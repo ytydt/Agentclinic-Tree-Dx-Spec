@@ -1302,3 +1302,74 @@ Priority order:
 Keep all module outputs strict-JSON and fail loudly on malformed responses.
 ```
 
+
+---
+
+## 16. LLM invocation support (OpenAI)
+
+This repository now supports true LLM-based module invocation.
+
+- If `AgentClinicTreeController` is initialized with `llm=OpenAILLMClient(...)`, each module stage (`SafetyController`, `RootSelector`, etc.) is executed through OpenAI Responses API using the prompt templates in `src/agentclinic_tree_dx/prompts/`.
+- If no LLM client is provided, the controller uses `env.call_module(...)` for deterministic/mock behavior.
+
+Example:
+
+```python
+from agentclinic_tree_dx.controller import AgentClinicTreeController
+from agentclinic_tree_dx.llm_client import OpenAILLMClient
+from agentclinic_tree_dx.adapters.mock_env import MockAgentClinicEnv
+from agentclinic_tree_dx.state import DiagnosticState
+
+env = MockAgentClinicEnv(module_responses={})
+llm = OpenAILLMClient(model="gpt-4.1-mini")
+controller = AgentClinicTreeController(env=env, llm=llm)
+state = DiagnosticState(case_id="demo")
+
+# requires OPENAI_API_KEY in environment
+result = controller.run(state)
+```
+
+Note: Calculator and external tool paths remain "naive" placeholders by design.
+
+---
+
+## 17. Running as a Doctor Agent with AgentClinic Patient/Tester/Moderator agents
+
+If you have a separate AgentClinic codebase, this project can run as the Doctor Agent through the `AgentClinicEnv` adapter:
+
+- `ask_patient(...)` routes to the Patient Agent (`answer_question`)
+- `request_exam`, `request_vital`, `order_lab`, `order_imaging` route to the Tester Agent (`perform_test`)
+- Final output is sent to the Moderator Agent (`review_case`) and attached as `moderator_review`
+
+Example integration skeleton:
+
+```python
+from agentclinic_tree_dx.adapters.agentclinic_env import AgentClinicEnv
+from agentclinic_tree_dx.controller import AgentClinicTreeController
+from agentclinic_tree_dx.llm_client import OpenAILLMClient
+from agentclinic_tree_dx.state import DiagnosticState
+
+# Wrap your external AgentClinic agents with these methods:
+# patient_agent.answer_question(question) -> dict
+# tester_agent.perform_test(test_type, request) -> dict
+# moderator_agent.review_case(payload) -> dict
+
+env = AgentClinicEnv(
+    case_id="real_case_001",
+    initial_summary="initial presentation text",
+    patient_agent=patient_agent,
+    tester_agent=tester_agent,
+    moderator_agent=moderator_agent,
+)
+
+controller = AgentClinicTreeController(
+    env=env,
+    llm=OpenAILLMClient(model="gpt-4.1-mini"),
+)
+
+state = DiagnosticState(case_id="real_case_001")
+result = controller.run(state)
+print(result["moderator_review"])
+```
+
+If you do not provide `llm`, you must inject deterministic `module_responses` into `AgentClinicEnv.call_module(...)`.
