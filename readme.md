@@ -1302,3 +1302,160 @@ Priority order:
 Keep all module outputs strict-JSON and fail loudly on malformed responses.
 ```
 
+
+---
+
+## 16. LLM invocation support (OpenAI)
+
+This repository now supports true LLM-based module invocation.
+
+- If `AgentClinicTreeController` is initialized with `llm=OpenAILLMClient(...)`, each module stage (`SafetyController`, `RootSelector`, etc.) is executed through OpenAI Responses API using the prompt templates in `src/agentclinic_tree_dx/prompts/`.
+- If no LLM client is provided, the controller uses `env.call_module(...)` for deterministic/mock behavior.
+
+Example:
+
+```python
+from agentclinic_tree_dx.controller import AgentClinicTreeController
+from agentclinic_tree_dx.llm_client import OpenAILLMClient
+from agentclinic_tree_dx.adapters.mock_env import MockAgentClinicEnv
+from agentclinic_tree_dx.state import DiagnosticState
+
+env = MockAgentClinicEnv(module_responses={})
+llm = OpenAILLMClient(model="gpt-4.1-mini")
+controller = AgentClinicTreeController(env=env, llm=llm)
+state = DiagnosticState(case_id="demo")
+
+# requires OPENAI_API_KEY in environment
+result = controller.run(state)
+```
+
+Note: Calculator and external tool paths remain "naive" placeholders by design.
+
+---
+
+## 17. Running as a Doctor Agent with AgentClinic Patient/Tester/Moderator agents
+
+If you have a separate AgentClinic codebase, this project can run as the Doctor Agent through the `AgentClinicEnv` adapter:
+
+- `ask_patient(...)` routes to the Patient Agent (`answer_question`)
+- `request_exam`, `request_vital`, `order_lab`, `order_imaging` route to the Tester Agent (`perform_test`)
+- Final output is sent to the Moderator Agent (`review_case`) and attached as `moderator_review`
+
+Example integration skeleton:
+
+```python
+from agentclinic_tree_dx.adapters.agentclinic_env import AgentClinicEnv
+from agentclinic_tree_dx.controller import AgentClinicTreeController
+from agentclinic_tree_dx.llm_client import OpenAILLMClient
+from agentclinic_tree_dx.state import DiagnosticState
+
+# Wrap your external AgentClinic agents with these methods:
+# patient_agent.answer_question(question) -> dict
+# tester_agent.perform_test(test_type, request) -> dict
+# moderator_agent.review_case(payload) -> dict
+
+env = AgentClinicEnv(
+    case_id="real_case_001",
+    initial_summary="initial presentation text",
+    patient_agent=patient_agent,
+    tester_agent=tester_agent,
+    moderator_agent=moderator_agent,
+)
+
+controller = AgentClinicTreeController(
+    env=env,
+    llm=OpenAILLMClient(model="gpt-4.1-mini"),
+)
+
+state = DiagnosticState(case_id="real_case_001")
+result = controller.run(state)
+print(result["moderator_review"])
+```
+
+If you do not provide `llm`, you must inject deterministic `module_responses` into `AgentClinicEnv.call_module(...)`.
+
+---
+
+## 18. Specialized execution mode for AgentClinic physician runtime
+
+Set `ControllerConfig(execution_mode="agentclinic_physician_patch")` to activate patch mode behavior:
+
+- state tracks turn budget, latest action type, and diagnosis readiness score
+- supports patch-oriented actions (`REQUEST_TEST_OR_MEASUREMENT`, `DIAGNOSIS_READY`, optional `USE_NOTEBOOK`, gated `RETRIEVE_EXTERNAL_KNOWLEDGE`)
+- applies a diagnosis-readiness gate before final stop
+- emits benchmark-facing output:
+  - `internal_reasoning_state`
+  - `benchmark_output` formatted as `Diagnosis Ready: <diagnosis>`
+
+Tool-gating config fields:
+- `allow_external_knowledge`
+- `allow_calculator`
+- `allow_notebook`
+- `max_turn_budget`
+- `min_readiness_to_commit`
+
+---
+
+## 19. SDbench specialized execution mode
+
+Set `ControllerConfig(execution_mode="sdbench_patch")` to activate SDbench behavior.
+
+Implemented SDbench-mode behaviors:
+- Gatekeeper-style interaction support via `SDbenchEnv`
+  - `ask_gatekeeper(...)`
+  - `request_test(...)`
+  - `submit_diagnosis(...)`
+- outbound SDbench action normalization and validation to benchmark classes:
+  - `ASK`
+  - `TEST`
+  - `DIAGNOSE`
+- SDbench frontier cap (top-k live branches capped at 3)
+- benchmark diagnosis submission payload:
+  - `{"diagnosis": "...", "submission": {...}, "internal_reasoning_state": {...}}`
+
+Example:
+
+```python
+from agentclinic_tree_dx.adapters.sdbench_env import SDbenchEnv
+from agentclinic_tree_dx.config import ControllerConfig
+from agentclinic_tree_dx.controller import AgentClinicTreeController
+from agentclinic_tree_dx.state import DiagnosticState
+
+env = SDbenchEnv(case_id="sd-001", gatekeeper=gatekeeper, module_responses={...})
+config = ControllerConfig(execution_mode="sdbench_patch")
+controller = AgentClinicTreeController(env=env, config=config)
+result = controller.run(DiagnosticState(case_id="sd-001"))
+```
+
+SDbench mode now also includes per-turn deliberation roles (`Hypothesis`, `TestChooser`, `Challenger`, `Stewardship`, `Checklist`, `Consensus`) and uses `FinalDiagnosisEmitter` to produce one final benchmark-facing diagnosis string before submission.
+
+AgentClinic patch mode enforces benchmark-facing action channel narrowing:
+- `ASK_PATIENT`
+- `REQUEST_TEST_OR_MEASUREMENT`
+- `USE_NOTEBOOK` (if enabled)
+- `RETRIEVE_EXTERNAL_KNOWLEDGE` (if enabled)
+- `DIAGNOSIS_READY`
+
+It also tracks `estimated_remaining_value` and applies a stricter readiness gate that blocks commitment if dangerous alternatives remain or a cheap/high-yield discriminator is still available.
+
+---
+
+## 20. Static Diagnosis-QA execution mode (MedQA-style)
+
+Set `ControllerConfig(execution_mode="static_diagnosis_qa")` for non-interactive static QA tasks.
+
+Behavior:
+- parses a full vignette once via `VignetteParser`
+- stores parsed evidence in `state.static_evidence_items`
+- runs analytical steps without patient/test acquisition
+- emits one benchmark-facing answer via `AnswerMapper`
+
+Expected final payload:
+- `final_answer`
+- `internal_reasoning_state`
+
+Static QA mode additionally remaps debate roles and planner/tool modules:
+- `EvidenceAllocator` (instead of interactive test chooser)
+- `ReasoningEconomyAuditor` (benchmark-purity stewardship)
+- `TemporaryAnalyticLeafPlanner`
+- `ToolUseGate` before calculator/retrieval
