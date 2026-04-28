@@ -26,6 +26,26 @@ class DummyGatekeeper:
         return {"accepted": True, "diagnosis": diagnosis}
 
 
+class AltMethodGatekeeper:
+    def __init__(self):
+        self.questions = []
+        self.ordered_tests = []
+        self.submitted = None
+        self.initial_case_info = "57-year-old with chest pain"
+
+    def ask_question(self, question: str):
+        self.questions.append(question)
+        return "no"
+
+    def order_test(self, test_name_or_panel: str):
+        self.ordered_tests.append(test_name_or_panel)
+        return "normal"
+
+    def submit_diagnosis(self, diagnosis: str):
+        self.submitted = diagnosis
+        return "submitted"
+
+
 def _sdbench_modules(action_type="ASK_PATIENT", leading="Pulmonary embolism"):
     return {
         "SafetyController": {"interrupt_active": False, "reason": "stable", "required_actions": []},
@@ -117,3 +137,48 @@ def test_sdbench_mode_rejects_illegal_outbound_action():
         assert False, "Expected ValueError for illegal SDbench action"
     except ValueError:
         assert True
+
+
+def test_sdbench_env_supports_alternative_gatekeeper_method_names():
+    gk = AltMethodGatekeeper()
+    env = SDbenchEnv(case_id="sd3", gatekeeper=gk, module_responses={})
+
+    assert env.get_case_summary() == "57-year-old with chest pain"
+    assert env.ask_gatekeeper("Any fever?") == {"answer": "no"}
+    assert env.request_test("troponin") == {"result": "normal"}
+    assert env.submit_diagnosis("ACS") == {"submission": "submitted"}
+
+
+def test_sdbench_env_supports_callable_hooks_for_custom_gatekeeper_shapes():
+    class CustomGatekeeper:
+        def __init__(self):
+            self.summary = "custom summary"
+            self.log = []
+
+        def q(self, text: str):
+            self.log.append(("q", text))
+            return "answer"
+
+        def t(self, text: str):
+            self.log.append(("t", text))
+            return "test-result"
+
+        def d(self, text: str):
+            self.log.append(("d", text))
+            return "ok"
+
+    gk = CustomGatekeeper()
+    env = SDbenchEnv(
+        case_id="sd4",
+        gatekeeper=gk,
+        case_summary_getter=lambda x: x.summary,
+        ask_fn=lambda x, q: x.q(q),
+        test_fn=lambda x, t: x.t(t),
+        diagnose_fn=lambda x, d: x.d(d),
+        module_responses={},
+    )
+
+    assert env.get_case_summary() == "custom summary"
+    assert env.ask_gatekeeper("question") == {"answer": "answer"}
+    assert env.request_test("test") == {"result": "test-result"}
+    assert env.submit_diagnosis("dx") == {"submission": "ok"}
