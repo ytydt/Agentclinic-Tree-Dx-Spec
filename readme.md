@@ -3,6 +3,17 @@
 
 This specification translates the refined tree-reasoning mapping into an implementable prototype design for an interactive diagnostic agent. It is anchored to the uploaded tree-reasoning notes and the thesis’s LTR idea of top-down recursive decomposition plus bottom-up aggregation with a traceable reasoning path. It is tailored to AgentClinic-style settings, where the agent must uncover diagnosis through dialogue, incomplete information, multimodal evidence collection, and tool use, including the two public AgentClinic tracks: AgentClinic-MedQA and AgentClinic-NEJM.
 
+### AgentClinic runtime compatibility note
+
+`AgentClinicEnv` now accepts either this project's native adapter signatures or the upstream AgentClinic-style agent methods:
+
+- patient agent: `answer_question(question)` **or** `inference_patient(question)`
+- measurement/tester agent: `perform_test(test_type, request)` **or** `inference_measurement(request)`
+
+This means AgentClinic patient and measurement agents can be wired directly in AgentClinic mode (`execution_mode="agentclinic_physician_patch"`) without writing an extra wrapper class for those two roles.
+For end-to-end install + wiring steps, see `agentclinic_upstream_setup.md`.
+For Open-MAI-Dx-Orchestrator/SDBench gatekeeper wiring, see `sdbench_upstream_setup.md`.
+
 Reference files:
 - tree-reasoning-in-diagnosis_20260412_0732.json
 - 面向视频问答的组合式推理技术研究v3(1).pdf

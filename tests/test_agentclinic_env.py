@@ -21,6 +21,15 @@ class DummyModerator:
         self.last_payload = payload
         return {"grade": "pass", "reason": "coherent"}
 
+class UpstreamStylePatient:
+    def inference_patient(self, question: str):
+        return f"Patient says: {question}"
+
+
+class UpstreamStyleMeasurement:
+    def inference_measurement(self, request: str):
+        return f"Measurement: {request}"
+
 
 class DummyLLM:
     def __init__(self):
@@ -103,3 +112,34 @@ def test_controller_attaches_moderator_review_with_agentclinic_env():
     assert result["leading_diagnosis_or_parent"] == "pneumonia"
     assert result["moderator_review"]["grade"] == "pass"
     assert moderator.last_payload["case_id"] == "c2"
+
+
+def test_agentclinic_env_supports_upstream_agentclinic_agent_interfaces():
+    env = AgentClinicEnv(
+        case_id="c3",
+        initial_summary="fever",
+        patient_agent=UpstreamStylePatient(),
+        tester_agent=UpstreamStyleMeasurement(),
+        moderator_agent=DummyModerator(),
+    )
+
+    assert env.ask_patient("How long?") == {"patient_answer": "Patient says: How long?"}
+    assert env.request_test_or_measurement("temperature") == {
+        "type": "measurement",
+        "request": "temperature",
+        "result": "Measurement: temperature",
+    }
+
+
+def test_controller_uses_skip_payload_when_moderator_is_not_configured():
+    env = AgentClinicEnv(
+        case_id="c4",
+        initial_summary="cough",
+        patient_agent=DummyPatient(),
+        tester_agent=DummyTester(),
+    )
+    controller = AgentClinicTreeController(env=env, llm=DummyLLM())
+
+    result = controller.run(DiagnosticState(case_id="c4"))
+
+    assert result["moderator_review"]["status"] == "skipped"
