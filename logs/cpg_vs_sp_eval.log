@@ -1,0 +1,48 @@
+
+9 cases | vocab=157595 | upstream=9 | arms=['sp_llm', 'cpg_llm', 'union_llm']
+
+LLM ready: qwen/qwen3-32b @ T=0
+
+CPG gsource ready=True  RAG gsource ready=False
+
+========================================================================================================
+[sp_llm]
+idx L1cov L1ax L2cov L2ax cpgS cpgGold  gold → L1 domain
+--------------------------------------------------------------------------------------------------------
+  1  MISS   NA  MISS   NA    0       -  pancoast tumor       → (none)
+  9  MISS   NA  MISS   NA    0       -  leukemoid reaction   → (none)
+ 13  MISS   NA  MISS   NA    0       -  glucagonoma          → (none)
+ 14  MISS   NA  MISS   NA    0       -  diastolic murmur bes → (none)
+ 17  MISS   NA  MISS   NA    0       -  chronic myeloid leuk → (none)
+ 18  MISS   NA  MISS   NA    0       -  vascular ectasia wit → (none)
+ 22  MISS   NA  MISS   NA    0       -  primary hyperparathy → (none)
+ 23  MISS   NA  MISS   NA    0       -  adhesions            → (none)
+ 24  MISS   NA  MISS   NA    0       -  foreign body obstruc → (none)
+--------------------------------------------------------------------------------------------------------
+  L1 coverage 0/9=0%  L1 axis-OK 0/1  | L2 coverage 0/9=0%  L2 axis-OK 0/1
+  CPG efficacy: snippets retrieved in 0/9 cases; gold family recalled FROM CPG in 0/9
+  [disease-gold only, N=8, excl. sign case14 — fair vs §31.13.17]: L1 coverage 0/8=0%
+
+========================================================================================================
+[cpg_llm]
+idx L1cov L1ax L2cov L2ax cpgS cpgGold  gold → L1 domain
+--------------------------------------------------------------------------------------------------------
+  1   HIT   OK   HIT   OK   24       -  pancoast tumor       → Neoplastic
+  9  MISS   NA  MISS   NA   24       Y  leukemoid reaction   → (none)
+ 13  MISS   NA  MISS   NA   24       -  glucagonoma          → (none)
+ 14  MISS   NA  MISS   NA   24       -  diastolic murmur bes → (none)
+ 17   HIT   OK   HIT   OK   24       Y  chronic myeloid leuk → Myeloid Lineage Neoplasms
+ 18   HIT   OK   HIT   OK   24       Y  vascular ectasia wit → Structural/Vascular Anomalies
+ 22   HIT   OK   HIT   OK   24       Y  primary hyperparathy → PTH-related hypercalcemia
+ 23  MISS   NA  MISS   NA   24       -  adhesions            → (none)
+ 24   HIT   OK   HIT   OK   24       Y  foreign body obstruc → Anatomical Causes
+--------------------------------------------------------------------------------------------------------
+  L1 coverage 5/9=56%  L1 axis-OK 5/5  | L2 coverage 5/9=56%  L2 axis-OK 5/5
+  CPG efficacy: snippets retrieved in 9/9 cases; gold family recalled FROM CPG in 5/9
+  [disease-gold only, N=8, excl. sign case14 — fair vs §31.13.17]: L1 coverage 5/8=62%
+
+========================================================================================================
+[union_llm]
+idx L1cov L1ax L2cov L2ax cpgS cpgGold  gold → L1 domain
+--------------------------------------------------------------------------------------------------------
+  1  MISS   NA  MISS   NA   24       -  pancoast tumor       → (none)

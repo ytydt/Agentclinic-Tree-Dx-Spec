@@ -1,0 +1,810 @@
+{
+  "_readme": "Hand-curated L2 leaf candidate sets + KEY DIFFERENTIAL findings for the TALP DISCRIMINATION-CAPABILITY test (scripts/eval_talp_discrimination.py + scripts/eval_discriminator_coverage.py + scripts/eval_l1_abstraction_retrieval.py + scripts/eval_evidence_precision.py). Seeded from data/eval/lr_coverage_cases.json (9 MedBullets cases). Join to the runtime vignette by gold_option == eval_pipeline_medbullets.load_dx_cases().answer.\n\nSCHEMA v2 (explicit roles, replaces the ambiguous favors/shared scheme):\n- candidates[]: {name, l1_parent, is_gold}. Each case has >=1 CROSS-PARENT strong distractor (sits under a different L1 family than the gold).\n- findings[].role (one of):\n    rule_in_gold            : present in gold, argues FOR gold. target=gold.\n    rule_out_distractor     : argues AGAINST a specific strong distractor (present-in-gold-absent-in-distractor, OR a negative/absent finding that excludes it). target=<distractor name>. direction_target is the candidate the finding argues AGAINST.\n    shared_nondiscriminating: present across most/all candidates -> must NOT be used to separate them (the SHARED-trap). target=null.\n    parent_child_trap       : a finding that a CHILD subtype of the gold's family ALSO has, so it must NOT be read as ruling OUT the parent family (e.g. CML-in-blast-phase has many blasts -> 'blasts present' must not rule out CML). target=<parent family>.\n- findings[].decisive: the single strongest gold-vs-strongest-distractor separator.\n- findings[].favors: DERIVED back-compat field for the v1 scripts: 'gold' | 'distractor:<name>' | 'shared'. For rule_out_distractor we set favors='shared' (v1 had no rule-out concept) so old coverage counts are unaffected; v2 scripts read 'role'.\n- parent_child (optional per case): {parent, children[], principle} documenting the subtype structure the parent_child_trap findings exercise.",
+  "cases": [
+    {
+      "id": "mb11_pancoast",
+      "corpus": "medbullets",
+      "case_idx": 11,
+      "gold": "Pancoast tumor",
+      "gold_option": "Apical lung tumor",
+      "l1_label": "Neoplastic (apical mass)",
+      "candidates": [
+        {
+          "name": "Pancoast tumor",
+          "l1_parent": "Neoplastic (apical mass)",
+          "is_gold": true
+        },
+        {
+          "name": "brachial plexopathy",
+          "l1_parent": "Peripheral nerve / plexus disorder",
+          "is_gold": false
+        },
+        {
+          "name": "cervical radiculopathy",
+          "l1_parent": "Peripheral nerve / radicular disorder",
+          "is_gold": false
+        },
+        {
+          "name": "subclavian steal syndrome",
+          "l1_parent": "Vascular disorder",
+          "is_gold": false
+        },
+        {
+          "name": "thoracic outlet syndrome",
+          "l1_parent": "Compressive / structural disorder",
+          "is_gold": false
+        }
+      ],
+      "findings": [
+        {
+          "finding": "Horner syndrome",
+          "role": "rule_in_gold",
+          "target": "Pancoast tumor",
+          "favors": "gold",
+          "in_vignette": false,
+          "hpo": "HP:0002277",
+          "decisive": true,
+          "note": "apical mass invades sympathetic chain; classic Pancoast discriminator"
+        },
+        {
+          "finding": "pain unchanged by head and neck position",
+          "role": "rule_out_distractor",
+          "target": "cervical radiculopathy",
+          "direction_target": "cervical radiculopathy",
+          "favors": "shared",
+          "in_vignette": true,
+          "hpo": "",
+          "decisive": true,
+          "note": "position-independent pain argues AGAINST radiculopathy / TOS (which are position-dependent)"
+        },
+        {
+          "finding": "weight loss",
+          "role": "rule_in_gold",
+          "target": "Pancoast tumor",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0001824",
+          "decisive": false,
+          "note": "17 lb loss -> malignancy, supportive not decisive"
+        },
+        {
+          "finding": "lower brachial plexus deficit (C8-T1 hand weakness)",
+          "role": "rule_in_gold",
+          "target": "Pancoast tumor",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "",
+          "decisive": false,
+          "note": "apical tumor invades lower trunk; also seen in lower brachial plexopathy"
+        },
+        {
+          "finding": "shoulder and arm pain",
+          "role": "shared_nondiscriminating",
+          "target": null,
+          "favors": "shared",
+          "in_vignette": true,
+          "hpo": "HP:0030834",
+          "decisive": false,
+          "note": "shared by Pancoast, TOS, plexopathy, radiculopathy -> non-discriminating",
+          "decision_set": [
+            "Pancoast tumor",
+            "brachial plexopathy",
+            "thoracic outlet syndrome"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mb34_leukemoid",
+      "corpus": "medbullets",
+      "case_idx": 34,
+      "gold": "leukemoid reaction",
+      "gold_option": "Leukemoid reaction",
+      "l1_label": "Reactive / Non-malignant Leukocytosis",
+      "candidates": [
+        {
+          "name": "leukemoid reaction",
+          "l1_parent": "Reactive / Non-malignant Leukocytosis",
+          "is_gold": true
+        },
+        {
+          "name": "chronic myeloid leukemia",
+          "l1_parent": "Chronic Myeloproliferative Neoplasm",
+          "is_gold": false
+        },
+        {
+          "name": "chronic lymphocytic leukemia",
+          "l1_parent": "Chronic Lymphoproliferative Neoplasm",
+          "is_gold": false
+        },
+        {
+          "name": "acute lymphoblastic leukemia",
+          "l1_parent": "Acute Leukemia",
+          "is_gold": false
+        },
+        {
+          "name": "multiple myeloma",
+          "l1_parent": "Plasma Cell Neoplasm",
+          "is_gold": false
+        }
+      ],
+      "findings": [
+        {
+          "finding": "elevated leukocyte alkaline phosphatase",
+          "role": "rule_in_gold",
+          "target": "leukemoid reaction",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "",
+          "decisive": true,
+          "note": "LAP HIGH -> leukemoid; LAP LOW -> CML (the single decisive discriminator)"
+        },
+        {
+          "finding": "absent Philadelphia chromosome / BCR-ABL",
+          "role": "rule_out_distractor",
+          "target": "chronic myeloid leukemia",
+          "direction_target": "chronic myeloid leukemia",
+          "favors": "shared",
+          "in_vignette": false,
+          "hpo": "",
+          "decisive": true,
+          "note": "no BCR-ABL rules OUT CML -> supports reactive leukemoid"
+        },
+        {
+          "finding": "leukocytosis with normal differential",
+          "role": "rule_in_gold",
+          "target": "leukemoid reaction",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0001974",
+          "decisive": false,
+          "note": "no blasts / left shift -> reactive, against acute leukemia"
+        },
+        {
+          "finding": "recent infection",
+          "role": "rule_in_gold",
+          "target": "leukemoid reaction",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "",
+          "decisive": false,
+          "note": "reactive trigger"
+        },
+        {
+          "finding": "leukocytosis",
+          "role": "shared_nondiscriminating",
+          "target": null,
+          "favors": "shared",
+          "in_vignette": true,
+          "hpo": "HP:0001974",
+          "decisive": false,
+          "note": "shared by leukemoid, CML, CLL, ALL -> non-discriminating",
+          "decision_set": [
+            "leukemoid reaction",
+            "chronic myeloid leukemia",
+            "acute lymphoblastic leukemia"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mb55_glucagonoma",
+      "corpus": "medbullets",
+      "case_idx": 55,
+      "gold": "glucagonoma",
+      "gold_option": "Alpha cell tumor",
+      "l1_label": "Neoplastic Process (alpha cell tumor)",
+      "candidates": [
+        {
+          "name": "glucagonoma",
+          "l1_parent": "Neoplastic Process (islet cell tumor)",
+          "is_gold": true
+        },
+        {
+          "name": "insulinoma",
+          "l1_parent": "Neoplastic Process (islet cell tumor)",
+          "is_gold": false
+        },
+        {
+          "name": "type 1 diabetes mellitus",
+          "l1_parent": "Autoimmune / Endocrine (beta cell destruction)",
+          "is_gold": false
+        },
+        {
+          "name": "type 2 diabetes mellitus",
+          "l1_parent": "Metabolic / Endocrine (insulin resistance)",
+          "is_gold": false
+        },
+        {
+          "name": "hypercortisolism",
+          "l1_parent": "Adrenal / Endocrine excess",
+          "is_gold": false
+        }
+      ],
+      "findings": [
+        {
+          "finding": "necrolytic migratory erythema",
+          "role": "rule_in_gold",
+          "target": "glucagonoma",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "",
+          "decisive": true,
+          "note": "pathognomonic painful papuloplaque rash of glucagonoma"
+        },
+        {
+          "finding": "hyperglycemia despite weight loss (not hypoglycemia)",
+          "role": "rule_out_distractor",
+          "target": "insulinoma",
+          "direction_target": "insulinoma",
+          "favors": "shared",
+          "in_vignette": true,
+          "hpo": "HP:0003074",
+          "decisive": true,
+          "note": "glucagon excess -> HIGH glucose; rules OUT insulinoma (which causes hypoglycemia)"
+        },
+        {
+          "finding": "diarrhea",
+          "role": "rule_in_gold",
+          "target": "glucagonoma",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0002014",
+          "decisive": false,
+          "note": "part of glucagonoma syndrome"
+        },
+        {
+          "finding": "hyperglycemia",
+          "role": "shared_nondiscriminating",
+          "target": null,
+          "favors": "shared",
+          "in_vignette": true,
+          "hpo": "HP:0003074",
+          "decisive": false,
+          "note": "shared by glucagonoma, T1DM, T2DM, hypercortisolism -> non-discriminating among the endocrine set",
+          "decision_set": [
+            "glucagonoma",
+            "type 2 diabetes mellitus",
+            "hypercortisolism"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mb57_kartagener",
+      "corpus": "medbullets",
+      "case_idx": 57,
+      "gold": "primary ciliary dyskinesia",
+      "gold_option": "Diastolic murmur best heard along the right lower sternal border",
+      "l1_label": "Congenital / Genetic Respiratory Disorder (ciliary)",
+      "candidates": [
+        {
+          "name": "primary ciliary dyskinesia",
+          "l1_parent": "Congenital / Genetic Respiratory Disorder (ciliary)",
+          "is_gold": true
+        },
+        {
+          "name": "cystic fibrosis",
+          "l1_parent": "Congenital / Genetic Disorder (CFTR)",
+          "is_gold": false
+        },
+        {
+          "name": "common variable immunodeficiency",
+          "l1_parent": "Primary Immunodeficiency",
+          "is_gold": false
+        },
+        {
+          "name": "chronic aspiration",
+          "l1_parent": "Structural / Mechanical airway disorder",
+          "is_gold": false
+        }
+      ],
+      "findings": [
+        {
+          "finding": "situs inversus",
+          "role": "rule_in_gold",
+          "target": "primary ciliary dyskinesia",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0001696",
+          "decisive": true,
+          "note": "Kartagener -> dextrocardia -> tricuspid murmur at RLSB; unique to PCD among the set"
+        },
+        {
+          "finding": "normal growth and weight gain",
+          "role": "rule_out_distractor",
+          "target": "cystic fibrosis",
+          "direction_target": "cystic fibrosis",
+          "favors": "shared",
+          "in_vignette": true,
+          "hpo": "",
+          "decisive": true,
+          "note": "normal growth argues AGAINST CF (which has failure to thrive / pancreatic insufficiency)"
+        },
+        {
+          "finding": "chronic sinusitis",
+          "role": "rule_in_gold",
+          "target": "primary ciliary dyskinesia",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0011109",
+          "decisive": false,
+          "note": "since birth; part of PCD triad"
+        },
+        {
+          "finding": "bronchiectasis",
+          "role": "shared_nondiscriminating",
+          "target": null,
+          "favors": "shared",
+          "in_vignette": true,
+          "hpo": "HP:0002110",
+          "decisive": false,
+          "note": "shared by PCD, CF, CVID, chronic aspiration -> non-discriminating",
+          "decision_set": [
+            "primary ciliary dyskinesia",
+            "cystic fibrosis",
+            "common variable immunodeficiency"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mb65_cml",
+      "corpus": "medbullets",
+      "case_idx": 65,
+      "gold": "chronic myeloid leukemia",
+      "gold_option": "Chronic myelogenous leukemia",
+      "l1_label": "Chronic Myeloproliferative Neoplasm",
+      "candidates": [
+        {
+          "name": "chronic myeloid leukemia",
+          "l1_parent": "Chronic Myeloproliferative Neoplasm",
+          "is_gold": true
+        },
+        {
+          "name": "acute myeloid leukemia",
+          "l1_parent": "Acute Myeloid Leukemia",
+          "is_gold": false
+        },
+        {
+          "name": "acute lymphoblastic leukemia",
+          "l1_parent": "Acute Lymphoblastic Leukemia",
+          "is_gold": false
+        },
+        {
+          "name": "chronic lymphocytic leukemia",
+          "l1_parent": "Chronic Lymphoproliferative Neoplasm",
+          "is_gold": false
+        },
+        {
+          "name": "leukemoid reaction",
+          "l1_parent": "Reactive / Non-malignant Leukocytosis",
+          "is_gold": false
+        }
+      ],
+      "parent_child": {
+        "parent": "Chronic Myeloproliferative Neoplasm",
+        "children": [
+          "CML chronic phase",
+          "CML accelerated phase",
+          "CML blast phase"
+        ],
+        "principle": "CML blast phase carries MANY circulating blasts, so 'blasts present' is COMMON to a child of the CML family and must NOT rule OUT the CML parent. Conversely, low LAP (a CML-family feature) present in any child should rule IN the parent."
+      },
+      "findings": [
+        {
+          "finding": "low leukocyte alkaline phosphatase",
+          "role": "rule_in_gold",
+          "target": "chronic myeloid leukemia",
+          "favors": "gold",
+          "in_vignette": false,
+          "hpo": "",
+          "decisive": true,
+          "note": "LAP LOW -> CML (vs HIGH in leukemoid); the classic CML discriminator; a CML-family feature -> rules IN parent"
+        },
+        {
+          "finding": "basophilia",
+          "role": "rule_in_gold",
+          "target": "chronic myeloid leukemia",
+          "favors": "gold",
+          "in_vignette": false,
+          "hpo": "HP:0011990",
+          "decisive": true,
+          "note": "peripheral basophilia is characteristic of CML, argues against AML/ALL/leukemoid"
+        },
+        {
+          "finding": "splenomegaly",
+          "role": "rule_in_gold",
+          "target": "chronic myeloid leukemia",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0001744",
+          "decisive": false,
+          "note": "massive splenomegaly typical of CML chronic phase"
+        },
+        {
+          "finding": "full spectrum of maturing myeloid cells on smear",
+          "role": "rule_in_gold",
+          "target": "chronic myeloid leukemia",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "",
+          "decisive": false,
+          "note": "left-shifted but MATURING granulocytes -> CML; a blast-only picture would favor AML"
+        },
+        {
+          "finding": "many circulating blasts",
+          "role": "parent_child_trap",
+          "target": "Chronic Myeloproliferative Neoplasm",
+          "favors": "shared",
+          "in_vignette": true,
+          "hpo": "",
+          "decisive": false,
+          "note": "PARENT/CHILD TRAP: CML in blast phase ALSO has many blasts, so 'blasts present' is shared with a CML child and must NOT rule out the CML parent (though in isolation it also fits AML/ALL)"
+        }
+      ]
+    },
+    {
+      "id": "mb66_peliosis",
+      "corpus": "medbullets",
+      "case_idx": 66,
+      "gold": "peliosis hepatis",
+      "gold_option": "Vascular ectasia within the liver",
+      "l1_label": "Vascular / Ischemic Hepatic Condition",
+      "candidates": [
+        {
+          "name": "peliosis hepatis",
+          "l1_parent": "Vascular / Ischemic Hepatic Condition",
+          "is_gold": true
+        },
+        {
+          "name": "Budd-Chiari syndrome",
+          "l1_parent": "Vascular / Ischemic Hepatic Condition",
+          "is_gold": false
+        },
+        {
+          "name": "choledocholithiasis",
+          "l1_parent": "Biliary Obstruction",
+          "is_gold": false
+        },
+        {
+          "name": "acute pancreatitis",
+          "l1_parent": "Inflammatory Abdominal Condition",
+          "is_gold": false
+        },
+        {
+          "name": "ectopic pregnancy",
+          "l1_parent": "Gynecologic / Obstetric Emergency",
+          "is_gold": false
+        }
+      ],
+      "findings": [
+        {
+          "finding": "anabolic androgenic steroid use",
+          "role": "rule_in_gold",
+          "target": "peliosis hepatis",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "",
+          "decisive": true,
+          "note": "burly build/acne -> androgen use -> peliosis hepatis; the decisive exposure clue"
+        },
+        {
+          "finding": "normal serum lipase",
+          "role": "rule_out_distractor",
+          "target": "acute pancreatitis",
+          "direction_target": "acute pancreatitis",
+          "favors": "shared",
+          "in_vignette": false,
+          "hpo": "",
+          "decisive": true,
+          "note": "normal lipase rules OUT acute pancreatitis"
+        },
+        {
+          "finding": "negative pregnancy test",
+          "role": "rule_out_distractor",
+          "target": "ectopic pregnancy",
+          "direction_target": "ectopic pregnancy",
+          "favors": "shared",
+          "in_vignette": false,
+          "hpo": "",
+          "decisive": false,
+          "note": "negative beta-hCG rules OUT ectopic pregnancy"
+        },
+        {
+          "finding": "hepatic vascular lesion rupture with hemoperitoneum",
+          "role": "rule_in_gold",
+          "target": "peliosis hepatis",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "",
+          "decisive": false,
+          "note": "RUQ pain worse with exertion + hypotension -> lesion hemorrhage"
+        },
+        {
+          "finding": "right upper quadrant pain",
+          "role": "shared_nondiscriminating",
+          "target": null,
+          "favors": "shared",
+          "in_vignette": true,
+          "hpo": "HP:0033438",
+          "decisive": false,
+          "note": "shared by peliosis, Budd-Chiari, choledocholithiasis, pancreatitis -> non-discriminating",
+          "decision_set": [
+            "peliosis hepatis",
+            "Budd-Chiari syndrome",
+            "choledocholithiasis"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mb77_hyperpara",
+      "corpus": "medbullets",
+      "case_idx": 77,
+      "gold": "primary hyperparathyroidism",
+      "gold_option": "Increased parathyroid hormone",
+      "l1_label": "Endocrine / Parathyroid Disorder",
+      "candidates": [
+        {
+          "name": "primary hyperparathyroidism",
+          "l1_parent": "Endocrine / Parathyroid Disorder",
+          "is_gold": true
+        },
+        {
+          "name": "malignancy-associated hypercalcemia",
+          "l1_parent": "Neoplastic / Paraneoplastic",
+          "is_gold": false
+        },
+        {
+          "name": "milk-alkali syndrome",
+          "l1_parent": "Exogenous / Iatrogenic Intake",
+          "is_gold": false
+        },
+        {
+          "name": "vitamin D intoxication",
+          "l1_parent": "Exogenous / Iatrogenic Intake",
+          "is_gold": false
+        },
+        {
+          "name": "sarcoidosis",
+          "l1_parent": "Granulomatous / Inflammatory Disorder",
+          "is_gold": false
+        }
+      ],
+      "findings": [
+        {
+          "finding": "elevated parathyroid hormone",
+          "role": "rule_in_gold",
+          "target": "primary hyperparathyroidism",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0003165",
+          "decisive": true,
+          "note": "high/inappropriately-normal PTH -> primary hyperPTH; PTH is SUPPRESSED in all four distractors"
+        },
+        {
+          "finding": "suppressed PTH would be expected but is elevated",
+          "role": "rule_out_distractor",
+          "target": "malignancy-associated hypercalcemia",
+          "direction_target": "malignancy-associated hypercalcemia",
+          "favors": "shared",
+          "in_vignette": true,
+          "hpo": "",
+          "decisive": true,
+          "note": "PTH-independent hypercalcemia (malignancy/PTHrP, vit D, milk-alkali) SUPPRESSES PTH; a HIGH PTH rules them OUT"
+        },
+        {
+          "finding": "hypophosphatemia",
+          "role": "rule_in_gold",
+          "target": "primary hyperparathyroidism",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0002148",
+          "decisive": true,
+          "note": "PTH wastes phosphate; discriminates from milk-alkali / vit D / malignancy"
+        },
+        {
+          "finding": "elevated alkaline phosphatase",
+          "role": "rule_in_gold",
+          "target": "primary hyperparathyroidism",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0003155",
+          "decisive": false,
+          "note": "bone turnover"
+        },
+        {
+          "finding": "hypercalcemia",
+          "role": "shared_nondiscriminating",
+          "target": null,
+          "favors": "shared",
+          "in_vignette": true,
+          "hpo": "HP:0003072",
+          "decisive": false,
+          "note": "shared by ALL candidates (the presenting syndrome) -> non-discriminating",
+          "decision_set": [
+            "primary hyperparathyroidism",
+            "malignancy-associated hypercalcemia",
+            "milk-alkali syndrome"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mb82_adhesions",
+      "corpus": "medbullets",
+      "case_idx": 82,
+      "gold": "adhesions",
+      "gold_option": "Adhesions",
+      "l1_label": "Mechanical Gastrointestinal Obstruction",
+      "candidates": [
+        {
+          "name": "adhesions",
+          "l1_parent": "Mechanical GI Obstruction",
+          "is_gold": true
+        },
+        {
+          "name": "sigmoid volvulus",
+          "l1_parent": "Mechanical GI Obstruction",
+          "is_gold": false
+        },
+        {
+          "name": "fecal impaction",
+          "l1_parent": "Mechanical GI Obstruction",
+          "is_gold": false
+        },
+        {
+          "name": "diabetic gastroparesis",
+          "l1_parent": "Motility / Metabolic Disorder",
+          "is_gold": false
+        },
+        {
+          "name": "norovirus gastroenteritis",
+          "l1_parent": "Infectious GI Condition",
+          "is_gold": false
+        }
+      ],
+      "parent_child": {
+        "parent": "Mechanical GI Obstruction",
+        "children": [
+          "adhesive small bowel obstruction",
+          "sigmoid volvulus",
+          "fecal impaction"
+        ],
+        "principle": "The mechanical-obstruction PARENT is ruled IN by the small-bowel-obstruction picture, which is common to its children; the specific cause (adhesions vs volvulus) is an intra-family leaf question, not a parent rule-out."
+      },
+      "findings": [
+        {
+          "finding": "prior abdominal surgery",
+          "role": "rule_in_gold",
+          "target": "adhesions",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "",
+          "decisive": true,
+          "note": "RLQ surgical scar -> adhesions = #1 cause of SBO; separates from volvulus/impaction WITHIN the mechanical family"
+        },
+        {
+          "finding": "no diarrhea (obstipation instead)",
+          "role": "rule_out_distractor",
+          "target": "norovirus gastroenteritis",
+          "direction_target": "norovirus gastroenteritis",
+          "favors": "shared",
+          "in_vignette": true,
+          "hpo": "",
+          "decisive": true,
+          "note": "obstipation + no diarrhea rules OUT viral gastroenteritis"
+        },
+        {
+          "finding": "small bowel obstruction pattern",
+          "role": "parent_child_trap",
+          "target": "Mechanical GI Obstruction",
+          "favors": "shared",
+          "in_vignette": true,
+          "hpo": "HP:0005214",
+          "decisive": false,
+          "note": "SBO picture is COMMON to the mechanical-obstruction children -> rules IN the parent family; not a rule-out of any specific child"
+        },
+        {
+          "finding": "abdominal distension",
+          "role": "shared_nondiscriminating",
+          "target": null,
+          "favors": "shared",
+          "in_vignette": true,
+          "hpo": "HP:0003270",
+          "decisive": false,
+          "note": "shared by adhesions, volvulus, fecal impaction -> non-discriminating within the obstruction family",
+          "decision_set": [
+            "adhesions",
+            "sigmoid volvulus",
+            "fecal impaction"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mb83_foreignbody",
+      "corpus": "medbullets",
+      "case_idx": 83,
+      "gold": "nasal foreign body",
+      "gold_option": "Foreign body obstruction",
+      "l1_label": "Foreign Body-Related Nasal Disorder",
+      "candidates": [
+        {
+          "name": "nasal foreign body",
+          "l1_parent": "Foreign Body / Mechanical Nasal Disorder",
+          "is_gold": true
+        },
+        {
+          "name": "bacterial sinusitis",
+          "l1_parent": "Infectious Nasal / Sinus Disorder",
+          "is_gold": false
+        },
+        {
+          "name": "nasopharyngeal carcinoma",
+          "l1_parent": "Neoplastic Disorder",
+          "is_gold": false
+        },
+        {
+          "name": "epistaxis from Kiesselbach plexus",
+          "l1_parent": "Vascular / Bleeding Disorder",
+          "is_gold": false
+        },
+        {
+          "name": "nasal septal perforation",
+          "l1_parent": "Structural Nasal Disorder",
+          "is_gold": false
+        }
+      ],
+      "findings": [
+        {
+          "finding": "unilateral foul purulent nasal discharge",
+          "role": "rule_in_gold",
+          "target": "nasal foreign body",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "",
+          "decisive": true,
+          "note": "unilaterality + foul odor in a child -> retained foreign body; sinusitis is typically bilateral"
+        },
+        {
+          "finding": "unilaterality of symptoms (not bilateral)",
+          "role": "rule_out_distractor",
+          "target": "bacterial sinusitis",
+          "direction_target": "bacterial sinusitis",
+          "favors": "shared",
+          "in_vignette": true,
+          "hpo": "",
+          "decisive": true,
+          "note": "bacterial sinusitis is typically BILATERAL; strict unilaterality argues AGAINST it"
+        },
+        {
+          "finding": "unilateral bloody nasal discharge",
+          "role": "rule_in_gold",
+          "target": "nasal foreign body",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "",
+          "decisive": false,
+          "note": "mucosal trauma from foreign body"
+        },
+        {
+          "finding": "nasal discharge",
+          "role": "shared_nondiscriminating",
+          "target": null,
+          "favors": "shared",
+          "in_vignette": true,
+          "hpo": "HP:0031416",
+          "decisive": false,
+          "note": "generic rhinorrhea shared by foreign body, sinusitis, NPC -> non-discriminating without laterality",
+          "decision_set": [
+            "nasal foreign body",
+            "bacterial sinusitis",
+            "nasopharyngeal carcinoma"
+          ]
+        }
+      ]
+    }
+  ]
+}

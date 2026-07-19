@@ -1,0 +1,118 @@
+{
+  "agents": [
+    {
+      "agent_id": "synthetic-reviewer-a",
+      "model": "meta-llama/llama-3.3-70b-instruct",
+      "prompt_sha256": "472f7e3d06db9388ba2f362503898e4afdd595e3c4e90735dfee4d57e3e102e3",
+      "role": "reviewer",
+      "seed": 17011
+    },
+    {
+      "agent_id": "synthetic-reviewer-b",
+      "model": "qwen/qwen3-32b",
+      "prompt_sha256": "4e3ac06c3945343894f6bd740d40e14a2da123eb458697a4554579df56c95513",
+      "role": "reviewer",
+      "seed": 29021
+    },
+    {
+      "agent_id": "synthetic-adjudicator",
+      "model": "google/gemini-2.5-pro",
+      "prompt_sha256": "83cfb65a9a8911a27a5d824dacba9f00baa06c00891357273cf876389a050227",
+      "role": "adjudicator",
+      "seed": 43003
+    }
+  ],
+  "artifact_kind": "cceg_research_review_packet",
+  "artifact_version": 1,
+  "clinical_use_prohibited": true,
+  "items": [
+    {
+      "adjudication": {
+        "agent_id": "synthetic-adjudicator",
+        "label": "reject",
+        "model": "google/gemini-2.5-pro",
+        "prompt": "You are a third synthetic research adjudicator. The two\nindependent research reviewers disagreed. Resolve only that disagreement from\nthe supplied claim, quote, and both reasons. Do not treat either reviewer as a\nhuman or clinician. Return strict JSON:\n{\"label\":\"accept|reject|uncertain\",\"reason\":\"brief evidence-bound resolution\"}.",
+        "prompt_sha256": "83cfb65a9a8911a27a5d824dacba9f00baa06c00891357273cf876389a050227",
+        "reason": "The claim's structured finding has a `value_state` of 'elevated' but a `relation` of `supports_a` (chronic myeloid leukemia). The quote states that an increased (elevated) score supports leukemoid reactions (candidate_b), while a low score supports CML. This is a direct contradiction.",
+        "role": "adjudicator",
+        "seed": 43003
+      },
+      "claim": {
+        "candidate_a": {
+          "id": null,
+          "id_provenance": null,
+          "l1_parent": null,
+          "name": "chronic myeloid leukemia"
+        },
+        "candidate_b": {
+          "id": null,
+          "id_provenance": null,
+          "l1_parent": null,
+          "name": "leukemoid reaction"
+        },
+        "claim_type": "direction",
+        "evidence": {
+          "article_id": "merck19e_ch117_leukemias",
+          "chunk_id": "merck19e_ch117_leukemias__chunk_00028",
+          "quote": "The leukocyte alkaline phosphatase score is usually low in CML and increased in leukemoid reactions.",
+          "quote_span": [
+            894,
+            994
+          ],
+          "source_id": "merck19e_ch117_leukemias",
+          "url": "urn:cceg:local"
+        },
+        "finding": {
+          "abstained": true,
+          "concepts": [],
+          "context": {},
+          "event_type": "laboratory",
+          "polarity": -1,
+          "specimen": null,
+          "surface": "low leukocyte alkaline phosphatase",
+          "temporal": {
+            "anchor": null,
+            "duration": null,
+            "onset": null,
+            "relation": null
+          },
+          "unit": null,
+          "value": null,
+          "value_state": "elevated"
+        },
+        "recommended_test": null,
+        "relation": "supports_a",
+        "source_claim_id": "cceg_e5ea64fe72b1c6ab",
+        "source_class": "cpg_prose"
+      },
+      "research_decision": "reject",
+      "research_review_id": "research_review_a38fec8abefcdcf7",
+      "review_trace_sha256": "073ed16d231a128b248a18aa9f1ae57c0814adae20899ef02b5002d52efad7c1",
+      "reviews": [
+        {
+          "agent_id": "synthetic-reviewer-a",
+          "label": "accept",
+          "model": "meta-llama/llama-3.3-70b-instruct",
+          "prompt": "You are synthetic research reviewer A. Independently\nassess whether the verbatim quote supports the proposed structured CCEG claim.\nUse only the supplied claim and quote. Focus first on exact pair binding,\ndirection, value scope, and negation. This is research simulation, not clinical\nvalidation and not human attestation. Return strict JSON:\n{\"label\":\"accept|reject|uncertain\",\"reason\":\"brief evidence-bound reason\"}.",
+          "prompt_sha256": "472f7e3d06db9388ba2f362503898e4afdd595e3c4e90735dfee4d57e3e102e3",
+          "reason": "quote states 'low in CML' and 'increased in leukemoid reactions', supporting the claim that low leukocyte alkaline phosphatase is associated with chronic myeloid leukemia",
+          "role": "reviewer",
+          "seed": 17011
+        },
+        {
+          "agent_id": "synthetic-reviewer-b",
+          "label": "reject",
+          "model": "qwen/qwen3-32b",
+          "prompt": "You are synthetic research reviewer B. Perform an\nindependent adversarial audit of a proposed CCEG claim using only its quoted\nsource. Look first for alternative readings, enumeration, missing comparator,\nnegation errors, or unsupported value specificity. This is research simulation,\nnot clinical validation and not human attestation. Return strict JSON:\n{\"label\":\"accept|reject|uncertain\",\"reason\":\"brief evidence-bound reason\"}.",
+          "prompt_sha256": "4e3ac06c3945343894f6bd740d40e14a2da123eb458697a4554579df56c95513",
+          "reason": "The finding specifies 'elevated' value_state but the evidence states that low leukocyte alkaline phosphatase supports CML, creating a negation error where elevated values should support leukemoid reaction (candidate_b) instead of CML (candidate_a).",
+          "role": "reviewer",
+          "seed": 29021
+        }
+      ],
+      "source_claim_id": "cceg_e5ea64fe72b1c6ab"
+    }
+  ],
+  "notice": "Synthetic model review only; not human attestation and not eligible for clinical scoring, validation, or serving.",
+  "research_only": true
+}

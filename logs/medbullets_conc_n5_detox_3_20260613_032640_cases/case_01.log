@@ -1,0 +1,612 @@
+================================================================================
+CASE 1  gold=A  answer=Apical lung tumor  is_image=False
+================================================================================
+A 55-year-old male bodybuilder presents to the emergency department with weakness of his right arm. The patient states he has experienced these symptoms for a few weeks; however, today his hand felt so weak he dropped his cup of tea. The patient has a medical history of diabetes. He drinks 2-7 alcoholic drinks per day and has smoked 2 packs of cigarettes per day since he was 25. The patient uses anabolic steroids. He has lost 17 pounds since he last came to the emergency department 1 month ago. His temperature is 99.5°F (37.5°C), blood pressure is 177/108 mmHg, pulse is 90/min, respirations are 17/min, and oxygen saturation is 98% on room air. Physical exam reveals decreased sensation in the right arm and 2/5 strength in the right arm and 5/5 strength in in the left arm. The patient states that he is experiencing a dull aching and burning pain in his right arm during the exam. Symptoms are not changed with changes in head and neck position. Which of the following is the most likely diagnosis?
+
+Options:
+A. Apical lung tumor
+B. Brachial plexopathy
+C. Cerebral infarction
+D. Scalenus anticus syndrome
+E. Subclavian steal syndrome
+
+================================================================================
+
+[2026-06-13 03:30:24] >>> Module: VignetteParser
+----------------------------------------------------------------------
+SYSTEM PROMPT:
+Role: VignetteParser
+
+Parse a static clinical vignette into structured fields for downstream reasoning.
+
+Instructions:
+1. Extract ALL clinical facts from the vignette text into evidence_items.
+   Each item's "content" should be a concise, self-contained factual phrase,
+   e.g. "Chief complaint: weakness of right arm" or "BP: 177/108 mmHg".
+2. Set "kind" for each item:
+   - "direct"     : explicitly stated in the vignette (most items)
+   - "derived"    : logically inferred combination of two stated facts
+3. Copy the exact question stem into "question".
+4. List every answer option under "options" using "id" and "description".
+5. Set "vignette" to the verbatim vignette text (question and options excluded).
+6. If the text references figures or images (e.g., "Figure A", "shown in the image"),
+   add one evidence item per reference with kind "image_reference" and content set to
+   the exact phrase (e.g., "ECG shown in Figure A — image not available in text form").
+   This signals to downstream modules that critical visual data may be missing.
+
+Return strict JSON only, no markdown:
+{
+  "vignette": "verbatim case text without the question/options block",
+  "question": "Which of the following is the most likely diagnosis?",
+  "options": [
+    {"id": "A", "description": "Apical lung tumor"},
+    {"id": "B", "description": "Brachial plexopathy"}
+  ],
+  "evidence_items": [
+    {
+      "id": "E1",
+      "kind": "direct",
+      "content": "Chief complaint: right arm weakness for several weeks",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E2",
+      "kind": "direct",
+      "content": "Social history: 2 pack/day smoking since age 25",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    }
+  ]
+}
+----------------------------------------------------------------------
+USER MESSAGE:
+Module: VignetteParser
+Return strict JSON only, no markdown.
+Payload:
+{"raw_case": "A 55-year-old male bodybuilder presents to the emergency department with weakness of his right arm. The patient states he has experienced these symptoms for a few weeks; however, today his hand felt so weak he dropped his cup of tea. The patient has a medical history of diabetes. He drinks 2-7 alcoholic drinks per day and has smoked 2 packs of cigarettes per day since he was 25. The patient uses anabolic steroids. He has lost 17 pounds since he last came to the emergency department 1 month ago. His temperature is 99.5°F (37.5°C), blood pressure is 177/108 mmHg, pulse is 90/min, respirations are 17/min, and oxygen saturation is 98% on room air. Physical exam reveals decreased sensation in the right arm and 2/5 strength in the right arm and 5/5 strength in in the left arm. The patient states that he is experiencing a dull aching and burning pain in his right arm during the exam. Symptoms are not changed with changes in head and neck position. Which of the following is the most likely diagnosis?\n\nOptions:\nA. Apical lung tumor\nB. Brachial plexopathy\nC. Cerebral infarction\nD. Scalenus anticus syndrome\nE. Subclavian steal syndrome\n"}
+----------------------------------------------------------------------
+RAW LLM RESPONSE:
+[Unable to generate VignetteParser after 5 attempts]
+----------------------------------------------------------------------
+PARSED RESULT:
+{}
+================================================================================
+
+[2026-06-13 03:33:26] >>> Module: SafetyController
+----------------------------------------------------------------------
+SYSTEM PROMPT:
+Role: SafetyController
+
+Inspect the current case state and determine whether immediate intervention must occur before further diagnostic expansion.
+
+Rules:
+1. Check for universal instability markers: airway compromise, severe respiratory compromise, shock or major haemodynamic instability (hypotension, tachycardia with end-organ signs), severe altered mental status with instability, uncontrolled haemorrhage.
+2. Check for time-critical syndrome patterns that require action before the differential is fully resolved (e.g., STEMI, stroke, tension pneumothorax, septic shock, meningitis with herniation risk).
+3. If any instability criterion is met, set interrupt_active: true and list the required immediate actions.
+4. If interrupt is inactive, explicitly state which universal instability criteria were assessed and why each is not met.
+5. Do not retrieve external knowledge unless it would immediately alter emergency action without delaying stabilisation.
+
+Return strict JSON only, no markdown:
+{
+  "interrupt_active": true,
+  "reason": "brief clinical rationale",
+  "required_actions": ["action 1", "action 2"],
+  "why_not_interrupt_if_false": []
+}
+----------------------------------------------------------------------
+USER MESSAGE:
+Module: SafetyController
+Return strict JSON only, no markdown.
+Payload:
+{"case_id": "MB_1", "timestep": 1, "case_summary": "A 55-year-old male bodybuilder presents to the emergency department with weakness of his right arm. The patient states he has experienced these symptoms for a few weeks; however, today his hand felt so weak he dropped his cup of tea. The patient has a medical history of diabetes. He drinks 2-7 alcoholic drinks per day and has smoked 2 packs of cigarettes per day since he was 25. The patient uses anabolic steroids. He has lost 17 pounds since he last came to the emergency department 1 month ago. His temperature is 99.5°F (37.5°C), blood pressure is 177/108 mmHg, pulse is 90/min, respirations are 17/min, and oxygen saturation is 98% on room air. Physical exam reveals decreased sensation in the right arm and 2/5 strength in the right arm and 5/5 strength in in the left arm. The patient states that he is experiencing a dull aching and burning pain in his right arm during the exam. Symptoms are not changed with changes in head and neck position. Which of the following is the most likely diagnosis?\n\nOptions:\nA. Apical lung tumor\nB. Brachial plexopathy\nC. Cerebral infarction\nD. Scalenus anticus syndrome\nE. Subclavian steal syndrome\n", "root": null, "branches": {}, "frontier": [], "other_mass": 0.0, "actions_taken": [], "deliberation": {}, "interrupt": {"active": false, "reason": "", "required_actions": []}, "termination": {"ready_to_stop": false, "termination_type": "continue", "reason": ""}, "turn_budget_used": 0, "estimated_remaining_value": 0.0, "max_turn_budget": 5, "latest_action_type": "", "diagnosis_readiness_score": 0.0, "benchmark_output_ready": false, "static_question": "", "static_options": [], "seen_evidence_ids": [], "seen_evidence_phenotypes": "set()", "mode_policy": {"benchmark_purity": true, "allow_external_knowledge": true}, "answer_option_mapping": {}, "root_revision_needed": false, "max_tree_depth": 3, "reasoning_ledger": {"anchor": {}, "leader": {}, "leader_evidence": {}, "action_intents": [], "considered_alternatives": []}}
+----------------------------------------------------------------------
+RAW LLM RESPONSE:
+[Unable to generate SafetyController after 5 attempts]
+----------------------------------------------------------------------
+PARSED RESULT:
+{}
+================================================================================
+
+[2026-06-13 03:36:28] >>> Module: RootSelector
+----------------------------------------------------------------------
+SYSTEM PROMPT:
+Role: RootSelector
+
+Choose the best ROOT NODE for the current diagnostic problem. The root node is NOT
+a diagnosis — it is the clinical syndrome frame that OPENS and organises the entire
+differential space. It must encode the pathophysiological pattern while preserving
+all plausible competing mechanisms for downstream branch generation.
+
+━━━ What makes a GOOD root node ━━━
+A good root encodes at least two of:
+  (a) Anatomical localisation  — where the lesion likely resides (cortex / cord /
+      plexus / peripheral nerve / vascular / systemic / visceral mass …)
+  (b) Temporal pattern         — acute (<24 h), subacute (days–weeks),
+      chronic-progressive (months–years)
+  (c) PRIMARY presenting syndrome — the chief complaint or dominant symptom cluster
+  (d) Alarming systemic context — constitutional features (weight loss, fever,
+      night sweats), high-danger urgency tier, significant risk-factor cluster
+
+Good examples of syndrome-frame labels (not diagnoses):
+  ✓ "Subacute Progressive Unilateral Upper-Limb Motor-Sensory Deficit with
+     Constitutional Alarm Signs"
+  ✓ "Acute Syncope of Uncertain Aetiology with Uncharacterised ECG Abnormality"
+  ✓ "Acute Chest Pain Syndrome with Suspected Ischaemic or Arrhythmic Aetiology"
+  ✓ "Subacute Bilateral Lower-Limb Weakness with Bladder Dysfunction (Cord Level)"
+  ✓ "Chronic Progressive Multisystem Syndrome with Connective-Tissue Features"
+
+What SEPARATES a syndrome frame from a premature diagnosis:
+  FRAME  → names the presenting pattern; leaves mechanism open to branches
+  DIAGNOSIS → names the specific disease (closes the differential)
+  Example:
+    ✗ "Pancoast Tumour Syndrome"         — names a specific disease (diagnosis)
+    ✓ "Subacute Unilateral Upper-Limb Neurological Deficit with Apical Alarm Signs"
+                                          — frame that includes Pancoast IN the differential
+
+━━━ What is FORBIDDEN ━━━
+  ✗ Paraphrasing the chief complaint only: "Acute Right Arm Weakness Syndrome"
+  ✗ Single-symptom labels:               "Right Arm Weakness"
+  ✗ Naming a specific disease:           "Pancoast Tumour Syndrome", "ACS Syndrome"
+  ✗ Vague filler:                        "Neurological Syndrome", "Cardiac Event"
+  ✗ Replacing the primary presenting syndrome with an image qualifier:
+      BAD : "Acute Cardiovascular Event with Uncharacterised ECG Abnormality"
+            (drops "syncope", the chief complaint)
+      GOOD: "Acute Syncope of Uncertain Aetiology with Uncharacterised ECG Abnormality"
+
+━━━ Algorithm ━━━
+1. Enumerate ALL key findings (not just the chief complaint):
+   motor/sensory deficits, constitutional features, risk factors,
+   vital-sign abnormalities, exam asymmetries, time course.
+2. Identify the PRIMARY presenting syndrome (the organising symptom cluster).
+3. Enumerate ALL plausible mechanism categories that could explain the findings:
+   cardiac, vascular, neurological, metabolic, neoplastic, infectious, toxic,
+   vasovagal, orthostatic, structural, inflammatory, etc.
+4. Compose a root label in this fixed order:
+     [temporal pattern]
+   + [PRIMARY presenting syndrome]
+   + [aetiology phrase — must remain OPEN: "of Uncertain Aetiology",
+     "with Possible Cardiac or Vasovagal Aetiology", "of Suspected Cardiac
+     or Orthostatic Origin"; name 1–2 COMPETING mechanisms, not a single
+     committed one, unless the evidence is near-conclusive (≥ 0.85 confidence)]
+   + [image-reference qualifier if a Figure is referenced but not described:
+     "with Uncharacterised ECG Abnormality"]
+5. Populate excluded_root_candidates with ALL plausible competing mechanisms
+   you considered but ranked lower — include brief reasons. This is a
+   COMPETING-MECHANISM REGISTER, not just a list of clearly impossible options.
+6. Neuroanatomical localisation (usually applicable, not absolute):
+   - Ipsilateral cranial nerve deficit + contralateral limb motor/sensory loss
+     → most likely BRAINSTEM or cervico-medullary junction; also consider
+       spinal cord demyelination — note in excluded_root_candidates
+   - Contralateral face + contralateral limb deficits → most likely hemisphere
+   - Bilateral lower-limb motor/sensory loss ± bladder → spinal cord
+   - Unilateral arm ± shoulder pain ± Horner + apical risk factors
+     → brachial plexus / apex of lung (T1/C8 territory)
+   These are typical patterns; include exceptions in excluded_root_candidates.
+7. If the root node already exists and new evidence contradicts it, set
+   need_root_revision: true.
+
+━━━ Evidence hierarchy (when history and objective findings conflict) ━━━
+Objective findings carry HIGHER WEIGHT than subjective history when naming the root:
+  Tier 1 (highest): ECG findings, imaging reports, pathology / biopsy results
+  Tier 2:           Lab values that define a physiological state
+  Tier 3:           Physical examination findings
+  Tier 4:           Vital-sign pattern
+  Tier 5 (lowest):  Patient-reported history, risk factors, social history
+
+Higher tiers carry more weight, but patient-reported history is NEVER discarded —
+it must appear in supporting_facts or alarm_features even when overridden.
+
+Example: A patient faints and attributes it to dehydration, but ECG (Tier 1)
+shows a conduction abnormality → root must acknowledge the cardiac finding.
+The dehydration narrative goes in excluded_root_candidates as a lower-tier
+explanation that remains a valid differential contributor.
+
+━━━ Constraints ━━━
+- When Tier-1 or Tier-2 data is present, its domain MUST appear in the root label
+  or in excluded_root_candidates with explicit reasoning.
+- If an evidence item of kind "image_reference" exists (e.g., "ECG shown in
+  Figure A — image not available"), treat it as Tier-1 with UNKNOWN content.
+  The root label MUST acknowledge the unresolved finding (e.g., "with
+  Uncharacterised ECG Abnormality"). Set confidence ≤ 0.5.
+- Do NOT use an isolated lab value or a single vital-sign reading as the root.
+- IGNORE any answer-option list that may appear in the payload — the root is a
+  syndrome frame derived from clinical findings only, not from the options.
+- External knowledge retrieval is permitted only if the case frame is genuinely
+  rare or specialty-specific.
+
+━━━ Domain-specific rules (apply when context matches) ━━━
+
+NEONATAL / INFANTILE MULTISYSTEM PRESENTATIONS (age < 6 months):
+  When two or more of the following coexist — jaundice, hepatosplenomegaly,
+  failure to thrive / weight loss, neurological signs, cataracts / visual
+  impairment, hypoglycaemia — metabolic and genetic disorders (inborn errors of
+  metabolism: galactosaemia, organic acidaemias, urea-cycle defects, lysosomal
+  storage disorders, etc.) MUST be listed as a HIGH-PRIORITY competing mechanism
+  in excluded_root_candidates. Multisystem involvement in this age group INCREASES
+  — not decreases — the probability of a metabolic/genetic aetiology. Reasoning
+  such as "less likely because it is multisystem" is clinically incorrect in this
+  context and is FORBIDDEN.
+
+POST-EXERTION ALTERED MENTAL STATUS (marathon, endurance sport, military drill):
+  When strenuous exertion context is present alongside AMS, BOTH of the following
+  competing mechanisms MUST appear in excluded_root_candidates, because they
+  require opposite treatment and cannot be conflated:
+  (a) Exercise-associated hyponatremia (EAH) — excessive hypotonic fluid intake
+      → dilutional hyponatraemia → cerebral oedema; treat with hypertonic or
+      isotonic saline, NOT free water.
+  (b) Exertional heat stroke (EHS) — hyperthermia from impaired heat dissipation
+      → direct cellular damage; treat with rapid cooling.
+  The root label aetiology phrase must reflect BOTH: e.g., "with Possible
+  Hyponatraemic or Hyperthermic Aetiology" rather than anchoring on hyperthermia
+  alone. Confidence must be ≤ 0.6 until serum sodium is known.
+
+Return strict JSON only, no markdown:
+{
+  "root_label": "syndrome-frame label following the algorithm above",
+  "time_course": "acute | subacute | chronic | unspecified",
+  "supporting_facts": [
+    "key finding used in root selection"
+  ],
+  "excluded_root_candidates": [
+    "Competing mechanism A: reason ranked lower but not excluded",
+    "Competing mechanism B: reason ranked lower but not excluded"
+  ],
+  "alarm_features": ["constitutional / urgency feature"],
+  "need_external_knowledge": false,
+  "knowledge_query_if_needed": "",
+  "need_root_revision": false,
+  "revision_reason": "",
+  "confidence": 0.0
+}
+----------------------------------------------------------------------
+USER MESSAGE:
+Module: RootSelector
+Return strict JSON only, no markdown.
+Payload:
+{"case_id": "MB_1", "timestep": 1, "case_summary": "A 55-year-old male bodybuilder presents to the emergency department with weakness of his right arm. The patient states he has experienced these symptoms for a few weeks; however, today his hand felt so weak he dropped his cup of tea. The patient has a medical history of diabetes. He drinks 2-7 alcoholic drinks per day and has smoked 2 packs of cigarettes per day since he was 25. The patient uses anabolic steroids. He has lost 17 pounds since he last came to the emergency department 1 month ago. His temperature is 99.5°F (37.5°C), blood pressure is 177/108 mmHg, pulse is 90/min, respirations are 17/min, and oxygen saturation is 98% on room air. Physical exam reveals decreased sensation in the right arm and 2/5 strength in the right arm and 5/5 strength in in the left arm. The patient states that he is experiencing a dull aching and burning pain in his right arm during the exam. Symptoms are not changed with changes in head and neck position. Which of the following is the most likely diagnosis?\n[Answer options redacted — use clinical findings only]", "root": null, "other_mass": 0.0, "interrupt": {"active": false, "reason": "", "required_actions": []}, "termination": {"ready_to_stop": false, "termination_type": "continue", "reason": ""}, "turn_budget_used": 0, "estimated_remaining_value": 0.0, "max_turn_budget": 5, "latest_action_type": "", "diagnosis_readiness_score": 0.0, "benchmark_output_ready": false, "static_question": "", "static_options": [], "seen_evidence_ids": [], "seen_evidence_phenotypes": "set()", "mode_policy": {"benchmark_purity": true, "allow_external_knowledge": true}, "answer_option_mapping": {}, "root_revision_needed": false, "max_tree_depth": 3, "reasoning_ledger": {"anchor": {}, "leader": {}, "leader_evidence": {}, "action_intents": [], "considered_alternatives": []}}
+----------------------------------------------------------------------
+RAW LLM RESPONSE:
+[Unable to generate RootSelector after 5 attempts]
+----------------------------------------------------------------------
+PARSED RESULT:
+{}
+================================================================================
+
+2026-06-13 03:36:28,724 WARNING agentclinic_tree_dx.controller: Module RootSelector violated output contract (attempt 1/3): missing/empty 'root_label'
+[2026-06-13 03:39:32] >>> Module: RootSelector
+----------------------------------------------------------------------
+SYSTEM PROMPT:
+Role: RootSelector
+
+Choose the best ROOT NODE for the current diagnostic problem. The root node is NOT
+a diagnosis — it is the clinical syndrome frame that OPENS and organises the entire
+differential space. It must encode the pathophysiological pattern while preserving
+all plausible competing mechanisms for downstream branch generation.
+
+━━━ What makes a GOOD root node ━━━
+A good root encodes at least two of:
+  (a) Anatomical localisation  — where the lesion likely resides (cortex / cord /
+      plexus / peripheral nerve / vascular / systemic / visceral mass …)
+  (b) Temporal pattern         — acute (<24 h), subacute (days–weeks),
+      chronic-progressive (months–years)
+  (c) PRIMARY presenting syndrome — the chief complaint or dominant symptom cluster
+  (d) Alarming systemic context — constitutional features (weight loss, fever,
+      night sweats), high-danger urgency tier, significant risk-factor cluster
+
+Good examples of syndrome-frame labels (not diagnoses):
+  ✓ "Subacute Progressive Unilateral Upper-Limb Motor-Sensory Deficit with
+     Constitutional Alarm Signs"
+  ✓ "Acute Syncope of Uncertain Aetiology with Uncharacterised ECG Abnormality"
+  ✓ "Acute Chest Pain Syndrome with Suspected Ischaemic or Arrhythmic Aetiology"
+  ✓ "Subacute Bilateral Lower-Limb Weakness with Bladder Dysfunction (Cord Level)"
+  ✓ "Chronic Progressive Multisystem Syndrome with Connective-Tissue Features"
+
+What SEPARATES a syndrome frame from a premature diagnosis:
+  FRAME  → names the presenting pattern; leaves mechanism open to branches
+  DIAGNOSIS → names the specific disease (closes the differential)
+  Example:
+    ✗ "Pancoast Tumour Syndrome"         — names a specific disease (diagnosis)
+    ✓ "Subacute Unilateral Upper-Limb Neurological Deficit with Apical Alarm Signs"
+                                          — frame that includes Pancoast IN the differential
+
+━━━ What is FORBIDDEN ━━━
+  ✗ Paraphrasing the chief complaint only: "Acute Right Arm Weakness Syndrome"
+  ✗ Single-symptom labels:               "Right Arm Weakness"
+  ✗ Naming a specific disease:           "Pancoast Tumour Syndrome", "ACS Syndrome"
+  ✗ Vague filler:                        "Neurological Syndrome", "Cardiac Event"
+  ✗ Replacing the primary presenting syndrome with an image qualifier:
+      BAD : "Acute Cardiovascular Event with Uncharacterised ECG Abnormality"
+            (drops "syncope", the chief complaint)
+      GOOD: "Acute Syncope of Uncertain Aetiology with Uncharacterised ECG Abnormality"
+
+━━━ Algorithm ━━━
+1. Enumerate ALL key findings (not just the chief complaint):
+   motor/sensory deficits, constitutional features, risk factors,
+   vital-sign abnormalities, exam asymmetries, time course.
+2. Identify the PRIMARY presenting syndrome (the organising symptom cluster).
+3. Enumerate ALL plausible mechanism categories that could explain the findings:
+   cardiac, vascular, neurological, metabolic, neoplastic, infectious, toxic,
+   vasovagal, orthostatic, structural, inflammatory, etc.
+4. Compose a root label in this fixed order:
+     [temporal pattern]
+   + [PRIMARY presenting syndrome]
+   + [aetiology phrase — must remain OPEN: "of Uncertain Aetiology",
+     "with Possible Cardiac or Vasovagal Aetiology", "of Suspected Cardiac
+     or Orthostatic Origin"; name 1–2 COMPETING mechanisms, not a single
+     committed one, unless the evidence is near-conclusive (≥ 0.85 confidence)]
+   + [image-reference qualifier if a Figure is referenced but not described:
+     "with Uncharacterised ECG Abnormality"]
+5. Populate excluded_root_candidates with ALL plausible competing mechanisms
+   you considered but ranked lower — include brief reasons. This is a
+   COMPETING-MECHANISM REGISTER, not just a list of clearly impossible options.
+6. Neuroanatomical localisation (usually applicable, not absolute):
+   - Ipsilateral cranial nerve deficit + contralateral limb motor/sensory loss
+     → most likely BRAINSTEM or cervico-medullary junction; also consider
+       spinal cord demyelination — note in excluded_root_candidates
+   - Contralateral face + contralateral limb deficits → most likely hemisphere
+   - Bilateral lower-limb motor/sensory loss ± bladder → spinal cord
+   - Unilateral arm ± shoulder pain ± Horner + apical risk factors
+     → brachial plexus / apex of lung (T1/C8 territory)
+   These are typical patterns; include exceptions in excluded_root_candidates.
+7. If the root node already exists and new evidence contradicts it, set
+   need_root_revision: true.
+
+━━━ Evidence hierarchy (when history and objective findings conflict) ━━━
+Objective findings carry HIGHER WEIGHT than subjective history when naming the root:
+  Tier 1 (highest): ECG findings, imaging reports, pathology / biopsy results
+  Tier 2:           Lab values that define a physiological state
+  Tier 3:           Physical examination findings
+  Tier 4:           Vital-sign pattern
+  Tier 5 (lowest):  Patient-reported history, risk factors, social history
+
+Higher tiers carry more weight, but patient-reported history is NEVER discarded —
+it must appear in supporting_facts or alarm_features even when overridden.
+
+Example: A patient faints and attributes it to dehydration, but ECG (Tier 1)
+shows a conduction abnormality → root must acknowledge the cardiac finding.
+The dehydration narrative goes in excluded_root_candidates as a lower-tier
+explanation that remains a valid differential contributor.
+
+━━━ Constraints ━━━
+- When Tier-1 or Tier-2 data is present, its domain MUST appear in the root label
+  or in excluded_root_candidates with explicit reasoning.
+- If an evidence item of kind "image_reference" exists (e.g., "ECG shown in
+  Figure A — image not available"), treat it as Tier-1 with UNKNOWN content.
+  The root label MUST acknowledge the unresolved finding (e.g., "with
+  Uncharacterised ECG Abnormality"). Set confidence ≤ 0.5.
+- Do NOT use an isolated lab value or a single vital-sign reading as the root.
+- IGNORE any answer-option list that may appear in the payload — the root is a
+  syndrome frame derived from clinical findings only, not from the options.
+- External knowledge retrieval is permitted only if the case frame is genuinely
+  rare or specialty-specific.
+
+━━━ Domain-specific rules (apply when context matches) ━━━
+
+NEONATAL / INFANTILE MULTISYSTEM PRESENTATIONS (age < 6 months):
+  When two or more of the following coexist — jaundice, hepatosplenomegaly,
+  failure to thrive / weight loss, neurological signs, cataracts / visual
+  impairment, hypoglycaemia — metabolic and genetic disorders (inborn errors of
+  metabolism: galactosaemia, organic acidaemias, urea-cycle defects, lysosomal
+  storage disorders, etc.) MUST be listed as a HIGH-PRIORITY competing mechanism
+  in excluded_root_candidates. Multisystem involvement in this age group INCREASES
+  — not decreases — the probability of a metabolic/genetic aetiology. Reasoning
+  such as "less likely because it is multisystem" is clinically incorrect in this
+  context and is FORBIDDEN.
+
+POST-EXERTION ALTERED MENTAL STATUS (marathon, endurance sport, military drill):
+  When strenuous exertion context is present alongside AMS, BOTH of the following
+  competing mechanisms MUST appear in excluded_root_candidates, because they
+  require opposite treatment and cannot be conflated:
+  (a) Exercise-associated hyponatremia (EAH) — excessive hypotonic fluid intake
+      → dilutional hyponatraemia → cerebral oedema; treat with hypertonic or
+      isotonic saline, NOT free water.
+  (b) Exertional heat stroke (EHS) — hyperthermia from impaired heat dissipation
+      → direct cellular damage; treat with rapid cooling.
+  The root label aetiology phrase must reflect BOTH: e.g., "with Possible
+  Hyponatraemic or Hyperthermic Aetiology" rather than anchoring on hyperthermia
+  alone. Confidence must be ≤ 0.6 until serum sodium is known.
+
+Return strict JSON only, no markdown:
+{
+  "root_label": "syndrome-frame label following the algorithm above",
+  "time_course": "acute | subacute | chronic | unspecified",
+  "supporting_facts": [
+    "key finding used in root selection"
+  ],
+  "excluded_root_candidates": [
+    "Competing mechanism A: reason ranked lower but not excluded",
+    "Competing mechanism B: reason ranked lower but not excluded"
+  ],
+  "alarm_features": ["constitutional / urgency feature"],
+  "need_external_knowledge": false,
+  "knowledge_query_if_needed": "",
+  "need_root_revision": false,
+  "revision_reason": "",
+  "confidence": 0.0
+}
+----------------------------------------------------------------------
+USER MESSAGE:
+Module: RootSelector
+Return strict JSON only, no markdown.
+Payload:
+{"case_id": "MB_1", "timestep": 1, "case_summary": "A 55-year-old male bodybuilder presents to the emergency department with weakness of his right arm. The patient states he has experienced these symptoms for a few weeks; however, today his hand felt so weak he dropped his cup of tea. The patient has a medical history of diabetes. He drinks 2-7 alcoholic drinks per day and has smoked 2 packs of cigarettes per day since he was 25. The patient uses anabolic steroids. He has lost 17 pounds since he last came to the emergency department 1 month ago. His temperature is 99.5°F (37.5°C), blood pressure is 177/108 mmHg, pulse is 90/min, respirations are 17/min, and oxygen saturation is 98% on room air. Physical exam reveals decreased sensation in the right arm and 2/5 strength in the right arm and 5/5 strength in in the left arm. The patient states that he is experiencing a dull aching and burning pain in his right arm during the exam. Symptoms are not changed with changes in head and neck position. Which of the following is the most likely diagnosis?\n[Answer options redacted — use clinical findings only]", "root": null, "other_mass": 0.0, "interrupt": {"active": false, "reason": "", "required_actions": []}, "termination": {"ready_to_stop": false, "termination_type": "continue", "reason": ""}, "turn_budget_used": 0, "estimated_remaining_value": 0.0, "max_turn_budget": 5, "latest_action_type": "", "diagnosis_readiness_score": 0.0, "benchmark_output_ready": false, "static_question": "", "static_options": [], "seen_evidence_ids": [], "seen_evidence_phenotypes": "set()", "mode_policy": {"benchmark_purity": true, "allow_external_knowledge": true}, "answer_option_mapping": {}, "root_revision_needed": false, "max_tree_depth": 3, "reasoning_ledger": {"anchor": {}, "leader": {}, "leader_evidence": {}, "action_intents": [], "considered_alternatives": []}, "__protocol_correction__": "Your previous response violated the required output contract: missing/empty 'root_label'. Return STRICT JSON only, with ALL required fields populated and correctly typed."}
+----------------------------------------------------------------------
+RAW LLM RESPONSE:
+[Unable to generate RootSelector after 5 attempts]
+----------------------------------------------------------------------
+PARSED RESULT:
+{}
+================================================================================
+
+2026-06-13 03:39:32,080 WARNING agentclinic_tree_dx.controller: Module RootSelector violated output contract (attempt 2/3): missing/empty 'root_label'
+[2026-06-13 03:42:35] >>> Module: RootSelector
+----------------------------------------------------------------------
+SYSTEM PROMPT:
+Role: RootSelector
+
+Choose the best ROOT NODE for the current diagnostic problem. The root node is NOT
+a diagnosis — it is the clinical syndrome frame that OPENS and organises the entire
+differential space. It must encode the pathophysiological pattern while preserving
+all plausible competing mechanisms for downstream branch generation.
+
+━━━ What makes a GOOD root node ━━━
+A good root encodes at least two of:
+  (a) Anatomical localisation  — where the lesion likely resides (cortex / cord /
+      plexus / peripheral nerve / vascular / systemic / visceral mass …)
+  (b) Temporal pattern         — acute (<24 h), subacute (days–weeks),
+      chronic-progressive (months–years)
+  (c) PRIMARY presenting syndrome — the chief complaint or dominant symptom cluster
+  (d) Alarming systemic context — constitutional features (weight loss, fever,
+      night sweats), high-danger urgency tier, significant risk-factor cluster
+
+Good examples of syndrome-frame labels (not diagnoses):
+  ✓ "Subacute Progressive Unilateral Upper-Limb Motor-Sensory Deficit with
+     Constitutional Alarm Signs"
+  ✓ "Acute Syncope of Uncertain Aetiology with Uncharacterised ECG Abnormality"
+  ✓ "Acute Chest Pain Syndrome with Suspected Ischaemic or Arrhythmic Aetiology"
+  ✓ "Subacute Bilateral Lower-Limb Weakness with Bladder Dysfunction (Cord Level)"
+  ✓ "Chronic Progressive Multisystem Syndrome with Connective-Tissue Features"
+
+What SEPARATES a syndrome frame from a premature diagnosis:
+  FRAME  → names the presenting pattern; leaves mechanism open to branches
+  DIAGNOSIS → names the specific disease (closes the differential)
+  Example:
+    ✗ "Pancoast Tumour Syndrome"         — names a specific disease (diagnosis)
+    ✓ "Subacute Unilateral Upper-Limb Neurological Deficit with Apical Alarm Signs"
+                                          — frame that includes Pancoast IN the differential
+
+━━━ What is FORBIDDEN ━━━
+  ✗ Paraphrasing the chief complaint only: "Acute Right Arm Weakness Syndrome"
+  ✗ Single-symptom labels:               "Right Arm Weakness"
+  ✗ Naming a specific disease:           "Pancoast Tumour Syndrome", "ACS Syndrome"
+  ✗ Vague filler:                        "Neurological Syndrome", "Cardiac Event"
+  ✗ Replacing the primary presenting syndrome with an image qualifier:
+      BAD : "Acute Cardiovascular Event with Uncharacterised ECG Abnormality"
+            (drops "syncope", the chief complaint)
+      GOOD: "Acute Syncope of Uncertain Aetiology with Uncharacterised ECG Abnormality"
+
+━━━ Algorithm ━━━
+1. Enumerate ALL key findings (not just the chief complaint):
+   motor/sensory deficits, constitutional features, risk factors,
+   vital-sign abnormalities, exam asymmetries, time course.
+2. Identify the PRIMARY presenting syndrome (the organising symptom cluster).
+3. Enumerate ALL plausible mechanism categories that could explain the findings:
+   cardiac, vascular, neurological, metabolic, neoplastic, infectious, toxic,
+   vasovagal, orthostatic, structural, inflammatory, etc.
+4. Compose a root label in this fixed order:
+     [temporal pattern]
+   + [PRIMARY presenting syndrome]
+   + [aetiology phrase — must remain OPEN: "of Uncertain Aetiology",
+     "with Possible Cardiac or Vasovagal Aetiology", "of Suspected Cardiac
+     or Orthostatic Origin"; name 1–2 COMPETING mechanisms, not a single
+     committed one, unless the evidence is near-conclusive (≥ 0.85 confidence)]
+   + [image-reference qualifier if a Figure is referenced but not described:
+     "with Uncharacterised ECG Abnormality"]
+5. Populate excluded_root_candidates with ALL plausible competing mechanisms
+   you considered but ranked lower — include brief reasons. This is a
+   COMPETING-MECHANISM REGISTER, not just a list of clearly impossible options.
+6. Neuroanatomical localisation (usually applicable, not absolute):
+   - Ipsilateral cranial nerve deficit + contralateral limb motor/sensory loss
+     → most likely BRAINSTEM or cervico-medullary junction; also consider
+       spinal cord demyelination — note in excluded_root_candidates
+   - Contralateral face + contralateral limb deficits → most likely hemisphere
+   - Bilateral lower-limb motor/sensory loss ± bladder → spinal cord
+   - Unilateral arm ± shoulder pain ± Horner + apical risk factors
+     → brachial plexus / apex of lung (T1/C8 territory)
+   These are typical patterns; include exceptions in excluded_root_candidates.
+7. If the root node already exists and new evidence contradicts it, set
+   need_root_revision: true.
+
+━━━ Evidence hierarchy (when history and objective findings conflict) ━━━
+Objective findings carry HIGHER WEIGHT than subjective history when naming the root:
+  Tier 1 (highest): ECG findings, imaging reports, pathology / biopsy results
+  Tier 2:           Lab values that define a physiological state
+  Tier 3:           Physical examination findings
+  Tier 4:           Vital-sign pattern
+  Tier 5 (lowest):  Patient-reported history, risk factors, social history
+
+Higher tiers carry more weight, but patient-reported history is NEVER discarded —
+it must appear in supporting_facts or alarm_features even when overridden.
+
+Example: A patient faints and attributes it to dehydration, but ECG (Tier 1)
+shows a conduction abnormality → root must acknowledge the cardiac finding.
+The dehydration narrative goes in excluded_root_candidates as a lower-tier
+explanation that remains a valid differential contributor.
+
+━━━ Constraints ━━━
+- When Tier-1 or Tier-2 data is present, its domain MUST appear in the root label
+  or in excluded_root_candidates with explicit reasoning.
+- If an evidence item of kind "image_reference" exists (e.g., "ECG shown in
+  Figure A — image not available"), treat it as Tier-1 with UNKNOWN content.
+  The root label MUST acknowledge the unresolved finding (e.g., "with
+  Uncharacterised ECG Abnormality"). Set confidence ≤ 0.5.
+- Do NOT use an isolated lab value or a single vital-sign reading as the root.
+- IGNORE any answer-option list that may appear in the payload — the root is a
+  syndrome frame derived from clinical findings only, not from the options.
+- External knowledge retrieval is permitted only if the case frame is genuinely
+  rare or specialty-specific.
+
+━━━ Domain-specific rules (apply when context matches) ━━━
+
+NEONATAL / INFANTILE MULTISYSTEM PRESENTATIONS (age < 6 months):
+  When two or more of the following coexist — jaundice, hepatosplenomegaly,
+  failure to thrive / weight loss, neurological signs, cataracts / visual
+  impairment, hypoglycaemia — metabolic and genetic disorders (inborn errors of
+  metabolism: galactosaemia, organic acidaemias, urea-cycle defects, lysosomal
+  storage disorders, etc.) MUST be listed as a HIGH-PRIORITY competing mechanism
+  in excluded_root_candidates. Multisystem involvement in this age group INCREASES
+  — not decreases — the probability of a metabolic/genetic aetiology. Reasoning
+  such as "less likely because it is multisystem" is clinically incorrect in this
+  context and is FORBIDDEN.
+
+POST-EXERTION ALTERED MENTAL STATUS (marathon, endurance sport, military drill):
+  When strenuous exertion context is present alongside AMS, BOTH of the following
+  competing mechanisms MUST appear in excluded_root_candidates, because they
+  require opposite treatment and cannot be conflated:
+  (a) Exercise-associated hyponatremia (EAH) — excessive hypotonic fluid intake
+      → dilutional hyponatraemia → cerebral oedema; treat with hypertonic or
+      isotonic saline, NOT free water.
+  (b) Exertional heat stroke (EHS) — hyperthermia from impaired heat dissipation
+      → direct cellular damage; treat with rapid cooling.
+  The root label aetiology phrase must reflect BOTH: e.g., "with Possible
+  Hyponatraemic or Hyperthermic Aetiology" rather than anchoring on hyperthermia
+  alone. Confidence must be ≤ 0.6 until serum sodium is known.
+
+Return strict JSON only, no markdown:
+{
+  "root_label": "syndrome-frame label following the algorithm above",
+  "time_course": "acute | subacute | chronic | unspecified",
+  "supporting_facts": [
+    "key finding used in root selection"
+  ],
+  "excluded_root_candidates": [
+    "Competing mechanism A: reason ranked lower but not excluded",
+    "Competing mechanism B: reason ranked lower but not excluded"
+  ],
+  "alarm_features": ["constitutional / urgency feature"],
+  "need_external_knowledge": false,
+  "knowledge_query_if_needed": "",
+  "need_root_revision": false,
+  "revision_reason": "",
+  "confidence": 0.0
+}
+----------------------------------------------------------------------
+USER MESSAGE:
+Module: RootSelector
+Return strict JSON only, no markdown.
+Payload:
+{"case_id": "MB_1", "timestep": 1, "case_summary": "A 55-year-old male bodybuilder presents to the emergency department with weakness of his right arm. The patient states he has experienced these symptoms for a few weeks; however, today his hand felt so weak he dropped his cup of tea. The patient has a medical history of diabetes. He drinks 2-7 alcoholic drinks per day and has smoked 2 packs of cigarettes per day since he was 25. The patient uses anabolic steroids. He has lost 17 pounds since he last came to the emergency department 1 month ago. His temperature is 99.5°F (37.5°C), blood pressure is 177/108 mmHg, pulse is 90/min, respirations are 17/min, and oxygen saturation is 98% on room air. Physical exam reveals decreased sensation in the right arm and 2/5 strength in the right arm and 5/5 strength in in the left arm. The patient states that he is experiencing a dull aching and burning pain in his right arm during the exam. Symptoms are not changed with changes in head and neck position. Which of the following is the most likely diagnosis?\n[Answer options redacted — use clinical findings only]", "root": null, "other_mass": 0.0, "interrupt": {"active": false, "reason": "", "required_actions": []}, "termination": {"ready_to_stop": false, "termination_type": "continue", "reason": ""}, "turn_budget_used": 0, "estimated_remaining_value": 0.0, "max_turn_budget": 5, "latest_action_type": "", "diagnosis_readiness_score": 0.0, "benchmark_output_ready": false, "static_question": "", "static_options": [], "seen_evidence_ids": [], "seen_evidence_phenotypes": "set()", "mode_policy": {"benchmark_purity": true, "allow_external_knowledge": true}, "answer_option_mapping": {}, "root_revision_needed": false, "max_tree_depth": 3, "reasoning_ledger": {"anchor": {}, "leader": {}, "leader_evidence": {}, "action_intents": [], "considered_alternatives": []}, "__protocol_correction__": "Your previous response violated the required output contract: missing/empty 'root_label'. Return STRICT JSON only, with ALL required fields populated and correctly typed."}
+----------------------------------------------------------------------
+RAW LLM RESPONSE:
+[Unable to generate RootSelector after 5 attempts]
+----------------------------------------------------------------------
+PARSED RESULT:
+{}
+================================================================================
+
+2026-06-13 03:42:35,126 WARNING agentclinic_tree_dx.controller: Module RootSelector violated output contract (attempt 3/3): missing/empty 'root_label'

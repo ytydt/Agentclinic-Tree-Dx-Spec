@@ -1,0 +1,309 @@
+{
+  "_meta": {
+    "purpose": "Multi-level (L1/L2) branch-recall eval with axis-separability, to give discrimination the 9-case L1-only set lacks (CPG §19 redesign).",
+    "match_rule": "A candidate disease string MATCHES a family if its token set is a superset of ANY of that family's accepted token-sets (all tokens len>3 present).",
+    "fields": {
+      "syndrome": "root query (presenting syndrome)",
+      "context": "brief discriminating features",
+      "l1_mandatory": "can't-miss L1 families; coverage = fraction recalled by recall(syndrome)",
+      "l1_target": "family of the correct dx we drill into for L2",
+      "l2_query": "query used for the L2 stage (the target family)",
+      "l2_gold": "correct L2 subfamily under l1_target; recalled via recall(l2_query)",
+      "axis_pair": "two OPPOSITE-axis pole families that must BOTH be recalled (separability precondition; if only one pole recalled, axis cannot be split → axis-pollution risk)"
+    },
+    "clinical_basis": "Standard textbook DDx trees (Harrison's/UpToDate-level): PTH axis for hypercalcemia, volume axis for hyponatremia, Light's criteria for effusion, ferritin for microcytic anemia, FENa for AKI, RAIU for hyperthyroidism, ACTH axis for Cushing, renin/aldo for secondary HTN, bilirubin conjugation for jaundice."
+  },
+  "cases": [
+    {
+      "id": "hypercalcemia",
+      "syndrome": "hypercalcemia",
+      "context": "elevated serum calcium; fatigue, constipation, polyuria",
+      "l1_mandatory": [
+        [["primary","hyperparathyroidism"],["parathyroid","adenoma"]],
+        [["malignancy"],["hypercalcemia","malignancy"],["squamous","carcinoma"]],
+        [["sarcoidosis"],["granulomatous"]],
+        [["thiazide"],["milk","alkali"],["vitamin","d","toxicity"]]
+      ],
+      "l1_target": [["malignancy"],["hypercalcemia","malignancy"]],
+      "l2_query": "hypercalcemia of malignancy",
+      "l2_gold": [
+        [["pthrp"],["humoral","hypercalcemia"],["squamous","cell","carcinoma"]],
+        [["osteolytic"],["bone","metastases"]],
+        [["multiple","myeloma"]]
+      ],
+      "axis_pair": [
+        [["primary","hyperparathyroidism"]],
+        [["malignancy"]]
+      ]
+    },
+    {
+      "id": "hyponatremia",
+      "syndrome": "hyponatremia",
+      "context": "low serum sodium; assess volume status and serum osmolality",
+      "l1_mandatory": [
+        [["hypovolemic","hyponatremia"],["volume","depletion"]],
+        [["siadh"],["inappropriate","antidiuretic"],["euvolemic"]],
+        [["hypervolemic"],["heart","failure"],["cirrhosis"]]
+      ],
+      "l1_target": [["siadh"],["inappropriate","antidiuretic"]],
+      "l2_query": "causes of SIADH syndrome of inappropriate antidiuretic hormone",
+      "l2_gold": [
+        [["small","cell","lung"]],
+        [["central","nervous","system"]],
+        [["medication"],["drug","induced"]]
+      ],
+      "axis_pair": [
+        [["hypovolemic"],["volume","depletion"]],
+        [["hypervolemic"],["heart","failure"]]
+      ]
+    },
+    {
+      "id": "jaundice",
+      "syndrome": "jaundice",
+      "context": "scleral icterus; fractionate bilirubin conjugated vs unconjugated",
+      "l1_mandatory": [
+        [["hemolysis"],["hemolytic","anemia"],["prehepatic"]],
+        [["hepatitis"],["hepatocellular"],["cirrhosis"]],
+        [["biliary","obstruction"],["obstructive","jaundice"],["cholestasis"]]
+      ],
+      "l1_target": [["biliary","obstruction"],["obstructive","jaundice"]],
+      "l2_query": "biliary obstruction causes differential",
+      "l2_gold": [
+        [["choledocholithiasis"],["common","bile","duct","stone"]],
+        [["pancreatic","cancer"],["pancreatic","carcinoma"]],
+        [["cholangiocarcinoma"]]
+      ],
+      "axis_pair": [
+        [["hemolysis"],["unconjugated"]],
+        [["obstructive","jaundice"],["conjugated"]]
+      ]
+    },
+    {
+      "id": "pleural_effusion",
+      "syndrome": "pleural effusion",
+      "context": "dyspnea; apply Light's criteria transudate vs exudate",
+      "l1_mandatory": [
+        [["transudate"],["heart","failure"],["cirrhosis"]],
+        [["exudate"],["parapneumonic"],["malignant","effusion"]]
+      ],
+      "l1_target": [["exudate"],["exudative"]],
+      "l2_query": "exudative pleural effusion differential diagnosis",
+      "l2_gold": [
+        [["parapneumonic"],["empyema"]],
+        [["malignant","effusion"],["malignancy"]],
+        [["tuberculous"],["tuberculosis"]]
+      ],
+      "axis_pair": [
+        [["transudate"]],
+        [["exudate"]]
+      ]
+    },
+    {
+      "id": "microcytic_anemia",
+      "syndrome": "microcytic anemia",
+      "context": "low MCV; check ferritin and iron studies",
+      "l1_mandatory": [
+        [["iron","deficiency"]],
+        [["thalassemia"]],
+        [["anemia","chronic","disease"],["chronic","inflammation"]],
+        [["sideroblastic"]]
+      ],
+      "l1_target": [["thalassemia"]],
+      "l2_query": "thalassemia types differential",
+      "l2_gold": [
+        [["alpha","thalassemia"]],
+        [["beta","thalassemia"]]
+      ],
+      "axis_pair": [
+        [["iron","deficiency"]],
+        [["thalassemia"]]
+      ]
+    },
+    {
+      "id": "acute_pancreatitis",
+      "syndrome": "acute pancreatitis",
+      "context": "epigastric pain, elevated lipase; identify etiology",
+      "l1_mandatory": [
+        [["gallstone"],["biliary","pancreatitis"]],
+        [["alcohol"]],
+        [["hypertriglyceridemia"],["hypertriglyceridaemia"]],
+        [["drug","induced"],["medication"]]
+      ],
+      "l1_target": [["hypertriglyceridemia"],["hypertriglyceridaemia"]],
+      "l2_query": "hypertriglyceridemia induced pancreatitis",
+      "l2_gold": [
+        [["familial","chylomicronemia"]],
+        [["severe","hypertriglyceridemia"]]
+      ],
+      "axis_pair": [
+        [["gallstone"]],
+        [["alcohol"]]
+      ]
+    },
+    {
+      "id": "thunderclap_headache",
+      "syndrome": "thunderclap headache",
+      "context": "sudden severe headache peaking within seconds",
+      "l1_mandatory": [
+        [["subarachnoid","hemorrhage"],["subarachnoid","haemorrhage"]],
+        [["reversible","cerebral","vasoconstriction"],["rcvs"]],
+        [["cerebral","venous","thrombosis"],["venous","sinus","thrombosis"]],
+        [["pituitary","apoplexy"]]
+      ],
+      "l1_target": [["subarachnoid","hemorrhage"],["subarachnoid","haemorrhage"]],
+      "l2_query": "subarachnoid hemorrhage causes",
+      "l2_gold": [
+        [["aneurysm"],["aneurysmal"]],
+        [["arteriovenous","malformation"]]
+      ],
+      "axis_pair": [
+        [["subarachnoid","hemorrhage"],["subarachnoid","haemorrhage"]],
+        [["reversible","cerebral","vasoconstriction"],["rcvs"]]
+      ]
+    },
+    {
+      "id": "acute_kidney_injury",
+      "syndrome": "acute kidney injury",
+      "context": "rising creatinine; classify prerenal vs intrinsic vs postrenal",
+      "l1_mandatory": [
+        [["prerenal"]],
+        [["acute","tubular","necrosis"],["intrinsic"]],
+        [["postrenal"],["obstructive","uropathy"]]
+      ],
+      "l1_target": [["acute","tubular","necrosis"],["intrinsic"]],
+      "l2_query": "intrinsic acute kidney injury differential",
+      "l2_gold": [
+        [["acute","tubular","necrosis"]],
+        [["acute","interstitial","nephritis"]],
+        [["glomerulonephritis"]]
+      ],
+      "axis_pair": [
+        [["prerenal"]],
+        [["postrenal"],["obstructive","uropathy"]]
+      ]
+    },
+    {
+      "id": "hyperthyroidism",
+      "syndrome": "hyperthyroidism",
+      "context": "low TSH high T4; radioactive iodine uptake high vs low",
+      "l1_mandatory": [
+        [["graves"]],
+        [["toxic","multinodular"],["toxic","nodular"]],
+        [["toxic","adenoma"]],
+        [["thyroiditis"]]
+      ],
+      "l1_target": [["graves"]],
+      "l2_query": "graves disease",
+      "l2_gold": [
+        [["thyroid","stimulating","immunoglobulin"],["tsh","receptor","antibody"]],
+        [["ophthalmopathy"]]
+      ],
+      "axis_pair": [
+        [["graves"]],
+        [["thyroiditis"]]
+      ]
+    },
+    {
+      "id": "cushing_syndrome",
+      "syndrome": "cushing syndrome",
+      "context": "hypercortisolism; measure ACTH dependent vs independent",
+      "l1_mandatory": [
+        [["pituitary","adenoma"],["cushing","disease"]],
+        [["ectopic","acth"]],
+        [["adrenal","adenoma"],["adrenal","carcinoma"]]
+      ],
+      "l1_target": [["ectopic","acth"]],
+      "l2_query": "ectopic ACTH syndrome causes",
+      "l2_gold": [
+        [["small","cell","lung"]],
+        [["carcinoid"]]
+      ],
+      "axis_pair": [
+        [["ectopic","acth"],["pituitary","adenoma"]],
+        [["adrenal","adenoma"],["adrenal","carcinoma"]]
+      ]
+    },
+    {
+      "id": "wide_complex_tachycardia",
+      "syndrome": "wide complex tachycardia",
+      "context": "regular wide QRS tachycardia on ECG",
+      "l1_mandatory": [
+        [["ventricular","tachycardia"]],
+        [["supraventricular","tachycardia"],["aberrancy"],["aberrant","conduction"]]
+      ],
+      "l1_target": [["ventricular","tachycardia"]],
+      "l2_query": "ventricular tachycardia types",
+      "l2_gold": [
+        [["monomorphic"]],
+        [["polymorphic"],["torsades"]]
+      ],
+      "axis_pair": [
+        [["ventricular","tachycardia"]],
+        [["supraventricular","tachycardia"]]
+      ]
+    },
+    {
+      "id": "secondary_hypertension",
+      "syndrome": "secondary hypertension",
+      "context": "resistant hypertension; screen endocrine and renovascular causes",
+      "l1_mandatory": [
+        [["primary","aldosteronism"],["hyperaldosteronism"]],
+        [["renal","artery","stenosis"],["renovascular"]],
+        [["pheochromocytoma"]],
+        [["cushing"]]
+      ],
+      "l1_target": [["primary","aldosteronism"],["hyperaldosteronism"]],
+      "l2_query": "primary aldosteronism causes",
+      "l2_gold": [
+        [["aldosterone","producing","adenoma"],["conn"]],
+        [["bilateral","adrenal","hyperplasia"]]
+      ],
+      "axis_pair": [
+        [["primary","aldosteronism"],["hyperaldosteronism"]],
+        [["renal","artery","stenosis"],["renovascular"]]
+      ]
+    },
+    {
+      "id": "macrocytic_anemia",
+      "syndrome": "macrocytic anemia",
+      "context": "high MCV; megaloblastic vs nonmegaloblastic",
+      "l1_mandatory": [
+        [["vitamin","b12","deficiency"],["cobalamin","deficiency"]],
+        [["folate","deficiency"]],
+        [["myelodysplastic"]],
+        [["alcohol"],["liver","disease"]]
+      ],
+      "l1_target": [["vitamin","b12","deficiency"],["cobalamin","deficiency"]],
+      "l2_query": "vitamin B12 deficiency causes",
+      "l2_gold": [
+        [["pernicious","anemia"]],
+        [["malabsorption"]]
+      ],
+      "axis_pair": [
+        [["megaloblastic"],["vitamin","b12","deficiency"]],
+        [["myelodysplastic"]]
+      ]
+    },
+    {
+      "id": "lower_gi_bleeding",
+      "syndrome": "lower gastrointestinal bleeding",
+      "context": "hematochezia in older adult",
+      "l1_mandatory": [
+        [["diverticulosis"],["diverticular","bleeding"]],
+        [["angiodysplasia"],["angioectasia"]],
+        [["colorectal","cancer"],["colon","cancer"]],
+        [["ischemic","colitis"]]
+      ],
+      "l1_target": [["angiodysplasia"],["angioectasia"]],
+      "l2_query": "angiodysplasia gastrointestinal",
+      "l2_gold": [
+        [["arteriovenous","malformation"]],
+        [["vascular","ectasia"]]
+      ],
+      "axis_pair": [
+        [["diverticulosis"],["diverticular","bleeding"]],
+        [["angiodysplasia"],["angioectasia"]]
+      ]
+    }
+  ]
+}

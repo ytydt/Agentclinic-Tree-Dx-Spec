@@ -1,0 +1,885 @@
+Nonadiabatic Field: A Conceptually Novel Approach for Nonadiabatic Quantum Molecular Dynamics
+Reliable trajectory-based nonadiabatic quantum dynamics methods at the atomic/molecular level are critical for the practical understanding and rational design of many important processes in real large/complex systems, where the quantum dynamical behavior of electrons and that of nuclei are coupled. The paper reports latest progress of nonadiabatic field (NaF), a conceptually novel approach for nonadiabatic quantum dynamics with independent trajectories. Substantially different from the mainstreams of Ehrenfest-like dynamics and surface hopping methods, the nuclear force in NaF involves the nonadiabatic force arising from the nonadiabatic coupling between different electronic states, in addition to the adiabatic force contributed by a single adiabatic electronic state. NaF is capable of faithfully describing the interplay between electronic and nuclear motion in a broad regime, which covers where the relevant electronic states keep coupled in a wide range or all the time and where the bifurcation characteristic of nuclear motion is essential. NaF is derived from the exact generalized phase space formulation with coordinate-momentum variables, where constraint phase space (CPS) is employed for discrete electronic-state degrees of freedom (DOFs) and infinite Wigner phase space is used for continuous nuclear DOFs. We propose efficient integrators for the equations of motion of NaF in both adiabatic and diabatic representations. Since the formalism in the CPS formulation is not unique, NaF can in principle be implemented with various phase space representations of the time correlation function (TCF) for the time-dependent property. They are applied to a suite of representative gas-phase and condensed-phase benchmark models where numerically exact results are available for comparison. It is shown that NaF is relatively insensitive to the phase space representation of the electronic TCF and will be a potential tool for practical and reliable simulations of the quantum mechanical behavior of both electronic and nuclear dynamics of nonadiabatic transition processes in real systems.
+
+Introduction
+A great deal of theoretical effort has been focused on developing trajectory-based approaches for including quantum mechanical effects in molecular dynamics simulations. These trajectory-based approaches consistently recover classical mechanical regions in chemical and biological processes, where nuclear quantum effects are negligible and classical molecular dynamics on a single-adiabatic-electronic-state potential energy surface (PES) is capable of describing the main features when the Born–Oppenheimer (BO) approximation is valid. Such classical mechanical regions are often too difficult to approach numerically by wave function methods, because a lot of destructive interference in the wave function interpretation (or in the quantum basis set expansion) is necessary to yield classical dynamics. Reasonable trajectory-based dynamics approaches are competent in practically illustrating the transition from the classical mechanical region to the region where nuclear quantum effects become non-negligible and then important. The phase space formulation with coordinate-momentum variables offers not only an exact representation of classical mechanics, but also a rigorous interpretation of quantum mechanics.− It naturally bridges quantum and classical concepts, which offers insight into developing practical trajectory-based quantum dynamics approaches− for real molecular systems in the age of postmodern quantum mechanics.
+When the BO approximation holds, the conventional infinite coordinate-momentum phase space for nuclear degrees of freedom (DOFs) is often used in the linearized semiclassical initial value representation (LSC-IVR)/classical Wigner,− forward–backward semiclassical dynamics,− path integral Liouville dynamics,− equilibrium continuity dynamics, and other practical phase space quantum dynamics approaches.− Some of these methods have been successfully applied to study electronically adiabatic processes where nuclear quantum effects are important,,− such as transport properties, dynamic structure factors, vibrational spectra,− chemical reaction rates, vibrational relaxation rates,− and so forth. It is important to note that the LSC-IVR/classical Wigner and some other approximate trajectory-based phase space approaches can in principle systematically be improved with more numerical effort by more advanced SC-IVRs of Miller and co-workers,− the SC-IVR series of Pollak and co-workers,− or by higher order corrections of the exact series expansion of the phase space propagator of Shao and Pollak and those of ref by us.
+The BO approximation, however, fails in many important fundamental processes in electron/hole/charge transfer, photoactivated, energy conversion, strong electromagnetic field/vacuum field manipulated processes in physical, chemical, biological, materials, geological, astronomic, quantum computation and quantum information systems,− which involve the quantum mechanical behavior of both electrons and nuclei in the context of nonadiabatic transition dynamics.− Comprehensive topics on the nonadiabatic transition are presented in the seminal reviews by Domcke, Yarkony, Koppel, Cederbaum, and co-workers.− In nonadiabatic transition processes, electrons are often depicted by F coupled discrete electronic states, while nuclei are described in continuous coordinate space. The state–state nonadiabatic coupling can be either inherent in molecular systems or induced by the external field. The composite/nonadiabatic system then includes both discrete electronic-state DOFs and continuous nuclear DOFs. Since the pioneering work of Makri and co-workers for providing benchmark results for the spin-boson model (a condensed-phase two-state nonadiabatic model) by quasi-adiabatic propagator path integral (QuAPI),− a few numerically exact methods, including more advanced real time path integral methods,− hierarchy equations of motion (HEOM),− dissipaton equation of motion,− (multilayer) multiconfiguration time-dependent Hartree [(ML-)MCTDH],− time-dependent density matrix renormalization group (TD-DMRG),− and other tensor network methods,− have been developed for benchmark model systems for nonadiabatic dynamics.
+When real (large) molecular systems are studied, most practical nonadiabatic dynamics methods with independent trajectories fall into two mainstreams. The first mainstream employs mean-field trajectories. The pioneering work of the Meyer-Miller (MM) mapping Hamiltonian model originally proposed from the “classical electron-analog” by Meyer and Miller in 1979 treats both electronic and nuclear DOFs on the same footing. In 1997 Stock and Thoss used the Schwinger oscillator theory of angular momentum to show the mapping Hamiltonian is exact in quantum mechanics. Although the MM mapping Hamiltonian model approach,− also employs mean field trajectories, in many regards it consistently outperforms traditional Ehrenfest dynamics in spirit of the Ehrenfest theorem. Nuclear DOFs of the mean field trajectory evolve on an averaged PES, of which the nuclear force can be decomposed into two components in the adiabatic representation, one is the nonadiabatic nuclear force, and the other is the mean of the adiabatic (BO) forces contributed by all electronic states. Ehrenfest dynamics fails to capture the bifurcation characteristic of nuclear motion in the asymptotic region where the nonadiabatic coupling disappears (e. g., for the gas-phase photodissociation event). When the MM Hamiltonian is used in the forward–backward or fully SC-IVR framework, the interference between different mean field trajectories naturally leads to the nuclear bifurcation characteristic in the asymptotic region as shown in refs and. When the infinite Wigner phase space is applied to both electronic and nuclear DOFs of the MM Hamiltonian and implemented in the full LSC-IVR framework for electronically nonadiabatic processes, the performance is much less satisfying even for electronic dynamics.− This is mainly because only a physical subspace of the harmonic oscillator is involved in the Schwinger mapping scheme, where the bosonic commutation relation does not necessarily hold, as pointed out in Appendix A of ref. A few methods− have been proposed on the (practical) quasi-classical level to improve the numerical performance over the full LSC-IVR for the MM mapping Hamiltonian model, of which the most prevailing one is the symmetrical quasi-classical (SQC) approach with triangle window functions (TWFs) developed by Cotton and Miller and widely used in refs,, and (−). This mainstream of trajectory-based methods is often competent in describing dynamics in the nonadiabatic coupling region, but difficult to produce the bifurcation characteristic of nuclear motion in the asymptotic region unless more numerically demanding strategies are applied. Another mainstream employs various hopping mechanisms for connecting two independent BO trajectories generated on two different adiabatic PESs in the nonadiabatic coupling region.− The most popular approach is the fewest-switches surface hopping (SH) originally developed by Tully in 1990. It has been successfully implemented for studying both gas phase models and realistic molecular systems.,− Quite a few other SH algorithms,− which introduce either stochastic or deterministic hopping events, have been further developed. This mainstream naturally satisfies the Born–Oppenheimer limit and captures the bifurcation characteristic of nuclear motion in the asymptotic limit where no nonadiabatic coupling exists, but encounters the challenge in nonadiabatic processes where the states keep coupled in a wide region or all the time. In addition to the two mainstreams, there exist some other methods employing independent trajectories.− Nonadiabatic dynamics approaches with coupled trajectories include multiple spawning by Martinez and co-workers,− exact factorization by Gross and co-workers,− multiconfiguration Ehrenfest by Shalashilin and co-workers,−etc.
+The generalized coordinate-momentum phase space formulation,,,− rigorously maps the composite system onto phase space with continuous coordinate-momentum variables, where nuclear DOFs are still depicted by the conventional infinite coordinate-momentum phase space but F discrete electronic-states are represented by the constraint coordinate-momentum phase space (CPS), which is diffeomorphic to the complex Stiefel manifolds U(F)/U(F-r) (with 1 ≤ r < F).− After ref first presented the key idea of a complete space with coordinate-momentum variables for constructing mapping Hamiltonian models for finite-state quantum systems, ref further established the CPS formulation related to the quotient space U(F)/U(F – 1) for general F-state systems by the sphere representation with coordinate-momentum variables in its main text and by the simplex representation with action-angle variables in its Appendix A. Reference then presented CPS with commutator variables that is related to the complex Stiefel manifolds U(F)/U(F – r). Interestingly, the quotient space U(F)/U(F – 2) is related to the equations of motion (EOMs) of the first model of ref or ref as well as the method used in ref.
+The exact EOMs of mapping coordinate-momentum variables of CPS for the pure F-state quantum system are linear.,,,− As pointed out in Appendix 3 of ref, the CPS formulation with coordinate-momentum variables is superior to the conventional Stratonovich phase space approaches with angle variables− used for studying composite/nonadiabatic systems,− because the EOMs of the latter are highly nonlinear and tedious, where inevitable singularities need to be excluded in dynamics especially when F is large. More importantly, the CPS formulation is versatile for yielding more new phase space representations of the finite-state quantum system. Some of these phase space representations will be discussed in Sub-Section 2.4. The generalized coordinate-momentum phase space formulation of quantum mechanics exactly represents the three key elements for nonadiabatic dynamics: the phase space integral expression for the expectation or ensemble average of the physical property of interest, the initial condition on phase space, and the EOMs on phase space.
+Even when we introduce the independent trajectory approximation in the generalized coordinate-momentum phase space formulation, the first two key elements are still exactly represented, and only the third key element is approximated. That is, the general Wigner-Moyal equation on quantum phase space, which is a partial differential equation, is replaced by a set of ordinary-differential equations to produce the independent trajectory. This involves the same strategy discussed in ref. When the phase space function corresponding to the quantum Hamiltonian operator is used to generate the EOMs for the independent trajectory, it leads to the classical mapping model (CMM) when the quotient space U(F)/U(F – 1) is employed, or the CMM with commutator variables (CMMcv) when the quotient space U(F)/U(F – r) with 1 ≤ r < F is used. More recently, we have proposed nonadiabatic field (NaF), a conceptually novel nonadiabatic dynamics approach with independent trajectories on quantum phase space. NaF is competent in faithfully describing both electronic and nuclear motion in the nonadiabatic coupling region and in the asymptotic region where the state–state coupling vanishes. The nuclear force in NaF includes two terms, one is the nonadiabatic nuclear force contributed by the product of the nonadiabatic coupling vector (NACV) and the electronic coherence between different electronic states, and the other is the adiabatic nuclear force of a single adiabatic electronic state (either stochastically with electronic weights or deterministically with the dominant electronic weight). NaF is then fundamentally different from the two prevailing conventional mainstreams with independent trajectories, because of two key elements: the exact expressions of the initial condition and of the time-dependent properties on generalized quantum phase space with coordinate-momentum variables for electronic and nuclear DOFs, and the nuclear EOMs on quantum phase space with the aforementioned adiabatic and nonadiabatic force. As shown in the main text of and Section S7 of the Supporting Information of ref, the comparison among NaF, Ehrenfest dynamics, SH methods, and the brute-force implementation of the EOMs of NaF to either Ehrenfest dynamics or SH methods demonstrates the importance of the two key elements.
+Recent progress on the CPS formulation has revealed new classes.− For instance, we have proposed a novel class of CPS for two-state systems, which satisfies a relation derived from the Abel integral equation leading to the exact population dynamics in the frozen nuclei limit. In any case of this class, each trajectory on CPS makes non-negative contribution to the electronic population dynamics. Interestingly, the TWF approach of Cotton and Miller used for population dynamics in the SQC/MM method is proved as a special case of this class. More classes are proposed in ref. In this paper, we apply NaF with a few new formalisms of CPS and test their performance in a suite of typical benchmark model systems, including linear vibronic coupling models, one-dimensional scattering models in gas-phase, system-bath models and atom-in-cavity models, where numerically exact results are available for comparison.
+The paper is organized as follows: Section 2 presents the theory of NaF methods, including phase space mapping formalisms, equations of motion, and a review of various time correlation functions (TCFs) in the CPS formulation. Section 3 demonstrates the numerical performance of NaF methods for the suite of gas-phase and condensed-phase model systems. Conclusion remarks are presented in Section 4.
+
+Theory
+
+Background
+In atomic units, the full Hamiltonian for Natom nuclei and Nele electrons readsHere, {RJ, PJ} are the coordinates and momenta of the J-th nucleus, M̃J is the ratio of the mass of the J-th nucleus to the mass of an electron, ZJ is the atomic (charge) number of the J-th nucleus, and  are the coordinates and momenta of the j-th electron. The first term of the right-hand side (RHS) of eq 1 represents the kinetic energy of the nuclei; the second term is the kinetic energy of the electrons; the third term stands for the Coulomb attraction potential between electrons and nuclei; the fourth and fifth terms are the repulsion potential between electrons and that between nuclei, respectively. The total number of nuclear DOFs is Nnuc = 3Natom. The reduced Planck constant, ℏ, is set to 1 and then omitted for electronic DOFs throughout the paper. In Sub-Sections 2.1 and 2.2, to illustrate nuclear quantum effects, ℏ for nuclear DOFs is explicitly expressed in formulas. But in other parts of the paper, ℏ for nuclear DOFs is also set to 1 and then omitted, because atomic units are used in all the benchmark tests.
+Define the electronic Hamiltonian Ĥel(R̂) as the sum of the last four terms in the RHS of eq 1. The full Hamiltonian becomeswhere M = diag{M̃1, M̃1, M̃1, M̃2, M̃2, M̃2, ···, M̃Natom, M̃Natom, M̃Natom} is the diagonal nuclear mass matrix, {R, P} are the coordinate and momentum vectors of nuclear DOFs, and the physical nuclear kinetic energy  is the same as the first term of the RHS of eq 1 for the full Hamiltonian. Here, MI is the mass of the I-th nuclear DOF, PI is the I-th component of the momentum vector, and RI is the I-th component of the coordinate vector.
+Assume that {|ϕk(R)⟩} is the complete set of orthonormal adiabatic electronic states for a given nuclear configuration, R. The representation of Ĥel(R̂) in the adiabatic basis readswhere Ek(R) denotes the adiabatic potential energy surface of the k-th adiabatic electronic state |ϕk(R)⟩. The rigorous expression of eq 3 in general involves a complete set of infinite adiabatic electronic states. It was in refs and where eq 2 with the expression of eq 3 for the electronic Hamiltonian, Ĥel(R), was first employed for phase space mapping methods for nonadiabatic dynamics. E.g., see eqs (55) and (57) of ref.
+The physical nuclear kinetic energy operator in either eq 1 or eq 2 should intrinsically be expressed in the full coordinate space of nuclear DOFs, which is independent of the electronic space. When the complete adiabatic electronic basis set is available, the expression of the physical nuclear kinetic energy operator readswhere P̂can is the canonical nuclear momentum operator that does not explicitly operate on any adiabatic basis state |ϕk(R)⟩,is the first-order nonadiabatic coupling vector between the k-th and l-th adiabatic electronic states, of which the J-th component is dkl(J)(R), andis the second-order derivative term with respect to the J-th nuclear DOF in the nonadiabatic coupling between the k-th and l-th adiabatic electronic states. It is easy to showandEquations 4, 7, and 8 lead to an equivalent expression of the physical nuclear kinetic energy operatoror in a more compact form,where  is the identity operator in electronic space represented by the adiabatic electronic basis set and  is an electronic operator, of which each element is a vector in the nuclear space as defined by eq 5. The RHS of eq 9 or that of eq 10 was already used in the literature, e.g., refs,,, and. It is important to note that eqs 4, 8, 9, or 10 only hold when the adiabatic electronic basis set is complete. That is, the summation in eqs 4, 8, and 9 intrinsically include infinite adiabatic electronic states. We note that eq 10 inherently hints the relation between the physical nuclear momentum operator, P̂, and the canonical nuclear momentum operator in the adiabatic representation, P̂can.
+Most processes in chemistry, materials, biology, and so forth involve finite energy where only a finite number of electronic states are effectively included. Assume that only F lowest adiabatic electronic basis states are relevant. The truncation of the electronic basis set in principle assumes that the third term of the equation below,vanishes. When  is not negligible for the system, it implies a nonabelian/Yang-Mills gauge field – id(R) with the gauge field tensorWhen the truncation of the adiabatic electronic basis set is reasonable, δDkl(J)(R) or  is often close to zero but should be ignored with caution.
+When the full space of electrons is involved, which means infinite adiabatic electronic states are included, the expression of eq 3 is indeed complete for the electronic Hamiltonian. Under such a circumstance, an orthonormal diabatic electronic basis set, {|n⟩}, that is independent of the nuclear coordinate vector, R, can rigorously be defined,where Tnk*(R) = ⟨ϕk(R)|n⟩ or Tnk(R) = ⟨n|ϕk(R)⟩ is the element of the diabatic-to-adiabatic transformation matrix, T(R). Then the representation of Ĥel(R) in the diabatic basis set becomeswhere Vnm(R) = ⟨n|Ĥel(R)|m⟩ is the matrix element for the electronic Hamiltonian, Ĥel(R). When the complete diabatic electronic set is available, the physical nuclear kinetic energy operator readsWhen only F diabatic electronic states are effectively involved, the truncation in the diabatic basis set and eqs 2, 14, and 15 leads to the expression of the full Hamiltonian operatorEquation 16 in principle assumes that {|n⟩}, n ∈ {1,···,F} is the “complete” set of diabatic electronic states and {|ϕk(R)⟩}, k ∈ {1,···,F} is the “complete” set of orthonormal adiabatic electronic states.
+We will first review the EOMs of NaF (on quantum phase space) in Sub-Section 2.2 and Sub-Section 2.3, then discuss the phase space integral expression of the TCF for evaluating the time-dependent property in Sub-Section 2.4.
+
+Phase Space Mapping Hamiltonian for Nonadiabatic Systems
+The one-to-one correspondence mapping function of the full Hamiltonian of eq 16 in the generalized coordinate-momentum phase space representation− readswheredenotes the mapping kernel of the Wigner phase space for nuclear DOFs, anddenotes the mapping kernel of CPS for electronic DOFs. Here, the notation Trn[·] and Tre[·] represent the trace over nuclear DOFs and that over electronic DOFs, respectively. The commutator matrix Γ can be represented by a series of extended phase space variables (namely the commutator variables) through its spectral decomposition. The mapping CPS,− characterized by constraint , is related to the normalization of eq 19 (i.e., Tre[K̂ele(x,p,Γ)] = 1), where γ denotes the parameter vector involved in the mapping CPS. The covariant form of eq 17 in the adiabatic representation readswhere x̃(R) + ip̃(R) = T†(R)(x + ip), Γ̃(R) = T†(R)ΓT(R) are covariant phase space variables of electronic DOFs in the adiabatic representation. As shown in refs and, the nuclear canonical momentum in the diabatic representation, P, corresponds to the nuclear kinematic momentum in the adiabatic representation. The relation between the nuclear kinematic momentum in the adiabatic representation, P, and the nuclear canonical momentum in the adiabatic representation, P̃, readsWhen the electronic basis set is complete, the physical nuclear momentum, the nuclear canonical momentum in the diabatic representation, and the nuclear kinematic momentum in the adiabatic representation are in principle equivalent. This is inherently implied in eq 10 and eq 15.
+Cotton, Liang and Miller directly started from the adiabatic representation and first showed the use of the nuclear kinematic momentum, P, in Ehrenfest-like dynamics of the Meyer-Miller mapping model to avoid second-order nonadiabatic coupling terms. The derivation of the nuclear kinematic momentum, P, in the generalized phase space formulation has been demonstrated in Section S1 of the Supporting Information of ref, Section 4 of ref, and Appendix 2 of its Supporting Information, where we have explicitly pointed out that the first-order nonadiabatic coupling corresponds to a nonabelian/Yang-Mills gauge field –id(I)(R) with the gauge field tensor defined by eq 12 and that the EOM of nuclear kinematic momentum P in the adiabatic representation does not include second-order nonadiabatic coupling terms only when such a gauge field tensor is zero, or equivalently, when the diabatic representation is rigorously defined or the adiabatic basis set is complete. NaF on quantum phase space employs nuclear kinematic momentum P in the adiabatic representation. In addition, as first explicitly pointed out in ref and already used in refs,,, and, nuclear kinematic momentum P in the adiabatic representation should be inherently utilized in SH methods. When the gauge field tensor (defined by eq 12) is zero, in SH methods the use of nuclear kinematic momentum P in the adiabatic representation can also avoid second-order nonadiabatic coupling terms.
+When the (electronic) adiabatic basis is incomplete,  in eq 12 deviates from zero. A correction term, Fresidue, arises from the nonabelian/Yang-Mills gauge field tensor in the force for the update of nuclear kinematic momentum vector P in the adiabatic representation, of which the I-th component readsHere ρ̃ denotes the corresponding effective electronic density matrix in the adiabatic representation, which depends on the EOMs of the nuclear DOFs. (An example is defined in eq 34.) Such a term was shown in eq (S30) of Appendix 2 of the Supporting Information of ref for the EOMs in the CPS formulation. Only when this term vanishes, the EOM of nuclear kinematic momentum P involves but the first-order nonadiabatic coupling term. When nuclear canonical momentum P̃ in the adiabatic representation was used instead, a term equivalent to the RHS of eq (22) appeared in Appendix B for the EOMs of the Meyer-Miller mapping model in ref by Meyer and Miller and in eq (17) for Ehrenfest dynamics in ref by Amano and Takatsuka. The relativistic analogue of the EOMs with the canonical momentum was proposed in ref by Wong, where the nonadiabatic coupling plays the role of the nonabelian gauge field interacting with the isotopic-spin-carrying particle.
+In all the benchmark tests presented in this paper where numerically exact results in the diabatic representation are available, the gauge field tensor defined by eq 12 is zero. When on-the-fly ab initio NaF simulations are performed for real systems where only a finite number of adiabatic electronic states are involved, the gauge field tensor of eq 12 should be disregarded with caution for the update of nuclear kinematic momentum P.
+
+Nonadiabatic Field
+As derived in refs,, and, the EOMs of the electronic phase space variables readin the diabatic representation, andin the adiabatic representation. Here, the elements of the effective potential matrix in the adiabatic representation areDefine g = x + ip and g̃(R) = x̃(R) + ip̃(R). Integrating eqs 23 and 24 over t with fixed R leads to the propagation of electronic phase space variables in the diabatic representation within a finite time-step Δtwhere the propagator in the diabatic representation readsSimilarly, integrating eqs 25 and 26 over t with fixed R and P yieldswith the propagator in the adiabatic representationFor a given effective electronic density matrixin the adiabatic representation, the EOMs of NaF for nuclear DOFs readwheredenotes the adiabatic force provided by the adiabatic electronic state, |ϕjocc(R)⟩, andrepresents the nonadiabatic force. Here, ρ̃nm(R) denotes the matrix element of ρ̃(x̃(R), p̃(R), Γ̃(R)). Equation 37 has an equivalent form to the nonadiabatic force in Ehrenfest-like dynamics of CMMcv. When the time-reversal symmetry holds, Fresidue of eq 22 is a correction term to the nonadiabatic nuclear force in eq 37. This correction term involves the derivative with respective to nuclear coordinate R of nonadiabatic coupling vector d(R), which is often costly to obtain. Nevertheless, the contribution from eq 22 to the nonadiabatic nuclear force is typically small in most cases and should be neglected with caution. When the nonadiabatic nuclear force of eq 37 is neglected, the EOMs in eq 35 lead to the BO trajectory employed in SH methods (where nuclear kinematic momentum P should be used). Since eq 37 intrinsically provides feedback of electronic coherence to nuclear motion, it should never be disregarded in the state–state (nonadiabatic) coupling regions where the term, (En(R) – Em(R))dmn(R) = ⟨ϕm(R)|∇RĤel(R)|ϕn(R)⟩ (n ≠ m), plays a role. The adiabatic nuclear force in eq 36 can be determined either by the weight stochastically or by the dominant component deterministically. In the latter case, eq 36 readswith h(x) denotes the Heaviside step function. The relation between the EOMs of NaF and the exact EOMs in the generalized coordinate-momentum phase space formulation of quantum mechanics is discussed in Section S9 of the Supporting Information.
+In NaF the mapping energy on quantum phase spacein the adiabatic representation for each trajectory should be conserved. Here, Ejocc(R) is the adiabatic PES of the single electronic state which contributes to the nuclear adiabatic force. As discussed in ref and already implemented in refs,,,, and, the RHS of eq 39 is the same mapping energy (with nuclear kinematic momentum P) on quantum phase space that the SH trajectory should conserve, even when nuclear DOFs are treated quantum mechanically and the nuclear initial condition is sampled on Wigner phase space. Since the nuclear kinematic momentum rather than the nuclear canonical momentum is involved in the mapping energy, in NaF the corresponding mapping energy (eq 39) should not be used to generate the EOMs for (R, P; x̃, p̃, Γ̃) on quantum phase space. In our previous works, we employed a momentum rescaling approach to ensure that the trajectory generated by eqs 35–37 conserves the corresponding mapping energy (eq 39) for NaF. That is, the mapping energy of eq 39 on quantum phase space is conserved by rescaling P along its direction after each time-step. In Section S1 of the Supporting Information, we demonstrate that this approach corresponds to the effective nonadiabatic force perpendicular to nuclear velocity M–1P in the infinitesimal time-step limit. Similar treatments have been discussed in Section S2 of the Supporting Information of ref. When the state with the dominant weight is switched, the nuclear kinematic momentum is also rescaled along its direction to achieve energy conservation if possible. In cases of frustrated switching, the occupied state, jocc, is not changed, even though this state no longer holds the dominant weight. The corresponding complete integrator is described in refs and. Below we introduce a more efficient integrator for NaF.
+Update the nuclear kinematic momentum within a half time-step Δt/2 using the adiabatic force
+Update the nuclear kinematic momentum within a half time-step Δt/2 using the numerical integrator for the effective nonadiabatic force for the Nnuc ≥ 2 case,whereHere, Ekin = PTM–1P/2 is the total kinetic energy, e∥(R, ρ̃) denotes the unit vector for the direction of vector B represents the scalar length of vector B, Π∥ = α∥e∥ = (M–1/2P·e∥)e∥ and Π⊥(R, P, ρ̃) = M–1/2P – α∥e∥ are the components of Π ≡ M–1/2P parallel and perpendicular to B, respectively. The integrator eq 41 conserves the total kinetic energy Ekin = PTM–1P/2. For the Nnuc = 1 case, this step is skipped. When  is very small or very large, please refer to arguments below and Section S1 of the Supporting Information of this paper for details of additional treatments.
+Update phase space variables of electronic DOFs within a half time-step Δt/2 according to
+Update the nuclear coordinate within a full time-step Δt
+Update phase space variables of electronic DOFs within the other half time-step Δt/2 according toCalculate the effective electronic density matrix ρ̃ according to eq 34.
+Determine a new occupied state jnew based on ρ̃ and rescale P if jnew ≠ jold,If HNaF(Rt+Δt, Pt+Δt/2, ρ̃t+Δt) < Ejnew(Rt+Δt), the switching of the adiabatic nuclear force component is frustrated. In such a case we keep jnew = jold and the rescaling step (for the nuclear kinematic momentum) eq 49 is skipped.
+Similar to Step 2, update the nuclear kinematic momentum within the other half time-step Δt/2 using the numerical integrator for the effective nonadiabatic force for the Nnuc ≥ 2 caseWhen  is very small or very large, please refer to arguments below and Section S1 of the Supporting Information for additional details.
+Update the nuclear kinematic momentum within the other half time-step Δt/2 using the adiabatic force
+Here we propose two important elements for efficiently integrating the EOMs of NaF within a finite time-step Δt. The first element is the numerical integrator for the effective nonadiabatic force as derived in Section S1 of the Supporting Information, and the second one is the more efficient numerical integrator scheme “P-e-R-e-P”. Combining these two elements, the complete integrator for the EOMs of NaF for a finite time-step Δt then reads:
+In Steps 2 and 7 of the integrator above for the Nnuc ≥ 2 case, two additional cases should be taken care of for achieving numerical stability. When  in eqs 42 and 43 is very small (e.g., ) in the region where the nonadiabatic coupling almost vanishes, we use the following integrator to replace the one in Steps 2 and 7 (for a half time-step, Δτ = Δt/2):Conversely,  is very large in the region where the NaF trajectory approaches the “classical” forbidden region (Ekin → 0). In this region, if M–1/2P and B are nearly parallel with each other in the same direction (), a self-adaptive time-step strategy should be employed to avoid numerical instability in the integrator eq 41. (Please see Section S1 of the Supporting Information for more details.) This complete integrator for a finite time-step Δt for NaF is applicable to general systems, regardless of whether the diabatic representation is available or not.
+As mentioned in refs and, several models defined in the diabatic representation (such as the FMO model and the singlet-fission model tested in the two references) require a considerably shorter time-step for numerical convergence when employing the propagator in eq 33 to propagate the electronic phase space variables in the adiabatic representation. When the diabatic representation is rigorously defined, we present two approaches to enhance the efficiency of NaF by taking advantage of that the diabatic basis set is available. The first approach is to use the covariant electronic propagator in the adiabatic representation according to its counterpart in the diabatic representation (eqs 28 and 29), rather than using eqs 31 and 32 for propagating electronic DOFs. This approach is equivalent to evolving electronic DOFs in the diabatic representation while nuclear DOFs are propagated in the adiabatic representation. (See more details in Section S2 of the Supporting Information.) The second approach is to express the nuclear force of the second equation of eq 35 of NaF (the sum of the adiabatic force and the nonadiabatic force) in the diabatic representation and to evolve both nuclear and electronic DOFs in the diabatic representation, as described in Section S3 of the Supporting Information.
+
+Time Correlation Functions
+Consider the TCF of electronic DOFswhere the (n = m, k = l), (n = m, k ≠ l), (n ≠ m, k = l), and (n ≠ m, k ≠ l) cases of eq 53 stand for the (electronic) population-population, population-coherence, coherence-population, and coherence-coherence TCFs, respectively. The unified framework of ref maps Dnm,kl(t) to the phase space counterpart−where dμ(x, p, Γ) denotes the integral measure over the mapping CPS, w(γ) represents the normalized weight (i.e., quasi-probability distribution) function (of γ) as first proposed in ref and C̅nm,kl(t) denotes an element of the time-dependent normalization factor tensor. The integrand function of electronic phase space variables in eq 54 can be determined in various ways. One typical choice for developing trajectory-based dynamics methods iswhere K̂ele–1(x, p, Γ) denotes the inverse mapping kernel of CPS, and {xt, pt, Γt} represents the phase variables of the trajectory at time t with the initial condition {x0, p0, Γ0}. The simplest yet useful case where Γ = γ1 in the electronic mapping kernel and its inverse is often utilized.− The constraint of the corresponding CPS reads with γ ∈ (−1/F, + ∞), yielding the U(F)/U(F-1) complex Stiefel manifold. Our previous works have presented several different forms of the electronic mapping kernel and pointed out that even for the same electronic mapping kernel, inverse mapping kernels, are not unique.−
+Below we list several types of TCFs in the CPS representation, and construct the corresponding NaF methods.
+
+Covariant-Covariant
+The mapping kernel and the inverse mapping kernel are given byIn this case, the normalization factor is C̅nm,kl(t) ≡ 1, with the invariant integral measure dμ(x, p) = Fdxdp. The weight function is often set to a Dirac delta function w(γ) = δ(γ – γ0) with an adjustable parameter γ0 ∈ (−1/F, + ∞), although other reasonable choices for w(γ) are possible. We denote eqs 54 and 55 combined with eqs 56 and 57 as the covariant-covariant (cc) TCF. The term “covariant” implies that the mapping kernel and the inverse mapping kernel satisfyfor arbitrary F × F unitary matrix U. The cc TCF is always able to produce the exact population and coherence dynamics in the frozen nuclei limit for F ≥ 2. The initial sampling of the variables {x, p} for electronic DOFs is according to the uniform distribution on one (2F – 1)-dimensional sphere .
+The cc TCF was employed by CMM in 2019 and by CMMcv in 2021 in refs and (−). In spirit of the unified framework of mapping models with coordinate-momentum variables of ref reported in 2016, the CMM methods on CPS were first proposed and derived in ref in 2019 for nonadiabatic systems with general F states (F ≥ 2). The CPS with coordinate-momentum variables with the general value of γ was first indicated by eqs (1), (5), (7), (19) and (28) of ref and the CPS with action-angle variables for the γ = 0 case was first presented by eqs (A4)-(A5) of Appendix A of ref. The strategy of using action-angle variables to establish or prove the CPS representations was first employed in Appendix A of ref, then in refs and, while the same strategy of using coordinate-momentum variables instead was presented in refs and. Section S4 of the Supporting Information of this paper revisits the strategy of using action-angle variables of CPS of Appendix A of ref only for education purposes. In ref, the constraint of eq 28 and the Hamiltonian model of either eq 7 or eq 19 inherently indicate the complex Stiefel manifolds U(F)/U(F-r) (with 1 ≤ r < F).− More specifically, in ref, the constraint of eq 28 and the Hamiltonian model of eq 7 with {γnm = γδnm; ∀n, m} intrinsically imply the U(F)/U(F-1) complex Stiefel manifold, and the constraint of eq 28 and the Hamiltonian model of eq 19 with {γ̃nm = γδnm; ∀n, m} in principle leads to the U(F)/U(F-2) complex Stiefel manifold.
+Following refs,, and, ref explicitly showed that the phase space parameter, γ, should lie in a continuous range (−1/F, + ∞), and refs,, and first pointed out that the P, W and Q versions of Stratonovich phase space correspond to only three special cases of the U(F)/U(F – 1) constraint phase space used in CMM with γ = 1,  and 0. These three conventional versions of Stratonovich phase space were used for studying nonadiabatic dynamics of composite systems for the F = 2 case in refs and, and later for the F = 2 case in ref, then for the multistate case (F ≥ 3) in ref in 2020. Their relations to the CMM/CPS approach first originally developed in refs and for general F-state systems, were presented in ref in 2021, and in ref Appendix 3 of ref, ref, and ref. For example, a special case for phase space parameter γ in CMM− where  of the U(F)/U(F – 1) constraint phase space is used, is related to the W version of the spin mapping method in ref for general F ≥ 3 cases, where the conventional W version of the SU(F)/U(F – 1) Stratonovich phase space is implemented. More details are presented in Appendix 3 of ref on the relation as well as subtle difference between the U(F)/U(F – 1) constraint coordinate-momentum phase space with 2F variables and the SU(F)/U(F – 1) Stratonovich phase space with 2F – 2 variables. The U(F)/U(F – 1) constraint coordinate-momentum phase space inherently includes a time-dependent global phase variable and naturally leads to the linear EOMs of quantum mechanics in the frozen nuclei limit. More recently, the twin-space representation with CMM/CPS has been proposed in ref.
+Similar to CMMcv, when NaF is combined with the “cc” TCF (leading to the NaF-cc method), it is essential to involve the commutator matrix in calculating nuclear force for satisfying the Born–Oppenheimer limit, where the initial condition readsHere j0 denotes the label of the initially occupied state. We have shown that  is recommended for NaF-cc, and we employ γ0 = 1/2 for NaF-cc throughout this paper. (That is, the weight function is w(γ) = δ(γ – 1/2).)
+As demonstrated in refs and, the mapping kernel as well as its inverse are not unique, while eqs 56 and 57 denote only a special choice (the covariant form). Several other kinds of mapping formalisms are discussed below as well as listed in ref.
+
+Triangle Window Functions
+We follow the formalism in refs and for describing the TCF with TWFs. The mapping kernel is given bywith the TWF for the n-th statewhere e(n) = [(x(n))2 + (p(n))2]/2. For the population-population and population-coherence TCFs (i.e., eq 55 with n = m), the corresponding inverse mapping kernel readsFor the coherence-population and coherence-coherence TCFs (i.e., eq 55 with n ≠ m), the inverse mapping kernel is set to be(Note that in principle eq 63 can also be used for the population-population and population-coherence TCFs.) The weight function readsand dμ(x, p) = Fdxdp. Since γ does not appear explicitly in the integrand, Q̅nm,kl(x0, p0, xt, pt), for CPS with TWFs, it can be integrated over exactly, leading toFinally, the time-dependent normalization factor readsThe TCF with TWFs for population dynamics (with eqs 60 and 62 for the n = m and k = l case) was first introduced by Cotton and Miller, of which the F = 2 case belongs to the novel class of exact phase space representations of the pure two-state system in ref and yields exact population dynamics in the frozen nuclei limit. Although it fails to produce exact population dynamics for F ≥ 3 in the frozen nuclei limit, the TWFs ensure a positive semidefinite population and demonstrate reasonably good results for typical multistate systems. The above formalism for TCFs involving coherence terms (i.e., n ≠ m or k ≠ l), which was first proposed in ref by us, satisfies the frozen nuclei limit for arbitrary number of states. Reference of Cotton and Miller provides a simple algorithm for efficient sampling or evaluation with TWFs, which is also described in details in our previous work.
+Two possible approaches for combining NaF with TWFs have been proposed in ref. The first approach employs Γ = 1/3, following the recommended zero-point energy parameter 1/3 of Cotton and Miller, and is referred to as NaF with TWFs (NaF-TW). The second method employs eq 59 as the initial condition of the commutator matrix, which is denoted as NaF with TWFs-2 (NaF-TW2). We have demonstrated that both NaF-TW and NaF-TW2 are comparable with NaF-cc and perform reasonably well for various benchmark gas-phase and condensed-phase systems.
+
+Hill Window Functions
+A novel positive semidefinite hill window functions (HWF) is proposed in ref for general F ≥ 3 cases, which can be utilized for constructing TCF formalisms. As an example, when choosing the mapping kernel asthe corresponding inverse mapping kernel for population-population and population-coherence TCFs (i.e., eq 55 with n = m) readswithwhere the diagonal terms of the inverse mapping kernel eq 68 are HWFs. The weight function is  and the invariant integral measure is dμ(x, p) = Fdxdp. The (time-dependent) normalization factor readsSimilar to the TCF with TWFs, the TCF with HWFs is positive semidefinite for estimating electronic population. For the F = 2 case, the population-population TCF can be related to Appendix B of ref in the frozen nuclei limit. In eq 68, parameter that appears in the population-coherence TCF can be related to ref. The inverse mapping kernel for coherence-population and coherence-coherence TCFs (i.e., eq 55 with n ≠ m) is identical to eq 57. Similar to NaF-TW and NaF-TW2 of ref, we also consider two approaches to use HWFs with NaF, namely NaF with HWFs (NaF-HW) and NaF with HWFs-2 (NaF-HW2). The initial condition of Γ for NaF-HW is defined as , i.e., an invariant CPS parameter, and that for NaF-HW2 employs eq 59.
+Uniformly sample a point on the (2F – 1)-dimensional sphere .
+If the phase variables of the point satisfy  for any k ≠ n, then accept the point as the initial condition. Otherwise repeat the procedure until one point is accepted.
+The initial sampling procedure for variables {x, p} for electronic DOFs with HWFs is listed below. For coherence-population and coherence-coherence TCFs, the initial condition of {x, p} is uniformly sampled on  where . For population-population and population-coherence TCFs Dnn, kl(t), the initial condition of {x, p} is uniformly sampled on with the following sampling procedure for one phase point:
+
+Covariant-Noncovariant
+When the covariant mapping kernel eq 56 is used as the mapping kernel K̂ele(x, p) in eq 55, in principle any function of phase space variables (regardless of whether it is covariant or noncovariant) can be used as a matrix element of the inverse mapping kernel K̂ele–1(x, p), and the frozen nuclei limit is naturally satisfied as long as the mapping formalism satisfies the exact mapping condition. This statement was first proved in ref by us in 2022 and then in ref. When noncovariant phase space functions are used in the inverse mapping kernel, the TCFs are referred as the covariant-noncovariant (cx) TCFs in ref. As an example, the inverse mapping kernel can be defined aswith the weight function , and the elements of the corresponding normalization factor tensor areThe invariant integral measure for cx is dμ(x, p) = Fdxdp. The cx TCFs satisfy the frozen nuclei limit. It is straightforward to implement NaF with the cx TCFs, which is denoted as NaF-cx. The initial condition of (x, p) is uniformly sampled on  with . Similar to NaF-cc, the commutator matrix with the initial condition in eq 59 is also critical for NaF-cx to approach the correct Born–Oppenheimer limit.
+Finally, when both nuclear and electronic DOFs are considered, the phase space counterpart of the quantum TCFcan be written aswhere the phase space functions of nuclear operators areHere, when not otherwise specified, an operator of pure nuclear DOFs B̂nuc is treated as . When Wigner phase space is employed for nuclear DOFs, the inverse mapping kernel K̂nuc–1(R, P) is identical to the mapping kernel defined in eq 18. In this paper, we utilize only Wigner phase space for nuclear DOFs. We note that other quantum phase space representations for nuclear DOFs may also be feasible for the NaF implementation.
+
+Numerical Results of Model Systems
+In this section, we apply the NaF methods outlined in Sub-Section 2.4 and listed in Table 1 to various typical model systems, including linear vibronic coupling models, one-dimensional nonadiabatic scattering models, system-bath systems with two or more states, and atom-in-cavity models. The results produced by NaF methods will be compared with the numerically exact results. Additionally, we employ three SH methods for comparison with NaF methods, namely, SH-1, SH-2 and SH-3. Because SH-3 is applicable to only two-state systems, its results are but available for the two-state cases in the following benchmark tests. Unless otherwise specified, the TCFs are calculated in the diabatic representation in all cases where exact results are available only in the diabatic representation. While simulations using SH methods can only be performed in the adiabatic representation, NaF simulations can be performed in either the adiabatic or diabatic representation, leading to same numerically converged results (see Section S3 of the Supporting Information).
+CPS Representations of the Electronic
+Time Correlation Function (by Using Equations 53–55) in Sub-Section 2.4
+Method	Elements of mapping kernel Knm	Elements of inverse mapping kernel Kkl–1	Weight function w(γ)	Normalization factor C̅nm,kl (t)	Initial	 	Condition of Γ	 	NaF-cc	eq 56	eq 57	δ(γ – γ0); γ0 = 1/2	1	eq 59	 	NaF-TW	eq 60	eq 62 (n = m)	eq 64	eq 66		 	eq 63 (n ≠ m)	 	NaF-TW2	eq 60	eq 62 (n = m)	eq 64	eq 66	eq 59	 	eq 63 (n ≠ m)	 	NaF-HW	eq 67	eq 68 (n = m)		eq 70		 	eq 57 (n ≠ m)	 	NaF-HW2	eq 67	eq 68 (n = m)		eq 70	eq 59	 	eq 57 (n ≠ m)	 	NaF-cx	eq 56	eq 71		eq 72	eq 59
+Our simulations are conducted on the new Sunway supercomputer. The heterogeneous platform is composed of millions of SW26010-Pro CPUs, each with 6 core groups (CGs) of a management processing element (MPE), 64 computing processing elements (CPEs) and 16 GB DDR4 memory. By implementing our nonadiabatic dynamics program with MPI and Athread, it can take full advantage of the super large-scale. The program package greatly enhances the efficiency of simulating long-time dynamics of nonadiabatic systems with numerous DOFs. Table 2 provides the parameters (the time-step size, the number of trajectories, etc.) for obtaining fully converged results of NaF methods for each benchmark model. We divide the trajectories into 20 groups to calculate the standard error of each physical property. The error bar for each result is plotted in the figure, although it is often smaller than the width of the line or the size of the marker. Similar numbers of trajectories are used in SH methods for obtaining fully converged results. We note that the number of NaF trajectories or SH trajectories can be considerably decreased when a larger error bar is tolerated.
+Number of Trajectories and the Time-Step
+Size for NaF Methods for Benchmark Models
+Model	Time-step Size	Number of trajectories	 	Pyrazine	 	LVCM	0.01 fs	∼105	 	Cr(CO)5 LVCM	0.01 fs	∼105	 	Thymine LVCM	0.01 fs	∼105	 	Tully	 	models	0.01 fs	∼105	 	3-state photodissociation models	0.01 fs	∼106	 	2-state photodissociation	 	model	0.01 fs	6 × 105	 	Spin-boson models	0.01 au	∼5 × 105	 	FMO model	0.5 fs	∼106	 	Singlet	 	fission model	0.005 fs	∼105	 	Atom-in-cavity models	0.1 au	∼105	 	One-dimensional	 	Holstein model	0.5 au	∼106
+
+Linear Vibronic Coupling Models
+The linear vibronic coupling model (LVCM) is a typical model for studying dynamics around molecular conical intersections. The Hamiltonian (in the diabatic representation) is Ĥ = Ĥ0 + ĤC, withwhere  and  represent the dimensionless weighted normal-mode momentum and coordinate of the k-th nuclear DOF, respectively, and ωk represents the corresponding vibrational frequency. The relation between {R̅k, P̅k} and the corresponding canonical (mass-weighted) coordinate/momentum, {Rk, Pk}, in the diabatic representation reads  and . The electron–nuclear coupling term iswhere En (n = 1, ...,F) represents the vertical excitation energy of the n-th state, while κk(n) and λk(nm) denote the linear coupling terms of the k-th nuclear DOF for the corresponding diagonal and off-diagonal elements, respectively.
+Two typical 2-state LVCMs for pyrazine—the 3-mode model of ref and the 24-mode model of ref are considered. The 3-state 2-mode LVCM of ref, which describes the dynamics of Cr(CO)5 through a Jahn–Teller conical intersection after photodissociation, is also tested. The parameters and more details of these three models are described in refs (−) and also summarized in our previous work. Both electronic population and nuclear properties are investigated and compared with the numerically exact results produced by MCTDH. The Heidelberg MCTDH package (V8.5) is employed for producing the exact data of the LVCMs for pyrazine, while the benchmark data of the Cr(CO)5 model are directly obtained from ref.
+In addition, a 7-state 39-mode LVCM of Thymine is investigated in this paper. This model, proposed by Improta, Santoro and their co-workers, is established from CAM-B3LYP calculations. We only consider the case where the ππ*2 state is initially occupied, with each nuclear mode in its corresponding vibrational ground state. The exact results provided by ML-MCTDH are available in ref. Although this LVCM includes seven states, we focus on three of them: the nOπ*1 state, the ππ*1 state and the ππ*2 state. These three states exhibit the most significant population transfer among all the states.
+Figures 1–3 present the results of the LVCMs for pyrazine and Cr(CO)5, demonstrating both the electronic population and nuclear properties. All SH methods and NaF methods produce similar reasonable descriptions in both electronic and nuclear dynamics of the LVCMs for these two molecules. We also show the results of CMM using the smallest and largest values of γ in the region  recommended in refs and. Although CMM often demonstrates superior performance in various benchmark condensed-phase models, it may produce unphysical negative populations and performs poorly for nuclear dynamics of LVCMs, of which such drawbacks have already been demonstrated in several (gas-phase) models in our previous works, e.g., in Figures 1 and 3 of ref and Figure 7 of ref. It is evident from Panel (a4) of Figure 1 for pyrazine and from Panel (i) of Figure 4 for Thymine that  should not be the best choice for phase space parameter γ for CMM for general real molecular systems. Figure 4 illustrates population dynamics of the LVCM for Thymine where 39 modes are included. Neither SH nor CMM methods offer reasonable predictions for this model. In contrast, NaF methods consistently demonstrate better performance in reasonably describing the population transfer of this LVCM model. Figure 4 for Thymine implies that the nonadiabatic (nuclear) force can play an important role around CI regions (for LVCMs) for real large molecular systems.
+Results of the 24-mode LVCM for pyrazine. Panels
+(a1)-(a4): Population
+of the state 2. Panels (b1)-(b4): The average dimensionless coordinate
+⟨R̅(t)⟩ of the
+nuclear normal mode v6a. Panels (c1)-(c4): The average dimensionless momentum ⟨P̅(t)⟩ of the nuclear normal
+mode v6a. In panels (a1),
+(b1) and (c1), the green, blue and cyan solid lines represent the
+results of NaF-cc, NaF-cx and NaF-TW, respectively. In panels (a2),
+(b2) and (c2), the cyan, pink, orange and magenta solid lines represent
+the results of NaF-TW, NaF-TW2, NaF-HW and NaF-HW2, respectively.
+In panels (a3), (b3) and (c3), the orange dashed line, purple dashed
+line, brown dashed line and cyan solid line denote the results of
+SH-1, SH-2, SH-3 and NaF-TW, respectively. In panels (a4), (b4) and
+(c4), the blue dashed line, green dashed line and cyan solid line
+denote the results of CMM (γ = 0.366), CMM (γ = 0.5) and
+NaF-TW, respectively. The numerically exact results produced by MCTDH are demonstrated by black solid lines with
+black points in each panel.
+Results of the 3-mode LVCM for pyrazine. Panels (a1)-(a4):
+Population
+of the state 2; Panels (b1)-(b4): The average dimensionless coordinate
+⟨R̅(t)⟩ of the
+nuclear normal mode v6a; Panels (c1)-(c4): The average dimensionless momentum ⟨P̅(t)⟩ of the nuclear normal
+mode v6a. In panels (a1),
+(b1) and (c1), the green, blue and cyan solid lines represent the
+results of NaF-cc, NaF-cx and NaF-TW, respectively. In panels (a2),
+(b2) and (c2), the cyan, pink, orange and magenta solid lines represent
+the results of NaF-TW, NaF-TW2, NaF-HW and NaF-HW2, respectively.
+In panels (a3), (b3) and (c3), the orange dashed line, purple dashed
+line, brown dashed line, and cyan solid line denote the results of
+SH-1, SH-2, SH-3 and NaF-TW, respectively. In panels (a4), (b4) and
+(c4), the blue dashed line, green dashed line and cyan solid line
+denote the results of CMM (γ = 0.366), CMM (γ = 0.5) and
+NaF-TW, respectively. The numerically exact results produced by MCTDH are demonstrated by black solid lines with
+black points in each panel.
+Results of the 2-mode LVCM for the Cr(CO)5 molecule.
+Panel (a1)-(a10): Population dynamics, where the black, red and blue
+solid lines represent the population of states 1–3, respectively,
+and the numerically exact results (taken from ref) are plotted by dashed
+lines with corresponding colors. Panel (a1): NaF-cc. Panel (a2): NaF-cx.
+Panel (a3): NaF-TW. Panel (a4): NaF-TW2. Panel (a5): NaF-HW. Panel
+(a6): NaF-HW2. Panel (a7): SH-1. Panel (a8): SH-2. Panel (a9): CMM
+(γ = 0.333). Panel (a10): CMM (γ = 0.5). Panels (b1)-(b4):
+The average dimensionless coordinate ⟨R̅(t)⟩ of the second nuclear normal mode. In
+panel (b1), the green, blue and cyan solid lines represent the results
+of NaF-cc, NaF-cx and NaF-TW, respectively. In panel (b2), the cyan,
+pink, orange and magenta solid lines represent the results of NaF-TW,
+NaF-TW2, NaF-HW and NaF-HW2, respectively. In panel (b3), the orange
+dashed line, purple dashed line and cyan solid line denote the results
+of SH-1, SH-2 and NaF-TW, respectively. In panel (b4), the blue dashed
+line, green dashed line and cyan solid line denote the results of
+CMM (γ = 0.333), CMM (γ = 0.5) and NaF-TW, respectively.
+Note that SH-3 is not applicable for this 3-state model. The numerically
+exact results produced by MCTDH (taken from ref) are demonstrated by
+black solid lines with black points in panels (b1)-(b4).
+Results of the 39-mode LVCM for the Thymine parametrized
+from the
+CAM-B3LYP calculations. In each panel, population dynamics of 3 states
+are demonstrated, where the blue, green and orange solid lines represent
+the population of the nOπ*1 state, the ππ*1
+state and the ππ*2 state, respectively. Panel (a): NaF-cc.
+Panel (b): NaF-cx. Panel (c): NaF-TW. Panel (d): NaF-TW2. Panel (e):
+NaF-HW. Panel (f): NaF-HW2. Panel (g): SH-1. Panel (h): SH-2. Panel
+(i): CMM (γ = 0.261). Panel (j): CMM (γ = 0.5). Note that
+SH-3 is not applicable for this 7-state model. The numerically exact
+results produced by ML-MCTDH (taken from ref) are demonstrated by
+dashed lines with corresponding colors in each panel.
+Although both CMM(cv) and NaF employ the CPS formulation, Figures 1–4 show that NaF is superior to CMM(cv) for LVCMs of real molecular systems. Because CMM(cv) employs Ehrenfest-like dynamics, the comparison in Figures 1–4 agrees with the conclusion of refs and that NaF performs better than Ehrenfest-like dynamics when both nuclear and electronic motion is considered in the asymptotic region where the nonadiabatic coupling disappears. We then only focus on NaF with the CPS formulation in the following benchmark tests.
+
+Nonadiabatic Scattering Processes in the Gas Phase
+We demonstrate the performance of NaF methods on gas-phase scattering problems with one nuclear DOF. We first consider Tully’s three scattering models with one nuclear DOF and two electronic states, namely, the single avoided crossing (SAC) model, the dual avoided crossing (DAC) model and the extended coupling region (ECR) model. The potential energy operator in the diabatic representation is V̂(R) = V11(R)|1⟩⟨1| + V22(R)|2⟩⟨2| + V12(R)(|1⟩⟨2| + |2⟩⟨1|), wherefor the SAC model with A = 0.01, B = 1.6, C = 0.005 and D = 1.0 (all in atomic units, the same below),for the DAC model with A = 0.1, B = 0.28, C = 0.015, D = 0.06 and E0 = 0.05, andfor the ECR model with B = 0.9, C = 0.1 and E0 = – 0.0006, respectively. The system is initially in the electronic ground state in the adiabatic representation with the nuclear mass M = 2000 au and the nuclear wave functionThe corresponding Wigner distribution of eq 82 readswhere the center of the wave function, R0, is set to −3.8, −10, and −13 au for SAC, DAC, and ECR models, respectively. The width parameter α = 1. Initial momentum P0 is adjustable. The scattering probabilities of each channel in the adiabatic representation are investigated. For these three models, the TCFs are directly expressed and calculated in the adiabatic representation. The numerically exact results are produced by using Colbert and Miller’s version of the discrete variable representation (DVR) of ref.
+Figures 5 and 6 illustrate the scattering probability in the adiabatic representation for all Tully models versus P0. SH-1 performs reasonably for the SAC and DAC models. Although SH-2 and SH-3 are consistent with SH-1 in the large momentum region, they perform worse than SH-1 in the relatively small momentum region. For example, both SH-2 and SH-3 underestimate the transmission probability of the electronic ground state in the SAC and DAC models for small P0. Additionally, SH-2 even produces negative transmission probabilities for the electronic excited state. All NaF methods yield relatively more accurate results than SH-2 for the SAC and DAC models. For the more challenging ECR model, the transmission probabilities obtained from SH-1 and SH-3 show overall good agreement with numerically exact results. SH-2 and all NaF methods underestimate the transmission probabilities on the electronic ground state in the intermediate momentum region. NaF-cc also significantly overestimates the transmission probability on the electronic excited state in the intermediate momentum region, while SH-2, NaF-cc and NaF-cx exhibit negative probability issues. NaF-TW, NaF-TW2, NaF-HW and NaF-HW2 yield more accurate results than other NaF methods due to their positive semidefinite TCFs for population dynamics.
+Results of the SAC and DAC models. Panels (a1) and (b1): transmission
+probabilities on the adiabatic ground and excited state of the SAC
+model, respectively. Panels (c1) and (d1): transmission probabilities
+on the adiabatic ground and excited state of the DAC model, respectively.
+In panels (a1), (b1), (c1) and (d1), the green, blue, and cyan solid
+lines represent the results of NaF-cc, NaF-cx and NaF-TW, respectively.
+Panels (a2), (b2), (c2) and (d2) are similar to panels (a1), (b1),
+(c1) and (d1), respectively, but the cyan, pink, orange and magenta
+solid lines denote the results of NaF-TW, NaF-TW2, NaF-HW and NaF-HW2,
+respectively. Panels (a3), (b3), (c3) and (d3) are similar to panels
+(a1), (b1), (c1) and (d1), respectively, but the orange dashed lines,
+purple dashed lines, brown dashed lines and cyan solid lines denote
+the results of SH-1, SH-2, SH-3 and NaF-TW, respectively. The numerically
+exact results produced by DVR are demonstrated
+by black points in each panel.
+Results of the ECR models. Panels (a1) and (b1): transmission
+probabilities
+on the adiabatic ground and excited state, respectively. Panels (c1)
+and (d1): reflection probabilities on the adiabatic ground and excited
+state, respectively. In panels (a1), (b1), (c1) and (d1), the green,
+blue, and cyan solid lines represent the results of NaF-cc, NaF-cx
+and NaF-TW, respectively. Panels (a2), (b2), (c2) and (d2) are similar
+to panels (a1), (b1), (c1) and (d1), respectively, but the cyan, pink,
+orange and magenta solid lines denote the results of NaF-TW, NaF-TW2,
+NaF-HW and NaF-HW2, respectively. Panels (a3), (b3), (c3) and (d3)
+are similar to panels (a1), (b1), (c1) and (d1), respectively, but
+the orange dashed lines, purple dashed lines, brown dashed lines and
+cyan solid lines denote the results of SH-1, SH-2, SH-3 and NaF-TW,
+respectively. The numerically exact results produced by DVR are demonstrated by black points in each panel.
+In addition, we employ three anharmonic photodissociation models with three electronic states, developed by Miller and co-workers. The diagonal elements of the potential matrix in the diabatic representation are Morse potential functionswhile the diabatic coupling elements are Gaussian functions:All parameters for these three models are provided in ref and are also summarized in our pervious works. We present the results of only Model 2 in the main text, leaving the other two models in Section S7 of the Supporting Information. The initial values of the nuclear DOF with mass M = 20000 au are sampled from the Wigner distribution function:Here ω = 0.005 au and Re = 3.3 au for Model 2. The electronic DOFs are initially excited on the first electronic state. The numerically exact results are produced by DVR.
+Panels (a)-(h) of Figure 7 present the electronic population dynamics of Model 2 of the 3-state photodissociation models. Interestingly, population dynamics generated by SH-2, illustrated in panel (h) of Figure 7, exhibit unreasonable oscillations. These oscillations are due to the unphysical momentum reversal for the frustrated hops in the SH-2 algorithm. This can also be inferred from the nuclear properties. Panels (i)-(k) of Figure 7 illustrate the nuclear momentum distribution in the asymptotic region (t = 200 fs) (See Sub-Section S1-E of the Supporting Information of ref) for further details), where panel (k) shows that the nuclear momentum distribution of SH-2 has a greater proportion falling into the negative momentum region compared to those of SH-1 and NaF methods, indicating that the momentum reversal procedure affects the direction of nuclear momentum even in the long-time region. Note that SH-1 and all NaF methods shown here do not involve any momentum reversal, which consistently provide accurate descriptions for electronic population dynamics of this model. (The algorithm of SH-1 utilized in this work can be referred to Section S7 of the Supporting Information of ref The differences in performance of all NaF methods are marginal for the other two models, but all of them slightly outperform SH-1 and SH-2, as demonstrated in Section S7 of the Supporting Information.
+Results of Model 2 of the 3-state photodissociation
+models. In
+panels (a)-(h), the black, red and blue dashed lines represent population
+dynamics of states 1–3, respectively. Panel (a): NaF-cc. Panel
+(b): NaF-cx. Panel (c): NaF-TW. Panel (d): NaF-TW2. Panel (e): NaF-HW.
+Panel (f) NaF-HW2. Panel (g): SH-1. Panel (h): SH-2. Note that SH-3
+is not applicable for this 3-state model. The numerically exact results
+produced by DVR are demonstrated by
+solid lines with corresponding colors in panels (a)-(h). Panels (i)-(k)
+illustrate the nuclear momentum distribution at 200 fs. The green,
+blue, and cyan solid lines in panel (i) represent the results of NaF-cc,
+NaF-cx and NaF-TW, respectively. The cyan, pink, orange and magenta
+solid lines in panel (j) denote the results of NaF-TW, NaF-TW2, NaF-HW
+and NaF-HW2, respectively. The orange dashed lines, purple dashed
+lines and cyan solid lines in panel (k) denote the results of SH-1,
+SH-2 and NaF-TW, respectively. The black solid lines in panels (i)-(k)
+denote the numerically exact results produced by DVR.
+We further test a two-state anharmonic photodissociation model. The diagonal elements of the diabatic potential energy matrix are identical to states 1 and 3 of Model 2 of the 3-state photodissociation model, while the off-diagonal elements follow eq 85 with parameters A12 = A21 = 0.005 au, R12 = R21 = 3.34 au and α12 = α21 = 8 au. All other computational settings remain the same as those of Model 2 of the three-state photodissociation model. Figure 8 illustrates population dynamics of the first diabatic state and the nuclear momentum distribution at 200 fs of the 2-state photodissociation model. As shown in panels (h) and (i) of Figure 8, both population dynamics of SH-2 and that of SH-3 exhibit artificial oscillations, indicating that the reversal of momentum in the frustrated hopping event in the two SH algorithms leads to unphysical behavior for the two-state benchmark model. As demonstrated in panel (g) of Figure 8, SH-1 provides physically correct population transfer behavior, but the results considerably deviate from the exact data. In contrast, all NaF methods consistently produce more accurate results for population dynamics, as illustrated in panels (a)-(f) of Figure 8. All NaF methods and SH methods generate comparable reasonable nuclear momentum distribution in the asymptotic region.
+Results of the 2-state photodissociation model. In panels (a)-(i),
+the black and red dashed lines represent population dynamics of states
+1 and 2, respectively. Panel (a): NaF-cc. Panel (b): NaF-cx. Panel
+(c): NaF-TW. Panel (d): NaF-TW2. Panel (e): NaF-HW. Panel (f) NaF-HW2.
+Panel (g): SH-1. Panel (h): SH-2. Panel (i): SH-3. The numerically
+exact results produced by DVR are demonstrated
+by solid lines with corresponding colors in panels (a)-(i). Panels
+(j)-(l) illustrate the nuclear momentum distribution at 200 fs. The
+green, blue, and cyan solid lines in panel (j) represent the results
+of NaF-cc, NaF-cx and NaF-TW, respectively. The cyan, pink, orange
+and magenta solid lines in panel (k) denote the results of NaF-TW,
+NaF-TW2, NaF-HW and NaF-HW2, respectively. The orange dashed lines,
+purple dashed lines, brown dashed lines and cyan solid lines in panel
+(l) denote the results of SH-1, SH-2, SH-3 and NaF-TW, respectively.
+The black solid lines in panels (j)-(l) denote the numerically exact
+results produced by DVR.
+
+System-Harmonic Bath Models
+System-harmonic bath models are widely employed to study condensed-phase dissipative processes, quantum phase transitions, quantum thermodynamics, heat/energy transport/relaxation properties, and electron/proton transfer processes in physics, chemical, biological, materials, quantum computation and quantum information systems.− These models also serve as benchmark problems for testing nonadiabatic dynamics methods,− because numerically exact results are often available by real-time path integral methods,−− (ML-)MCTDH,− TD-DMRG,− HEOM,−etc. The Hamiltonian operator can be divided into three parts: the system part, the harmonic bath, and the bilinear coupling term:
+A typical example is the 2-state spin-boson model, whose Hamiltonian is of the formwhere σ̂z = |1⟩⟨1| – |2⟩⟨2| and σ̂x = |1⟩⟨2| + |2⟩⟨1| are the corresponding components of the Pauli operators. Another type is the site-exciton model, which readswhere Nb = Nnuc/F represents the number of bath modes on each site/state.
+The frequencies, {ωj}, and coefficients, {cj}, of bath DOFs are often obtained by discretizing the spectral density as first suggested by Makri in ref. For the Ohmic spectral density  with Kondo parameter α and cutoff frequency ωc, the discretization scheme is often presented asSimilarly, the Debye spectral density  with reorganization energy λ and characteristic frequency ωc is discretized asMore recent progress on obtaining the harmonic-bath parameters from molecular dynamics simulations has been discussed in ref. The initial density is often set as the tensor product between the density of system and the thermal equilibrium density of bath DOFs:We first utilize four spin-boson models with Ohmic spectral density at low temperature β = 5. The values of the Kondo parameter and the cutoff frequency are listed in α ∈ {0.1, 0.4} and ωc ∈ {1, 2.5}, and the energy bias and the coupling are set to ε = Δ = 1. The system is initially in state |1⟩ (that is, ρ̂s = |1⟩⟨1|). 300 bath DOFs are utilized for each spin-boson model. These models have been tested in refs,,, and, where the numerically exact results produced by extended hierarchy equations of motion (eHEOM)− are available. In principle, one can also produce numerically exact data from other benchmark methods. Figures 9 and 10 illustrate electronic population and coherence dynamics of all spin-boson models, respectively. The results generated by SH methods deviate from the exact data since relatively short time, especially for the models with higher cutoff frequencies and stronger system-bath coupling. In comparison, the data produced by NaF methods exhibit better agreements with the numerically exact results in all cases.
+Results
+of the population difference D(t) = ρ11(t) – ρ22(t) of spin-boson models with Ohmic spectral
+density at β = 5. The first to fourth rows illustrate the models
+with parameters {α = 0.1, ωc = 1}, {α = 0.4, ωc = 1},
+{α = 0.1, ωc = 2.5} and {α
+= 0.4, ωc = 2.5}, respectively.
+In panels (a1), (b1), (c1) and (d1), the green, blue and cyan solid
+lines represent the results produced by NaF-cc, NaF-cx and NaF-TW,
+respectively. Panels (a2), (b2), (c2) and (d2), the cyan, pink, orange
+and magenta solid lines denote the results produced by NaF-TW, NaF-TW2,
+NaF-HW and NaF-HW2, respectively. In panels (a3), (b3), (c3) and (d3),
+the orange dashed lines, purple dashed lines, brown dashed lines and
+cyan solid lines denote the results produced by SH-1, SH-2, SH-3 and
+NaF-TW, respectively. The numerically exact results produced by eHEOM− are demonstrated by black points
+in each panel.
+Similar to Figure 9, but illustrates the results of the modulus of the off-diagonal
+term |ρ12(t)|.
+We also consider two multistate site-exciton models with Debye spectral density, which are derived from real chemical systems. The first model is the 7-state Fenna-Matthews-Olson (FMO) model, which describes the exciton energy transfer processes within the light-harvesting complex in green sulfur bacteria.− The system Hamiltonian is given byThe parameters of the spectral density are λ = 35 cm–1 and ωc = 106.14 cm–1. We employ 50 bath modes for each state. The first state of the system is initially occupied, with temperature set at T = 77 K. Numerically exact data are obtained from TD-DMRG calculations,− using the same discretization scheme to establish a Hamiltonian operator for the FMO model, which are also employed by trajectory-based methods. This ensures that all methods are fairly compared for a well-defined quantum mechanical Hamiltonian operator. The second case is a 3-state model used to describe the singlet fission (SF) of pentacene. The system Hamiltonian iswhere the three states represent the high-energy singlet state (S1), the charge-transfer state (CT), and the multiexciton state (TT), respectively. The parameters of the Debye spectral density are λ = 0.1 eV and ωc = 0.18 eV. 200 bath modes are utilized for each state. The system is initially located at the S1 state, and the temperature is set at 300 K. The numerically exact data for the SF model are obtained from HEOM.−
+Figures 11 and 12 present the results of electronic population and coherence dynamics of the 7-state FMO model, respectively. We evolve the trajectories up to 10000 fs, approaching the long-time steady-state region. As shown in Figure 11(g) and Figure 12(g), SH-1 is not able to produce reasonable results for this model. Interestingly, although SH-2 outperforms SH-1 in the first 1000 fs, the long-time predictions by SH-2 are not reasonable. SH-2 generates the unphysical attenuation rather than the plateau for the population of the third state, as well as for the coherence term |ρ34| after 2000 fs. This indicates that SH-2 does not rationally describe the steady-state region in the long-time limit. We note that the SH-2 results shown in Figures 11 and 12 differ from those presented in ref. This discrepancy arises because ref used the classical Boltzmann distribution instead of the Wigner distribution for sampling the initial values of nuclear DOFs, thus excluding any nuclear quantum effects (for bath modes) during the simulations. TD-DMRG suggests that quantum effects in nuclear dynamics are not negligible for the FMO model at 77 K. Even when only electronic dynamics is investigated, nuclear (bath) modes should be treated quantum mechanically to predict time-dependent electronic properties for the right reason. Compared to the exact data produced by TD-DMRG using the identical Hamiltonian operator (with the same number of bath modes), SH-2 fails to describe the correct long-time asymptotic behavior in the steady-state region when nuclear quantum effects are not neglected. In comparison, all NaF methods, with nuclear (bath) DOFs consistently sampled from the Wigner distribution, produce overall reasonable results and outperform the SH methods. While NaF-cc and NaF-cx yield more accurate population dynamics in the first 1000 fs, NaF-TW, NaF-TW2, NaF-HW, and NaF-HW2 predict more reasonable long-time population dynamics. In addition, NaF-TW, NaF-TW2, NaF-HW, and NaF-HW2 exhibit better performance than other NaF methods in describing the coherence dynamics, especially in the long-time region (after 1000 fs).
+Results of population
+dynamics of the 7-state FMO model at 77 K.
+50 nuclear (bath) modes in the discretization scheme are employed
+for each state in the simulations. In each panel, the red, blue, green,
+orange, purple, brown and cyan solid lines represent the population
+of states 1–7, respectively. Panel (a): NaF-cc. Panel (b):
+NaF-cx. Panel (c): NaF-TW. Panel (d): NaF-TW2. Panel (e): NaF-HW.
+Panel (f) NaF-HW2. Panel (g): SH-1. Panel (h): SH-2. Note that SH-3
+is not applicable for this 7-state model. The numerically exact results
+produced by TD-DMRG− for the same effective Hamiltonian in the discretization scheme
+are demonstrated by dashed lines with corresponding colors in each
+panel.
+Results of the coherence dynamics of the 7-state FMO model
+at 77
+K. 50 nuclear (bath) modes in the discretization scheme are employed
+for each state in the simulations. In each panel, the red, blue, green,
+and purple solid lines represent the moduli of the off-diagonal terms
+ρ12, ρ13, ρ15 and
+ρ34, respectively. Panel (a): NaF-cc. Panel (b):
+NaF-cx. Panel (c): NaF-TW. Panel (d): NaF-TW2. Panel (e): NaF-HW.
+Panel (f) NaF-HW2. Panel (g): SH-1. Panel (h): SH-2. Note that SH-3
+is not applicable for this 7-state model. The numerically exact results
+produced by TD-DMRG− for the same effective Hamiltonian in the discretization scheme
+are demonstrated by dashed lines with corresponding colors in each
+panel.
+Figures 11 and 12 imply the importance of nuclear nonadiabatic force for correctly describing the quantum mechanical behavior of both electronic and nuclear motion in the model system. Since the mixed quantum-classical limit (where nuclear DOFs are treated classically and electronic DOFs are treated quantum mechanically) is not defined without any ambiguity for nonadiabatic systems where nuclear motion and electronic motion are coupled, caution should often be taken when nuclear DOFs are described by classical mechanics in either thermodynamics or nonadiabatic transition dynamics. For instance, when the number of path integral beads becomes one in the adiabatic representation for coupled multi-electronic-state systems, nuclear DOFs are treated classically, but such a mixed quantum-classical limit does not always leads to consistent results for electronic thermodynamic properties.
+The results of 7-state FMO model at zero temperature (0 K) are presented in Section S7 of the Supporting Information, which provides a significant challenging test for trajectory-based nonadiabatic dynamics methods. When the initial nuclear distribution is described by classical mechanics for this case, it does not yield any meaningful results for NaF, SH, or other independent-trajectory-based nonadiabatic dynamics methods. Even in such a challenging case, NaF methods also lead to reasonably good results (in comparison to the TD-DMRG results) and consistently outperform SH methods. The zero-temperature benchmark test case of the effective Hamiltonian in the discretization scheme of the FMO model in Section S7 of the Supporting Information is also heuristic. The initial nuclear condition of many practical ab initio photodynamics simulations is set to be the ground vibrational state of an electronic state (e.g., often the ground adiabatic electronic state or a diabatic state) of the real multidimensional molecular system before photoexcitation. Such an initial condition is equivalent to the zero-temperature limit for nuclear DOFs on a single adiabatic or diabatic state PES of a complex molecular system.
+Figure 13 illustrates electronic population dynamics of the SF model. Similar to the FMO model, SH-2 also produces noticeable attenuation of the population dynamics of the TT state in the long-time dynamics region, in comparison to exact results. In contrast to SH methods, NaF methods produce overall more reasonable results.
+Population dynamics of the SF model. 200 nuclear
+modes are employed
+for each state in the simulations. In each panel, the black, red and
+cyan solid lines represent the population of the S1, TT and CT state,
+respectively. Panel (a): NaF-cc. Panel (b): NaF-cx. Panel (c): NaF-TW.
+Panel (d): NaF-TW2. Panel (e): NaF-HW. Panel (f) NaF-HW2. Panel (g):
+SH-1. Panel (h): SH-2. Note that SH-3 is not applicable for this 3-state
+model. The numerically exact results produced by HEOM− are demonstrated by dashed lines with corresponding colors in each
+panel.
+
+Cavity Quantum Electrodynamics Processes
+We employ the atom-in-cavity models in refs and to test NaF methods on cavity quantum electrodynamics (cQED) processes.,,− Similar to the system-bath models, the total Hamiltonian of the atom-in-cavity models can be decomposed into three parts. The atomic part is expensed by its eigenstateswhere εn denotes the n-th corresponding atomic energy level. The optical field part readswhere âj† (âj) denotes the creation (annihilation) operator of the j-th optical field mode, and ωj represents the corresponding photonic frequency. The coupling term is represented using the dipole approximation aswhere μnm denotes the transitional dipole moment between the atomic eigenstates |n⟩ and |m⟩, and  denotes the atom-optical field interaction. Here L = 2.362 × 105 au, ε0 and r0 = L/2 denote the volume length of the cavity, the vacuum permittivity, and the location of the atom, respectively. We utilize Nnuc = 400 optical field modes with the frequency ωj = jπc/L, where c = 137.036 au denotes the light speed in vacuum.
+Two models are considered in this work, one is the two-state model with the atomic energy levels ε1 = – 0.6738, ε2 = – 0.2798, and the dipole moments μ12 = – 1.034. The other model is the three-state model, which extends from the two-state model with an additional atomic energy level ε3 = – 0.1547 and dipole moment μ23 = – 2.536 (all in atomic units). The system is initially located at the highest atomic eigenstate, while each optical field mode is in the corresponding optical vacuum state (ground state).
+When trajectory-based methods are employed for simulating these two models, it is more convenient to recast the optical field modes by their canonical coordinates and momentum in the diabatic representationand treating {R̂j, P̂j} as continuous nuclear DOFs. This implies that one can map the optical field modes them onto the Wigner phase space and employ trajectory-based methods to study the evolution. Geva and co-workers have applied the Meyer-Miller mapping model approach to study the same systems. Some more tests have also been performed in refs,,,, and. Here we compare the results obtained by the NaF and SH methods with the numerically exact results yielded by truncated configuration interaction in refs and.
+Figures 14 and 15 illustrate the results of all atom-in-cavity models. All SH methods exhibit poor performance in both the short-time spontaneous emission process and the re-absorption/re-emission process at around 1800 au. In contrast, all NaF methods offer a much better description of spontaneous emission as well as the re-absorption/re-emission processes, and predict more accurate population results in the plateau region.
+Population
+dynamics of the 2-state atom-in-cavity model with 400
+standing wave modes. In each panel, the black and red dashed lines
+represent the population of the atomic ground and excited state, respectively.
+Panel (a): NaF-cc. Panel (b): NaF-cx. Panel (c): NaF-TW. Panel (d):
+NaF-TW2. Panel (e): NaF-HW. Panel (f) NaF-HW2. Panel (g): SH-1. Panel
+(h): SH-2. Panel (i): SH-3. The numerically exact results produced
+by truncated configuration interaction (taken from refs and) are demonstrated by
+solid lines with corresponding colors in each panel.
+Population dynamics of the 3-state atom-in-cavity model
+with 400
+standing wave modes. In each panel, the black, red and blue dashed
+lines represent the population of the first, second and third atomic
+state, respectively. Panel (a): NaF-cc. Panel (b): NaF-cx. Panel (c):
+NaF-TW. Panel (d): NaF-TW2. Panel (e): NaF-HW. Panel (f) NaF-HW2.
+Panel (g): SH-1. Panel (h): SH-2. Note that SH-3 is not applicable
+for this 3-state model. The numerically exact results produced by
+truncated configuration interaction (taken from refs and) are demonstrated by
+solid lines with corresponding colors in each panel.
+
+Conclusions
+We have recently developed NaF, a conceptually novel nonadiabatic dynamics approach with independent trajectories on quantum phase space with coordinate-momentum variables, where CPS is used for discrete electronic-state DOFs and Wigner phase space is employed for nuclear DOFs. In the paper we develop an exact integrator for updating the nuclear kinematic momentum from the contribution of the effective nonadiabatic force for a finite time-step, which is included in the efficient algorithm for NaF in the adiabatic representation described in Section 2.3. When the diabatic representation is available, two additional efficient algorithms that take advantage of the diabatic representation are proposed in Sections S2–S3 of the Supporting Information. We implement these efficient NaF algorithms with MPI and Athread for the heterogeneous platform.
+We show a few expressions of (electronic) TCFs in quantum phase space representation, then apply them to NaF. These NaF methods are employed to investigate a suite of benchmark model systems, ranging from low-dimensional gas-phase models to condensed-phase complex systems, and are compared with numerically exact approaches and three SH methods. NaF methods are robust and competent in presenting reasonable descriptions for both electronic and nuclear motion in the nonadiabatic coupling region as well as the asymptotic region. As demonstrated in Figures 1–4 for the LVCMs for molecular CIs, Figures 5 and 6 for one-dimensional scattering models of Tully, and Figure 7 for one-dimensional three-state photodisassociation models of Miller and co-workers and Figure 8 for a two-state anharmonic model, the overall performance of NaF methods is comparable to that of SH methods for gas-phase systems. More importantly, NaF methods are superior to SH methods in high-dimensional (condensed-phase) systems where the nonadiabatic coupling region is wide or the states stay coupled all the time, as shown in Figures 9 and 10 for spin-boson models, Figures 11 and 12 for the 7-site FMO model, Figure 13 for the three-state SF model, and Figures 14 and 15 for cavity-induced chemical processes. The benchmark tests shown in the present paper as well as in ref) and Section S7 of the Supporting Information of ref ( imply that, although the phase space expressions of (electronic) TCFs may also be used with various surface hopping or Ehrenfest-like dynamics methods, NaF should always be highly recommended for its superiority.
+The suite of benchmark model tests also indicates that the performance of NaF is relatively insensitive to the phase space expression of electronic TCFs. In addition, Figure 16 investigates the Holstein model for the carrier mobility of organic semiconductors, which one of us already studied in ref in 2020. The isomorphism of ref suggests that the Holstein model can be studied by NaF and other nonadiabatic dynamics methods. Figure 16 compares the NaF results related to the electronic coherence-coherence TWF and those benchmark results produced by TD-DMRG, for the same initial condition in quantum mechanics. Figure 16 shows that NaF yields reasonable results in a wide temperature regime. In addition, as shown in Figure S4 of Section S3 of the Supporting Information of ref, NaF methods are capable of describing the electron transfer rate that is also related to the electronic coherence-coherence TWF, which reproduce the Marcus theory− in its valid region. Among all the NaF methods, NaF-TW is recommended due to its positive semidefinite TCF of population dynamics and the overall reasonable accuracy for various model systems. It is expected that NaF-TW can be performed for simulations of nonadiabatic transition processes of real molecular systems with ab initio on-the-fly calculations,− or machine learning approaches.− It will be intriguing to use NaF to study electronically (or vibrationally) nonadiabatic processes involving numerous DOFs, such as electron/hole/positron/proton/hydrogen transfer and matter/energy transport in bulk or at interfaces in complex systems, especially where the nonadiabatic coupling region is broad, in chemistry, physics, materials, biology, and so forth. A simulation package for NaF and other nonadiabatic molecular dynamics methods will be reported by us soon.
+Benchmark
+results of μ of the one-dimensional Holstein model
+in ref as functions
+of temperature. In panel (a), the green hollow circles with green
+dashed lines, blue hollow squares with blue dashed lines and cyan
+triangles with cyan solid lines represent the results of NaF-cc; NaF-cx
+and NaF-TW, respectively. In panel (b), the cyan triangles with cyan
+solid lines, pink hollow squares with pink dashed lines, blue squares
+with blue solid lines, red points with red dashed lines represent
+the results of NaF-TW, NaF-TW2, NaF-HW and NaF-HW2, respectively.
+In each panel, black points with black solid lines denote the results
+of TD-DMRG. (Please see more details in Section S5 of the Supporting Information.) Figure S2(c) of the Supporting Information shows that, when the initial
+nuclear condition is sampled by classical mechanics, the results significantly
+deviate from the TD-DMRG results. It suggests that nuclear quantum
+effects are important for this system. Consistent definitions of the
+electronic coherence-coherence TCF for multistate systems, which satisfy
+the frozen nuclei limit, are not available for these SH methods in
+the literature. So it will be fair to compare SH methods to TD-DMRG and NaF methods
+in the future.
+We note that, despite its overall robust superior performance for various nonadiabatic/composite systems, NaF is not adequate to describe deep quantum tunneling effects or true quantum recurrence/coherence/resonance effects, as implied in Figure S7 of Section S8 of the Supporting Information. This is because NaF only involves the independent trajectory without the phase. When the NaF trajectory with its associated phase is included in the semiclassical analogy approach or time-dependent multiconfiguration approach, it will offer potential tools for faithfully describing these more challenging quantum mechanical effects with more computational effort, although it is expected that such effects are often quenched in large molecular systems.
+Finally, we suggest that the suite of gas phase and condensed phase benchmark models in the main text and the Supporting Information of the paper should be important for testing various developed or new practical nonadiabatic molecular dynamics methods in the community. Because numerically exact results are available for these benchmark models that represent various regions (or limits) of nonadiabatic transition processes, it is clean and clear to illustrate whether both electronic motion and nuclear quantum effects are reasonably described by the practical method that is designed for ab initio nonadiabatic quantum molecular dynamics. It will also be useful to include more typical representative benchmark tests in the suite. Such a suite will help develop consistent practical approaches that faithfully capture the main features of the quantum mechanical behavior of both electrons and nuclei in nonadiabatic transition processes in real complex molecular systems.
+
+Supporting Information Available
+Numerical integrator for effective nonadiabatic force of NaF; Further details of the numerical integrator of NaF; Nuclear force of NaF in the diabatic representation; Derivation of the covariant-covariant TCF with action-angle variables; Simulation details of one-dimensional Holstein model; Details of TD-DMRG simulations; Additional numerical results for the 3-state photodissociation models and for the FMO model at zero temperature; Transition path flight time simulation; Relation between the EOMs of NaF and the exact EOMs in the generalized coordinate-momentum phase space formulation of quantum mechanics; Electronic TCF of the weighted mapping model with the Born-Oppenheimer limit (PDF)
+The Supporting Information is available free of charge at https://pubs.acs.org/doi/10.1021/acs.jctc.5c00181.
+
+Supplementary Material
+
+Author Contributions
+§ B.W., B.L., and X.H. contributed equally.
+National Science Fund for Distinguished Young Scholars (Grant No. 22225304)
+The authors declare no competing financial interest.
+
+Abbreviations and Notations
+Abbreviation and Notations
+Complete Terminology
+BO
+Born–Oppenheimer
+C̅nm, kl(t)
+time-dependent normalization factor tensor
+cc
+covariant-covariant
+CMM
+classical mapping model
+CMMcv
+classical mapping model with commutator variables
+CPS
+constraint coordinate-momentum phase space
+cx
+covariant-noncovariant
+dμ(x, p)
+integral measure of electronic phase space variables
+Dnm, kl(t)
+time correlation function of electronic degrees of freedom
+Dnm, kl(t) (n = m, k = l)
+(electronic) population-population time correlation function
+Dnm, kl(t) (n = m, k ≠ l)
+(electronic) population-coherence time correlation function
+Dnm, kl(t) (n ≠ m, k = l)
+(electronic) coherence-population time correlation function
+Dnm, kl(t) (n ≠ m, k ≠ l)
+(electronic) coherence-coherence time correlation function
+DAC
+dual avoided crossing
+DVR
+discrete variable representation
+DOF
+degree of freedom
+ECR
+extended coupling region
+eHEOM
+extended hierarchy equations of motion
+EOM
+equation of motion
+FMO
+Fenna-Matthews-Olson
+g
+vector x + ip
+γ
+parameter of constraint coordinate-momentum phase space
+Γ
+commutator matrix of electronic degrees of freedom
+HNaF(R, P, ρ̃)
+mapping energy on quantum phase space of nonadiabatic field
+HEOM
+hierarchy equations of motion
+HWF
+hill window function
+K̂ele(x, p, Γ)
+mapping kernel of electronic degrees of freedom
+K̂ele–1(x, p, Γ)
+inverse mapping kernel of electronic degrees of freedom
+K̂nuc(R, P)
+mapping kernel of nuclear degrees of freedom
+K̂nuc–1(R, P)
+inverse mapping kernel of nuclear degrees of freedom
+LSC-IVR
+linearized semiclassical initial value representation
+LVCM
+linear vibronic coupling model
+MCTDH
+multiconfiguration time-dependent Hartree
+ML-MCTDH
+multilayer multiconfiguration time-dependent Hartree
+MM
+Meyer-Miller
+NaF
+nonadiabatic field
+NaF-cc
+nonadiabatic field with covariant-covariant time correlation functions
+NaF-cx
+nonadiabatic field with covariant-noncovariant time correlation functions
+NaF-HW
+nonadiabatic field with hill window functions
+NaF-HW2
+nonadiabatic field with hill window functions-2
+NaF-TW
+nonadiabatic field with triangle window functions
+NaF-TW2
+nonadiabatic field with triangle window functions-2
+PES
+potential energy surface
+Q̅nm,kl(x, p, Γ; γ; t)
+integrand of electronic time correlation function in constraint coordinate-momentum phase space representation
+ρ̃(x̃, p̃, Γ̃)
+effective electronic density matrix in the adiabatic representation
+RHS
+right-hand side
+manifold of constraint coordinate-momentum phase space
+SAC
+single avoided crossing
+SF
+singlet fission
+SH
+surface hopping
+SQC
+symmetrical quasi-classical
+TCF
+time correlation function
+TD-DMRG
+time-dependent density matrix renormalization group
+TWF
+triangle window function.
+U(R, Δt)
+electronic propagator in the diabatic representation
+Ũ(R, Δt)
+electronic propagator in the adiabatic representation
+w(γ)
+normalized weight (quasi-probability distribution) function of constraint coordinate-momentum phase space
+
+References
+Development of Multiscale Models for Complex Chemical Systems: From H+H2 to Biomolecules (Nobel Lecture)
+Zur Quantentheorie Der Molekeln
+Quantum Mechanics and Group Theory
+On the Quantum Correction for Thermodynamic Equilibrium
+On the Principles of Elementary Quantum Mechanics
+Quantum Mechanics as a Statistical Theory
+Some Formal Properties of the Density Matrix
+Generalized Phase-Space Distribution Functions
+Unified Formulation of Phase Space Mapping Approaches for Nonadiabatic Quantum Dynamics
+New Phase Space Formulations and Quantum Dynamics Approaches
+Theory and Application of the Quantum Phase-Space Distribution Functions
+Real Time Correlation Function in a Single Phase Space Integral Beyond the Linearized Semiclassical Initial Value Representation
+An Approach for Generating Trajectory-Based Dynamics Which Conserves the Canonical Distribution in the Phase Space Formulation of Quantum Mechanics. I. Theories
+An Approach for Generating Trajectory-Based Dynamics Which Conserves the Canonical Distribution in the Phase Space Formulation of Quantum Mechanics. II. Thermal Correlation Functions
+Two More Approaches for Generating Trajectory-Based Dynamics Which Conserves the Canonical Distribution in the Phase Space Formulation of Quantum Mechanics
+Phase Space Representation of Quantum Dynamics
+Postmodern Quantum-Mechanics
+Semiclassical Approximations for the Calculation of Thermal Rate Constants for Chemical Reactions in Complex Molecular Systems
+A Simple Model for the Treatment of Imaginary Frequencies in Chemical Reaction Rates and Molecular Liquids
+Recent Advances in the Linearized Semiclassical Initial Value Representation/Classical Wigner Model for the Thermal Correlation Function
+A New Quantum Transition State Theory
+Quantum Transition State Theory: Perturbation Expansion
+Quantum Time Correlation Functions and Classical Coherence
+A Relationship between Semiclassical and Centroid Correlation Functions
+Practical Evaluation of Condensed Phase Quantum Correlation Functions: A Feynman-Kleinert Variational Linearized Path Integral Method
+Semiclassical Influence Functionals for Quantum Systems in Anharmonic Environments
+Spiers Memorial Lecture - Quantum and Semiclassical Theory of Chemical Reaction Rates
+Forward-Backward Semiclassical Dynamics without Prefactors
+Forward-Backward Semiclassical Dynamics with Linear Scaling
+Forward-Backward Semiclassical Simulation of Dynamical Properties in Liquids
+Simulation of Dynamical Properties of Normal and Superfluid Helium
+Long-Time Behaviour of Quantized Distributions in Forward–Backward Semiclassical Dynamics
+Symmetries and Detailed Balance in Forward–Backward Semiclassical Dynamics
+Path Integral Liouville Dynamics for Thermal Equilibrium Systems
+Further Study of Path Integral Liouville Dynamics
+Path Integral Liouville Dynamics: Applications to Infrared Spectra of Oh, Water, Ammonia, and Methane
+Path Integral Liouville Dynamics Simulations of Vibrational Spectra of Formaldehyde and Hydrogen Peroxide
+Machine Learning Phase Space Quantum Dynamics Approaches
+A New Class of Ensemble Conserving Algorithms for Approximate Quantum Dynamics: Theoretical Formulation and Model Problems
+Application of a New Ensemble Conserving Quantum Dynamics Simulation Algorithm to Liquid Para-Hydrogen and Ortho-Deuterium
+Approximating Matsubara Dynamics Using the Planetary Model: Tests on Liquid Water and Ice
+Coherent State Representation of Thermal Correlation Functions with Applications to Rate Theory
+Entanglement Dynamics with a Trajectory-Based Formulation
+Quantum Tunneling Dynamics Using Entangled Trajectories: General Potentials
+Simulation of Quantum Processes Using Entangled Trajectory Molecular Dynamics
+Quantum Tunneling Using Entangled Classical Trajectories
+Using the Thermal Gaussian Approximation for the Boltzmann Operator in Semiclassical Initial Value Time Correlation Functions
+Linearized Semiclassical Initial Value Time Correlation Functions Using the Thermal Gaussian Approximation: Applications to Condensed Phase Systems
+Test of the Consistency of Various Linearized Semiclassical Initial Value Time Correlation Functions in Application to Inelastic Neutron Scattering from Liquid Para-Hydrogen
+Linearized Semiclassical Initial Value Time Correlation Functions with Maximum Entropy Analytic Continuation
+Quantum Dynamical Effects in Liquid Water: A Semiclassical Study on the Diffusion and the Infrared Absorption Spectrum
+Insights in Quantum Dynamical Effects in the Infrared Spectroscopy of Liquid Water from a Semiclassical Study with an Ab Initio-Based Flexible and Polarizable Force Field
+A Semiclassical Study of the Thermal Conductivity of Low Temperature Liquids
+Vibrational Energy Relaxation in Liquid Oxygen from a Semiclassical Molecular Dynamics Simulation
+Semiclassical Theory of Vibrational Energy Relaxation in the Condensed Phase
+On the Calculation of Vibrational Energy Relaxation Rate Constants from Centroid Molecular Dynamics Simulations
+Vibrational Energy Relaxation Rates Via the Linearized Semiclassical Approximation: Applications to Neat Diatomic Liquids and Atomic-Diatomic Liquid Mixtures
+Vibrational Energy Relaxation of Polyatomic Molecules in Liquid Solution Via the Linearized Semiclassical Method
+Vibrational Energy Relaxation Rates of H2 and D2 in Liquid Argon Via the Linearized Semiclassical Method
+Quantum Density Fluctuations in Liquid Neon from Linearized Path-Integral Calculations
+Feynman-Kleinert Linearized Path Integral (FK-LPI) Algorithms for Quantum Molecular Dynamics, with Application to Water and He(4)
+Static and Dynamic Quantum Effects in Molecular Liquids: A Linearized Path Integral Description of Water
+Determination of the Van Hove Spectrum of Liquid He(4): An Application of the Feymnan-Kleinert Linearized Path Integral Methodology
+Critical Role of Quantum Dynamical Effects in the Raman Spectroscopy of Liquid Water
+Forward-Backward Initial Value Representation for Semiclassical Time Correlation Functions
+The Semiclassical Initial Value Representation: A Potentially Practical Way for Adding Quantum Effects to Classical Molecular Dynamics Simulations
+Quantum Dynamics of Complex Molecular Systems
+Including Quantum Effects in the Dynamics of Complex (I.E., Large) Molecular Systems
+Systematic Improvement of Initial Value Representations of the Semiclassical Propagator
+Monte Carlo Method for Evaluating the Quantum Real Time Propagator
+Optimization of the Semiclassical Initial Value Representation of the Exact Quantum-Mechanical Real Time Propagator
+Generalized Liouville Time-Dependent Perturbation Theory
+Excitons in Nanoscale Systems
+Conical Intersection Dynamics of the Primary Photoisomerization Event in Vision
+Lessons from Nature About Solar Light Harvesting
+Singlet Fission
+Nonadiabatic Chemical Dynamics in Intermediate and Intense Laser Fields
+Aggregation-Induced Emission: Together We Shine, United We Soar!
+Coherent Wavepackets in the Fenna-Matthews-Olson Complex Are Robust to Excitonic-Structure Perturbations Caused by Mutagenesis
+Highly Efficient Blue Fluorescent Oleds Based on Upper Level Triplet–Singlet Intersystem Crossing
+Manipulating Matter by Strong Coupling to Vacuum Fields
+Phonon-Assisted up-Conversion Photoluminescence of Quantum Dots
+Essential Challenges and New Opportunities in the Investigation of Excited State Structure and Dynamics for Complex Systems
+Role of Conical Intersections in Molecular Spectroscopy and Photoinduced Chemical Dynamics
+Equation-of-Motion Methods for the Calculation of Femtosecond Time-Resolved 4-Wave-Mixing and N-Wave-Mixing Signals
+Nonadiabatic Quantum Chemistry-Past, Present, and Future
+Multimode Vibronic Coupling Effects in Molecules
+Classical and Quantum Light-Induced Non-Adiabaticity in Molecular Systems
+Adiabatic and Quasidiabatic States in a Gauge Theoretical Framework
+Isomerization through Conical Intersections
+Seaming Is Believing
+Ab Initio Nonadiabatic Quantum Molecular Dynamics
+Fundamental Approaches to Nonadiabaticity: Toward a Chemical Theory Beyond the Born-Oppenheimer Paradigm
+Nonadiabatic Charge Dynamics in Novel Solar Cell Materials
+Recent Advances and Perspectives on Nonadiabatic Mixed Quantum-Classical Dynamics
+Nonadiabatic Dynamics: The SHARC Approach
+The Hierarchical and Perturbative Forms of Stochastic Schrodinger Equations and Their Applications to Carrier Dynamics in Organic Materials
+Theoretical Perspectives on Non-Born-Oppenheimer Effects in Chemistry
+Classical Molecular Dynamics Simulation of Electronically Non-Adiabatic Processes
+Delocalized Excitons in Natural Light-Harvesting Complexes
+Quantum Decoherence and the Isotope Effect in Condensed Phase Nonadiabatic Molecular Dynamics Simulations
+Breaking the Size Limitation of Nonadiabatic Molecular Dynamics in Condensed Matter Systems with Local Descriptor Machine Learning
+Path Integrals for Dissipative Systems by Tensor Multiplication. Condensed Phase Quantum Dynamics for Arbitrarily Long Time
+Tensor Propagator for Iterative Quantum Time Evolution of Reduced Density Matrices. I. Theory
+Tensor Propagator for Iterative Quantum Time Evolution of Reduced Density Matrices. II. Numerical Methodology
+Numerical Path-Integral Techniques for Long-Time Dynamics of Quantum Dissipative Systems
+Quantum-Classical Path Integral: A Rigorous Approach to Condensed Phase Dynamics
+Modular Path Integral Methodology for Real-Time Quantum Dynamics
+Small Matrix Path Integral for System-Bath Dynamics
+Small Matrix Disentanglement of the Path Integral: Overcoming the Exponential Tensor Scaling with Memory Length
+Small Matrix Path Integral with Extended Memory
+Two-Tier Modular Anharmonic Small Matrix Path Integral with Composite Spin-Boson Baths
+Parsing the Influence Functional: Harmonic Bath Mapping and Anharmonic Small Matrix Path Integral
+Kink Sum for Long-Memory Small Matrix Path Integral Dynamics
+Comment on Unified Framework for Open Quantum Dynamics with Memory
+Pathsum: A C++ and Fortran Suite of Fully Quantum Mechanical Real-Time Path Integral Methods for (Multi-)System Plus Bath Dynamics
+Time Evolution of a Quantum System in Contact with a Nearly Gaussian-Markoffian Noise Bath
+Hierarchical Approach Based on Stochastic Decoupling to Dissipative Systems
+Exact Quantum Master Equation Via the Calculus on Path Integrals
+Stochastic Description of Quantum Open Systems: Formal Solution and Strong Dissipation Limit
+A Hybrid Stochastic Hierarchy Equations of Motion Approach to Treat the Low Temperature Dynamics of Non-Markovian Open Quantum Systems
+Extended Hierarchy Equation of Motion for the Spin-Boson Model
+Theory of Open Quantum Systems with Bath of Electrons and Phonons and Spins: Many-Dissipaton Density Matrixes Approach
+Dissipaton Equation of Motion for System-and-Bath Interference Dynamics
+Dissipaton Dynamics Theory Versus Quantum Master Equations
+Equilibrium and Transient Thermodynamics: A Unified Dissipaton-Space Approach
+Quantum Dissipation with Nonlinear Environment Couplings: Stochastic Fields Dressed Dissipaton Equation of Motion Approach
+Quantum Mechanics of Open Systems: Dissipaton Theories
+The Multi-Configurational Time-Dependent Hartree Approach
+Self-Consistent Hybrid Approach for Complex Systems: Application to the Spin-Boson Model with Debye Spectral Density
+Multilayer Formulation of the Multiconfiguration Time-Dependent Hartree Theory
+Multilayer Multiconfiguration Time-Dependent Hartree Theory
+Using the MCTDH Wavepacket Propagation Method to Describe Multimode Non-Adiabatic Dynamics
+Calculation and Selective Population of Vibrational Levels with the Multiconfiguration Time-Dependent Hartree (MCTDH) Algorithm
+Tangent Space Formulation of the Multi-Configuration Time-Dependent Hartree Equations of Motion: The Projector–Splitting Algorithm Revisited
+Relaxation of a System with a Conical Intersection Coupled to a Bath: A Benchmark 24-Dimensional Wave Packet Study Treating the Environment Explicitly
+Molecular Dynamics of Pyrazine after Excitation to the S2 Electronic State Using a Realistic 24-Mode Model Hamiltonian
+The Multiconfigurational Time-Dependent Hartree (MCTDH) Method: A Highly Efficient Algorithm for Propagating Wavepackets
+Wave-Packet Dynamics within the Multiconfiguration Hartree Framework - General-Aspects and Application to Nocl
+A Multilayer Multiconfigurational Time-Dependent Hartree Approach for Quantum Dynamics on General Potential Energy Surfaces
+Representation of Diabatic Potential Energy Matrices for Multiconfiguration Time-Dependent Hartree Treatments of High-Dimensional Nonadiabatic Photodissociation Dynamics
+Multidimensional Quantum Mechanical Modeling of Electron Transfer and Electronic Coherence in Plant Cryptochromes: The Role of Initial Bath Conditions
+Photoinduced Nonadiabatic Dynamics of Ethene: Six-Dimensional Wave Packet Propagations Using Two Different Approximations of the Kinetic Energy Operators
+Time-Dependent Density Matrix Renormalization Group Method for Quantum Dynamics in Complex Systems
+Density-Matrix Formulation for Quantum Renormalization-Groups
+The Density-Matrix Renormalization Group in the Age of Matrix Product States
+Time-Step Targeting Time-Dependent and Dynamical Density Matrix Renormalization Group Algorithms with Ab Initio Hamiltonians
+The Time-Dependent Density Matrix Renormalisation Group Method
+Efficient Simulation of One-Dimensional Quantum Many-Body Systems
+Matrix Product Density Operators: Simulation of Finite-Temperature and Dissipative Systems
+Mixed-State Dynamics in One-Dimensional Quantum Lattice Systems: A Time-Dependent Superoperator Renormalization Algorithm
+Efficient Simulation of Strong System-Environment Interactions
+Unifying Time Evolution and Optimization with Matrix Product States
+Time Integration of Tensor Trains
+Quantum Electron-Vibrational Dynamics at Finite Temperature: Thermo Field Dynamics Approach
+Large-Scale Quantum Dynamics with Matrix Product States
+Tensor-Train Split-Operator Fourier Transform (TT-SOFT) Method: Multidimensional Nonadiabatic Quantum Dynamics
+Tensor-Train Split-Operator Ksl (TT-SOKSL) Method for Quantum Dynamics Simulations
+Tensor-Train Thermo-Field Memory Kernels for Generalized Quantum Master Equations
+A Classical Analog for Electronic Degrees of Freedom in Nonadiabatic Collision Processes
+Semiclassical Description of Nonadiabatic Quantum Dynamics
+Classical-Models for Electronic Degrees of Freedom: Derivation Via Spin Analogy and Application to F*+H2→F+H2
+Classical Model for Electronic Degrees of Freedom: Charge Transfer in Na + I Collisions
+Effect of Electronic Transition Dynamics on Iodine Atom Recombination in Liquids
+Classical Models for Electronic Degrees of Freedom: Quenching of Br*(2P1/2) by Collision with H2 in Three Dimensions
+A Classical Model for Time- and Frequency-Resolved Spectroscopy of Nonadiabatic Excited-State Dynamics
+Classical Formulation of the Spectroscopy of Nonadiabatic Excited-State Dynamics
+Flow of Zero-Point Energy and Exploration of Phase Space in Classical Simulations of Quantum Relaxation Dynamics. II. Application to Nonadiabatic Processes
+Flow of Zero-Point Energy and Exploration of Phase Space in Classical Simulations of Quantum Relaxation Dynamics
+Consistent Treatment of Quantum-Mechanical and Classical Degrees of Freedom in Mixed Quantum-Classical Simulations
+Classical Description of Nonadiabatic Quantum Dynamics
+Semiclassical Description of Nonadiabatic Quantum Dynamics: Application to the S1-S2 Conical Intersection in Pyrazine
+Mapping Approach to the Semiclassical Description of Nonadiabatic Quantum Dynamics
+Classical Mapping Approaches for Nonadiabatic Dynamics: Short Time Analysis
+Semiclassical Initial Value Representation for Electronically Nonadiabatic Molecular Dynamics
+Semiclassical Theory of Electronically Nonadiabatic Dynamics: Results of a Linearized Approximation to the Initial Value Representation
+Nonadiabatic Photodissociation Dynamics Oficnin the a Continuum: A Semiclassical Initial Value Representation Study
+Ultrafast Non-Adiabatic Dynamics of Systems with Multiple Surface Crossings: A Test of the Meyer-Miller Hamiltonian with Semiclassical Initial Value Representation Methods
+Semiclassical Description of Electronically Nonadiabatic Dynamics Via the Initial Value Representation
+Electronically Nonadiabatic Dynamics Via Semiclassical Initial Value Methods
+Exact Quantum Statistics for Electronically Nonadiabatic Systems Using Continuous Path Variables
+Semiclassical Description of Electronic Excitation Population Transfer in a Model Photosynthetic System
+Symmetrical Windowing for Quantum States in Quasi-Classical Trajectory Simulations
+Symmetrical Windowing for Quantum States in Quasi-Classical Trajectory Simulations: Application to Electronically Non-Adiabatic Processes
+Symmetrical Windowing for Quantum States in Quasi-Classical Trajectory Simulations: Application to Electron Transfer
+A Symmetrical Quasi-Classical Spin-Mapping Model for the Electronic Degrees of Freedom in Non-Adiabatic Processes
+Communication: Note on Detailed Balance in Symmetrical Quasi-Classical Models for Electronically Non-Adiabatic Dynamics
+A New Symmetrical Quasi-Classical Model for Electronically Non-Adiabatic Processes: Application to the Case of Weak Non-Adiabatic Coupling
+The Symmetrical Quasi-Classical Model for Electronically Non-Adiabatic Processes Applied to Energy Transfer Dynamics in Site-Exciton Models of Light-Harvesting Complexes
+Communication: Wigner Functions in Action-Angle Variables, Bohr-Sommerfeld Quantization, the Heisenberg Correspondence Principle, and a Symmetrical Quasi-Classical Approach to the Full Electronic Density Matrix
+On the Adiabatic Representation of Meyer-Miller Electronic-Nuclear Dynamics
+The Symmetrical Quasi-Classical Approach to Electronically Nonadiabatic Dynamics Applied to Ultrafast Exciton Migration Processes in Semiconducting Polymers
+A Symmetrical Quasi-Classical Windowing Model for the Molecular Dynamics Treatment of Non-Adiabatic Processes Involving Many Electronic States
+Trajectory-Adjusted Electronic Zero Point Energy in Classical Meyer-Miller Vibronic Dynamics: Symmetrical Quasiclassical Application to Photodissociation
+On the Identity of the Identity Operator in Nonadiabatic Linearized Semiclassical Dynamics
+Improved Population Operators for Multi-State Nonadiabatic Dynamics with the Mixed Quantum-Classical Mapping Approach
+Generalized Spin Mapping for Quantum-Classical Dynamics
+Nonadiabatic Dynamics Via the Symmetrical Quasi-Classical Method in the Presence of Anharmonicity
+Combining the Mapping Hamiltonian Linearized Semiclassical Approach with the Generalized Quantum Master Equation to Simulate Electronically Nonadiabatic Molecular Dynamics
+Improving the Accuracy of Quasiclassical Mapping Hamiltonian Methods by Treating the Window Function Width as an Adjustable Parameter
+Simulating Absorption Spectra of Multiexcitonic Systems Via Quasiclassical Mapping Hamiltonian Methods
+Benchmarking Quasiclassical Mapping Hamiltonian Methods for Simulating Electronically Nonadiabatic Molecular Dynamics
+Electronic Dynamics through Conical Intersections Via Quasiclassical Mapping Hamiltonian Methods
+Benchmarking Quasiclassical Mapping Hamiltonian Methods for Simulating Cavity-Modified Molecular Dynamics
+A Semiclassical Limit for the Mapping Hamiltonian Approach to Electronically Nonadiabatic Dynamics
+A Nonperturbative Methodology for Simulating Multidimensional Spectra of Multiexcitonic Molecular Systems Via Quasiclassical Mapping Hamiltonian Methods
+Electronically Nonadiabatic Dynamics in Singlet Fission: A Quasi-Classical Trajectory Simulation
+Electronically Nonadiabatic Dynamics in Complex Molecular Systems: An Efficient and Accurate Semiclassical Solution
+Quasiclassical Modeling of Cavity Quantum Electrodynamics
+An Assessment of Mean-Field Mixed Semiclassical Approaches: Equilibrium Populations and Algorithm Stability
+Ultrafast Electron Transfer with Symmetrical Quasi-Classical Dynamics Based on Mapping Hamiltonian and Quantum Dynamics Based on ML-MCTDH
+Two-Dimensional Vibronic Spectroscopy with Semiclassical Thermofield Dnamics
+2d Electronic-Vibrational Spectroscopy with Classical Trajectories
+Spectroscopic Response Theory with Classical Mapping Hamiltonians
+One and Two Dimensional Vibronic Spectra for an Exciton Dimer from Classical Trajectories
+Two-Dimensional Vibrational-Electronic Spectra with Semiclassical Mechanics
+GPU-Accelerated on-the-Fly Nonadiabatic Semiclassical Dynamics
+A Linearized Semiclassical Dynamics Study of the Multiquantum Vibrational Relaxation of NO Scattering from a Au(111) Surface
+On the Accuracy of the LSC-IVR Approach for Excitation Energy Transfer in Molecular Aggregates
+Mixed Quantum-Classical Description of Excitation Energy Transfer in a Model Fenna-Matthews-Olsen Complex
+Semiclassical Molecular Dynamics Simulations of Ultrafast Photodissociation Dynamics Associated with the Chappuis Band of Ozone
+Semiclassical Theory of Inelastic Collisions. I. Classical Picture and Semiclassical Formulation
+On the Applicability of the Classical Trajectory Equations in Inelastic Scattering Theory
+Classical Trajectory Model for Electronically Nonadiabatic Collision Phenomena. A Classical Analog for Electronic Degrees of Freedom
+A Self-Consistent Eikonal Treatment of Electronic Transitions in Molecular Collisions
+Ab Initio Ehrenfest Dynamics
+Bemerkung Über Die Angenäherte Gültigkeit Der Klassischen Mechanik Innerhalb Der Quantenmechanik
+A Unified Theoretical Framework for Mapping Models for the Multi-State Hamiltonian
+Combining Meyer-Miller Hamiltonian with Electronic Structure Methods for on-the-Fly Nonadiabatic Dynamics Simulations: Implementation and Application
+Trajectory Propagation of Symmetrical Quasi-Classical Dynamics with Meyer-Miller Mapping Hamiltonian Using Machine Learning
+Analysis of Bath Motion in Mm-Sqc Dynamics Via Dimensionality Reduction Approach: Principal Component Analysis
+On-the-Fly Symmetrical Quasi-Classical Dynamics with Meyer–Miller Mapping Hamiltonian for the Treatment of Nonadiabatic Dynamics at Conical Intersections
+Study of the Exciton Dynamics in Perylene Bisimide (PBI) Aggregates with Symmetrical Quasiclassical Dynamics Based on the Meyer-Miller Mapping Hamiltonian
+Initial Sampling in Symmetrical Quasiclassical Dynamics Based on Li-Miller Mapping Hamiltonian
+Performance Evaluation of the Symmetrical Quasi-Classical Dynamics Method Based on Meyer-Miller Mapping Hamiltonian in the Treatment of Site-Exciton Models
+All-Atom Nonadiabatic Semiclassical Mapping Dynamics for Photoinduced Charge Transfer of Organic Photovoltaic Molecules in Explicit Solvents
+Benchmarking Various Nonadiabatic Semiclassical Mapping Dynamics Methods with Tensor-Train Thermo-Field Dynamics
+Multi-State Harmonic Models with Globally Shared Bath for Nonadiabatic Dynamics in the Condensed Phase
+Multistate Reaction Coordinate Model for Charge and Energy Transfer Dynamics in the Condensed Phase
+Generalized Nonequilibrium Fermi’s Golden Rule and Its Semiclassical Approximations for Electronic Transitions between Multiple States
+Dynamic Signatures of Electronically Nonadiabatic Coupling in Sodium Hydride: A Rigorous Test for the Symmetric Quasi-Classical Model Applied to Realistic, Electronic States in the Adiabatic Representation
+The Symmetric Quasi-Classical Model Using on-the-Fly Time-Dependent Density Functional Theory within the Tamm-Dancoff Approximation
+All-Atom Photoinduced Charge Transfer Dynamics in Condensed Phase Via Multistate Nonlinear-Response Instantaneous Marcus Theory
+Reduced Density Matrix Dynamics in Multistate Harmonic Models Via Time-Convolution and Time-Convolutionless Quantum Master Equations with Quantum-Mechanical and Semiclassical Kernels
+Trajectory Surface Hopping Approach to Nonadiabatic Molecular Collisions: The Reaction of H+ with D2
+Molecular Dynamics with Electronic Transitions
+Energy Transfer in Collisions of an Excited Sodium Atom with a Nitrogen Molecule
+The Theory of Nonadiabatic Transitions: Recent Development with Exponential Models
+Proton Transfer in Solution: Molecular Dynamics with Quantum Transitions
+Perspective: Nonadiabatic Dynamics Theory
+Critical Appraisal of the Fewest Switches Algorithm for Surface Hopping
+Surface Hopping Trajectory Simulations with Spin-Orbit and Dynamical Couplings
+Trajectory Surface Hopping in the Time-Dependent Kohn-Sham Approach for Electron-Nuclear Dynamics
+Nonadiabatic Dynamics with Trajectory Surface Hopping Method
+Assessing the Performance of Trajectory Surface Hopping Methods: Ultrafast Internal Conversion in Pyrazine
+Treatment of Nonadiabatic Dynamics by on-the-Fly Trajectory Surface Hopping Dynamics
+Nonadiabatic Dynamics of Cycloparaphenylenes with TD-DFTB Surface Hopping
+A General Method to Describe Intersystem Crossing Dynamics in Trajectory Surface Hopping
+Nonadiabatic Dynamics at Metal Surfaces: Independent Electron Surface Hopping with Phonon and Electron Thermostats
+Generalized Trajectory Surface-Hopping Method for Internal Conversion and Intersystem Crossing
+Analysis of the Geometrical Evolution in on-the-Fly Surface-Hopping Nonadiabatic Dynamics with Machine Learning Dimensionality Reduction Approaches: Classical Multidimensional Scaling and Isometric Feature Mapping
+An on-the-Fly Surface-Hopping Program JADE for Nonadiabatic Molecular Dynamics of Polyatomic Systems: Implementation and Applications
+Differential Cross Sections for Alkali-Halogen Collisions from Trajectory Calculations on Intersecting Surfaces
+Trajectory-Surface-Hopping Study of Na(3p2P) + H2 → Na(3s2S)+H2(v ′, j ′, θ)
+Theory of Nonadiabatic Transition for General Two-State Curve Crossing Problems. I. Nonadiabatic Tunneling Case
+Theory of Nonadiabatic Transition for General Two-State Curve Crossing Problems. II. Landau-Zener Case
+New Implementation of the Trajectory Surface Hopping Method with Use of the Zhu-Nakamura Theory
+Surface Hopping from the Perspective of Quantum-Classical Liouville Dynamics
+Phase-Space Surface Hopping: Nonadiabatic Dynamics in a Superadiabatic Basis
+Decoherence-Induced Surface Hopping
+Phase-Corrected Surface Hopping: Correcting the Phase Evolution of the Electronic Wavefunction
+A New Approach to Decoherence and Momentum Rescaling in the Surface Hopping Algorithm
+An Efficient, Augmented Surface Hopping Algorithm That Includes Decoherence for Use in Large-Scale Simulations
+Understanding the Surface Hopping View of Electronic Transitions and Decoherence
+Ring Polymer Molecular Dynamics with Surface Hopping
+Second-Quantized Surface Hopping
+Recent Progress in Surface Hopping: 2011–2015
+Surface Hopping by Consensus
+Surface Hopping without Momentum Jumps: A Quantum-Trajectory-Based Approach to Nonadiabatic Dynamics
+Classical and Nonclassical Effects in Surface Hopping Methodology for Simulating Coupled Electronic-Nuclear Dynamics
+A First Principles Derivation of Energy-Conserving Momentum Jumps in Surface Hopping Simulations
+Benchmark Performance of Global Switching Versus Local Switching for Trajectory Surface Hopping Molecular Dynamics Simulation: Cis<->Trans Azobenzene Photoisomerization
+Non-Hermitian Surface Hopping
+Surface Hopping Methods for Nonadiabatic Dynamics in Extended Systems
+Detailed Complementary Consistency: Wave Function Tells Particle How to Hop, Particle Tells Wave Function How to Collapse
+Consistent Construction of the Density Matrix from Surface Hopping Trajectories
+A Mapping Approach to Surface Hopping
+A Multi-State Mapping Approach to Surface Hopping
+Effective Potentials for Intermediate-Energy Electron Scattering: Testing Theoretical Models
+Non-Born-Oppenheimer Trajectories with Self-Consistent Decay of Mixing
+Coherent Switching with Decay of Mixing: An Improved Treatment of Electronic Coherence for Non-Born-Oppenheimer Trajectories
+Phase-Space Averaging and Natural Branching of Nuclear Paths for Nonadiabatic Electron Wavepacket Dynamics
+A Multi-State Trajectory Method for Non-Adiabatic Dynamics Simulations
+Coherence-Controlled Nonadiabatic Dynamics Via State-Space Decomposition: A Consistent Way to Incorporate Ehrenfest and Born-Oppenheimer-Like Treatments of Nuclear Motion
+Multi-State Trajectory Approach to Non-Adiabatic Dynamics: General Formalism and the Active State Trajectory Approximation
+Coherence Penalty Functional: A Simple Method for Adding Decoherence in Ehrenfest Dynamics
+Decoherence-Corrected Ehrenfest Molecular Dynamics on Many Electronic States
+An Accurate, Non-Empirical Method for Incorporating Decoherence into Ehrenfest Dynamics
+Nonadiabatic Molecular Dynamics: Validation of the Multiple Spawning Method for a Multidimensional Problem
+Electronic Absorption and Resonance Raman Spectroscopy from Ab Initio Quantum Molecular Dynamics
+Ab Initio Multiple Spawning: Photochemistry from First Principles Quantum Molecular Dynamics
+Dynamics of the Collisional Electron Transfer and Femtosecond Photodissociation of NaI on Ab Initio Electronic Energy Curves
+Exact Factorization of the Time-Dependent Electron-Nuclear Wave Function
+Correlated Electron-Nuclear Dynamics: Exact Factorization of the Molecular Wavefunction
+Mixed Quantum-Classical Dynamics on the Exact Time-Dependent Potential Energy Surface: A Fresh Look at Non-Adiabatic Processes
+Multiconfigurational Ehrenfest Approach to Quantum Coherent Dynamics in Large Molecular Systems
+On-the-Fly Ab Initio Molecular Dynamics with Multiconfigurational Ehrenfest Method
+Ab Initio Multiple Cloning Algorithm for Quantum Nonadiabatic Molecular Dynamics
+Nonadiabatic Excited-State Molecular Dynamics Methodologies: Comparison and Convergence
+Isomorphism between the Multi-State Hamiltonian and the Second-Quantized Many-Electron Hamiltonian with Only 1-Electron Interactions
+A New Perspective for Nonadiabatic Dynamics with Phase Space Mapping Models
+Negative Zero-Point-Energy Parameter in the Meyer-Miller Mapping Model for Nonadiabatic Dynamics
+Commutator Matrix in Phase Space Mapping Models for Nonadiabatic Quantum Dynamics
+Phase Space Mapping Theory for Nonadiabatic Quantum Molecular Dynamics
+Nonadiabatic Field on Quantum Phase Space: A Century after Ehrenfest
+A Novel Class of Phase Space Representations for Exact Population Dynamics of Two-State Quantum Systems and the Relation to Triangle Window Functions
+Nonadiabatic Field with Triangle Window Functions on Quantum Phase Space
+On Quantum Phase Space Mapping Theory and Trajectory-Based Dynamics Approaches
+Constraint Phase Space Formulations for Finite-State Quantum Systems: The Relation between Commutator Variables and Complex Stiefel Manifolds
+On Complex Stiefel Manifolds
+Generalized Discrete Truncated Wigner Approximation for Nonadiabatic Quantum-Classical Dynamics
+On Distributions in Representation Space
+General Concept of Quantization
+Exact Evolution Equations for SU(2) Quasidistribution Functions
+SU(N)-Symmetric Quasi-Probability Distribution Functions
+Dissipative and Stochastic Geometric Phase of a Qubit within a Canonical Langevin Framework
+A Langevin Canonical Approach to the Dynamics of Chiral Systems: Populations and Coherences
+A Langevin Canonical Approach to the Dynamics of Chiral Systems: Thermal Averages and Heat Capacity
+Semiclassical Approaches Are Inconsistent
+Phase Space Quantum–Classical Hybrid Model
+General Approach to Quantum Mechanics as a Statistical Theory
+Supporting Information of ″Nonadiabatic Field on Quantum Phase Space: A Century after Ehrenfest″
+Quantum Dynamics of Chemical Systems with Large Number of Degrees of Freedom: Linearized Phase Space Methods and Quantum Simulations
+Diabolical Conical Intersections
+The Geometric Phase in Molecular-Systems
+Supporting Information of ″New Phase Space Formulations and Quantum Dynamics Approaches″
+Supporting Information of ″Commutator Matrix in Phase Space Mapping Models for Nonadiabatic Quantum Dynamics″
+Transition Path Flight Times and Nonadiabatic Electronic Transitions
+Field and Particle Equations for the Classical Yang-Mills Field and Particles with Isotopic Spin
+Quantum Fluctuation of Electronic Wave-Packet Dynamics Coupled with Classical Nuclear Motions
+Deriving the Exact Nonadiabatic Quantum Propagator in the Mapping Variable Representation
+Supporting Information of ″Nonadiabatic Field with Triangle Window Functions on Quantum Phase Space″
+New Nonadiabatic Dynamics Methods with Phase Space Mapping Models
+Wigner Functions for Arbitrary Quantum Systems
+Spin-Mapping Approach for Nonadiabatic Molecular Dynamics
+NQCDynamics.jl: A Julia Package for Nonadiabatic Quantum Classical Molecular Dynamics in the Condensed Phase
+Short-Time Accuracy and Intra-Electron Correlation for Nonadiabatic Quantum–Classical Mapping Approaches
+Twin-Space Representation of Classical Mapping Model in the Constraint Phase Space Representation: Numerically Exact Approach to Open Quantum Systems
+S1-S2 Conical Intersection and Ultrafast S2→S1 Internal Conversion in Pyrazine
+Path-Integral Treatment of Multi-Mode Vibronic Coupling
+AWavepacket Dynamics Study of Cr(CO)5 after Formation by Photodissociation: Relaxation through an (E ⊕ A) ⊗ e Jahn–Teller Conical Intersection
+The MCTDH Package, Version 8.2, (2000). H.-D. Meyer, Version 8.3 (2002), Version 8.4 (2007). O. Vendrell and H.-D. Meyer Version 8.5 (2013). Version 8.5 contains the ML-MCTDH algorithm
+Nonadiabatic Absorption Spectra and Ultrafast Dynamics of DNA and RNA Photoexcited Nucleobases
+A Novel Discrete Variable Representation for Quantum Mechanical Reactive Scattering Via the S-Matrix Kohn Method
+Dynamics of the Dissipative Two-State System
+Heat Transfer in the Spin-Boson Model: A Comparative Study in the Incoherent Tunneling Regime
+Numerical Variational Studies of Quantum Phase Transitions in the Sub-Ohmic Spin-Boson Model with Multiple Polaron Ansatz
+Quantum Phase Transitions in the Sub-Ohmic Spin-Boson Model: Failure of the Quantum-Classical Mapping
+Dynamical Scaling in the Ohmic Spin-Boson Model Studied by Extended Hierarchical Equations of Motion
+Heat Transport in a Spin-Boson Model at Low Temperatures: A Multilayer Multiconfiguration Time-Dependent Hartree Study
+Calculating Multidimensional Optical Spectra from Classical Trajectories
+Site-Dependent Fluctuations Optimize Electronic Energy Transfer in the Fenna-Matthews-Olson Protein
+Semiclassical Study of Electronically Nonadiabatic Dynamics in the Condensed-Phase: Spin-Boson Problem with Debye Spectral Density
+On the Accuracy of Surface Hopping Dynamics in Condensed Phase Non-Adiabatic Problems
+Path Integral Molecular Dynamics for Exact Quantum Statistics of Multi-Electronic-State Systems
+Accurate Calculation of Equilibrium Reduced Density Matrix for the System-Bath Model: A Multilayer Multiconfiguration Time-Dependent Hartree Approach and Its Comparison to a Multi-Electronic-State Path Integral Molecular Dynamics Approach
+Influence of Phonons on Exciton Transfer Dynamics: Comparison of the Redfield, Forster, and Modified Redfield Equations
+The Linear Response Approximation and Its Lowest Order Corrections: An Influence Functional Approach
+Iterative Calculation of Energy Eigenstates Employing the Multilayer Multiconfiguration Time-Dependent Hartree Theory
+Proton Transfer Reactions in Model Condensed-Phase Environments: Accurate Quantum Dynamics Using the Multilayer Multiconfiguration Time-Dependent Hartree Approach
+Direct Determination of Discrete Harmonic Bath Parameters from Molecular Dynamics Simulations
+The Study of an Extended Hierarchy Equation of Motion in the Spin-Boson Model: The Cutoff Function of the Sub-Ohmic Spectral Density
+Chlorophyll Arrangement in a Bacteriochlorophyll Protein from Chlorobium-Limicola
+Evidence for Wavelike Energy Transfer through Quantum Coherence in Photosynthetic Systems
+Theoretical Examination of Quantum Coherence in a Photosynthetic System at Physiological Temperature
+Perspective: Quantum or Classical Coherence?
+Quantum Biology Revisited
+Photosynthesis Tunes Quantum-Mechanical Mixing of Electronic and Vibrational States to Steer Exciton Energy Transfer
+The Quantum Coherent Mechanism for Singlet Fission: Experiment and Theory
+Capturing Vacuum Fluctuations and Photon Correlations in Cavity Quantum Electrodynamics with Multitrajectory Ehrenfest Dynamics
+Benchmarking Semiclassical and Perturbative Methods for Real-Time Simulations of Cavity-Bound Emission and Interference
+Modification of Excitation and Charge Transfer in Cavity Quantum-Electrodynamical Chemistry
+Ab Initio Optimized Effective Potentials for Real Molecules in Optical Cavities: Photon Contributions to the Molecular Ground State
+Breakdown of Gauge Invariance in Ultrastrong-Coupling Cavity Qed
+Atoms and Molecules in Cavities, from Weak to Strong Coupling in Quantum-Electrodynamics (QED) Chemistry
+Cavity Born-Oppenheimer Approximation for Correlated Electron-Nuclear-Photon Systems
+Optimized Effective Potential for Quantum Electrodynamical Time-Dependent Density Functional Theory
+Kohn-Sham Approach to Quantum Electrodynamical Density-Functional Theory: Exact Time-Dependent Effective Potentials in Real Space
+Time-Dependent Density Functional Theory for Many-Electron Systems Interacting with Cavity Photons
+Cavity Molecular Dynamics Simulations of Liquid Water under Vibrational Ultrastrong Coupling
+Comparison of Different Classical, Semiclassical, and Quantum Treatments of Light-Matter Interactions: Understanding Energy Conservation
+Understanding the Nature of Mean-Field Semiclassical Light-Matter Dynamics: An Investigation of Energy Transfer, Electron-Electron Correlations, External Driving, and Long-Time Detailed Balance
+Predictive Semiclassical Model for Coherent and Incoherent Emission in the Strong Field Regime: The Mollow Triplet Revisited
+Ehrenfest+R Dynamics. I. A Mixed Quantum-Classical Electrodynamics Simulation of Spontaneous Emission
+Ab Initio Nonrelativistic Quantum Electrodynamics: Bridging Quantum Chemistry and Quantum Optics from Weak to Strong Coupling
+Mixed Quantum-Classical Electrodynamics: Understanding Spontaneous Decay and Zero-Point Energy
+A Necessary Trade-Off for Semiclassical Electrodynamics: Accurate Short-Range Coulomb Interactions Versus the Enforcement of Causality?
+Numerical Simulations of Atomic Decay in Cavities and Material Media
+Model Atom for Multiphoton Physics
+Finite-Temperature TD-DMRG for the Carrier Mobility of Organic Semiconductors
+Electron Transfer Reactions in Chemistry Theory and Experiment
+Electron-Transfer Reactions in Chemistry - Theory and Experiment
+On the Theory of Electron-Transfer Reactions. VI. Unified Treatment for Homogeneous and Electrode Reactions
+An Atomic Orbital-Based Formulation of Analytical Gradients and Nonadiabatic Coupling Vector Elements for the State-Averaged Complete Active Space Self-Consistent Field Method on Graphical Processing Units
+NAC-TDDFT: Time-Dependent Density Functional Theory for Nonadiabatic Couplings
+Nonadiabatic Molecular Dynamics by Multiconfiguration Pair-Density Functional Theory
+Multistate Density Functional Theory of Excited States
+Semiclassical Nonadiabatic Molecular Dynamics Using Linearized Pair-Density Functional Theory
+Analytic Evaluation of Nonadiabatic Coupling Terms at the MR-CI Level. I. Formalism
+Analytical Derivative Coupling for Multistate CASPT2 Theory
+Analytical State-Average Complete-Active-Space Self-Consistent Field Nonadiabatic Coupling Vectors: Implementation with Density-Fitted Two-Electron Integrals and Application to Conical Intersections
+Analytic Non-Adiabatic Couplings for Selected Configuration Interaction Via Approximate Degenerate Coupled Perturbed Hartree-Fock
+Analytic Evaluation of the Nonadiabatic Coupling Vector between Excited States Using Equation-of-Motion Coupled-Cluster Theory
+Nonadiabatic Dynamics Algorithms with Only Potential Energies and Gradients: Curvature-Driven Coherent Switching with Decay of Mixing and Curvature-Driven Trajectory Surface Hopping
+Generalized Semiclassical Ehrenfest Method: A Route to Wave Function-Free Photochemistry and Nonadiabatic Dynamics with Only Potential Energies and Gradients
+Nonadiabatic Excited-State Dynamics with Machine Learning
+Extending the Time Scales of Nonadiabatic Molecular Dynamics Via Machine Learning in the Time Domain
+A Look inside the Black Box of Machine Learning Photodynamics Simulations
+Machine Learning Accelerated Photodynamics Simulations
+Deep Learning for Nonadiabatic Excited-State Dynamics
+Machine Learning Accelerated Nonadiabatic Dynamics Simulations of Materials with Excitonic Effects

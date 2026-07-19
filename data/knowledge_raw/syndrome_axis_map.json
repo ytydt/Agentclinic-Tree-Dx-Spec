@@ -1,0 +1,143 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "created": "2026-06-10",
+    "description": "§23.14 Step-0 table: maps a root SYNDROME class to its single L1 classification axis and the MECE L1 domain partition along that axis. Domains carry member_keywords used to project candidate disease entities (L3) onto the L1 partition and to compute domain-level key-branch recall. The axis is chosen by the root clinical problem (Valid split criteria #1: siblings share one axis at comparable abstraction). Each entry is single-axis by construction.",
+    "axis_enum": ["anatomy", "mechanism", "urgency", "management_pathway", "test_pathway", "etiology", "risk_context", "severity", "temporal", "hemodynamic", "other"],
+    "sources": [
+      "MULTI_LEVEL_EXPANSION_DESIGN.md §2/§15.4-15.6",
+      "agentclinic_algorithm_update_requirements_design.md §11.3-11.4 (Valid split criteria + chest pain/jaundice/shock examples)",
+      "Stern, Cifu & Altkorn, Symptom to Diagnosis (4th ed.) — syndrome differential frameworks"
+    ],
+    "matching": "An entry matches a case when ANY of its syndrome_keywords is a substring of the root label or vignette (case-insensitive). The most specific (longest-keyword) match wins; fallback = the 'undifferentiated' entry (axis=mechanism).",
+    "fallback_axis": "mechanism"
+  },
+  "syndromes": [
+    {
+      "id": "leukocytosis",
+      "syndrome_keywords": ["leukocytosis", "elevated white", "high wbc", "leukocyte count", "marked leukocyte", "very high white blood"],
+      "axis": "mechanism",
+      "axis_rationale": "reactive vs neoplastic, then myeloid vs lymphoid vs plasma-cell — the standard haematologic mechanism axis (mirrors branch_creator.txt B1-B5 template).",
+      "domains": [
+        {"name": "reactive / non-malignant leukocytosis", "member_keywords": ["leukemoid", "reactive", "infection", "leukemoid reaction", "non-malignant"]},
+        {"name": "myeloid neoplasm (incl. MPN / blast-bearing)", "member_keywords": ["myeloid", "myelogenous", "cml", "aml", "mds", "myeloproliferative", "polycythemia", "essential thrombocythemia", "myelofibrosis", "blast"], "split_variants": [{"name": "myeloid neoplasm with increased blasts / blast crisis (AML, MDS-EB, CML-BC)", "member_keywords": ["blast crisis", "accelerated", "acute myeloid", "myelodysplastic", "increased blasts", "excess blasts"]}]},
+        {"name": "lymphoid neoplasm", "member_keywords": ["lymphoid", "lymphocytic", "lymphoblastic", "all", "cll", "lymphoma"]},
+        {"name": "plasma cell disorder", "member_keywords": ["myeloma", "plasma cell"]}
+      ]
+    },
+    {
+      "id": "hypercalcemia",
+      "syndrome_keywords": ["hypercalcemia", "elevated calcium", "high calcium", "ca2+: 1", "hypercalcaemia"],
+      "axis": "mechanism",
+      "axis_rationale": "mechanism of calcium elevation: PTH-mediated vs PTHrP/osteolytic malignancy vs vitamin-D/granulomatous vs other.",
+      "domains": [
+        {"name": "PTH-mediated (parathyroid)", "member_keywords": ["parathyroid", "hyperparathyroid", "pth", "adenoma"]},
+        {"name": "malignancy-associated (PTHrP / osteolytic)", "member_keywords": ["malignancy", "pthrp", "metastas", "squamous", "myeloma", "carcinoma"]},
+        {"name": "vitamin-D / granulomatous", "member_keywords": ["sarcoid", "granulomatous", "vitamin d", "calcitriol", "lymphoma"]},
+        {"name": "other (drug / endocrine / immobilization)", "member_keywords": ["thiazide", "milk-alkali", "thyrotoxic", "immobil", "lithium"]}
+      ]
+    },
+    {
+      "id": "hyperglycemia_with_skin",
+      "syndrome_keywords": ["hyperglycemia", "blood glucose", "new-onset diabetes", "glucose: >", "glucose > 500", "underlying pathophysiology of this patient", "rash"],
+      "axis": "mechanism",
+      "axis_rationale": "mechanism of hyperglycemia: insulin deficiency vs insulin resistance vs counter-regulatory hormone excess (paraneoplastic/endocrine).",
+      "domains": [
+        {"name": "counter-regulatory hormone excess / paraneoplastic endocrine", "member_keywords": ["alpha cell", "glucagonoma", "glucagon", "cortisol", "hypercortisol", "cushing", "pheochromocytoma", "neuroendocrine", "islet"]},
+        {"name": "insulin deficiency (beta-cell loss)", "member_keywords": ["beta cell destruction", "type 1", "autoimmune", "insulin deficiency"]},
+        {"name": "insulin resistance", "member_keywords": ["insulin resistance", "type 2", "metabolic syndrome", "obesity"]},
+        {"name": "insulin excess (hypoglycemia distractor)", "member_keywords": ["beta cell tumor", "insulinoma"]}
+      ]
+    },
+    {
+      "id": "bowel_obstruction",
+      "syndrome_keywords": ["bowel obstruction", "obstipation", "distended abdomen", "nausea and vomiting", "abdominal distension", "underlying etiology of this patient", "tympanitic"],
+      "axis": "mechanism",
+      "axis_rationale": "mechanism of impaired transit: mechanical obstruction vs functional/motility vs infectious/inflammatory.",
+      "domains": [
+        {"name": "mechanical obstruction", "member_keywords": ["adhesion", "volvulus", "twisting", "hernia", "tumor", "stricture", "intussusception", "mechanical", "impacted stool", "fecal impaction"]},
+        {"name": "functional / motility (neurogenic)", "member_keywords": ["enteric nervous system", "gastroparesis", "autonomic neuropathy", "ileus", "pseudo-obstruction", "motility"]},
+        {"name": "infectious / inflammatory", "member_keywords": ["norovirus", "gastroenteritis", "infectious", "colitis", "inflammatory bowel"]}
+      ]
+    },
+    {
+      "id": "acute_abdomen_shock",
+      "syndrome_keywords": ["severe abdominal pain", "acute abdomen", "right upper quadrant", "hemorrhagic shock", "hypotension", "ruptured"],
+      "axis": "anatomy",
+      "axis_rationale": "organ/anatomic source of the acute abdomen (gyn vs hepatobiliary vs pancreatic vs GI vascular), per Symptom-to-Diagnosis acute-abdomen framework.",
+      "domains": [
+        {"name": "gynecologic / pelvic", "member_keywords": ["ectopic", "blastocyst", "ovarian", "tubal", "pelvic"]},
+        {"name": "hepatic / hepatobiliary vascular", "member_keywords": ["hepatic", "liver", "peliosis", "vascular ectasia", "hepatic vein", "budd-chiari", "sinusoidal"]},
+        {"name": "biliary obstruction", "member_keywords": ["bile duct", "choledocholithiasis", "common bile duct", "cholangitis", "gallstone"]},
+        {"name": "pancreatic", "member_keywords": ["pancreas", "pancreatitis"]}
+      ]
+    },
+    {
+      "id": "focal_limb_neuro_deficit",
+      "syndrome_keywords": ["arm weakness", "weakness of his right arm", "weakness of her", "decreased sensation", "limb weakness", "monoparesis", "hand felt so weak"],
+      "axis": "anatomy",
+      "axis_rationale": "anatomic localization along the neural pathway (central vs root/plexus-compressive vs peripheral nerve vs vascular), per neurological localization principle (MULTI_LEVEL §2 L1=anatomic/mechanism domain).",
+      "domains": [
+        {"name": "central (brain / cord)", "member_keywords": ["cerebral", "infarction", "stroke", "cord", "central"]},
+        {"name": "compressive plexopathy / apical mass", "member_keywords": ["apical lung", "pancoast", "superior sulcus", "brachial plexus", "plexopathy", "scalenus", "thoracic outlet", "tumor", "mass"]},
+        {"name": "peripheral neuropathy / radiculopathy", "member_keywords": ["peripheral neuropathy", "radiculopathy", "mononeuropathy", "entrapment"]},
+        {"name": "vascular (steal / ischemia)", "member_keywords": ["subclavian steal", "vascular", "ischemic peripheral"]}
+      ]
+    },
+    {
+      "id": "unilateral_nasal_discharge",
+      "syndrome_keywords": ["nasal discharge", "unilateral purulent", "epistaxis", "nasal", "sinusitis"],
+      "axis": "etiology",
+      "axis_rationale": "etiology of unilateral nasal symptoms in a child: foreign body vs infection vs neoplasm vs vascular/structural.",
+      "domains": [
+        {"name": "foreign body / mechanical", "member_keywords": ["foreign body", "obstruction", "aspiration", "object"]},
+        {"name": "infection", "member_keywords": ["sinusitis", "bacterial", "superinfection", "infection"]},
+        {"name": "neoplasm", "member_keywords": ["carcinoma", "nasopharyngeal", "tumor", "angiofibroma"]},
+        {"name": "vascular / structural", "member_keywords": ["kiesselbach", "septal perforation", "vessel", "bleeding"]}
+      ]
+    },
+    {
+      "id": "chest_pain",
+      "syndrome_keywords": ["chest pain", "chest pressure", "acute chest"],
+      "axis": "mechanism",
+      "axis_rationale": "pathophysiologic mechanism (agentclinic_algorithm_update §11.4 chest-pain example).",
+      "domains": [
+        {"name": "ischemic cardiac", "member_keywords": ["acute coronary", "ischemic", "stemi", "nstemi", "angina", "myocardial"]},
+        {"name": "thromboembolic pulmonary", "member_keywords": ["pulmonary embolism", "thromboembolic", "pe"]},
+        {"name": "aortic / vascular", "member_keywords": ["aortic dissection", "aortic", "vascular"]},
+        {"name": "pleural-pulmonary", "member_keywords": ["pneumothorax", "pleural", "pneumonia"]},
+        {"name": "non-cardiopulmonary", "member_keywords": ["esophageal", "musculoskeletal", "gerd"]}
+      ]
+    },
+    {
+      "id": "jaundice",
+      "syndrome_keywords": ["jaundice", "icterus", "scleral icterus", "hyperbilirubinemia"],
+      "axis": "anatomy",
+      "axis_rationale": "anatomic site (agentclinic_algorithm_update §11.4 jaundice example): prehepatic / hepatocellular / cholestatic-obstructive.",
+      "domains": [
+        {"name": "prehepatic (hemolytic)", "member_keywords": ["hemolysis", "hemolytic", "prehepatic"]},
+        {"name": "hepatocellular", "member_keywords": ["hepatitis", "hepatocellular", "cirrhosis", "drug-induced liver"]},
+        {"name": "cholestatic / obstructive", "member_keywords": ["cholestatic", "obstruction", "choledocholithiasis", "stricture", "malignancy", "pbc"]}
+      ]
+    },
+    {
+      "id": "shock",
+      "syndrome_keywords": ["undifferentiated shock", "shock", "hypotensive and"],
+      "axis": "hemodynamic",
+      "axis_rationale": "hemodynamic mechanism (agentclinic_algorithm_update §11.4 shock example): distributive / cardiogenic / obstructive / hypovolemic.",
+      "domains": [
+        {"name": "distributive", "member_keywords": ["sepsis", "anaphylaxis", "distributive", "neurogenic shock"]},
+        {"name": "cardiogenic", "member_keywords": ["cardiogenic", "myocardial", "heart failure"]},
+        {"name": "obstructive", "member_keywords": ["tamponade", "pulmonary embolism", "tension pneumothorax", "obstructive"]},
+        {"name": "hypovolemic", "member_keywords": ["hemorrhage", "hypovolemic", "dehydration"]}
+      ]
+    },
+    {
+      "id": "undifferentiated",
+      "syndrome_keywords": [],
+      "axis": "mechanism",
+      "axis_rationale": "fallback when no specific syndrome matches: default to a pathophysiologic-mechanism axis (MULTI_LEVEL §15.5 default).",
+      "domains": []
+    }
+  ]
+}

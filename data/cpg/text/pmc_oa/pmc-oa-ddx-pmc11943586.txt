@@ -1,0 +1,180 @@
+Dynamical Projective Operatorial Approach (DPOA): Theory and Applications to Pump–Probe Setups and Semiconductors
+This manuscript reviews our recently developed theory, the dynamical projective operatorial approach (DPOA), for studying pump–probe setups in ultra-fast regimes. After reviewing the general formulation of the DPOA, we focus on its lattice version and provide a formalism that is particularly suitable for several pumped semiconductors. Within the DPOA, we also compute the TR-ARPES signal through out-of-equilibrium Green’s functions and establish an out-of-equilibrium counterpart of the fluctuation–dissipation theorem. Moreover, we generalize the linear response theory to pumped systems and address, within the DPOA, the differential transient optical properties, providing an overall robust theoretical and computational framework for studying pump–probe setups. Considering a minimal model for a semiconductor, we illustrate the capabilities of the DPOA and discuss several features emerging in this case study that are relevant to real materials.
+
+1. Introduction
+In the recent few decades, by the so-called pump–probe setups being developed, it became possible to unravel out-of-equilibrium particle dynamics in femtosecond and even sub-femtosecond time regimes. The importance of these studies is two-fold. On the application side, gaining control over systems in such short time scales paves the way towards ultra-fast electronics. On the fundamental physics side, the real-time dynamics of pump-induced charge excitations determines the underlying physical mechanisms.
+The pump pulse is usually in the range of energy gaps between the valence band (VB) and conduction band (CB), which would be in the IR regime for typical semiconductors. Pumping the system excites electrons and changes their energy distributions, which is a crucial subject of investigation. In general, there are three approaches to reading out the response of a system to an ultra-short, intense pump pulse. One approach is to study the high-harmonic generation induced by the pump pulse, which is not discussed in this manuscript. Another important approach is to study the time-resolved angle-resolved photoemission spectroscopy (TR-ARPES) signal, which is an out-of-equilibrium version of ARPES. It uses a probe pulse to eject electrons from the sample and analyzes their energy and momentum distribution. These distributions contain information about out-of-equilibrium bands and their occupations and vary depending on the time delay between pump and probe pulses.
+The third and last approach is centered around studying the transient optical response of the pumped system to a very low-intensity probe pulse. The most convenient probe pulse has a high frequency, which is used to excite electrons from the core bands to the VBs and CBs near the Fermi surface. The pump pulse excites electrons and holes in these CBs and VBs, while the probe pulse reveals the details of these excitations through exciting core-band electrons to them, which are readable from the optical response of the system to the probe pulse.
+The aforementioned experimental advances demand the development of appropriate theoretical tools to both simulate and analyze the experimental results. The most standard approach for this aim is the time-dependent density functional theory (TD-DFT). Despite several advantages of TD-DFT, it unfortunately has two significant disadvantages. First, the computational cost is very high, as it demands considerable resources, and the calculations usually take very long to compute. Second, it is not very easy to gain deep insights into the individual roles of different mechanisms and understand how they interplay with each other.
+Alongside the ab initio approaches, there are model-Hamiltonian approaches that can be used for the pump–probe setups, with parameters that are usually obtained from equilibrium DFT calculations. These approaches straightforwardly solve the second problem of TD-DFT, as one can turn on and off different terms of the governing Hamiltonian to see how the final results are affected. However, it is generally challenging to handle the numerous complications of real setups within model-Hamiltonian approaches, and this may result in oversimplification.
+To resolve some of the issues mentioned above, we have devised a novel model-Hamiltonian method, the dynamical projective operatorial approach (DPOA). The DPOA proves to be able to analyze complicated real setups with several bands and unravel the photo injection mechanisms in ultra-fast regimes very affordably. The DPOA uses projection matrices to obtain the time evolution of composite operators; hence, in principle, it is capable of obtaining any out-of-equilibrium multi-time multi-particle quantities of interest. The DPOA is not restricted to any specific type of materials. Moreover, for instance, it can also handle strongly correlated systems. However, this manuscript primarily focuses on DPOA’s applications to pumped semiconductors.
+In this paper, we review our previous results, providing a clear understanding of how the DPOA should be applied to real systems. Using a simple model, we present the features that can be expected in pumped semiconductors, either via the measurement of the TR-ARPES signal or the transient optical properties. The rest of this manuscript is organized as follows: In Section 2, we present the theoretical framework of the DPOA. Section 2.1 introduces the general DPOA theory. In Section 2.2, the formalism is adapted to lattice systems. In Section 2.3, the formulation for computing the TR-ARPES signal is given. In Section 2.4, a generalized linear response theory for computing transient optical properties is reported. In Section 3, we consider a simplified modelization of a semiconductor and, through the application of theDPOA, we study its TR-ARPES signal and transient optical properties. Finally, in Section 4, we summarize and draft some conclusions.
+
+2. Theory
+
+2.1. Dynamical Projective Operatorial Approach (DPOA): General Theory
+Consider a general time-independent Hamiltonian  which describes a system in equilibrium. It is always possible to find some sets of composite operators , which close their hierarchy of the equations of motion (EOMs), where  identifies the set’s number. The total number of (disjoint) sets is determined by the number of (independent—non-correlated) degrees of freedom characterizing the system.
+In the presence of a time-dependent external perturbation (e.g., an electromagnetic pump pulse), the Hamiltonian becomes time-dependent: . Such a perturbation usually affects only the the single-particle term of the Hamiltonian and the closure of the hierarchy of the EOMs of the  is preserved, as follows: where · is the matrix product in the operatorial space, and  and  are the time-dependent energy matrix and eigenoperators within the set  in the Heisenberg picture, respectively. The dynamical projective operatorial approach (DPOA) exploits that  where  is the dynamical projection matrix. In the following, we choose  to be any time before the application of the pump pulse (e.g., ), so that  stands for the operatorial basis describing the equilibrium system. Moreover, for the sake of simplicity, we select . The EOM for  reads as  which should be solved with the initial condition .
+For a general pumped system, we have , in which  describes the system at equilibrium. At equilibrium, the solution of Equation (3) is . It is worth noting that by rewriting , we obtain the following reduced equation of motion: where . It is straightforward to show that, from Equation (4), one can obtain the following equivalent integro-differential equation:
+
+2.2. Pumped Lattice Systems out of Equilibrium
+The DPOA can be applied to any kind of system: atoms, molecules, organic structures, lattice systems, etc. In this work, we focus on pumped lattice systems. Starting from the results of the many available DFT codes for the target equilibrium system and wannierizing them (for example, by exploiting the Wannier90 code), one obtains a tight-binding quadratic Hamiltonian, which allows us to consider the effects of applying external EM fields (see, for instance,). One should keep in mind that such an approach neglects the dynamical Coloumb interaction (i.e., its differential contribution to the out-of-equilibrium dynamics), even though it considers the static Coloumb interaction (through the exchange and correlation integrals within the equilibrium DFT calculation), which is fundamental for correctly describing the bands of the target system, for example, by opening and determining the value of the band gaps.
+We consider an electromagnetic pump pulse with vector potential  and electric field  applied to our system after some time . In the dipole gauge, the related time-dependent Hamiltonian is given by where  is the electronic annihilation operator,  is the lattice momentum in the first Brillouin zone (FBZ), and , which also includes the spin, refers to the set of quantum numbers characterizing a localized state (e.g., a maximally localized Wannier state) and  and  are the hopping and dipole matrix elements, respectively. We have adopted a notation in which any operator (in either first or second quantization) written in the basis of the localized states carries the over-script ∼. The value of the electronic charge is indicated by . Moreover, ·, in this and similar cases, stands for the dot product between two vectors in the Cartesian space. Equation (7) can be considered as the generalization of the Peierls substitution to multi-band systems.
+It is convenient to work within a basis in which the equilibrium Hamiltonian, , is diagonal. The transformation to such a basis, which we call the band basis, can be performed through a unitary matrix  satisfying where  stands for the Kronecker delta, n is the index of the energy band and  is the band energy. Using , it is straightforward to transform any matrix from the localized basis to the band basis: where M can be any of T, , , etc. In order to clearly distinguish the operators in the two bases, we denote the operators in the band basis without the over-script∼used for the operators in the localized basis. The annihilation operator of an electron in the band n and with momentum  is as follows:Out of equilibrium, we have , where  and . Moreover, the out-of-equilibrium number of electrons in band n with momentum , , can be calculated as where  is the Fermi distribution function.
+In real materials, one usually deals with several bands and a dense  grid: computing the out-of-equilibrium Hamiltonian terms (matrices with band indexes per each momentum value in the grid and at each instant of time) is extremely time-consuming. A very efficient way to noticeably reduce the computational cost is to expand any matrix  in powers of the vector potential:The vector potential is expressed as , where  is the polarization of the pulse and  is its amplitude.  is the m-th partial derivative in the direction of . Judiciously truncating the Peierls expansion, Equation (12), one needs to compute only once the properly chosen number of derivatives per each momentum value and use them at all times. The m-th partial derivatives can be computed as follows: where  is the matrix in the direct space, as computed via the wannierization procedure. For the hopping matrix, , we call the term  with  () the velocity (inverse-mass) term. However, even though the derivative is not applied to the transformation matrix, , the resulting quantity is not the velocity (inverse mass) relative to the energy bands.
+
+2.3. Green’s Functions and TR-ARPES Signal
+Green’s function (GF) formalism provides a very versatile machinery to compute several relevant properties of a system. The retarded, , and the lesser, , GFs, are defined as follows: Using the DPOA, one can obtain non-equilibrium GFs in terms of the dynamical projection matrices P as where  is the single-particle density matrix at equilibrium. In the band basis in which the equilibrium Hamiltonian is diagonal, .
+For determining the out-of-equilibrium particle distribution over the energy of a pumped system, one can analyze the TR-ARPES signal, which plays almost the same role out of equilibrium of the spectral function in equilibrium. In this case, in addition to the pump pulse, one needs to consider a probe pulse too. The probe pulse ejects the electrons out of the system so that their energy and momentum can be measured: this is known as the TR-ARPES signal. This, for a probe pulse centered at , is proportional to (see and the references therein) where  is the probe–pulse envelope. The normalization factor is chosen in such a way that  is normalized to the total number of particles at momentum ,
+Although  provides information about the occupied states, the out-of-equilibrium TR-ARPES bands are computed using a retarded signal defined as In the band basis, we have  where which shows that the TR-ARPES signal is non-negative. It is worth noting that Equations (21) and (22) act as the out-of-equilibrium counterpart of the fluctuation–dissipation theorem.
+
+2.4. Out-of-Equilibrium Optical Properties
+In studying the out-of-equilibrium optical properties of a pumped system, we need to consider an overall electromagnetic pulse composed of both a pump and a probe pulse. The system’s optical response (reflection and/or absorption) is generally studied as a function of the time delay between the pump and probe pulses. Analyzing such a variation, one obtains information about the ultra-fast pump-induced effects on the system.
+Since the probe pulse is very weak by definition, one can compute the transient optical properties of the system through a generalized linear response theory (GLRT) that fully takes into account that the system is under the effect of the pump pulse. Deriving such a GLRT requires the following: (i) to obtain the light-matter Hamiltonian for a general realistic lattice system and a general electromagnetic pulse; (ii) to derive the expression of the electric current for such a pumped system; (iii) to determine the expression of the optical conductivity of a pumped system in this framework; (iv) to obtain the expressions of the transient reflectivity and absorption; (v) to devise a numerical framework that effectively permits us to compute these quantities for real materials (many conduction and valence bands involved and very dense momentum grids).
+Within this framework, exploiting the DPOA, the out-of-equilibrium time-dependent optical conductivity of a pumped system probed at time  (i.e., the center of the probe pulse is at time ), , reads as follows:  where which can be rewritten in a computationally more efficient way as follows: where  is the number of points on the grid which samples the FBZ, and  is the volume of unit cell. Thus, the full volume of the system is . The matrices ,  and  read as follows: and where the notation  is used for the commutator.
+Moreover, where and in which
+Having the optical conductivity , one performs the Fourier transformation with respect to  to obtain it as a function of the probe–pulse frequency, , as where  is a damping factor. In real systems, this damping factor is finite. In numerical simulations, one needs to choose its value while considering the specific system under study and the details of the simulation (see ref. for a detailed discussion on this issue). However, to study pump-induced dynamics, the system should have dampings small enough such that the damping time () is much larger than the time scales of those pump-induced dynamics.
+A noticeable simplification in the calculations is achieved if one restricts the upper limit of the integral given in Equation (38) to some  at which the pump pulse is negligible and writes where  in which  where and
+We consider a case in which both the pump and probe pulses are linearly polarized and both of them have the same polarization. Therefore, the optical conductivity reduces to . Correspondingly, the dielectric function is where  is the vacuum dielectric constant.
+If the probe pulse frequencies are much larger than the pump pulse ones, the transient reflectivity of an s-polarized probe pulse of central frequency  and incident angle  is given byFollowing the experimental measurements, we also compute the relative differential transient reflectivity, , defined as  where  is the equilibrium reflectivity. To gain more information about the features appearing in , one can perform a Fourier transformation with respect to the time :
+Up until now, we have been considering reflectivity. However, it is also possible to study the transient absorption coefficient of the pumped system, which is given by where c is the speed of light in a vacuum and  is the real out-of-equilibrium refractive index. In our calculations, we compute the transient differential absorption coefficient as where  stands for the absorption coefficient at equilibrium.
+
+3. The Case Study of a Three-Band Semiconductor
+In both cases, the TR-ARPES signal and transient optical properties, to analyze the phenomenology that emerges in a pump–probe setup, it is helpful to consider a simple model describing a semiconductor. In this way, without becoming lost in the complications of any particular real material, one can construct a dictionary of phenomena coming from different mechanisms. Dealing with real experimental setups, such a dictionary can be extremely useful in analyzing the results.
+Our semiconductor model consists of a cubic lattice with a lattice constant a and three bands: a valence band (VB), a conduction band (CB), and a core band. The dispersions of VB and CB can be obtained by the following hopping matrix elements: , , , , and . Here,  is the hopping matrix element between localized Wannier states with indices  and  centered at a relative distance , and . The unit of energy is , which determines the band gap. For example,  results in a band gap of  at . By diagonalizing the matrix , one obtains the dispersions of VB and CBs. On the other hand, to simplify the model and focus on the effects of the pump pulse and not on the specific features of the core band and of its coupling to VB and CB, we consider a flat core band at energy  and no hopping between the core band and the other two bands. The core band is coupled to the VB and CB via a local momentum-independent dipole matrix element . For the case of the TR-ARPES signal, we consider the main cubic path in the FBZ, while for studying the transient optical properties, we sample the k space by a cubic  grid, which includes . The damping factor is chosen as .
+The vector potential of the pump pulse is  where  isAccordingly, we assume that the center of the pump pulse is taken as the origin of the time axis. Hence, the center of the probe pulse, , coincides with the time delay between the pump and probe pulses. The pump amplitude is , the FWHM of the pump pulse is , and the pump frequency is .
+
+3.1. TR-ARPES Signals
+In Figure 1, we show the maps of the retarded and lesser TR-ARPES signals, when the center and the FWHM of the probe pulse coincides with those of the pump pulse. The local maxima of the TR-ARPES signal can be considered as the TR-ARPES bands. In the proximity of the equilibrium VB and CB (shown by the red lines), we have the main TR-ARPES bands that are just slightly shifted. Meanwhile, in equilibrium, we only have two bands in the energy range of Figure 1, where, under the application of the pump pulse, new side bands emerge. Some of these sidebands are∼ (n being a non-zero integer), apart from the main VB or CB, and we call them photon sidebands (PSBs), or more precisely, n-photon PSBs. We also witness the emergence of some other kinds of sidebands in the proximity of the main bands, which we called envelope-Peierls sidebands (EPSBs). The retarded signal features both VB and CB and all their sidebands, regardless of their occupation. On the other hand, the lesser signal, which is directly measurable in experiments, just shows the occupied portion of the band structure. Hence, it features only the VB and its sidebands.
+The origin of the one-photon PSBs is the velocity term in the Peierls expansion. One can simply show that this velocity is proportional to  in our model, which vanishes on the planes -X-A-Z and Y-M-B-D, preventing the appearance of one-photon PSBs at these k-points. The inverse-mass term is proportional to . Therefore, at S, C, middle points of the lines X-M, A-B, Z-D and -Y, it vanishes identically. The vanishing of inverse-mass terms results in no shift of the TR-ARPES bands with respect to the equilibrium bands, but it results in the disappearance of the EPSBs. This clarifies how the symmetries of the system can affect the emerging features in the TR-ARPES signals, namely the band shifts and the pump-induced sidebands.
+
+3.2. Transient Optical Properties
+In Figure 2, the transient optical properties of the system under the application of the pump pulse are shown. The low-frequency pump pulse excites the electrons from the VB to the CB, while a high-frequency probe pulse, which is in the frequency range of the energy gaps between the core band and VB/CB, allows us to detect the effects of the pump pulse in transient optical properties.
+Figure 2a reports the differential absorption coefficient, as shown in Equation (50). The one-photon resonances between the VB and CB mainly occur at the indicated dashed lines, where the absorption coefficient shows its most significant changes. This can be understood as follows: The pump pulse strongly excites electrons from the VB to the CB at resonant  points, and it creates holes in the former and electrons in the latter. The holes in the VB make it possible for the high-frequency probe pulse to excite electrons from the core band to the VB, which results in an increase in the absorption coefficient. On the other hand, because of the Pauli exclusion principle, the electrons in the CB leave less vacancies for the probe-induced excitations from the core band. Consequently, we have a reduction in the absorption coefficient at the corresponding probe frequencies.
+Figure 2b reports the relative differential reflectivity at the angle θ = 55° (see Equation (47)). At the absorption edges, where the absorption coefficient undergoes the most significant changes (indicated with dashed lines),  approaches zero. Therefore, we obtain very narrow white strips. This can be very helpful in finding the connection between the experimental results for  and the band structure of the system.
+Figure 2c reports , which is the frequency content of (see Equation (48)). The oscillations of the relative differential reflectivity (in , with respect to which the Fourier transformation is performed) are in the proximity of twice the pump frequency, , and there is no odd component. This shows that summing over all k points in the FBZ cancels out the odd frequencies that originate from the velocities.
+
+4. Summary and Perspectives
+In this manuscript, we reviewed our recently developed model-Hamiltonian approach, the dynamical projective operatorial approach (DPOA). The main ingredients of the DPOA and its applications to pumped semiconductors are reported and explained in detail. After providing the general theory of the DPOA, we clarified how it can exploit the equilibrium ab initio results for investigating pumped semiconductors through the study of the TR-ARPES signal and of the transient optical properties.
+For the case of the TR-ARPES signal, we presented the methodology to compute the standard experimentally measurable signal, the lesser signal. Moreover, we computed another (theoretical) TR-ARPES signal, the retarded one, which can be used to study the out-of-equilibrium bands of pumped systems. In the case of transient optical properties, the results of our generalized linear response theory are presented and used to analyze a pumped system.
+The DPOA can be applied to real materials (with being an example). However, to illustrate different kinds of phenomena that can emerge in such pump–probe setups, we presented a simple yet rich model for a semiconductor. For the TR-ARPES signal, we discussed the emergence of different kinds of sidebands, the roles of system symmetries, and the relevance of the resonances. For the case of transient optical properties, we established the relations between the system band structure, the pump-induced excitations, the transient optical response of the system to the probe pulse, and the frequency content of absorption and reflectivity.
+The DPOA is a versatile approach that can be applied to highly complicated systems with an affordable computational cost.
+Disclaimer/Publisher’s Note: The statements, opinions and data contained in all publications are solely those of the individual author(s) and contributor(s) and not of MDPI and/or the editor(s). MDPI and/or the editor(s) disclaim responsibility for any injury to people or property resulting from any ideas, methods, instructions or products referred to in the content.
+
+Institutional Review Board Statement
+Not applicable.
+
+Informed Consent Statement
+Not applicable.
+
+Data Availability Statement
+The raw data supporting the conclusions of this article will be made available by the authors on request.
+
+Conflicts of Interest
+The authors declare no conflicts of interest. The funders had no role in the design of the study; in the collection, analyses, or interpretation of data; in the writing of the manuscript; or in the decision to publish the results.
+
+References
+Intense few-cycle laser fields: Frontiers of nonlinear optics
+Attosecond physics
+Resonant generation of coherent phonons in a superconductor by ultrafast optical pump pulses
+Attosecond metrology: From electron capture to future signal processing
+Nonequilibrium dynamical mean-field theory and its applications
+Advances in attosecond science
+Emergent ultrafast phenomena in correlated oxides and heterostructures
+Attosecond spectroscopy for the investigation of ultrafast dynamics in atomic, molecular and solid-state physics
+Direct and simultaneous observation of ultrafast electron and hole dynamics in germanium
+Ultrafast carrier thermalization and trapping in silicon-germanium alloy probed by extreme ultraviolet transient absorption spectroscopy
+Femtosecond tracking of carrier relaxation in germanium with extreme ultraviolet transient reflectivity
+Femtosecond dynamics of electronic states in the Mott insulator 1T-TaS2 by time resolved photoelectron spectroscopy
+Transient electronic structure and melting of a charge density wave in TbTe3
+Generation of high-order harmonics from solid surfaces by intense femtosecond laser pulses
+Efficient Extreme UV Harmonics Generated from Picosecond Laser Pulse Interactions with Solid Targets
+Extreme midinfrared nonlinear optics in semiconductors
+Observation of high-order harmonic generation in a bulk crystal
+Extreme ultraviolet high-harmonic spectroscopy of solids
+High-harmonic generation by field enhanced femtosecond pulses in metal-sapphire nanostructure
+Extreme ultraviolet transient absorption of solids from femtosecond to attosecond timescales
+Anisotropic high-harmonic generation in bulk crystals
+High-harmonic generation from an atomically thin semiconductor
+Crystal symmetry and polarization of high-order harmonics in ZnO
+Collapse of long-range charge order tracked by time-resolved photoemission at high momenta
+Tracking Cooper pairs in a cuprate superconductor by ultrafast angle-resolved photoemission
+Time-domain classification of charge-density-wave insulators
+Coherent Phonon Coupling to Individual Bloch States in Photoexcited Bismuth
+Observation of Floquet-Bloch states on the surface of a topological insulator
+Direct View of Hot Carrier Dynamics in Graphene
+Energy dissipation from a correlated system driven out of equilibrium
+Subcycle observation of lightwave-driven Dirac currents in a topological surface band
+Angular-resolved ultraviolet photoemission spectroscopy and its application to the layer compounds Ta Se 2 and Ta S 2
+Experimental energy dispersions for valence and conduction bands of palladium
+Spectral function and photoemission spectra in antiferromagnetically correlated metals
+The electronic structure of solids studied using angle resolved photoemission spectroscopy
+Angle-resolved photoemission studies of the cuprate superconductors
+Angle-resolved photoemission studies of quantum materials
+Controlling dielectrics with the electric field of light
+Ultrafast switching to a stable hidden quantum state in an electronic crystal
+Attosecond band-gap dynamics in silicon
+Attosecond dynamical Franz-Keldysh effect in polycrystalline diamond
+Petahertz optical drive with wide-bandgap semiconductor
+Disorder-sensitive pump-probe measurements on Nd1.83Ce0.17CuO4±δ films
+Tracking local magnetic dynamics via high-energy charge excitations in a relativistic Mott insulator
+Localized vibrations in superconducting YBa2Cu3O7 revealed by ultrafast optical coherent spectroscopy
+Attosecond optical-field-enhanced carrier injection into the GaAs conduction band
+Signatures of Enhanced Superconducting Phase Coherence in Optimally Doped Bi2Sr2Y0.08Ca0.92Cu2O8+δ Driven by Midinfrared Pulse Excitations
+Retrieval of the complex-valued refractive index of germanium near the M4,5 absorption edge
+Transient absorption spectroscopy using high harmonic generation: A review of ultrafast X-ray dynamics in molecules and solids
+Anisotropic time-domain electronic response in cuprates driven by midinfrared pulses
+Field-driven attosecond charge dynamics in germanium
+Photoinduced charge carrier dynamics in germanium
+Attosecond magnetization dynamics in non-magnetic materials driven by intense femtosecond lasers
+Inside Cover: Simulating Pump–Probe Photoelectron and Absorption Spectroscopy on the Attosecond Timescale with Time-Dependent Density Functional Theory (ChemPhysChem 7/2013)
+Monitoring electron-photon dressing in WSe2
+Efficient and accurate modeling of electron photoemission in nanostructures with TDDFT
+A first-principles time-dependent density functional theory framework for spin and time-resolved angular-resolved photoelectron spectroscopy in periodic systems
+Velocity-gauge real-time TDDFT within a numerical atomic orbital basis set
+Atomic-like high-harmonic generation from two-dimensional materials
+Real-time and real-space time-dependent density-functional theory approach to attosecond dynamics
+Dialogue on analytical and ab initio methods in attoscience
+Role of intraband transitions in photocarrier generation
+Detecting light-induced Floquet band gaps of graphene via trARPES
+Time evolution of energies and populations in germanium perturbed by a near-infrared pulse on the atto-second scale
+Gauge invariance of light-matter interactions in first-principle tight-binding models
+Time-resolved ARPES signal in pumped semiconductors within the dynamical projective operatorial approach
+Generalized linear response theory for pumped systems and its application to transient optical properties
+The Hubbard model within the equations of motion approach
+Underdoped cuprate phenomenology in the two-dimensional Hubbard model within the composite operator method
+The Composite Operator Method (COM)
+The Hubbard model beyond the two-pole approximation: A composite operator method study
+Composite operator method analysis of the underdoped cuprates puzzle
+The composite operator method route to the 2D Hubbard model and the cuprates
+Out-of-equilibrium Hubbard dimer within DPOA
+Attosecond Inter-and Intra-Band Charge Carrier Dynamics in Germanium
+Light-Driven Attosecond Photoinjection in Germanium
+Attosecond photoinjection dynamics in germanium
+Dynamical projective operatorial approach (DPOA) for pump-probe setups in the ultrafast regime
+Photoexcitation in germanium probed by attosecond transient reflectivity spectroscopy
+The superconducting gap in the two-dimensional Hubbard model
+The overdoped regime in La2- xSrxCuO4
+The half-filled Hubbard chain in the Composite Operator Method: A comparison with Bethe Ansatz
+Incommensurate spin fluctuations in the two-dimensional t-t’-U model
+The Hubbard model in the two-pole approximation
+Two-Scale Analysis of the SU(N) Kondo Model
+The two-dimensional t-t’-U model as a minimal model for cuprate materials
+Antiferromagnetic phase in the Hubbard model by means of the composite operator method
+Bosonic sector of the two-dimensional Hubbard model studied within a two-pole approximation
+The 2-site Hubbard and t-J models
+Equation of motion method for composite field operators
+The Hubbard model with intersite interaction within the Composite Operator Method
+Self-energy corrections to the electronic spectrum of the Hubbard model
+High-order correlation effects in the two-dimensional Hubbard model
+Exact solution of the one-dimensional spin-3/2 Ising model in magnetic field
+Emery vs. Hubbard model for cuprate superconductors: A composite operator method study
+An updated version of wannier90: A tool for obtaining maximally-localised Wannier functions
+Zur theorie des diamagnetismus von leitungselektronen
+Coupling of nonlocal potentials to electromagnetic fields
+Theoretical Description of Time-Resolved Photoemission Spectroscopy: Application to Pump-Probe Experiments
+Examining electron-boson coupling using time-resolved spectroscopy
+Gauge invariance in the theoretical description of time-resolved angle-resolved pump/probe photoemission spectroscopy
+Theory of subcycle time-resolved photoemission: Application to terahertz photodressing in graphene
+(a) The retarded, , and (b) the lesser, , TR-ARPES signals along the main path, for the case where the centers and the FWHM of the pump and probe pulses coincide with each other (i.e.,  and ). The equilibrium band energies are shown with solid red lines, and the local maxima of the signal at each k point are shown with green dots. The latter indicate the out-of-equilibrium TR-ARPES bands.
+(a) Differential absorption coefficient (Equation (50)), as a function of  and . The absorption coefficient is made to be dimensionless by being multiplied by the lattice constant a. The red arrow shows the electronic excitation via the one-photon resonance with the pump pulse. (b) Relative differential reflectivity for  (Equation (47)) as a function of  and . (c) The frequency content of relative differential reflectivity,  (see Equation (48)). The low-frequency region, , is not shown.

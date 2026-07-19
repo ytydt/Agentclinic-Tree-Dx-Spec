@@ -1,0 +1,90 @@
+{
+  "metadata": {
+    "purpose": "Structured age/sex incidence MODIFIERS for the diagnostic PRIOR (not finding LRs). Age & sex are epidemiology: they shift pre-test probability, they are not test results. Multipliers are coarse, monotone-where-appropriate relative weights (1.0 = neutral), grounded in standard epidemiology (e.g. SEER age-specific cancer incidence; textbook onset distributions). Extend by adding categories or disease overrides; keep multipliers RELATIVE and bounded.",
+    "age_bands": ["0-1", "2-12", "13-18", "19-40", "41-60", "61-200"],
+    "clamp": [0.05, 4.0],
+    "sources": "SEER age-specific incidence; Harrison's/UpToDate onset distributions; ACS cancer statistics.",
+    "version": 1
+  },
+  "categories": {
+    "solid_malignancy": {
+      "keywords": ["carcinoma", "adenocarcinoma", "cancer", "neoplasm", "tumor", "tumour", "malignan", "sarcoma", "mesothelioma", "melanoma"],
+      "age_bands": {"0-1": 0.3, "2-12": 0.2, "13-18": 0.3, "19-40": 0.5, "41-60": 1.3, "61-200": 2.2},
+      "sex_skew": {}
+    },
+    "degenerative": {
+      "keywords": ["alzheimer", "parkinson", "dementia", "osteoarthritis", "degenerative", "macular degeneration"],
+      "age_bands": {"0-1": 0.05, "2-12": 0.05, "13-18": 0.05, "19-40": 0.1, "41-60": 0.6, "61-200": 2.4},
+      "sex_skew": {}
+    },
+    "atherosclerotic_cardiovascular": {
+      "keywords": ["coronary", "myocardial", "atherosclero", "ischemic heart", "ischaemic heart", "angina", "peripheral arterial", "abdominal aortic aneurysm"],
+      "age_bands": {"0-1": 0.05, "2-12": 0.05, "13-18": 0.1, "19-40": 0.4, "41-60": 1.3, "61-200": 1.9},
+      "sex_skew": {"male": 1.3, "female": 0.8}
+    },
+    "congenital_genetic": {
+      "keywords": ["congenital", "genetic", "hereditary", "inherited", "inborn error", "cystic fibrosis", "neural tube"],
+      "age_bands": {"0-1": 2.2, "2-12": 1.6, "13-18": 1.1, "19-40": 0.7, "41-60": 0.4, "61-200": 0.3},
+      "sex_skew": {}
+    },
+    "autoimmune_inflammatory": {
+      "keywords": ["lupus", "rheumatoid", "systemic sclerosis", "multiple sclerosis", "inflammatory bowel", "sjogren", "myasthenia"],
+      "age_bands": {"0-1": 0.2, "2-12": 0.4, "13-18": 0.8, "19-40": 1.5, "41-60": 1.2, "61-200": 0.7},
+      "sex_skew": {"female": 1.3, "male": 0.7}
+    }
+  },
+  "diseases": {
+    "chronic myeloid leukemia": {
+      "keywords": ["chronic myeloid leukemia", "chronic myelogenous leukemia", "cml"],
+      "age_bands": {"0-1": 0.1, "2-12": 0.1, "13-18": 0.2, "19-40": 0.5, "41-60": 1.2, "61-200": 1.9},
+      "sex_skew": {"male": 1.2, "female": 0.85}
+    },
+    "acute lymphoblastic leukemia": {
+      "keywords": ["acute lymphoblastic leukemia", "acute lymphocytic leukemia", "all"],
+      "age_bands": {"0-1": 1.2, "2-12": 2.4, "13-18": 1.2, "19-40": 0.7, "41-60": 0.6, "61-200": 0.8},
+      "sex_skew": {}
+    },
+    "acute myeloid leukemia": {
+      "keywords": ["acute myeloid leukemia", "acute myelogenous leukemia", "aml"],
+      "age_bands": {"0-1": 0.6, "2-12": 0.4, "13-18": 0.5, "19-40": 0.7, "41-60": 1.1, "61-200": 2.0},
+      "sex_skew": {}
+    },
+    "prostate cancer": {
+      "keywords": ["prostate"],
+      "age_bands": {"0-1": 0.0, "2-12": 0.0, "13-18": 0.0, "19-40": 0.05, "41-60": 0.8, "61-200": 2.5},
+      "sex_skew": {"male": 1.0, "female": 0.0}
+    },
+    "ovarian cancer": {
+      "keywords": ["ovarian"],
+      "age_bands": {"0-1": 0.05, "2-12": 0.1, "13-18": 0.2, "19-40": 0.6, "41-60": 1.3, "61-200": 1.8},
+      "sex_skew": {"male": 0.0, "female": 1.0}
+    },
+    "endometrial cancer": {
+      "keywords": ["endometrial", "uterine"],
+      "age_bands": {"0-1": 0.0, "2-12": 0.0, "13-18": 0.05, "19-40": 0.4, "41-60": 1.3, "61-200": 1.7},
+      "sex_skew": {"male": 0.0, "female": 1.0}
+    },
+    "giant cell arteritis": {
+      "keywords": ["giant cell arteritis", "temporal arteritis"],
+      "age_bands": {"0-1": 0.0, "2-12": 0.0, "13-18": 0.0, "19-40": 0.05, "41-60": 0.6, "61-200": 2.5},
+      "sex_skew": {"female": 1.3, "male": 0.7}
+    },
+    "kawasaki disease": {
+      "keywords": ["kawasaki"],
+      "age_bands": {"0-1": 2.5, "2-12": 1.8, "13-18": 0.4, "19-40": 0.1, "41-60": 0.05, "61-200": 0.05},
+      "sex_skew": {"male": 1.2, "female": 0.85}
+    },
+    "myeloid neoplasm (family)": {
+      "_note": "§21.13.4 Bug2 fix: broad myeloid family labels (e.g. 'Myeloid Neoplasm with Increased Blasts', 'Chronic Myeloproliferative Neoplasm') would otherwise hit the solid_malignancy 'neoplasm' keyword and get a SOLID-TUMOUR age curve. Checked before categories; gives the (older-skewed) myeloid leukemia curve instead.",
+      "keywords": ["myeloid neoplasm", "myeloproliferative", "chronic myeloproliferative", "myelodysplastic"],
+      "age_bands": {"0-1": 0.4, "2-12": 0.3, "13-18": 0.4, "19-40": 0.6, "41-60": 1.2, "61-200": 2.0},
+      "sex_skew": {"male": 1.1, "female": 0.9}
+    },
+    "lymphoid neoplasm (family)": {
+      "_note": "§21.13.4 Bug2 fix: broad lymphoid-blast family labels (e.g. 'Lymphoid Neoplasm with Increased Blasts' ≈ ALL) are CHILD-peaked; the solid_malignancy curve would invert this (×0.20 in a child). Gives the lymphoblastic (child-peaked) curve.",
+      "keywords": ["lymphoid neoplasm", "lymphoblastic"],
+      "age_bands": {"0-1": 1.0, "2-12": 1.9, "13-18": 1.1, "19-40": 0.8, "41-60": 0.7, "61-200": 0.9},
+      "sex_skew": {}
+    }
+  }
+}

@@ -1,0 +1,4666 @@
+{
+  "arm": "A19-budget-safe",
+  "comparator": "A-raw-v2",
+  "generated_from": {
+    "error_mode_cells": "/data2/wanghongyi/Agentclinic-Tree-Dx-Spec/logs/l2_a_variant_legacy_ab_v2/evaluation/case_deep/error_mode_cells.json",
+    "transitions": "/data2/wanghongyi/Agentclinic-Tree-Dx-Spec/logs/l2_a_variant_legacy_ab_v2/evaluation/case_deep/arm_case_transitions_vs_a_raw_v2.json",
+    "case_means": "/data2/wanghongyi/Agentclinic-Tree-Dx-Spec/logs/l2_a_variant_legacy_ab_v2/evaluation/case_deep/case_means_3run.json",
+    "generation_traces": "/data2/wanghongyi/Agentclinic-Tree-Dx-Spec/logs/l2_a_variant_matrix_v2/generation/traces/A19-budget-safe",
+    "evaluation_traces": "/data2/wanghongyi/Agentclinic-Tree-Dx-Spec/logs/l2_a_variant_legacy_ab_v2/evaluation/traces/A19-budget-safe",
+    "transform_code": "/data2/wanghongyi/Agentclinic-Tree-Dx-Spec/scripts/l2_a_variant_v2_transforms.py"
+  },
+  "summary": {
+    "n_cells": 51,
+    "rates_a19": {
+      "top2": 0.3333,
+      "top1": 0.2549,
+      "local_champion": 0.4706,
+      "active_gold_l2_coverage": 0.8627,
+      "reserve_gold_present": 0.8431
+    },
+    "rates_raw_macro_case_mean": {
+      "top2": 0.4902,
+      "top1": 0.4118,
+      "local_champion": 0.6078
+    },
+    "net_vs_a_raw_v2_cell_transitions": {
+      "top2": -8,
+      "top1": -8,
+      "local_champion": -7,
+      "top2_loss_cells": 10,
+      "top2_gain_cells": 2,
+      "lc_loss_cells": 10,
+      "lc_gain_cells": 3
+    },
+    "loss_gate_counts": {
+      "success": 17,
+      "local_champion_elimination": 20,
+      "intergroup_rank_loss": 7,
+      "coverage_deleted": 7
+    },
+    "top2_fail_by_gate": {
+      "coverage_deleted": 7,
+      "intergroup_rank_loss": 7,
+      "local_champion_elimination": 20
+    },
+    "top2_regression_cells_vs_raw": 10,
+    "local_champion_elimination_cells": 20,
+    "local_champion_false_cells": 27,
+    "hard_delete_invariant_ok": true,
+    "cap_after_dedupe_hard_drop_rate": 0.0,
+    "lineage_rejection_totals": {
+      "budget_overflow": 210,
+      "hard_delete": 0,
+      "semantic_duplicate": 722
+    },
+    "verdict": "A19 meets its no-hard-delete invariant but is the worst Top-2 arm because global semantic dedupe strips cross-parent gold champions into reserve, then local ranking fails to elect the remaining active gold. Reserve does not rescue Top-2."
+  },
+  "design_goal_gap": {
+    "intended": "semantic cluster → single final budget B=4 active unique concepts per parent; duplicates/overflow to reserve (not hard-delete); cap_after_dedupe_hard_drop_rate=0; fix v1 A2→A3 double-cap hard deletes WITHOUT destroying downstream Top-2.",
+    "achieved": [
+      "hard_delete=0 and cap_after_dedupe_hard_drop_rate=0.0 verified in lineage",
+      "duplicates and overflow go to closed_for_now reserve as designed",
+      "active_gold_l2_coverage remains high (86.3%) because usually one gold copy stays active"
+    ],
+    "missed": [
+      "Top-2 collapses to 33.3% (net -8 vs raw) — design failed its non-destruction clause",
+      "local_champion 47.1% with 20/51 local_champion_elimination gates (net -7 vs raw)",
+      "semantic clustering is GLOBAL across parents, so \"unique concepts per parent\" is violated in spirit: parents lose their concept exemplar",
+      "reserve is not consumed by local ranking, so \"safe\" shelving is effectively silent deletion for Top-2",
+      "_leaf_quality cluster-winner selection is near-degenerate (often zero posteriors), biasing to lower id / B1"
+    ],
+    "root_cause_one_liner": "Global cross-parent dedupe + inert reserve + local-rank distractors, not hard-delete."
+  },
+  "regression_cells": [
+    {
+      "case_id": "mb55_glucagonoma",
+      "replicate": 1,
+      "loss_gate": "local_champion_elimination",
+      "gold_went_to_reserve": true,
+      "reserve_gold_present": true,
+      "active_gold_l2_coverage": true,
+      "acceptable_l2": [
+        "B1.2",
+        "B4.1",
+        "B5.2"
+      ],
+      "acceptable_labels": {
+        "B1.2": "Glucagonoma",
+        "B4.1": "Glucagonoma",
+        "B5.2": "Glucagonoma"
+      },
+      "a19_gold_active": [
+        "B1.2"
+      ],
+      "a19_gold_reserve": [
+        "B4.1",
+        "B5.2"
+      ],
+      "gold_in_reserve_detail": [
+        {
+          "id": "B4.1",
+          "label": "Glucagonoma",
+          "parent": "B4",
+          "mechanism": "semantic_duplicate",
+          "winner_id": "B1.2",
+          "winner_label": "Glucagonoma",
+          "cluster": "Glucagonoma",
+          "cluster_members": [
+            "B1.2",
+            "B4.1",
+            "B5.2"
+          ],
+          "cluster_member_labels": {
+            "B1.2": "Glucagonoma",
+            "B4.1": "Glucagonoma",
+            "B5.2": "Glucagonoma"
+          }
+        },
+        {
+          "id": "B5.2",
+          "label": "Glucagonoma",
+          "parent": "B5",
+          "mechanism": "semantic_duplicate",
+          "winner_id": "B1.2",
+          "winner_label": "Glucagonoma",
+          "cluster": "Glucagonoma",
+          "cluster_members": [
+            "B1.2",
+            "B4.1",
+            "B5.2"
+          ],
+          "cluster_member_labels": {
+            "B1.2": "Glucagonoma",
+            "B4.1": "Glucagonoma",
+            "B5.2": "Glucagonoma"
+          }
+        }
+      ],
+      "gold_in_active_detail": [
+        {
+          "id": "B1.2",
+          "label": "Glucagonoma",
+          "parent": "B1",
+          "rank_among_cluster_winners": 2,
+          "parent_ranking": [
+            "B1.1",
+            "B1.2",
+            "B1.3",
+            "B1.4"
+          ],
+          "is_local_champion": false,
+          "parent_local_champion_id": "B1.1",
+          "parent_local_champion_label": "Type 2 Diabetes Mellitus"
+        }
+      ],
+      "raw_gold_champions": [
+        "B4.1"
+      ],
+      "reserved_raw_gold_champions": [
+        "B4.1"
+      ],
+      "a19_local_champions": [
+        "B1.1",
+        "B2.1",
+        "B3.4",
+        "B4.4",
+        "B5.3"
+      ],
+      "a19_champion_labels": {
+        "B1.1": "Type 2 Diabetes Mellitus",
+        "B2.1": "Dermatomyositis",
+        "B3.4": "Necrobiosis Lipoidica",
+        "B4.4": "Insulinoma",
+        "B5.3": "Necrolytic Migratory Erythema"
+      },
+      "lc_elimination_mechanism": "raw_gold_champion_reserved",
+      "baseline_top2": true,
+      "actual_top2": false,
+      "local_champion": false,
+      "raw_local_champion": true,
+      "rank": null,
+      "raw_rank": 1
+    },
+    {
+      "case_id": "mb83_foreignbody",
+      "replicate": 1,
+      "loss_gate": "local_champion_elimination",
+      "gold_went_to_reserve": true,
+      "reserve_gold_present": true,
+      "active_gold_l2_coverage": true,
+      "acceptable_l2": [
+        "B1.2",
+        "B2.1",
+        "B3.2"
+      ],
+      "acceptable_labels": {
+        "B1.2": "Nasal Foreign Body",
+        "B2.1": "Foreign body obstruction",
+        "B3.2": "Nasal Foreign Body"
+      },
+      "a19_gold_active": [
+        "B1.2",
+        "B2.1"
+      ],
+      "a19_gold_reserve": [
+        "B3.2"
+      ],
+      "gold_in_reserve_detail": [
+        {
+          "id": "B3.2",
+          "label": "Nasal Foreign Body",
+          "parent": "B3",
+          "mechanism": "semantic_duplicate",
+          "winner_id": "B1.2",
+          "winner_label": "Nasal Foreign Body",
+          "cluster": "nasal foreign body",
+          "cluster_members": [
+            "B1.2",
+            "B3.2"
+          ],
+          "cluster_member_labels": {
+            "B1.2": "Nasal Foreign Body",
+            "B3.2": "Nasal Foreign Body"
+          }
+        }
+      ],
+      "gold_in_active_detail": [
+        {
+          "id": "B1.2",
+          "label": "Nasal Foreign Body",
+          "parent": "B1",
+          "rank_among_cluster_winners": 3,
+          "parent_ranking": [
+            "B1.1",
+            "B1.4",
+            "B1.2",
+            "B1.5"
+          ],
+          "is_local_champion": false,
+          "parent_local_champion_id": "B1.4",
+          "parent_local_champion_label": "Kiesselbach Plexus Bleeding"
+        },
+        {
+          "id": "B2.1",
+          "label": "Foreign body obstruction",
+          "parent": "B2",
+          "rank_among_cluster_winners": 3,
+          "parent_ranking": [
+            "B2.3",
+            "B2.2",
+            "B2.1"
+          ],
+          "is_local_champion": false,
+          "parent_local_champion_id": "B2.2",
+          "parent_local_champion_label": "Bleeding and infected vessel of Kiesselbach plexus"
+        }
+      ],
+      "raw_gold_champions": [
+        "B3.2"
+      ],
+      "reserved_raw_gold_champions": [
+        "B3.2"
+      ],
+      "a19_local_champions": [
+        "B1.4",
+        "B2.2",
+        "B3.4",
+        "B4.2"
+      ],
+      "a19_champion_labels": {
+        "B1.4": "Kiesselbach Plexus Bleeding",
+        "B2.2": "Bleeding and infected vessel of Kiesselbach plexus",
+        "B3.4": "Allergic Rhinitis",
+        "B4.2": "Nasopharyngeal carcinoma"
+      },
+      "lc_elimination_mechanism": "raw_gold_champion_reserved",
+      "baseline_top2": true,
+      "actual_top2": false,
+      "local_champion": false,
+      "raw_local_champion": true,
+      "rank": null,
+      "raw_rank": 1
+    },
+    {
+      "case_id": "mxh036",
+      "replicate": 1,
+      "loss_gate": "local_champion_elimination",
+      "gold_went_to_reserve": true,
+      "reserve_gold_present": true,
+      "active_gold_l2_coverage": true,
+      "acceptable_l2": [
+        "B1.3",
+        "B2.1",
+        "B4.1",
+        "B5.1"
+      ],
+      "acceptable_labels": {
+        "B1.3": "Glycogen storage disease type 1",
+        "B2.1": "Glycogen storage disease type 1",
+        "B4.1": "Glycogen storage disease type 1",
+        "B5.1": "Glycogen storage disease type 1"
+      },
+      "a19_gold_active": [
+        "B1.3"
+      ],
+      "a19_gold_reserve": [
+        "B2.1",
+        "B4.1",
+        "B5.1"
+      ],
+      "gold_in_reserve_detail": [
+        {
+          "id": "B2.1",
+          "label": "Glycogen storage disease type 1",
+          "parent": "B2",
+          "mechanism": "semantic_duplicate",
+          "winner_id": "B1.3",
+          "winner_label": "Glycogen storage disease type 1",
+          "cluster": "Glycogen storage disease type 1",
+          "cluster_members": [
+            "B1.3",
+            "B2.1",
+            "B4.1",
+            "B5.1"
+          ],
+          "cluster_member_labels": {
+            "B1.3": "Glycogen storage disease type 1",
+            "B2.1": "Glycogen storage disease type 1",
+            "B4.1": "Glycogen storage disease type 1",
+            "B5.1": "Glycogen storage disease type 1"
+          }
+        },
+        {
+          "id": "B4.1",
+          "label": "Glycogen storage disease type 1",
+          "parent": "B4",
+          "mechanism": "semantic_duplicate",
+          "winner_id": "B1.3",
+          "winner_label": "Glycogen storage disease type 1",
+          "cluster": "Glycogen storage disease type 1",
+          "cluster_members": [
+            "B1.3",
+            "B2.1",
+            "B4.1",
+            "B5.1"
+          ],
+          "cluster_member_labels": {
+            "B1.3": "Glycogen storage disease type 1",
+            "B2.1": "Glycogen storage disease type 1",
+            "B4.1": "Glycogen storage disease type 1",
+            "B5.1": "Glycogen storage disease type 1"
+          }
+        },
+        {
+          "id": "B5.1",
+          "label": "Glycogen storage disease type 1",
+          "parent": "B5",
+          "mechanism": "semantic_duplicate",
+          "winner_id": "B1.3",
+          "winner_label": "Glycogen storage disease type 1",
+          "cluster": "Glycogen storage disease type 1",
+          "cluster_members": [
+            "B1.3",
+            "B2.1",
+            "B4.1",
+            "B5.1"
+          ],
+          "cluster_member_labels": {
+            "B1.3": "Glycogen storage disease type 1",
+            "B2.1": "Glycogen storage disease type 1",
+            "B4.1": "Glycogen storage disease type 1",
+            "B5.1": "Glycogen storage disease type 1"
+          }
+        }
+      ],
+      "gold_in_active_detail": [
+        {
+          "id": "B1.3",
+          "label": "Glycogen storage disease type 1",
+          "parent": "B1",
+          "rank_among_cluster_winners": 3,
+          "parent_ranking": [
+            "B1.1",
+            "B1.4",
+            "B1.3",
+            "B1.2"
+          ],
+          "is_local_champion": false,
+          "parent_local_champion_id": "B1.1",
+          "parent_local_champion_label": "Lipoprotein lipase deficiency"
+        }
+      ],
+      "raw_gold_champions": [
+        "B2.1"
+      ],
+      "reserved_raw_gold_champions": [
+        "B2.1"
+      ],
+      "a19_local_champions": [
+        "B1.1",
+        "B2.7",
+        "B3.4",
+        "B4.5"
+      ],
+      "a19_champion_labels": {
+        "B1.1": "Lipoprotein lipase deficiency",
+        "B2.7": "Pompe disease",
+        "B3.4": "Fabry disease",
+        "B4.5": "Carnitine palmitoyltransferase II deficiency"
+      },
+      "lc_elimination_mechanism": "raw_gold_champion_reserved",
+      "baseline_top2": true,
+      "actual_top2": false,
+      "local_champion": false,
+      "raw_local_champion": true,
+      "rank": null,
+      "raw_rank": 2
+    },
+    {
+      "case_id": "mxh046",
+      "replicate": 1,
+      "loss_gate": "local_champion_elimination",
+      "gold_went_to_reserve": true,
+      "reserve_gold_present": true,
+      "active_gold_l2_coverage": true,
+      "acceptable_l2": [
+        "B1.3",
+        "B2.4",
+        "B3.2",
+        "B4.2"
+      ],
+      "acceptable_labels": {
+        "B1.3": "Homocystinuria",
+        "B2.4": "Homocystinuria",
+        "B3.2": "Homocystinuria",
+        "B4.2": "Homocystinuria"
+      },
+      "a19_gold_active": [
+        "B1.3"
+      ],
+      "a19_gold_reserve": [
+        "B2.4",
+        "B3.2",
+        "B4.2"
+      ],
+      "gold_in_reserve_detail": [
+        {
+          "id": "B2.4",
+          "label": "Homocystinuria",
+          "parent": "B2",
+          "mechanism": "semantic_duplicate",
+          "winner_id": "B1.3",
+          "winner_label": "Homocystinuria",
+          "cluster": "homocystinuria",
+          "cluster_members": [
+            "B1.3",
+            "B2.4",
+            "B3.2",
+            "B4.2"
+          ],
+          "cluster_member_labels": {
+            "B1.3": "Homocystinuria",
+            "B2.4": "Homocystinuria",
+            "B3.2": "Homocystinuria",
+            "B4.2": "Homocystinuria"
+          }
+        },
+        {
+          "id": "B3.2",
+          "label": "Homocystinuria",
+          "parent": "B3",
+          "mechanism": "semantic_duplicate",
+          "winner_id": "B1.3",
+          "winner_label": "Homocystinuria",
+          "cluster": "homocystinuria",
+          "cluster_members": [
+            "B1.3",
+            "B2.4",
+            "B3.2",
+            "B4.2"
+          ],
+          "cluster_member_labels": {
+            "B1.3": "Homocystinuria",
+            "B2.4": "Homocystinuria",
+            "B3.2": "Homocystinuria",
+            "B4.2": "Homocystinuria"
+          }
+        },
+        {
+          "id": "B4.2",
+          "label": "Homocystinuria",
+          "parent": "B4",
+          "mechanism": "semantic_duplicate",
+          "winner_id": "B1.3",
+          "winner_label": "Homocystinuria",
+          "cluster": "homocystinuria",
+          "cluster_members": [
+            "B1.3",
+            "B2.4",
+            "B3.2",
+            "B4.2"
+          ],
+          "cluster_member_labels": {
+            "B1.3": "Homocystinuria",
+            "B2.4": "Homocystinuria",
+            "B3.2": "Homocystinuria",
+            "B4.2": "Homocystinuria"
+          }
+        }
+      ],
+      "gold_in_active_detail": [
+        {
+          "id": "B1.3",
+          "label": "Homocystinuria",
+          "parent": "B1",
+          "rank_among_cluster_winners": 2,
+          "parent_ranking": [
+            "B1.1",
+            "B1.3",
+            "B1.2",
+            "B1.4"
+          ],
+          "is_local_champion": false,
+          "parent_local_champion_id": "B1.1",
+          "parent_local_champion_label": "Marfan syndrome"
+        }
+      ],
+      "raw_gold_champions": [
+        "B1.3"
+      ],
+      "reserved_raw_gold_champions": [],
+      "a19_local_champions": [
+        "B1.1"
+      ],
+      "a19_champion_labels": {
+        "B1.1": "Marfan syndrome"
+      },
+      "lc_elimination_mechanism": "partial_gold_reserved_remaining_lost_local_rank",
+      "baseline_top2": true,
+      "actual_top2": false,
+      "local_champion": false,
+      "raw_local_champion": true,
+      "rank": null,
+      "raw_rank": 1
+    },
+    {
+      "case_id": "mb57_kartagener",
+      "replicate": 2,
+      "loss_gate": "local_champion_elimination",
+      "gold_went_to_reserve": true,
+      "reserve_gold_present": true,
+      "active_gold_l2_coverage": true,
+      "acceptable_l2": [
+        "B1.4",
+        "B1.5",
+        "B2.2",
+        "B2.4",
+        "B3.3",
+        "B3.5",
+        "B4.3",
+        "B4.4",
+        "B5.3"
+      ],
+      "acceptable_labels": {
+        "B1.4": "Primary Ciliary Dyskinesia",
+        "B1.5": "Kartagener Syndrome",
+        "B2.2": "Primary Ciliary Dyskinesia",
+        "B2.4": "Kartagener Syndrome",
+        "B3.3": "Primary Ciliary Dyskinesia",
+        "B3.5": "Kartagener Syndrome",
+        "B4.3": "Primary Ciliary Dyskinesia",
+        "B4.4": "Kartagener Syndrome",
+        "B5.3": "primary ciliary dyskinesia"
+      },
+      "a19_gold_active": [
+        "B1.4",
+        "B1.5"
+      ],
+      "a19_gold_reserve": [
+        "B2.2",
+        "B2.4",
+        "B3.3",
+        "B3.5",
+        "B4.3",
+        "B4.4",
+        "B5.3"
+      ],
+      "gold_in_reserve_detail": [
+        {
+          "id": "B2.2",
+          "label": "Primary Ciliary Dyskinesia",
+          "parent": "B2",
+          "mechanism": "semantic_duplicate",
+          "winner_id": "B1.4",
+          "winner_label": "Primary Ciliary Dyskinesia",
+          "cluster": "primary ciliary dyskinesia",
+          "cluster_members": [
+            "B1.4",
+            "B2.2",
+            "B3.3",
+            "B4.3",
+            "B5.3"
+          ],
+          "cluster_member_labels": {
+            "B1.4": "Primary Ciliary Dyskinesia",
+            "B2.2": "Primary Ciliary Dyskinesia",
+            "B3.3": "Primary Ciliary Dyskinesia",
+            "B4.3": "Primary Ciliary Dyskinesia",
+            "B5.3": "primary ciliary dyskinesia"
+          }
+        },
+        {
+          "id": "B2.4",
+          "label": "Kartagener Syndrome",
+          "parent": "B2",
+          "mechanism": "semantic_duplicate",
+          "winner_id": "B1.5",
+          "winner_label": "Kartagener Syndrome",
+          "cluster": "kartagener syndrome",
+          "cluster_members": [
+            "B1.5",
+            "B2.4",
+            "B3.5",
+            "B4.4"
+          ],
+          "cluster_member_labels": {
+            "B1.5": "Kartagener Syndrome",
+            "B2.4": "Kartagener Syndrome",
+            "B3.5": "Kartagener Syndrome",
+            "B4.4": "Kartagener Syndrome"
+          }
+        },
+        {
+          "id": "B3.3",
+          "label": "Primary Ciliary Dyskinesia",
+          "parent": "B3",
+          "mechanism": "semantic_duplicate",
+          "winner_id": "B1.4",
+          "winner_label": "Primary Ciliary Dyskinesia",
+          "cluster": "primary ciliary dyskinesia",
+          "cluster_members": [
+            "B1.4",
+            "B2.2",
+            "B3.3",
+            "B4.3",
+            "B5.3"
+          ],
+          "cluster_member_labels": {
+            "B1.4": "Primary Ciliary Dyskinesia",
+            "B2.2": "Primary Ciliary Dyskinesia",
+            "B3.3": "Primary Ciliary Dyskinesia",
+            "B4.3": "Primary Ciliary Dyskinesia",
+            "B5.3": "primary ciliary dyskinesia"
+          }
+        },
+        {
+          "id": "B3.5",
+          "label": "Kartagener Syndrome",
+          "parent": "B3",
+          "mechanism": "semantic_duplicate",
+          "winner_id": "B1.5",
+          "winner_label": "Kartagener Syndrome",
+          "cluster": "kartagener syndrome",
+          "cluster_members": [
+            "B1.5",
+            "B2.4",
+            "B3.5",
+            "B4.4"
+          ],
+          "cluster_member_labels": {
+            "B1.5": "Kartagener Syndrome",
+            "B2.4": "Kartagener Syndrome",
+            "B3.5": "Kartagener Syndrome",
+            "B4.4": "Kartagener Syndrome"
+          }
+        },
+        {
+          "id": "B4.3",
+          "label": "Primary Ciliary Dyskinesia",
+          "parent": "B4",
+          "mechanism": "semantic_duplicate",
+          "winner_id": "B1.4",
+          "winner_label": "Primary Ciliary Dyskinesia",
+          "cluster": "primary ciliary dyskinesia",
+          "cluster_members": [
+            "B1.4",
+            "B2.2",
+            "B3.3",
+            "B4.3",
+            "B5.3"
+          ],
+          "cluster_member_labels": {
+            "B1.4": "Primary Ciliary Dyskinesia",
+            "B2.2": "Primary Ciliary Dyskinesia",
+            "B3.3": "Primary Ciliary Dyskinesia",
+            "B4.3": "Primary Ciliary Dyskinesia",
+            "B5.3": "primary ciliary dyskinesia"
+          }
+        },
+        {
+          "id": "B4.4",
+          "label": "Kartagener Syndrome",
+          "parent": "B4",
+          "mechanism": "semantic_duplicate",
+          "winner_id": "B1.5",
+          "winner_label": "Kartagener Syndrome",
+          "cluster": "kartagener syndrome",
+          "cluster_members": [
+            "B1.5",
+            "B2.4",
+            "B3.5",
+            "B4.4"
+          ],
+          "cluster_member_labels": {
+            "B1.5": "Kartagener Syndrome",
+            "B2.4": "Kartagener Syndrome",
+            "B3.5": "Kartagener Syndrome",
+            "B4.4": "Kartagener Syndrome"
+          }
+        },
+        {
+          "id": "B5.3",
+          "label": "primary ciliary dyskinesia",
+          "parent": "B5",
+          "mechanism": "semantic_duplicate",
+          "winner_id": "B1.4",
+          "winner_label": "Primary Ciliary Dyskinesia",
+          "cluster": "primary ciliary dyskinesia",
+          "cluster_members": [
+            "B1.4",
+            "B2.2",
+            "B3.3",
+            "B4.3",
+            "B5.3"
+          ],
+          "cluster_member_labels": {
+            "B1.4": "Primary Ciliary Dyskinesia",
+            "B2.2": "Primary Ciliary Dyskinesia",
+            "B3.3": "Primary Ciliary Dyskinesia",
+            "B4.3": "Primary Ciliary Dyskinesia",
+            "B5.3": "primary ciliary dyskinesia"
+          }
+        }
+      ],
+      "gold_in_active_detail": [
+        {
+          "id": "B1.4",
+          "label": "Primary Ciliary Dyskinesia",
+          "parent": "B1",
+          "rank_among_cluster_winners": 1,
+          "parent_ranking": [
+            "B1.4",
+            "B1.2",
+            "B1.5",
+            "B1.1"
+          ],
+          "is_local_champion": false,
+          "parent_local_champion_id": "B1.2",
+          "parent_local_champion_label": "Cystic fibrosis"
+        },
+        {
+          "id": "B1.5",
+          "label": "Kartagener Syndrome",
+          "parent": "B1",
+          "rank_among_cluster_winners": 3,
+          "parent_ranking": [
+            "B1.4",
+            "B1.2",
+            "B1.5",
+            "B1.1"
+          ],
+          "is_local_champion": false,
+          "parent_local_champion_id": "B1.2",
+          "parent_local_champion_label": "Cystic fibrosis"
+        }
+      ],
+      "raw_gold_champions": [
+        "B2.4",
+        "B3.3",
+        "B4.4"
+      ],
+      "reserved_raw_gold_champions": [
+        "B2.4",
+        "B3.3",
+        "B4.4"
+      ],
+      "a19_local_champions": [
+        "B1.2",
+        "B2.3",
+        "B3.2",
+        "B4.5",
+        "B5.6"
+      ],
+      "a19_champion_labels": {
+        "B1.2": "Cystic fibrosis",
+        "B2.3": "Bronchiectasis",
+        "B3.2": "Multisystem Inflammatory Syndrome in Children",
+        "B4.5": "Gaucher Disease",
+        "B5.6": "cardiac sarcoidosis"
+      },
+      "lc_elimination_mechanism": "raw_gold_champion_reserved",
+      "baseline_top2": true,
+      "actual_top2": false,
+      "local_champion": false,
+      "raw_local_champion": true,
+      "rank": null,
+      "raw_rank": 1
+    },
+    {
+      "case_id": "mb55_glucagonoma",
+      "replicate": 3,
+      "loss_gate": "intergroup_rank_loss",
+      "gold_went_to_reserve": true,
+      "reserve_gold_present": true,
+      "active_gold_l2_coverage": true,
+      "acceptable_l2": [
+        "B1.2",
+        "B2.2",
+        "B3.7",
+        "B4.1"
+      ],
+      "acceptable_labels": {
+        "B1.2": "Glucagonoma",
+        "B2.2": "Glucagonoma",
+        "B3.7": "Glucagonoma Syndrome",
+        "B4.1": "Glucagonoma"
+      },
+      "a19_gold_active": [
+        "B1.2"
+      ],
+      "a19_gold_reserve": [
+        "B2.2",
+        "B3.7",
+        "B4.1"
+      ],
+      "gold_in_reserve_detail": [
+        {
+          "id": "B2.2",
+          "label": "Glucagonoma",
+          "parent": "B2",
+          "mechanism": "semantic_duplicate",
+          "winner_id": "B1.2",
+          "winner_label": "Glucagonoma",
+          "cluster": "Glucagonoma",
+          "cluster_members": [
+            "B1.2",
+            "B2.2",
+            "B3.7",
+            "B4.1"
+          ],
+          "cluster_member_labels": {
+            "B1.2": "Glucagonoma",
+            "B2.2": "Glucagonoma",
+            "B3.7": "Glucagonoma Syndrome",
+            "B4.1": "Glucagonoma"
+          }
+        },
+        {
+          "id": "B3.7",
+          "label": "Glucagonoma Syndrome",
+          "parent": "B3",
+          "mechanism": "semantic_duplicate",
+          "winner_id": "B1.2",
+          "winner_label": "Glucagonoma",
+          "cluster": "Glucagonoma",
+          "cluster_members": [
+            "B1.2",
+            "B2.2",
+            "B3.7",
+            "B4.1"
+          ],
+          "cluster_member_labels": {
+            "B1.2": "Glucagonoma",
+            "B2.2": "Glucagonoma",
+            "B3.7": "Glucagonoma Syndrome",
+            "B4.1": "Glucagonoma"
+          }
+        },
+        {
+          "id": "B4.1",
+          "label": "Glucagonoma",
+          "parent": "B4",
+          "mechanism": "semantic_duplicate",
+          "winner_id": "B1.2",
+          "winner_label": "Glucagonoma",
+          "cluster": "Glucagonoma",
+          "cluster_members": [
+            "B1.2",
+            "B2.2",
+            "B3.7",
+            "B4.1"
+          ],
+          "cluster_member_labels": {
+            "B1.2": "Glucagonoma",
+            "B2.2": "Glucagonoma",
+            "B3.7": "Glucagonoma Syndrome",
+            "B4.1": "Glucagonoma"
+          }
+        }
+      ],
+      "gold_in_active_detail": [
+        {
+          "id": "B1.2",
+          "label": "Glucagonoma",
+          "parent": "B1",
+          "rank_among_cluster_winners": 2,
+          "parent_ranking": [
+            "B1.1",
+            "B1.2",
+            "B1.3"
+          ],
+          "is_local_champion": true,
+          "parent_local_champion_id": "B1.2",
+          "parent_local_champion_label": "Glucagonoma"
+        }
+      ],
+      "raw_gold_champions": [
+        "B1.2",
+        "B3.7",
+        "B4.1"
+      ],
+      "reserved_raw_gold_champions": [
+        "B3.7",
+        "B4.1"
+      ],
+      "a19_local_champions": [
+        "B1.2",
+        "B2.3",
+        "B3.2",
+        "B4.4",
+        "B5.5"
+      ],
+      "a19_champion_labels": {
+        "B1.2": "Glucagonoma",
+        "B2.3": "Dermatomyositis",
+        "B3.2": "Necrobiosis Lipoidica",
+        "B4.4": "Insulinoma",
+        "B5.5": "acanthosis nigricans"
+      },
+      "lc_elimination_mechanism": null,
+      "baseline_top2": true,
+      "actual_top2": false,
+      "local_champion": true,
+      "raw_local_champion": true,
+      "rank": 3,
+      "raw_rank": 1
+    },
+    {
+      "case_id": "mb57_kartagener",
+      "replicate": 3,
+      "loss_gate": "local_champion_elimination",
+      "gold_went_to_reserve": true,
+      "reserve_gold_present": true,
+      "active_gold_l2_coverage": true,
+      "acceptable_l2": [
+        "B1.3",
+        "B1.4",
+        "B2.3",
+        "B2.4",
+        "B3.2",
+        "B3.6",
+        "B4.3",
+        "B4.4",
+        "B5.3"
+      ],
+      "acceptable_labels": {
+        "B1.3": "Primary Ciliary Dyskinesia",
+        "B1.4": "Kartagener Syndrome",
+        "B2.3": "Primary Ciliary Dyskinesia",
+        "B2.4": "Kartagener Syndrome",
+        "B3.2": "Primary Ciliary Dyskinesia",
+        "B3.6": "Kartagener Syndrome",
+        "B4.3": "Kartagener Syndrome",
+        "B4.4": "Primary Ciliary Dyskinesia",
+        "B5.3": "primary ciliary dyskinesia"
+      },
+      "a19_gold_active": [
+        "B1.3",
+        "B1.4"
+      ],
+      "a19_gold_reserve": [
+        "B2.3",
+        "B2.4",
+        "B3.2",
+        "B3.6",
+        "B4.3",
+        "B4.4",
+        "B5.3"
+      ],
+      "gold_in_reserve_detail": [
+        {
+          "id": "B2.3",
+          "label": "Primary Ciliary Dyskinesia",
+          "parent": "B2",
+          "mechanism": "semantic_duplicate",
+          "winner_id": "B1.3",
+          "winner_label": "Primary Ciliary Dyskinesia",
+          "cluster": "primary ciliary dyskinesia",
+          "cluster_members": [
+            "B1.3",
+            "B2.3",
+            "B3.2",
+            "B4.4",
+            "B5.3"
+          ],
+          "cluster_member_labels": {
+            "B1.3": "Primary Ciliary Dyskinesia",
+            "B2.3": "Primary Ciliary Dyskinesia",
+            "B3.2": "Primary Ciliary Dyskinesia",
+            "B4.4": "Primary Ciliary Dyskinesia",
+            "B5.3": "primary ciliary dyskinesia"
+          }
+        },
+        {
+          "id": "B2.4",
+          "label": "Kartagener Syndrome",
+          "parent": "B2",
+          "mechanism": "semantic_duplicate",
+          "winner_id": "B1.4",
+          "winner_label": "Kartagener Syndrome",
+          "cluster": "kartagener syndrome",
+          "cluster_members": [
+            "B1.4",
+            "B2.4",
+            "B3.6",
+            "B4.3"
+          ],
+          "cluster_member_labels": {
+            "B1.4": "Kartagener Syndrome",
+            "B2.4": "Kartagener Syndrome",
+            "B3.6": "Kartagener Syndrome",
+            "B4.3": "Kartagener Syndrome"
+          }
+        },
+        {
+          "id": "B3.2",
+          "label": "Primary Ciliary Dyskinesia",
+          "parent": "B3",
+          "mechanism": "semantic_duplicate",
+          "winner_id": "B1.3",
+          "winner_label": "Primary Ciliary Dyskinesia",
+          "cluster": "primary ciliary dyskinesia",
+          "cluster_members": [
+            "B1.3",
+            "B2.3",
+            "B3.2",
+            "B4.4",
+            "B5.3"
+          ],
+          "cluster_member_labels": {
+            "B1.3": "Primary Ciliary Dyskinesia",
+            "B2.3": "Primary Ciliary Dyskinesia",
+            "B3.2": "Primary Ciliary Dyskinesia",
+            "B4.4": "Primary Ciliary Dyskinesia",
+            "B5.3": "primary ciliary dyskinesia"
+          }
+        },
+        {
+          "id": "B3.6",
+          "label": "Kartagener Syndrome",
+          "parent": "B3",
+          "mechanism": "semantic_duplicate",
+          "winner_id": "B1.4",
+          "winner_label": "Kartagener Syndrome",
+          "cluster": "kartagener syndrome",
+          "cluster_members": [
+            "B1.4",
+            "B2.4",
+            "B3.6",
+            "B4.3"
+          ],
+          "cluster_member_labels": {
+            "B1.4": "Kartagener Syndrome",
+            "B2.4": "Kartagener Syndrome",
+            "B3.6": "Kartagener Syndrome",
+            "B4.3": "Kartagener Syndrome"
+          }
+        },
+        {
+          "id": "B4.3",
+          "label": "Kartagener Syndrome",
+          "parent": "B4",
+          "mechanism": "semantic_duplicate",
+          "winner_id": "B1.4",
+          "winner_label": "Kartagener Syndrome",
+          "cluster": "kartagener syndrome",
+          "cluster_members": [
+            "B1.4",
+            "B2.4",
+            "B3.6",
+            "B4.3"
+          ],
+          "cluster_member_labels": {
+            "B1.4": "Kartagener Syndrome",
+            "B2.4": "Kartagener Syndrome",
+            "B3.6": "Kartagener Syndrome",
+            "B4.3": "Kartagener Syndrome"
+          }
+        },
+        {
+          "id": "B4.4",
+          "label": "Primary Ciliary Dyskinesia",
+          "parent": "B4",
+          "mechanism": "semantic_duplicate",
+          "winner_id": "B1.3",
+          "winner_label": "Primary Ciliary Dyskinesia",
+          "cluster": "primary ciliary dyskinesia",
+          "cluster_members": [
+            "B1.3",
+            "B2.3",
+            "B3.2",
+            "B4.4",
+            "B5.3"
+          ],
+          "cluster_member_labels": {
+            "B1.3": "Primary Ciliary Dyskinesia",
+            "B2.3": "Primary Ciliary Dyskinesia",
+            "B3.2": "Primary Ciliary Dyskinesia",
+            "B4.4": "Primary Ciliary Dyskinesia",
+            "B5.3": "primary ciliary dyskinesia"
+          }
+        },
+        {
+          "id": "B5.3",
+          "label": "primary ciliary dyskinesia",
+          "parent": "B5",
+          "mechanism": "semantic_duplicate",
+          "winner_id": "B1.3",
+          "winner_label": "Primary Ciliary Dyskinesia",
+          "cluster": "primary ciliary dyskinesia",
+          "cluster_members": [
+            "B1.3",
+            "B2.3",
+            "B3.2",
+            "B4.4",
+            "B5.3"
+          ],
+          "cluster_member_labels": {
+            "B1.3": "Primary Ciliary Dyskinesia",
+            "B2.3": "Primary Ciliary Dyskinesia",
+            "B3.2": "Primary Ciliary Dyskinesia",
+            "B4.4": "Primary Ciliary Dyskinesia",
+            "B5.3": "primary ciliary dyskinesia"
+          }
+        }
+      ],
+      "gold_in_active_detail": [
+        {
+          "id": "B1.3",
+          "label": "Primary Ciliary Dyskinesia",
+          "parent": "B1",
+          "rank_among_cluster_winners": 4,
+          "parent_ranking": [
+            "B1.2",
+            "B1.4",
+            "B1.5",
+            "B1.3"
+          ],
+          "is_local_champion": false,
+          "parent_local_champion_id": "B1.5",
+          "parent_local_champion_label": "Bronchiectasis"
+        },
+        {
+          "id": "B1.4",
+          "label": "Kartagener Syndrome",
+          "parent": "B1",
+          "rank_among_cluster_winners": 2,
+          "parent_ranking": [
+            "B1.2",
+            "B1.4",
+            "B1.5",
+            "B1.3"
+          ],
+          "is_local_champion": false,
+          "parent_local_champion_id": "B1.5",
+          "parent_local_champion_label": "Bronchiectasis"
+        }
+      ],
+      "raw_gold_champions": [
+        "B2.4",
+        "B4.3",
+        "B5.3"
+      ],
+      "reserved_raw_gold_champions": [
+        "B2.4",
+        "B4.3",
+        "B5.3"
+      ],
+      "a19_local_champions": [
+        "B1.5",
+        "B3.5",
+        "B5.4"
+      ],
+      "a19_champion_labels": {
+        "B1.5": "Bronchiectasis",
+        "B3.5": "Sarcoidosis",
+        "B5.4": "cardiac sarcoidosis"
+      },
+      "lc_elimination_mechanism": "raw_gold_champion_reserved",
+      "baseline_top2": true,
+      "actual_top2": false,
+      "local_champion": false,
+      "raw_local_champion": true,
+      "rank": null,
+      "raw_rank": 1
+    },
+    {
+      "case_id": "mb83_foreignbody",
+      "replicate": 3,
+      "loss_gate": "local_champion_elimination",
+      "gold_went_to_reserve": true,
+      "reserve_gold_present": true,
+      "active_gold_l2_coverage": true,
+      "acceptable_l2": [
+        "B1.2",
+        "B2.1",
+        "B3.2",
+        "B4.6"
+      ],
+      "acceptable_labels": {
+        "B1.2": "Nasal Foreign Body",
+        "B2.1": "Foreign body obstruction",
+        "B3.2": "Nasal Foreign Body",
+        "B4.6": "Foreign body obstruction"
+      },
+      "a19_gold_active": [
+        "B1.2",
+        "B2.1"
+      ],
+      "a19_gold_reserve": [
+        "B3.2",
+        "B4.6"
+      ],
+      "gold_in_reserve_detail": [
+        {
+          "id": "B3.2",
+          "label": "Nasal Foreign Body",
+          "parent": "B3",
+          "mechanism": "semantic_duplicate",
+          "winner_id": "B1.2",
+          "winner_label": "Nasal Foreign Body",
+          "cluster": "nasal foreign body",
+          "cluster_members": [
+            "B1.2",
+            "B3.2"
+          ],
+          "cluster_member_labels": {
+            "B1.2": "Nasal Foreign Body",
+            "B3.2": "Nasal Foreign Body"
+          }
+        },
+        {
+          "id": "B4.6",
+          "label": "Foreign body obstruction",
+          "parent": "B4",
+          "mechanism": "semantic_duplicate",
+          "winner_id": "B2.1",
+          "winner_label": "Foreign body obstruction",
+          "cluster": "foreign body obstruction",
+          "cluster_members": [
+            "B2.1",
+            "B4.6"
+          ],
+          "cluster_member_labels": {
+            "B2.1": "Foreign body obstruction",
+            "B4.6": "Foreign body obstruction"
+          }
+        }
+      ],
+      "gold_in_active_detail": [
+        {
+          "id": "B1.2",
+          "label": "Nasal Foreign Body",
+          "parent": "B1",
+          "rank_among_cluster_winners": 3,
+          "parent_ranking": [
+            "B1.1",
+            "B1.5",
+            "B1.2",
+            "B1.4"
+          ],
+          "is_local_champion": false,
+          "parent_local_champion_id": "B1.1",
+          "parent_local_champion_label": "Acute Bacterial Sinusitis"
+        },
+        {
+          "id": "B2.1",
+          "label": "Foreign body obstruction",
+          "parent": "B2",
+          "rank_among_cluster_winners": 3,
+          "parent_ranking": [
+            "B2.3",
+            "B2.2",
+            "B2.1",
+            "B2.5"
+          ],
+          "is_local_champion": false,
+          "parent_local_champion_id": "B2.2",
+          "parent_local_champion_label": "Bleeding and infected vessel of Kiesselbach plexus"
+        }
+      ],
+      "raw_gold_champions": [
+        "B1.2",
+        "B3.2",
+        "B4.6"
+      ],
+      "reserved_raw_gold_champions": [
+        "B3.2",
+        "B4.6"
+      ],
+      "a19_local_champions": [
+        "B1.1",
+        "B2.2",
+        "B3.5",
+        "B4.3"
+      ],
+      "a19_champion_labels": {
+        "B1.1": "Acute Bacterial Sinusitis",
+        "B2.2": "Bleeding and infected vessel of Kiesselbach plexus",
+        "B3.5": "Nasopharyngeal Carcinoma",
+        "B4.3": "Esthesioneuroblastoma"
+      },
+      "lc_elimination_mechanism": "raw_gold_champion_reserved",
+      "baseline_top2": true,
+      "actual_top2": false,
+      "local_champion": false,
+      "raw_local_champion": true,
+      "rank": null,
+      "raw_rank": 1
+    },
+    {
+      "case_id": "mxh036",
+      "replicate": 3,
+      "loss_gate": "local_champion_elimination",
+      "gold_went_to_reserve": true,
+      "reserve_gold_present": true,
+      "active_gold_l2_coverage": true,
+      "acceptable_l2": [
+        "B1.3",
+        "B2.1",
+        "B4.1",
+        "B5.2"
+      ],
+      "acceptable_labels": {
+        "B1.3": "Glycogen storage disease type 1",
+        "B2.1": "Glycogen storage disease type 1",
+        "B4.1": "Glycogen storage disease type 1",
+        "B5.2": "Glycogen storage disease type 1"
+      },
+      "a19_gold_active": [
+        "B1.3"
+      ],
+      "a19_gold_reserve": [
+        "B2.1",
+        "B4.1",
+        "B5.2"
+      ],
+      "gold_in_reserve_detail": [
+        {
+          "id": "B2.1",
+          "label": "Glycogen storage disease type 1",
+          "parent": "B2",
+          "mechanism": "semantic_duplicate",
+          "winner_id": "B1.3",
+          "winner_label": "Glycogen storage disease type 1",
+          "cluster": "glycogen storage disease type 1",
+          "cluster_members": [
+            "B1.3",
+            "B2.1",
+            "B4.1",
+            "B5.2"
+          ],
+          "cluster_member_labels": {
+            "B1.3": "Glycogen storage disease type 1",
+            "B2.1": "Glycogen storage disease type 1",
+            "B4.1": "Glycogen storage disease type 1",
+            "B5.2": "Glycogen storage disease type 1"
+          }
+        },
+        {
+          "id": "B4.1",
+          "label": "Glycogen storage disease type 1",
+          "parent": "B4",
+          "mechanism": "semantic_duplicate",
+          "winner_id": "B1.3",
+          "winner_label": "Glycogen storage disease type 1",
+          "cluster": "glycogen storage disease type 1",
+          "cluster_members": [
+            "B1.3",
+            "B2.1",
+            "B4.1",
+            "B5.2"
+          ],
+          "cluster_member_labels": {
+            "B1.3": "Glycogen storage disease type 1",
+            "B2.1": "Glycogen storage disease type 1",
+            "B4.1": "Glycogen storage disease type 1",
+            "B5.2": "Glycogen storage disease type 1"
+          }
+        },
+        {
+          "id": "B5.2",
+          "label": "Glycogen storage disease type 1",
+          "parent": "B5",
+          "mechanism": "semantic_duplicate",
+          "winner_id": "B1.3",
+          "winner_label": "Glycogen storage disease type 1",
+          "cluster": "glycogen storage disease type 1",
+          "cluster_members": [
+            "B1.3",
+            "B2.1",
+            "B4.1",
+            "B5.2"
+          ],
+          "cluster_member_labels": {
+            "B1.3": "Glycogen storage disease type 1",
+            "B2.1": "Glycogen storage disease type 1",
+            "B4.1": "Glycogen storage disease type 1",
+            "B5.2": "Glycogen storage disease type 1"
+          }
+        }
+      ],
+      "gold_in_active_detail": [
+        {
+          "id": "B1.3",
+          "label": "Glycogen storage disease type 1",
+          "parent": "B1",
+          "rank_among_cluster_winners": 3,
+          "parent_ranking": [
+            "B1.1",
+            "B1.5",
+            "B1.3",
+            "B1.2"
+          ],
+          "is_local_champion": false,
+          "parent_local_champion_id": "B1.1",
+          "parent_local_champion_label": "Lipoprotein lipase deficiency"
+        }
+      ],
+      "raw_gold_champions": [
+        "B2.1"
+      ],
+      "reserved_raw_gold_champions": [
+        "B2.1"
+      ],
+      "a19_local_champions": [
+        "B1.1",
+        "B2.2",
+        "B3.2",
+        "B5.3"
+      ],
+      "a19_champion_labels": {
+        "B1.1": "Lipoprotein lipase deficiency",
+        "B2.2": "Glycogen storage disease type 3",
+        "B3.2": "Niemann-Pick disease type A",
+        "B5.3": "Gaucher's disease"
+      },
+      "lc_elimination_mechanism": "raw_gold_champion_reserved",
+      "baseline_top2": true,
+      "actual_top2": false,
+      "local_champion": false,
+      "raw_local_champion": true,
+      "rank": null,
+      "raw_rank": 2
+    },
+    {
+      "case_id": "mxh046",
+      "replicate": 3,
+      "loss_gate": "local_champion_elimination",
+      "gold_went_to_reserve": true,
+      "reserve_gold_present": true,
+      "active_gold_l2_coverage": true,
+      "acceptable_l2": [
+        "B1.2",
+        "B2.4",
+        "B3.2",
+        "B4.2"
+      ],
+      "acceptable_labels": {
+        "B1.2": "Homocystinuria",
+        "B2.4": "Homocystinuria",
+        "B3.2": "Homocystinuria",
+        "B4.2": "Homocystinuria"
+      },
+      "a19_gold_active": [
+        "B1.2"
+      ],
+      "a19_gold_reserve": [
+        "B2.4",
+        "B3.2",
+        "B4.2"
+      ],
+      "gold_in_reserve_detail": [
+        {
+          "id": "B2.4",
+          "label": "Homocystinuria",
+          "parent": "B2",
+          "mechanism": "semantic_duplicate",
+          "winner_id": "B1.2",
+          "winner_label": "Homocystinuria",
+          "cluster": "homocystinuria",
+          "cluster_members": [
+            "B1.2",
+            "B2.4",
+            "B3.2",
+            "B4.2"
+          ],
+          "cluster_member_labels": {
+            "B1.2": "Homocystinuria",
+            "B2.4": "Homocystinuria",
+            "B3.2": "Homocystinuria",
+            "B4.2": "Homocystinuria"
+          }
+        },
+        {
+          "id": "B3.2",
+          "label": "Homocystinuria",
+          "parent": "B3",
+          "mechanism": "semantic_duplicate",
+          "winner_id": "B1.2",
+          "winner_label": "Homocystinuria",
+          "cluster": "homocystinuria",
+          "cluster_members": [
+            "B1.2",
+            "B2.4",
+            "B3.2",
+            "B4.2"
+          ],
+          "cluster_member_labels": {
+            "B1.2": "Homocystinuria",
+            "B2.4": "Homocystinuria",
+            "B3.2": "Homocystinuria",
+            "B4.2": "Homocystinuria"
+          }
+        },
+        {
+          "id": "B4.2",
+          "label": "Homocystinuria",
+          "parent": "B4",
+          "mechanism": "semantic_duplicate",
+          "winner_id": "B1.2",
+          "winner_label": "Homocystinuria",
+          "cluster": "homocystinuria",
+          "cluster_members": [
+            "B1.2",
+            "B2.4",
+            "B3.2",
+            "B4.2"
+          ],
+          "cluster_member_labels": {
+            "B1.2": "Homocystinuria",
+            "B2.4": "Homocystinuria",
+            "B3.2": "Homocystinuria",
+            "B4.2": "Homocystinuria"
+          }
+        }
+      ],
+      "gold_in_active_detail": [
+        {
+          "id": "B1.2",
+          "label": "Homocystinuria",
+          "parent": "B1",
+          "rank_among_cluster_winners": 2,
+          "parent_ranking": [
+            "B1.1",
+            "B1.2",
+            "B1.3",
+            "B1.4"
+          ],
+          "is_local_champion": false,
+          "parent_local_champion_id": "B1.1",
+          "parent_local_champion_label": "Marfan syndrome"
+        }
+      ],
+      "raw_gold_champions": [
+        "B1.2",
+        "B2.4"
+      ],
+      "reserved_raw_gold_champions": [
+        "B2.4"
+      ],
+      "a19_local_champions": [
+        "B1.1",
+        "B3.5"
+      ],
+      "a19_champion_labels": {
+        "B1.1": "Marfan syndrome",
+        "B3.5": "Multisystem inflammatory syndrome in children"
+      },
+      "lc_elimination_mechanism": "raw_gold_champion_reserved",
+      "baseline_top2": true,
+      "actual_top2": false,
+      "local_champion": false,
+      "raw_local_champion": true,
+      "rank": null,
+      "raw_rank": 1
+    }
+  ],
+  "majority_loss_cases": [
+    {
+      "case_id": "mb55_glucagonoma",
+      "n_top2_loss_reps": 2,
+      "n_lc_loss_reps": 1,
+      "case_means_a19": {
+        "actual_top1_mean": 0.3333333333333333,
+        "actual_top2_mean": 0.3333333333333333,
+        "local_champion_mean": 0.6666666666666666,
+        "reserve_gold_present_mean": 1.0,
+        "active_gold_l2_coverage_mean": 1.0,
+        "loss_gate_mode": "local_champion_elimination"
+      },
+      "case_means_raw": {
+        "actual_top1_mean": 1.0,
+        "actual_top2_mean": 1.0,
+        "local_champion_mean": 1.0
+      },
+      "replicates": [
+        {
+          "replicate": 1,
+          "loss_gate": "local_champion_elimination",
+          "baseline_top2": true,
+          "actual_top2": false,
+          "raw_local_champion": true,
+          "local_champion": false,
+          "a19_gold_active": [
+            "B1.2"
+          ],
+          "a19_gold_reserve": [
+            "B4.1",
+            "B5.2"
+          ],
+          "raw_gold_champions": [
+            "B4.1"
+          ],
+          "reserved_raw_gold_champions": [
+            "B4.1"
+          ],
+          "a19_champions": [
+            "B1.1",
+            "B2.1",
+            "B3.4",
+            "B4.4",
+            "B5.3"
+          ],
+          "a19_champion_labels": {
+            "B1.1": "Type 2 Diabetes Mellitus",
+            "B2.1": "Dermatomyositis",
+            "B3.4": "Necrobiosis Lipoidica",
+            "B4.4": "Insulinoma",
+            "B5.3": "Necrolytic Migratory Erythema"
+          },
+          "gold_fates": {
+            "B1.2": {
+              "label": "Glucagonoma",
+              "parent": "B1",
+              "mechanism": "active_kept",
+              "in_active": true,
+              "in_reserve": false,
+              "winner_id": null,
+              "winner_label": null,
+              "cluster": "Glucagonoma",
+              "cluster_members": null,
+              "cluster_member_labels": null,
+              "rank_among_cluster_winners": 2,
+              "parent_ranking": [
+                "B1.1",
+                "B1.2",
+                "B1.3",
+                "B1.4"
+              ]
+            },
+            "B4.1": {
+              "label": "Glucagonoma",
+              "parent": "B4",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.2",
+              "winner_label": "Glucagonoma",
+              "cluster": "Glucagonoma",
+              "cluster_members": [
+                "B1.2",
+                "B4.1",
+                "B5.2"
+              ],
+              "cluster_member_labels": {
+                "B1.2": "Glucagonoma",
+                "B4.1": "Glucagonoma",
+                "B5.2": "Glucagonoma"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            },
+            "B5.2": {
+              "label": "Glucagonoma",
+              "parent": "B5",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.2",
+              "winner_label": "Glucagonoma",
+              "cluster": "Glucagonoma",
+              "cluster_members": [
+                "B1.2",
+                "B4.1",
+                "B5.2"
+              ],
+              "cluster_member_labels": {
+                "B1.2": "Glucagonoma",
+                "B4.1": "Glucagonoma",
+                "B5.2": "Glucagonoma"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            }
+          },
+          "diagnosis": "cross_parent_semantic_duplicate_reserves_raw_champions_then_active_gold_loses_local_rank"
+        },
+        {
+          "replicate": 2,
+          "loss_gate": "success",
+          "baseline_top2": true,
+          "actual_top2": true,
+          "raw_local_champion": true,
+          "local_champion": true,
+          "a19_gold_active": [
+            "B1.2"
+          ],
+          "a19_gold_reserve": [
+            "B4.1"
+          ],
+          "raw_gold_champions": [
+            "B1.2",
+            "B4.1"
+          ],
+          "reserved_raw_gold_champions": [
+            "B4.1"
+          ],
+          "a19_champions": [
+            "B1.2",
+            "B2.1",
+            "B3.4",
+            "B4.4",
+            "B5.4"
+          ],
+          "a19_champion_labels": {
+            "B1.2": "Glucagonoma",
+            "B2.1": "Dermatomyositis",
+            "B3.4": "Necrobiosis Lipoidica",
+            "B4.4": "Insulinoma",
+            "B5.4": "sarcoidosis"
+          },
+          "gold_fates": {
+            "B1.2": {
+              "label": "Glucagonoma",
+              "parent": "B1",
+              "mechanism": "active_kept",
+              "in_active": true,
+              "in_reserve": false,
+              "winner_id": null,
+              "winner_label": null,
+              "cluster": "glucagonoma",
+              "cluster_members": null,
+              "cluster_member_labels": null,
+              "rank_among_cluster_winners": 2,
+              "parent_ranking": [
+                "B1.1",
+                "B1.2",
+                "B1.3"
+              ]
+            },
+            "B4.1": {
+              "label": "Glucagonoma",
+              "parent": "B4",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.2",
+              "winner_label": "Glucagonoma",
+              "cluster": "glucagonoma",
+              "cluster_members": [
+                "B1.2",
+                "B4.1"
+              ],
+              "cluster_member_labels": {
+                "B1.2": "Glucagonoma",
+                "B4.1": "Glucagonoma"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            }
+          },
+          "diagnosis": "success"
+        },
+        {
+          "replicate": 3,
+          "loss_gate": "intergroup_rank_loss",
+          "baseline_top2": true,
+          "actual_top2": false,
+          "raw_local_champion": true,
+          "local_champion": true,
+          "a19_gold_active": [
+            "B1.2"
+          ],
+          "a19_gold_reserve": [
+            "B2.2",
+            "B3.7",
+            "B4.1"
+          ],
+          "raw_gold_champions": [
+            "B1.2",
+            "B3.7",
+            "B4.1"
+          ],
+          "reserved_raw_gold_champions": [
+            "B3.7",
+            "B4.1"
+          ],
+          "a19_champions": [
+            "B1.2",
+            "B2.3",
+            "B3.2",
+            "B4.4",
+            "B5.5"
+          ],
+          "a19_champion_labels": {
+            "B1.2": "Glucagonoma",
+            "B2.3": "Dermatomyositis",
+            "B3.2": "Necrobiosis Lipoidica",
+            "B4.4": "Insulinoma",
+            "B5.5": "acanthosis nigricans"
+          },
+          "gold_fates": {
+            "B1.2": {
+              "label": "Glucagonoma",
+              "parent": "B1",
+              "mechanism": "active_kept",
+              "in_active": true,
+              "in_reserve": false,
+              "winner_id": null,
+              "winner_label": null,
+              "cluster": "Glucagonoma",
+              "cluster_members": null,
+              "cluster_member_labels": null,
+              "rank_among_cluster_winners": 2,
+              "parent_ranking": [
+                "B1.1",
+                "B1.2",
+                "B1.3"
+              ]
+            },
+            "B2.2": {
+              "label": "Glucagonoma",
+              "parent": "B2",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.2",
+              "winner_label": "Glucagonoma",
+              "cluster": "Glucagonoma",
+              "cluster_members": [
+                "B1.2",
+                "B2.2",
+                "B3.7",
+                "B4.1"
+              ],
+              "cluster_member_labels": {
+                "B1.2": "Glucagonoma",
+                "B2.2": "Glucagonoma",
+                "B3.7": "Glucagonoma Syndrome",
+                "B4.1": "Glucagonoma"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            },
+            "B3.7": {
+              "label": "Glucagonoma Syndrome",
+              "parent": "B3",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.2",
+              "winner_label": "Glucagonoma",
+              "cluster": "Glucagonoma",
+              "cluster_members": [
+                "B1.2",
+                "B2.2",
+                "B3.7",
+                "B4.1"
+              ],
+              "cluster_member_labels": {
+                "B1.2": "Glucagonoma",
+                "B2.2": "Glucagonoma",
+                "B3.7": "Glucagonoma Syndrome",
+                "B4.1": "Glucagonoma"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            },
+            "B4.1": {
+              "label": "Glucagonoma",
+              "parent": "B4",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.2",
+              "winner_label": "Glucagonoma",
+              "cluster": "Glucagonoma",
+              "cluster_members": [
+                "B1.2",
+                "B2.2",
+                "B3.7",
+                "B4.1"
+              ],
+              "cluster_member_labels": {
+                "B1.2": "Glucagonoma",
+                "B2.2": "Glucagonoma",
+                "B3.7": "Glucagonoma Syndrome",
+                "B4.1": "Glucagonoma"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            }
+          },
+          "diagnosis": "intergroup_rank_loss_with_partial_gold_portfolio_collapse"
+        }
+      ],
+      "primary_mechanism": "Cross-parent semantic clustering collapses multi-parent gold copies into a single B1 winner; raw local champions under B2/B3/B4/B5 are reserved as semantic_duplicate; remaining active gold under B1 then loses local ranking to a non-gold distractor."
+    },
+    {
+      "case_id": "mb57_kartagener",
+      "n_top2_loss_reps": 2,
+      "n_lc_loss_reps": 2,
+      "case_means_a19": {
+        "actual_top1_mean": 0.0,
+        "actual_top2_mean": 0.3333333333333333,
+        "local_champion_mean": 0.3333333333333333,
+        "reserve_gold_present_mean": 1.0,
+        "active_gold_l2_coverage_mean": 1.0,
+        "loss_gate_mode": "local_champion_elimination"
+      },
+      "case_means_raw": {
+        "actual_top1_mean": 0.6666666666666666,
+        "actual_top2_mean": 0.6666666666666666,
+        "local_champion_mean": 1.0
+      },
+      "replicates": [
+        {
+          "replicate": 1,
+          "loss_gate": "success",
+          "baseline_top2": false,
+          "actual_top2": true,
+          "raw_local_champion": true,
+          "local_champion": true,
+          "a19_gold_active": [
+            "B1.2",
+            "B2.4"
+          ],
+          "a19_gold_reserve": [
+            "B2.3",
+            "B3.2",
+            "B3.5",
+            "B4.3",
+            "B5.2",
+            "B5.3"
+          ],
+          "raw_gold_champions": [
+            "B2.4"
+          ],
+          "reserved_raw_gold_champions": [],
+          "a19_champions": [
+            "B1.2",
+            "B2.4",
+            "B3.6",
+            "B5.5"
+          ],
+          "a19_champion_labels": {
+            "B1.2": "Primary Ciliary Dyskinesia",
+            "B2.4": "Kartagener Syndrome",
+            "B3.6": "Young Syndrome",
+            "B5.5": "Cystic Fibrosis with Cardiac Involvement"
+          },
+          "gold_fates": {
+            "B1.2": {
+              "label": "Primary Ciliary Dyskinesia",
+              "parent": "B1",
+              "mechanism": "active_kept",
+              "in_active": true,
+              "in_reserve": false,
+              "winner_id": null,
+              "winner_label": null,
+              "cluster": "primary ciliary dyskinesia",
+              "cluster_members": null,
+              "cluster_member_labels": null,
+              "rank_among_cluster_winners": 2,
+              "parent_ranking": [
+                "B1.1",
+                "B1.2",
+                "B1.5",
+                "B1.3"
+              ]
+            },
+            "B2.3": {
+              "label": "Primary Ciliary Dyskinesia",
+              "parent": "B2",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.2",
+              "winner_label": "Primary Ciliary Dyskinesia",
+              "cluster": "primary ciliary dyskinesia",
+              "cluster_members": [
+                "B1.2",
+                "B2.3",
+                "B3.2",
+                "B4.3",
+                "B5.2"
+              ],
+              "cluster_member_labels": {
+                "B1.2": "Primary Ciliary Dyskinesia",
+                "B2.3": "Primary Ciliary Dyskinesia",
+                "B3.2": "Primary Ciliary Dyskinesia",
+                "B4.3": "Primary Ciliary Dyskinesia",
+                "B5.2": "Primary Ciliary Dyskinesia"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            },
+            "B2.4": {
+              "label": "Kartagener Syndrome",
+              "parent": "B2",
+              "mechanism": "active_kept",
+              "in_active": true,
+              "in_reserve": false,
+              "winner_id": null,
+              "winner_label": null,
+              "cluster": "kartagener syndrome",
+              "cluster_members": null,
+              "cluster_member_labels": null,
+              "rank_among_cluster_winners": 2,
+              "parent_ranking": [
+                "B2.2",
+                "B2.4"
+              ]
+            },
+            "B3.2": {
+              "label": "Primary Ciliary Dyskinesia",
+              "parent": "B3",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.2",
+              "winner_label": "Primary Ciliary Dyskinesia",
+              "cluster": "primary ciliary dyskinesia",
+              "cluster_members": [
+                "B1.2",
+                "B2.3",
+                "B3.2",
+                "B4.3",
+                "B5.2"
+              ],
+              "cluster_member_labels": {
+                "B1.2": "Primary Ciliary Dyskinesia",
+                "B2.3": "Primary Ciliary Dyskinesia",
+                "B3.2": "Primary Ciliary Dyskinesia",
+                "B4.3": "Primary Ciliary Dyskinesia",
+                "B5.2": "Primary Ciliary Dyskinesia"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            },
+            "B3.5": {
+              "label": "Kartagener Syndrome",
+              "parent": "B3",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B2.4",
+              "winner_label": "Kartagener Syndrome",
+              "cluster": "kartagener syndrome",
+              "cluster_members": [
+                "B2.4",
+                "B3.5",
+                "B5.3"
+              ],
+              "cluster_member_labels": {
+                "B2.4": "Kartagener Syndrome",
+                "B3.5": "Kartagener Syndrome",
+                "B5.3": "Kartagener Syndrome"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            },
+            "B4.3": {
+              "label": "Primary Ciliary Dyskinesia",
+              "parent": "B4",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.2",
+              "winner_label": "Primary Ciliary Dyskinesia",
+              "cluster": "primary ciliary dyskinesia",
+              "cluster_members": [
+                "B1.2",
+                "B2.3",
+                "B3.2",
+                "B4.3",
+                "B5.2"
+              ],
+              "cluster_member_labels": {
+                "B1.2": "Primary Ciliary Dyskinesia",
+                "B2.3": "Primary Ciliary Dyskinesia",
+                "B3.2": "Primary Ciliary Dyskinesia",
+                "B4.3": "Primary Ciliary Dyskinesia",
+                "B5.2": "Primary Ciliary Dyskinesia"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            },
+            "B5.2": {
+              "label": "Primary Ciliary Dyskinesia",
+              "parent": "B5",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.2",
+              "winner_label": "Primary Ciliary Dyskinesia",
+              "cluster": "primary ciliary dyskinesia",
+              "cluster_members": [
+                "B1.2",
+                "B2.3",
+                "B3.2",
+                "B4.3",
+                "B5.2"
+              ],
+              "cluster_member_labels": {
+                "B1.2": "Primary Ciliary Dyskinesia",
+                "B2.3": "Primary Ciliary Dyskinesia",
+                "B3.2": "Primary Ciliary Dyskinesia",
+                "B4.3": "Primary Ciliary Dyskinesia",
+                "B5.2": "Primary Ciliary Dyskinesia"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            },
+            "B5.3": {
+              "label": "Kartagener Syndrome",
+              "parent": "B5",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B2.4",
+              "winner_label": "Kartagener Syndrome",
+              "cluster": "kartagener syndrome",
+              "cluster_members": [
+                "B2.4",
+                "B3.5",
+                "B5.3"
+              ],
+              "cluster_member_labels": {
+                "B2.4": "Kartagener Syndrome",
+                "B3.5": "Kartagener Syndrome",
+                "B5.3": "Kartagener Syndrome"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            }
+          },
+          "diagnosis": "success"
+        },
+        {
+          "replicate": 2,
+          "loss_gate": "local_champion_elimination",
+          "baseline_top2": true,
+          "actual_top2": false,
+          "raw_local_champion": true,
+          "local_champion": false,
+          "a19_gold_active": [
+            "B1.4",
+            "B1.5"
+          ],
+          "a19_gold_reserve": [
+            "B2.2",
+            "B2.4",
+            "B3.3",
+            "B3.5",
+            "B4.3",
+            "B4.4",
+            "B5.3"
+          ],
+          "raw_gold_champions": [
+            "B2.4",
+            "B3.3",
+            "B4.4"
+          ],
+          "reserved_raw_gold_champions": [
+            "B2.4",
+            "B3.3",
+            "B4.4"
+          ],
+          "a19_champions": [
+            "B1.2",
+            "B2.3",
+            "B3.2",
+            "B4.5",
+            "B5.6"
+          ],
+          "a19_champion_labels": {
+            "B1.2": "Cystic fibrosis",
+            "B2.3": "Bronchiectasis",
+            "B3.2": "Multisystem Inflammatory Syndrome in Children",
+            "B4.5": "Gaucher Disease",
+            "B5.6": "cardiac sarcoidosis"
+          },
+          "gold_fates": {
+            "B1.4": {
+              "label": "Primary Ciliary Dyskinesia",
+              "parent": "B1",
+              "mechanism": "active_kept",
+              "in_active": true,
+              "in_reserve": false,
+              "winner_id": null,
+              "winner_label": null,
+              "cluster": "primary ciliary dyskinesia",
+              "cluster_members": null,
+              "cluster_member_labels": null,
+              "rank_among_cluster_winners": 1,
+              "parent_ranking": [
+                "B1.4",
+                "B1.2",
+                "B1.5",
+                "B1.1"
+              ]
+            },
+            "B1.5": {
+              "label": "Kartagener Syndrome",
+              "parent": "B1",
+              "mechanism": "active_kept",
+              "in_active": true,
+              "in_reserve": false,
+              "winner_id": null,
+              "winner_label": null,
+              "cluster": "kartagener syndrome",
+              "cluster_members": null,
+              "cluster_member_labels": null,
+              "rank_among_cluster_winners": 3,
+              "parent_ranking": [
+                "B1.4",
+                "B1.2",
+                "B1.5",
+                "B1.1"
+              ]
+            },
+            "B2.2": {
+              "label": "Primary Ciliary Dyskinesia",
+              "parent": "B2",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.4",
+              "winner_label": "Primary Ciliary Dyskinesia",
+              "cluster": "primary ciliary dyskinesia",
+              "cluster_members": [
+                "B1.4",
+                "B2.2",
+                "B3.3",
+                "B4.3",
+                "B5.3"
+              ],
+              "cluster_member_labels": {
+                "B1.4": "Primary Ciliary Dyskinesia",
+                "B2.2": "Primary Ciliary Dyskinesia",
+                "B3.3": "Primary Ciliary Dyskinesia",
+                "B4.3": "Primary Ciliary Dyskinesia",
+                "B5.3": "primary ciliary dyskinesia"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            },
+            "B2.4": {
+              "label": "Kartagener Syndrome",
+              "parent": "B2",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.5",
+              "winner_label": "Kartagener Syndrome",
+              "cluster": "kartagener syndrome",
+              "cluster_members": [
+                "B1.5",
+                "B2.4",
+                "B3.5",
+                "B4.4"
+              ],
+              "cluster_member_labels": {
+                "B1.5": "Kartagener Syndrome",
+                "B2.4": "Kartagener Syndrome",
+                "B3.5": "Kartagener Syndrome",
+                "B4.4": "Kartagener Syndrome"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            },
+            "B3.3": {
+              "label": "Primary Ciliary Dyskinesia",
+              "parent": "B3",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.4",
+              "winner_label": "Primary Ciliary Dyskinesia",
+              "cluster": "primary ciliary dyskinesia",
+              "cluster_members": [
+                "B1.4",
+                "B2.2",
+                "B3.3",
+                "B4.3",
+                "B5.3"
+              ],
+              "cluster_member_labels": {
+                "B1.4": "Primary Ciliary Dyskinesia",
+                "B2.2": "Primary Ciliary Dyskinesia",
+                "B3.3": "Primary Ciliary Dyskinesia",
+                "B4.3": "Primary Ciliary Dyskinesia",
+                "B5.3": "primary ciliary dyskinesia"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            },
+            "B3.5": {
+              "label": "Kartagener Syndrome",
+              "parent": "B3",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.5",
+              "winner_label": "Kartagener Syndrome",
+              "cluster": "kartagener syndrome",
+              "cluster_members": [
+                "B1.5",
+                "B2.4",
+                "B3.5",
+                "B4.4"
+              ],
+              "cluster_member_labels": {
+                "B1.5": "Kartagener Syndrome",
+                "B2.4": "Kartagener Syndrome",
+                "B3.5": "Kartagener Syndrome",
+                "B4.4": "Kartagener Syndrome"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            },
+            "B4.3": {
+              "label": "Primary Ciliary Dyskinesia",
+              "parent": "B4",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.4",
+              "winner_label": "Primary Ciliary Dyskinesia",
+              "cluster": "primary ciliary dyskinesia",
+              "cluster_members": [
+                "B1.4",
+                "B2.2",
+                "B3.3",
+                "B4.3",
+                "B5.3"
+              ],
+              "cluster_member_labels": {
+                "B1.4": "Primary Ciliary Dyskinesia",
+                "B2.2": "Primary Ciliary Dyskinesia",
+                "B3.3": "Primary Ciliary Dyskinesia",
+                "B4.3": "Primary Ciliary Dyskinesia",
+                "B5.3": "primary ciliary dyskinesia"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            },
+            "B4.4": {
+              "label": "Kartagener Syndrome",
+              "parent": "B4",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.5",
+              "winner_label": "Kartagener Syndrome",
+              "cluster": "kartagener syndrome",
+              "cluster_members": [
+                "B1.5",
+                "B2.4",
+                "B3.5",
+                "B4.4"
+              ],
+              "cluster_member_labels": {
+                "B1.5": "Kartagener Syndrome",
+                "B2.4": "Kartagener Syndrome",
+                "B3.5": "Kartagener Syndrome",
+                "B4.4": "Kartagener Syndrome"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            },
+            "B5.3": {
+              "label": "primary ciliary dyskinesia",
+              "parent": "B5",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.4",
+              "winner_label": "Primary Ciliary Dyskinesia",
+              "cluster": "primary ciliary dyskinesia",
+              "cluster_members": [
+                "B1.4",
+                "B2.2",
+                "B3.3",
+                "B4.3",
+                "B5.3"
+              ],
+              "cluster_member_labels": {
+                "B1.4": "Primary Ciliary Dyskinesia",
+                "B2.2": "Primary Ciliary Dyskinesia",
+                "B3.3": "Primary Ciliary Dyskinesia",
+                "B4.3": "Primary Ciliary Dyskinesia",
+                "B5.3": "primary ciliary dyskinesia"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            }
+          },
+          "diagnosis": "cross_parent_semantic_duplicate_reserves_raw_champions_then_active_gold_loses_local_rank"
+        },
+        {
+          "replicate": 3,
+          "loss_gate": "local_champion_elimination",
+          "baseline_top2": true,
+          "actual_top2": false,
+          "raw_local_champion": true,
+          "local_champion": false,
+          "a19_gold_active": [
+            "B1.3",
+            "B1.4"
+          ],
+          "a19_gold_reserve": [
+            "B2.3",
+            "B2.4",
+            "B3.2",
+            "B3.6",
+            "B4.3",
+            "B4.4",
+            "B5.3"
+          ],
+          "raw_gold_champions": [
+            "B2.4",
+            "B4.3",
+            "B5.3"
+          ],
+          "reserved_raw_gold_champions": [
+            "B2.4",
+            "B4.3",
+            "B5.3"
+          ],
+          "a19_champions": [
+            "B1.5",
+            "B3.5",
+            "B5.4"
+          ],
+          "a19_champion_labels": {
+            "B1.5": "Bronchiectasis",
+            "B3.5": "Sarcoidosis",
+            "B5.4": "cardiac sarcoidosis"
+          },
+          "gold_fates": {
+            "B1.3": {
+              "label": "Primary Ciliary Dyskinesia",
+              "parent": "B1",
+              "mechanism": "active_kept",
+              "in_active": true,
+              "in_reserve": false,
+              "winner_id": null,
+              "winner_label": null,
+              "cluster": "primary ciliary dyskinesia",
+              "cluster_members": null,
+              "cluster_member_labels": null,
+              "rank_among_cluster_winners": 4,
+              "parent_ranking": [
+                "B1.2",
+                "B1.4",
+                "B1.5",
+                "B1.3"
+              ]
+            },
+            "B1.4": {
+              "label": "Kartagener Syndrome",
+              "parent": "B1",
+              "mechanism": "active_kept",
+              "in_active": true,
+              "in_reserve": false,
+              "winner_id": null,
+              "winner_label": null,
+              "cluster": "kartagener syndrome",
+              "cluster_members": null,
+              "cluster_member_labels": null,
+              "rank_among_cluster_winners": 2,
+              "parent_ranking": [
+                "B1.2",
+                "B1.4",
+                "B1.5",
+                "B1.3"
+              ]
+            },
+            "B2.3": {
+              "label": "Primary Ciliary Dyskinesia",
+              "parent": "B2",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.3",
+              "winner_label": "Primary Ciliary Dyskinesia",
+              "cluster": "primary ciliary dyskinesia",
+              "cluster_members": [
+                "B1.3",
+                "B2.3",
+                "B3.2",
+                "B4.4",
+                "B5.3"
+              ],
+              "cluster_member_labels": {
+                "B1.3": "Primary Ciliary Dyskinesia",
+                "B2.3": "Primary Ciliary Dyskinesia",
+                "B3.2": "Primary Ciliary Dyskinesia",
+                "B4.4": "Primary Ciliary Dyskinesia",
+                "B5.3": "primary ciliary dyskinesia"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            },
+            "B2.4": {
+              "label": "Kartagener Syndrome",
+              "parent": "B2",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.4",
+              "winner_label": "Kartagener Syndrome",
+              "cluster": "kartagener syndrome",
+              "cluster_members": [
+                "B1.4",
+                "B2.4",
+                "B3.6",
+                "B4.3"
+              ],
+              "cluster_member_labels": {
+                "B1.4": "Kartagener Syndrome",
+                "B2.4": "Kartagener Syndrome",
+                "B3.6": "Kartagener Syndrome",
+                "B4.3": "Kartagener Syndrome"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            },
+            "B3.2": {
+              "label": "Primary Ciliary Dyskinesia",
+              "parent": "B3",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.3",
+              "winner_label": "Primary Ciliary Dyskinesia",
+              "cluster": "primary ciliary dyskinesia",
+              "cluster_members": [
+                "B1.3",
+                "B2.3",
+                "B3.2",
+                "B4.4",
+                "B5.3"
+              ],
+              "cluster_member_labels": {
+                "B1.3": "Primary Ciliary Dyskinesia",
+                "B2.3": "Primary Ciliary Dyskinesia",
+                "B3.2": "Primary Ciliary Dyskinesia",
+                "B4.4": "Primary Ciliary Dyskinesia",
+                "B5.3": "primary ciliary dyskinesia"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            },
+            "B3.6": {
+              "label": "Kartagener Syndrome",
+              "parent": "B3",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.4",
+              "winner_label": "Kartagener Syndrome",
+              "cluster": "kartagener syndrome",
+              "cluster_members": [
+                "B1.4",
+                "B2.4",
+                "B3.6",
+                "B4.3"
+              ],
+              "cluster_member_labels": {
+                "B1.4": "Kartagener Syndrome",
+                "B2.4": "Kartagener Syndrome",
+                "B3.6": "Kartagener Syndrome",
+                "B4.3": "Kartagener Syndrome"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            },
+            "B4.3": {
+              "label": "Kartagener Syndrome",
+              "parent": "B4",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.4",
+              "winner_label": "Kartagener Syndrome",
+              "cluster": "kartagener syndrome",
+              "cluster_members": [
+                "B1.4",
+                "B2.4",
+                "B3.6",
+                "B4.3"
+              ],
+              "cluster_member_labels": {
+                "B1.4": "Kartagener Syndrome",
+                "B2.4": "Kartagener Syndrome",
+                "B3.6": "Kartagener Syndrome",
+                "B4.3": "Kartagener Syndrome"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            },
+            "B4.4": {
+              "label": "Primary Ciliary Dyskinesia",
+              "parent": "B4",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.3",
+              "winner_label": "Primary Ciliary Dyskinesia",
+              "cluster": "primary ciliary dyskinesia",
+              "cluster_members": [
+                "B1.3",
+                "B2.3",
+                "B3.2",
+                "B4.4",
+                "B5.3"
+              ],
+              "cluster_member_labels": {
+                "B1.3": "Primary Ciliary Dyskinesia",
+                "B2.3": "Primary Ciliary Dyskinesia",
+                "B3.2": "Primary Ciliary Dyskinesia",
+                "B4.4": "Primary Ciliary Dyskinesia",
+                "B5.3": "primary ciliary dyskinesia"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            },
+            "B5.3": {
+              "label": "primary ciliary dyskinesia",
+              "parent": "B5",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.3",
+              "winner_label": "Primary Ciliary Dyskinesia",
+              "cluster": "primary ciliary dyskinesia",
+              "cluster_members": [
+                "B1.3",
+                "B2.3",
+                "B3.2",
+                "B4.4",
+                "B5.3"
+              ],
+              "cluster_member_labels": {
+                "B1.3": "Primary Ciliary Dyskinesia",
+                "B2.3": "Primary Ciliary Dyskinesia",
+                "B3.2": "Primary Ciliary Dyskinesia",
+                "B4.4": "Primary Ciliary Dyskinesia",
+                "B5.3": "primary ciliary dyskinesia"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            }
+          },
+          "diagnosis": "cross_parent_semantic_duplicate_reserves_raw_champions_then_active_gold_loses_local_rank"
+        }
+      ],
+      "primary_mechanism": "Cross-parent semantic clustering collapses multi-parent gold copies into a single B1 winner; raw local champions under B2/B3/B4/B5 are reserved as semantic_duplicate; remaining active gold under B1 then loses local ranking to a non-gold distractor."
+    },
+    {
+      "case_id": "mb83_foreignbody",
+      "n_top2_loss_reps": 2,
+      "n_lc_loss_reps": 2,
+      "case_means_a19": {
+        "actual_top1_mean": 0.3333333333333333,
+        "actual_top2_mean": 0.3333333333333333,
+        "local_champion_mean": 0.3333333333333333,
+        "reserve_gold_present_mean": 1.0,
+        "active_gold_l2_coverage_mean": 1.0,
+        "loss_gate_mode": "local_champion_elimination"
+      },
+      "case_means_raw": {
+        "actual_top1_mean": 1.0,
+        "actual_top2_mean": 1.0,
+        "local_champion_mean": 1.0
+      },
+      "replicates": [
+        {
+          "replicate": 1,
+          "loss_gate": "local_champion_elimination",
+          "baseline_top2": true,
+          "actual_top2": false,
+          "raw_local_champion": true,
+          "local_champion": false,
+          "a19_gold_active": [
+            "B1.2",
+            "B2.1"
+          ],
+          "a19_gold_reserve": [
+            "B3.2"
+          ],
+          "raw_gold_champions": [
+            "B3.2"
+          ],
+          "reserved_raw_gold_champions": [
+            "B3.2"
+          ],
+          "a19_champions": [
+            "B1.4",
+            "B2.2",
+            "B3.4",
+            "B4.2"
+          ],
+          "a19_champion_labels": {
+            "B1.4": "Kiesselbach Plexus Bleeding",
+            "B2.2": "Bleeding and infected vessel of Kiesselbach plexus",
+            "B3.4": "Allergic Rhinitis",
+            "B4.2": "Nasopharyngeal carcinoma"
+          },
+          "gold_fates": {
+            "B1.2": {
+              "label": "Nasal Foreign Body",
+              "parent": "B1",
+              "mechanism": "active_kept",
+              "in_active": true,
+              "in_reserve": false,
+              "winner_id": null,
+              "winner_label": null,
+              "cluster": "nasal foreign body",
+              "cluster_members": null,
+              "cluster_member_labels": null,
+              "rank_among_cluster_winners": 3,
+              "parent_ranking": [
+                "B1.1",
+                "B1.4",
+                "B1.2",
+                "B1.5"
+              ]
+            },
+            "B2.1": {
+              "label": "Foreign body obstruction",
+              "parent": "B2",
+              "mechanism": "active_kept",
+              "in_active": true,
+              "in_reserve": false,
+              "winner_id": null,
+              "winner_label": null,
+              "cluster": "foreign body obstruction",
+              "cluster_members": null,
+              "cluster_member_labels": null,
+              "rank_among_cluster_winners": 3,
+              "parent_ranking": [
+                "B2.3",
+                "B2.2",
+                "B2.1"
+              ]
+            },
+            "B3.2": {
+              "label": "Nasal Foreign Body",
+              "parent": "B3",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.2",
+              "winner_label": "Nasal Foreign Body",
+              "cluster": "nasal foreign body",
+              "cluster_members": [
+                "B1.2",
+                "B3.2"
+              ],
+              "cluster_member_labels": {
+                "B1.2": "Nasal Foreign Body",
+                "B3.2": "Nasal Foreign Body"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            }
+          },
+          "diagnosis": "cross_parent_semantic_duplicate_reserves_raw_champions_then_active_gold_loses_local_rank"
+        },
+        {
+          "replicate": 2,
+          "loss_gate": "success",
+          "baseline_top2": true,
+          "actual_top2": true,
+          "raw_local_champion": true,
+          "local_champion": true,
+          "a19_gold_active": [
+            "B1.2"
+          ],
+          "a19_gold_reserve": [
+            "B2.1",
+            "B3.2",
+            "B4.8"
+          ],
+          "raw_gold_champions": [
+            "B1.2",
+            "B3.2",
+            "B4.8"
+          ],
+          "reserved_raw_gold_champions": [
+            "B3.2",
+            "B4.8"
+          ],
+          "a19_champions": [
+            "B1.2",
+            "B2.3",
+            "B4.1"
+          ],
+          "a19_champion_labels": {
+            "B1.2": "Nasal Foreign Body",
+            "B2.3": "Sinusitis with bacterial superinfection",
+            "B4.1": "Nasopharyngeal carcinoma"
+          },
+          "gold_fates": {
+            "B1.2": {
+              "label": "Nasal Foreign Body",
+              "parent": "B1",
+              "mechanism": "active_kept",
+              "in_active": true,
+              "in_reserve": false,
+              "winner_id": null,
+              "winner_label": null,
+              "cluster": "Nasal Foreign Body",
+              "cluster_members": null,
+              "cluster_member_labels": null,
+              "rank_among_cluster_winners": 2,
+              "parent_ranking": [
+                "B1.1",
+                "B1.2",
+                "B1.6",
+                "B1.3"
+              ]
+            },
+            "B2.1": {
+              "label": "Foreign body obstruction",
+              "parent": "B2",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.2",
+              "winner_label": "Nasal Foreign Body",
+              "cluster": "Nasal Foreign Body",
+              "cluster_members": [
+                "B1.2",
+                "B2.1",
+                "B3.2",
+                "B4.8"
+              ],
+              "cluster_member_labels": {
+                "B1.2": "Nasal Foreign Body",
+                "B2.1": "Foreign body obstruction",
+                "B3.2": "Nasal Foreign Body",
+                "B4.8": "Foreign body obstruction"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            },
+            "B3.2": {
+              "label": "Nasal Foreign Body",
+              "parent": "B3",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.2",
+              "winner_label": "Nasal Foreign Body",
+              "cluster": "Nasal Foreign Body",
+              "cluster_members": [
+                "B1.2",
+                "B2.1",
+                "B3.2",
+                "B4.8"
+              ],
+              "cluster_member_labels": {
+                "B1.2": "Nasal Foreign Body",
+                "B2.1": "Foreign body obstruction",
+                "B3.2": "Nasal Foreign Body",
+                "B4.8": "Foreign body obstruction"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            },
+            "B4.8": {
+              "label": "Foreign body obstruction",
+              "parent": "B4",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.2",
+              "winner_label": "Nasal Foreign Body",
+              "cluster": "Nasal Foreign Body",
+              "cluster_members": [
+                "B1.2",
+                "B2.1",
+                "B3.2",
+                "B4.8"
+              ],
+              "cluster_member_labels": {
+                "B1.2": "Nasal Foreign Body",
+                "B2.1": "Foreign body obstruction",
+                "B3.2": "Nasal Foreign Body",
+                "B4.8": "Foreign body obstruction"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            }
+          },
+          "diagnosis": "success"
+        },
+        {
+          "replicate": 3,
+          "loss_gate": "local_champion_elimination",
+          "baseline_top2": true,
+          "actual_top2": false,
+          "raw_local_champion": true,
+          "local_champion": false,
+          "a19_gold_active": [
+            "B1.2",
+            "B2.1"
+          ],
+          "a19_gold_reserve": [
+            "B3.2",
+            "B4.6"
+          ],
+          "raw_gold_champions": [
+            "B1.2",
+            "B3.2",
+            "B4.6"
+          ],
+          "reserved_raw_gold_champions": [
+            "B3.2",
+            "B4.6"
+          ],
+          "a19_champions": [
+            "B1.1",
+            "B2.2",
+            "B3.5",
+            "B4.3"
+          ],
+          "a19_champion_labels": {
+            "B1.1": "Acute Bacterial Sinusitis",
+            "B2.2": "Bleeding and infected vessel of Kiesselbach plexus",
+            "B3.5": "Nasopharyngeal Carcinoma",
+            "B4.3": "Esthesioneuroblastoma"
+          },
+          "gold_fates": {
+            "B1.2": {
+              "label": "Nasal Foreign Body",
+              "parent": "B1",
+              "mechanism": "active_kept",
+              "in_active": true,
+              "in_reserve": false,
+              "winner_id": null,
+              "winner_label": null,
+              "cluster": "nasal foreign body",
+              "cluster_members": null,
+              "cluster_member_labels": null,
+              "rank_among_cluster_winners": 3,
+              "parent_ranking": [
+                "B1.1",
+                "B1.5",
+                "B1.2",
+                "B1.4"
+              ]
+            },
+            "B2.1": {
+              "label": "Foreign body obstruction",
+              "parent": "B2",
+              "mechanism": "active_kept",
+              "in_active": true,
+              "in_reserve": false,
+              "winner_id": null,
+              "winner_label": null,
+              "cluster": "foreign body obstruction",
+              "cluster_members": null,
+              "cluster_member_labels": null,
+              "rank_among_cluster_winners": 3,
+              "parent_ranking": [
+                "B2.3",
+                "B2.2",
+                "B2.1",
+                "B2.5"
+              ]
+            },
+            "B3.2": {
+              "label": "Nasal Foreign Body",
+              "parent": "B3",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.2",
+              "winner_label": "Nasal Foreign Body",
+              "cluster": "nasal foreign body",
+              "cluster_members": [
+                "B1.2",
+                "B3.2"
+              ],
+              "cluster_member_labels": {
+                "B1.2": "Nasal Foreign Body",
+                "B3.2": "Nasal Foreign Body"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            },
+            "B4.6": {
+              "label": "Foreign body obstruction",
+              "parent": "B4",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B2.1",
+              "winner_label": "Foreign body obstruction",
+              "cluster": "foreign body obstruction",
+              "cluster_members": [
+                "B2.1",
+                "B4.6"
+              ],
+              "cluster_member_labels": {
+                "B2.1": "Foreign body obstruction",
+                "B4.6": "Foreign body obstruction"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            }
+          },
+          "diagnosis": "cross_parent_semantic_duplicate_reserves_raw_champions_then_active_gold_loses_local_rank"
+        }
+      ],
+      "primary_mechanism": "Cross-parent semantic clustering collapses multi-parent gold copies into a single B1 winner; raw local champions under B2/B3/B4/B5 are reserved as semantic_duplicate; remaining active gold under B1 then loses local ranking to a non-gold distractor."
+    },
+    {
+      "case_id": "mxh036",
+      "n_top2_loss_reps": 2,
+      "n_lc_loss_reps": 2,
+      "case_means_a19": {
+        "actual_top1_mean": 0.3333333333333333,
+        "actual_top2_mean": 0.3333333333333333,
+        "local_champion_mean": 0.3333333333333333,
+        "reserve_gold_present_mean": 1.0,
+        "active_gold_l2_coverage_mean": 1.0,
+        "loss_gate_mode": "local_champion_elimination"
+      },
+      "case_means_raw": {
+        "actual_top1_mean": 0.3333333333333333,
+        "actual_top2_mean": 1.0,
+        "local_champion_mean": 1.0
+      },
+      "replicates": [
+        {
+          "replicate": 1,
+          "loss_gate": "local_champion_elimination",
+          "baseline_top2": true,
+          "actual_top2": false,
+          "raw_local_champion": true,
+          "local_champion": false,
+          "a19_gold_active": [
+            "B1.3"
+          ],
+          "a19_gold_reserve": [
+            "B2.1",
+            "B4.1",
+            "B5.1"
+          ],
+          "raw_gold_champions": [
+            "B2.1"
+          ],
+          "reserved_raw_gold_champions": [
+            "B2.1"
+          ],
+          "a19_champions": [
+            "B1.1",
+            "B2.7",
+            "B3.4",
+            "B4.5"
+          ],
+          "a19_champion_labels": {
+            "B1.1": "Lipoprotein lipase deficiency",
+            "B2.7": "Pompe disease",
+            "B3.4": "Fabry disease",
+            "B4.5": "Carnitine palmitoyltransferase II deficiency"
+          },
+          "gold_fates": {
+            "B1.3": {
+              "label": "Glycogen storage disease type 1",
+              "parent": "B1",
+              "mechanism": "active_kept",
+              "in_active": true,
+              "in_reserve": false,
+              "winner_id": null,
+              "winner_label": null,
+              "cluster": "Glycogen storage disease type 1",
+              "cluster_members": null,
+              "cluster_member_labels": null,
+              "rank_among_cluster_winners": 3,
+              "parent_ranking": [
+                "B1.1",
+                "B1.4",
+                "B1.3",
+                "B1.2"
+              ]
+            },
+            "B2.1": {
+              "label": "Glycogen storage disease type 1",
+              "parent": "B2",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.3",
+              "winner_label": "Glycogen storage disease type 1",
+              "cluster": "Glycogen storage disease type 1",
+              "cluster_members": [
+                "B1.3",
+                "B2.1",
+                "B4.1",
+                "B5.1"
+              ],
+              "cluster_member_labels": {
+                "B1.3": "Glycogen storage disease type 1",
+                "B2.1": "Glycogen storage disease type 1",
+                "B4.1": "Glycogen storage disease type 1",
+                "B5.1": "Glycogen storage disease type 1"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            },
+            "B4.1": {
+              "label": "Glycogen storage disease type 1",
+              "parent": "B4",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.3",
+              "winner_label": "Glycogen storage disease type 1",
+              "cluster": "Glycogen storage disease type 1",
+              "cluster_members": [
+                "B1.3",
+                "B2.1",
+                "B4.1",
+                "B5.1"
+              ],
+              "cluster_member_labels": {
+                "B1.3": "Glycogen storage disease type 1",
+                "B2.1": "Glycogen storage disease type 1",
+                "B4.1": "Glycogen storage disease type 1",
+                "B5.1": "Glycogen storage disease type 1"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            },
+            "B5.1": {
+              "label": "Glycogen storage disease type 1",
+              "parent": "B5",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.3",
+              "winner_label": "Glycogen storage disease type 1",
+              "cluster": "Glycogen storage disease type 1",
+              "cluster_members": [
+                "B1.3",
+                "B2.1",
+                "B4.1",
+                "B5.1"
+              ],
+              "cluster_member_labels": {
+                "B1.3": "Glycogen storage disease type 1",
+                "B2.1": "Glycogen storage disease type 1",
+                "B4.1": "Glycogen storage disease type 1",
+                "B5.1": "Glycogen storage disease type 1"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            }
+          },
+          "diagnosis": "cross_parent_semantic_duplicate_reserves_raw_champions_then_active_gold_loses_local_rank"
+        },
+        {
+          "replicate": 2,
+          "loss_gate": "success",
+          "baseline_top2": true,
+          "actual_top2": true,
+          "raw_local_champion": true,
+          "local_champion": true,
+          "a19_gold_active": [
+            "B1.3",
+            "B2.1"
+          ],
+          "a19_gold_reserve": [
+            "B4.1",
+            "B5.2"
+          ],
+          "raw_gold_champions": [
+            "B1.3",
+            "B2.1"
+          ],
+          "reserved_raw_gold_champions": [],
+          "a19_champions": [
+            "B1.2",
+            "B2.1",
+            "B3.4",
+            "B4.4",
+            "B5.5"
+          ],
+          "a19_champion_labels": {
+            "B1.2": "Lipoprotein lipase deficiency",
+            "B2.1": "Glycogen Storage Disease Type 1a",
+            "B3.4": "Pompe disease",
+            "B4.4": "Fructose-1,6-bisphosphatase deficiency",
+            "B5.5": "Familial chylomicronemia syndrome"
+          },
+          "gold_fates": {
+            "B1.3": {
+              "label": "Glycogen storage disease type 1",
+              "parent": "B1",
+              "mechanism": "active_kept",
+              "in_active": true,
+              "in_reserve": false,
+              "winner_id": null,
+              "winner_label": null,
+              "cluster": "glycogen storage disease type 1",
+              "cluster_members": null,
+              "cluster_member_labels": null,
+              "rank_among_cluster_winners": 2,
+              "parent_ranking": [
+                "B1.2",
+                "B1.3",
+                "B1.1",
+                "B1.5"
+              ]
+            },
+            "B2.1": {
+              "label": "Glycogen Storage Disease Type 1a",
+              "parent": "B2",
+              "mechanism": "active_kept",
+              "in_active": true,
+              "in_reserve": false,
+              "winner_id": null,
+              "winner_label": null,
+              "cluster": "glycogen storage disease type 1a",
+              "cluster_members": null,
+              "cluster_member_labels": null,
+              "rank_among_cluster_winners": 1,
+              "parent_ranking": [
+                "B2.1",
+                "B2.3",
+                "B2.2",
+                "B2.4"
+              ]
+            },
+            "B4.1": {
+              "label": "Glycogen storage disease type 1",
+              "parent": "B4",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.3",
+              "winner_label": "Glycogen storage disease type 1",
+              "cluster": "glycogen storage disease type 1",
+              "cluster_members": [
+                "B1.3",
+                "B4.1",
+                "B5.2"
+              ],
+              "cluster_member_labels": {
+                "B1.3": "Glycogen storage disease type 1",
+                "B4.1": "Glycogen storage disease type 1",
+                "B5.2": "Glycogen storage disease type 1"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            },
+            "B5.2": {
+              "label": "Glycogen storage disease type 1",
+              "parent": "B5",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.3",
+              "winner_label": "Glycogen storage disease type 1",
+              "cluster": "glycogen storage disease type 1",
+              "cluster_members": [
+                "B1.3",
+                "B4.1",
+                "B5.2"
+              ],
+              "cluster_member_labels": {
+                "B1.3": "Glycogen storage disease type 1",
+                "B4.1": "Glycogen storage disease type 1",
+                "B5.2": "Glycogen storage disease type 1"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            }
+          },
+          "diagnosis": "success"
+        },
+        {
+          "replicate": 3,
+          "loss_gate": "local_champion_elimination",
+          "baseline_top2": true,
+          "actual_top2": false,
+          "raw_local_champion": true,
+          "local_champion": false,
+          "a19_gold_active": [
+            "B1.3"
+          ],
+          "a19_gold_reserve": [
+            "B2.1",
+            "B4.1",
+            "B5.2"
+          ],
+          "raw_gold_champions": [
+            "B2.1"
+          ],
+          "reserved_raw_gold_champions": [
+            "B2.1"
+          ],
+          "a19_champions": [
+            "B1.1",
+            "B2.2",
+            "B3.2",
+            "B5.3"
+          ],
+          "a19_champion_labels": {
+            "B1.1": "Lipoprotein lipase deficiency",
+            "B2.2": "Glycogen storage disease type 3",
+            "B3.2": "Niemann-Pick disease type A",
+            "B5.3": "Gaucher's disease"
+          },
+          "gold_fates": {
+            "B1.3": {
+              "label": "Glycogen storage disease type 1",
+              "parent": "B1",
+              "mechanism": "active_kept",
+              "in_active": true,
+              "in_reserve": false,
+              "winner_id": null,
+              "winner_label": null,
+              "cluster": "glycogen storage disease type 1",
+              "cluster_members": null,
+              "cluster_member_labels": null,
+              "rank_among_cluster_winners": 3,
+              "parent_ranking": [
+                "B1.1",
+                "B1.5",
+                "B1.3",
+                "B1.2"
+              ]
+            },
+            "B2.1": {
+              "label": "Glycogen storage disease type 1",
+              "parent": "B2",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.3",
+              "winner_label": "Glycogen storage disease type 1",
+              "cluster": "glycogen storage disease type 1",
+              "cluster_members": [
+                "B1.3",
+                "B2.1",
+                "B4.1",
+                "B5.2"
+              ],
+              "cluster_member_labels": {
+                "B1.3": "Glycogen storage disease type 1",
+                "B2.1": "Glycogen storage disease type 1",
+                "B4.1": "Glycogen storage disease type 1",
+                "B5.2": "Glycogen storage disease type 1"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            },
+            "B4.1": {
+              "label": "Glycogen storage disease type 1",
+              "parent": "B4",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.3",
+              "winner_label": "Glycogen storage disease type 1",
+              "cluster": "glycogen storage disease type 1",
+              "cluster_members": [
+                "B1.3",
+                "B2.1",
+                "B4.1",
+                "B5.2"
+              ],
+              "cluster_member_labels": {
+                "B1.3": "Glycogen storage disease type 1",
+                "B2.1": "Glycogen storage disease type 1",
+                "B4.1": "Glycogen storage disease type 1",
+                "B5.2": "Glycogen storage disease type 1"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            },
+            "B5.2": {
+              "label": "Glycogen storage disease type 1",
+              "parent": "B5",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.3",
+              "winner_label": "Glycogen storage disease type 1",
+              "cluster": "glycogen storage disease type 1",
+              "cluster_members": [
+                "B1.3",
+                "B2.1",
+                "B4.1",
+                "B5.2"
+              ],
+              "cluster_member_labels": {
+                "B1.3": "Glycogen storage disease type 1",
+                "B2.1": "Glycogen storage disease type 1",
+                "B4.1": "Glycogen storage disease type 1",
+                "B5.2": "Glycogen storage disease type 1"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            }
+          },
+          "diagnosis": "cross_parent_semantic_duplicate_reserves_raw_champions_then_active_gold_loses_local_rank"
+        }
+      ],
+      "primary_mechanism": "Cross-parent semantic clustering collapses multi-parent gold copies into a single B1 winner; raw local champions under B2/B3/B4/B5 are reserved as semantic_duplicate; remaining active gold under B1 then loses local ranking to a non-gold distractor."
+    },
+    {
+      "case_id": "mxh046",
+      "n_top2_loss_reps": 2,
+      "n_lc_loss_reps": 2,
+      "case_means_a19": {
+        "actual_top1_mean": 0.0,
+        "actual_top2_mean": 0.0,
+        "local_champion_mean": 0.0,
+        "reserve_gold_present_mean": 1.0,
+        "active_gold_l2_coverage_mean": 0.6666666666666666,
+        "loss_gate_mode": "local_champion_elimination"
+      },
+      "case_means_raw": {
+        "actual_top1_mean": 0.6666666666666666,
+        "actual_top2_mean": 0.6666666666666666,
+        "local_champion_mean": 0.6666666666666666
+      },
+      "replicates": [
+        {
+          "replicate": 1,
+          "loss_gate": "local_champion_elimination",
+          "baseline_top2": true,
+          "actual_top2": false,
+          "raw_local_champion": true,
+          "local_champion": false,
+          "a19_gold_active": [
+            "B1.3"
+          ],
+          "a19_gold_reserve": [
+            "B2.4",
+            "B3.2",
+            "B4.2"
+          ],
+          "raw_gold_champions": [
+            "B1.3"
+          ],
+          "reserved_raw_gold_champions": [],
+          "a19_champions": [
+            "B1.1"
+          ],
+          "a19_champion_labels": {
+            "B1.1": "Marfan syndrome"
+          },
+          "gold_fates": {
+            "B1.3": {
+              "label": "Homocystinuria",
+              "parent": "B1",
+              "mechanism": "active_kept",
+              "in_active": true,
+              "in_reserve": false,
+              "winner_id": null,
+              "winner_label": null,
+              "cluster": "homocystinuria",
+              "cluster_members": null,
+              "cluster_member_labels": null,
+              "rank_among_cluster_winners": 2,
+              "parent_ranking": [
+                "B1.1",
+                "B1.3",
+                "B1.2",
+                "B1.4"
+              ]
+            },
+            "B2.4": {
+              "label": "Homocystinuria",
+              "parent": "B2",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.3",
+              "winner_label": "Homocystinuria",
+              "cluster": "homocystinuria",
+              "cluster_members": [
+                "B1.3",
+                "B2.4",
+                "B3.2",
+                "B4.2"
+              ],
+              "cluster_member_labels": {
+                "B1.3": "Homocystinuria",
+                "B2.4": "Homocystinuria",
+                "B3.2": "Homocystinuria",
+                "B4.2": "Homocystinuria"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            },
+            "B3.2": {
+              "label": "Homocystinuria",
+              "parent": "B3",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.3",
+              "winner_label": "Homocystinuria",
+              "cluster": "homocystinuria",
+              "cluster_members": [
+                "B1.3",
+                "B2.4",
+                "B3.2",
+                "B4.2"
+              ],
+              "cluster_member_labels": {
+                "B1.3": "Homocystinuria",
+                "B2.4": "Homocystinuria",
+                "B3.2": "Homocystinuria",
+                "B4.2": "Homocystinuria"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            },
+            "B4.2": {
+              "label": "Homocystinuria",
+              "parent": "B4",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.3",
+              "winner_label": "Homocystinuria",
+              "cluster": "homocystinuria",
+              "cluster_members": [
+                "B1.3",
+                "B2.4",
+                "B3.2",
+                "B4.2"
+              ],
+              "cluster_member_labels": {
+                "B1.3": "Homocystinuria",
+                "B2.4": "Homocystinuria",
+                "B3.2": "Homocystinuria",
+                "B4.2": "Homocystinuria"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            }
+          },
+          "diagnosis": "cross_parent_semantic_duplicate_reserves_raw_champions_then_active_gold_loses_local_rank"
+        },
+        {
+          "replicate": 2,
+          "loss_gate": "coverage_deleted",
+          "baseline_top2": false,
+          "actual_top2": false,
+          "raw_local_champion": false,
+          "local_champion": false,
+          "a19_gold_active": [],
+          "a19_gold_reserve": [
+            "B1.4",
+            "B2.4",
+            "B3.2",
+            "B4.2"
+          ],
+          "raw_gold_champions": [],
+          "reserved_raw_gold_champions": [],
+          "a19_champions": [
+            "B1.1",
+            "B3.4"
+          ],
+          "a19_champion_labels": {
+            "B1.1": "Marfan syndrome",
+            "B3.4": "Lysosomal storage disease"
+          },
+          "gold_fates": {
+            "B1.4": {
+              "label": "Homocystinuria",
+              "parent": "B1",
+              "mechanism": "budget_overflow",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": null,
+              "winner_label": null,
+              "cluster": "Homocystinuria",
+              "cluster_members": [
+                "B1.4",
+                "B2.4",
+                "B3.2",
+                "B4.2"
+              ],
+              "cluster_member_labels": {
+                "B1.4": "Homocystinuria",
+                "B2.4": "Homocystinuria",
+                "B3.2": "Homocystinuria",
+                "B4.2": "Homocystinuria"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            },
+            "B2.4": {
+              "label": "Homocystinuria",
+              "parent": "B2",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.4",
+              "winner_label": "Homocystinuria",
+              "cluster": "Homocystinuria",
+              "cluster_members": [
+                "B1.4",
+                "B2.4",
+                "B3.2",
+                "B4.2"
+              ],
+              "cluster_member_labels": {
+                "B1.4": "Homocystinuria",
+                "B2.4": "Homocystinuria",
+                "B3.2": "Homocystinuria",
+                "B4.2": "Homocystinuria"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            },
+            "B3.2": {
+              "label": "Homocystinuria",
+              "parent": "B3",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.4",
+              "winner_label": "Homocystinuria",
+              "cluster": "Homocystinuria",
+              "cluster_members": [
+                "B1.4",
+                "B2.4",
+                "B3.2",
+                "B4.2"
+              ],
+              "cluster_member_labels": {
+                "B1.4": "Homocystinuria",
+                "B2.4": "Homocystinuria",
+                "B3.2": "Homocystinuria",
+                "B4.2": "Homocystinuria"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            },
+            "B4.2": {
+              "label": "Homocystinuria",
+              "parent": "B4",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.4",
+              "winner_label": "Homocystinuria",
+              "cluster": "Homocystinuria",
+              "cluster_members": [
+                "B1.4",
+                "B2.4",
+                "B3.2",
+                "B4.2"
+              ],
+              "cluster_member_labels": {
+                "B1.4": "Homocystinuria",
+                "B2.4": "Homocystinuria",
+                "B3.2": "Homocystinuria",
+                "B4.2": "Homocystinuria"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            }
+          },
+          "diagnosis": "coverage_deleted"
+        },
+        {
+          "replicate": 3,
+          "loss_gate": "local_champion_elimination",
+          "baseline_top2": true,
+          "actual_top2": false,
+          "raw_local_champion": true,
+          "local_champion": false,
+          "a19_gold_active": [
+            "B1.2"
+          ],
+          "a19_gold_reserve": [
+            "B2.4",
+            "B3.2",
+            "B4.2"
+          ],
+          "raw_gold_champions": [
+            "B1.2",
+            "B2.4"
+          ],
+          "reserved_raw_gold_champions": [
+            "B2.4"
+          ],
+          "a19_champions": [
+            "B1.1",
+            "B3.5"
+          ],
+          "a19_champion_labels": {
+            "B1.1": "Marfan syndrome",
+            "B3.5": "Multisystem inflammatory syndrome in children"
+          },
+          "gold_fates": {
+            "B1.2": {
+              "label": "Homocystinuria",
+              "parent": "B1",
+              "mechanism": "active_kept",
+              "in_active": true,
+              "in_reserve": false,
+              "winner_id": null,
+              "winner_label": null,
+              "cluster": "homocystinuria",
+              "cluster_members": null,
+              "cluster_member_labels": null,
+              "rank_among_cluster_winners": 2,
+              "parent_ranking": [
+                "B1.1",
+                "B1.2",
+                "B1.3",
+                "B1.4"
+              ]
+            },
+            "B2.4": {
+              "label": "Homocystinuria",
+              "parent": "B2",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.2",
+              "winner_label": "Homocystinuria",
+              "cluster": "homocystinuria",
+              "cluster_members": [
+                "B1.2",
+                "B2.4",
+                "B3.2",
+                "B4.2"
+              ],
+              "cluster_member_labels": {
+                "B1.2": "Homocystinuria",
+                "B2.4": "Homocystinuria",
+                "B3.2": "Homocystinuria",
+                "B4.2": "Homocystinuria"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            },
+            "B3.2": {
+              "label": "Homocystinuria",
+              "parent": "B3",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.2",
+              "winner_label": "Homocystinuria",
+              "cluster": "homocystinuria",
+              "cluster_members": [
+                "B1.2",
+                "B2.4",
+                "B3.2",
+                "B4.2"
+              ],
+              "cluster_member_labels": {
+                "B1.2": "Homocystinuria",
+                "B2.4": "Homocystinuria",
+                "B3.2": "Homocystinuria",
+                "B4.2": "Homocystinuria"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            },
+            "B4.2": {
+              "label": "Homocystinuria",
+              "parent": "B4",
+              "mechanism": "semantic_duplicate",
+              "in_active": false,
+              "in_reserve": true,
+              "winner_id": "B1.2",
+              "winner_label": "Homocystinuria",
+              "cluster": "homocystinuria",
+              "cluster_members": [
+                "B1.2",
+                "B2.4",
+                "B3.2",
+                "B4.2"
+              ],
+              "cluster_member_labels": {
+                "B1.2": "Homocystinuria",
+                "B2.4": "Homocystinuria",
+                "B3.2": "Homocystinuria",
+                "B4.2": "Homocystinuria"
+              },
+              "rank_among_cluster_winners": null,
+              "parent_ranking": null
+            }
+          },
+          "diagnosis": "cross_parent_semantic_duplicate_reserves_raw_champions_then_active_gold_loses_local_rank"
+        }
+      ],
+      "primary_mechanism": "Cross-parent semantic clustering collapses multi-parent gold copies into a single B1 winner; raw local champions under B2/B3/B4/B5 are reserved as semantic_duplicate; remaining active gold under B1 then loses local ranking to a non-gold distractor."
+    }
+  ],
+  "coverage_quantification": {
+    "n_cells": 51,
+    "reserve_gold_present_and_active_coverage_false": 1,
+    "reserve_gold_present_and_active_coverage_true": 42,
+    "reserve_gold_absent_and_active_coverage_true": 2,
+    "reserve_gold_absent_and_active_coverage_false": 6,
+    "rates": {
+      "reserve_gold_present": 0.8431372549019608,
+      "active_gold_l2_coverage": 0.8627450980392157
+    },
+    "interpretation": "Gold-in-reserve with active_coverage=false is rare (1/51: mxh046 r2, gold cluster winner B1.4 Homocystinuria then budget_overflow). The dominant pattern is reserve_gold=true AND active_coverage=true (42/51): at least one gold copy stays active while sibling copies under other parents are reserved via cross-parent semantic_duplicate. This preserves the coverage flag but destroys the multi-parent gold champion portfolio Top-2 needs.",
+    "per_gold_id_mechanism_counts": {
+      "active_kept": 55,
+      "semantic_duplicate": 127,
+      "budget_overflow": 2
+    },
+    "cells_with_any_gold_budget_overflow": 2,
+    "cells_with_any_gold_semantic_duplicate": 43,
+    "gold_semantic_duplicate_cross_parent": 127,
+    "gold_semantic_duplicate_same_parent": 0,
+    "gold_dup_winner_parent_flow_top": {
+      "B4->B1": 35,
+      "B2->B1": 28,
+      "B3->B1": 28,
+      "B5->B1": 24,
+      "OTHER->B1": 3,
+      "B5->B4": 3,
+      "B5->B2": 2,
+      "B4->B2": 2,
+      "B3->B2": 1,
+      "B4->B3": 1
+    }
+  },
+  "local_champion_elimination_deep_dive": {
+    "n": 20,
+    "all_have_active_gold_coverage": true,
+    "all_have_reserve_gold_present": true,
+    "none_have_gold_as_local_champion": true,
+    "top2_regressions_among_them": 9,
+    "baseline_already_failed_top2": 11,
+    "vs_raw_lc_loss_cells": 10,
+    "cells": [
+      {
+        "case_id": "mb55_glucagonoma",
+        "replicate": 1,
+        "baseline_top2": true,
+        "is_top2_regression_vs_raw": true,
+        "active_gold_l2_coverage": true,
+        "reserve_gold_present": true,
+        "a19_gold_active": [
+          "B1.2"
+        ],
+        "a19_gold_reserve": [
+          "B4.1",
+          "B5.2"
+        ],
+        "reserved_raw_gold_champions": [
+          "B4.1"
+        ],
+        "active_gold_vs_parent_champion": [
+          {
+            "gold_id": "B1.2",
+            "gold_label": "Glucagonoma",
+            "parent": "B1",
+            "parent_champion_id": "B1.1",
+            "parent_champion_label": "Type 2 Diabetes Mellitus",
+            "gold_won_local": false
+          }
+        ],
+        "mechanism": "NOT all-gold-reserved: active_coverage always true in these 20 cells. Cross-parent dedupe reserves sibling gold copies (often raw champions); surviving active gold then loses local ranking to a non-gold distractor under the same parent."
+      },
+      {
+        "case_id": "mb82_adhesions",
+        "replicate": 1,
+        "baseline_top2": false,
+        "is_top2_regression_vs_raw": false,
+        "active_gold_l2_coverage": true,
+        "reserve_gold_present": true,
+        "a19_gold_active": [
+          "B1.2"
+        ],
+        "a19_gold_reserve": [
+          "B4.5"
+        ],
+        "reserved_raw_gold_champions": [],
+        "active_gold_vs_parent_champion": [
+          {
+            "gold_id": "B1.2",
+            "gold_label": "Adhesions",
+            "parent": "B1",
+            "parent_champion_id": "B1.1",
+            "parent_champion_label": "Intestinal Obstruction",
+            "gold_won_local": false
+          }
+        ],
+        "mechanism": "NOT all-gold-reserved: active_coverage always true in these 20 cells. Cross-parent dedupe reserves sibling gold copies (often raw champions); surviving active gold then loses local ranking to a non-gold distractor under the same parent."
+      },
+      {
+        "case_id": "mb83_foreignbody",
+        "replicate": 1,
+        "baseline_top2": true,
+        "is_top2_regression_vs_raw": true,
+        "active_gold_l2_coverage": true,
+        "reserve_gold_present": true,
+        "a19_gold_active": [
+          "B1.2",
+          "B2.1"
+        ],
+        "a19_gold_reserve": [
+          "B3.2"
+        ],
+        "reserved_raw_gold_champions": [
+          "B3.2"
+        ],
+        "active_gold_vs_parent_champion": [
+          {
+            "gold_id": "B1.2",
+            "gold_label": "Nasal Foreign Body",
+            "parent": "B1",
+            "parent_champion_id": "B1.4",
+            "parent_champion_label": "Kiesselbach Plexus Bleeding",
+            "gold_won_local": false
+          },
+          {
+            "gold_id": "B2.1",
+            "gold_label": "Foreign body obstruction",
+            "parent": "B2",
+            "parent_champion_id": "B2.2",
+            "parent_champion_label": "Bleeding and infected vessel of Kiesselbach plexus",
+            "gold_won_local": false
+          }
+        ],
+        "mechanism": "NOT all-gold-reserved: active_coverage always true in these 20 cells. Cross-parent dedupe reserves sibling gold copies (often raw champions); surviving active gold then loses local ranking to a non-gold distractor under the same parent."
+      },
+      {
+        "case_id": "mxh036",
+        "replicate": 1,
+        "baseline_top2": true,
+        "is_top2_regression_vs_raw": true,
+        "active_gold_l2_coverage": true,
+        "reserve_gold_present": true,
+        "a19_gold_active": [
+          "B1.3"
+        ],
+        "a19_gold_reserve": [
+          "B2.1",
+          "B4.1",
+          "B5.1"
+        ],
+        "reserved_raw_gold_champions": [
+          "B2.1"
+        ],
+        "active_gold_vs_parent_champion": [
+          {
+            "gold_id": "B1.3",
+            "gold_label": "Glycogen storage disease type 1",
+            "parent": "B1",
+            "parent_champion_id": "B1.1",
+            "parent_champion_label": "Lipoprotein lipase deficiency",
+            "gold_won_local": false
+          }
+        ],
+        "mechanism": "NOT all-gold-reserved: active_coverage always true in these 20 cells. Cross-parent dedupe reserves sibling gold copies (often raw champions); surviving active gold then loses local ranking to a non-gold distractor under the same parent."
+      },
+      {
+        "case_id": "mxh045",
+        "replicate": 1,
+        "baseline_top2": false,
+        "is_top2_regression_vs_raw": false,
+        "active_gold_l2_coverage": true,
+        "reserve_gold_present": true,
+        "a19_gold_active": [
+          "B1.3"
+        ],
+        "a19_gold_reserve": [
+          "B2.6",
+          "B3.3",
+          "B4.3",
+          "B5.8"
+        ],
+        "reserved_raw_gold_champions": [],
+        "active_gold_vs_parent_champion": [
+          {
+            "gold_id": "B1.3",
+            "gold_label": "Malrotation of the gut",
+            "parent": "B1",
+            "parent_champion_id": "B1.1",
+            "parent_champion_label": "Intussusception",
+            "gold_won_local": false
+          }
+        ],
+        "mechanism": "NOT all-gold-reserved: active_coverage always true in these 20 cells. Cross-parent dedupe reserves sibling gold copies (often raw champions); surviving active gold then loses local ranking to a non-gold distractor under the same parent."
+      },
+      {
+        "case_id": "mxh046",
+        "replicate": 1,
+        "baseline_top2": true,
+        "is_top2_regression_vs_raw": true,
+        "active_gold_l2_coverage": true,
+        "reserve_gold_present": true,
+        "a19_gold_active": [
+          "B1.3"
+        ],
+        "a19_gold_reserve": [
+          "B2.4",
+          "B3.2",
+          "B4.2"
+        ],
+        "reserved_raw_gold_champions": [],
+        "active_gold_vs_parent_champion": [
+          {
+            "gold_id": "B1.3",
+            "gold_label": "Homocystinuria",
+            "parent": "B1",
+            "parent_champion_id": "B1.1",
+            "parent_champion_label": "Marfan syndrome",
+            "gold_won_local": false
+          }
+        ],
+        "mechanism": "NOT all-gold-reserved: active_coverage always true in these 20 cells. Cross-parent dedupe reserves sibling gold copies (often raw champions); surviving active gold then loses local ranking to a non-gold distractor under the same parent."
+      },
+      {
+        "case_id": "mxh055",
+        "replicate": 1,
+        "baseline_top2": false,
+        "is_top2_regression_vs_raw": false,
+        "active_gold_l2_coverage": true,
+        "reserve_gold_present": true,
+        "a19_gold_active": [
+          "B1.3"
+        ],
+        "a19_gold_reserve": [
+          "B3.3",
+          "B4.1",
+          "B5.2"
+        ],
+        "reserved_raw_gold_champions": [],
+        "active_gold_vs_parent_champion": [
+          {
+            "gold_id": "B1.3",
+            "gold_label": "Exertional Heat Stroke",
+            "parent": "B1",
+            "parent_champion_id": "B1.1",
+            "parent_champion_label": "Neuroleptic Malignant Syndrome",
+            "gold_won_local": false
+          }
+        ],
+        "mechanism": "NOT all-gold-reserved: active_coverage always true in these 20 cells. Cross-parent dedupe reserves sibling gold copies (often raw champions); surviving active gold then loses local ranking to a non-gold distractor under the same parent."
+      },
+      {
+        "case_id": "mxh075",
+        "replicate": 1,
+        "baseline_top2": false,
+        "is_top2_regression_vs_raw": false,
+        "active_gold_l2_coverage": true,
+        "reserve_gold_present": true,
+        "a19_gold_active": [
+          "B1.7"
+        ],
+        "a19_gold_reserve": [
+          "B4.4",
+          "B5.3"
+        ],
+        "reserved_raw_gold_champions": [],
+        "active_gold_vs_parent_champion": [
+          {
+            "gold_id": "B1.7",
+            "gold_label": "Truncus Arteriosus",
+            "parent": "B1",
+            "parent_champion_id": "B1.1",
+            "parent_champion_label": "Hypoplastic Left Heart Syndrome",
+            "gold_won_local": false
+          }
+        ],
+        "mechanism": "NOT all-gold-reserved: active_coverage always true in these 20 cells. Cross-parent dedupe reserves sibling gold copies (often raw champions); surviving active gold then loses local ranking to a non-gold distractor under the same parent."
+      },
+      {
+        "case_id": "mb57_kartagener",
+        "replicate": 2,
+        "baseline_top2": true,
+        "is_top2_regression_vs_raw": true,
+        "active_gold_l2_coverage": true,
+        "reserve_gold_present": true,
+        "a19_gold_active": [
+          "B1.4",
+          "B1.5"
+        ],
+        "a19_gold_reserve": [
+          "B2.2",
+          "B2.4",
+          "B3.3",
+          "B3.5",
+          "B4.3",
+          "B4.4",
+          "B5.3"
+        ],
+        "reserved_raw_gold_champions": [
+          "B2.4",
+          "B3.3",
+          "B4.4"
+        ],
+        "active_gold_vs_parent_champion": [
+          {
+            "gold_id": "B1.4",
+            "gold_label": "Primary Ciliary Dyskinesia",
+            "parent": "B1",
+            "parent_champion_id": "B1.2",
+            "parent_champion_label": "Cystic fibrosis",
+            "gold_won_local": false
+          },
+          {
+            "gold_id": "B1.5",
+            "gold_label": "Kartagener Syndrome",
+            "parent": "B1",
+            "parent_champion_id": "B1.2",
+            "parent_champion_label": "Cystic fibrosis",
+            "gold_won_local": false
+          }
+        ],
+        "mechanism": "NOT all-gold-reserved: active_coverage always true in these 20 cells. Cross-parent dedupe reserves sibling gold copies (often raw champions); surviving active gold then loses local ranking to a non-gold distractor under the same parent."
+      },
+      {
+        "case_id": "mb82_adhesions",
+        "replicate": 2,
+        "baseline_top2": false,
+        "is_top2_regression_vs_raw": false,
+        "active_gold_l2_coverage": true,
+        "reserve_gold_present": true,
+        "a19_gold_active": [
+          "B1.3"
+        ],
+        "a19_gold_reserve": [
+          "B4.5"
+        ],
+        "reserved_raw_gold_champions": [],
+        "active_gold_vs_parent_champion": [
+          {
+            "gold_id": "B1.3",
+            "gold_label": "Adhesions",
+            "parent": "B1",
+            "parent_champion_id": "B1.1",
+            "parent_champion_label": "Intestinal Obstruction",
+            "gold_won_local": false
+          }
+        ],
+        "mechanism": "NOT all-gold-reserved: active_coverage always true in these 20 cells. Cross-parent dedupe reserves sibling gold copies (often raw champions); surviving active gold then loses local ranking to a non-gold distractor under the same parent."
+      },
+      {
+        "case_id": "mxh045",
+        "replicate": 2,
+        "baseline_top2": false,
+        "is_top2_regression_vs_raw": false,
+        "active_gold_l2_coverage": true,
+        "reserve_gold_present": true,
+        "a19_gold_active": [
+          "B1.3"
+        ],
+        "a19_gold_reserve": [
+          "B2.6",
+          "B3.3",
+          "B4.3",
+          "B5.3"
+        ],
+        "reserved_raw_gold_champions": [],
+        "active_gold_vs_parent_champion": [
+          {
+            "gold_id": "B1.3",
+            "gold_label": "Malrotation of the gut",
+            "parent": "B1",
+            "parent_champion_id": "B1.1",
+            "parent_champion_label": "Intussusception",
+            "gold_won_local": false
+          }
+        ],
+        "mechanism": "NOT all-gold-reserved: active_coverage always true in these 20 cells. Cross-parent dedupe reserves sibling gold copies (often raw champions); surviving active gold then loses local ranking to a non-gold distractor under the same parent."
+      },
+      {
+        "case_id": "mxh055",
+        "replicate": 2,
+        "baseline_top2": false,
+        "is_top2_regression_vs_raw": false,
+        "active_gold_l2_coverage": true,
+        "reserve_gold_present": true,
+        "a19_gold_active": [
+          "B1.3"
+        ],
+        "a19_gold_reserve": [
+          "B3.3",
+          "B4.1",
+          "B5.2"
+        ],
+        "reserved_raw_gold_champions": [],
+        "active_gold_vs_parent_champion": [
+          {
+            "gold_id": "B1.3",
+            "gold_label": "Exertional Heat Stroke",
+            "parent": "B1",
+            "parent_champion_id": "B1.1",
+            "parent_champion_label": "Neuroleptic Malignant Syndrome",
+            "gold_won_local": false
+          }
+        ],
+        "mechanism": "NOT all-gold-reserved: active_coverage always true in these 20 cells. Cross-parent dedupe reserves sibling gold copies (often raw champions); surviving active gold then loses local ranking to a non-gold distractor under the same parent."
+      },
+      {
+        "case_id": "mxh075",
+        "replicate": 2,
+        "baseline_top2": false,
+        "is_top2_regression_vs_raw": false,
+        "active_gold_l2_coverage": true,
+        "reserve_gold_present": true,
+        "a19_gold_active": [
+          "B2.9"
+        ],
+        "a19_gold_reserve": [
+          "B4.4",
+          "B5.3"
+        ],
+        "reserved_raw_gold_champions": [
+          "B4.4"
+        ],
+        "active_gold_vs_parent_champion": [
+          {
+            "gold_id": "B2.9",
+            "gold_label": "Truncus Arteriosus",
+            "parent": "B2",
+            "parent_champion_id": "B2.4",
+            "parent_champion_label": "Patent Ductus Arteriosus",
+            "gold_won_local": false
+          }
+        ],
+        "mechanism": "NOT all-gold-reserved: active_coverage always true in these 20 cells. Cross-parent dedupe reserves sibling gold copies (often raw champions); surviving active gold then loses local ranking to a non-gold distractor under the same parent."
+      },
+      {
+        "case_id": "mb57_kartagener",
+        "replicate": 3,
+        "baseline_top2": true,
+        "is_top2_regression_vs_raw": true,
+        "active_gold_l2_coverage": true,
+        "reserve_gold_present": true,
+        "a19_gold_active": [
+          "B1.3",
+          "B1.4"
+        ],
+        "a19_gold_reserve": [
+          "B2.3",
+          "B2.4",
+          "B3.2",
+          "B3.6",
+          "B4.3",
+          "B4.4",
+          "B5.3"
+        ],
+        "reserved_raw_gold_champions": [
+          "B2.4",
+          "B4.3",
+          "B5.3"
+        ],
+        "active_gold_vs_parent_champion": [
+          {
+            "gold_id": "B1.3",
+            "gold_label": "Primary Ciliary Dyskinesia",
+            "parent": "B1",
+            "parent_champion_id": "B1.5",
+            "parent_champion_label": "Bronchiectasis",
+            "gold_won_local": false
+          },
+          {
+            "gold_id": "B1.4",
+            "gold_label": "Kartagener Syndrome",
+            "parent": "B1",
+            "parent_champion_id": "B1.5",
+            "parent_champion_label": "Bronchiectasis",
+            "gold_won_local": false
+          }
+        ],
+        "mechanism": "NOT all-gold-reserved: active_coverage always true in these 20 cells. Cross-parent dedupe reserves sibling gold copies (often raw champions); surviving active gold then loses local ranking to a non-gold distractor under the same parent."
+      },
+      {
+        "case_id": "mb82_adhesions",
+        "replicate": 3,
+        "baseline_top2": false,
+        "is_top2_regression_vs_raw": false,
+        "active_gold_l2_coverage": true,
+        "reserve_gold_present": true,
+        "a19_gold_active": [
+          "B1.3"
+        ],
+        "a19_gold_reserve": [
+          "B5.6"
+        ],
+        "reserved_raw_gold_champions": [],
+        "active_gold_vs_parent_champion": [
+          {
+            "gold_id": "B1.3",
+            "gold_label": "Adhesions",
+            "parent": "B1",
+            "parent_champion_id": "B1.1",
+            "parent_champion_label": "Intestinal Obstruction",
+            "gold_won_local": false
+          }
+        ],
+        "mechanism": "NOT all-gold-reserved: active_coverage always true in these 20 cells. Cross-parent dedupe reserves sibling gold copies (often raw champions); surviving active gold then loses local ranking to a non-gold distractor under the same parent."
+      },
+      {
+        "case_id": "mb83_foreignbody",
+        "replicate": 3,
+        "baseline_top2": true,
+        "is_top2_regression_vs_raw": true,
+        "active_gold_l2_coverage": true,
+        "reserve_gold_present": true,
+        "a19_gold_active": [
+          "B1.2",
+          "B2.1"
+        ],
+        "a19_gold_reserve": [
+          "B3.2",
+          "B4.6"
+        ],
+        "reserved_raw_gold_champions": [
+          "B3.2",
+          "B4.6"
+        ],
+        "active_gold_vs_parent_champion": [
+          {
+            "gold_id": "B1.2",
+            "gold_label": "Nasal Foreign Body",
+            "parent": "B1",
+            "parent_champion_id": "B1.1",
+            "parent_champion_label": "Acute Bacterial Sinusitis",
+            "gold_won_local": false
+          },
+          {
+            "gold_id": "B2.1",
+            "gold_label": "Foreign body obstruction",
+            "parent": "B2",
+            "parent_champion_id": "B2.2",
+            "parent_champion_label": "Bleeding and infected vessel of Kiesselbach plexus",
+            "gold_won_local": false
+          }
+        ],
+        "mechanism": "NOT all-gold-reserved: active_coverage always true in these 20 cells. Cross-parent dedupe reserves sibling gold copies (often raw champions); surviving active gold then loses local ranking to a non-gold distractor under the same parent."
+      },
+      {
+        "case_id": "mxh036",
+        "replicate": 3,
+        "baseline_top2": true,
+        "is_top2_regression_vs_raw": true,
+        "active_gold_l2_coverage": true,
+        "reserve_gold_present": true,
+        "a19_gold_active": [
+          "B1.3"
+        ],
+        "a19_gold_reserve": [
+          "B2.1",
+          "B4.1",
+          "B5.2"
+        ],
+        "reserved_raw_gold_champions": [
+          "B2.1"
+        ],
+        "active_gold_vs_parent_champion": [
+          {
+            "gold_id": "B1.3",
+            "gold_label": "Glycogen storage disease type 1",
+            "parent": "B1",
+            "parent_champion_id": "B1.1",
+            "parent_champion_label": "Lipoprotein lipase deficiency",
+            "gold_won_local": false
+          }
+        ],
+        "mechanism": "NOT all-gold-reserved: active_coverage always true in these 20 cells. Cross-parent dedupe reserves sibling gold copies (often raw champions); surviving active gold then loses local ranking to a non-gold distractor under the same parent."
+      },
+      {
+        "case_id": "mxh045",
+        "replicate": 3,
+        "baseline_top2": false,
+        "is_top2_regression_vs_raw": false,
+        "active_gold_l2_coverage": true,
+        "reserve_gold_present": true,
+        "a19_gold_active": [
+          "B1.3"
+        ],
+        "a19_gold_reserve": [
+          "B2.6",
+          "B3.3",
+          "B4.3",
+          "B5.6"
+        ],
+        "reserved_raw_gold_champions": [],
+        "active_gold_vs_parent_champion": [
+          {
+            "gold_id": "B1.3",
+            "gold_label": "Malrotation of the gut",
+            "parent": "B1",
+            "parent_champion_id": "B1.1",
+            "parent_champion_label": "Intussusception",
+            "gold_won_local": false
+          }
+        ],
+        "mechanism": "NOT all-gold-reserved: active_coverage always true in these 20 cells. Cross-parent dedupe reserves sibling gold copies (often raw champions); surviving active gold then loses local ranking to a non-gold distractor under the same parent."
+      },
+      {
+        "case_id": "mxh046",
+        "replicate": 3,
+        "baseline_top2": true,
+        "is_top2_regression_vs_raw": true,
+        "active_gold_l2_coverage": true,
+        "reserve_gold_present": true,
+        "a19_gold_active": [
+          "B1.2"
+        ],
+        "a19_gold_reserve": [
+          "B2.4",
+          "B3.2",
+          "B4.2"
+        ],
+        "reserved_raw_gold_champions": [
+          "B2.4"
+        ],
+        "active_gold_vs_parent_champion": [
+          {
+            "gold_id": "B1.2",
+            "gold_label": "Homocystinuria",
+            "parent": "B1",
+            "parent_champion_id": "B1.1",
+            "parent_champion_label": "Marfan syndrome",
+            "gold_won_local": false
+          }
+        ],
+        "mechanism": "NOT all-gold-reserved: active_coverage always true in these 20 cells. Cross-parent dedupe reserves sibling gold copies (often raw champions); surviving active gold then loses local ranking to a non-gold distractor under the same parent."
+      },
+      {
+        "case_id": "mxh055",
+        "replicate": 3,
+        "baseline_top2": false,
+        "is_top2_regression_vs_raw": false,
+        "active_gold_l2_coverage": true,
+        "reserve_gold_present": true,
+        "a19_gold_active": [
+          "B1.2"
+        ],
+        "a19_gold_reserve": [
+          "B2.4",
+          "B3.3",
+          "B4.1",
+          "B5.2"
+        ],
+        "reserved_raw_gold_champions": [],
+        "active_gold_vs_parent_champion": [
+          {
+            "gold_id": "B1.2",
+            "gold_label": "Exertional Heat Stroke",
+            "parent": "B1",
+            "parent_champion_id": "B1.1",
+            "parent_champion_label": "Neuroleptic Malignant Syndrome",
+            "gold_won_local": false
+          }
+        ],
+        "mechanism": "NOT all-gold-reserved: active_coverage always true in these 20 cells. Cross-parent dedupe reserves sibling gold copies (often raw champions); surviving active gold then loses local ranking to a non-gold distractor under the same parent."
+      }
+    ],
+    "mechanistic_answer": "For all 20 local_champion_elimination cells: gold is NOT fully reserved (active_coverage=true). Champion selection picks a non-gold active leaf under the parent that still holds gold. Simultaneously, raw gold champions under other parents were reserved via semantic_duplicate. So both factors operate: reserved sibling gold champions + local ranker failure on remaining actives. It is NOT primarily \"all gold reserved → non-gold champion by default\"."
+  },
+  "mechanisms": [
+    {
+      "id": "M1_cross_parent_semantic_dedupe",
+      "title": "Cross-parent semantic clustering collapses multi-parent gold portfolio",
+      "severity": "dominant",
+      "evidence": {
+        "gold_semantic_duplicate_events": 127,
+        "same_parent_gold_dups": 0,
+        "winner_flow": "Almost always non-B1 gold loses to B1 copy (B4/B2/B3/B5 -> B1)",
+        "code_locus": "scripts/l2_a_variant_v2_transforms.py::apply_budget_safe_selection clusters globally then keeps one winner via _leaf_quality, then budgets winners per parent"
+      },
+      "effect": "Identical gold labels under different L1 parents are treated as one concept. Only the quality-sorted winner stays active (usually under B1); other parents lose their gold leaf to reserve as semantic_duplicate. Raw Top-2 often depended on gold being local champion under B2/B3/B4; those champions disappear from the active set.",
+      "example": {
+        "case_id": "mb55_glucagonoma",
+        "replicate": 1,
+        "cluster": "Glucagonoma",
+        "members": {
+          "B1.2": "Glucagonoma",
+          "B4.1": "Glucagonoma",
+          "B5.2": "Glucagonoma"
+        },
+        "winner": "B1.2",
+        "reserved": [
+          "B4.1",
+          "B5.2"
+        ],
+        "raw_gold_champion_reserved": "B4.1"
+      }
+    },
+    {
+      "id": "M2_active_gold_loses_local_rank",
+      "title": "Surviving active gold loses local champion selection to distractors",
+      "severity": "dominant_cofactor_on_all_20_lc_elimination_cells",
+      "evidence": {
+        "local_champion_elimination_cells": 20,
+        "fraction_with_active_gold_coverage": "20/20",
+        "fraction_with_gold_as_any_local_champion": "0/20",
+        "examples": [
+          {
+            "case": "mb55_glucagonoma r1",
+            "active_gold": "B1.2 Glucagonoma",
+            "parent_champ": "B1.1 Type 2 Diabetes Mellitus"
+          },
+          {
+            "case": "mxh046 r1",
+            "active_gold": "B1.3 Homocystinuria",
+            "parent_champ": "B1.1 Marfan syndrome"
+          },
+          {
+            "case": "mb57_kartagener r2",
+            "active_gold": "B1.4 PCD / B1.5 Kartagener",
+            "parent_champ": "B1.2 Cystic fibrosis"
+          },
+          {
+            "case": "mxh036 r1",
+            "active_gold": "B1.3 GSD type 1",
+            "parent_champ": "B1.1 Lipoprotein lipase deficiency"
+          }
+        ]
+      },
+      "effect": "Even when active_gold_l2_coverage stays true, local ranker picks a non-gold active sibling. Combined with M1 removing gold from other parents, local_champion becomes false → loss_gate=local_champion_elimination.",
+      "answer_to_question_E": "local_champion collapses primarily because champion selection picks a non-gold ACTIVE leaf while gold is still active under that parent — NOT because gold was fully reserved. However, the raw gold champions under OTHER parents WERE reserved (M1), so the system loses the portfolio of gold champions and then also fails to elect the remaining active gold. Reserve is not consulted by local ranking (A19 has no reserve rescue)."
+    },
+    {
+      "id": "M3_rare_budget_overflow_of_gold_winner",
+      "title": "Budget overflow can still shelve the sole gold cluster winner",
+      "severity": "rare_but_severe",
+      "evidence": {
+        "gold_budget_overflow_events": 2,
+        "canonical_example": {
+          "case_id": "mxh046",
+          "replicate": 2,
+          "loss_gate": "coverage_deleted",
+          "cluster": "Homocystinuria",
+          "winner": "B1.4",
+          "then": "B1.4 budget_overflow under B1 ranking [B1.1, B1.7, B1.3, B1.9] (Marfan/Weill-Marchesani/Loeys-Dietz/Fibrillinoid)",
+          "active_gold_l2_coverage": false,
+          "reserve_gold_present": true
+        }
+      },
+      "effect": "After winning the semantic cluster, gold can still be overflowed when B1 has >4 post-dedupe cluster winners. This is the only cell pattern with reserve_gold=true and active_coverage=false (1/51)."
+    },
+    {
+      "id": "M4_hard_delete_fixed_but_downstream_destroyed",
+      "title": "Design invariant holds; downstream Top-2 still collapses",
+      "severity": "design_goal_gap",
+      "evidence": {
+        "cap_after_dedupe_hard_drop_rate": 0.0,
+        "hard_delete_rejections": 0,
+        "lineage_rejection_totals": {
+          "budget_overflow": 210,
+          "hard_delete": 0,
+          "semantic_duplicate": 722
+        },
+        "top2": "33.3% (worst)",
+        "vs_raw_net": {
+          "top2": -8,
+          "top1": -8,
+          "local_champion": -7
+        }
+      },
+      "effect": "A19 successfully replaces hard-delete with reserve, but reserve is inert for local ranking. The intended fix of v1 A2→A3 double-cap therefore does not protect Top-2: the damage moved from hard-delete to semantic_duplicate + local rank failure."
+    }
+  ],
+  "recommended_fixes": [
+    {
+      "id": "F1_parent_scoped_clustering",
+      "priority": 1,
+      "fix": "Run semantic clustering within each L1 parent, not globally. Prevents B2/B3/B4 gold copies from being reserved as duplicates of B1 gold.",
+      "addresses": [
+        "M1"
+      ]
+    },
+    {
+      "id": "F2_multi_parent_gold_retention",
+      "priority": 1,
+      "fix": "If clustering remains global, keep one active exemplar per (concept, parent) rather than one per concept. Alternatively: never reserve a leaf that is the sole gold exemplar under its parent.",
+      "addresses": [
+        "M1",
+        "M2"
+      ]
+    },
+    {
+      "id": "F3_gold_aware_or_evidence_aware_cluster_winner",
+      "priority": 2,
+      "fix": "Replace weak _leaf_quality (posterior+coverage+0.01*evidence, often all-zero) with evidence/LLM rerank for cluster winner, and/or prefer keeping the leaf under the parent where local ranker historically wins.",
+      "addresses": [
+        "M1",
+        "M2"
+      ]
+    },
+    {
+      "id": "F4_reserve_rescue_into_local",
+      "priority": 2,
+      "fix": "Wire A22-style reserve challenger into local ranking when margin is thin or when reserve holds same-concept siblings. Makes reserve non-inert for Top-2.",
+      "addresses": [
+        "M2",
+        "M4"
+      ]
+    },
+    {
+      "id": "F5_protect_cluster_winner_from_budget_overflow",
+      "priority": 3,
+      "fix": "Pin semantic-cluster winners (or high-evidence leaves) into the B=4 active set before LLM budget rerank, preventing mxh046-r2 style coverage_deleted.",
+      "addresses": [
+        "M3"
+      ]
+    },
+    {
+      "id": "F6_budget_per_parent_after_parent_scoped_dedupe",
+      "priority": 2,
+      "fix": "Keep B=4 and hard_drop_rate=0, but apply budget only after parent-scoped dedupe so capacity is not consumed by unrelated concepts while gold exemplars from other parents were already stripped.",
+      "addresses": [
+        "M1",
+        "M3",
+        "M4"
+      ]
+    }
+  ]
+}

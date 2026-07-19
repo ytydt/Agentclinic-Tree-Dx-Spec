@@ -1,0 +1,539 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentclinic.local/schemas/cceg-claim-v1.schema.json",
+  "title": "CCEG Reified Clinical Claim v1",
+  "description": "Pair-scoped, value-aware, provenance-bearing clinical evidence claim. Cross-field source permissions are additionally enforced by cceg_schema.validate_claim.",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "claim_id": {
+      "type": "string",
+      "pattern": "^cceg_[a-f0-9]{12,64}$"
+    },
+    "claim_type": {
+      "enum": [
+        "common",
+        "direction",
+        "membership",
+        "phenotype_assertion",
+        "test_recommendation"
+      ]
+    },
+    "candidate_a": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id_provenance": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "l1_parent": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "id",
+        "id_provenance",
+        "l1_parent"
+      ],
+      "additionalProperties": false
+    },
+    "candidate_b": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id_provenance": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "l1_parent": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "id",
+        "id_provenance",
+        "l1_parent"
+      ],
+      "additionalProperties": false
+    },
+    "finding": {
+      "type": "object",
+      "properties": {
+        "surface": {
+          "type": "string",
+          "minLength": 1
+        },
+        "event_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "concepts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "system": {
+                "type": "string",
+                "minLength": 1
+              },
+              "code": {
+                "type": "string",
+                "minLength": 1
+              },
+              "display": {
+                "type": "string",
+                "minLength": 1
+              },
+              "provenance": {
+                "type": "string",
+                "minLength": 1
+              },
+              "confidence": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              }
+            },
+            "required": [
+              "system",
+              "code",
+              "display",
+              "provenance",
+              "confidence"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "polarity": {
+          "enum": [
+            -1,
+            0,
+            1
+          ]
+        },
+        "value_state": {
+          "enum": [
+            "absent",
+            "elevated",
+            "normal",
+            "present",
+            "suppressed",
+            "unknown"
+          ]
+        },
+        "value": {
+          "type": [
+            "string",
+            "number",
+            "null"
+          ]
+        },
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "specimen": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "temporal": {
+          "type": "object",
+          "properties": {
+            "onset": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "duration": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "relation": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "anchor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "onset",
+            "duration",
+            "relation",
+            "anchor"
+          ],
+          "additionalProperties": false
+        },
+        "context": {
+          "type": "object"
+        },
+        "abstained": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "surface",
+        "event_type",
+        "concepts",
+        "polarity",
+        "value_state",
+        "value",
+        "unit",
+        "specimen",
+        "temporal",
+        "context",
+        "abstained"
+      ],
+      "additionalProperties": false
+    },
+    "relation": {
+      "enum": [
+        "argues_against_a",
+        "argues_against_b",
+        "atypical_for",
+        "common",
+        "member_of",
+        "recommends_test",
+        "supports_a",
+        "supports_b",
+        "typical_for"
+      ]
+    },
+    "recommended_test": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "strength": {
+      "enum": [
+        "anecdotal",
+        "explicit",
+        "qualified"
+      ]
+    },
+    "source_class": {
+      "enum": [
+        "case_report_list",
+        "case_report_prose",
+        "cpg_enumeration",
+        "cpg_prose",
+        "oracle"
+      ]
+    },
+    "allowed_consumers": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "audit",
+          "p3_soft",
+          "p4_soft",
+          "p5_soft",
+          "p5_veto"
+        ]
+      }
+    },
+    "comparator": {
+      "type": "object",
+      "properties": {
+        "required": {
+          "type": "boolean"
+        },
+        "has_support_excerpt": {
+          "type": "boolean"
+        },
+        "has_contrast_excerpt": {
+          "type": "boolean"
+        },
+        "contrast_candidates": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "required",
+        "has_support_excerpt",
+        "has_contrast_excerpt",
+        "contrast_candidates"
+      ],
+      "additionalProperties": false
+    },
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "source_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "chunk_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "article_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "section": {
+          "type": "string",
+          "minLength": 1
+        },
+        "chunk_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "quote": {
+          "type": "string",
+          "minLength": 1
+        },
+        "quote_span": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "url": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence_grade": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "source_id",
+        "chunk_id",
+        "article_id",
+        "section",
+        "chunk_type",
+        "quote",
+        "quote_span",
+        "url",
+        "evidence_grade"
+      ],
+      "additionalProperties": false
+    },
+    "extraction": {
+      "type": "object",
+      "properties": {
+        "pipeline": {
+          "type": "string",
+          "minLength": 1
+        },
+        "model": {
+          "type": "string",
+          "minLength": 1
+        },
+        "prompt_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "entailment_status": {
+          "enum": [
+            "conflict",
+            "grounded",
+            "rejected",
+            "unvalidated"
+          ]
+        },
+        "normalization_abstained": {
+          "type": "boolean"
+        },
+        "normalization_reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "pipeline",
+        "model",
+        "prompt_sha256",
+        "confidence",
+        "entailment_status",
+        "normalization_abstained",
+        "normalization_reason"
+      ],
+      "additionalProperties": false
+    },
+    "audit": {
+      "type": "object",
+      "properties": {
+        "enumeration_only": {
+          "type": "boolean"
+        },
+        "pair_binding_ok": {
+          "type": "boolean"
+        },
+        "negation_scope_ok": {
+          "type": "boolean"
+        },
+        "value_scope_ok": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "enumeration_only",
+        "pair_binding_ok",
+        "negation_scope_ok",
+        "value_scope_ok"
+      ],
+      "additionalProperties": false
+    },
+    "review": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "accepted",
+            "rejected",
+            "unreviewed"
+          ]
+        },
+        "reviewer_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "adjudication": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "status",
+        "reviewer_ids",
+        "adjudication"
+      ],
+      "additionalProperties": false
+    },
+    "split": {
+      "type": "object",
+      "properties": {
+        "document_family": {
+          "type": "string",
+          "minLength": 1
+        },
+        "document_split": {
+          "enum": [
+            "build",
+            "audit",
+            "held_out"
+          ]
+        },
+        "family_held_out": {
+          "type": "boolean"
+        },
+        "pilot_scope": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "document_family",
+        "document_split",
+        "family_held_out",
+        "pilot_scope"
+      ],
+      "additionalProperties": false
+    },
+    "claim_status": {
+      "enum": [
+        "grounded",
+        "pending_review",
+        "raw",
+        "rejected"
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "claim_id",
+    "claim_type",
+    "candidate_a",
+    "candidate_b",
+    "finding",
+    "relation",
+    "recommended_test",
+    "strength",
+    "source_class",
+    "allowed_consumers",
+    "comparator",
+    "provenance",
+    "extraction",
+    "audit",
+    "review",
+    "split",
+    "claim_status"
+  ],
+  "additionalProperties": false
+}

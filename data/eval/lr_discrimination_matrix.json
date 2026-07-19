@@ -1,0 +1,282 @@
+{
+  "_readme": "IMPROVED, INDEPENDENT discrimination test set (does NOT replace data/eval/lr_coverage_cases.json). Motivation: the coverage set only annotated gold-favoring findings (~24), never tested whether the annotator (a) inflates a DISTRACTOR's LR (→ correct branch starves under renormalization), (b) falsely rules OUT the correct branch on a confounder, or (c) fails to rule out a distractor it should; and it had no tree-depth stratification. Here EACH finding carries a full (finding × candidate-branch) EXPECTED-EFFECT matrix, a depth tag (L1 family-routing vs leaf discrimination), and a trap type. Branch keys are leaf DISEASE names so every cell is LR-queryable. Effect vocab (for a finding PRESENT in the vignette): pathognomonic|strong_for|for|weak_for|neutral|weak_against|against|rule_out. trap types: shared_high (alarming but shared → must stay neutral, else false-high starvation), ruleout_distractor (present finding should rule out a distractor), confounder_correct (naive reader might rule OUT the correct dx but it must stay for/neutral), distractor_specific (legit strong_for a distractor), pathognomonic, discriminator (clean leaf discriminator), constitutional (non-specific).",
+  "effect_bands": {
+    "pathognomonic": ">=50", "strong_for": "10..50", "for": "3..10",
+    "weak_for": "1.5..3", "neutral": "0.67..1.5", "weak_against": "0.33..0.67",
+    "against": "0.1..0.33", "rule_out": "<=0.1"
+  },
+  "cases": [
+    {
+      "id": "mb11_pancoast",
+      "case_idx": 11,
+      "gold": "Pancoast tumor",
+      "gold_family": "Neoplastic Disorder with Neurological Manifestations",
+      "branches": [
+        {"name": "Pancoast tumor", "level": "leaf", "family": "Neoplastic", "is_gold": true},
+        {"name": "brachial plexopathy", "level": "leaf", "family": "Inflammatory/Structural", "is_gold": false},
+        {"name": "thoracic outlet syndrome", "level": "leaf", "family": "Mechanical", "is_gold": false},
+        {"name": "cervical radiculopathy", "level": "leaf", "family": "Mechanical", "is_gold": false},
+        {"name": "subclavian steal syndrome", "level": "leaf", "family": "Vascular", "is_gold": false}
+      ],
+      "evidence": [
+        {"finding": "Horner syndrome", "depth": "leaf", "trap": "pathognomonic",
+         "effects": {"Pancoast tumor": "strong_for", "subclavian steal syndrome": "against", "thoracic outlet syndrome": "weak_for", "brachial plexopathy": "neutral"},
+         "note": "apical mass → sympathetic chain"},
+        {"finding": "weight loss", "depth": "L1", "trap": "constitutional",
+         "effects": {"Pancoast tumor": "for", "subclavian steal syndrome": "weak_against", "thoracic outlet syndrome": "weak_against", "cervical radiculopathy": "weak_against"},
+         "note": "17 lb → neoplastic family; argues against benign mechanical causes"},
+        {"finding": "heavy cigarette smoking", "depth": "L1", "trap": "constitutional",
+         "effects": {"Pancoast tumor": "for", "brachial plexopathy": "neutral", "cervical radiculopathy": "neutral"},
+         "note": "lung-ca risk factor"},
+        {"finding": "lower trunk brachial plexus deficit (C8-T1 hand weakness)", "depth": "leaf", "trap": "shared_high",
+         "effects": {"Pancoast tumor": "weak_for", "brachial plexopathy": "weak_for", "thoracic outlet syndrome": "weak_for"},
+         "note": "TRAP: shared by all lower-plexus causes; must NOT be strong_for any single one"},
+        {"finding": "symptoms unchanged by head and neck position", "depth": "leaf", "trap": "ruleout_distractor",
+         "effects": {"thoracic outlet syndrome": "rule_out", "cervical radiculopathy": "against", "Pancoast tumor": "neutral"},
+         "note": "positional provocation defines TOS/radiculopathy; absence rules them out"}
+      ]
+    },
+    {
+      "id": "mb34_leukemoid",
+      "case_idx": 34,
+      "gold": "leukemoid reaction",
+      "gold_family": "Reactive / Non-malignant Leukocytosis",
+      "branches": [
+        {"name": "leukemoid reaction", "level": "leaf", "family": "Reactive", "is_gold": true},
+        {"name": "chronic myeloid leukemia", "level": "leaf", "family": "Chronic Myeloproliferative Neoplasm", "is_gold": false},
+        {"name": "acute myeloid leukemia", "level": "leaf", "family": "Myeloid Neoplasm with Increased Blasts", "is_gold": false},
+        {"name": "chronic lymphocytic leukemia", "level": "leaf", "family": "Lymphoid Neoplasm", "is_gold": false},
+        {"name": "acute lymphoblastic leukemia", "level": "leaf", "family": "Lymphoid Neoplasm", "is_gold": false}
+      ],
+      "evidence": [
+        {"finding": "elevated leukocyte alkaline phosphatase", "depth": "leaf", "trap": "discriminator",
+         "effects": {"leukemoid reaction": "strong_for", "chronic myeloid leukemia": "rule_out"},
+         "note": "LAP HIGH → reactive; CML has LOW LAP → present high-LAP rules OUT CML"},
+        {"finding": "marked leukocytosis (66,500/mm3)", "depth": "L1", "trap": "shared_high",
+         "effects": {"leukemoid reaction": "neutral", "chronic myeloid leukemia": "weak_for", "acute myeloid leukemia": "weak_for"},
+         "note": "TRAP: extreme WBC alone does NOT separate reactive from neoplastic; must not down-weight leukemoid"},
+        {"finding": "leukocytosis with normal differential and no circulating blasts", "depth": "leaf", "trap": "ruleout_distractor",
+         "effects": {"acute myeloid leukemia": "against", "acute lymphoblastic leukemia": "against", "leukemoid reaction": "weak_for", "chronic myeloid leukemia": "neutral"},
+         "note": "absence of blasts argues against ACUTE leukemias"},
+        {"finding": "recent viral infection", "depth": "leaf", "trap": "discriminator",
+         "effects": {"leukemoid reaction": "for", "chronic myeloid leukemia": "neutral"},
+         "note": "reactive trigger"},
+        {"finding": "weight loss and fatigue", "depth": "L1", "trap": "confounder_correct",
+         "effects": {"leukemoid reaction": "neutral", "chronic myeloid leukemia": "weak_for", "acute myeloid leukemia": "weak_for"},
+         "note": "TRAP: constitutional sx tempt a malignancy call; must NOT rule out leukemoid (starvation risk)"}
+      ]
+    },
+    {
+      "id": "mb55_glucagonoma",
+      "case_idx": 55,
+      "gold": "glucagonoma",
+      "gold_family": "Neoplastic Process",
+      "branches": [
+        {"name": "glucagonoma", "level": "leaf", "family": "Neoplastic", "is_gold": true},
+        {"name": "insulinoma", "level": "leaf", "family": "Neoplastic", "is_gold": false},
+        {"name": "type 2 diabetes mellitus", "level": "leaf", "family": "Endocrine", "is_gold": false},
+        {"name": "hypercortisolism", "level": "leaf", "family": "Endocrine", "is_gold": false},
+        {"name": "type 1 diabetes mellitus", "level": "leaf", "family": "Endocrine", "is_gold": false}
+      ],
+      "evidence": [
+        {"finding": "necrolytic migratory erythema", "depth": "leaf", "trap": "pathognomonic",
+         "effects": {"glucagonoma": "pathognomonic", "type 2 diabetes mellitus": "against", "hypercortisolism": "neutral"},
+         "note": "pathognomonic painful papuloplaque rash"},
+        {"finding": "hyperglycemia (glucose > 500)", "depth": "leaf", "trap": "ruleout_distractor",
+         "effects": {"glucagonoma": "for", "insulinoma": "rule_out", "type 2 diabetes mellitus": "weak_for", "hypercortisolism": "weak_for"},
+         "note": "glucagon excess → high glucose; RULES OUT insulinoma (which causes hypoglycemia)"},
+        {"finding": "diarrhea", "depth": "L1", "trap": "shared_high",
+         "effects": {"glucagonoma": "weak_for", "type 2 diabetes mellitus": "neutral"},
+         "note": "part of glucagonoma syndrome but non-specific"},
+        {"finding": "obesity", "depth": "L1", "trap": "confounder_correct",
+         "effects": {"glucagonoma": "neutral", "type 2 diabetes mellitus": "weak_for", "insulinoma": "neutral"},
+         "note": "TRAP: obesity biases toward T2DM/insulin resistance; must NOT rule out glucagonoma"},
+        {"finding": "weight loss with high glucose", "depth": "leaf", "trap": "discriminator",
+         "effects": {"glucagonoma": "for", "type 2 diabetes mellitus": "weak_against"},
+         "note": "catabolic weight loss despite hyperglycemia → against simple T2DM"}
+      ]
+    },
+    {
+      "id": "mb57_pcd",
+      "case_idx": 57,
+      "gold": "primary ciliary dyskinesia",
+      "gold_family": "Primary Ciliary Dyskinesia",
+      "branches": [
+        {"name": "primary ciliary dyskinesia", "level": "leaf", "family": "PCD", "is_gold": true},
+        {"name": "cystic fibrosis", "level": "leaf", "family": "Cystic Fibrosis", "is_gold": false},
+        {"name": "common variable immunodeficiency", "level": "leaf", "family": "Immunodeficiency", "is_gold": false},
+        {"name": "chronic bacterial sinusitis", "level": "leaf", "family": "Chronic Respiratory Infection", "is_gold": false}
+      ],
+      "evidence": [
+        {"finding": "situs inversus with dextrocardia", "depth": "leaf", "trap": "pathognomonic",
+         "effects": {"primary ciliary dyskinesia": "strong_for", "cystic fibrosis": "against", "common variable immunodeficiency": "against"},
+         "note": "Kartagener; situs inversus does not occur in CF/CVID"},
+        {"finding": "bronchiectasis", "depth": "L1", "trap": "shared_high",
+         "effects": {"primary ciliary dyskinesia": "weak_for", "cystic fibrosis": "weak_for", "common variable immunodeficiency": "weak_for"},
+         "note": "TRAP: bronchiectasis shared by all three; NOT discriminating"},
+        {"finding": "chronic sinusitis since birth", "depth": "L1", "trap": "shared_high",
+         "effects": {"primary ciliary dyskinesia": "weak_for", "cystic fibrosis": "weak_for", "common variable immunodeficiency": "weak_for"},
+         "note": "shared sinopulmonary phenotype"},
+        {"finding": "normal growth and weight gain", "depth": "leaf", "trap": "ruleout_distractor",
+         "effects": {"cystic fibrosis": "against", "primary ciliary dyskinesia": "weak_for"},
+         "note": "pancreatic insufficiency in CF → failure to thrive; normal growth argues AGAINST CF"},
+        {"finding": "normal sweat chloride", "depth": "leaf", "trap": "ruleout_distractor",
+         "effects": {"cystic fibrosis": "rule_out", "primary ciliary dyskinesia": "weak_for"},
+         "note": "normal sweat chloride rules out CF"}
+      ]
+    },
+    {
+      "id": "mb65_cml",
+      "case_idx": 65,
+      "gold": "chronic myeloid leukemia",
+      "gold_family": "Chronic Myeloproliferative Neoplasm",
+      "branches": [
+        {"name": "chronic myeloid leukemia", "level": "leaf", "family": "Chronic Myeloproliferative Neoplasm", "is_gold": true},
+        {"name": "acute myeloid leukemia", "level": "leaf", "family": "Myeloid Neoplasm with Increased Blasts", "is_gold": false},
+        {"name": "acute lymphoblastic leukemia", "level": "leaf", "family": "Lymphoid Neoplasm", "is_gold": false},
+        {"name": "chronic lymphocytic leukemia", "level": "leaf", "family": "Lymphoid Neoplasm", "is_gold": false},
+        {"name": "leukemoid reaction", "level": "leaf", "family": "Reactive", "is_gold": false}
+      ],
+      "evidence": [
+        {"finding": "leukocytosis (57,500) with 35% circulating blasts", "depth": "leaf", "trap": "ruleout_distractor",
+         "effects": {"chronic myeloid leukemia": "for", "acute myeloid leukemia": "for", "leukemoid reaction": "rule_out", "chronic lymphocytic leukemia": "weak_against"},
+         "note": "blasts rule out reactive leukemoid; myeloid blasts → CML(blast phase) or AML (shared → leaf-tie)"},
+        {"finding": "leukostasis symptoms (blurry vision, ataxia)", "depth": "leaf", "trap": "shared_high",
+         "effects": {"chronic myeloid leukemia": "for", "acute myeloid leukemia": "weak_for"},
+         "note": "hyperleukocytosis → leukostasis, more with very high WBC of CML"},
+        {"finding": "myeloid blasts (not lymphoid)", "depth": "leaf", "trap": "ruleout_distractor",
+         "effects": {"acute lymphoblastic leukemia": "against", "chronic lymphocytic leukemia": "against", "chronic myeloid leukemia": "weak_for", "acute myeloid leukemia": "weak_for"},
+         "note": "myeloid lineage argues against lymphoid neoplasms"},
+        {"finding": "night sweats and weight loss", "depth": "L1", "trap": "constitutional",
+         "effects": {"chronic myeloid leukemia": "weak_for", "acute myeloid leukemia": "weak_for", "leukemoid reaction": "neutral"},
+         "note": "TRAP: constitutional, does NOT separate CML from AML at leaf"},
+        {"finding": "anemia and thrombocytopenia", "depth": "L1", "trap": "shared_high",
+         "effects": {"chronic myeloid leukemia": "weak_for", "acute myeloid leukemia": "weak_for", "leukemoid reaction": "weak_against"},
+         "note": "marrow infiltration; against purely reactive"}
+      ]
+    },
+    {
+      "id": "mb66_peliosis",
+      "case_idx": 66,
+      "gold": "peliosis hepatis",
+      "gold_family": "Vascular/Ischemic Abdominal Condition",
+      "branches": [
+        {"name": "peliosis hepatis", "level": "leaf", "family": "Vascular", "is_gold": true},
+        {"name": "Budd-Chiari syndrome", "level": "leaf", "family": "Vascular", "is_gold": false},
+        {"name": "acute pancreatitis", "level": "leaf", "family": "Inflammatory", "is_gold": false},
+        {"name": "ectopic pregnancy", "level": "leaf", "family": "Reproductive", "is_gold": false},
+        {"name": "choledocholithiasis", "level": "leaf", "family": "Obstructive", "is_gold": false}
+      ],
+      "evidence": [
+        {"finding": "anabolic androgenic steroid use", "depth": "leaf", "trap": "discriminator",
+         "effects": {"peliosis hepatis": "strong_for", "acute pancreatitis": "neutral", "ectopic pregnancy": "against"},
+         "note": "androgen exposure → peliosis hepatis"},
+        {"finding": "hypotension with acute hepatic pain during exertion", "depth": "leaf", "trap": "discriminator",
+         "effects": {"peliosis hepatis": "for", "Budd-Chiari syndrome": "weak_for", "choledocholithiasis": "weak_against"},
+         "note": "vascular lesion rupture/hemorrhage → shock; not typical of stone"},
+        {"finding": "right upper quadrant pain", "depth": "L1", "trap": "shared_high",
+         "effects": {"peliosis hepatis": "weak_for", "Budd-Chiari syndrome": "weak_for", "choledocholithiasis": "weak_for", "acute pancreatitis": "weak_for"},
+         "note": "TRAP: localizes to RUQ but shared by all hepatobiliary causes"},
+        {"finding": "negative urine beta-hCG", "depth": "leaf", "trap": "ruleout_distractor",
+         "effects": {"ectopic pregnancy": "rule_out", "peliosis hepatis": "neutral"},
+         "note": "negative hCG rules out ectopic pregnancy"},
+        {"finding": "normal serum lipase", "depth": "leaf", "trap": "ruleout_distractor",
+         "effects": {"acute pancreatitis": "against", "peliosis hepatis": "neutral"},
+         "note": "normal lipase argues strongly against pancreatitis"},
+        {"finding": "heavy alcohol use", "depth": "L1", "trap": "confounder_correct",
+         "effects": {"acute pancreatitis": "weak_for", "peliosis hepatis": "neutral"},
+         "note": "TRAP: alcohol biases toward pancreatitis; must NOT rule out peliosis"}
+      ]
+    },
+    {
+      "id": "mb77_hyperpara",
+      "case_idx": 77,
+      "gold": "primary hyperparathyroidism",
+      "gold_family": "Metabolic/Bone Disorder",
+      "branches": [
+        {"name": "primary hyperparathyroidism", "level": "leaf", "family": "Metabolic/Bone", "is_gold": true},
+        {"name": "malignancy-associated hypercalcemia", "level": "leaf", "family": "Malignancy", "is_gold": false},
+        {"name": "milk-alkali syndrome", "level": "leaf", "family": "Metabolic", "is_gold": false},
+        {"name": "vitamin D intoxication", "level": "leaf", "family": "Metabolic", "is_gold": false},
+        {"name": "sarcoidosis", "level": "leaf", "family": "Systemic Inflammatory", "is_gold": false}
+      ],
+      "evidence": [
+        {"finding": "hypercalcemia", "depth": "L1", "trap": "shared_high",
+         "effects": {"primary hyperparathyroidism": "weak_for", "malignancy-associated hypercalcemia": "weak_for", "milk-alkali syndrome": "weak_for", "vitamin D intoxication": "weak_for", "sarcoidosis": "weak_for"},
+         "note": "TRAP: hypercalcemia is the shared syndrome, not a discriminator"},
+        {"finding": "hypophosphatemia", "depth": "leaf", "trap": "discriminator",
+         "effects": {"primary hyperparathyroidism": "for", "milk-alkali syndrome": "against", "vitamin D intoxication": "weak_against", "malignancy-associated hypercalcemia": "neutral"},
+         "note": "PTH wastes phosphate; milk-alkali/vitD tend to normal/high phosphate"},
+        {"finding": "elevated alkaline phosphatase", "depth": "leaf", "trap": "discriminator",
+         "effects": {"primary hyperparathyroidism": "for", "milk-alkali syndrome": "against"},
+         "note": "high bone turnover in PHPT"},
+        {"finding": "chronic hypercalcemia with normal renal function", "depth": "leaf", "trap": "ruleout_distractor",
+         "effects": {"milk-alkali syndrome": "against", "primary hyperparathyroidism": "weak_for"},
+         "note": "milk-alkali usually has renal impairment/alkalosis"},
+        {"finding": "recent weight loss and cough", "depth": "L1", "trap": "confounder_correct",
+         "effects": {"malignancy-associated hypercalcemia": "weak_for", "sarcoidosis": "weak_for", "primary hyperparathyroidism": "neutral"},
+         "note": "TRAP: biases toward malignancy/sarcoid; must NOT rule out PHPT"}
+      ]
+    },
+    {
+      "id": "mb82_adhesions",
+      "case_idx": 82,
+      "gold": "adhesions",
+      "gold_family": "Mechanical Gastrointestinal Obstruction",
+      "branches": [
+        {"name": "adhesions", "level": "leaf", "family": "Mechanical Obstruction", "is_gold": true},
+        {"name": "sigmoid volvulus", "level": "leaf", "family": "Mechanical Obstruction", "is_gold": false},
+        {"name": "fecal impaction", "level": "leaf", "family": "Mechanical Obstruction", "is_gold": false},
+        {"name": "diabetic gastroparesis", "level": "leaf", "family": "Motility Disorder", "is_gold": false},
+        {"name": "norovirus gastroenteritis", "level": "leaf", "family": "Infectious", "is_gold": false}
+      ],
+      "evidence": [
+        {"finding": "prior abdominal surgery (right lower quadrant scar)", "depth": "leaf", "trap": "discriminator",
+         "effects": {"adhesions": "strong_for", "sigmoid volvulus": "weak_against", "norovirus gastroenteritis": "against"},
+         "note": "prior surgery → adhesions = #1 mechanical SBO cause"},
+        {"finding": "distended tympanitic abdomen with obstruction", "depth": "L1", "trap": "shared_high",
+         "effects": {"adhesions": "weak_for", "sigmoid volvulus": "weak_for", "fecal impaction": "weak_for", "diabetic gastroparesis": "neutral"},
+         "note": "TRAP: obstruction picture shared across mechanical causes"},
+        {"finding": "no diarrhea", "depth": "leaf", "trap": "ruleout_distractor",
+         "effects": {"norovirus gastroenteritis": "against", "adhesions": "neutral"},
+         "note": "absence of diarrhea argues against viral gastroenteritis"},
+        {"finding": "poorly controlled diabetes", "depth": "L1", "trap": "confounder_correct",
+         "effects": {"diabetic gastroparesis": "weak_for", "adhesions": "neutral"},
+         "note": "TRAP: diabetes biases toward gastroparesis; must NOT rule out adhesions"},
+        {"finding": "symptoms worse with fatty meals and alcohol", "depth": "L1", "trap": "shared_high",
+         "effects": {"adhesions": "neutral", "diabetic gastroparesis": "weak_for"},
+         "note": "non-specific dyspepsia; not discriminating for mechanical obstruction"}
+      ]
+    },
+    {
+      "id": "mb83_foreignbody",
+      "case_idx": 83,
+      "gold": "nasal foreign body",
+      "gold_family": "Foreign Body-Related Nasal Disorder",
+      "branches": [
+        {"name": "nasal foreign body", "level": "leaf", "family": "Foreign Body", "is_gold": true},
+        {"name": "bacterial sinusitis", "level": "leaf", "family": "Infectious", "is_gold": false},
+        {"name": "nasopharyngeal carcinoma", "level": "leaf", "family": "Neoplastic", "is_gold": false},
+        {"name": "epistaxis from Kiesselbach plexus", "level": "leaf", "family": "Vascular", "is_gold": false},
+        {"name": "nasal septal perforation", "level": "leaf", "family": "Structural", "is_gold": false}
+      ],
+      "evidence": [
+        {"finding": "unilateral purulent nasal discharge in a young child", "depth": "leaf", "trap": "discriminator",
+         "effects": {"nasal foreign body": "strong_for", "bacterial sinusitis": "weak_against", "nasopharyngeal carcinoma": "neutral"},
+         "note": "unilateral foul discharge in a child → foreign body until proven otherwise"},
+        {"finding": "unilaterality of nasal discharge", "depth": "leaf", "trap": "ruleout_distractor",
+         "effects": {"bacterial sinusitis": "against", "nasal foreign body": "for"},
+         "note": "sinusitis is typically BILATERAL; unilaterality argues against it"},
+        {"finding": "bloody nasal discharge", "depth": "L1", "trap": "shared_high",
+         "effects": {"nasal foreign body": "weak_for", "nasopharyngeal carcinoma": "weak_for", "epistaxis from Kiesselbach plexus": "weak_for"},
+         "note": "TRAP: blood is shared by FB, tumor, and epistaxis"},
+        {"finding": "acute onset over days in a 7-year-old", "depth": "leaf", "trap": "ruleout_distractor",
+         "effects": {"nasopharyngeal carcinoma": "against", "nasal foreign body": "weak_for"},
+         "note": "NPC is a chronic adult/adolescent tumor; acute pediatric course argues against"},
+        {"finding": "preceding acute sinusitis treated with decongestants", "depth": "L1", "trap": "confounder_correct",
+         "effects": {"bacterial sinusitis": "weak_for", "nasal foreign body": "neutral"},
+         "note": "TRAP: prior sinusitis label anchors on sinusitis; must NOT rule out foreign body"}
+      ]
+    }
+  ]
+}

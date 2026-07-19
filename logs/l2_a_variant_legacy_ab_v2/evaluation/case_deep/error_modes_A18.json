@@ -1,0 +1,2706 @@
+{
+  "arm": "A18-parent-safe",
+  "comparator": "A-raw-v2",
+  "protocol": "l2-a-variant-v2",
+  "sources": {
+    "error_mode_cells": "logs/l2_a_variant_legacy_ab_v2/evaluation/case_deep/error_mode_cells.json",
+    "transitions": "logs/l2_a_variant_legacy_ab_v2/evaluation/case_deep/arm_case_transitions_vs_a_raw_v2.json",
+    "gen_traces": "logs/l2_a_variant_matrix_v2/generation/traces/A18-parent-safe/",
+    "eval_traces": "logs/l2_a_variant_legacy_ab_v2/evaluation/traces/A18-parent-safe/",
+    "final_audit": "logs/l2_a_variant_matrix_v2/judge/final_audit.json",
+    "transform_code": "scripts/l2_a_variant_v2_transforms.py::apply_parent_safe_gate"
+  },
+  "summary": {
+    "n_cells": 51,
+    "n_leaf_gate_decisions": 1515,
+    "n_parent_mismatch_reserves": 775,
+    "n_active_keeps": 740,
+    "reserve_rate": 0.5116,
+    "top2_pct": 45.1,
+    "top1_pct": 37.3,
+    "coverage_pct": 82.4,
+    "a_raw_top2_pct": 49.0,
+    "a_raw_top1_pct": 41.2,
+    "a_raw_coverage_pct": 88.2,
+    "top2_net_vs_a_raw": -2,
+    "coverage_net_vs_a_raw": -3,
+    "top1_net_vs_a_raw": -2,
+    "gate_decision_confidence_distribution": {
+      "valid|high": 740,
+      "invalid|high": 775
+    },
+    "uncertain_or_low_conf_count": 0,
+    "fail_open_keeps_non_valid": 0,
+    "confusion_vs_final_audit_parent_valid": {
+      "TP_reserve_and_invalid": 478,
+      "FP_reserve_but_valid": 297,
+      "FN_active_but_invalid": 109,
+      "TN_active_and_valid": 631,
+      "precision": 0.6168,
+      "recall": 0.8143,
+      "false_positive_rate": 0.32,
+      "false_negative_rate": 0.1857
+    },
+    "coverage_deleted_attribution": {
+      "n_coverage_deleted_cells": 9,
+      "a18_causal_all_gold_reserved": [
+        "mxh075 r1",
+        "mxh075 r2",
+        "mxh075 r3"
+      ],
+      "preexisting_inventory_miss_not_a18": [
+        "mb66_peliosis r1",
+        "mxh068 r1",
+        "mb66_peliosis r2",
+        "mxh068 r2",
+        "mb66_peliosis r3",
+        "mxh068 r3"
+      ]
+    },
+    "top2_regression_vs_a_raw": {
+      "loss_count": 6,
+      "gain_count": 4,
+      "net": -2,
+      "losses": [
+        {
+          "case_id": "mb11_pancoast",
+          "replicate": 2
+        },
+        {
+          "case_id": "mb83_foreignbody",
+          "replicate": 1
+        },
+        {
+          "case_id": "mb83_foreignbody",
+          "replicate": 2
+        },
+        {
+          "case_id": "mb83_foreignbody",
+          "replicate": 3
+        },
+        {
+          "case_id": "mxh046",
+          "replicate": 1
+        },
+        {
+          "case_id": "mxh046",
+          "replicate": 3
+        }
+      ],
+      "gains": [
+        {
+          "case_id": "mb57_kartagener",
+          "replicate": 1
+        },
+        {
+          "case_id": "mb65_cml",
+          "replicate": 2
+        },
+        {
+          "case_id": "mb77_hyperpara",
+          "replicate": 2
+        },
+        {
+          "case_id": "mb77_hyperpara",
+          "replicate": 3
+        }
+      ],
+      "case_majority_losses": [
+        "mb83_foreignbody",
+        "mxh046"
+      ]
+    },
+    "headline": "A18 replaces A1 hard-delete with reserve, but the task-locked gate is over-decisive: 775/1515 leaves reserved as invalid+high (0 uncertain). False-positive reserve rate 297/775=38.3% vs final_audit parent_valid=true, driven by classification_axis string mismatch without case context. This wipes active gold on mxh075 (coverage net -3) and thins multi-parent gold on mb83/mxh046/mb11 (Top2 net -2)."
+  },
+  "design_goal_gap": {
+    "intended": {
+      "task_locked_parent_gate": true,
+      "no_full_case_context": true,
+      "only_high_confidence_invalid_to_reserve": true,
+      "uncertain_or_drift_fail_open_keep_active": true,
+      "fix_a1_false_negative_hard_deletes": "replace hard delete with reserve"
+    },
+    "observed": {
+      "payload_only_parent_and_candidate": true,
+      "all_reserves_are_invalid_high": true,
+      "uncertain_count": 0,
+      "low_confidence_count": 0,
+      "fail_open_path_exercised": false,
+      "reserve_instead_of_hard_delete": true,
+      "but_over_aggressive_high_conf_invalid": true,
+      "empirical_effect": "Top2 45.1% < A-raw 49.0%; coverage 82.4% < A-raw 88.2%; parent_mismatch rejections=775."
+    },
+    "gap_summary": [
+      "Fail-open is dead code in practice: model returns only valid/high or invalid/high (0/1515 uncertain or low).",
+      "Task-locked axis comparison without case context causes systematic false-positive reserves when leaf.classification_axis != parent.classification_axis (especially mechanism/etiology and anatomy/etiology), including gold leaves.",
+      "Reserve (vs A1 hard delete) preserves inventory_gold but still drops active_gold_l2_coverage when ALL gold copies are reserved (mxh075 ×3), which is a coverage regression vs A-raw.",
+      "Even when coverage is preserved, thinning multi-parent gold placements causes Top2 regressions via intergroup_rank_loss (mb83×3, mb11 r2) and local_champion_elimination (mxh046 r1/r3).",
+      "Gate over-reserves relative to judge (reserve_rate 51.2% vs judge_invalid 38.7%); precision only 0.617."
+    ],
+    "case_context_probe": [
+      {
+        "case_id": "mxh075",
+        "replicate": 1,
+        "payload_fields_observed": [
+          "candidate",
+          "current_parent"
+        ],
+        "case_context_in_payload": false,
+        "gold_invalidations_illustrating_context_gap": [
+          {
+            "branch_id": "B1.7",
+            "label": "Truncus Arteriosus",
+            "parent_label": "Left Heart Obstructive Lesions",
+            "parent_axis": "anatomy",
+            "leaf_axis": "etiology",
+            "gate_rationale": "classification axis mismatch",
+            "is_parent_valid": false,
+            "why_context_matters": "Without case evidence, gate reduces to axis-tag equality. Leaf tagged 'etiology' under parent 'Left Heart Obstructive Lesions' (anatomy) → high-confidence invalid, even when disease semantically belongs under that parent."
+          },
+          {
+            "branch_id": "B4.4",
+            "label": "Truncus Arteriosus",
+            "parent_label": "Other Cardiac Anomalies",
+            "parent_axis": "anatomy",
+            "leaf_axis": "etiology",
+            "gate_rationale": "classification axis mismatch",
+            "is_parent_valid": true,
+            "why_context_matters": "Without case evidence, gate reduces to axis-tag equality. Leaf tagged 'etiology' under parent 'Other Cardiac Anomalies' (anatomy) → high-confidence invalid, even when disease semantically belongs under that parent."
+          },
+          {
+            "branch_id": "B5.3",
+            "label": "Truncus arteriosus",
+            "parent_label": "Non-Cardiac Causes",
+            "parent_axis": "anatomy",
+            "leaf_axis": "etiology",
+            "gate_rationale": "classification axis mismatch",
+            "is_parent_valid": false,
+            "why_context_matters": "Without case evidence, gate reduces to axis-tag equality. Leaf tagged 'etiology' under parent 'Non-Cardiac Causes' (anatomy) → high-confidence invalid, even when disease semantically belongs under that parent."
+          }
+        ]
+      },
+      {
+        "case_id": "mxh075",
+        "replicate": 2,
+        "payload_fields_observed": [
+          "candidate",
+          "current_parent"
+        ],
+        "case_context_in_payload": false,
+        "gold_invalidations_illustrating_context_gap": [
+          {
+            "branch_id": "B2.9",
+            "label": "Truncus Arteriosus",
+            "parent_label": "Septal Defects",
+            "parent_axis": "anatomy",
+            "leaf_axis": "etiology",
+            "gate_rationale": "classification axis mismatch",
+            "is_parent_valid": false,
+            "why_context_matters": "Without case evidence, gate reduces to axis-tag equality. Leaf tagged 'etiology' under parent 'Septal Defects' (anatomy) → high-confidence invalid, even when disease semantically belongs under that parent."
+          },
+          {
+            "branch_id": "B4.4",
+            "label": "Truncus Arteriosus",
+            "parent_label": "Other Cardiac Anomalies",
+            "parent_axis": "anatomy",
+            "leaf_axis": "etiology",
+            "gate_rationale": "classification axis mismatch",
+            "is_parent_valid": true,
+            "why_context_matters": "Without case evidence, gate reduces to axis-tag equality. Leaf tagged 'etiology' under parent 'Other Cardiac Anomalies' (anatomy) → high-confidence invalid, even when disease semantically belongs under that parent."
+          },
+          {
+            "branch_id": "B5.3",
+            "label": "Truncus arteriosus",
+            "parent_label": "Non-Cardiac Causes",
+            "parent_axis": "anatomy",
+            "leaf_axis": "etiology",
+            "gate_rationale": "classification axis mismatch",
+            "is_parent_valid": false,
+            "why_context_matters": "Without case evidence, gate reduces to axis-tag equality. Leaf tagged 'etiology' under parent 'Non-Cardiac Causes' (anatomy) → high-confidence invalid, even when disease semantically belongs under that parent."
+          }
+        ]
+      },
+      {
+        "case_id": "mxh075",
+        "replicate": 3,
+        "payload_fields_observed": [
+          "candidate",
+          "current_parent"
+        ],
+        "case_context_in_payload": false,
+        "gold_invalidations_illustrating_context_gap": [
+          {
+            "branch_id": "B4.4",
+            "label": "Truncus Arteriosus",
+            "parent_label": "Other Cardiac Anomalies",
+            "parent_axis": "anatomy",
+            "leaf_axis": "etiology",
+            "gate_rationale": "classification axis mismatch",
+            "is_parent_valid": true,
+            "why_context_matters": "Without case evidence, gate reduces to axis-tag equality. Leaf tagged 'etiology' under parent 'Other Cardiac Anomalies' (anatomy) → high-confidence invalid, even when disease semantically belongs under that parent."
+          },
+          {
+            "branch_id": "B5.3",
+            "label": "Truncus arteriosus",
+            "parent_label": "Non-Cardiac Causes",
+            "parent_axis": "anatomy",
+            "leaf_axis": "etiology",
+            "gate_rationale": "Classification axis mismatch",
+            "is_parent_valid": false,
+            "why_context_matters": "Without case evidence, gate reduces to axis-tag equality. Leaf tagged 'etiology' under parent 'Non-Cardiac Causes' (anatomy) → high-confidence invalid, even when disease semantically belongs under that parent."
+          }
+        ]
+      },
+      {
+        "case_id": "mxh046",
+        "replicate": 1,
+        "payload_fields_observed": [
+          "candidate",
+          "current_parent"
+        ],
+        "case_context_in_payload": false,
+        "gold_invalidations_illustrating_context_gap": [
+          {
+            "branch_id": "B3.2",
+            "label": "Homocystinuria",
+            "parent_label": "Multisystem Developmental Disorder",
+            "parent_axis": "mechanism",
+            "leaf_axis": "etiology",
+            "gate_rationale": "candidate classification axis does not match parent axis",
+            "is_parent_valid": true,
+            "why_context_matters": "Without case evidence, gate reduces to axis-tag equality. Leaf tagged 'etiology' under parent 'Multisystem Developmental Disorder' (mechanism) → high-confidence invalid, even when disease semantically belongs under that parent."
+          },
+          {
+            "branch_id": "B4.2",
+            "label": "Homocystinuria",
+            "parent_label": "Other",
+            "parent_axis": "mechanism",
+            "leaf_axis": "etiology",
+            "gate_rationale": "classification axis mismatch",
+            "is_parent_valid": true,
+            "why_context_matters": "Without case evidence, gate reduces to axis-tag equality. Leaf tagged 'etiology' under parent 'Other' (mechanism) → high-confidence invalid, even when disease semantically belongs under that parent."
+          }
+        ]
+      },
+      {
+        "case_id": "mb83_foreignbody",
+        "replicate": 1,
+        "payload_fields_observed": [
+          "candidate",
+          "current_parent"
+        ],
+        "case_context_in_payload": false,
+        "gold_invalidations_illustrating_context_gap": [
+          {
+            "branch_id": "B1.2",
+            "label": "Nasal Foreign Body",
+            "parent_label": "Infectious Process of the Nasal Cavity",
+            "parent_axis": "mechanism",
+            "leaf_axis": "etiology",
+            "gate_rationale": "mechanism vs etiology",
+            "is_parent_valid": false,
+            "why_context_matters": "Without case evidence, gate reduces to axis-tag equality. Leaf tagged 'etiology' under parent 'Infectious Process of the Nasal Cavity' (mechanism) → high-confidence invalid, even when disease semantically belongs under that parent."
+          },
+          {
+            "branch_id": "B3.2",
+            "label": "Nasal Foreign Body",
+            "parent_label": "Inflammatory Process of the Nasal Cavity",
+            "parent_axis": "mechanism",
+            "leaf_axis": "etiology",
+            "gate_rationale": "mechanism vs etiology",
+            "is_parent_valid": false,
+            "why_context_matters": "Without case evidence, gate reduces to axis-tag equality. Leaf tagged 'etiology' under parent 'Inflammatory Process of the Nasal Cavity' (mechanism) → high-confidence invalid, even when disease semantically belongs under that parent."
+          }
+        ]
+      }
+    ]
+  },
+  "regression_cells": [
+    {
+      "kind": "coverage_deleted",
+      "case_id": "mb66_peliosis",
+      "replicate": 1,
+      "loss_gate": "coverage_deleted",
+      "actual_top2": false,
+      "baseline_top2_a_raw": false,
+      "active_gold_l2_coverage": false,
+      "inventory_gold_l2_coverage": false,
+      "reserve_gold_present": false,
+      "gold_in_reserve_due_to_parent_mismatch": false,
+      "all_gold_reserved_by_parent_mismatch": false,
+      "any_gold_still_active": false,
+      "n_active": 16,
+      "n_reserve": 9,
+      "n_parent_mismatch": 9,
+      "a_raw_n_active": 25,
+      "a_raw_local_champion_ids": [],
+      "a18_local_champion_ids": [],
+      "a_raw_rank": null,
+      "a18_rank": null,
+      "gold_leaves": [],
+      "mechanism": "preexisting_inventory_miss__not_a18",
+      "note": "Gold absent from inventory in both A-raw and A18; A18 parent gate not causal."
+    },
+    {
+      "kind": "coverage_deleted",
+      "case_id": "mxh068",
+      "replicate": 1,
+      "loss_gate": "coverage_deleted",
+      "actual_top2": false,
+      "baseline_top2_a_raw": false,
+      "active_gold_l2_coverage": false,
+      "inventory_gold_l2_coverage": false,
+      "reserve_gold_present": false,
+      "gold_in_reserve_due_to_parent_mismatch": false,
+      "all_gold_reserved_by_parent_mismatch": false,
+      "any_gold_still_active": false,
+      "n_active": 25,
+      "n_reserve": 15,
+      "n_parent_mismatch": 15,
+      "a_raw_n_active": 40,
+      "a_raw_local_champion_ids": [],
+      "a18_local_champion_ids": [],
+      "a_raw_rank": null,
+      "a18_rank": null,
+      "gold_leaves": [],
+      "mechanism": "preexisting_inventory_miss__not_a18",
+      "note": "Gold absent from inventory in both A-raw and A18; A18 parent gate not causal."
+    },
+    {
+      "kind": "coverage_deleted",
+      "case_id": "mxh075",
+      "replicate": 1,
+      "loss_gate": "coverage_deleted",
+      "actual_top2": false,
+      "baseline_top2_a_raw": false,
+      "active_gold_l2_coverage": false,
+      "inventory_gold_l2_coverage": true,
+      "reserve_gold_present": true,
+      "gold_in_reserve_due_to_parent_mismatch": true,
+      "all_gold_reserved_by_parent_mismatch": true,
+      "any_gold_still_active": false,
+      "n_active": 9,
+      "n_reserve": 26,
+      "n_parent_mismatch": 26,
+      "a_raw_n_active": 35,
+      "a_raw_local_champion_ids": [
+        "B1.1",
+        "B2.3",
+        "B3.2",
+        "B4.3",
+        "B5.1"
+      ],
+      "a18_local_champion_ids": [
+        "B1.1",
+        "B2.2",
+        "B3.5",
+        "B4.6"
+      ],
+      "a_raw_rank": null,
+      "a18_rank": null,
+      "gold_leaves": [
+        {
+          "branch_id": "B1.7",
+          "label": "Truncus Arteriosus",
+          "parent_label": "Left Heart Obstructive Lesions",
+          "parent_axis": "anatomy",
+          "leaf_axis": "etiology",
+          "pool": "reserve",
+          "gate_decision": "invalid",
+          "gate_confidence": "high",
+          "gate_reason": "parent_mismatch",
+          "rationale": "classification axis mismatch",
+          "is_parent_valid": false,
+          "matches_gold": true,
+          "reserved_by_parent_mismatch": true,
+          "false_positive_reserve": false
+        },
+        {
+          "branch_id": "B4.4",
+          "label": "Truncus Arteriosus",
+          "parent_label": "Other Cardiac Anomalies",
+          "parent_axis": "anatomy",
+          "leaf_axis": "etiology",
+          "pool": "reserve",
+          "gate_decision": "invalid",
+          "gate_confidence": "high",
+          "gate_reason": "parent_mismatch",
+          "rationale": "classification axis mismatch",
+          "is_parent_valid": true,
+          "matches_gold": true,
+          "reserved_by_parent_mismatch": true,
+          "false_positive_reserve": true
+        },
+        {
+          "branch_id": "B5.3",
+          "label": "Truncus arteriosus",
+          "parent_label": "Non-Cardiac Causes",
+          "parent_axis": "anatomy",
+          "leaf_axis": "etiology",
+          "pool": "reserve",
+          "gate_decision": "invalid",
+          "gate_confidence": "high",
+          "gate_reason": "parent_mismatch",
+          "rationale": "classification axis mismatch",
+          "is_parent_valid": false,
+          "matches_gold": true,
+          "reserved_by_parent_mismatch": true,
+          "false_positive_reserve": false
+        }
+      ],
+      "mechanism": "all_gold_copies_reserved_by_parent_mismatch",
+      "note": "Every acceptable gold leaf reserved via high-confidence parent_mismatch. Of these, 1 judged parent_valid=true by final_audit (axis-string over-fire without case context)."
+    },
+    {
+      "kind": "coverage_deleted",
+      "case_id": "mb66_peliosis",
+      "replicate": 2,
+      "loss_gate": "coverage_deleted",
+      "actual_top2": false,
+      "baseline_top2_a_raw": false,
+      "active_gold_l2_coverage": false,
+      "inventory_gold_l2_coverage": false,
+      "reserve_gold_present": false,
+      "gold_in_reserve_due_to_parent_mismatch": false,
+      "all_gold_reserved_by_parent_mismatch": false,
+      "any_gold_still_active": false,
+      "n_active": 10,
+      "n_reserve": 11,
+      "n_parent_mismatch": 11,
+      "a_raw_n_active": 21,
+      "a_raw_local_champion_ids": [],
+      "a18_local_champion_ids": [],
+      "a_raw_rank": null,
+      "a18_rank": null,
+      "gold_leaves": [],
+      "mechanism": "preexisting_inventory_miss__not_a18",
+      "note": "Gold absent from inventory in both A-raw and A18; A18 parent gate not causal."
+    },
+    {
+      "kind": "coverage_deleted",
+      "case_id": "mxh068",
+      "replicate": 2,
+      "loss_gate": "coverage_deleted",
+      "actual_top2": false,
+      "baseline_top2_a_raw": false,
+      "active_gold_l2_coverage": false,
+      "inventory_gold_l2_coverage": false,
+      "reserve_gold_present": false,
+      "gold_in_reserve_due_to_parent_mismatch": false,
+      "all_gold_reserved_by_parent_mismatch": false,
+      "any_gold_still_active": false,
+      "n_active": 25,
+      "n_reserve": 9,
+      "n_parent_mismatch": 9,
+      "a_raw_n_active": 34,
+      "a_raw_local_champion_ids": [],
+      "a18_local_champion_ids": [],
+      "a_raw_rank": null,
+      "a18_rank": null,
+      "gold_leaves": [],
+      "mechanism": "preexisting_inventory_miss__not_a18",
+      "note": "Gold absent from inventory in both A-raw and A18; A18 parent gate not causal."
+    },
+    {
+      "kind": "coverage_deleted",
+      "case_id": "mxh075",
+      "replicate": 2,
+      "loss_gate": "coverage_deleted",
+      "actual_top2": false,
+      "baseline_top2_a_raw": false,
+      "active_gold_l2_coverage": false,
+      "inventory_gold_l2_coverage": true,
+      "reserve_gold_present": true,
+      "gold_in_reserve_due_to_parent_mismatch": true,
+      "all_gold_reserved_by_parent_mismatch": true,
+      "any_gold_still_active": false,
+      "n_active": 10,
+      "n_reserve": 27,
+      "n_parent_mismatch": 27,
+      "a_raw_n_active": 37,
+      "a_raw_local_champion_ids": [
+        "B1.1",
+        "B2.4",
+        "B3.2",
+        "B4.4",
+        "B5.1"
+      ],
+      "a18_local_champion_ids": [
+        "B1.1",
+        "B2.1",
+        "B3.5",
+        "B4.7"
+      ],
+      "a_raw_rank": 5,
+      "a18_rank": null,
+      "gold_leaves": [
+        {
+          "branch_id": "B2.9",
+          "label": "Truncus Arteriosus",
+          "parent_label": "Septal Defects",
+          "parent_axis": "anatomy",
+          "leaf_axis": "etiology",
+          "pool": "reserve",
+          "gate_decision": "invalid",
+          "gate_confidence": "high",
+          "gate_reason": "parent_mismatch",
+          "rationale": "classification axis mismatch",
+          "is_parent_valid": false,
+          "matches_gold": true,
+          "reserved_by_parent_mismatch": true,
+          "false_positive_reserve": false
+        },
+        {
+          "branch_id": "B4.4",
+          "label": "Truncus Arteriosus",
+          "parent_label": "Other Cardiac Anomalies",
+          "parent_axis": "anatomy",
+          "leaf_axis": "etiology",
+          "pool": "reserve",
+          "gate_decision": "invalid",
+          "gate_confidence": "high",
+          "gate_reason": "parent_mismatch",
+          "rationale": "classification axis mismatch",
+          "is_parent_valid": true,
+          "matches_gold": true,
+          "reserved_by_parent_mismatch": true,
+          "false_positive_reserve": true
+        },
+        {
+          "branch_id": "B5.3",
+          "label": "Truncus arteriosus",
+          "parent_label": "Non-Cardiac Causes",
+          "parent_axis": "anatomy",
+          "leaf_axis": "etiology",
+          "pool": "reserve",
+          "gate_decision": "invalid",
+          "gate_confidence": "high",
+          "gate_reason": "parent_mismatch",
+          "rationale": "classification axis mismatch",
+          "is_parent_valid": false,
+          "matches_gold": true,
+          "reserved_by_parent_mismatch": true,
+          "false_positive_reserve": false
+        }
+      ],
+      "mechanism": "all_gold_copies_reserved_by_parent_mismatch",
+      "note": "Every acceptable gold leaf reserved via high-confidence parent_mismatch. Of these, 1 judged parent_valid=true by final_audit (axis-string over-fire without case context)."
+    },
+    {
+      "kind": "coverage_deleted",
+      "case_id": "mb66_peliosis",
+      "replicate": 3,
+      "loss_gate": "coverage_deleted",
+      "actual_top2": false,
+      "baseline_top2_a_raw": false,
+      "active_gold_l2_coverage": false,
+      "inventory_gold_l2_coverage": false,
+      "reserve_gold_present": false,
+      "gold_in_reserve_due_to_parent_mismatch": false,
+      "all_gold_reserved_by_parent_mismatch": false,
+      "any_gold_still_active": false,
+      "n_active": 15,
+      "n_reserve": 10,
+      "n_parent_mismatch": 10,
+      "a_raw_n_active": 25,
+      "a_raw_local_champion_ids": [],
+      "a18_local_champion_ids": [],
+      "a_raw_rank": null,
+      "a18_rank": null,
+      "gold_leaves": [],
+      "mechanism": "preexisting_inventory_miss__not_a18",
+      "note": "Gold absent from inventory in both A-raw and A18; A18 parent gate not causal."
+    },
+    {
+      "kind": "coverage_deleted",
+      "case_id": "mxh068",
+      "replicate": 3,
+      "loss_gate": "coverage_deleted",
+      "actual_top2": false,
+      "baseline_top2_a_raw": false,
+      "active_gold_l2_coverage": false,
+      "inventory_gold_l2_coverage": false,
+      "reserve_gold_present": false,
+      "gold_in_reserve_due_to_parent_mismatch": false,
+      "all_gold_reserved_by_parent_mismatch": false,
+      "any_gold_still_active": false,
+      "n_active": 29,
+      "n_reserve": 14,
+      "n_parent_mismatch": 14,
+      "a_raw_n_active": 43,
+      "a_raw_local_champion_ids": [],
+      "a18_local_champion_ids": [],
+      "a_raw_rank": null,
+      "a18_rank": null,
+      "gold_leaves": [],
+      "mechanism": "preexisting_inventory_miss__not_a18",
+      "note": "Gold absent from inventory in both A-raw and A18; A18 parent gate not causal."
+    },
+    {
+      "kind": "coverage_deleted",
+      "case_id": "mxh075",
+      "replicate": 3,
+      "loss_gate": "coverage_deleted",
+      "actual_top2": false,
+      "baseline_top2_a_raw": false,
+      "active_gold_l2_coverage": false,
+      "inventory_gold_l2_coverage": true,
+      "reserve_gold_present": true,
+      "gold_in_reserve_due_to_parent_mismatch": true,
+      "all_gold_reserved_by_parent_mismatch": true,
+      "any_gold_still_active": false,
+      "n_active": 9,
+      "n_reserve": 24,
+      "n_parent_mismatch": 24,
+      "a_raw_n_active": 33,
+      "a_raw_local_champion_ids": [
+        "B1.1",
+        "B2.3",
+        "B3.2",
+        "B4.4",
+        "B5.1"
+      ],
+      "a18_local_champion_ids": [
+        "B1.1",
+        "B2.2",
+        "B3.7",
+        "B4.3"
+      ],
+      "a_raw_rank": 5,
+      "a18_rank": null,
+      "gold_leaves": [
+        {
+          "branch_id": "B4.4",
+          "label": "Truncus Arteriosus",
+          "parent_label": "Other Cardiac Anomalies",
+          "parent_axis": "anatomy",
+          "leaf_axis": "etiology",
+          "pool": "reserve",
+          "gate_decision": "invalid",
+          "gate_confidence": "high",
+          "gate_reason": "parent_mismatch",
+          "rationale": "classification axis mismatch",
+          "is_parent_valid": true,
+          "matches_gold": true,
+          "reserved_by_parent_mismatch": true,
+          "false_positive_reserve": true
+        },
+        {
+          "branch_id": "B5.3",
+          "label": "Truncus arteriosus",
+          "parent_label": "Non-Cardiac Causes",
+          "parent_axis": "anatomy",
+          "leaf_axis": "etiology",
+          "pool": "reserve",
+          "gate_decision": "invalid",
+          "gate_confidence": "high",
+          "gate_reason": "parent_mismatch",
+          "rationale": "Classification axis mismatch",
+          "is_parent_valid": false,
+          "matches_gold": true,
+          "reserved_by_parent_mismatch": true,
+          "false_positive_reserve": false
+        }
+      ],
+      "mechanism": "all_gold_copies_reserved_by_parent_mismatch",
+      "note": "Every acceptable gold leaf reserved via high-confidence parent_mismatch. Of these, 1 judged parent_valid=true by final_audit (axis-string over-fire without case context)."
+    },
+    {
+      "kind": "top2_regression_vs_a_raw",
+      "case_id": "mb83_foreignbody",
+      "replicate": 1,
+      "loss_gate": "intergroup_rank_loss",
+      "actual_top2": false,
+      "baseline_top2_a_raw": true,
+      "active_gold_l2_coverage": true,
+      "inventory_gold_l2_coverage": true,
+      "reserve_gold_present": true,
+      "gold_in_reserve_due_to_parent_mismatch": true,
+      "all_gold_reserved_by_parent_mismatch": false,
+      "any_gold_still_active": true,
+      "n_active": 7,
+      "n_reserve": 11,
+      "n_parent_mismatch": 11,
+      "a_raw_n_active": 18,
+      "a_raw_local_champion_ids": [
+        "B1.4",
+        "B2.2",
+        "B3.2",
+        "B4.1"
+      ],
+      "a18_local_champion_ids": [
+        "B1.1",
+        "B2.1",
+        "B3.1",
+        "B4.1"
+      ],
+      "a_raw_rank": 1,
+      "a18_rank": 3,
+      "gold_leaves": [
+        {
+          "branch_id": "B1.2",
+          "label": "Nasal Foreign Body",
+          "parent_label": "Infectious Process of the Nasal Cavity",
+          "parent_axis": "mechanism",
+          "leaf_axis": "etiology",
+          "pool": "reserve",
+          "gate_decision": "invalid",
+          "gate_confidence": "high",
+          "gate_reason": "parent_mismatch",
+          "rationale": "mechanism vs etiology",
+          "is_parent_valid": false,
+          "matches_gold": true,
+          "reserved_by_parent_mismatch": true,
+          "false_positive_reserve": false
+        },
+        {
+          "branch_id": "B2.1",
+          "label": "Foreign body obstruction",
+          "parent_label": "Anatomical Obstruction of the Nasal Cavity",
+          "parent_axis": "mechanism",
+          "leaf_axis": "etiology",
+          "pool": "active",
+          "gate_decision": "valid",
+          "gate_confidence": "high",
+          "gate_reason": "parent_gate_keep",
+          "rationale": "The candidate disease 'Foreign body obstruction' can be classified under the mechanism axis as it describes a physical blockage, which aligns with 'Anatomical Obstruction of the Nasal Cavity'.",
+          "is_parent_valid": true,
+          "matches_gold": true,
+          "reserved_by_parent_mismatch": false,
+          "false_positive_reserve": false
+        },
+        {
+          "branch_id": "B3.2",
+          "label": "Nasal Foreign Body",
+          "parent_label": "Inflammatory Process of the Nasal Cavity",
+          "parent_axis": "mechanism",
+          "leaf_axis": "etiology",
+          "pool": "reserve",
+          "gate_decision": "invalid",
+          "gate_confidence": "high",
+          "gate_reason": "parent_mismatch",
+          "rationale": "mechanism vs etiology",
+          "is_parent_valid": false,
+          "matches_gold": true,
+          "reserved_by_parent_mismatch": true,
+          "false_positive_reserve": false
+        }
+      ],
+      "mechanism": "gold_copies_thinned__intergroup_rank_loss",
+      "note": "Gold still active under at least one parent, but A18 reserved alternate gold placements that were local champions in A-raw; intergroup rank fell outside Top2."
+    },
+    {
+      "kind": "top2_regression_vs_a_raw",
+      "case_id": "mxh046",
+      "replicate": 1,
+      "loss_gate": "local_champion_elimination",
+      "actual_top2": false,
+      "baseline_top2_a_raw": true,
+      "active_gold_l2_coverage": true,
+      "inventory_gold_l2_coverage": true,
+      "reserve_gold_present": true,
+      "gold_in_reserve_due_to_parent_mismatch": true,
+      "all_gold_reserved_by_parent_mismatch": false,
+      "any_gold_still_active": true,
+      "n_active": 10,
+      "n_reserve": 8,
+      "n_parent_mismatch": 8,
+      "a_raw_n_active": 18,
+      "a_raw_local_champion_ids": [
+        "B1.3",
+        "B2.1",
+        "B3.1",
+        "B4.1"
+      ],
+      "a18_local_champion_ids": [
+        "B1.1",
+        "B2.1"
+      ],
+      "a_raw_rank": 1,
+      "a18_rank": null,
+      "gold_leaves": [
+        {
+          "branch_id": "B1.3",
+          "label": "Homocystinuria",
+          "parent_label": "Genetic Disorder with Marfanoid Features",
+          "parent_axis": "mechanism",
+          "leaf_axis": "etiology",
+          "pool": "active",
+          "gate_decision": "valid",
+          "gate_confidence": "high",
+          "gate_reason": "parent_gate_keep",
+          "rationale": "The candidate disease Homocystinuria can be classified under the mechanism axis as it involves an error in amino acid metabolism, which is a genetic mechanism.",
+          "is_parent_valid": true,
+          "matches_gold": true,
+          "reserved_by_parent_mismatch": false,
+          "false_positive_reserve": false
+        },
+        {
+          "branch_id": "B2.4",
+          "label": "Homocystinuria",
+          "parent_label": "Connective Tissue Disorder",
+          "parent_axis": "mechanism",
+          "leaf_axis": "etiology",
+          "pool": "active",
+          "gate_decision": "valid",
+          "gate_confidence": "high",
+          "gate_reason": "parent_gate_keep",
+          "rationale": "Homocystinuria is a genetic disorder affecting connective tissue",
+          "is_parent_valid": false,
+          "matches_gold": true,
+          "reserved_by_parent_mismatch": false,
+          "false_positive_reserve": false
+        },
+        {
+          "branch_id": "B3.2",
+          "label": "Homocystinuria",
+          "parent_label": "Multisystem Developmental Disorder",
+          "parent_axis": "mechanism",
+          "leaf_axis": "etiology",
+          "pool": "reserve",
+          "gate_decision": "invalid",
+          "gate_confidence": "high",
+          "gate_reason": "parent_mismatch",
+          "rationale": "candidate classification axis does not match parent axis",
+          "is_parent_valid": true,
+          "matches_gold": true,
+          "reserved_by_parent_mismatch": true,
+          "false_positive_reserve": true
+        },
+        {
+          "branch_id": "B4.2",
+          "label": "Homocystinuria",
+          "parent_label": "Other",
+          "parent_axis": "mechanism",
+          "leaf_axis": "etiology",
+          "pool": "reserve",
+          "gate_decision": "invalid",
+          "gate_confidence": "high",
+          "gate_reason": "parent_mismatch",
+          "rationale": "classification axis mismatch",
+          "is_parent_valid": true,
+          "matches_gold": true,
+          "reserved_by_parent_mismatch": true,
+          "false_positive_reserve": true
+        }
+      ],
+      "mechanism": "gold_parent_depleted__local_champion_elimination",
+      "note": "Some gold copies reserved; remaining active gold lost local champion race (sibling pool thinned / alternate parents removed)."
+    },
+    {
+      "kind": "top2_regression_vs_a_raw",
+      "case_id": "mb11_pancoast",
+      "replicate": 2,
+      "loss_gate": "intergroup_rank_loss",
+      "actual_top2": false,
+      "baseline_top2_a_raw": true,
+      "active_gold_l2_coverage": true,
+      "inventory_gold_l2_coverage": true,
+      "reserve_gold_present": true,
+      "gold_in_reserve_due_to_parent_mismatch": true,
+      "all_gold_reserved_by_parent_mismatch": false,
+      "any_gold_still_active": true,
+      "n_active": 13,
+      "n_reserve": 5,
+      "n_parent_mismatch": 5,
+      "a_raw_n_active": 18,
+      "a_raw_local_champion_ids": [
+        "B1.1",
+        "B2.2",
+        "B3.2",
+        "B4.1"
+      ],
+      "a18_local_champion_ids": [
+        "B1.1",
+        "B2.1",
+        "B3.2",
+        "B4.1"
+      ],
+      "a_raw_rank": 2,
+      "a18_rank": 3,
+      "gold_leaves": [
+        {
+          "branch_id": "B1.1",
+          "label": "Pancoast tumor",
+          "parent_label": "Neoplastic Disorder with Neurological Involvement",
+          "parent_axis": "mechanism",
+          "leaf_axis": "etiology",
+          "pool": "active",
+          "gate_decision": "valid",
+          "gate_confidence": "high",
+          "gate_reason": "parent_gate_keep",
+          "rationale": "Pancoast tumor is a type of neoplastic disorder with neurological involvement",
+          "is_parent_valid": true,
+          "matches_gold": true,
+          "reserved_by_parent_mismatch": false,
+          "false_positive_reserve": false
+        },
+        {
+          "branch_id": "B2.2",
+          "label": "Pancoast tumor",
+          "parent_label": "Inflammatory or Autoimmune Disorder with Neurological Involvement",
+          "parent_axis": "mechanism",
+          "leaf_axis": "etiology",
+          "pool": "reserve",
+          "gate_decision": "invalid",
+          "gate_confidence": "high",
+          "gate_reason": "parent_mismatch",
+          "rationale": "Pancoast tumor is not primarily an inflammatory or autoimmune disorder",
+          "is_parent_valid": false,
+          "matches_gold": true,
+          "reserved_by_parent_mismatch": true,
+          "false_positive_reserve": false
+        },
+        {
+          "branch_id": "B3.5",
+          "label": "Pancoast tumor",
+          "parent_label": "Vascular Disorder with Neurological Involvement",
+          "parent_axis": "mechanism",
+          "leaf_axis": "etiology",
+          "pool": "reserve",
+          "gate_decision": "invalid",
+          "gate_confidence": "high",
+          "gate_reason": "parent_mismatch",
+          "rationale": "classification axis mismatch",
+          "is_parent_valid": false,
+          "matches_gold": true,
+          "reserved_by_parent_mismatch": true,
+          "false_positive_reserve": false
+        }
+      ],
+      "mechanism": "gold_copies_thinned__intergroup_rank_loss",
+      "note": "Gold still active under at least one parent, but A18 reserved alternate gold placements that were local champions in A-raw; intergroup rank fell outside Top2."
+    },
+    {
+      "kind": "top2_regression_vs_a_raw",
+      "case_id": "mb83_foreignbody",
+      "replicate": 2,
+      "loss_gate": "intergroup_rank_loss",
+      "actual_top2": false,
+      "baseline_top2_a_raw": true,
+      "active_gold_l2_coverage": true,
+      "inventory_gold_l2_coverage": true,
+      "reserve_gold_present": true,
+      "gold_in_reserve_due_to_parent_mismatch": true,
+      "all_gold_reserved_by_parent_mismatch": false,
+      "any_gold_still_active": true,
+      "n_active": 13,
+      "n_reserve": 12,
+      "n_parent_mismatch": 12,
+      "a_raw_n_active": 25,
+      "a_raw_local_champion_ids": [
+        "B1.2",
+        "B2.2",
+        "B3.2",
+        "B4.8"
+      ],
+      "a18_local_champion_ids": [
+        "B1.1",
+        "B2.1",
+        "B3.1",
+        "B4.1"
+      ],
+      "a_raw_rank": 1,
+      "a18_rank": 3,
+      "gold_leaves": [
+        {
+          "branch_id": "B1.2",
+          "label": "Nasal Foreign Body",
+          "parent_label": "Infectious Process of the Nasal Cavity",
+          "parent_axis": "mechanism",
+          "leaf_axis": "etiology",
+          "pool": "reserve",
+          "gate_decision": "invalid",
+          "gate_confidence": "high",
+          "gate_reason": "parent_mismatch",
+          "rationale": "mechanism vs etiology",
+          "is_parent_valid": false,
+          "matches_gold": true,
+          "reserved_by_parent_mismatch": true,
+          "false_positive_reserve": false
+        },
+        {
+          "branch_id": "B2.1",
+          "label": "Foreign body obstruction",
+          "parent_label": "Anatomical Obstruction of the Nasal Cavity",
+          "parent_axis": "mechanism",
+          "leaf_axis": "etiology",
+          "pool": "active",
+          "gate_decision": "valid",
+          "gate_confidence": "high",
+          "gate_reason": "parent_gate_keep",
+          "rationale": "The candidate disease 'Foreign body obstruction' can be classified under the mechanism axis as it describes a physical blockage, which aligns with 'Anatomical Obstruction of the Nasal Cavity'.",
+          "is_parent_valid": true,
+          "matches_gold": true,
+          "reserved_by_parent_mismatch": false,
+          "false_positive_reserve": false
+        },
+        {
+          "branch_id": "B3.2",
+          "label": "Nasal Foreign Body",
+          "parent_label": "Inflammatory Process of the Nasal Cavity",
+          "parent_axis": "mechanism",
+          "leaf_axis": "etiology",
+          "pool": "reserve",
+          "gate_decision": "invalid",
+          "gate_confidence": "high",
+          "gate_reason": "parent_mismatch",
+          "rationale": "mechanism vs etiology",
+          "is_parent_valid": false,
+          "matches_gold": true,
+          "reserved_by_parent_mismatch": true,
+          "false_positive_reserve": false
+        },
+        {
+          "branch_id": "B4.8",
+          "label": "Foreign body obstruction",
+          "parent_label": "Neoplastic Process of the Nasal Cavity",
+          "parent_axis": "mechanism",
+          "leaf_axis": "etiology",
+          "pool": "reserve",
+          "gate_decision": "invalid",
+          "gate_confidence": "high",
+          "gate_reason": "parent_mismatch",
+          "rationale": "Foreign body obstruction does not fit under Neoplastic Process of the Nasal Cavity",
+          "is_parent_valid": false,
+          "matches_gold": true,
+          "reserved_by_parent_mismatch": true,
+          "false_positive_reserve": false
+        }
+      ],
+      "mechanism": "gold_copies_thinned__intergroup_rank_loss",
+      "note": "Gold still active under at least one parent, but A18 reserved alternate gold placements that were local champions in A-raw; intergroup rank fell outside Top2."
+    },
+    {
+      "kind": "top2_regression_vs_a_raw",
+      "case_id": "mb83_foreignbody",
+      "replicate": 3,
+      "loss_gate": "intergroup_rank_loss",
+      "actual_top2": false,
+      "baseline_top2_a_raw": true,
+      "active_gold_l2_coverage": true,
+      "inventory_gold_l2_coverage": true,
+      "reserve_gold_present": true,
+      "gold_in_reserve_due_to_parent_mismatch": true,
+      "all_gold_reserved_by_parent_mismatch": false,
+      "any_gold_still_active": true,
+      "n_active": 10,
+      "n_reserve": 14,
+      "n_parent_mismatch": 14,
+      "a_raw_n_active": 24,
+      "a_raw_local_champion_ids": [
+        "B1.2",
+        "B2.2",
+        "B3.2",
+        "B4.6"
+      ],
+      "a18_local_champion_ids": [
+        "B1.1",
+        "B2.1",
+        "B3.1",
+        "B4.2"
+      ],
+      "a_raw_rank": 1,
+      "a18_rank": 3,
+      "gold_leaves": [
+        {
+          "branch_id": "B1.2",
+          "label": "Nasal Foreign Body",
+          "parent_label": "Infectious Process of the Nasal Cavity",
+          "parent_axis": "mechanism",
+          "leaf_axis": "etiology",
+          "pool": "reserve",
+          "gate_decision": "invalid",
+          "gate_confidence": "high",
+          "gate_reason": "parent_mismatch",
+          "rationale": "Nasal Foreign Body is an etiology, not a mechanism",
+          "is_parent_valid": false,
+          "matches_gold": true,
+          "reserved_by_parent_mismatch": true,
+          "false_positive_reserve": false
+        },
+        {
+          "branch_id": "B2.1",
+          "label": "Foreign body obstruction",
+          "parent_label": "Anatomical Obstruction of the Nasal Cavity",
+          "parent_axis": "mechanism",
+          "leaf_axis": "etiology",
+          "pool": "active",
+          "gate_decision": "valid",
+          "gate_confidence": "high",
+          "gate_reason": "parent_gate_keep",
+          "rationale": "The candidate disease 'Foreign body obstruction' can be classified under the mechanism axis as it describes a physical blockage, which aligns with 'Anatomical Obstruction of the Nasal Cavity'.",
+          "is_parent_valid": true,
+          "matches_gold": true,
+          "reserved_by_parent_mismatch": false,
+          "false_positive_reserve": false
+        },
+        {
+          "branch_id": "B3.2",
+          "label": "Nasal Foreign Body",
+          "parent_label": "Inflammatory Process of the Nasal Cavity",
+          "parent_axis": "mechanism",
+          "leaf_axis": "etiology",
+          "pool": "reserve",
+          "gate_decision": "invalid",
+          "gate_confidence": "high",
+          "gate_reason": "parent_mismatch",
+          "rationale": "mechanism vs etiology",
+          "is_parent_valid": false,
+          "matches_gold": true,
+          "reserved_by_parent_mismatch": true,
+          "false_positive_reserve": false
+        },
+        {
+          "branch_id": "B4.6",
+          "label": "Foreign body obstruction",
+          "parent_label": "Neoplastic Process of the Nasal Cavity",
+          "parent_axis": "mechanism",
+          "leaf_axis": "etiology",
+          "pool": "reserve",
+          "gate_decision": "invalid",
+          "gate_confidence": "high",
+          "gate_reason": "parent_mismatch",
+          "rationale": "mechanism vs etiology",
+          "is_parent_valid": false,
+          "matches_gold": true,
+          "reserved_by_parent_mismatch": true,
+          "false_positive_reserve": false
+        }
+      ],
+      "mechanism": "gold_copies_thinned__intergroup_rank_loss",
+      "note": "Gold still active under at least one parent, but A18 reserved alternate gold placements that were local champions in A-raw; intergroup rank fell outside Top2."
+    },
+    {
+      "kind": "top2_regression_vs_a_raw",
+      "case_id": "mxh046",
+      "replicate": 3,
+      "loss_gate": "local_champion_elimination",
+      "actual_top2": false,
+      "baseline_top2_a_raw": true,
+      "active_gold_l2_coverage": true,
+      "inventory_gold_l2_coverage": true,
+      "reserve_gold_present": true,
+      "gold_in_reserve_due_to_parent_mismatch": true,
+      "all_gold_reserved_by_parent_mismatch": false,
+      "any_gold_still_active": true,
+      "n_active": 13,
+      "n_reserve": 10,
+      "n_parent_mismatch": 10,
+      "a_raw_n_active": 23,
+      "a_raw_local_champion_ids": [
+        "B1.2",
+        "B2.4",
+        "B3.1",
+        "B4.1"
+      ],
+      "a18_local_champion_ids": [
+        "B1.1",
+        "B2.1"
+      ],
+      "a_raw_rank": 1,
+      "a18_rank": null,
+      "gold_leaves": [
+        {
+          "branch_id": "B1.2",
+          "label": "Homocystinuria",
+          "parent_label": "Genetic Disorder with Marfanoid Features",
+          "parent_axis": "mechanism",
+          "leaf_axis": "etiology",
+          "pool": "active",
+          "gate_decision": "valid",
+          "gate_confidence": "high",
+          "gate_reason": "parent_gate_keep",
+          "rationale": "Homocystinuria is a genetic disorder",
+          "is_parent_valid": true,
+          "matches_gold": true,
+          "reserved_by_parent_mismatch": false,
+          "false_positive_reserve": false
+        },
+        {
+          "branch_id": "B2.4",
+          "label": "Homocystinuria",
+          "parent_label": "Connective Tissue Disorder",
+          "parent_axis": "mechanism",
+          "leaf_axis": "etiology",
+          "pool": "active",
+          "gate_decision": "valid",
+          "gate_confidence": "high",
+          "gate_reason": "parent_gate_keep",
+          "rationale": "Homocystinuria is a genetic disorder affecting connective tissue",
+          "is_parent_valid": false,
+          "matches_gold": true,
+          "reserved_by_parent_mismatch": false,
+          "false_positive_reserve": false
+        },
+        {
+          "branch_id": "B3.2",
+          "label": "Homocystinuria",
+          "parent_label": "Multisystem Developmental Disorder",
+          "parent_axis": "mechanism",
+          "leaf_axis": "etiology",
+          "pool": "reserve",
+          "gate_decision": "invalid",
+          "gate_confidence": "high",
+          "gate_reason": "parent_mismatch",
+          "rationale": "candidate classification axis does not match parent axis",
+          "is_parent_valid": true,
+          "matches_gold": true,
+          "reserved_by_parent_mismatch": true,
+          "false_positive_reserve": true
+        },
+        {
+          "branch_id": "B4.2",
+          "label": "Homocystinuria",
+          "parent_label": "Other",
+          "parent_axis": "mechanism",
+          "leaf_axis": "etiology",
+          "pool": "reserve",
+          "gate_decision": "invalid",
+          "gate_confidence": "high",
+          "gate_reason": "parent_mismatch",
+          "rationale": "mechanism vs etiology",
+          "is_parent_valid": true,
+          "matches_gold": true,
+          "reserved_by_parent_mismatch": true,
+          "false_positive_reserve": true
+        }
+      ],
+      "mechanism": "gold_parent_depleted__local_champion_elimination",
+      "note": "Some gold copies reserved; remaining active gold lost local champion race (sibling pool thinned / alternate parents removed)."
+    }
+  ],
+  "false_positive_reserves": {
+    "definition": "Leaf reserved by A18 (parent_mismatch) but final_audit is_parent_valid=true",
+    "n": 297,
+    "rate_among_reserves": 0.3832,
+    "rate_among_all_leaves": 0.196,
+    "n_gold_or_matches_gold": 32,
+    "axis_pair_distribution": {
+      "mechanism/etiology": 247,
+      "anatomy/etiology": 39,
+      "etiology/etiology": 11
+    },
+    "axis_unequal_share": 0.963,
+    "rationale_buckets": {
+      "other_content_rationale": 17,
+      "classification_axis_mismatch_language": 252,
+      "mechanism_vs_etiology": 28
+    },
+    "by_case_top": [
+      {
+        "case_id": "mb34_leukemoid",
+        "n": 51
+      },
+      {
+        "case_id": "mxh045",
+        "n": 34
+      },
+      {
+        "case_id": "mxh055",
+        "n": 34
+      },
+      {
+        "case_id": "mb57_kartagener",
+        "n": 27
+      },
+      {
+        "case_id": "mxh046",
+        "n": 23
+      },
+      {
+        "case_id": "mxh075",
+        "n": 21
+      },
+      {
+        "case_id": "mb65_cml",
+        "n": 18
+      },
+      {
+        "case_id": "mb82_adhesions",
+        "n": 18
+      },
+      {
+        "case_id": "mxh011",
+        "n": 18
+      },
+      {
+        "case_id": "mb55_glucagonoma",
+        "n": 14
+      },
+      {
+        "case_id": "mxh036",
+        "n": 8
+      },
+      {
+        "case_id": "mb66_peliosis",
+        "n": 7
+      }
+    ],
+    "examples": [
+      {
+        "case_id": "mb34_leukemoid",
+        "replicate": 1,
+        "branch_id": "B5.5",
+        "label": "Leukemoid Reaction",
+        "parent_label": "Inflammatory / Autoimmune Disorder",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "is_goldish": true,
+        "acceptable": true,
+        "matches_gold": true,
+        "final_audit_parent_valid": true,
+        "a18_pool": "reserve"
+      },
+      {
+        "case_id": "mb34_leukemoid",
+        "replicate": 1,
+        "branch_id": "OTHER.2",
+        "label": "Leukemoid reaction",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "Classification axis mismatch",
+        "is_goldish": true,
+        "acceptable": true,
+        "matches_gold": true,
+        "final_audit_parent_valid": true,
+        "a18_pool": "reserve"
+      },
+      {
+        "case_id": "mb34_leukemoid",
+        "replicate": 2,
+        "branch_id": "B5.5",
+        "label": "Leukemoid Reaction",
+        "parent_label": "Inflammatory / Autoimmune Disorder",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "is_goldish": true,
+        "acceptable": true,
+        "matches_gold": true,
+        "final_audit_parent_valid": true,
+        "a18_pool": "reserve"
+      },
+      {
+        "case_id": "mb34_leukemoid",
+        "replicate": 2,
+        "branch_id": "OTHER.3",
+        "label": "Leukemoid reaction",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "Classification axis mismatch",
+        "is_goldish": true,
+        "acceptable": true,
+        "matches_gold": true,
+        "final_audit_parent_valid": true,
+        "a18_pool": "reserve"
+      },
+      {
+        "case_id": "mb34_leukemoid",
+        "replicate": 3,
+        "branch_id": "B5.5",
+        "label": "Leukemoid Reaction",
+        "parent_label": "Inflammatory / Autoimmune Disorder",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "candidate classification axis does not match parent axis",
+        "is_goldish": true,
+        "acceptable": true,
+        "matches_gold": true,
+        "final_audit_parent_valid": true,
+        "a18_pool": "reserve"
+      },
+      {
+        "case_id": "mb34_leukemoid",
+        "replicate": 3,
+        "branch_id": "OTHER.3",
+        "label": "Leukemoid reaction",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "Classification axis mismatch",
+        "is_goldish": true,
+        "acceptable": true,
+        "matches_gold": true,
+        "final_audit_parent_valid": true,
+        "a18_pool": "reserve"
+      },
+      {
+        "case_id": "mb55_glucagonoma",
+        "replicate": 1,
+        "branch_id": "B5.2",
+        "label": "Glucagonoma",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "is_goldish": true,
+        "acceptable": true,
+        "matches_gold": true,
+        "final_audit_parent_valid": true,
+        "a18_pool": "reserve"
+      },
+      {
+        "case_id": "mb57_kartagener",
+        "replicate": 1,
+        "branch_id": "B5.2",
+        "label": "Primary Ciliary Dyskinesia",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "is_goldish": true,
+        "acceptable": true,
+        "matches_gold": true,
+        "final_audit_parent_valid": true,
+        "a18_pool": "reserve"
+      },
+      {
+        "case_id": "mb57_kartagener",
+        "replicate": 1,
+        "branch_id": "B5.3",
+        "label": "Kartagener Syndrome",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "is_goldish": true,
+        "acceptable": true,
+        "matches_gold": true,
+        "final_audit_parent_valid": true,
+        "a18_pool": "reserve"
+      },
+      {
+        "case_id": "mb57_kartagener",
+        "replicate": 2,
+        "branch_id": "B5.3",
+        "label": "primary ciliary dyskinesia",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "is_goldish": true,
+        "acceptable": true,
+        "matches_gold": true,
+        "final_audit_parent_valid": true,
+        "a18_pool": "reserve"
+      },
+      {
+        "case_id": "mb57_kartagener",
+        "replicate": 3,
+        "branch_id": "B5.3",
+        "label": "primary ciliary dyskinesia",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "is_goldish": true,
+        "acceptable": true,
+        "matches_gold": true,
+        "final_audit_parent_valid": true,
+        "a18_pool": "reserve"
+      },
+      {
+        "case_id": "mb65_cml",
+        "replicate": 1,
+        "branch_id": "B5.5",
+        "label": "Chronic Myelogenous Leukemia",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "is_goldish": true,
+        "acceptable": true,
+        "matches_gold": true,
+        "final_audit_parent_valid": true,
+        "a18_pool": "reserve"
+      },
+      {
+        "case_id": "mb65_cml",
+        "replicate": 3,
+        "branch_id": "B5.4",
+        "label": "Chronic Myelogenous Leukemia",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "is_goldish": true,
+        "acceptable": true,
+        "matches_gold": true,
+        "final_audit_parent_valid": true,
+        "a18_pool": "reserve"
+      },
+      {
+        "case_id": "mb82_adhesions",
+        "replicate": 3,
+        "branch_id": "B5.6",
+        "label": "Adhesions",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "is_goldish": true,
+        "acceptable": true,
+        "matches_gold": true,
+        "final_audit_parent_valid": true,
+        "a18_pool": "reserve"
+      },
+      {
+        "case_id": "mxh011",
+        "replicate": 1,
+        "branch_id": "B4.1",
+        "label": "Epiglottitis",
+        "parent_label": "Other Infectious Causes",
+        "parent_axis": "anatomy",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "is_goldish": true,
+        "acceptable": true,
+        "matches_gold": false,
+        "final_audit_parent_valid": true,
+        "a18_pool": "reserve"
+      },
+      {
+        "case_id": "mxh011",
+        "replicate": 2,
+        "branch_id": "B1.1",
+        "label": "Epiglottitis",
+        "parent_label": "Upper Respiratory Infection",
+        "parent_axis": "anatomy",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "is_goldish": true,
+        "acceptable": true,
+        "matches_gold": false,
+        "final_audit_parent_valid": true,
+        "a18_pool": "reserve"
+      },
+      {
+        "case_id": "mxh011",
+        "replicate": 3,
+        "branch_id": "B4.1",
+        "label": "Epiglottitis",
+        "parent_label": "Other Infectious Causes",
+        "parent_axis": "anatomy",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "is_goldish": true,
+        "acceptable": true,
+        "matches_gold": false,
+        "final_audit_parent_valid": true,
+        "a18_pool": "reserve"
+      },
+      {
+        "case_id": "mxh045",
+        "replicate": 1,
+        "branch_id": "B5.8",
+        "label": "Malrotation of the gut",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "is_goldish": true,
+        "acceptable": true,
+        "matches_gold": true,
+        "final_audit_parent_valid": true,
+        "a18_pool": "reserve"
+      },
+      {
+        "case_id": "mxh045",
+        "replicate": 2,
+        "branch_id": "B5.3",
+        "label": "Malrotation of the gut",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "is_goldish": true,
+        "acceptable": true,
+        "matches_gold": true,
+        "final_audit_parent_valid": true,
+        "a18_pool": "reserve"
+      },
+      {
+        "case_id": "mxh045",
+        "replicate": 3,
+        "branch_id": "B5.6",
+        "label": "Malrotation of the gut",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "is_goldish": true,
+        "acceptable": true,
+        "matches_gold": true,
+        "final_audit_parent_valid": true,
+        "a18_pool": "reserve"
+      },
+      {
+        "case_id": "mxh046",
+        "replicate": 1,
+        "branch_id": "B3.2",
+        "label": "Homocystinuria",
+        "parent_label": "Multisystem Developmental Disorder",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "candidate classification axis does not match parent axis",
+        "is_goldish": true,
+        "acceptable": true,
+        "matches_gold": true,
+        "final_audit_parent_valid": true,
+        "a18_pool": "reserve"
+      },
+      {
+        "case_id": "mxh046",
+        "replicate": 1,
+        "branch_id": "B4.2",
+        "label": "Homocystinuria",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "is_goldish": true,
+        "acceptable": true,
+        "matches_gold": true,
+        "final_audit_parent_valid": true,
+        "a18_pool": "reserve"
+      },
+      {
+        "case_id": "mxh046",
+        "replicate": 2,
+        "branch_id": "B3.2",
+        "label": "Homocystinuria",
+        "parent_label": "Multisystem Developmental Disorder",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "candidate classification axis does not match parent axis",
+        "is_goldish": true,
+        "acceptable": true,
+        "matches_gold": true,
+        "final_audit_parent_valid": true,
+        "a18_pool": "reserve"
+      },
+      {
+        "case_id": "mxh046",
+        "replicate": 2,
+        "branch_id": "B4.2",
+        "label": "Homocystinuria",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "mechanism vs etiology",
+        "is_goldish": true,
+        "acceptable": true,
+        "matches_gold": true,
+        "final_audit_parent_valid": true,
+        "a18_pool": "reserve"
+      },
+      {
+        "case_id": "mxh046",
+        "replicate": 3,
+        "branch_id": "B3.2",
+        "label": "Homocystinuria",
+        "parent_label": "Multisystem Developmental Disorder",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "candidate classification axis does not match parent axis",
+        "is_goldish": true,
+        "acceptable": true,
+        "matches_gold": true,
+        "final_audit_parent_valid": true,
+        "a18_pool": "reserve"
+      },
+      {
+        "case_id": "mxh046",
+        "replicate": 3,
+        "branch_id": "B4.2",
+        "label": "Homocystinuria",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "mechanism vs etiology",
+        "is_goldish": true,
+        "acceptable": true,
+        "matches_gold": true,
+        "final_audit_parent_valid": true,
+        "a18_pool": "reserve"
+      },
+      {
+        "case_id": "mxh055",
+        "replicate": 1,
+        "branch_id": "B5.2",
+        "label": "Exertional Heat Stroke",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "is_goldish": true,
+        "acceptable": true,
+        "matches_gold": true,
+        "final_audit_parent_valid": true,
+        "a18_pool": "reserve"
+      },
+      {
+        "case_id": "mxh055",
+        "replicate": 2,
+        "branch_id": "B5.2",
+        "label": "Exertional Heat Stroke",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "is_goldish": true,
+        "acceptable": true,
+        "matches_gold": true,
+        "final_audit_parent_valid": true,
+        "a18_pool": "reserve"
+      }
+    ],
+    "gold_fp_examples": [
+      {
+        "case_id": "mb34_leukemoid",
+        "replicate": 1,
+        "branch_id": "B5.5",
+        "label": "Leukemoid Reaction",
+        "parent_label": "Inflammatory / Autoimmune Disorder",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mb34_leukemoid",
+        "replicate": 1,
+        "branch_id": "OTHER.2",
+        "label": "Leukemoid reaction",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "Classification axis mismatch",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mb55_glucagonoma",
+        "replicate": 1,
+        "branch_id": "B5.2",
+        "label": "Glucagonoma",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mb57_kartagener",
+        "replicate": 1,
+        "branch_id": "B5.2",
+        "label": "Primary Ciliary Dyskinesia",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mb57_kartagener",
+        "replicate": 1,
+        "branch_id": "B5.3",
+        "label": "Kartagener Syndrome",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mb65_cml",
+        "replicate": 1,
+        "branch_id": "B5.5",
+        "label": "Chronic Myelogenous Leukemia",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mxh011",
+        "replicate": 1,
+        "branch_id": "B4.1",
+        "label": "Epiglottitis",
+        "parent_label": "Other Infectious Causes",
+        "parent_axis": "anatomy",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "acceptable": true,
+        "matches_gold": false
+      },
+      {
+        "case_id": "mxh045",
+        "replicate": 1,
+        "branch_id": "B5.8",
+        "label": "Malrotation of the gut",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mxh046",
+        "replicate": 1,
+        "branch_id": "B3.2",
+        "label": "Homocystinuria",
+        "parent_label": "Multisystem Developmental Disorder",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "candidate classification axis does not match parent axis",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mxh046",
+        "replicate": 1,
+        "branch_id": "B4.2",
+        "label": "Homocystinuria",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mxh055",
+        "replicate": 1,
+        "branch_id": "B5.2",
+        "label": "Exertional Heat Stroke",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mxh075",
+        "replicate": 1,
+        "branch_id": "B4.4",
+        "label": "Truncus Arteriosus",
+        "parent_label": "Other Cardiac Anomalies",
+        "parent_axis": "anatomy",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mb34_leukemoid",
+        "replicate": 2,
+        "branch_id": "B5.5",
+        "label": "Leukemoid Reaction",
+        "parent_label": "Inflammatory / Autoimmune Disorder",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mb34_leukemoid",
+        "replicate": 2,
+        "branch_id": "OTHER.3",
+        "label": "Leukemoid reaction",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "Classification axis mismatch",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mb57_kartagener",
+        "replicate": 2,
+        "branch_id": "B5.3",
+        "label": "primary ciliary dyskinesia",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mxh011",
+        "replicate": 2,
+        "branch_id": "B1.1",
+        "label": "Epiglottitis",
+        "parent_label": "Upper Respiratory Infection",
+        "parent_axis": "anatomy",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "acceptable": true,
+        "matches_gold": false
+      },
+      {
+        "case_id": "mxh045",
+        "replicate": 2,
+        "branch_id": "B5.3",
+        "label": "Malrotation of the gut",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mxh046",
+        "replicate": 2,
+        "branch_id": "B3.2",
+        "label": "Homocystinuria",
+        "parent_label": "Multisystem Developmental Disorder",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "candidate classification axis does not match parent axis",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mxh046",
+        "replicate": 2,
+        "branch_id": "B4.2",
+        "label": "Homocystinuria",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "mechanism vs etiology",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mxh055",
+        "replicate": 2,
+        "branch_id": "B5.2",
+        "label": "Exertional Heat Stroke",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mxh075",
+        "replicate": 2,
+        "branch_id": "B4.4",
+        "label": "Truncus Arteriosus",
+        "parent_label": "Other Cardiac Anomalies",
+        "parent_axis": "anatomy",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mb34_leukemoid",
+        "replicate": 3,
+        "branch_id": "B5.5",
+        "label": "Leukemoid Reaction",
+        "parent_label": "Inflammatory / Autoimmune Disorder",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "candidate classification axis does not match parent axis",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mb34_leukemoid",
+        "replicate": 3,
+        "branch_id": "OTHER.3",
+        "label": "Leukemoid reaction",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "Classification axis mismatch",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mb57_kartagener",
+        "replicate": 3,
+        "branch_id": "B5.3",
+        "label": "primary ciliary dyskinesia",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mb65_cml",
+        "replicate": 3,
+        "branch_id": "B5.4",
+        "label": "Chronic Myelogenous Leukemia",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mb82_adhesions",
+        "replicate": 3,
+        "branch_id": "B5.6",
+        "label": "Adhesions",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mxh011",
+        "replicate": 3,
+        "branch_id": "B4.1",
+        "label": "Epiglottitis",
+        "parent_label": "Other Infectious Causes",
+        "parent_axis": "anatomy",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "acceptable": true,
+        "matches_gold": false
+      },
+      {
+        "case_id": "mxh045",
+        "replicate": 3,
+        "branch_id": "B5.6",
+        "label": "Malrotation of the gut",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mxh046",
+        "replicate": 3,
+        "branch_id": "B3.2",
+        "label": "Homocystinuria",
+        "parent_label": "Multisystem Developmental Disorder",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "candidate classification axis does not match parent axis",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mxh046",
+        "replicate": 3,
+        "branch_id": "B4.2",
+        "label": "Homocystinuria",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "mechanism vs etiology",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mxh055",
+        "replicate": 3,
+        "branch_id": "B5.2",
+        "label": "Exertional Heat Stroke",
+        "parent_label": "Other",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mxh075",
+        "replicate": 3,
+        "branch_id": "B4.4",
+        "label": "Truncus Arteriosus",
+        "parent_label": "Other Cardiac Anomalies",
+        "parent_axis": "anatomy",
+        "leaf_axis": "etiology",
+        "rationale": "classification axis mismatch",
+        "acceptable": true,
+        "matches_gold": true
+      }
+    ]
+  },
+  "false_negative_keeps": {
+    "definition": "Leaf kept active by A18 but final_audit is_parent_valid=false",
+    "n": 109,
+    "rate_among_active": 0.1473,
+    "rate_among_all_leaves": 0.0719,
+    "n_gold_or_matches_gold_kept_under_invalid_parent": 18,
+    "by_case_top": [
+      {
+        "case_id": "mxh014",
+        "n": 13
+      },
+      {
+        "case_id": "mxh046",
+        "n": 12
+      },
+      {
+        "case_id": "mxh055",
+        "n": 12
+      },
+      {
+        "case_id": "mb66_peliosis",
+        "n": 11
+      },
+      {
+        "case_id": "mxh068",
+        "n": 11
+      },
+      {
+        "case_id": "mb34_leukemoid",
+        "n": 9
+      },
+      {
+        "case_id": "mxh036",
+        "n": 7
+      },
+      {
+        "case_id": "mb11_pancoast",
+        "n": 6
+      },
+      {
+        "case_id": "mb55_glucagonoma",
+        "n": 6
+      },
+      {
+        "case_id": "mxh045",
+        "n": 6
+      },
+      {
+        "case_id": "mb77_hyperpara",
+        "n": 5
+      },
+      {
+        "case_id": "mb83_foreignbody",
+        "n": 4
+      }
+    ],
+    "note": "Fail-open path never fired (0 uncertain / 0 low-confidence). FN keeps are high-confidence VALID decisions that disagree with the judge, not intentional uncertain fail-open.",
+    "examples": [
+      {
+        "case_id": "mb11_pancoast",
+        "replicate": 1,
+        "branch_id": "B3.3",
+        "label": "Brachial plexopathy",
+        "parent_label": "Vascular Disorder with Neurological Involvement",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "Brachial plexopathy can be a vascular disorder with neurological involvement due to its potential causes, such as trauma or compression affecting blood vessels and nerves.",
+        "gate_decision": "valid",
+        "gate_confidence": "high",
+        "final_audit_parent_valid": false,
+        "a18_pool": "active",
+        "acceptable": false,
+        "matches_gold": false
+      },
+      {
+        "case_id": "mb11_pancoast",
+        "replicate": 1,
+        "branch_id": "B4.3",
+        "label": "Pancoast tumor",
+        "parent_label": "Traumatic or Compressive Disorder with Neurological Involvement",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "Pancoast tumor is a type of tumor that can cause traumatic or compressive disorder with neurological involvement",
+        "gate_decision": "valid",
+        "gate_confidence": "high",
+        "final_audit_parent_valid": false,
+        "a18_pool": "active",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mb34_leukemoid",
+        "replicate": 1,
+        "branch_id": "B1.2",
+        "label": "Chronic Myeloid Leukemia",
+        "parent_label": "Myeloid Neoplasm with Increased Blasts",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "Chronic Myeloid Leukemia is related to Myeloid Neoplasm with Increased Blasts",
+        "gate_decision": "valid",
+        "gate_confidence": "high",
+        "final_audit_parent_valid": false,
+        "a18_pool": "active",
+        "acceptable": false,
+        "matches_gold": false
+      },
+      {
+        "case_id": "mb55_glucagonoma",
+        "replicate": 1,
+        "branch_id": "B2.3",
+        "label": "Fabry disease",
+        "parent_label": "Inflammatory/Autoimmune Disorder",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "Fabry disease is an autoimmune disorder",
+        "gate_decision": "valid",
+        "gate_confidence": "high",
+        "final_audit_parent_valid": false,
+        "a18_pool": "active",
+        "acceptable": false,
+        "matches_gold": false
+      },
+      {
+        "case_id": "mb57_kartagener",
+        "replicate": 2,
+        "branch_id": "B1.5",
+        "label": "Kartagener Syndrome",
+        "parent_label": "Cardiovascular Disorder",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "Kartagener Syndrome is a cardiovascular disorder related to the mechanism of ciliary dysfunction",
+        "gate_decision": "valid",
+        "gate_confidence": "high",
+        "final_audit_parent_valid": false,
+        "a18_pool": "active",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mb57_kartagener",
+        "replicate": 3,
+        "branch_id": "B1.4",
+        "label": "Kartagener Syndrome",
+        "parent_label": "Cardiovascular Disorder",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "Kartagener Syndrome is a cardiovascular disorder related to ciliary dysfunction, which can be classified under a mechanism-based axis",
+        "gate_decision": "valid",
+        "gate_confidence": "high",
+        "final_audit_parent_valid": false,
+        "a18_pool": "active",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mb66_peliosis",
+        "replicate": 1,
+        "branch_id": "B2.4",
+        "label": "Appendicitis",
+        "parent_label": "Obstructive Abdominal Conditions",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "Appendicitis is an obstructive abdominal condition",
+        "gate_decision": "valid",
+        "gate_confidence": "high",
+        "final_audit_parent_valid": false,
+        "a18_pool": "active",
+        "acceptable": false,
+        "matches_gold": false
+      },
+      {
+        "case_id": "mb77_hyperpara",
+        "replicate": 1,
+        "branch_id": "B3.2",
+        "label": "Primary Hyperparathyroidism",
+        "parent_label": "Neoplastic/Paraneoplastic Syndrome",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "Neoplastic/Paraneoplastic Syndrome can encompass conditions like Primary Hyperparathyroidism which may have a neoplastic etiology",
+        "gate_decision": "valid",
+        "gate_confidence": "high",
+        "final_audit_parent_valid": false,
+        "a18_pool": "active",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mb77_hyperpara",
+        "replicate": 2,
+        "branch_id": "B3.2",
+        "label": "Primary Hyperparathyroidism",
+        "parent_label": "Neoplastic/Paraneoplastic Syndrome",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "Neoplastic/Paraneoplastic Syndrome can encompass conditions like Primary Hyperparathyroidism",
+        "gate_decision": "valid",
+        "gate_confidence": "high",
+        "final_audit_parent_valid": false,
+        "a18_pool": "active",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mb77_hyperpara",
+        "replicate": 3,
+        "branch_id": "B3.2",
+        "label": "Primary Hyperparathyroidism",
+        "parent_label": "Neoplastic/Paraneoplastic Syndrome",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "Neoplastic/Paraneoplastic Syndrome can encompass conditions like Primary Hyperparathyroidism",
+        "gate_decision": "valid",
+        "gate_confidence": "high",
+        "final_audit_parent_valid": false,
+        "a18_pool": "active",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mb82_adhesions",
+        "replicate": 1,
+        "branch_id": "B4.3",
+        "label": "Diabetic gastroparesis",
+        "parent_label": "Vascular Disorder",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "Diabetic gastroparesis is a vascular disorder related to diabetes",
+        "gate_decision": "valid",
+        "gate_confidence": "high",
+        "final_audit_parent_valid": false,
+        "a18_pool": "active",
+        "acceptable": false,
+        "matches_gold": false
+      },
+      {
+        "case_id": "mb83_foreignbody",
+        "replicate": 1,
+        "branch_id": "B3.1",
+        "label": "Acute Bacterial Sinusitis",
+        "parent_label": "Inflammatory Process of the Nasal Cavity",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "The candidate disease Acute Bacterial Sinusitis is a type of inflammatory process of the nasal cavity.",
+        "gate_decision": "valid",
+        "gate_confidence": "high",
+        "final_audit_parent_valid": false,
+        "a18_pool": "active",
+        "acceptable": false,
+        "matches_gold": false
+      },
+      {
+        "case_id": "mxh011",
+        "replicate": 1,
+        "branch_id": "B2.5",
+        "label": "Croup due to Parainfluenza virus",
+        "parent_label": "Lower Respiratory Infection",
+        "parent_axis": "anatomy",
+        "leaf_axis": "etiology",
+        "rationale": "Croup due to Parainfluenza virus is a type of Lower Respiratory Infection",
+        "gate_decision": "valid",
+        "gate_confidence": "high",
+        "final_audit_parent_valid": false,
+        "a18_pool": "active",
+        "acceptable": false,
+        "matches_gold": false
+      },
+      {
+        "case_id": "mxh014",
+        "replicate": 1,
+        "branch_id": "B2.2",
+        "label": "Prosthetic Valve Endocarditis",
+        "parent_label": "Non-infective Endocarditis",
+        "parent_axis": "etiology",
+        "leaf_axis": "etiology",
+        "rationale": "Prosthetic Valve Endocarditis is a type of Non-infective Endocarditis is not accurate, however, Prosthetic Valve Endocarditis is indeed related to the etiology axis",
+        "gate_decision": "valid",
+        "gate_confidence": "high",
+        "final_audit_parent_valid": false,
+        "a18_pool": "active",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mxh014",
+        "replicate": 1,
+        "branch_id": "B3.2",
+        "label": "Prosthetic Valve Endocarditis",
+        "parent_label": "Cardiac Valve Disorder",
+        "parent_axis": "etiology",
+        "leaf_axis": "etiology",
+        "rationale": "The candidate disease Prosthetic Valve Endocarditis is a type of endocarditis which can be related to cardiac valve disorders, specifically those involving prosthetic valves, aligning with the etiology axis of Cardiac Valve Disorder.",
+        "gate_decision": "valid",
+        "gate_confidence": "high",
+        "final_audit_parent_valid": false,
+        "a18_pool": "active",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mxh014",
+        "replicate": 2,
+        "branch_id": "B2.2",
+        "label": "Prosthetic Valve Endocarditis",
+        "parent_label": "Non-infective Endocarditis",
+        "parent_axis": "etiology",
+        "leaf_axis": "etiology",
+        "rationale": "Prosthetic Valve Endocarditis is a type of Non-infective Endocarditis is not accurate, however, Prosthetic Valve Endocarditis is a type of endocarditis which can be classified under etiology",
+        "gate_decision": "valid",
+        "gate_confidence": "high",
+        "final_audit_parent_valid": false,
+        "a18_pool": "active",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mxh014",
+        "replicate": 2,
+        "branch_id": "B3.2",
+        "label": "Prosthetic Valve Endocarditis",
+        "parent_label": "Cardiac Valve Disorder",
+        "parent_axis": "etiology",
+        "leaf_axis": "etiology",
+        "rationale": "The candidate disease Prosthetic Valve Endocarditis is a type of endocarditis which can be related to cardiac valve disorders, specifically those involving prosthetic valves, aligning with the etiology axis of Cardiac Valve Disorder.",
+        "gate_decision": "valid",
+        "gate_confidence": "high",
+        "final_audit_parent_valid": false,
+        "a18_pool": "active",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mxh014",
+        "replicate": 3,
+        "branch_id": "B2.2",
+        "label": "Prosthetic Valve Endocarditis",
+        "parent_label": "Non-infective Endocarditis",
+        "parent_axis": "etiology",
+        "leaf_axis": "etiology",
+        "rationale": "Prosthetic Valve Endocarditis is a type of Non-infective Endocarditis is not accurate, however, Prosthetic Valve Endocarditis is a type of endocarditis which can be classified under etiology",
+        "gate_decision": "valid",
+        "gate_confidence": "high",
+        "final_audit_parent_valid": false,
+        "a18_pool": "active",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mxh014",
+        "replicate": 3,
+        "branch_id": "B3.2",
+        "label": "Prosthetic Valve Endocarditis",
+        "parent_label": "Cardiac Valve Disorder",
+        "parent_axis": "etiology",
+        "leaf_axis": "etiology",
+        "rationale": "Prosthetic Valve Endocarditis is a type of endocarditis related to cardiac valve issues, which fits under Cardiac Valve Disorder",
+        "gate_decision": "valid",
+        "gate_confidence": "high",
+        "final_audit_parent_valid": false,
+        "a18_pool": "active",
+        "acceptable": true,
+        "matches_gold": true
+      },
+      {
+        "case_id": "mxh036",
+        "replicate": 1,
+        "branch_id": "B2.4",
+        "label": "Fructose-1,6-bisphosphatase deficiency",
+        "parent_label": "Glycogen Storage Disease",
+        "parent_axis": "mechanism",
+        "leaf_axis": "etiology",
+        "rationale": "Fructose-1,6-bisphosphatase deficiency is a type of glycogen storage disease due to enzymatic deficiency",
+        "gate_decision": "valid",
+        "gate_confidence": "high",
+        "final_audit_parent_valid": false,
+        "a18_pool": "active",
+        "acceptable": false,
+        "matches_gold": false
+      }
+    ]
+  },
+  "mechanisms": [
+    {
+      "id": "M1_axis_tag_overfire",
+      "title": "Classification-axis string mismatch → high-confidence invalid",
+      "severity": "primary",
+      "evidence": {
+        "fp_reserves": 297,
+        "fp_with_unequal_axes": 286,
+        "dominant_axis_pair": "mechanism/etiology",
+        "dominant_axis_pair_n": 247
+      },
+      "concrete_cases": [
+        "mxh075 r1–r3: Truncus under Other Cardiac Anomalies (anatomy) reserved for axis mismatch; judge parent_valid=true on B4.4",
+        "mxh046 r1/r3: Homocystinuria under Multisystem Developmental Disorder / Other reserved despite parent_valid=true",
+        "mb34_leukemoid: Leukemoid under Inflammatory/Other reserved as FP (51 FP leaves across reps)"
+      ],
+      "links_to_metrics": "Drives FP reserve rate 297/775=38.3%; causal for mxh075 coverage net -3 vs A-raw"
+    },
+    {
+      "id": "M2_fail_open_never_fires",
+      "title": "Uncertain/low-confidence fail-open path unused",
+      "severity": "primary",
+      "evidence": {
+        "uncertain": 0,
+        "low_conf": 0,
+        "schema_fail_open_reasons": 0,
+        "distribution": {
+          "valid|high": 740,
+          "invalid|high": 775
+        }
+      },
+      "concrete_cases": "All 51 cells / 1515 decisions are binary high-conf valid|invalid",
+      "links_to_metrics": "Design intended uncertain→keep; observed always decisive → over-reserve"
+    },
+    {
+      "id": "M3_multi_parent_gold_thinning",
+      "title": "Reserving alternate gold placements hurts local/intergroup rank even when one gold stays active",
+      "severity": "primary",
+      "evidence": {
+        "top2_loss_cells": [
+          {
+            "case_id": "mb11_pancoast",
+            "replicate": 2
+          },
+          {
+            "case_id": "mb83_foreignbody",
+            "replicate": 1
+          },
+          {
+            "case_id": "mb83_foreignbody",
+            "replicate": 2
+          },
+          {
+            "case_id": "mb83_foreignbody",
+            "replicate": 3
+          },
+          {
+            "case_id": "mxh046",
+            "replicate": 1
+          },
+          {
+            "case_id": "mxh046",
+            "replicate": 3
+          }
+        ],
+        "case_majority_losses": [
+          "mb83_foreignbody",
+          "mxh046"
+        ]
+      },
+      "concrete_cases": [
+        "mb83_foreignbody r1–r3: A-raw local champions included gold under Infectious/Inflammatory (B1.2/B3.2); A18 reserved those (mechanism vs etiology), kept only Anatomical Obstruction B2.1 → rank 1→3, intergroup_rank_loss",
+        "mxh046 r1/r3: reserved Multisystem/Other gold (FP); local_champion_ids shrink; loss_gate=local_champion_elimination",
+        "mb11_pancoast r2: reserved inflammatory/vascular gold copies; neoplastic gold remains but rank 2→3"
+      ],
+      "links_to_metrics": "Top2 net -2 vs A-raw despite coverage preserved on these cells"
+    },
+    {
+      "id": "M4_coverage_wipe_when_all_gold_mismatched",
+      "title": "All gold copies under axis-mismatched parents → active coverage wipe",
+      "severity": "high",
+      "evidence": {
+        "cells": [
+          "mxh075 r1",
+          "mxh075 r2",
+          "mxh075 r3"
+        ],
+        "transition_coverage_losses": [
+          {
+            "case_id": "mxh075",
+            "replicate": 1
+          },
+          {
+            "case_id": "mxh075",
+            "replicate": 2
+          },
+          {
+            "case_id": "mxh075",
+            "replicate": 3
+          }
+        ]
+      },
+      "concrete_cases": "mxh075: all Truncus leaves tagged etiology under anatomy parents; A-raw kept them live (cov=true); A18 reserved all (cov=false, reserve_gold_present=true)",
+      "links_to_metrics": "Entire coverage net -3 vs A-raw; mb66/mxh068 coverage_deleted are NOT A18-caused (inventory miss shared with A-raw)"
+    },
+    {
+      "id": "M5_fn_keeps_remain",
+      "title": "High-conf valid still leaves parent_valid=false active (incomplete cleaning)",
+      "severity": "secondary",
+      "evidence": {
+        "fn_keeps": 109,
+        "fn_rate_among_active": 0.1473
+      },
+      "concrete_cases": [
+        "mb11_pancoast r1 B3.3 'Brachial plexopathy' under 'Vascular Disorder with Neurological Involvement'",
+        "mb11_pancoast r1 B4.3 'Pancoast tumor' under 'Traumatic or Compressive Disorder with Neurological Involvement'",
+        "mb34_leukemoid r1 B1.2 'Chronic Myeloid Leukemia' under 'Myeloid Neoplasm with Increased Blasts'",
+        "mb34_leukemoid r1 B5.9 'Fabry Disease' under 'Inflammatory / Autoimmune Disorder'",
+        "mb55_glucagonoma r1 B2.3 'Fabry disease' under 'Inflammatory/Autoimmune Disorder'",
+        "mb55_glucagonoma r1 B3.6 'Erythema Multiforme' under 'Infectious Disorder'"
+      ],
+      "links_to_metrics": "Active parent_invalid remains 109/740; gate does not achieve judge-aligned cleaning despite heavy reserve"
+    }
+  ],
+  "recommended_fixes": [
+    {
+      "id": "F1",
+      "priority": 1,
+      "fix": "Stop treating leaf.classification_axis != parent.classification_axis as sufficient for high-confidence invalid. Prompt should judge semantic parent membership using parent label + representative_diseases, and ignore or downweight axis-tag inequality.",
+      "targets": [
+        "M1_axis_tag_overfire",
+        "M4_coverage_wipe_when_all_gold_mismatched"
+      ]
+    },
+    {
+      "id": "F2",
+      "priority": 1,
+      "fix": "Calibrate confidence: require explicit uncertainty when parent label is coarse (\"Other\", \"Other Cardiac Anomalies\") or representatives empty; force decision=uncertain or confidence=low → fail-open keep active. Today fail-open never fires.",
+      "targets": [
+        "M2_fail_open_never_fires",
+        "M1_axis_tag_overfire"
+      ]
+    },
+    {
+      "id": "F3",
+      "priority": 2,
+      "fix": "Gold-aware / coverage-safe reserve rule: if a concept would have zero remaining active copies after reserve, fail-open keep at least one (prefer judge-valid or best parent fit). Would have prevented mxh075 coverage wipe.",
+      "targets": [
+        "M4_coverage_wipe_when_all_gold_mismatched"
+      ]
+    },
+    {
+      "id": "F4",
+      "priority": 2,
+      "fix": "Optional minimal case evidence (symptom/system only) for borderline parents, OR two-pass: axis-only soft score then confirm with light case context when invalid+high. Preserves task-lock for clear cases while fixing Truncus/Homocystinuria FP reserves.",
+      "targets": [
+        "M1_axis_tag_overfire",
+        "design_goal case-context gap"
+      ]
+    },
+    {
+      "id": "F5",
+      "priority": 3,
+      "fix": "Do not reserve gold copies that are local champions in the pre-gate tree unless invalidation is confirmed by a second judge pass (reduces mb83/mxh046 Top2 regressions).",
+      "targets": [
+        "M3_multi_parent_gold_thinning"
+      ]
+    },
+    {
+      "id": "F6",
+      "priority": 3,
+      "fix": "Tighten valid path too: when gate says valid/high but parent is obviously wrong by axis+label heuristics, allow uncertain rather than forced valid — addresses residual FN keeps.",
+      "targets": [
+        "M5_fn_keeps_remain"
+      ]
+    }
+  ]
+}

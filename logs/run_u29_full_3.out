@@ -1,0 +1,54 @@
+[21:24:01]   u29_full_3: GPU try 1/2 on cuda:1
+ERROR conda.cli.main_run:execute(33): Subprocess for 'conda run ['python', 'scripts/eval_pipeline_medbullets.py', '--cases', '1,9,13,14,17,18,22,23,24', '--workers', '9', '--case-timeout', '25640', '--temp', '0', '--fix-a2', '--fix-b', '--branch-knowledge', '--mandatory-kb-branches', '--lr-clean', '--phase-subaxis', '--tag', 'u29_full_3']' command failed.  (See above for error)
+SecondaryLRCache flush failed: [Errno 2] No such file or directory: '/data2/wanghongyi/Agentclinic-Tree-Dx-Spec/data/knowledge_raw/rag_lr_secondary_cache.clean.json.tmp' -> '/data2/wanghongyi/Agentclinic-Tree-Dx-Spec/data/knowledge_raw/rag_lr_secondary_cache.clean.json'
+/home/wanghongyi/.conda/envs/gnn-llm/.tmpuqthbopw: line 3: 2806005 Segmentation fault      (core dumped) python scripts/eval_pipeline_medbullets.py --cases 1,9,13,14,17,18,22,23,24 --workers 9 --case-timeout 25640 --temp 0 --fix-a2 --fix-b --branch-knowledge --mandatory-kb-branches --lr-clean --phase-subaxis --tag u29_full_3
+
+================================================================================
+CONCURRENT PIPELINE EVAL — 9 dx cases (9 text-only, 0 image-dependent)  [rerun subset: [1, 9, 13, 14, 17, 18, 22, 23, 24]]
+  model=qwen/qwen3-32b  workers=9  case_timeout=25640s  injection=ON  protocol_retries=2  temp=0.0
+  CFG tag='u29_full_3' age_prior=True rag_override=False ruleout=True present_first=True ruleout_min_sp=0.0 fixA=False fixA2=True fixB=True branchKB=True retrievalPriority=False matchGuards=False confCascade=False lrDetox=False lrClean=True mandKBbranch=True phaseSubaxis=True
+  log=/data2/wanghongyi/Agentclinic-Tree-Dx-Spec/logs/medbullets_conc_u29_full_3_20260617_212402.log
+================================================================================
+[XX   ] case 23  gold=A pred=B (txt,738s) Adhesions
+
+[21:54:02]   u29_full_3: missing JSON after GPU try 1 (likely native crash)
+[21:54:02]   u29_full_3: GPU try 2/2 on cuda:2
+================================================================================
+CONCURRENT PIPELINE EVAL — 9 dx cases (9 text-only, 0 image-dependent)  [rerun subset: [1, 9, 13, 14, 17, 18, 22, 23, 24]]
+  model=qwen/qwen3-32b  workers=9  case_timeout=25640s  injection=ON  protocol_retries=2  temp=0.0
+  CFG tag='u29_full_3' age_prior=True rag_override=False ruleout=True present_first=True ruleout_min_sp=0.0 fixA=False fixA2=True fixB=True branchKB=True retrievalPriority=False matchGuards=False confCascade=False lrDetox=False lrClean=True mandKBbranch=True phaseSubaxis=True
+  log=/data2/wanghongyi/Agentclinic-Tree-Dx-Spec/logs/medbullets_conc_u29_full_3_20260617_215404.log
+================================================================================
+[LLM] Error in 'TemporaryAnalyticLeafPlanner' attempt 1: Token limit exceeded.
+[LLM]  → Token/context overflow for 'TemporaryAnalyticLeafPlanner'; fast-failing (no retry).
+[LLM] Error: [Unable to generate TemporaryAnalyticLeafPlanner after 5 attempts]
+[LLM] Warning: Could not parse JSON for TemporaryAnalyticLeafPlanner. Raw: [Unable to generate TemporaryAnalyticLeafPlanner after 5 attempts]
+[XX   ] case 14  gold=A pred=C (txt,1015s) Diastolic murmur best heard along 
+[XX   ] case 9   gold=D pred=C (txt,1601s) Leukemoid reaction
+[XX   ] case 24  gold=B pred=E (txt,1636s) Foreign body obstruction
+[XX   ] case 18  gold=E pred=A (txt,2517s) Vascular ectasia within the liver
+[OK   ] case 1   gold=A pred=A (txt,2600s) Apical lung tumor
+[LLM] Warning: Could not parse JSON for PostUpdateStateReviser. Raw: {
+  "branch_decisions": [
+    {
+      "branch_id": "B1",
+      "decision": "park",
+      "live_subtype": "live_safety_protected",
+      "rationale": "Posterior below test_threshold but high danger (0.8) prevents closure; retained for safety monitoring."
+    },
+    {
+      "branch_id": "B2",
+      "d
+[XX   ] case 23  gold=A pred=B (txt,2956s) Adhesions
+[OK   ] case 13  gold=A pred=A (txt,2989s) Alpha cell tumor
+[OK   ] case 17  gold=D pred=D (txt,3557s) Chronic myelogenous leukemia
+[OK   ] case 22  gold=C pred=C (txt,4614s) Increased parathyroid hormone
+
+================================================================================
+RESULTS (two口径)
+================================================================================
+  全量    (full):     4/9 = 44.4%   (scored cases; 0 unscored)
+  不含图像(no-image): 4/9 = 44.4%
+  protocol failures (skipped): 0   runtime errors: 0   timeouts: 0
+  results JSON: /data2/wanghongyi/Agentclinic-Tree-Dx-Spec/logs/medbullets_conc_u29_full_3_20260617_215404.json
+

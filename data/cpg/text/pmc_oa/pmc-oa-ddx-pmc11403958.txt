@@ -1,0 +1,182 @@
+Accuracy of deep learning in the differential diagnosis of coronary artery stenosis: a systematic review and meta-analysis
+Background
+In recent years, as deep learning has received widespread attention in the field of heart disease, some studies have explored the potential of deep learning based on coronary angiography (CAG) or coronary CT angiography (CCTA) images in detecting the extent of coronary artery stenosis. However, there is still a lack of a systematic understanding of its diagnostic accuracy, impeding the advancement of intelligent diagnosis of coronary artery stenosis. Therefore, we conducted this study to review the accuracy of image-based deep learning in detecting coronary artery stenosis.
+Methods
+We retrieved PubMed, Cochrane, Embase, and Web of Science until April 11, 2023. The risk of bias in the included studies was appraised using the QUADAS-2 tool. We extracted the accuracy of deep learning in the test set and performed subgroup analyses by binary and multiclass classification scenarios. We performed a subgroup analysis based on different degrees of stenosis and applied a double arcsine transformation to process the data. The analysis was done by using R.
+Results
+Our systematic review finally included 18 studies, involving 3568 patients and 13,362 images. In the included studies, deep learning models were constructed based on CAG and CCTA. In binary classification tasks, the accuracy for detecting > 25%, > 50% and > 70% degrees of stenosis at the vessel level were 0.81 (95% CI: 0.71–0.85), 0.73 (95% CI: 0.58–0.88) and 0.61 (95% CI: 0.56–0.65), respectively. In multiclass classification tasks, the accuracy for detecting 0–25%, 25–50%, 50–70%, and 70–100% degrees of stenosis at the vessel level were 0.78 (95% CI: 0.73–0.84), 0.86 (95% CI: 0.78–0.93), 0.83 (95% CI: 0.70–0.97), and 0.70 (95% CI: 0.42–0.98), respectively.
+Conclusions
+Our study shows that deep learning models based on CAG and CCTA appear to be relatively accurate in diagnosing different degrees of coronary artery stenosis. However, for various degrees of stenosis, their accuracy still needs to be further improved.
+Supplementary Information
+The online version contains supplementary material available at 10.1186/s12880-024-01403-4.
+
+Introduction
+Coronary artery disease (CAD) is the most prevalent heart disease and affects 7.2% of adults aged ≥ 20 in the United States. It is a particular health concern in densely populated countries. CAD mainly manifests as coronary artery stenosis, which arises from plaques within arteries caused by the deposition of cholesterol, calcium, and fat. These plaques can obstruct arteries, and then restrict oxygen-rich blood flowing into the heart, potentially leading to fatal outcomes. Consequently, accurately quantifying the degree of coronary artery stenosis is crucial for early diagnosis, risk assessment, and the management of CAD. Early identification and management of CAD is essential in clinical practice since it can reduce the risk of acute coronary events and sudden death.
+While invasive coronary angiography (CAG) is still the gold standard for the diagnosis of stenosis, several non-invasive techniques are available, such as Electron Beam Computed Tomography (EBCT), Multi-Detector Computed Tomography (MDCT), and Coronary Magnetic Resonance Angiography. However, these methods heavily rely on clinical practitioners’ expertise and experience. With recent advancements in artificial intelligence and statistical theory, image-based artificial intelligence has been successfully applied to the diagnosis and treatment of diseases in clinical practice. The application of artificial intelligence in the medical field, particularly deep learning, has garnered significant attention from researchers. Deep learning has been widely utilized across various domains, including drug discovery and biomedical signal analysis. For instance, neural network-based models have been effectively employed to predict drug permeability across the placenta. Machine learning approaches, integrating fingerprint amalgamation and data balancing, have been used to comprehensively analyze drug permeability through the blood-brain barrier. Additionally, deep learning methods have been applied to estimate age and gender from electrocardiogram signals, and food recognition has been automated via deep learning models. Over the past decade, deep learning has made significant advancements in medical information science and image analysis, particularly through the use of convolutional neural networks (CNNs). CNNs have made notable advancements in fields like computer vision and speech recognition. For example, efficient CNNs such as ConvUNeXt and DRU-Net have been developed for medical image segmentation, highlighting the strengths of deep learning in ultrasound image segmentation. Additionally, neural networks with improved segmentation accuracy have been developed for liver CT image segmentation and liver ultrasound image segmentation.. Researchers have proposed a new framework that can effectively bridge CNNs and transformers (Cotr) for precise 3D medical image segmentation. In the context of liver tumor diseases, image segmentation serves as the first step for clinicians in optimizing diagnosis, staging, treatment planning, and interventions, which could potentially impact diagnostic and therapeutic outcomes. Additionally, researchers have explored the risk assessment of computer-aided diagnostic software for hepatic resection and evaluated the effectiveness of fusion imaging for immediate post-ablation assessment of malignant liver neoplasms. Deep learning also appears to show promising results in the diagnosis of certain complex cardiac diseases. For instance, artificial intelligence and deep neural networks have been employed to identify electrocardiographically concealed long QT syndrome using surface 12-lead electrocardiograms (ECGs), demonstrating their potential in the intelligent diagnosis of diseases.
+In this context, some researchers have explored deep learning models based on coronary angiography (CAG) or coronary CT angiography (CCTA) images to identify the degree of coronary artery stenosis. Nevertheless, comprehensive evidence substantiating their efficacy remains insufficient. Therefore, we conducted this systematic review and meta-analysis of previously published studies to provide the following evidence for the use of deep learning in the diagnosis of coronary artery stenosis: (1) A review of the accuracy of deep learning in differentiating various levels of coronary artery stenosis based on CAG or CCTA; (2) A review of the accuracy of deep learning in diagnosing coronary artery stenosis for both binary classification and multiclass classification tasks.
+
+Methods
+
+Study registration
+This study was carried out following the Preferred Reporting Items for Systematic Reviews and Meta-Analyses (PRISMA) 2020 guidelines and prospectively registered with PROSPERO (ID: CRD42023444635).
+
+Eligibility criteria
+
+Inclusion criteria
+Studies that have fully developed deep learning models for identifying the degree of coronary artery stenosis, including both binary classification and multiclass classification tasks.
+Some studies may utilize the same publicly available database. We acknowledged the contributions of these studies, and included various deep learning investigations conducted on the same dataset.
+In previous research, there may be a small number of studies that have validated previously developed deep learning models. These studies were also included in our systematic review.
+The types of studies included were case-control studies, cohort studies, and cross-sectional studies.
+Studies had to be written in English.
+
+Exclusion criteria
+Meta-analyses, reviews, guidelines, and expert opinions were excluded.
+Studies lacking model validation were excluded.
+Studies did not report the following outcome measures for model accuracy: ROC, c-statistic, c-index, sensitivity, specificity, accuracy, recovery, precision, confusion matrix, diagnostic fourfold table, F1 score, and calibration curve.
+Studies solely focused on image segmentation and reconstruction.
+
+Data sources and search strategy
+PubMed, Cochrane, Embase, and Web of Science were thoroughly retrieved up to April 11, 2023. Both MeSH terms and free-text keywords were used, without restrictions on publication region or year. Details of the search strategy are available in Table S1.
+
+Study selection and data extraction
+All identified articles were imported into EndNote software. Duplicates were automatically and manually removed. After checking titles and abstracts, we deleted irrelevant studies. The full texts of the remaining articles were reviewed to determine eligible studies.
+A structured form was used to extract data, including title, first author, year of publication, author’s country, study type, patient source, image source, diagnostic criteria for coronary artery stenosis, degree of coronary artery stenosis, total number of cases, number of coronary artery stenosis cases in training set, total number of cases in training set, generation methods of validation set, number of coronary artery stenosis cases in validation set, number of cases in validation set, and the type of models used. The literature screening and data extraction were independently implemented by two researchers, followed by cross-checking. Any dissents were addressed by a third researcher (a cardiology expert).
+
+Risk of bias assessment
+The QUADAS-2 tool (Quality Assessment of Diagnostic Accuracy Studies-2) was leveraged to discern the risk of bias and applicability of the included studies. This tool encompassed specific questions in four aspects: patient selection, index test, reference standard, and flow and timing. Each question was answered as Yes, No, or Unclear, which suggested a low, high, or unclear risk of bias, respectively. Studies were graded at low risk of bias if all key questions in each domain were answered with Yes. If all signal questions were answered as No, there was potential bias. An unclear risk was considered if there was no sufficient information for a definitive judgment.
+The quality assessment was independently conducted by two researchers (a clinician with 5 years of experience in cardiology and a clinician with over 5 years of cardiology experience). Then their results were cross-checked. Discrepancies were resolved by a third researcher (a cardiology expert).
+
+Outcomes
+This study assessed the accuracy of deep learning in detecting the degree of coronary artery stenosis. Notably, the degree thresholds for defining stenosis were inconsistent across studies from different countries, and > 25%, > 50%, and > 70% were mainly used.
+
+Synthesis methods
+Since a limited number of the included studies reported the number of cases and images of different stenosis degrees, we failed to perform the planned meta-analysis using a bivariate mixed-effects model and diagnostic 2 × 2 tables, as described in the registered protocol. Consequently, a meta-analysis of sensitivity was conducted instead. Heterogeneity across studies was examined utilizing the Q test and I² index. A fixed-effects model was employed for meta-analysis if I² <50%, while a random-effects model was applied if I² >50%. Subgroup analyses, sensitivity analyses, and meta-regression analyses were implemented to discern the sources of heterogeneity.
+
+Results
+
+Study selection
+A total of 2,139 reports were identified from PubMed, Cochrane, Embase, and Web of Science. After the removal of 749 duplicate publications, titles and abstracts were checked, and 42 potentially relevant studies were selected. After a thorough full-text review, 18 studies were eligible and included. The literature screening process is shown in Fig. 1.
+Visually depicts the literature screening process
+
+Study characteristics
+The 18 included studies encompassed 3,568 patients and 13,362 vascular images. These studies were published between 2019 and 2023, and these studies were conducted in China, the United States, Australia, Japan, Mexico, Portugal, and the Netherlands. Five studies were multicenter studies, while the remaining were single-center studies. Regarding image sources, 3 studies relied solely on CAG images, 11 utilized only CCTA images, and 4 used both modalities. Twelve studies used binary classification tasks, while six focused on multiclass tasks. The threshold for defining coronary artery stenosis varied across studies, with > 25%, > 50%, and > 70% being the most commonly used. Five studies used 25% as the threshold for defining coronary artery stenosis, seven used 50%, four used 70%, and two did not explicitly define the threshold. Detailed information is provided in Table 1.
+Detailed information is provided in basic information
+No.	Author	Year	Country	Patient source	Image source	Diagnostic criteria for coronary artery stenosis	Degree of coronary artery stenosis	Number of cases	Number of images	Number of blood vessels	 	1	Xianjun Han	2023	China	Single center	CCTA	the Society of Car_x005f Cardiovascular Computed Tomography (SCCT) according to the 18segment mode	> 50%>70%	200		770	 	2	William F	2023	USA	Multi-center	CCTA	Unclear	> 50%>70%	303			 	3	Chao Cong	2023	China	Multi-center	CCTA	Unclear	< 25%25–99%100%	230			 	4	Hao Ling	2023	China	Single center	CAG	Unclear	< 25%,25–99%,100%	949	2847		 	5	Hongyan Zhu	2022	China	Single center	CCTA	Unclear	unclear	30	6000		 	6	Chen Zhao	2022	USA	Single center	CAG	Unclear	> 25	79	294		 	7	Yan Yi	2022	China	Single center	CCTA	Unclear	< 50%≥ 50%	71		213	 	8	A. Sehly	2022	Australia	Single center	CCTA	Unclear	0%,1–49%≥ 50%			1435	 	9	Xin Jin	2022	China	Multi-center	CTA	2016CAD-RADS(TM)coronary artery disease - reporting and data system	1–24%25–49%50–69%70–99%100%	505	127,763		 	10	H. Yabushita	2021	Japan	Single center	CAG	Unclear	≥ 75%	199	479		 	11	Lixue Xu	2021	China	Multi-center	CCTA and CAG	the Coronary Artery Disease Reporting and Data System (CAD-RADS) guidelines	> 50%≥70%	527		2073	 	12	Andrew D. Choi	2021	USA	Multi-center	CCTA	SCCT CAD-RADS and SCCT reporting guidelines	> 50%> 70%	232		924	 	13	W.Yin	2020	China	Unclear	CCTA and CAG	Unclear	≥ 50%	161			 	14	Emmanuel Ovalle-Magallanes	2020	Mexico	Multi-center	CCTA and CAG	Unclear	unclear	250			 	15	Dan Han	2020	China	Single center	CCTA and CAG	the Society of Car_x005f Cardiovascular Computed Tomography (SCCT) according to the 18segment mode	≥ 50%	100			 	16	H. Marques	2020	Portugal	Multi-center	CCTA	2016CAD-RADS (TM) coronary artery disease - reporting and data system	1–24%25–49%50–69%70–99%100%				 	17	Majd Zreik	2019	Netherlands	Single center	CCTA	the guidelines of the Society of Cardiovascular Computed Tomography (SCCT) for reporting coronary artery disease	none,< 50%,≥ 50%	163		534	 	18	Ethan J. Halpern	2010	USA	Single center	CCTA	Unclear	< 50%>50%	207
+
+Risk of bias
+While all included studies employed a case-control design, this design did not impact the assessment of the performance of deep learning. Thus, the risk of bias in patient selection is considered low. Additionally, although the included studies did not describe whether the index tests were interpreted without the knowledge of the results of the reference standard, their results were obtained using artificial intelligence, which did not affect the assessment of the performance of deep learning. As such, the risk of bias in the index test was also deemed low. Besides, most studies lacked explicit information on the blinding in the assessment of the reference standard. However, there was a reasonable interval between the index tests and reference standard, and all patients received a reference standard, suggesting a low risk of bias in flow and timing.
+
+Meta-analysis
+
+Binary classification tasks
+For binary classification tasks, most studies mainly used < 50% and > 50% as the threshold for defining coronary artery stenosis, while limited studies used 25% and 70%. Based on vascular images, the meta-analysis revealed that the accuracy of deep learning models was 0.79 (95% CI: 0.64–0.94) for detecting < 50% stenosis and 0.73 (95% CI: 0.58–0.88) for > 50% stenosis. However, the results for 25% and 70% stenosis should be interpreted with caution (Fig. 2). Likewise, based on patients, the meta-analysis showed higher performance of deep learning models in the diagnosis of < 50% stenosis (0.83, 95% CI: 0.74–0.93) compared to > 50% stenosis (0.79, 95% CI: 0.66–0.91) (Fig. 3).
+Results of vessel-based meta-analysis for binary classification tasks
+Results of per-patient-based meta-analysis for binary classification tasks
+Based on vascular images, the meta-analysis showed that the accuracy of CCTA-based models was 0.80 (95% CI: 0.76–0.84) for detecting < 50% stenosis, 0.76 (95% CI: 0.53–0.99) for > 50% stenosis, 0.81 (95% CI: 0.76–0.84) for < 25% stenosis, and 0.81 (95% CI: 0.75–0.88) for > 25% stenosis (Fig. 4). Based on patients, the meta-analysis revealed that the accuracy of these models was 0.87 (95% CI: 0.67–1.07) for detecting < 50% stenosis, 0.70 (95% CI: 0.62–0.79) for > 50% stenosis, 0.85 (95% CI: 0.81–0.90) for < 25% stenosis, and 0.72 (95% CI: 0.62–0.82) for > 25% stenosis (Fig. 5).
+Results of vessel-based meta-analysis for models based on CCTA images
+Results of per-patient-based meta-analysis for models based on CCTA images
+
+Multiclass classification tasks
+For multiclass classification tasks, based on vascular images, the meta-analysis revealed that the accuracy of deep learning models was 0.78 (95% CI: 0.73–0.84) for detecting 0–25% stenosis, 0.86 (95% CI: 0.78–0.93) for 25–50% stenosis, 0.83 (95% CI: 0.70–0.97) for 50–70% stenosis, and 0.70 (95% CI: 0.42–0.98) for 70–100% stenosis (Fig. 6). Based on patients, the meta-analysis revealed that the accuracy of deep learning models was 0.72 (95% CI: 0.48–0.95) for detecting 0–25% stenosis, 0.78 (95% CI: 0.55–1.00) for 25–50% stenosis, 0.65 (95% CI: 0.30–1.00) for 50–70% stenosis, and 0.74 (95% CI: 0.54–0.94) for 70–100% stenosis (Fig. 7).
+Results of vessel-based meta-analysis for multiclass classification tasks
+Results of per-patient-based meta-analysis for multiclass classification tasks
+
+Discussion
+
+Summary of the main findings
+Deep learning is relatively accurate in detecting coronary artery stenosis, especially > 50% and < 50% stenosis. In binary classification tasks, the accuracy of deep learning models in detecting < 50% stenosis at the vessel level was 0.79 (95% CI: 0.64–0.94), and 0.73 (95% CI: 0.58–0.88) for > 50% stenosis. In the multiclass classification tasks, the accuracy was 0.86 (95% CI: 0.78–0.93) for 25–50% stenosis and 0.83 (95% CI: 0.70–0.97) for 50–70% stenosis.
+Coronary artery stenosis is often caused by atherosclerosis which narrows the coronary artery lumens. In most studies, significant stenosis is typically defined as a 50% or higher degree of stenosis. The treatment of CAD primarily relies mainly on drugs, often combined with reperfusion therapies through interventional procedures or bypass surgery. These treatments aim to improve coronary blood flow, prevent cardiovascular events, and enhance quality of life. The specific treatment approach would be formulated according to the severity and number of coronary artery stenosis. Existing studies mainly focus on significant stenosis (> 50%). Our findings demonstrate the high accuracy of deep learning in detecting stenosis > 50%, suggesting that deep learning is a feasible technique.
+Recent research has mainly used image-based techniques to detect coronary artery stenosis. Song-Bai Deng et al. reported that FFRCT showed a sensitivity of 90% (95% CI: 85–93%) and a specificity of 72% (95% CI: 67–76%) in the diagnosis of CAD. A review by Zhenhua Xing et al. described the accuracy of quantitative flow ratio (QFR) in the assessment of moderate coronary artery stenosis, with a sensitivity of 0.89 (95% CI: 0.86–0.92) and a specificity of 0.88 (95% CI: 0.86–0.91). Shun-Lin Guo reported that dual-source computed tomography (DSCT) achieved a sensitivity of 0.957 (95% CI: 0.943–0.969) and specificity of 0.930 (95% CI: 0.910–0.940) in the diagnosis of CADs when the degree of ≥ 50% was used as the threshold to define significant stenosis. Although these studies have reported promising performance of deep learning in binary classification tasks, they overlook multiclass scenarios. However, assessing varying degrees of coronary artery stenosis is prevalent in clinical practice. Hence, our comprehensive review highlights favorable performance of machine learning in the diagnosis of vascular stenosis in multiclass settings, with an accuracy rate of 0.78 (95% CI: 0.73–0.84) for 0–25% stenosis, 0.86 (95% CI: 0.78–0.93) for 25–50% stenosis, and 0.83 (95% CI: 0.70–0.97) for 50–70% stenosis.
+Image segmentation is a key technique in the field of computer vision. It involves the process of dividing an image into multiple regions or objects. In medical imaging, particularly in cardiovascular imaging, segmentation is a critical step for enhancing the diagnosis of cardiovascular diseases. Segmenting images facilitates the extraction of quantitative data, such as the degree of luminal stenosis, plaque burden, and arterial wall thicknes. Additionally, segmented images can provide a clear and detailed visual representation of the coronary arteries, which enables clinicians to easily identify areas of concern. Reproducibility in image segmentation is vital for disease detection, yet it remains a significant challenge in ongoing research. Segmented images can be integrated with other diagnostic modalities, such as CT angiography, MR angiography, or intravascular ultrasound (IVUS), to provide a comprehensive assessment of coronary artery disease. Segmentation methods include automated and semi-automated approaches based on deep learning, as well as manual segmentation. Deep learning-based segmentation reduces the time and effort required for manual segmentation and minimizes human error. In current research, segmented images are often analyzed using specialized software to extract texture features, which are then used to construct traditional machine learning models for disease diagnosis or prognosis prediction. These approaches have shown promising results. Similarly, researchers can adopt deep learning methods to directly train on segmented images for disease diagnosis. In the diagnosis of certain diseases, deep learning appears to have advantages over traditional machine learning. In the original studies included in our systematic review, the research focused on deep learning models built on image segmentation, which demonstrated promising accuracy in improving the identification of coronary artery stenosis.
+Nowadays, artificial intelligence research based on imaging faces several great challenges. The development of AI across different imaging modalities presents certain difficulties. For example, in the study by Snigdha Mohanty et al., a novel non-rigid method was introduced to register both the same and cross-imaging modalities, such as MRI, CT, and 3D rotational angiography. Even within the same modality, the impact of noise during the image segmentation process remains a serious challenge in practical applications. The speed of segmentation during the process is also a challenge, and some researchers have been exploring solutions to improve running speed. Additionally, in manual segmentation, the reproducibility of results remains a significant challenge due to the reliance on the prior knowledge of human experts.
+
+Strengths and limitations
+This study is the first to discuss the accuracy of deep learning in detecting coronary artery stenosis, providing valuable evidence for future research. However, it still has some limitations. First, despite our systematic search, the number of the included studies is limited. Therefore, more studies are required for validation in the future. Second, these studies employed diverse thresholds for defining coronary artery stenosis, with some thresholds analyzed in only a few studies. Hence, the results should be interpreted cautiously. Third, the models were mainly built on both CCTA and CAG images and seldom on CAG images, and thus the results should be interpreted with caution.
+
+Conclusions
+In summary, deep learning methods have recently gained significant attention and have been widely used in the intelligent detection of coronary artery stenosis. Our meta-analysis reveals that these methods are relatively accurate for detecting coronary artery stenosis. Existing studies focus on both binary and multiclass classification tasks, but actually, the latter appears more applicable to clinical practice. However, accurately detecting smaller degrees of stenosis in multi-class settings remains challenging. Therefore, future research is needed to develop more efficient deep learning models to enhance the detection of coronary artery stenosis.
+
+Electronic supplementary material
+Below is the link to the electronic supplementary material.
+Publisher’s note
+Springer Nature remains neutral with regard to jurisdictional claims in published maps and institutional affiliations.
+
+Author contributions
+All authors contributed to the study conception and design. Writing - original draft preparation: Li Tu; Writing - review and editing: Li Tu; Conceptualization: Li Tu; Methodology: Ying Deng, Li Tu; Formal analysis and investigation: Li Tu, Yun Chen; Funding acquisition: Ying Deng; Resources: Yun Chen, Yi Luo; Supervision: Ying Deng, Yun Chen, and all authors commented on previous versions of the manuscript. All authors read and approved the final manuscript.
+
+Funding
+This research did not receive any specific grant from funding agencies in the public, commercial, or not-for-profit sectors.
+
+Data availability
+No datasets were generated or analysed during the current study.
+
+Declarations
+
+Ethics approval and consent to participate
+Not applicable.
+
+Consent for publication
+Not applicable.
+
+Competing interests
+The authors declare no competing interests.
+
+References
+Executive Summary: Heart Disease and Stroke Statistics–2016 update: a Report from the American Heart Association
+Heart Disease and Stroke Statistics-2022 update: a Report from the American Heart Association
+Report on Cardiovascular Health and diseases in China 2022: an updated Summary
+Segmentation of coronary arteries images using spatio-temporal feature Fusion Network with Combo loss
+Prognosis after recovery from myocardial infarction: the relative importance of cardiac dilatation and coronary stenoses
+2019 ESC guidelines for the diagnosis and management of chronic coronary syndromes
+Non-invasive imaging in coronary artery disease including anatomical and functional evaluation of ischaemia and viability assessment
+Investigating the Use of Machine Learning models to understand the drugs permeability across Placenta
+Re-routing drugs to blood brain barrier: a Comprehensive Analysis of Machine Learning approaches with fingerprint amalgamation and data balancing
+Estimating age and gender from electrocardiogram signals: a comprehensive review of the past decade
+MEFood: a large-scale Representative Benchmark of Quotidian Foods for the Middle East
+Visual object tracking with adaptive structural convolutional network
+ConvUNeXt: an efficient convolution neural network for medical image segmentation
+Jafari M, Auer DP, Francis ST, Garibaldi JM, Chen X. DRU-Net: An Efficient Deep Convolutional Neural Network for Medical Image Segmentation. 2020 IEEE 17th International Symposium on Biomedical Imaging (ISBI) 2020:1144–1148.
+Advancements in Deep Learning for B-Mode Ultrasound Segmentation: a Comprehensive Review
+A lightweight neural network with multiscale feature enhancement for liver CT segmentation
+Dense-PSP-UNet: a neural network for fast inference liver ultrasound segmentation
+Xie Y, Zhang J, Shen C, Xia Y. CoTr: efficiently bridging CNN and Transformer for 3D medical image segmentation. In: 2021; Cham. Springer International Publishing; 2021. pp. 171–80.
+Practical utility of liver segmentation methods in clinical surgeries and interventions
+Risk Assessment of computer-aided Diagnostic Software for hepatic resection
+Efficacy of fusion imaging for immediate post-ablation assessment of malignant liver neoplasms: a systematic review
+Use of Artificial Intelligence and deep neural networks in evaluation of patients with Electrocardiographically concealed Long QT Syndrome from the surface 12-Lead Electrocardiogram
+QUADAS-2: a revised tool for the quality assessment of diagnostic accuracy studies
+The influence of artificial intelligence assistance on the diagnostic performance of CCTA for coronary stenosis for radiologists with different levels of experience
+AI evaluation of stenosis on coronary CTA, comparison with quantitative coronary angiography and fractional Flow Reserve: a CREDENCE Trial Substudy
+Deep learning-based end-to-end automated stenosis classification and localization on catheter coronary angiography
+Deep learning model for coronary angiography
+Performance of an Artificial Intelligence-based application for the detection of plaque-based stenosis on Monoenergetic Coronary CT Angiography: validation by Invasive Coronary Angiography
+Sehly A, He A, Jaltotage B, Lan NSR, Joyner J, Flack J, Sokolov J, Chronos N, Ko B, Chow B et al. Coronary artery stenosis and vulnerable plaque quantification on CCTA by deep learning methods. Eur Heart J 2022, 43(Supplement_2).
+Automatic coronary plaque detection, classification, and stenosis grading using deep learning and radiomics on computed tomography angiography images: a multi-center multi-vendor study
+Development of Novel Artificial Intelligence to detect the Presence of clinically meaningful coronary atherosclerotic stenosis in Major Branch from Coronary Angiography Video
+Diagnostic accuracy and generalizability of a deep learning-based fully automated algorithm for coronary artery stenosis detection on CCTA: a Multi-centre Registry Study
+CT ​evaluation ​by ​Artificial ​Intelligence ​for ​Atherosclerosis, stenosis and vascular ​morphology ​(CLARIFY): ​A ​multi-center, international study
+Deep Learning Versus radiologists Visual Assessment to identify plaque and stenosis at coronary ct angiography
+Transfer learning for stenosis detection in X-ray coronary angiography
+Deep learning analysis in coronary computed tomographic angiography imaging for the assessment of patients with coronary artery stenosis
+Automated Artificial Intelligence-based interpretation of coronary CTA: determination of stenosis severity compared with Level III Expert readers
+A recurrent CNN for Automatic Detection and classification of coronary artery plaque and stenosis in coronary CT angiography
+Diagnosis of coronary stenosis with CT angiography comparison of automated computer diagnosis with expert readings
+Effects of coronary stenoses on coronary flow reserve and resistance
+The treatment of coronary artery disease
+Diagnostic performance of noninvasive fractional flow reserve derived from coronary computed tomography angiography in coronary artery disease: a systematic review and meta-analysis
+Diagnostic performance of QFR for the evaluation of Intermediate Coronary Artery Stenosis confirmed by fractional Flow Reserve
+Diagnostic accuracy of first generation dual-source computed tomography in the assessment of coronary artery disease: a meta-analysis from 24 studies
+Use of chaos concept in medical image segmentation
+Recent advances in artificial intelligence for cardiac CT: enhancing diagnosis and prognosis prediction
+Application of quantitative Assessment of Coronary atherosclerosis by Coronary computed Tomographic Angiography
+Kumari V, Kumar N, Kumar KS, Kumar A, Skandha SS, Saxena S, Khanna NN, Laird JR, Singh N, Fouda MM et al. Deep learning paradigm and its Bias for Coronary Artery Wall Segmentation in Intravascular Ultrasound scans: a closer look. J Cardiovasc Dev Dis 2023, 10(12).
+Towards automated coronary artery segmentation: a systematic review
+AnnularCut: a graph-cut design for left ventricle segmentation from magnetic resonance images
+Automated liver tissues delineation techniques: a systematic survey on machine learning current trends and future orientations
+MRI-Based Radiomics methods for Predicting Ki-67 expression in breast Cancer: a systematic review and Meta-analysis
+The gap before real clinical application of imaging-based machine-learning and radiomic models for chemoradiation outcome prediction in esophageal cancer: a systematic review and meta-analysis
+Artificial intelligence for the diagnosis of lymph node metastases in patients with abdominopelvic malignancy: a systematic review and meta-analysis
+Toward Computing Cross-modality symmetric Non-rigid Medical Image Registration
+Semiautomated hybrid algorithm for estimation of three-dimensional liver surface in CT using dynamic cellular automata and level-sets
+LV Segmentation using Stochastic Resonance and Evolutionary Cellular Automata
+Zynq SoC based acceleration of the lattice boltzmann method

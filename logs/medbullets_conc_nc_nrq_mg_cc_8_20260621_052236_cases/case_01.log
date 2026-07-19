@@ -1,0 +1,1525 @@
+================================================================================
+CASE 1  gold=A  answer=Apical lung tumor  is_image=False
+================================================================================
+A 55-year-old male bodybuilder presents to the emergency department with weakness of his right arm. The patient states he has experienced these symptoms for a few weeks; however, today his hand felt so weak he dropped his cup of tea. The patient has a medical history of diabetes. He drinks 2-7 alcoholic drinks per day and has smoked 2 packs of cigarettes per day since he was 25. The patient uses anabolic steroids. He has lost 17 pounds since he last came to the emergency department 1 month ago. His temperature is 99.5°F (37.5°C), blood pressure is 177/108 mmHg, pulse is 90/min, respirations are 17/min, and oxygen saturation is 98% on room air. Physical exam reveals decreased sensation in the right arm and 2/5 strength in the right arm and 5/5 strength in in the left arm. The patient states that he is experiencing a dull aching and burning pain in his right arm during the exam. Symptoms are not changed with changes in head and neck position. Which of the following is the most likely diagnosis?
+
+Options:
+A. Apical lung tumor
+B. Brachial plexopathy
+C. Cerebral infarction
+D. Scalenus anticus syndrome
+E. Subclavian steal syndrome
+
+================================================================================
+
+[2026-06-21 05:24:52] >>> Module: VignetteParser
+----------------------------------------------------------------------
+SYSTEM PROMPT:
+Role: VignetteParser
+
+Parse a static clinical vignette into structured fields for downstream reasoning.
+
+Instructions:
+1. Extract ALL clinical facts from the vignette text into evidence_items.
+   Each item's "content" should be a concise, self-contained factual phrase,
+   e.g. "Chief complaint: weakness of right arm" or "BP: 177/108 mmHg".
+2. Set "kind" for each item:
+   - "direct"     : explicitly stated in the vignette (most items)
+   - "derived"    : logically inferred combination of two stated facts
+3. Copy the exact question stem into "question".
+4. List every answer option under "options" using "id" and "description".
+5. Set "vignette" to the verbatim vignette text (question and options excluded).
+6. If the text references figures or images (e.g., "Figure A", "shown in the image"),
+   add one evidence item per reference with kind "image_reference" and content set to
+   the exact phrase (e.g., "ECG shown in Figure A — image not available in text form").
+   This signals to downstream modules that critical visual data may be missing.
+
+Return strict JSON only, no markdown:
+{
+  "vignette": "verbatim case text without the question/options block",
+  "question": "Which of the following is the most likely diagnosis?",
+  "options": [
+    {"id": "A", "description": "Apical lung tumor"},
+    {"id": "B", "description": "Brachial plexopathy"}
+  ],
+  "evidence_items": [
+    {
+      "id": "E1",
+      "kind": "direct",
+      "content": "Chief complaint: right arm weakness for several weeks",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E2",
+      "kind": "direct",
+      "content": "Social history: 2 pack/day smoking since age 25",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    }
+  ]
+}
+----------------------------------------------------------------------
+USER MESSAGE:
+Module: VignetteParser
+Return strict JSON only, no markdown.
+Payload:
+{"raw_case": "A 55-year-old male bodybuilder presents to the emergency department with weakness of his right arm. The patient states he has experienced these symptoms for a few weeks; however, today his hand felt so weak he dropped his cup of tea. The patient has a medical history of diabetes. He drinks 2-7 alcoholic drinks per day and has smoked 2 packs of cigarettes per day since he was 25. The patient uses anabolic steroids. He has lost 17 pounds since he last came to the emergency department 1 month ago. His temperature is 99.5°F (37.5°C), blood pressure is 177/108 mmHg, pulse is 90/min, respirations are 17/min, and oxygen saturation is 98% on room air. Physical exam reveals decreased sensation in the right arm and 2/5 strength in the right arm and 5/5 strength in in the left arm. The patient states that he is experiencing a dull aching and burning pain in his right arm during the exam. Symptoms are not changed with changes in head and neck position. Which of the following is the most likely diagnosis?\n\nOptions:\nA. Apical lung tumor\nB. Brachial plexopathy\nC. Cerebral infarction\nD. Scalenus anticus syndrome\nE. Subclavian steal syndrome\n"}
+----------------------------------------------------------------------
+RAW LLM RESPONSE:
+{
+  "vignette": "A 55-year-old male bodybuilder presents to the emergency department with weakness of his right arm. The patient states he has experienced these symptoms for a few weeks; however, today his hand felt so weak he dropped his cup of tea. The patient has a medical history of diabetes. He drinks 2-7 alcoholic drinks per day and has smoked 2 packs of cigarettes per day since he was 25. The patient uses anabolic steroids. He has lost 17 pounds since he last came to the emergency department 1 month ago. His temperature is 99.5°F (37.5°C), blood pressure is 177/108 mmHg, pulse is 90/min, respirations are 17/min, and oxygen saturation is 98% on room air. Physical exam reveals decreased sensation in the right arm and 2/5 strength in the right arm and 5/5 strength in in the left arm. The patient states that he is experiencing a dull aching and burning pain in his right arm during the exam. Symptoms are not changed with changes in head and neck position.",
+  "question": "Which of the following is the most likely diagnosis?",
+  "options": [
+    {"id": "A", "description": "Apical lung tumor"},
+    {"id": "B", "description": "Brachial plexopathy"},
+    {"id": "C", "description": "Cerebral infarction"},
+    {"id": "D", "description": "Scalenus anticus syndrome"},
+    {"id": "E", "description": "Subclavian steal syndrome"}
+  ],
+  "evidence_items": [
+    {
+      "id": "E1",
+      "kind": "direct",
+      "content": "Chief complaint: 55-year-old male bodybuilder with right arm weakness",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E2",
+      "kind": "direct",
+      "content": "Symptoms duration: right arm weakness for several weeks",
+      "source_ids": ["E1"],
+      "independent": false,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E3",
+      "kind": "direct",
+      "content": "Acute exacerbation: dropped tea cup due to sudden right arm weakness",
+      "source_ids": ["E1"],
+      "independent": false,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E4",
+      "kind": "direct",
+      "content": "Medical history: diabetes mellitus",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E5",
+      "kind": "direct",
+      "content": "Alcohol use: 2-7 drinks per day",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E6",
+      "kind": "direct",
+      "content": "Smoking history: 2 packs/day since age 25",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E7",
+      "kind": "direct",
+      "content": "Anabolic steroid use",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E8",
+      "kind": "direct",
+      "content": "Weight loss: 17 pounds since last ED visit 1 month ago",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E9",
+      "kind": "direct",
+      "content": "Temperature: 99.5°F (37.5°C)",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E10",
+      "kind": "direct",
+      "content": "Blood pressure: 177/108 mmHg",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E11",
+      "kind": "direct",
+      "content": "Pulse: 90/min",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E12",
+      "kind": "direct",
+      "content": "Respirations: 17/min",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E13",
+      "kind": "direct",
+      "content": "Oxygen saturation: 98% on room air",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E14",
+      "kind": "direct",
+      "content": "Physical exam: decreased sensation in right arm",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E15",
+      "kind": "direct",
+      "content": "Physical exam: right arm strength 2/5",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E16",
+      "kind": "direct",
+      "content": "Physical exam: left arm strength 5/5",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E17",
+      "kind": "direct",
+      "content": "Symptoms description: dull aching and burning pain in right arm",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E18",
+      "kind": "direct",
+      "content": "Physical exam finding: symptoms unchanged with head/neck position changes",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    }
+  ]
+}
+----------------------------------------------------------------------
+PARSED RESULT:
+{
+  "vignette": "A 55-year-old male bodybuilder presents to the emergency department with weakness of his right arm. The patient states he has experienced these symptoms for a few weeks; however, today his hand felt so weak he dropped his cup of tea. The patient has a medical history of diabetes. He drinks 2-7 alcoholic drinks per day and has smoked 2 packs of cigarettes per day since he was 25. The patient uses anabolic steroids. He has lost 17 pounds since he last came to the emergency department 1 month ago. His temperature is 99.5°F (37.5°C), blood pressure is 177/108 mmHg, pulse is 90/min, respirations are 17/min, and oxygen saturation is 98% on room air. Physical exam reveals decreased sensation in the right arm and 2/5 strength in the right arm and 5/5 strength in in the left arm. The patient states that he is experiencing a dull aching and burning pain in his right arm during the exam. Symptoms are not changed with changes in head and neck position.",
+  "question": "Which of the following is the most likely diagnosis?",
+  "options": [
+    {
+      "id": "A",
+      "description": "Apical lung tumor"
+    },
+    {
+      "id": "B",
+      "description": "Brachial plexopathy"
+    },
+    {
+      "id": "C",
+      "description": "Cerebral infarction"
+    },
+    {
+      "id": "D",
+      "description": "Scalenus anticus syndrome"
+    },
+    {
+      "id": "E",
+      "description": "Subclavian steal syndrome"
+    }
+  ],
+  "evidence_items": [
+    {
+      "id": "E1",
+      "kind": "direct",
+      "content": "Chief complaint: 55-year-old male bodybuilder with right arm weakness",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E2",
+      "kind": "direct",
+      "content": "Symptoms duration: right arm weakness for several weeks",
+      "source_ids": [
+        "E1"
+      ],
+      "independent": false,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E3",
+      "kind": "direct",
+      "content": "Acute exacerbation: dropped tea cup due to sudden right arm weakness",
+      "source_ids": [
+        "E1"
+      ],
+      "independent": false,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E4",
+      "kind": "direct",
+      "content": "Medical history: diabetes mellitus",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E5",
+      "kind": "direct",
+      "content": "Alcohol use: 2-7 drinks per day",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E6",
+      "kind": "direct",
+      "content": "Smoking history: 2 packs/day since age 25",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E7",
+      "kind": "direct",
+      "content": "Anabolic steroid use",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E8",
+      "kind": "direct",
+      "content": "Weight loss: 17 pounds since last ED visit 1 month ago",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E9",
+      "kind": "direct",
+      "content": "Temperature: 99.5°F (37.5°C)",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E10",
+      "kind": "direct",
+      "content": "Blood pressure: 177/108 mmHg",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E11",
+      "kind": "direct",
+      "content": "Pulse: 90/min",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E12",
+      "kind": "direct",
+      "content": "Respirations: 17/min",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E13",
+      "kind": "direct",
+      "content": "Oxygen saturation: 98% on room air",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E14",
+      "kind": "direct",
+      "content": "Physical exam: decreased sensation in right arm",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E15",
+      "kind": "direct",
+      "content": "Physical exam: right arm strength 2/5",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E16",
+      "kind": "direct",
+      "content": "Physical exam: left arm strength 5/5",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E17",
+      "kind": "direct",
+      "content": "Symptoms description: dull aching and burning pain in right arm",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E18",
+      "kind": "direct",
+      "content": "Physical exam finding: symptoms unchanged with head/neck position changes",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    }
+  ]
+}
+================================================================================
+
+[2026-06-21 05:25:13] >>> Module: SafetyController
+----------------------------------------------------------------------
+SYSTEM PROMPT:
+Role: SafetyController
+
+Inspect the current case state and determine whether immediate intervention must occur before further diagnostic expansion.
+
+Rules:
+1. Check for universal instability markers: airway compromise, severe respiratory compromise, shock or major haemodynamic instability (hypotension, tachycardia with end-organ signs), severe altered mental status with instability, uncontrolled haemorrhage.
+2. Check for time-critical syndrome patterns that require action before the differential is fully resolved (e.g., STEMI, stroke, tension pneumothorax, septic shock, meningitis with herniation risk).
+3. If any instability criterion is met, set interrupt_active: true and list the required immediate actions.
+4. If interrupt is inactive, explicitly state which universal instability criteria were assessed and why each is not met.
+5. Do not retrieve external knowledge unless it would immediately alter emergency action without delaying stabilisation.
+
+Return strict JSON only, no markdown:
+{
+  "interrupt_active": true,
+  "reason": "brief clinical rationale",
+  "required_actions": ["action 1", "action 2"],
+  "why_not_interrupt_if_false": []
+}
+----------------------------------------------------------------------
+USER MESSAGE:
+Module: SafetyController
+Return strict JSON only, no markdown.
+Payload:
+{"case_id": "MB_1", "timestep": 1, "case_summary": "A 55-year-old male bodybuilder presents to the emergency department with weakness of his right arm. The patient states he has experienced these symptoms for a few weeks; however, today his hand felt so weak he dropped his cup of tea. The patient has a medical history of diabetes. He drinks 2-7 alcoholic drinks per day and has smoked 2 packs of cigarettes per day since he was 25. The patient uses anabolic steroids. He has lost 17 pounds since he last came to the emergency department 1 month ago. His temperature is 99.5°F (37.5°C), blood pressure is 177/108 mmHg, pulse is 90/min, respirations are 17/min, and oxygen saturation is 98% on room air. Physical exam reveals decreased sensation in the right arm and 2/5 strength in the right arm and 5/5 strength in in the left arm. The patient states that he is experiencing a dull aching and burning pain in his right arm during the exam. Symptoms are not changed with changes in head and neck position. Which of the following is the most likely diagnosis?\n\nOptions:\nA. Apical lung tumor\nB. Brachial plexopathy\nC. Cerebral infarction\nD. Scalenus anticus syndrome\nE. Subclavian steal syndrome\n", "root": null, "branches": {}, "frontier": [], "other_mass": 0.0, "actions_taken": [], "deliberation": {}, "interrupt": {"active": false, "reason": "", "required_actions": []}, "termination": {"ready_to_stop": false, "termination_type": "continue", "reason": ""}, "turn_budget_used": 0, "estimated_remaining_value": 0.0, "max_turn_budget": 5, "latest_action_type": "", "diagnosis_readiness_score": 0.0, "benchmark_output_ready": false, "static_question": "Which of the following is the most likely diagnosis?", "static_options": [{"id": "A", "description": "Apical lung tumor"}, {"id": "B", "description": "Brachial plexopathy"}, {"id": "C", "description": "Cerebral infarction"}, {"id": "D", "description": "Scalenus anticus syndrome"}, {"id": "E", "description": "Subclavian steal syndrome"}], "seen_evidence_ids": [], "seen_evidence_phenotypes": "set()", "mode_policy": {"benchmark_purity": true, "allow_external_knowledge": true}, "answer_option_mapping": {}, "root_revision_needed": false, "program_faults": [], "max_tree_depth": 3, "reasoning_ledger": {"anchor": {}, "leader": {}, "leader_evidence": {}, "action_intents": [], "considered_alternatives": []}}
+----------------------------------------------------------------------
+RAW LLM RESPONSE:
+{
+  "interrupt_active": false,
+  "reason": "",
+  "required_actions": [],
+  "why_not_interrupt_if_false": [
+    "No airway compromise: patient has normal oxygen saturation (98% on room air) and no signs of airway obstruction.",
+    "No severe respiratory compromise: respiratory rate is 17/min (normal) and oxygen saturation is adequate.",
+    "No shock/haemodynamic instability: blood pressure is elevated (177/108 mmHg) but not hypotensive; no end-organ signs (e.g., altered mental status, oliguria).",
+    "No uncontrolled haemorrhage: no evidence of active bleeding or haemodynamic instability.",
+    "No acute neurological instability requiring immediate action (e.g., stroke with sudden hemiparesis): symptoms are subacute (weeks duration) and not consistent with acute stroke (e.g., no facial droop, no language deficits, no rapid progression).",
+    "No signs of herniation or other time-critical neurological emergencies."
+  ]
+}
+----------------------------------------------------------------------
+PARSED RESULT:
+{
+  "interrupt_active": false,
+  "reason": "",
+  "required_actions": [],
+  "why_not_interrupt_if_false": [
+    "No airway compromise: patient has normal oxygen saturation (98% on room air) and no signs of airway obstruction.",
+    "No severe respiratory compromise: respiratory rate is 17/min (normal) and oxygen saturation is adequate.",
+    "No shock/haemodynamic instability: blood pressure is elevated (177/108 mmHg) but not hypotensive; no end-organ signs (e.g., altered mental status, oliguria).",
+    "No uncontrolled haemorrhage: no evidence of active bleeding or haemodynamic instability.",
+    "No acute neurological instability requiring immediate action (e.g., stroke with sudden hemiparesis): symptoms are subacute (weeks duration) and not consistent with acute stroke (e.g., no facial droop, no language deficits, no rapid progression).",
+    "No signs of herniation or other time-critical neurological emergencies."
+  ]
+}
+================================================================================
+
+[2026-06-21 05:25:40] >>> Module: RootSelector
+----------------------------------------------------------------------
+SYSTEM PROMPT:
+Role: RootSelector
+
+Choose the best ROOT NODE for the current diagnostic problem. The root node is NOT
+a diagnosis — it is the clinical syndrome frame that OPENS and organises the entire
+differential space. It must encode the pathophysiological pattern while preserving
+all plausible competing mechanisms for downstream branch generation.
+
+━━━ What makes a GOOD root node ━━━
+A good root encodes at least two of:
+  (a) Anatomical localisation  — where the lesion likely resides (cortex / cord /
+      plexus / peripheral nerve / vascular / systemic / visceral mass …)
+  (b) Temporal pattern         — acute (<24 h), subacute (days–weeks),
+      chronic-progressive (months–years)
+  (c) PRIMARY presenting syndrome — the chief complaint or dominant symptom cluster
+  (d) Alarming systemic context — constitutional features (weight loss, fever,
+      night sweats), high-danger urgency tier, significant risk-factor cluster
+
+Good examples of syndrome-frame labels (not diagnoses):
+  ✓ "Subacute Progressive Unilateral Upper-Limb Motor-Sensory Deficit with
+     Constitutional Alarm Signs"
+  ✓ "Acute Syncope of Uncertain Aetiology with Uncharacterised ECG Abnormality"
+  ✓ "Acute Chest Pain Syndrome with Suspected Ischaemic or Arrhythmic Aetiology"
+  ✓ "Subacute Bilateral Lower-Limb Weakness with Bladder Dysfunction (Cord Level)"
+  ✓ "Chronic Progressive Multisystem Syndrome with Connective-Tissue Features"
+
+What SEPARATES a syndrome frame from a premature diagnosis:
+  FRAME  → names the presenting pattern; leaves mechanism open to branches
+  DIAGNOSIS → names the specific disease (closes the differential)
+  Example:
+    ✗ "Pancoast Tumour Syndrome"         — names a specific disease (diagnosis)
+    ✓ "Subacute Unilateral Upper-Limb Neurological Deficit with Apical Alarm Signs"
+                                          — frame that includes Pancoast IN the differential
+
+━━━ What is FORBIDDEN ━━━
+  ✗ Paraphrasing the chief complaint only: "Acute Right Arm Weakness Syndrome"
+  ✗ Single-symptom labels:               "Right Arm Weakness"
+  ✗ Naming a specific disease:           "Pancoast Tumour Syndrome", "ACS Syndrome"
+  ✗ Vague filler:                        "Neurological Syndrome", "Cardiac Event"
+  ✗ Replacing the primary presenting syndrome with an image qualifier:
+      BAD : "Acute Cardiovascular Event with Uncharacterised ECG Abnormality"
+            (drops "syncope", the chief complaint)
+      GOOD: "Acute Syncope of Uncertain Aetiology with Uncharacterised ECG Abnormality"
+
+━━━ Algorithm ━━━
+1. Enumerate ALL key findings (not just the chief complaint):
+   motor/sensory deficits, constitutional features, risk factors,
+   vital-sign abnormalities, exam asymmetries, time course.
+2. Identify the PRIMARY presenting syndrome (the organising symptom cluster).
+3. Enumerate ALL plausible mechanism categories that could explain the findings:
+   cardiac, vascular, neurological, metabolic, neoplastic, infectious, toxic,
+   vasovagal, orthostatic, structural, inflammatory, etc.
+4. Compose a root label in this fixed order:
+     [temporal pattern]
+   + [PRIMARY presenting syndrome]
+   + [aetiology phrase — must remain OPEN: "of Uncertain Aetiology",
+     "with Possible Cardiac or Vasovagal Aetiology", "of Suspected Cardiac
+     or Orthostatic Origin"; name 1–2 COMPETING mechanisms, not a single
+     committed one, unless the evidence is near-conclusive (≥ 0.85 confidence)]
+   + [image-reference qualifier if a Figure is referenced but not described:
+     "with Uncharacterised ECG Abnormality"]
+5. Populate excluded_root_candidates with ALL plausible competing mechanisms
+   you considered but ranked lower — include brief reasons. This is a
+   COMPETING-MECHANISM REGISTER, not just a list of clearly impossible options.
+6. Neuroanatomical localisation (usually applicable, not absolute):
+   - Ipsilateral cranial nerve deficit + contralateral limb motor/sensory loss
+     → most likely BRAINSTEM or cervico-medullary junction; also consider
+       spinal cord demyelination — note in excluded_root_candidates
+   - Contralateral face + contralateral limb deficits → most likely hemisphere
+   - Bilateral lower-limb motor/sensory loss ± bladder → spinal cord
+   - Unilateral arm ± shoulder pain ± Horner + apical risk factors
+     → brachial plexus / apex of lung (T1/C8 territory)
+   These are typical patterns; include exceptions in excluded_root_candidates.
+7. If the root node already exists and new evidence contradicts it, set
+   need_root_revision: true.
+
+━━━ Evidence hierarchy (when history and objective findings conflict) ━━━
+Objective findings carry HIGHER WEIGHT than subjective history when naming the root:
+  Tier 1 (highest): ECG findings, imaging reports, pathology / biopsy results
+  Tier 2:           Lab values that define a physiological state
+  Tier 3:           Physical examination findings
+  Tier 4:           Vital-sign pattern
+  Tier 5 (lowest):  Patient-reported history, risk factors, social history
+
+Higher tiers carry more weight, but patient-reported history is NEVER discarded —
+it must appear in supporting_facts or alarm_features even when overridden.
+
+Example: A patient faints and attributes it to dehydration, but ECG (Tier 1)
+shows a conduction abnormality → root must acknowledge the cardiac finding.
+The dehydration narrative goes in excluded_root_candidates as a lower-tier
+explanation that remains a valid differential contributor.
+
+━━━ Constraints ━━━
+- When Tier-1 or Tier-2 data is present, its domain MUST appear in the root label
+  or in excluded_root_candidates with explicit reasoning.
+- If an evidence item of kind "image_reference" exists (e.g., "ECG shown in
+  Figure A — image not available"), treat it as Tier-1 with UNKNOWN content.
+  The root label MUST acknowledge the unresolved finding (e.g., "with
+  Uncharacterised ECG Abnormality"). Set confidence ≤ 0.5.
+- Do NOT use an isolated lab value or a single vital-sign reading as the root.
+- IGNORE any answer-option list that may appear in the payload — the root is a
+  syndrome frame derived from clinical findings only, not from the options.
+- External knowledge retrieval is permitted only if the case frame is genuinely
+  rare or specialty-specific.
+
+━━━ Domain-specific rules (apply when context matches) ━━━
+
+NEONATAL / INFANTILE MULTISYSTEM PRESENTATIONS (age < 6 months):
+  When two or more of the following coexist — jaundice, hepatosplenomegaly,
+  failure to thrive / weight loss, neurological signs, cataracts / visual
+  impairment, hypoglycaemia — metabolic and genetic disorders (inborn errors of
+  metabolism: galactosaemia, organic acidaemias, urea-cycle defects, lysosomal
+  storage disorders, etc.) MUST be listed as a HIGH-PRIORITY competing mechanism
+  in excluded_root_candidates. Multisystem involvement in this age group INCREASES
+  — not decreases — the probability of a metabolic/genetic aetiology. Reasoning
+  such as "less likely because it is multisystem" is clinically incorrect in this
+  context and is FORBIDDEN.
+
+POST-EXERTION ALTERED MENTAL STATUS (marathon, endurance sport, military drill):
+  When strenuous exertion context is present alongside AMS, BOTH of the following
+  competing mechanisms MUST appear in excluded_root_candidates, because they
+  require opposite treatment and cannot be conflated:
+  (a) Exercise-associated hyponatremia (EAH) — excessive hypotonic fluid intake
+      → dilutional hyponatraemia → cerebral oedema; treat with hypertonic or
+      isotonic saline, NOT free water.
+  (b) Exertional heat stroke (EHS) — hyperthermia from impaired heat dissipation
+      → direct cellular damage; treat with rapid cooling.
+  The root label aetiology phrase must reflect BOTH: e.g., "with Possible
+  Hyponatraemic or Hyperthermic Aetiology" rather than anchoring on hyperthermia
+  alone. Confidence must be ≤ 0.6 until serum sodium is known.
+
+Return strict JSON only, no markdown:
+{
+  "root_label": "syndrome-frame label following the algorithm above",
+  "time_course": "acute | subacute | chronic | unspecified",
+  "supporting_facts": [
+    "key finding used in root selection"
+  ],
+  "excluded_root_candidates": [
+    "Competing mechanism A: reason ranked lower but not excluded",
+    "Competing mechanism B: reason ranked lower but not excluded"
+  ],
+  "alarm_features": ["constitutional / urgency feature"],
+  "need_external_knowledge": false,
+  "knowledge_query_if_needed": "",
+  "need_root_revision": false,
+  "revision_reason": "",
+  "confidence": 0.0
+}
+----------------------------------------------------------------------
+USER MESSAGE:
+Module: RootSelector
+Return strict JSON only, no markdown.
+Payload:
+{"case_id": "MB_1", "timestep": 1, "case_summary": "A 55-year-old male bodybuilder presents to the emergency department with weakness of his right arm. The patient states he has experienced these symptoms for a few weeks; however, today his hand felt so weak he dropped his cup of tea. The patient has a medical history of diabetes. He drinks 2-7 alcoholic drinks per day and has smoked 2 packs of cigarettes per day since he was 25. The patient uses anabolic steroids. He has lost 17 pounds since he last came to the emergency department 1 month ago. His temperature is 99.5°F (37.5°C), blood pressure is 177/108 mmHg, pulse is 90/min, respirations are 17/min, and oxygen saturation is 98% on room air. Physical exam reveals decreased sensation in the right arm and 2/5 strength in the right arm and 5/5 strength in in the left arm. The patient states that he is experiencing a dull aching and burning pain in his right arm during the exam. Symptoms are not changed with changes in head and neck position. Which of the following is the most likely diagnosis?\n[Answer options redacted — use clinical findings only]", "root": null, "other_mass": 0.0, "interrupt": {"active": false, "reason": "", "required_actions": []}, "termination": {"ready_to_stop": false, "termination_type": "continue", "reason": ""}, "turn_budget_used": 0, "estimated_remaining_value": 0.0, "max_turn_budget": 5, "latest_action_type": "", "diagnosis_readiness_score": 0.0, "benchmark_output_ready": false, "static_question": "Which of the following is the most likely diagnosis?", "static_options": [], "seen_evidence_ids": [], "seen_evidence_phenotypes": "set()", "mode_policy": {"benchmark_purity": true, "allow_external_knowledge": true}, "answer_option_mapping": {}, "root_revision_needed": false, "program_faults": [], "max_tree_depth": 3, "reasoning_ledger": {"anchor": {}, "leader": {}, "leader_evidence": {}, "action_intents": [], "considered_alternatives": []}}
+----------------------------------------------------------------------
+RAW LLM RESPONSE:
+{
+  "root_label": "Subacute Unilateral Upper-Limb Motor-Sensory Deficit with Constitutional Alarm Signs",
+  "time_course": "subacute",
+  "supporting_facts": [
+    "Progressive right arm weakness and sensory loss over weeks",
+    "Constitutional symptoms: weight loss (17 lbs) and low-grade fever",
+    "High-risk factors: chronic smoking (2 packs/day since age 25) and systemic steroid use",
+    "Ipsilateral motor/sensory findings (right arm) with apical risk profile"
+  ],
+  "excluded_root_candidates": [
+    "Cervical radiculopathy: symptoms unchanged with head/neck position",
+    "Diabetic peripheral neuropathy: unilateral pattern atypical for symmetric neuropathy",
+    "Steroid-induced vasculopathy: possible but lacks definitive vascular signs (e.g., claudication)"
+  ],
+  "alarm_features": [
+    "Unintentional weight loss (17 lbs in 1 month)",
+    "Chronic smoking history (apical lung concern)",
+    "Systemic motor-sensory deficit with constitutional symptoms"
+  ],
+  "need_external_knowledge": false,
+  "knowledge_query_if_needed": "",
+  "need_root_revision": false,
+  "revision_reason": "",
+  "confidence": 0.6
+}
+----------------------------------------------------------------------
+PARSED RESULT:
+{
+  "root_label": "Subacute Unilateral Upper-Limb Motor-Sensory Deficit with Constitutional Alarm Signs",
+  "time_course": "subacute",
+  "supporting_facts": [
+    "Progressive right arm weakness and sensory loss over weeks",
+    "Constitutional symptoms: weight loss (17 lbs) and low-grade fever",
+    "High-risk factors: chronic smoking (2 packs/day since age 25) and systemic steroid use",
+    "Ipsilateral motor/sensory findings (right arm) with apical risk profile"
+  ],
+  "excluded_root_candidates": [
+    "Cervical radiculopathy: symptoms unchanged with head/neck position",
+    "Diabetic peripheral neuropathy: unilateral pattern atypical for symmetric neuropathy",
+    "Steroid-induced vasculopathy: possible but lacks definitive vascular signs (e.g., claudication)"
+  ],
+  "alarm_features": [
+    "Unintentional weight loss (17 lbs in 1 month)",
+    "Chronic smoking history (apical lung concern)",
+    "Systemic motor-sensory deficit with constitutional symptoms"
+  ],
+  "need_external_knowledge": false,
+  "knowledge_query_if_needed": "",
+  "need_root_revision": false,
+  "revision_reason": "",
+  "confidence": 0.6
+}
+================================================================================
+
+[2026-06-21 05:27:24] >>> Module: BranchCreator
+----------------------------------------------------------------------
+SYSTEM PROMPT:
+Role: BranchCreator
+
+Generate schema-level competing branches under the current root node.
+
+IMPORTANT: You are creating Level-1 branches directly under the root node ONLY.
+Do NOT attempt to create sub-branches within branches. Sub-branch creation is
+handled by a separate SubBranchCreator module called later in the cycle.
+Keep all generated branches at the same abstraction level (diagnosis-family level).
+
+═══ MANDATORY NAMING RULE (ENFORCED) ═══
+Branch labels MUST be BROAD FAMILY names, NEVER specific disease names.
+FORBIDDEN labels: "Acute Myeloid Leukemia", "CML", "Pneumonia", "Crohn's Disease"
+REQUIRED labels:  "Myeloid Neoplasm with Increased Blasts", "Chronic MPN",
+                  "Lower Respiratory Infection", "Inflammatory Bowel Disease"
+
+If ANY branch label is a specific disease entity rather than a family, your
+output is INVALID. Test: can the label encompass 2+ distinct disease entities?
+If not, broaden it.
+
+═══ MANDATORY PHASE-CROSSING RULE (ENFORCED) ═══
+When blasts (≥20%) or other acute features are present AND chronic disease
+families are plausible, you MUST:
+
+1. Name the blast-bearing family by PRESENTATION PATTERN, not by a single
+   disease:
+     WRONG:  "Acute Myeloid Leukemia"
+     RIGHT:  "Myeloid Neoplasm with Increased Blasts"
+   The right label covers de novo AML AND CML blast crisis AND MDS-EB.
+
+2. Create a SEPARATE chronic family for chronic-phase entities only:
+     "Chronic Myeloproliferative Neoplasm (chronic/accelerated phase)"
+
+3. Both families MUST be live until discriminating evidence (BCR-ABL,
+   cytogenetics, bone-marrow biopsy) is available.
+
+Mandatory haematological malignancy template (use when blasts are present):
+  B1 "Myeloid Neoplasm with Increased Blasts"
+     (de novo AML, CML blast crisis, MDS with excess blasts)
+  B2 "Lymphoid Neoplasm with Increased Blasts"
+     (ALL, lymphoblastic lymphoma)
+  B3 "Chronic Myeloproliferative Neoplasm"
+     (CML chronic/accelerated phase, PV, ET, PMF)
+  B4 "Lymphoproliferative / Plasma Cell Disorder"
+     (CLL, lymphoma, myeloma)
+  B5 "Reactive / Non-malignant Leukocytosis"
+     (leukemoid reaction, infection)
+
+═══════════════════════════════════════════
+
+Instructions:
+- All siblings must be at comparable abstraction levels (diagnosis-family, NOT
+  mixed with specific diseases or subtypes).
+- Include at least one can't-miss branch (high danger score, even if low prior
+  probability) whenever the clinical context warrants it.
+- Apply the branch inclusion rule: keep branch B if ANY of the following hold:
+    plausibility(B) > test_threshold (0.05)
+    OR danger(B) >= 0.7
+    OR B uniquely explains unresolved critical evidence
+- Default frontier policy: 2-4 live branches, 1-2 parked branches, optional
+  residual OTHER.
+- When the root node involves a process with both ACUTE and CHRONIC / SUBACUTE
+  presentations, you MUST create SEPARATE branches for each major temporal
+  category.
+- For each branch, estimate the fields that allow the controller to score leaf
+  actions:
+    askable_discriminators: questions that could help separate this branch from
+      competitors
+    requestable_discriminators: tests or exams that could separate this branch
+    turn_cost_to_refine: approximate number of turns needed to resolve this branch
+    diagnosis_commitment_gain: how much confirming this branch would raise
+      diagnosis readiness (0-1)
+    interrupt_relevance: how urgent this branch is if confirmed (0-1)
+- Annotate each branch with level_role (always "family" for Level-1 branches)
+  and classification_axis (the axis used to distinguish siblings from each other).
+  Valid classification_axis values: anatomy|mechanism|urgency|management_pathway|
+  test_pathway|etiology|risk_context|severity|other
+- External knowledge retrieval is permitted only if the diagnostic schema is
+  unclear or rare.
+
+Return strict JSON only, no markdown:
+{
+  "branches": [
+    {
+      "id": "B1",
+      "label": "diagnosis family label (MUST be broad family, NOT specific disease)",
+      "status": "live",
+      "prior_estimate": 0.0,
+      "danger": 0.0,
+      "level_role": "family",
+      "classification_axis": "mechanism",
+      "askable_discriminators": ["question 1"],
+      "requestable_discriminators": ["test 1"],
+      "turn_cost_to_refine": 1.0,
+      "diagnosis_commitment_gain": 0.0,
+      "interrupt_relevance": 0.0,
+      "why_included": "reason"
+    }
+  ],
+  "frontier": ["B1", "B2"],
+  "need_external_knowledge": false,
+  "knowledge_query_if_needed": ""
+}
+----------------------------------------------------------------------
+USER MESSAGE:
+Module: BranchCreator
+Return strict JSON only, no markdown.
+Payload:
+{"case_id": "MB_1", "timestep": 1, "case_summary": "A 55-year-old male bodybuilder presents to the emergency department with weakness of his right arm. The patient states he has experienced these symptoms for a few weeks; however, today his hand felt so weak he dropped his cup of tea. The patient has a medical history of diabetes. He drinks 2-7 alcoholic drinks per day and has smoked 2 packs of cigarettes per day since he was 25. The patient uses anabolic steroids. He has lost 17 pounds since he last came to the emergency department 1 month ago. His temperature is 99.5°F (37.5°C), blood pressure is 177/108 mmHg, pulse is 90/min, respirations are 17/min, and oxygen saturation is 98% on room air. Physical exam reveals decreased sensation in the right arm and 2/5 strength in the right arm and 5/5 strength in in the left arm. The patient states that he is experiencing a dull aching and burning pain in his right arm during the exam. Symptoms are not changed with changes in head and neck position. Which of the following is the most likely diagnosis?\n\nOptions:\nA. Apical lung tumor\nB. Brachial plexopathy\nC. Cerebral infarction\nD. Scalenus anticus syndrome\nE. Subclavian steal syndrome\n", "root": {"label": "Subacute Unilateral Upper-Limb Motor-Sensory Deficit with Constitutional Alarm Signs", "time_course": "subacute", "severity": "unspecified", "confidence": 0.6, "supporting_facts": ["Progressive right arm weakness and sensory loss over weeks", "Constitutional symptoms: weight loss (17 lbs) and low-grade fever", "High-risk factors: chronic smoking (2 packs/day since age 25) and systemic steroid use", "Ipsilateral motor/sensory findings (right arm) with apical risk profile"], "excluded_candidates": ["Cervical radiculopathy: symptoms unchanged with head/neck position", "Diabetic peripheral neuropathy: unilateral pattern atypical for symmetric neuropathy", "Steroid-induced vasculopathy: possible but lacks definitive vascular signs (e.g., claudication)"], "alarm_features": ["Unintentional weight loss (17 lbs in 1 month)", "Chronic smoking history (apical lung concern)", "Systemic motor-sensory deficit with constitutional symptoms"]}, "branches": {}, "frontier": [], "other_mass": 0.0, "differential_history": [], "interrupt": {"active": false, "reason": "", "required_actions": []}, "termination": {"ready_to_stop": false, "termination_type": "continue", "reason": ""}, "turn_budget_used": 0, "estimated_remaining_value": 0.0, "max_turn_budget": 5, "latest_action_type": "", "diagnosis_readiness_score": 0.0, "benchmark_output_ready": false, "static_question": "Which of the following is the most likely diagnosis?", "static_options": [{"id": "A", "description": "Apical lung tumor"}, {"id": "B", "description": "Brachial plexopathy"}, {"id": "C", "description": "Cerebral infarction"}, {"id": "D", "description": "Scalenus anticus syndrome"}, {"id": "E", "description": "Subclavian steal syndrome"}], "seen_evidence_ids": [], "seen_evidence_phenotypes": "set()", "mode_policy": {"benchmark_purity": true, "allow_external_knowledge": true}, "answer_option_mapping": {}, "root_revision_needed": false, "program_faults": [], "max_tree_depth": 3, "reasoning_ledger": {"anchor": {}, "leader": {}, "leader_evidence": {}, "action_intents": [], "considered_alternatives": []}}
+----------------------------------------------------------------------
+RAW LLM RESPONSE:
+{
+  "branches": [
+    {
+      "id": "B1",
+      "label": "Pulmonary Neoplasm with Constitutional Symptoms",
+      "status": "live",
+      "prior_estimate": 0.3,
+      "danger": 0.8,
+      "level_role": "family",
+      "classification_axis": "anatomy",
+      "askable_discriminators": [
+        "Do you have a history of cough or hemoptysis?",
+        "Have you noticed any chest wall mass or swelling?"
+      ],
+      "requestable_discriminators": [
+        "Chest imaging (CT scan)",
+        "Sputum cytology"
+      ],
+      "turn_cost_to_refine": 2.0,
+      "diagnosis_commitment_gain": 0.7,
+      "interrupt_relevance": 0.9,
+      "why_included": "Alcohol and smoking history raise concern for apical lung pathology; constitutional symptoms (weight loss, fever) suggest malignancy or chronic infection"
+    },
+    {
+      "id": "B2",
+      "label": "Brachial Plexus Lesion",
+      "status": "live",
+      "prior_estimate": 0.25,
+      "danger": 0.5,
+      "level_role": "family",
+      "classification_axis": "mechanism",
+      "askable_discriminators": [
+        "Have you experienced any neck or shoulder trauma recently?",
+        "Do symptoms radiate from the neck to the arm?"
+      ],
+      "requestable_discriminators": [
+        "Nerve conduction studies",
+        "Upper thoracic MRI"
+      ],
+      "turn_cost_to_refine": 2.0,
+      "diagnosis_commitment_gain": 0.6,
+      "interrupt_relevance": 0.6,
+      "why_included": "Bodybuilding activity and anabolic steroid use increase risk of brachial plexus injury; unilateral pattern fits"
+    },
+    {
+      "id": "B3",
+      "label": "Cerebrovascular Event",
+      "status": "live",
+      "prior_estimate": 0.2,
+      "danger": 0.7,
+      "level_role": "family",
+      "classification_axis": "anatomy",
+      "askable_discriminators": [
+        "Any sudden headache or visual changes?",
+        "History of atrial fibrillation or hypercoagulable state?"
+      ],
+      "requestable_discriminators": [
+        "Brain MRI with diffusion-weighted imaging",
+        "ECG and cardiac monitoring"
+      ],
+      "turn_cost_to_refine": 1.5,
+      "diagnosis_commitment_gain": 0.8,
+      "interrupt_relevance": 0.75,
+      "why_included": "High risk of stroke in diabetic patient with hypertension; subacute presentation could reflect delayed neurological recovery"
+    },
+    {
+      "id": "B4",
+      "label": "Vascular Compression Syndrome",
+      "status": "live",
+      "prior_estimate": 0.15,
+      "danger": 0.4,
+      "level_role": "family",
+      "classification_axis": "mechanism",
+      "askable_discriminators": [
+        "Do symptoms worsen with arm elevation or shoulder movement?",
+        "Any pulsatile mass or bruit in the neck?"
+      ],
+      "requestable_discriminators": [
+        "Doppler ultrasound of subclavian arteries",
+        "CT angiography"
+      ],
+      "turn_cost_to_refine": 1.0,
+      "diagnosis_commitment_gain": 0.5,
+      "interrupt_relevance": 0.4,
+      "why_included": "Bodybuilder anatomy (muscle hypertrophy) may compress vascular structures; unilateral presentation is characteristic"
+    },
+    {
+      "id": "B5",
+      "label": "Systemic/Neoplastic Process",
+      "status": "parked",
+      "prior_estimate": 0.1,
+      "danger": 0.9,
+      "level_role": "family",
+      "classification_axis": "etiology",
+      "askable_discriminators": [
+        "Have you noticed any other new or unusual symptoms?",
+        "Any history of other malignancies or night sweats?"
+      ],
+      "requestable_discriminators": [
+        "PET-CT scan",
+        "Biopsy of any suspicious lymph nodes"
+      ],
+      "turn_cost_to_refine": 3.0,
+      "diagnosis_commitment_gain": 0.9,
+      "interrupt_relevance": 0.85,
+      "why_included": "Constitutional symptoms (weight loss, fever) and risk factors (smoking, steroid use) raise concern for systemic malignancy; requires broader workup"
+    }
+  ],
+  "frontier": ["B1", "B2", "B3", "B4"],
+  "need_external_knowledge": false,
+  "knowledge_query_if_needed": ""
+}
+----------------------------------------------------------------------
+PARSED RESULT:
+{
+  "branches": [
+    {
+      "id": "B1",
+      "label": "Pulmonary Neoplasm with Constitutional Symptoms",
+      "status": "live",
+      "prior_estimate": 0.3,
+      "danger": 0.8,
+      "level_role": "family",
+      "classification_axis": "anatomy",
+      "askable_discriminators": [
+        "Do you have a history of cough or hemoptysis?",
+        "Have you noticed any chest wall mass or swelling?"
+      ],
+      "requestable_discriminators": [
+        "Chest imaging (CT scan)",
+        "Sputum cytology"
+      ],
+      "turn_cost_to_refine": 2.0,
+      "diagnosis_commitment_gain": 0.7,
+      "interrupt_relevance": 0.9,
+      "why_included": "Alcohol and smoking history raise concern for apical lung pathology; constitutional symptoms (weight loss, fever) suggest malignancy or chronic infection"
+    },
+    {
+      "id": "B2",
+      "label": "Brachial Plexus Lesion",
+      "status": "live",
+      "prior_estimate": 0.25,
+      "danger": 0.5,
+      "level_role": "family",
+      "classification_axis": "mechanism",
+      "askable_discriminators": [
+        "Have you experienced any neck or shoulder trauma recently?",
+        "Do symptoms radiate from the neck to the arm?"
+      ],
+      "requestable_discriminators": [
+        "Nerve conduction studies",
+        "Upper thoracic MRI"
+      ],
+      "turn_cost_to_refine": 2.0,
+      "diagnosis_commitment_gain": 0.6,
+      "interrupt_relevance": 0.6,
+      "why_included": "Bodybuilding activity and anabolic steroid use increase risk of brachial plexus injury; unilateral pattern fits"
+    },
+    {
+      "id": "B3",
+      "label": "Cerebrovascular Event",
+      "status": "live",
+      "prior_estimate": 0.2,
+      "danger": 0.7,
+      "level_role": "family",
+      "classification_axis": "anatomy",
+      "askable_discriminators": [
+        "Any sudden headache or visual changes?",
+        "History of atrial fibrillation or hypercoagulable state?"
+      ],
+      "requestable_discriminators": [
+        "Brain MRI with diffusion-weighted imaging",
+        "ECG and cardiac monitoring"
+      ],
+      "turn_cost_to_refine": 1.5,
+      "diagnosis_commitment_gain": 0.8,
+      "interrupt_relevance": 0.75,
+      "why_included": "High risk of stroke in diabetic patient with hypertension; subacute presentation could reflect delayed neurological recovery"
+    },
+    {
+      "id": "B4",
+      "label": "Vascular Compression Syndrome",
+      "status": "live",
+      "prior_estimate": 0.15,
+      "danger": 0.4,
+      "level_role": "family",
+      "classification_axis": "mechanism",
+      "askable_discriminators": [
+        "Do symptoms worsen with arm elevation or shoulder movement?",
+        "Any pulsatile mass or bruit in the neck?"
+      ],
+      "requestable_discriminators": [
+        "Doppler ultrasound of subclavian arteries",
+        "CT angiography"
+      ],
+      "turn_cost_to_refine": 1.0,
+      "diagnosis_commitment_gain": 0.5,
+      "interrupt_relevance": 0.4,
+      "why_included": "Bodybuilder anatomy (muscle hypertrophy) may compress vascular structures; unilateral presentation is characteristic"
+    },
+    {
+      "id": "B5",
+      "label": "Systemic/Neoplastic Process",
+      "status": "parked",
+      "prior_estimate": 0.1,
+      "danger": 0.9,
+      "level_role": "family",
+      "classification_axis": "etiology",
+      "askable_discriminators": [
+        "Have you noticed any other new or unusual symptoms?",
+        "Any history of other malignancies or night sweats?"
+      ],
+      "requestable_discriminators": [
+        "PET-CT scan",
+        "Biopsy of any suspicious lymph nodes"
+      ],
+      "turn_cost_to_refine": 3.0,
+      "diagnosis_commitment_gain": 0.9,
+      "interrupt_relevance": 0.85,
+      "why_included": "Constitutional symptoms (weight loss, fever) and risk factors (smoking, steroid use) raise concern for systemic malignancy; requires broader workup"
+    }
+  ],
+  "frontier": [
+    "B1",
+    "B2",
+    "B3",
+    "B4"
+  ],
+  "need_external_knowledge": false,
+  "knowledge_query_if_needed": ""
+}
+================================================================================
+
+2026-06-21 05:27:24,644 INFO agentclinic_tree_dx.controller: AGE-PRIOR age=55 sex=male adjusted 1 branch(es): {'Pulmonary Neoplasm with Constitutional Symptoms': 1.3}
+[2026-06-21 05:28:31] >>> Module: TemporaryAnalyticLeafPlanner
+----------------------------------------------------------------------
+SYSTEM PROMPT:
+Role: TemporaryAnalyticLeafPlanner
+
+You are reasoning over a FIXED clinical vignette (no real patient interaction). All
+evidence is pre-given in the case text. Your task is to generate structured analytic
+candidates for each live branch, then let the downstream bundler select the final set.
+
+Action types available:
+- ANALYZE_VIGNETTE : analyse how specific evidence bears on a branch
+- DIAGNOSIS_READY  : declare the differential resolved when evidence is conclusive
+
+Instructions:
+
+1. For EACH live branch in state.frontier, generate EXACTLY 2 candidates:
+
+   (a) A CONFIRM candidate — analyse the evidence that BEST SUPPORTS this branch.
+       Set target_branches[branch_id] = "support".
+       Set primary_function = "confirm".
+       Set falsification_value = 0.0.
+
+   (b) A CHALLENGE candidate — analyse the evidence that is MOST INCONSISTENT
+       with this branch. This is a self-challenge: you are looking for reasons
+       why this branch might be WRONG, not why it is right.
+       Set target_branches[branch_id] = "against".
+       Set primary_function = "challenge".
+       Set falsification_value = estimated probability displacement if the
+       inconsistency is confirmed (0.0-1.0).
+
+   If you cannot identify any inconsistent evidence for a branch, set the
+   challenge candidate's content to:
+   "No contradicting evidence identified for [branch label]; all available
+   findings are consistent."
+   and set expected_information_gain = 0.0 (it will be filtered).
+
+   EXCEPTION: for branches with danger >= 0.7 AND posterior < 0.15, replace
+   the confirm candidate with a SAFETY_ENSURE candidate:
+       Set primary_function = "safety_ensure".
+       This candidate should analyse whether any evidence RULES OUT this
+       dangerous diagnosis — failing to do so is a safety gap.
+
+2. For EACH candidate, fill target_branches as a DICTIONARY mapping EVERY
+   materially affected branch to its expected impact direction:
+     "support"  — the analysis result is expected to favor this branch
+     "against"  — the analysis result is expected to disfavor this branch
+     "neutral"  — the branch is affected but direction is uncertain
+
+   The directions of different branches CAN and often SHOULD differ for the
+   same candidate. Example: an analysis showing that subacute onset favors CML
+   should have target_branches = {"B1(AML)": "against", "B2(CML)": "support"}.
+
+3. Score each candidate (all components 0-1):
+     LeafScore = ExpectedInformationGain
+               + SafetyValue
+               + ActionSeparationValue
+               + FalsificationValue
+   (CostPenalty / DelayPenalty / InvasivenessPenalty = 0 for analytic steps)
+
+4. Content should be a precise, branch-specific question about the vignette
+   evidence. Do NOT write generic questions that apply to all branches.
+   Good: "Does the subacute onset over days with constitutional symptoms
+          argue against de novo AML in favor of a chronic process?"
+   Bad:  "Analyze the evidence for this branch."
+
+5. Set bundle_independence = 1.0 and result_dependency = false for all
+   analytic steps (they are independent since evidence is fixed).
+
+6. Once one branch achieves clear dominance (posterior > 0.75 and no
+   dangerous alternative), use DIAGNOSIS_READY as the top-ranked candidate.
+
+Return strict JSON only, no markdown:
+{
+  "candidate_leaves_ranked": [
+    {
+      "branch_id": "B1",
+      "type": "ANALYZE_VIGNETTE",
+      "content": "precise analytic question",
+      "score": 0.0,
+      "expected_information_gain": 0.0,
+      "safety_value": 0.0,
+      "action_separation_value": 0.0,
+      "falsification_value": 0.0,
+      "expected_cost": 0.0,
+      "expected_delay": 0.0,
+      "invasiveness": 0.0,
+      "target_branches": {"B1": "support", "B2": "against"},
+      "primary_function": "confirm",
+      "bundle_independence": 1.0,
+      "result_dependency": false,
+      "redundancy_group": "",
+      "urgency": "routine",
+      "why": "one-line rationale"
+    }
+  ]
+}
+----------------------------------------------------------------------
+USER MESSAGE:
+Module: TemporaryAnalyticLeafPlanner
+Return strict JSON only, no markdown.
+Payload:
+{"case_id": "MB_1", "timestep": 1, "case_summary": "A 55-year-old male bodybuilder presents to the emergency department with weakness of his right arm. The patient states he has experienced these symptoms for a few weeks; however, today his hand felt so weak he dropped his cup of tea. The patient has a medical history of diabetes. He drinks 2-7 alcoholic drinks per day and has smoked 2 packs of cigarettes per day since he was 25. The patient uses anabolic steroids. He has lost 17 pounds since he last came to the emergency department 1 month ago. His temperature is 99.5°F (37.5°C), blood pressure is 177/108 mmHg, pulse is 90/min, respirations are 17/min, and oxygen saturation is 98% on room air. Physical exam reveals decreased sensation in the right arm and 2/5 strength in the right arm and 5/5 strength in in the left arm. The patient states that he is experiencing a dull aching and burning pain in his right arm during the exam. Symptoms are not changed with changes in head and neck position. Which of the following is the most likely diagnosis?\n\nOptions:\nA. Apical lung tumor\nB. Brachial plexopathy\nC. Cerebral infarction\nD. Scalenus anticus syndrome\nE. Subclavian steal syndrome\n", "root": {"label": "Subacute Unilateral Upper-Limb Motor-Sensory Deficit with Constitutional Alarm Signs", "time_course": "subacute", "severity": "unspecified", "confidence": 0.6, "supporting_facts": ["Progressive right arm weakness and sensory loss over weeks", "Constitutional symptoms: weight loss (17 lbs) and low-grade fever", "High-risk factors: chronic smoking (2 packs/day since age 25) and systemic steroid use", "Ipsilateral motor/sensory findings (right arm) with apical risk profile"], "excluded_candidates": ["Cervical radiculopathy: symptoms unchanged with head/neck position", "Diabetic peripheral neuropathy: unilateral pattern atypical for symmetric neuropathy", "Steroid-induced vasculopathy: possible but lacks definitive vascular signs (e.g., claudication)"], "alarm_features": ["Unintentional weight loss (17 lbs in 1 month)", "Chronic smoking history (apical lung concern)", "Systemic motor-sensory deficit with constitutional symptoms"]}, "branches": {"B1": {"id": "B1", "label": "Pulmonary Neoplasm with Constitutional Symptoms", "parent": "ROOT", "level": 1, "status": "live", "prior": 0.35779816513761464, "posterior": 0.35779816513761464, "danger": 0.8, "actionability": 0.0, "explanatory_coverage": 0.0, "expand_score": 0.0, "evidence_for": [], "evidence_against": [], "unresolved_questions": [], "children": [], "closure_reason": "", "turn_cost_to_refine": 2.0, "diagnosis_commitment_gain": 0.7, "interrupt_relevance": 0.9, "level_role": "family", "classification_axis": "anatomy", "representative_diseases": []}, "B2": {"id": "B2", "label": "Brachial Plexus Lesion", "parent": "ROOT", "level": 1, "status": "live", "prior": 0.2293577981651376, "posterior": 0.2293577981651376, "danger": 0.5, "actionability": 0.0, "explanatory_coverage": 0.0, "expand_score": 0.0, "evidence_for": [], "evidence_against": [], "unresolved_questions": [], "children": [], "closure_reason": "", "turn_cost_to_refine": 2.0, "diagnosis_commitment_gain": 0.6, "interrupt_relevance": 0.6, "level_role": "family", "classification_axis": "mechanism", "representative_diseases": []}, "B3": {"id": "B3", "label": "Cerebrovascular Event", "parent": "ROOT", "level": 1, "status": "live", "prior": 0.1834862385321101, "posterior": 0.1834862385321101, "danger": 0.7, "actionability": 0.0, "explanatory_coverage": 0.0, "expand_score": 0.0, "evidence_for": [], "evidence_against": [], "unresolved_questions": [], "children": [], "closure_reason": "", "turn_cost_to_refine": 1.5, "diagnosis_commitment_gain": 0.8, "interrupt_relevance": 0.75, "level_role": "family", "classification_axis": "anatomy", "representative_diseases": []}, "B4": {"id": "B4", "label": "Vascular Compression Syndrome", "parent": "ROOT", "level": 1, "status": "live", "prior": 0.13761467889908255, "posterior": 0.13761467889908255, "danger": 0.4, "actionability": 0.0, "explanatory_coverage": 0.0, "expand_score": 0.0, "evidence_for": [], "evidence_against": [], "unresolved_questions": [], "children": [], "closure_reason": "", "turn_cost_to_refine": 1.0, "diagnosis_commitment_gain": 0.5, "interrupt_relevance": 0.4, "level_role": "family", "classification_axis": "mechanism", "representative_diseases": []}, "B5": {"id": "B5", "label": "Systemic/Neoplastic Process", "level": 1, "status": "parked", "posterior": 0.092, "danger": 0.9, "parent": "ROOT", "closure_reason": "", "evidence_against": []}}, "frontier": ["B1", "B2", "B3", "B4"], "other_mass": 0.0, "pending_results": [], "actions_taken": [], "differential_history": [], "deliberation": {}, "interrupt": {"active": false, "reason": "", "required_actions": []}, "termination": {"ready_to_stop": false, "termination_type": "continue", "reason": ""}, "turn_budget_used": 0, "estimated_remaining_value": 0.0, "max_turn_budget": 5, "latest_action_type": "", "diagnosis_readiness_score": 0.0, "benchmark_output_ready": false, "static_question": "Which of the following is the most likely diagnosis?", "static_options": [{"id": "A", "description": "Apical lung tumor"}, {"id": "B", "description": "Brachial plexopathy"}, {"id": "C", "description": "Cerebral infarction"}, {"id": "D", "description": "Scalenus anticus syndrome"}, {"id": "E", "description": "Subclavian steal syndrome"}], "seen_evidence_ids": [], "seen_evidence_phenotypes": "set()", "mode_policy": {"benchmark_purity": true, "allow_external_knowledge": true}, "answer_option_mapping": {}, "tool_use_log": [], "root_revision_needed": false, "program_faults": [], "max_tree_depth": 3, "reasoning_ledger": {"anchor": {}, "leader": {"branch_id": "B1", "label": "Pulmonary Neoplasm with Constitutional Symptoms", "posterior": 0.358, "leading_since_t": 0, "n_revisions": 0}, "leader_evidence": {"confirming": 0, "disconfirming": 0, "last_disconfirming_digest": ""}, "action_intents": [], "considered_alternatives": ["B2", "B3", "B4"]}, "discriminator_hints": "[Knowledge Layer: coverage=40%, source=both]\n\nBrachial Plexus Lesion vs Vascular Compression Syndrome:\n  Favours first:  burning sensation, diminished sensation, electric shock-like sensation, intense pain, loss of feeling\n\nRelated to Brachial Plexus Lesion: amyotrophic neuralgia, brachial plexus neoplasm, brachial plexus neuritis\n\nRelated to Vascular Compression Syndrome: carpal tunnel syndrome, meralgia paresthetica, peripheral neuropathy\n\n[Indirect reasoning chains (PrimeKG 2-hop):]\n  A 55-year-old male bodybuilder presents to the emergency department with weakness of his right arm → hyporeflexia of upper limbs → Brachial Plexus Lesion\n  A 55-year-old male bodybuilder presents to the emergency department with weakness of his right arm → hyporeflexia of upper limbs → Vascular Compression Syndrome"}
+----------------------------------------------------------------------
+RAW LLM RESPONSE:
+{
+  "candidate_leaves_ranked": [
+    {
+      "branch_id": "B1",
+      "type": "ANALYZE_VIGNETTE",
+      "content": "Does the presence of constitutional symptoms (weight loss, low-grade fever) and apical risk profile (chronic smoking) strongly support a pulmonary neoplasm over other subacute unilateral deficits?",
+      "score": 0.45,
+      "expected_information_gain": 0.3,
+      "safety_value": 0.15,
+      "action_separation_value": 0.0,
+      "falsification_value": 0.0,
+      "expected_cost": 0.0,
+      "expected_delay": 0.0,
+      "invasiveness": 0.0,
+      "target_branches": {"B1": "support", "B3": "against"},
+      "primary_function": "confirm",
+      "bundle_independence": 1.0,
+      "result_dependency": false,
+      "redundancy_group": "",
+      "urgency": "routine",
+      "why": "Apical risk factors and systemic symptoms strongly contextualize B1 while weakening B3 (acute stroke)"
+    },
+    {
+      "branch_id": "B1",
+      "type": "ANALYZE_VIGNETTE",
+      "content": "Does the absence of localized apical symptoms (e.g., chest pain, cough) and presence of burning pain in the arm contradict a pulmonary neoplasm as the primary pathology?",
+      "score": 0.35,
+      "expected_information_gain": 0.25,
+      "safety_value": 0.0,
+      "action_separation_value": 0.0,
+      "falsification_value": 0.1,
+      "expected_cost": 0.0,
+      "expected_delay": 0.0,
+      "invasiveness": 0.0,
+      "target_branches": {"B1": "against", "B2": "support"},
+      "primary_function": "challenge",
+      "bundle_independence": 1.0,
+      "result_dependency": false,
+      "redundancy_group": "",
+      "urgency": "routine",
+      "why": "Burning pain pattern is more characteristic of brachial plexopathy than direct tumor compression"
+    },
+    {
+      "branch_id": "B2",
+      "type": "ANALYZE_VIGNETTE",
+      "content": "Does the combination of progressive unilateral motor-sensory deficit and constitutional symptoms (weight loss, fever) align with brachial plexopathy pathophysiology?",
+      "score": 0.4,
+      "expected_information_gain": 0.28,
+      "safety_value": 0.12,
+      "action_separation_value": 0.0,
+      "falsification_value": 0.0,
+      "expected_cost": 0.0,
+      "expected_delay": 0.0,
+      "invasiveness": 0.0,
+      "target_branches": {"B2": "support", "B1": "against"},
+      "primary_function": "confirm",
+      "bundle_independence": 1.0,
+      "result_dependency": false,
+      "redundancy_group": "",
+      "urgency": "routine",
+      "why": "Unilateral motor-sensory findings with systemic symptoms are more consistent with plexopathy than localized apical tumor"
+    },
+    {
+      "branch_id": "B2",
+      "type": "ANALYZE_VIGNETTE",
+      "content": "Does the lack of localized brachial plexus inflammation/infection signs (e.g., redness, trauma) contradict the diagnosis of brachial plexopathy?",
+      "score": 0.25,
+      "expected_information_gain": 0.15,
+      "safety_value": 0.0,
+      "action_separation_value": 0.0,
+      "falsification_value": 0.1,
+      "expected_cost": 0.0,
+      "expected_delay": 0.0,
+      "invasiveness": 0.0,
+      "target_branches": {"B2": "against", "B5": "support"},
+      "primary_function": "challenge",
+      "bundle_independence": 1.0,
+      "result_dependency": false,
+      "redundancy_group": "",
+      "urgency": "routine",
+      "why": "Systemic weight loss and fever suggest a neoplastic process rather than isolated plexopathy"
+    },
+    {
+      "branch_id": "B3",
+      "type": "ANALYZE_VIGNETTE",
+      "content": "Does the subacute progression over weeks with constitutional symptoms make cerebral infarction less likely than a systemic process?",
+      "score": 0.3,
+      "expected_information_gain": 0.22,
+      "safety_value": 0.0,
+      "action_separation_value": 0.0,
+      "falsification_value": 0.08,
+      "expected_cost": 0.0,
+      "expected_delay": 0.0,
+      "invasiveness": 0.0,
+      "target_branches": {"B3": "against", "B1": "support"},
+      "primary_function": "challenge",
+      "bundle_independence": 1.0,
+      "result_dependency": false,
+      "redundancy_group": "",
+      "urgency": "routine",
+      "why": "Classic stroke presentation is acute, not subacute with systemic symptoms"
+    },
+    {
+      "branch_id": "B3",
+      "type": "ANALYZE_VIGNETTE",
+      "content": "Does the presence of ipsilateral motor-sensory findings and systemic risk factors (smoking, hypertension) provide a plausible mechanism for cerebrovascular involvement?",
+      "score": 0.35,
+      "expected_information_gain": 0.2,
+      "safety_value": 0.15,
+      "action_separation_value": 0.0,
+      "falsification_value": 0.0,
+      "expected_cost": 0.0,
+      "expected_delay": 0.0,
+      "invasiveness": 0.0,
+      "target_branches": {"B3": "support", "B4": "against"},
+      "primary_function": "confirm",
+      "bundle_independence": 1.0,
+      "result_dependency": false,
+      "redundancy_group": "",
+      "urgency": "routine",
+      "why": "Hypertension and smoking increase stroke risk, though subacute presentation remains atypical"
+    },
+    {
+      "branch_id": "B4",
+      "type": "ANALYZE_VIGNETTE",
+      "content": "Does the patient's bodybuilder anatomy with chronic muscle use create a plausible mechanism for vascular compression syndrome?",
+      "score": 0.3,
+      "expected_information_gain": 0.2,
+      "safety_value": 0.0,
+      "action_separation_value": 0.0,
+      "falsification_value": 0.0,
+      "expected_cost": 0.0,
+      "expected_delay": 0.0,
+      "invasiveness": 0.0,
+      "target_branches": {"B4": "support", "B3": "neutral"},
+      "primary_function": "confirm",
+      "bundle_independence": 1.0,
+      "result_dependency": false,
+      "redundancy_group": "",
+      "urgency": "routine",
+      "why": "Muscle hypertrophy could compress neurovascular structures, though lacks definitive vascular signs"
+    },
+    {
+      "branch_id": "B4",
+      "type": "ANALYZE_VIGNETTE",
+      "content": "Does the absence of classic vascular signs (claudication, pulse discrepancies) and presence of systemic constitutional symptoms rule out vascular compression syndrome?",
+      "score": 0.2,
+      "expected_information_gain": 0.1,
+      "safety_value": 0.0,
+      "action_separation_value": 0.0,
+      "falsification_value": 0.1,
+      "expected_cost": 0.0,
+      "expected_delay": 0.0,
+      "invasiveness": 0.0,
+      "target_branches": {"B4": "against", "B1": "support"},
+      "primary_function": "challenge",
+      "bundle_independence": 1.0,
+      "result_dependency": false,
+      "redundancy_group": "",
+      "urgency": "routine",
+      "why": "Systemic symptoms and lack of vascular findings strongly suggest neoplastic process over benign vascular compression"
+    }
+  ]
+}
+----------------------------------------------------------------------
+PARSED RESULT:
+{
+  "candidate_leaves_ranked": [
+    {
+      "branch_id": "B1",
+      "type": "ANALYZE_VIGNETTE",
+      "content": "Does the presence of constitutional symptoms (weight loss, low-grade fever) and apical risk profile (chronic smoking) strongly support a pulmonary neoplasm over other subacute unilateral deficits?",
+      "score": 0.45,
+      "expected_information_gain": 0.3,
+      "safety_value": 0.15,
+      "action_separation_value": 0.0,
+      "falsification_value": 0.0,
+      "expected_cost": 0.0,
+      "expected_delay": 0.0,
+      "invasiveness": 0.0,
+      "target_branches": {
+        "B1": "support",
+        "B3": "against"
+      },
+      "primary_function": "confirm",
+      "bundle_independence": 1.0,
+      "result_dependency": false,
+      "redundancy_group": "",
+      "urgency": "routine",
+      "why": "Apical risk factors and systemic symptoms strongly contextualize B1 while weakening B3 (acute stroke)"
+    },
+    {
+      "branch_id": "B1",
+      "type": "ANALYZE_VIGNETTE",
+      "content": "Does the absence of localized apical symptoms (e.g., chest pain, cough) and presence of burning pain in the arm contradict a pulmonary neoplasm as the primary pathology?",
+      "score": 0.35,
+      "expected_information_gain": 0.25,
+      "safety_value": 0.0,
+      "action_separation_value": 0.0,
+      "falsification_value": 0.1,
+      "expected_cost": 0.0,
+      "expected_delay": 0.0,
+      "invasiveness": 0.0,
+      "target_branches": {
+        "B1": "against",
+        "B2": "support"
+      },
+      "primary_function": "challenge",
+      "bundle_independence": 1.0,
+      "result_dependency": false,
+      "redundancy_group": "",
+      "urgency": "routine",
+      "why": "Burning pain pattern is more characteristic of brachial plexopathy than direct tumor compression"
+    },
+    {
+      "branch_id": "B2",
+      "type": "ANALYZE_VIGNETTE",
+      "content": "Does the combination of progressive unilateral motor-sensory deficit and constitutional symptoms (weight loss, fever) align with brachial plexopathy pathophysiology?",
+      "score": 0.4,
+      "expected_information_gain": 0.28,
+      "safety_value": 0.12,
+      "action_separation_value": 0.0,
+      "falsification_value": 0.0,
+      "expected_cost": 0.0,
+      "expected_delay": 0.0,
+      "invasiveness": 0.0,
+      "target_branches": {
+        "B2": "support",
+        "B1": "against"
+      },
+      "primary_function": "confirm",
+      "bundle_independence": 1.0,
+      "result_dependency": false,
+      "redundancy_group": "",
+      "urgency": "routine",
+      "why": "Unilateral motor-sensory findings with systemic symptoms are more consistent with plexopathy than localized apical tumor"
+    },
+    {
+      "branch_id": "B2",
+      "type": "ANALYZE_VIGNETTE",
+      "content": "Does the lack of localized brachial plexus inflammation/infection signs (e.g., redness, trauma) contradict the diagnosis of brachial plexopathy?",
+      "score": 0.25,
+      "expected_information_gain": 0.15,
+      "safety_value": 0.0,
+      "action_separation_value": 0.0,
+      "falsification_value": 0.1,
+      "expected_cost": 0.0,
+      "expected_delay": 0.0,
+      "invasiveness": 0.0,
+      "target_branches": {
+        "B2": "against",
+        "B5": "support"
+      },
+      "primary_function": "challenge",
+      "bundle_independence": 1.0,
+      "result_dependency": false,
+      "redundancy_group": "",
+      "urgency": "routine",
+      "why": "Systemic weight loss and fever suggest a neoplastic process rather than isolated plexopathy"
+    },
+    {
+      "branch_id": "B3",
+      "type": "ANALYZE_VIGNETTE",
+      "content": "Does the subacute progression over weeks with constitutional symptoms make cerebral infarction less likely than a systemic process?",
+      "score": 0.3,
+      "expected_information_gain": 0.22,
+      "safety_value": 0.0,
+      "action_separation_value": 0.0,
+      "falsification_value": 0.08,
+      "expected_cost": 0.0,
+      "expected_delay": 0.0,
+      "invasiveness": 0.0,
+      "target_branches": {
+        "B3": "against",
+        "B1": "support"
+      },
+      "primary_function": "challenge",
+      "bundle_independence": 1.0,
+      "result_dependency": false,
+      "redundancy_group": "",
+      "urgency": "routine",
+      "why": "Classic stroke presentation is acute, not subacute with systemic symptoms"
+    },
+    {
+      "branch_id": "B3",
+      "type": "ANALYZE_VIGNETTE",
+      "content": "Does the presence of ipsilateral motor-sensory findings and systemic risk factors (smoking, hypertension) provide a plausible mechanism for cerebrovascular involvement?",
+      "score": 0.35,
+      "expected_information_gain": 0.2,
+      "safety_value": 0.15,
+      "action_separation_value": 0.0,
+      "falsification_value": 0.0,
+      "expected_cost": 0.0,
+      "expected_delay": 0.0,
+      "invasiveness": 0.0,
+      "target_branches": {
+        "B3": "support",
+        "B4": "against"
+      },
+      "primary_function": "confirm",
+      "bundle_independence": 1.0,
+      "result_dependency": false,
+      "redundancy_group": "",
+      "urgency": "routine",
+      "why": "Hypertension and smoking increase stroke risk, though subacute presentation remains atypical"
+    },
+    {
+      "branch_id": "B4",
+      "type": "ANALYZE_VIGNETTE",
+      "content": "Does the patient's bodybuilder anatomy with chronic muscle use create a plausible mechanism for vascular compression syndrome?",
+      "score": 0.3,
+      "expected_information_gain": 0.2,
+      "safety_value": 0.0,
+      "action_separation_value": 0.0,
+      "falsification_value": 0.0,
+      "expected_cost": 0.0,
+      "expected_delay": 0.0,
+      "invasiveness": 0.0,
+      "target_branches": {
+        "B4": "support",
+        "B3": "neutral"
+      },
+      "primary_function": "confirm",
+      "bundle_independence": 1.0,
+      "result_dependency": false,
+      "redundancy_group": "",
+      "urgency": "routine",
+      "why": "Muscle hypertrophy could compress neurovascular structures, though lacks definitive vascular signs"
+    },
+    {
+      "branch_id": "B4",
+      "type": "ANALYZE_VIGNETTE",
+      "content": "Does the absence of classic vascular signs (claudication, pulse discrepancies) and presence of systemic constitutional symptoms rule out vascular compression syndrome?",
+      "score": 0.2,
+      "expected_information_gain": 0.1,
+      "safety_value": 0.0,
+      "action_separation_value": 0.0,
+      "falsification_value": 0.1,
+      "expected_cost": 0.0,
+      "expected_delay": 0.0,
+      "invasiveness": 0.0,
+      "target_branches": {
+        "B4": "against",
+        "B1": "support"
+      },
+      "primary_function": "challenge",
+      "bundle_independence": 1.0,
+      "result_dependency": false,
+      "redundancy_group": "",
+      "urgency": "routine",
+      "why": "Systemic symptoms and lack of vascular findings strongly suggest neoplastic process over benign vascular compression"
+    }
+  ]
+}
+================================================================================
+

@@ -1,0 +1,476 @@
+{
+  "_readme": "Hand-curated leaf-level candidate branches (correct + key distractors) and their KEY DIFFERENTIAL findings, for the LR-QUALITY / COVERAGE isolation test (scripts/eval_lr_coverage_isolated.py). This isolates the LR machinery from evidence-selection / branch-selection error: we FEED the correct discriminating findings and the correct candidate set, and only ask whether the 3-layer stack (LIRICAL phenotype-LR ∪ GetTheDiagnosis/pathognomonic anchor ∪ qualitative) can produce a usable quantitative LR. L1 families were already built (logs/branchgen_rh.json); the leaf candidates here are the hand-constructed lower level. Optional 'hpo'/'omim' hints feed a second 'hinted' arm that separates DATA coverage from MAPPING quality. corpus: medbullets = common ED/IM dx (should stress Layer B/qualitative); rarearena = long-tail Mendelian/rare (should stress Layer A LIRICAL).",
+  "cases": [
+    {
+      "id": "mb11_pancoast",
+      "corpus": "medbullets",
+      "case_idx": 11,
+      "gold": "Pancoast tumor",
+      "gold_option": "Apical lung tumor",
+      "l1_label": "Neoplastic Disorder with Neurological Manifestations",
+      "distractors": [
+        "brachial plexopathy",
+        "cervical radiculopathy",
+        "subclavian steal syndrome",
+        "thoracic outlet syndrome"
+      ],
+      "findings": [
+        {
+          "finding": "Horner syndrome",
+          "favors": "gold",
+          "in_vignette": false,
+          "hpo": "HP:0002277",
+          "note": "apical mass → sympathetic chain; classic Pancoast discriminator"
+        },
+        {
+          "finding": "weight loss",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0001824",
+          "note": "17 lb loss → malignancy"
+        },
+        {
+          "finding": "lower brachial plexus deficit (C8-T1 hand weakness)",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "",
+          "note": "apical tumor invades lower trunk"
+        },
+        {
+          "finding": "pain unchanged by head and neck position",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "",
+          "note": "argues against TOS / scalenus / radiculopathy"
+        }
+      ]
+    },
+    {
+      "id": "mb34_leukemoid",
+      "corpus": "medbullets",
+      "case_idx": 34,
+      "gold": "leukemoid reaction",
+      "gold_option": "Leukemoid reaction",
+      "l1_label": "Reactive / Non-malignant Leukocytosis",
+      "distractors": [
+        "chronic myeloid leukemia",
+        "chronic lymphocytic leukemia",
+        "acute lymphoblastic leukemia",
+        "multiple myeloma"
+      ],
+      "findings": [
+        {
+          "finding": "elevated leukocyte alkaline phosphatase",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "",
+          "note": "LAP HIGH → leukemoid; LAP LOW → CML (the single decisive discriminator)"
+        },
+        {
+          "finding": "leukocytosis with normal differential",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0001974",
+          "note": "no blasts / left shift → reactive, against acute leukemia"
+        },
+        {
+          "finding": "recent infection",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "",
+          "note": "reactive trigger"
+        }
+      ]
+    },
+    {
+      "id": "mb55_glucagonoma",
+      "corpus": "medbullets",
+      "case_idx": 55,
+      "gold": "glucagonoma",
+      "gold_option": "Alpha cell tumor",
+      "l1_label": "Neoplastic Process",
+      "distractors": [
+        "type 1 diabetes mellitus",
+        "insulinoma",
+        "hypercortisolism",
+        "type 2 diabetes mellitus"
+      ],
+      "findings": [
+        {
+          "finding": "necrolytic migratory erythema",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "",
+          "note": "pathognomonic painful papuloplaque rash of glucagonoma"
+        },
+        {
+          "finding": "hyperglycemia",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0003074",
+          "note": "glucagon excess → high glucose; against insulinoma"
+        },
+        {
+          "finding": "diarrhea",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0002014",
+          "note": "part of glucagonoma syndrome"
+        }
+      ]
+    },
+    {
+      "id": "mb57_kartagener",
+      "corpus": "medbullets",
+      "case_idx": 57,
+      "gold": "primary ciliary dyskinesia",
+      "gold_option": "Diastolic murmur best heard along the right lower sternal border",
+      "l1_label": "Chronic Respiratory Infection",
+      "distractors": [
+        "cystic fibrosis",
+        "common variable immunodeficiency",
+        "autism spectrum disorder"
+      ],
+      "findings": [
+        {
+          "finding": "bronchiectasis",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0002110",
+          "note": "airway dilation on MRI"
+        },
+        {
+          "finding": "situs inversus",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0001696",
+          "note": "Kartagener → dextrocardia → tricuspid murmur RLSB"
+        },
+        {
+          "finding": "chronic sinusitis",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0011109",
+          "note": "since birth"
+        },
+        {
+          "finding": "normal growth and weight gain",
+          "favors": "distractor:cystic fibrosis",
+          "in_vignette": true,
+          "hpo": "",
+          "note": "normal growth argues AGAINST CF"
+        }
+      ]
+    },
+    {
+      "id": "mb65_cml",
+      "corpus": "medbullets",
+      "case_idx": 65,
+      "gold": "chronic myeloid leukemia",
+      "gold_option": "Chronic myelogenous leukemia",
+      "l1_label": "Chronic Myeloproliferative Neoplasm",
+      "distractors": [
+        "acute myeloid leukemia",
+        "acute lymphoblastic leukemia",
+        "chronic lymphocytic leukemia",
+        "leukemoid reaction"
+      ],
+      "findings": [
+        {
+          "finding": "leukocytosis with circulating blasts",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "",
+          "note": "57,500 with 35% blasts → leukemia not leukemoid"
+        },
+        {
+          "finding": "night sweats",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0030166",
+          "note": "constitutional/myeloproliferative"
+        },
+        {
+          "finding": "weight loss",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0001824",
+          "note": "10 lb"
+        },
+        {
+          "finding": "anemia",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0001903",
+          "note": "marrow crowding"
+        }
+      ]
+    },
+    {
+      "id": "mb66_peliosis",
+      "corpus": "medbullets",
+      "case_idx": 66,
+      "gold": "peliosis hepatis",
+      "gold_option": "Vascular ectasia within the liver",
+      "l1_label": "Vascular/Ischemic Abdominal Condition",
+      "distractors": [
+        "ectopic pregnancy",
+        "acute pancreatitis",
+        "Budd-Chiari syndrome",
+        "choledocholithiasis"
+      ],
+      "findings": [
+        {
+          "finding": "anabolic androgenic steroid use",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "",
+          "note": "burly build/acne → androgen use → peliosis hepatis"
+        },
+        {
+          "finding": "right upper quadrant pain worse with exertion",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "",
+          "note": "hepatic lesion rupture/hemorrhage"
+        },
+        {
+          "finding": "hypotension",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0002615",
+          "note": "intra-abdominal hemorrhage"
+        }
+      ]
+    },
+    {
+      "id": "mb77_hyperpara",
+      "corpus": "medbullets",
+      "case_idx": 77,
+      "gold": "primary hyperparathyroidism",
+      "gold_option": "Increased parathyroid hormone",
+      "l1_label": "Metabolic/Bone Disorder",
+      "distractors": [
+        "malignancy-associated hypercalcemia",
+        "milk-alkali syndrome",
+        "vitamin D intoxication",
+        "sarcoidosis"
+      ],
+      "findings": [
+        {
+          "finding": "hypercalcemia",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0003072",
+          "note": "Ca 12.5"
+        },
+        {
+          "finding": "hypophosphatemia",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0002148",
+          "note": "PTH wastes phosphate; discriminates from milk-alkali / vit D"
+        },
+        {
+          "finding": "elevated alkaline phosphatase",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0003155",
+          "note": "bone turnover"
+        }
+      ]
+    },
+    {
+      "id": "mb82_adhesions",
+      "corpus": "medbullets",
+      "case_idx": 82,
+      "gold": "adhesions",
+      "gold_option": "Adhesions",
+      "l1_label": "Mechanical Gastrointestinal Obstruction",
+      "distractors": [
+        "diabetic gastroparesis",
+        "sigmoid volvulus",
+        "fecal impaction",
+        "norovirus gastroenteritis"
+      ],
+      "findings": [
+        {
+          "finding": "prior abdominal surgery",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "",
+          "note": "RLQ scar → adhesions = #1 SBO cause"
+        },
+        {
+          "finding": "small bowel obstruction",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0005214",
+          "note": "distended tympanitic abdomen, bilious vomiting"
+        },
+        {
+          "finding": "abdominal distension",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0003270",
+          "note": "obstruction"
+        }
+      ]
+    },
+    {
+      "id": "mb83_foreignbody",
+      "corpus": "medbullets",
+      "case_idx": 83,
+      "gold": "nasal foreign body",
+      "gold_option": "Foreign body obstruction",
+      "l1_label": "Foreign Body-Related Nasal Disorder",
+      "distractors": [
+        "bacterial sinusitis",
+        "nasopharyngeal carcinoma",
+        "epistaxis from Kiesselbach plexus",
+        "nasal septal perforation"
+      ],
+      "findings": [
+        {
+          "finding": "unilateral purulent nasal discharge",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "",
+          "note": "unilateral foul purulent discharge in a child → foreign body"
+        },
+        {
+          "finding": "unilateral bloody nasal discharge",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "",
+          "note": "unilaterality is the key discriminator vs sinusitis (bilateral)"
+        }
+      ]
+    },
+    {
+      "id": "ra_wilson",
+      "corpus": "rarearena",
+      "case_idx": -1,
+      "gold": "Wilson disease",
+      "gold_option": "Wilson disease",
+      "distractors": [
+        "autoimmune hepatitis",
+        "primary sclerosing cholangitis",
+        "hemochromatosis"
+      ],
+      "findings": [
+        {
+          "finding": "Kayser-Fleischer ring",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0200032",
+          "note": "corneal copper; near-pathognomonic"
+        },
+        {
+          "finding": "increased urinary copper concentration",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0010839",
+          "note": "24h urine copper"
+        },
+        {
+          "finding": "low ceruloplasmin",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0002385",
+          "note": "decreased serum ceruloplasmin"
+        },
+        {
+          "finding": "tremor",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0001337",
+          "note": "neuro Wilson"
+        }
+      ]
+    },
+    {
+      "id": "ra_nf1",
+      "corpus": "rarearena",
+      "case_idx": -1,
+      "gold": "neurofibromatosis type 1",
+      "gold_option": "Neurofibromatosis, type 1",
+      "distractors": [
+        "neurofibromatosis type 2",
+        "Legius syndrome",
+        "McCune-Albright syndrome"
+      ],
+      "findings": [
+        {
+          "finding": "cafe-au-lait spots",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0000957",
+          "note": ">=6 → NF1 criterion"
+        },
+        {
+          "finding": "axillary freckling",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0000997",
+          "note": "Crowe sign"
+        },
+        {
+          "finding": "Lisch nodules",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0009737",
+          "note": "iris hamartomas"
+        },
+        {
+          "finding": "optic glioma",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0009734",
+          "note": "NF1-associated tumor"
+        }
+      ]
+    },
+    {
+      "id": "ra_homocystinuria",
+      "corpus": "rarearena",
+      "case_idx": 17,
+      "gold": "homocystinuria",
+      "gold_option": "Homocystinuria",
+      "distractors": [
+        "Marfan syndrome",
+        "Ehlers-Danlos syndrome"
+      ],
+      "findings": [
+        {
+          "finding": "ectopia lentis",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0001083",
+          "note": "downward lens dislocation (vs upward in Marfan)"
+        },
+        {
+          "finding": "marfanoid habitus",
+          "favors": "distractor:Marfan syndrome",
+          "in_vignette": true,
+          "hpo": "",
+          "note": "shared → non-discriminating"
+        },
+        {
+          "finding": "intellectual disability",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0001249",
+          "note": "homocystinuria has ID; Marfan does not"
+        },
+        {
+          "finding": "thromboembolism",
+          "favors": "gold",
+          "in_vignette": true,
+          "hpo": "HP:0001907",
+          "note": "hypercoagulable"
+        }
+      ]
+    }
+  ]
+}

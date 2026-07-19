@@ -1,0 +1,328 @@
+A comprehensive review and evaluation of species richness estimation
+Abstract
+Motivation
+The statistical problem of estimating the total number of distinct species in a population (or distinct elements in a multiset), given only a small sample, occurs in various areas, ranging from the unseen species problem in ecology to estimating the diversity of immune repertoires. Accurately estimating the true richness from very small samples is challenging, in particular for highly diverse populations with many rare species. Depending on the application, different estimation strategies have been proposed that incorporate explicit or implicit assumptions about either the species distribution or about the sampling process. These methods are scattered across the literature, and an extensive overview of their assumptions, methodology, and performance is currently lacking.
+Results
+We comprehensively review and evaluate a variety of existing methods on real and simulated data with different compositions of rare and abundant species. Our evaluation shows that, depending on species composition, different methods provide the most accurate richness estimates. Simple methods based on the observed number of singletons yield accurate asymptotic lower bounds for several of the tested simulated species compositions, but tend to underestimate the true richness for heterogeneous populations and small samples containing 1% to 5% of the population. When the population size is known, upsampling (extrapolating) estimators such as PreSeq and RichnEst yield accurate estimates of the total species richness in a sample that is up to 10 times larger than the observed sample.
+Availability
+Source code for data simulation and richness estimation is available at https://gitlab.com/rahmannlab/speciesrichness.
+
+Introduction
+Estimating the diversity of a population from a small sample has a wide range of applications in diverse fields, such as ecology, immunology, biological sequence analysis, and linguistics. One of the oldest applications is the unseen species problem in ecology, e.g. predicting the number of butterfly species on an island after capturing a small collection of butterflies. The same statistical problem arises in linguistics when trying to estimate how many words a writer might have known but never used in any of his published works. In quantitative linguistics, this is a measure to compare the vocabulary richness of writers. Recent applications include the analysis of microbial complexity in environmental niches, the comparison of bacterial diversity in human guts under different disease conditions, or the quantification of a suitable sequencing depth to study rare cancer types based on the diversity of genetic variants and mutations.
+While there are many measures of diversity, such as the proportion of rare and abundant species, or the entropy of the species distribution, we limit this review to the estimation of species richness from individual-based abundance data. Species richness measures the total number of distinct species in a population, assuming that each individual belongs to a single species. We hence exclude methods that measure presence and absence of a species in a sampling unit (called incidence data), require spatial information, or assume that an individual may belong to several species at once.
+In most applications, it is infeasible to observe the complete population; so, the observed species richness of a sample usually underestimates the true richness, especially for populations with many rare species. However, an accurate estimate is crucial to analyse the properties of a population. For instance, the T- or B-cell receptor richness of immune repertoires indicates the effectiveness of the immune system, and an accurate estimate is thus vital to compare immune systems between healthy and diseased individuals. Since the frequency distribution of T-cell receptor repertoires is highly skewed, rare T-cell receptors are often missed in the sampling process. This necessitates robust estimation of the actual richness.
+Accurate estimation of species richness is a challenging statistical problem, in particular without making additional assumptions about the sampling process or the species distribution (see Fig. 1). Various estimators have been proposed over the years to achieve accurate richness estimates for populations with different species compositions. Early estimators, like the Chao 1 or Jackknife estimator, assume that most information about the number of missing species is present in the number of species captured only once or twice. Other estimators assume that the species counts follow a parametric probability distribution, e.g. a Gamma-Poisson mixture distribution. Several recent methods make no such assumptions and are based on linear programming or curve fitting.
+Comparison of species (color) richness in the population and in a sample. A For a homogeneous population, a small sample is sufficient to observe a sample richness that is close to the true richness. B The sample richness of a population with many rare species underestimates the true richness. C Rarefaction curve. Increasing the sample size leads to an increase in the observed richness, converging to the true richness. For a heterogeneous population with many rare species, the convergence is slow. D T-cell diversity. Somatic recombination of V, D, J gene segments during T-cell maturation gives rise to numerous distinct T-cell receptors that form an immune system that is able to recognize almost all potential pathogens. However, analysing T-cell receptor diversity based on a small blood sample is challenging, because the sample only contains a minute portion of all T-cells from a person.
+While for ecological studies one is often interested in either accurate asymptotic lower bounds of the population size or species richness estimates for extrapolated sample sizes up to  to  times the observed sample size, other applications, such as metagenomics or immune repertoire analysis, require accurate estimates for populations that are more than 10 times larger than the observed sample. Hence, new methods are still being developed with the goal to yield reliable results for populations that are several magnitudes larger than the observed sample.
+In addition, data from various research areas have different properties that may invalidate the assumption of some richness estimators. For example, in microbiome analyses, methods relying on accurate abundances of rare species may lead to over- or underestimation of species richness depending on the performed preprocessing. When the species richness is decided on the sequence level, singletons are likely caused by sequencing errors and are often removed prior to further analysis steps. When we estimate species richness at the taxonomic level, contamination or misclassification may result in some species being incorrectly present or absent. Such application specific problems should be considered before applying species richness estimators; we come back to these important points in the Discussion.
+Since a systematic comparison of long-established and contemporary species richness estimators has not yet been conducted, we evaluate the performance of species richness estimators on a variety of simulated and real data with different underlying frequency distributions.
+
+Methods
+
+Definitions and notation
+From a full population of  individuals ( may be finite or infinite, known or unknown), a finite random sample of  individuals is observed. We assume that the sample is small, i.e. . Each individual (sometimes called element) in the population belongs to a species (sometimes called class or group). The number of species in the full population is referred to as its species richness  , which we assume to be finite (even for infinite ).
+The observed sample richness is denoted by .
+For each observed species, we count its abundance in the sample and obtain the abundance vector .
+The number of species observed exactly  times in the sample is given by  (i.e. ), such that the number  of individuals in the sample satisfies
+and the observed richness is given by
+The population’s species richness can be expressed by
+i.e. the observed richness plus the number of unobserved species that are missing in the sample. Therefore, estimating  is equivalent to estimating the unobserved  from the observed . As the observation is finite,  is of finite length.
+
+Classification of richness estimators
+Species richness estimators can be divided into two main groups: (1) If the total population size  is known or assumed to be known, finite, and given as an input, we have an upsampling or extrapolation task (by a factor of ), i.e. we need to solve the inverse problem of the random (down)sampling process. (2) If  is unknown or assumed infinite, it is (often implicitly) assumed that the total population species richness  is finite, i.e. the rarefaction curve reaches a finite asymptotic upper limit (Fig. 1C), which means that there cannot be arbitrarily many rare species. The first group is referred to as upsampling estimators and the second group as population estimators. In ecology, the two groups are often called extrapolating and asymptotic richness estimators, respectively. If (an approximation of)  is available, an upsampling estimator should be preferred, as using more information typically yields more accurate results.
+
+Scenarios for upsampling (extrapolating) and population (asymptotic) estimators
+A use case for an upsampling estimator is the decision on the sequencing depth of a DNA library of unknown quality. Based on PCR duplicate statistics after a low-depth (say, 3x coverage) pre-experiment, it can be decided whether 30x versus 15x coverage would yield significantly more new fragments, or whether one would see mostly PCR duplicates. A use case for both classes is the estimation of T-cell receptor richness from small blood samples (e.g. in healthy versus sick individuals): The exact total number of T-cells is unknown, but we have reasonable estimates of the total number of T-cells in the body and in the blood (Fig. 1D). A use case for population estimators is the estimation of microbiome species diversity of the intestine, bacterial species diversity in soil or global insect, plant, or animal diversity in conservation studies.
+
+Classification of estimators by assumptions made
+Estimators can be further divided according to whether they make assumptions about the species composition, i.e. about the behavior of . If they do, the species richness estimation problem often simplifies to estimating one or a few parameters of a parametric distribution, which leads to computationally efficient estimators that show good accuracy if the assumptions are satisfied, but that may be inaccurate if not. We call these estimators parametric estimators, and estimators that make no explicit distributional assumptions non-parametric estimators.
+An overview of estimators that we discuss in more detail in the following sections appears in Table 1. Each particular method may make explicit or implicit additional assumptions, which we shall describe below as needed. We first mention several common principles behind these methods.
+Overview of species richness estimators. Column “up” indicates whether an estimator is an upsampling estimator () or not (; then it is a population estimator). Population (asymptotic) and upsampling (extrapolating) estimators are separated by a horizontal line. Column “par” indicates whether an estimator is parametric (), i.e. whether it makes distributional assumptions about the species composition, or not (). The Chao 1 estimator can be derived from a Poisson model, but was first introduced as a nonparametric estimator. Column “Implementation” links to the estimator’s implementation that we used for computational experiments (“ours” means our own implementation; available at https://gitlab.com/rahmannlab/speciesrichness).
+Name	Up	Par	Reference	Implementation	 	Good–Turing			Good 	ours	 	Jackknife			Burnham and Overton 	ours	 	ACE			Chao and Lee Chao and Lee 	ours	 	Poisson			Sandland and Cormack 	Breakaway R package	 	Chao 1		  	Chao 	ours	 	Gamma-Poisson mixture			Fisher et al.	ours	 	Chao and Bunge			Chao and Bunge 	Breakaway R package	 	Lanumteang and Böhning			Lanumteang and Böhning 	ours	 	Chiu			Chiu 	ours	 	Objective Bayesian			Barger and Bunge 	Breakaway R package	 	Recon			Kaplinsky and Arnaout 	GitHub ArnaoutLab	 	Valiant			Valiant and Valiant 	Valiant Code	 	Breakaway			Willis and Bunge 	Breakaway R package	 	TES			Zou et al.	TES R script	 	iNEXT			Hsieh et al.	iNEXT R package	 	Smoothed Good–Toulmin			Orlitsky et al.	ours	 	PreSeq			Daley and Smith 	PreSeq R package	 	Pitman sampling formula			Pitman 	GitHub Stefanie Tauber	 	DivE			Laydon et al.	DivE R package	 	RichnEst (formerly Dupre)			Schröder and Rahmann 	GitLab RahmannLab
+
+General principles
+Given the abundance vector ,  of the observed species in a sample, we assume that it is the realization of an underlying probabilistic model. Let  denote the random variable describing the abundance of a randomly picked species; let  be the probability of observing a species exactly  times; so  for . If we draw  times an independent copy of  (abundances, including zeros) and count how many times each abundance  was seen, we obtain , including . Conversely,  is an estimate for .
+
+Zero-truncated distribution
+The number of unobserved species  is unknown. Thus, if  with  being the true probability distribution for capturing a species exactly  times (whether it follows a parametric family or not), then  with  for  is the zero-truncated distribution. It is obtained from  by setting  and  for , where the normalization constant  ensures that , so . From this, we derive
+which by itself is not very helpful, as both  and  are unknown, but with additional (distributional) assumptions yields useful estimators (see below). Obtaining  from equation (1) is also referred to as the Horvitz–Thompson point estimate for zero-truncated distributions.
+
+Coverage estimates
+The denominator in equation (1),  or , reflects the proportion of observed species and is also called sample coverage  . Some of the estimators directly or indirectly estimate  as  and then .
+
+Distributional assumption: poisson
+As mentioned above, one may assume that  follows a certain type of probability distribution with probabilities  for . Such an assumption cannot be justified in general, but may hold for certain types of datasets, and it simplifies the estimation problem. A popular distributional assumption for each  is the Poisson distribution, which models the random number  of successes when many attempts () are made, each with a very small success probability (), such that their product , corresponding to the expected number of successes, is a positive constant. Then, the Poisson distribution specifies that . The Poisson assumption can be exploited in different ways.
+First, the Poisson distribution specifies that , so we can assume that  and simply estimate . This estimator can also be derived in a non-parametric way as a Jackknife estimator (see below).
+Alternatively, under the Poisson assumption,  can be estimated by , and  can be estimated by . It follows that , or , which is essentially the Chao 1 estimator (see the following section). Note that this estimator only uses  and  and not the other information contained in the data.
+Still under the Poisson assumption, the data can be more comprehensively used if we compute an maximum likelihood estimate for the parameter  from the observed zero-truncated Poisson distribution and then use equation (1) to estimate . This is the Poisson (PO) estimator (details in the following section).
+
+Estimators in detail
+
+Population estimators
+
+Good–Turing estimator (GT)
+The Good–Turing estimator is one of the earliest richness estimators. Assuming that a random sample is drawn from an infinite population with a finite number of species , Good proposed estimates for the probabilities that a species is represented exactly  times without making further assumptions about the population frequency distribution. One of their main results is that the proportion of species represented in the sample (coverage) is approximately , or equivalently, the probability that the next observed individual belongs to an unseen species is given by . This result led to the common assumption that rare species, especially the number of singletons, contain most information about the number of missing species.
+Good did not further comment on predicting species richness given the probability to observe a new element. However, we may use the estimate  (or ) together with equation (1) or the coverage estimate to obtain the GT estimator
+
+Jackknife estimators (Jack 1, Jack 2)
+Burnham and Overton derived non-parametric estimators that are a linear combination of the species frequencies. The derivation is based on the following assumptions: the population is closed, the species detection rate is constant for each species but may vary between species and the capture events are all independent. It follows that the observed capture frequencies are a random variable following a multinomial distribution with unknown success probabilities. Instead of assuming a parametric distribution for the success probabilities, Burnham and Overton derive a non-parametric estimator using the generalized Jackknife method. The first and second order Jackknife estimators are given by
+
+ACE estimator (ACE)
+The abundance-based coverage estimator (ACE) is a modification of the GT estimator in the sense that it considers only rare species for the coverage estimator. The species are separated into rare and abundant groups based on a frequency cutoff , i.e. species are rare if they are observed at most  times. The most common cutoff is , but results are sensitive to the choice of .
+We apply , but instead of using the entire number  of observed species, we only use the number  of rare species and adjust  accordingly. The number of abundant species is simply counted as-is. We obtain
+where
+The above estimator is not the final ACE estimator because it assumes that all rare species are homogeneous, i.e. all species are assumed to have the same relative abundance. Since the homogeneity assumption may be violated, Chao and Lee proposed an adjusted estimator that accounts for the heterogeneity of rare elements. For a population with true relative species abundances , the abundance distribution may be summarized by its mean  and coefficient of variation (CV), where the squared CV is defined as
+Based on the results by Good and Toulmin, Chao and Lee estimate  by
+With this estimate of , Chao and Lee obtained
+We point out again that the estimate is sensitive to the rareness abundance threshold .
+
+Poisson estimator (PO)
+The PO estimator has already been briefly introduced above: We assume that each  is drawn from a Poisson distribution with an unknown parameter . We estimate  from the zero-truncated distribution as  and then use equation (1) to estimate
+We now provide details on the estimation of  using the maximum likelihood approach on the zero-truncated Poisson distribution, where for ,
+For a sample of size  and observed species abundances , the likelihood function is given by
+It follows that the MLE must satisfy
+which can be solved numerically for .
+Instead of considering all species to estimate , the sample may first be restricted to rare species with an abundance bounded by a user-defined threshold  (default ), with the same implications as for the ACE estimator.
+
+Chao 1 estimator (Chao 1 , Chao 1-BC)
+As introduced in Section 2.3, Chao proposed a non-parametric estimator that can be derived under the assumption that the observed species counts follow a Poisson distribution with equal detection rate . The estimator is given by
+Chao proved that the estimator yields a lower bound of the true richness for  under both multinomial and Poisson models. The lower bound can be derived based on the monotonicity of the ratio of consecutive probabilities.
+Since the Chao 1 estimator is undefined for , it has been replaced in later work by a bias-corrected version, given by
+Its derivation requires additional assumptions, including species homogeneity, which often do not hold in practice.
+A hybrid form is to use  for  and the bias-corrected term  if .
+
+Gamma-Poisson mixture estimator (GPM)
+Under the assumption that the detection rate varies between species, the Poisson parameter  is itself a random variable. If we assume that the species-specific  are drawn from a Gamma distribution, then the observed species counts follow a Gamma-Poisson mixture distribution, which is a common assumption of many richness estimators.
+The marginal distribution of a Gamma-Poisson mixture model with parameters  and  is given for  by
+Under the zero-truncated Gamma-Poisson mixture model, the probability  to observe a species exactly  times is given by .
+As introduced in Section 2.3, the Horvitz–Thompson richness estimator is given by
+which requires the estimation of  and .
+The observed frequencies  follow a multinomial distribution with total sum  and probabilities . Hence, we may solve for  and  by maximizing the likelihood function
+For detailed information about deriving the MLE for a Gamma-Poisson mixture distribution, we refer the reader to the paper by Chiu.
+
+Chao and bunge estimator (CB)
+Chao and Bunge proposed an estimator that has a non-parametric form, but the optimality criteria hold under a Gamma-Poisson mixture model.
+For a sample with observed richness  and number of individuals for each species in the sample given by , the Chao and Bunge estimator is given by
+which is based on a consistent estimator for the expected value of  under a Gamma-Poisson mixture model.
+
+Lanumteang and Böhning estimator (LB)
+Lanumteang and Böhning derived a species richness estimator by computing a Taylor expansion over the -ratios , where  has a Gamma-Poisson mixture distribution. Solving the equations in  for  allows us to derive an estimate for  that is non-parametric in form; given by
+
+Chiu estimator (Chiu)
+Chiu proposed a moment estimator for a Gamma-Poisson mixture model that estimates the parameters based on the expected values for the number of unseen species, singletons, doubletons, and tripletons. The derived point estimate to predict species richness is given by
+where  is estimated using the Chao 1 estimator, , and , i.e.  clipped to the interval .
+
+Objective Bayesian estimator (OB-PO, OB-NB, OB-G, OB-MG)
+Under the assumption that the species abundances follow a certain parametric probability distribution, the parameters may alternatively be estimated using Bayesian statistics instead of maximum likelihood approaches, for example using Bayesian estimators that place an objective prior on the number of species and their frequency distributions.
+Barger and Bunge suggest to use reference priors, which maximize the expected entropy. In this review, we evaluated the Bayesian estimators for a Poisson (OB-PO), negative binomial (OB-NB), geometric (OB-G), and mixed geometric (OB-MG) distribution.
+
+Recon
+To estimate diversity of B- and T-cell repertoires, Kaplinsky and Arnaout developed Recon, a maximum likelihood approach that makes no parametric assumption about the frequency distribution.
+The estimator is calculated using an expectation-maximization approach that adds in each iteration new parameters until further parameters would lead to overfitting. The algorithm starts from a uniform frequency distribution, i.e. all species have the same number of individuals in the population. In each iteration, a new species frequency is added and the respective species counts and relative frequencies are fitted by maximum likelihood. Apart from species richness, the predicted frequency distribution may be used to estimate other diversity measures, such as entropy, the Gini–Simpson index, or Hill numbers.
+
+Valiant
+Valiant and Valiant developed a linear program that estimates the shape of the unobserved portion of the frequency distribution. They show that their approach yields accurate results for various natural distributions if the sample size is at least in  for a population with  distinct species.
+The algorithm is a combination of two linear programs. The first linear program searches a histogram whose expectation is closest to the observed frequency distribution. The second linear program optimizes the objective of finding a histogram that has minimal support size under the constraint that the new histogram has a similar distance to the observed frequency distribution as the one obtained by the first linear program. The coefficients to calculate the expected frequencies are computed using Poisson probabilities.
+For the evaluation, we have increased the maximum number of iterations to .
+
+Breakaway
+Willis and Bunge estimate species richness using a heteroscedastic, correlated nonlinear regression model to fit ratios of consecutive frequencies. By fitting a rational to the ratios of the form  as a function of , the estimate for the number of unseen elements  is given by projecting the fitted function to .
+Since a robust estimate for the number of missing species requires an accurate number of singletons, Willis enhanced the previous approach by predicting both the number of unobserved elements and the number of singletons, called Breakaway-nof1.
+
+TES
+Zou et al. proposed to estimate the total species richness by fitting two asymptotic-parametric models to the probability-based rarefaction curves. For the first model, the expected value for the total species richness is computed under a hypergeometric sampling model, and for the second model under a multinomial sampling model. The two parametric models were previously introduced by Hurlbert and Smith and Grassle, respectively. To estimate the total species richness, a four-parameter Weibull-logistic regression model is fitted to the change in expected value for increasing sample sizes. The species richness estimate is given by the asymptote of the fitted function. If the sample is too small to successfully fit a Weibull-logistic model, a three-parameter logistic regression model is fitted instead. The final richness estimate is given by the mean value of the asymptote under a hypergeometric and multinomial model.
+
+Upsampling estimators
+The previous estimators attempt to estimate the species richness  of the full population without knowing its size , even allowing infinite , but assume that  is finite. In contrast, the following estimators are given the population size  as additional input, and therefore do an upsampling or extrapolation task (from observed richness  and  with  individuals to the unknown  with  individuals). The difficulty of the upsampling problem increases with the ratio .
+
+iNEXT
+The iNEXT R package provides a combined framework to interpolate (i.e. compute the rarefaction curve) and extrapolate Hill numbers of several diversity orders. For abundance data, the Hill numbers of order  are defined for a sample with relative abundances  as
+Hence, the sample species richness corresponds to Hill numbers of diversity order , completely disregarding relative species abundances. To extrapolate Hill numbers from an initial sample of size  to a larger sample of size , Chao et al. introduced extrapolated diversity estimators  for any . For diversity order , the size-based extrapolated species richness for an enlarged sample of size  is given by
+where  can be any proper estimator for , e.g. the Chao 1 estimator for . However, as already noted by Colwell et al., the above estimator is only reliable for  (see Chao et al. for more detailed information).
+
+Good–Toulmin estimator (EF-GT, PO-GT)
+To estimate how many unseen species may be expected in a next sample, Good and Toulmin proposed an estimate that is based on the assumption that the capture rates follow a Poisson distribution. Since the probability of observing a new species is given by the probability that a species was not seen in the first but was seen in the second sample, the expected number  of new species one would see in a second sample of same size is given for a population with  species by
+where  denotes the probability to observe exactly  individuals from species  under a Poisson distribution with parameter . The series expansion of the second term is given by
+which may be used to rewrite equation (4) as
+Good and Toulmin approximate the sum  by the observed  and generalize the procedure to general sizes  of the second sample. They obtain an estimate for the number of unseen elements  in a new random sample of size  from a sample of size :
+with ratio . Note that , as derived above, corresponds to upsampling by a factor of 2, where the second sample has the same size as the first, and  corresponds to 100x upsampling. They showed that the above formula is a nearly unbiased non-parametric estimator of  for all , but the convergence of the series is not guaranteed for .
+One possibility to achieve convergence for  is to perform so-called probabilistic smoothing, yielding new estimators of the form
+where the discrete random variable  can follow an arbitrary discrete distribution.
+Efron and Thisted proposed Binomial smoothing (GT-ET), such that
+with , and  being a tuning parameter. We use , which has been shown by Orlitsky et al. to lead to the best convergence rate.
+As an alternative, Poisson smoothing (GT-PO) uses
+with .
+The resulting estimates  are in fact estimates of ; thus the richness estimator is . This also holds for the following estimators, which use more complex procedures to estimate the number of unseen species.
+
+PreSeq
+To approximate the molecular complexity of sequencing libraries, Daley and Smith introduced the idea of using rational function approximation to increase the radius of convergence of the Good–Toulmin power series, given by equation (4). Rational function approximation increases the radius of convergence for divergent series, in particular for alternating power series such as the Good–Toulmin power series. This approach allows to predict the species richness for samples that are several orders of magnitudes larger than the reference sample.
+In addition, PreSeq first applies the Euler transform to equation (5), as proposed by Good, yielding the power series
+By transforming the variable  of the power series, PreSeq considers a larger class for the rational function approximation, but under the constraint that the first coefficients are equal to the coefficients of the original power series, hence trusting the original series more in the neighborhood around .
+
+Pitman/Ewens sampling formula (PSF)
+The Pitman sampling distribution, a two-parametric generalization of the Ewens sampling formula, is a common sampling model that assumes an infinite sampling universe. The urn representation of the Pitmam sampling formula is given by the Hoppe urn model. The formula calculates the probability of observing an integer partition of , where a partition is assumed to be random and exchangeable. The set of valid integer partitions is given by . The probability of a partition  under a Pitman sampling model with parameters  and  is defined as
+. To estimate species richness, the parameters  and  of the Pitman sampling distribution can be estimated using maximum likelihood estimation. Given  and , the expected number of additional elements  in a next sample of size  is given by
+
+DivE
+Rarefaction curves show the number of distinct elements as a function of the sample size and are a common method in diversity estimation to analyse species richness via nested subsampling. Traditional curve fitting approaches fit a parametric asymptotic function, such as a negative exponential or logistic function, to the rarefaction curve. The species richness is then given by the asymptote of the function.
+Laydon et al. extended this idea by fitting a list of 58 mathematical function classes to the rarefaction curves and accumulating the results of the five best fitting classes. Instead of computing the asymptote, the predicted species richness is given by extrapolating each function to the desired sample size. Since testing all mathematical functions is very compute intensive, we restrict our evaluation to previously suggested functions: the logistic, negative exponential, logarithmic, hyperbolic, and Hill function families.
+
+RichnEst
+Schröder and Rahmann developed a linear program (LP) to estimate the molecular complexity or duplication rate of sequencing experiments from a small sample. The linear program searches for plausible frequency vectors of the whole population by minimizing the distance between the expected frequency vector and the observed frequency vector of the sample.
+Assuming that the sample is drawn randomly, the probability that a species with  individuals in the complete population of size  is observed exactly  times in a sample of size  follows a hypergeometric distribution, which allows us to compute the expected frequency vector, assuming a population frequency vector. The LP formulation is used to invert this forward downsampling process.
+
+Evaluation
+
+Data simulation
+The richness estimators are evaluated on simulated data with nine different species compositions (Fig. 2). We consider samples containing , as well as  of the population. For each test case, a sample is drawn  times, resulting in a total of  test cases.
+Simulated data. Each plot shows the species frequency distribution of a population with  individuals and  distinct species under different population models, described in Section 3.1.
+For each species composition, the relative abundances for a population with  individuals and  distinct species are given by , such that  and , where the  are the absolute population abundances and . Below, we specify  or  of different population composition models. Data simulation and evaluation was automated using Snakemake.
+
+Random model
+For , we draw  from the uniform distribution on , normalized such that . We then multiply the  by the population size  to obtain the abundances , with an average of .
+
+Homogeneous model
+For , we set . Thus, for  and , each species has exactly 10 individuals.
+
+Uniform mixture model
+For one fifth of the species, , we set , and for the remaining 4/5 of the species, , we set  (assuming that  is a multiple of 5).
+
+Negative binomial models
+We use two different models. For , we set , where  is a random sample drawn from a negative binomial distribution either with parameters  and  (model 1), or with  and  (model 2).
+
+Two mixture model
+We set , where  is a random sample drawn from a negative binomial distribution with parameters  and  for one half of the species and with parameters  and  for the other half of the species.
+
+Geometric model
+For , we set , where  is a random sample drawn from a geometric distribution with parameter .
+
+Power decay model
+For , we set , where  is the proper normalization constant.
+
+Zipf–Mandelbrot model
+For , we set , where  is the proper normalization constant.
+
+Real datasets
+We apply the tools to publicly available immune repertoire, microbiome, and reef fish datasets.
+The repertoire sequencing data published by Shugay et al. [, VDJTools Examples] contains targeted sequencing of V(D)J genes, which code for distinct antibodies and T-cell receptors. The unique arrangement of V(D)J segments is called the clonotype of a cell. The estimation of clonotype richness enables a high level analysis of immune repertoire diversity. We apply the tools to 58 available samples, for which we create 10 subsamples for each of 6 subsampling rates of 1%, 3%, 5%, 10%, 20%, and 30%, resulting in 3480 test cases.
+To estimate microbiome diversity, we apply the tools to 20 metagenomic datasets from Durazzi et al. [, MG-Rast database], which contain the abundance of bacterial strains in the chicken gut at different taxonomic levels. In our evaluation, we estimate bacterial richness based on the taxonomic classification at the genus level. For each dataset, we create the same  subsample types as for the immune repertoires, resulting in  test cases.
+In addition, we evaluate the methods on an ecological dataset of global reef fish communities [, Fish dataset] from. For each fish species, we sum up the species abundances of different size classes. The methods are evaluated on 10 repeated subsamples containing 1%, 3%, 5%, 10%, 20%, and 30% of the complete fish dataset.
+
+Results
+The evaluated methods require as input either the observed abundance vector , i.e. the number of times each species was observed in the sample, or the frequency vector , i.e. the number of species occurring exactly  times in the sample, and output a point estimate and sometimes a confidence interval of the population species richness. Since not all methods compute a confidence interval, we measure the accuracy based on the point estimates.
+On simulated data, we evaluate all methods with respect to (1) proportion of crashes, (2) proportion of outliers, (3) point estimation accuracy, and (4) computational resource requirements. Next, we evaluate the point estimation accuracy for V(D)J, microbiome, and fish subsamples.
+
+Proportion of unsolved problems
+Figure 3A shows the proportion of unsolved test problems for each method. A test problem is unsolved if the tool either crashed or failed to converge to a solution. Most of the tools are able to compute a point estimate for all problems, except for the objective Bayesian estimators, TES, and smoothed Good–Toulmin estimators, which sometimes fail to converge. In addition, the Good–Turing and Lanumteang–Böhning estimator fail if  or  are zero, respectively. A similar problem holds for the Chao–Bunge estimator if  in equation (2). For detailed information about the proportion of unsolved problem per subsampling rate and population, see Supplementary Figure S.2.
+A For each tool, the proportion of unsolved problems is shown. Lower is better; zero is desirable. B Proportion of outliers for each tool. For constant , each point estimate that is smaller than  or larger than  is assumed to be an outlier that heavily under- or overestimates the true population richness, respectively. Lower is better.
+
+Proportion of outliers
+We compare the number of outliers per tool, where we consider an estimate to be an outlier if  or , for a constant . Figure 3B shows the proportion of outliers for  and .
+As expected, the observed species richness (Obs) often strongly underestimates the true richness. For several test cases, Breakaway(-nof1) and the maximum-likelihood based Poisson and Gamma-Poisson estimators strongly over- and underestimate the true richness. In addition, the Pitman sampling formula and the smoothed Good–Toulmin estimators strongly overestimate the true richness for small sampling rates. For the Good–Toulmin estimators, this may be caused by divergence of the power series. In general, simple estimators, such as Chao1, usually underestimate the true richness, while more complex estimators both under- and overestimate the true richness (see Figure 3B). Moreover, all tools have most outliers for small sampling rates (1% to 5%). For larger sampling rates, populations with a Power Decay and Zipf–Mandelbrot distribution are most challenging (see Supplementary Figure S.3).
+
+Estimation accuracy
+Figure 4 gives a more detailed overview of the estimation accuracy. Each panel corresponds to a sampling rate. Each box plot shows the deviation of the point estimate from the true richness across all population models for one method. Individual plots for each population model are provided in the supplementary figures.
+Box plots of estimation accuracy on simulated data. Shown are  ratios between the estimated species richness and the true species richness for different subsampling rates (panels), combined over all population models. If the prediction is correct,  (red horizontal line). If , the estimator overestimates the true richness and if , the estimator underestimates the true richness. Failures and outliers (using ; see Fig. 3) are not included in this data.
+Computational resource requirements: A Wall clock time in seconds; B Memory usage in kilobytes. The benchmarks for a sample containing 3%, 20%, 50%, and 80% of the total population were averaged over three runs for populations with a negative binomial ( and ) and Zipf–Mandelbrot frequency distribution on a AMD Ryzen 9 5950X 16-Core processor with a maximum CPU clock speed of 5.1 GHz.
+In general, the estimation problem is more challenging when only a small portion of the population has been observed, resulting in an extreme underestimation of the true richness by many tools, such as the Chao 1 estimator, the ACE estimator, TES, or Valiant. When the sample contains more than  of the population, asymptotic estimators overestimate the true richness for some species compositions. For example, the Chao 1, ACE, and Chiu estimators, which are often referred to as a lower bounds, yield accurate lower bounds close to the true species richness for most species compositions, but overestimate the species richness for the two mixture model if the sample contains more than  of the population (Supplementary Figure S.8).
+The non-parametric and Gamma-Poisson mixture estimators give accurate results for populations with a negative binomial and homogeneous frequency distribution, but tend to underestimate the true richness for populations under a geometric, Zipf–Mandelbrot or power decay model (Supplementary Figures S.4–S.12), with the Chao 1 , ACE, and Chiu estimators being among the most accurate methods.
+Breakaway and Breakaway-nof1 both over- and underestimate the true richness and have large estimation intervals for repeated samples (Supplementary Figure S.7). Recon and the Bayesian Geometric and Mixed Geometric estimators tend to overestimate the true richness. Even for a population with a geometric frequency distribution, the objective Bayesian geometric and mixed geometric estimators consistently overestimate the true richness (Supplementary Figure S.9).
+Upsampling methods, show increasing accuracy with increasing sample size. An increased sample size means that we have smaller upsampling (extrapolation) factors or that we observed a larger fraction of the complete population.
+The smoothed Good–Toulmin estimators provide accurate results for many of the evaluated problems. However, they can suffer from convergence problems, e.g. many of the problems could not be solved by the smoothed Good–Toulmin estimators if less than  of a population with a power decay frequency distribution was observed (see Supplementary Figure S.2). PreSeq’s approach of using rational function approximation successfully increases the convergence ratio of the power series. PreSeq is able to solve all problems and is among the best performing tools for populations with a power decay or Zipf–Mandelbrot distribution, in particular for low sampling rates (Supplementary Figure S.12). The performance of DivE is similar to PreSeq showing an increasing accuracy for larger samples. For low sampling rates (), the estimates of RichnEst show high variation and both over- and underestimate the true richness. For sampling rates , RichnEst gives accurate richness estimates. Because iNEXT was developed to extrapolate to a new sample 2 to 3 times the reference sample size, it is less accurate and underestimates the species richness for lower sampling rates, but provides accurate results for sampling factors .
+Although the Pitman sampling formula also requires an upsampling factor, it is less accurate than most population and upsampling estimators, i.e. the true richness is often overestimated (see Fig. 4).
+
+Computational requirements
+Running times range from under one second for tools such as the Good–Turing, Jackknife, Chao 1, and Gamma-Poisson mixture model, to an hour for the Objective Bayes Poisson estimator and several hours for DivE. Although we evaluated DivE with only 5 different mathematical function families, the running time was already significantly higher compared to the other methods. In addition, DivE’s time requirements strongly increase with increasing sample size, which makes it impractical for large datasets.
+The maximum memory requirements are under 1 GB for all tools and evaluated sample sizes and largely independent of sample size.
+
+Evaluation on Real Data
+Methods that could not solve all problems (Good–Turing, Chao–Bunge, Objective Bayesian, smoothed Good–Toulmin, TES), had extreme outliers (Breakaway, Breakaway-nof1, Pitman sampling formula), performed less accurate for most problems (Jackknife 1 and 2, Poisson model) or have impractical computation times on large data (DivE, e.g. 120h for one V(D)J dataset and a subsampling rate of ) are not considered in the subsequent evaluation.
+Figure 6 shows the deviation of the predicted species richness from the observed species richness in the complete V(D)J sequencing, microbiome and reef fish datasets for different subsampling rates. The box plot labeled “Obs” shows the number of observed species in the subsample; it always underestimates the true richness. For the population estimators, the observed richness of the complete dataset imposes a lower bound on the true species richness, but the true population richness may be higher considering that real data never samples the whole population. The rarefaction curves for the V(D)J data indicate that the total VDJ diversity is substantially larger than the full sample richness. In contrast, the rarefaction curves for the microbiome and reef fish data suggest that the population richness is close to the sample richness (see Supplementary Figure S.13). The estimates of the upsampling estimators iNEXT, PreSeq, and RichnEst should be close to the observed richness of the complete dataset.
+Estimation of species richness for A V(D)J immune repertoire data (sequence level) B microbiome data (Lactobacillus strains in broiler after taxonomic classification at the genus level) C global reef fish communities. The box plots display the distribution of  ratios between the predicted species richness and the species richness observed in the complete dataset. Numbers at the cut whiskers show the maximum deviation of the method.
+
+Estimating V(D)J richness
+On the V(D)J data (see Fig. 6A), the lower bounds of Chao 1, ACE, and the richness estimator of the Gamma-Poisson mixture model strongly underestimate the true richness for low subsampling rates, which is consistent with the previous results that these estimators tend to strongly underestimate the true richness for compositions with many rare elements. The predictions by Chiu, Recon, and Valiant are close to the true richness of the full sample if  of the population has been observed, but they predict a higher estimate for higher subsampling rates. Since the true richness of the immune repertoire is unknown (our 100% is in fact also only a sample of unknown proportion), the accuracy cannot be validated, but the almost linear rarefaction curves indicate that the total VDJ diversity is substantially larger than the full sample richness (see Supplementary Figure S.13). This equally holds for the Lanumteang–Böhning estimator, which is the only method that predicts an extremely higher richness for all subsampling rates. In general, for too small subsampling factors, population (asymptotic) estimators are not able to provide accurate estimates that are independent of the sample size.
+Among the upsampling estimators, the point estimates of RichnEst vary more compared to iNEXT and PreSeq. For a subsampling rate of  and  the predictions of RichnEst are on average closer to the true richness. In particular, iNEXT underestimates the true richness due to the limited reliability when the sample size is more than doubled. All upsampling estimators show an increasing accuracy for larger subsamples.
+
+Estimating microbiome richness
+For the microbiome data, the true population richness can be assumed to be close to the sample richness (see rarefaction curves in Supplementary Figure S.13). Figure 6B shows that all methods underestimate the species richness for subsampling rates below , except for RichnEst, which shows a high variation for small subsampling rates. For a subsampling rate of  and  only the Lanumteang–Böhning estimator and Valiant predict a higher population richness. Recon strongly underestimates the species richness. All other methods have a similar performance, with PreSeq yielding the most accurate results.
+
+Estimating global reef fish richness
+The results for the reef fish data are very similar to the microbiome data (see Fig. 6C): For low subsampling rates, the species richness is underestimated and with increasing subsampling rates the estimation of all methods converges to the total sample richness.
+
+Discussion and conclusions
+The increasing applications of richness estimation, for instance estimating the diversity of immune repertoires, make the accurate estimation of species richness from a small sample an important research topic. Although a variety of richness estimators already exist, new approaches that are either specific or generally applicable to many different scenarios, are still being developed. In particular, recent methods try to tackle the challenges of undersampled and heterogeneous species compositions. We presented a methodologically focused overview of existing richness estimators and evaluated them on a wide range of populations with different species compositions.
+Richness estimators are classified into population and upsampling estimators, depending on whether they require the size  of a future sample as an additional parameter. In ecology, they are referred to as asymptotic and extrapolating richness estimators, respectively.
+Asymptotic (population) estimators often provide lower bounds and may have a limited reliability as point estimates for strongly undersampled populations. Among the population estimators, the estimators that are non-parametric in form, like the Chao 1 , ACE, and Chiu estimator, provided the most accurate point estimates for a variety of simulated species composition, but strongly underestimated the true species richness if the population was either very heterogeneous are only a small portion of the sample had been observed. The estimates of more complex methods, like Breakaway or the Objective Bayesian estimators, often had a high variation for repeated subsamples from the same population and both strongly over- and underestimated the true richness.
+Upsampling (extrapolating) estimators generally give accurate estimates of the total species richness, except for the Pitman sampling formula, which gave inaccurate results for many problems. RichnEst and iNEXT provided accurate results for large subsampling rates, but suffered from inaccuracies when the sample was too small ( for RichnEst and  for iNEXT). For small subsamples, PreSeq often outperformed the other approaches.
+We observed that the accuracy on downsampled real data was comparable to the accuracy on simulated data. However, downsampling a complete population results in a clean dataset, and its properties may be very different from actual real data, such as for amplicon-based microbiome sequencing data. Data cleaning and preprocessing are common steps in microbiome analysis, but may introduce conditions that invalidate the direct use of some estimators. For example, it is common to remove singleton species from the sample, because they may be explained by misclassifications caused by sequencing errors; although some may be correct. In this case, non-parametric estimators, such as the Chao 1 and Chiu estimator, that are based on the number of singletons are not directly applicable. To solve this problem, Chiu and Chao propose to use an estimate for the number of singletons instead of the sample singletons. However, recent work on gut microbiome analysis suggests to filter out all low abundance taxa to remove contamination, in particular for 16S amplicon-based sequencing data. In this case, the results of most richness estimators should be treated with caution, because many estimators, such as Chao 1, Chiu, ACE, Jacknife, or iNEXT, assume that most of the information about missing species is contained in the number of low abundance species. Our study does not evaluate the performance of the considered estimators under unclean data or processed data with such biases. This remains an important topic for future work.
+
+Key Points
+comprehensive review of published methods for species richness estimation on simulated artificial data and downsampled real data (immune repertoire, microbiome, and global reef fish data)
+mathematical foundations and statistical assumptions of richness estimation methods
+Heterogeneous species compositions are more challenging than homogeneous species compositions.
+Population (asymptotic) estimators, such as Chao 1 or Chiu, yield accurate lower bounds if the number of singletons in the sample is correct.
+Upsampling (extrapolating) estimators, such as PreSeq or RichnEst, allow accurate richness estimation for samples up to  larger than the reference sample.
+
+Supplementary Material
+
+Author contributions
+The evaluation was done by J.S. under the supervision of S.R. J.S. and S.R. wrote and revised the manuscript.
+
+Funding
+Internal funding.
+
+Data availability
+All evaluated data is available online. The V(D)J data was published in, the microbiome data in, and the reef fish data in. Detailed accession numbers and download scripts are provided in the code repository (see Code availability).
+
+Code availability
+The code to run all methods is available at https://gitlab.com/rahmannlab/speciesrichness. The repository contains code for simulating the data, download scripts for the real datasets, and Snakemake workflows to run all evaluations.
+
+References
+The relation between the number of species and the number of individuals in a random sample of an animal population
+The population frequencies of species and the estimation of population parameters
+Metagenomic applications in microbial diversity, bioremediation, pollution monitoring, enzyme and drug discovery. A review
+Gut microbiome: profound implications for diet and disease
+More for less: predicting and maximizing genomic variant discovery via Bayesian nonparametrics
+Estimating T-cell repertoire diversity: limitations of classical estimators and a new approach
+Nonparametric estimation of the number of classes in a population
+Estimation of the size of a closed population when capture probabilities vary among animals
+Statistical inference for Poisson and multinomial models for capture-recapture experiments
+Efficient duplicate rate estimation from subsamples of sequencing libraries
+Estimating the unseen: improved estimators for entropy and other properties
+Estimating diversity via frequency ratios
+Models and estimators linking individual-based and sample-based rarefaction, extrapolation and comparison of assemblages
+Robust estimates of overall immune-repertoire diversity from high-throughput measurements on samples
+Pitfalls in the statistical analysis of microbiome amplicon sequencing data
+Estimating the number of classes via sample coverage
+Estimating the number of species in a stochastic abundance model
+An extension of Chao’s estimator of population size based on the first three capture frequency counts
+A more reliable species richness estimator based on the gamma–Poisson model
+Objective Bayesian estimation for the number of species
+Estimating total species richness: fitting rarefaction by asymptotic approximation
+iNEXT: an R package for rarefaction and extrapolation of species diversity (hill numbers)
+Optimal prediction of the number of unseen species
+Predicting the molecular complexity of sequencing libraries
+Exchangeable and partially exchangeable random partitions
+Quantification of HTLV-1 clonality and TCR diversity
+A generalization of sampling without replacement from a finite universe
+Robust estimation of population size when capture probabilities vary among animals
+Species estimation and applications
+The number of new species, and the increase in population coverage, when a sample is increased
+Point and interval estimation of the population size using the truncated Poisson regression model
+Estimating the population size for capture-recapture data with unequal catchability
+Use of the ratio plot in capture–recapture estimation
+A modification of Chao’s lower bound estimator in the case of one-inflation
+Species richness estimation with high diversity but spurious singletons
+The nonconcept of species diversity: a critique and alternative parameters
+Sampling properties of a family of diversity measures
+Rarefaction and extrapolation with hill numbers: a framework for sampling and estimation in species diversity studies
+Estimating the number of unseen species: how many words did Shakespeare know
+Exploring the sampling universe of RNA-seq
+Estimating terrestrial biodiversity through extrapolation
+Sustainable data analysis with Snakemake
+VDJtools: unifying post-analysis of T cell receptor repertoires
+Comparison between 16S rRNA and shotgun sequencing data for the taxonomic characterization of the gut microbiota
+Species richness and identity both determine the biomass of global reef fish communities
+Estimating and comparing microbial diversity in the presence of sequencing errors
+Handling of spurious sequences affects the outcome of high-throughput 16s rRNA gene amplicon profiling

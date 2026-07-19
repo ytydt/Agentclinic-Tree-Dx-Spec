@@ -1,0 +1,64 @@
+
+9 cases | vocab=157595 | upstream=9 | arms=['orig', 'cpg_llm', 'hybrid']
+
+LLM ready: qwen/qwen3-32b @ T=0
+
+CPG gsource ready=True  RAG gsource ready=True
+
+========================================================================================================
+[orig]
+idx L1cov L1ax L2cov L2ax cpgS cpgGold  gold → L1 domain
+--------------------------------------------------------------------------------------------------------
+  1  MISS   NA  MISS   NA    0       -  pancoast tumor       → (none)
+  9  MISS   NA  MISS   NA    0       -  leukemoid reaction   → (none)
+ 13  MISS   NA  MISS   NA    0       -  glucagonoma          → (none)
+ 14  MISS   NA  MISS   NA    0       -  diastolic murmur bes → (none)
+ 17   HIT   OK   HIT   OK    0       -  chronic myeloid leuk → Leukemia, disease (taxonomy)
+ 18  MISS   NA  MISS   NA    0       -  vascular ectasia wit → (none)
+ 22   HIT   OK   HIT   OK    0       -  primary hyperparathy → Disorder of neck (taxonomy)
+ 23  MISS   NA  MISS   NA    0       -  adhesions            → (none)
+ 24  MISS   NA  MISS   NA    0       -  foreign body obstruc → (none)
+--------------------------------------------------------------------------------------------------------
+  L1 coverage 2/9=22%  L1 axis-OK 2/2  | L2 coverage 2/9=22%  L2 axis-OK 2/2
+  CPG efficacy: snippets retrieved in 0/9 cases; gold family recalled FROM CPG in 0/9
+
+========================================================================================================
+[cpg_llm]
+idx L1cov L1ax L2cov L2ax cpgS cpgGold  gold → L1 domain
+--------------------------------------------------------------------------------------------------------
+  1   HIT   OK   HIT   OK   24       -  pancoast tumor       → Neoplastic
+  9  MISS   NA  MISS   NA   24       Y  leukemoid reaction   → (none)
+ 13  MISS   NA  MISS   NA   24       -  glucagonoma          → (none)
+ 14  MISS   NA  MISS   NA   24       -  diastolic murmur bes → (none)
+ 17   HIT   OK   HIT   OK   24       Y  chronic myeloid leuk → Myeloid Lineage Neoplasms
+ 18   HIT   OK   HIT   OK   24       Y  vascular ectasia wit → Hepatic and Vascular Pathology
+ 22   HIT   OK   HIT   OK   24       Y  primary hyperparathy → PTH-related hypercalcemia
+ 23  MISS   NA  MISS   NA   24       -  adhesions            → (none)
+ 24   HIT   OK   HIT   OK   24       Y  foreign body obstruc → Nasal Foreign Body
+--------------------------------------------------------------------------------------------------------
+  L1 coverage 5/9=56%  L1 axis-OK 5/5  | L2 coverage 5/9=56%  L2 axis-OK 5/5
+  CPG efficacy: snippets retrieved in 9/9 cases; gold family recalled FROM CPG in 5/9
+
+========================================================================================================
+[hybrid]
+idx L1cov L1ax L2cov L2ax cpgS cpgGold  gold → L1 domain
+--------------------------------------------------------------------------------------------------------
+  1  MISS   NA  MISS   NA   24       -  pancoast tumor       → (none)
+[LLM] Timeout: GuidelineDDxExtractor exceeded 120s. Retrying (1/2) …
+  9  MISS   NA  MISS   NA   24       Y  leukemoid reaction   → (none)
+ 13  MISS   NA  MISS   NA   24       Y  glucagonoma          → (none)
+ 14  MISS   NA  MISS   NA   24       -  diastolic murmur bes → (none)
+ 17   HIT   OK   HIT   OK   24       Y  chronic myeloid leuk → Leukemia, disease (taxonomy)
+ 18   HIT   OK   HIT   OK   24       Y  vascular ectasia wit → Structural abnormality of liver (t
+ 22   HIT   OK   HIT   OK   24       Y  primary hyperparathy → Disorder of neck (taxonomy)
+ 23  MISS   NA  MISS   NA   24       -  adhesions            → (none)
+ 24  MISS   NA  MISS   NA   24       Y  foreign body obstruc → (none)
+--------------------------------------------------------------------------------------------------------
+  L1 coverage 3/9=33%  L1 axis-OK 3/3  | L2 coverage 3/9=33%  L2 axis-OK 3/3
+  CPG efficacy: snippets retrieved in 9/9 cases; gold family recalled FROM CPG in 6/9
+
+========================================================================================================
+SUMMARY (L1cov / L1ax / L2cov / L2ax / cpg_gold-recall)
+  orig       L1 2/9 ax2 | L2 2/9 ax2 | cpgGold 0/9
+  cpg_llm    L1 5/9 ax5 | L2 5/9 ax5 | cpgGold 5/9
+  hybrid     L1 3/9 ax3 | L2 3/9 ax3 | cpgGold 6/9

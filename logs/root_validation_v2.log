@@ -1,0 +1,3767 @@
+
+================================================================================
+LOG SESSION STARTED  2026-05-18T05:41:56.328945
+Model: meta-llama/llama-3.3-70b-instruct
+================================================================================
+
+[2026-05-18 05:42:00] >>> Module: VignetteParser
+----------------------------------------------------------------------
+SYSTEM PROMPT:
+Role: VignetteParser
+
+Parse a static clinical vignette into structured fields for downstream reasoning.
+
+Instructions:
+1. Extract ALL clinical facts from the vignette text into evidence_items.
+   Each item's "content" should be a concise, self-contained factual phrase,
+   e.g. "Chief complaint: weakness of right arm" or "BP: 177/108 mmHg".
+2. Set "kind" for each item:
+   - "direct"     : explicitly stated in the vignette (most items)
+   - "derived"    : logically inferred combination of two stated facts
+3. Copy the exact question stem into "question".
+4. List every answer option under "options" using "id" and "description".
+5. Set "vignette" to the verbatim vignette text (question and options excluded).
+
+Return strict JSON only, no markdown:
+{
+  "vignette": "verbatim case text without the question/options block",
+  "question": "Which of the following is the most likely diagnosis?",
+  "options": [
+    {"id": "A", "description": "Apical lung tumor"},
+    {"id": "B", "description": "Brachial plexopathy"}
+  ],
+  "evidence_items": [
+    {
+      "id": "E1",
+      "kind": "direct",
+      "content": "Chief complaint: right arm weakness for several weeks",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E2",
+      "kind": "direct",
+      "content": "Social history: 2 pack/day smoking since age 25",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    }
+  ]
+}
+----------------------------------------------------------------------
+USER MESSAGE:
+Module: VignetteParser
+Return strict JSON only, no markdown.
+Payload:
+{"raw_case": "A 67-year-old man presents to the emergency department after fainting. He was outside tending to his lawn for several hours in the heat, when he stood up suddenly from pulling weeds and fainted. He denies any preceding symptoms and returned to baseline within 1 minute. The patient is not aware of any medical problems and just started seeing a primary care physician last week. He recently used a friend's prescription for ondansetron for nausea. His temperature is 99.3°F (37.4°C), blood pressure is 142/88 mmHg, pulse is 107/min, respirations are 14/min, and oxygen saturation is 99% on room air. Physical exam reveals intact cranial nerves, normal strength and sensation, and a stable gait. His abdomen is soft and nontender. An ECG is performed as seen in Figure A. Which of the following is the most likely diagnosis based on this patient’s ECG?\n\nOptions:\nA. Acute myocardial infarction\nB. Hypokalemia\nC. Intermittent torsades des pointes\nD. Previous myocardial ischemia\nE. Pulmonary embolism"}
+----------------------------------------------------------------------
+RAW LLM RESPONSE:
+{
+  "vignette": "A 67-year-old man presents to the emergency department after fainting. He was outside tending to his lawn for several hours in the heat, when he stood up suddenly from pulling weeds and fainted. He denies any preceding symptoms and returned to baseline within 1 minute. The patient is not aware of any medical problems and just started seeing a primary care physician last week. He recently used a friend's prescription for ondansetron for nausea. His temperature is 99.3°F (37.4°C), blood pressure is 142/88 mmHg, pulse is 107/min, respirations are 14/min, and oxygen saturation is 99% on room air. Physical exam reveals intact cranial nerves, normal strength and sensation, and a stable gait. His abdomen is soft and nontender. An ECG is performed as seen in Figure A.",
+  "question": "Which of the following is the most likely diagnosis based on this patient’s ECG?",
+  "options": [
+    {"id": "A", "description": "Acute myocardial infarction"},
+    {"id": "B", "description": "Hypokalemia"},
+    {"id": "C", "description": "Intermittent torsades des pointes"},
+    {"id": "D", "description": "Previous myocardial ischemia"},
+    {"id": "E", "description": "Pulmonary embolism"}
+  ],
+  "evidence_items": [
+    {
+      "id": "E1",
+      "kind": "direct",
+      "content": "Chief complaint: fainting",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E2",
+      "kind": "direct",
+      "content": "Age: 67 years",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E3",
+      "kind": "direct",
+      "content": "Activity at time of fainting: tending to lawn in the heat",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E4",
+      "kind": "direct",
+      "content": "Sudden standing from pulling weeds preceded fainting",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E5",
+      "kind": "direct",
+      "content": "Denies any preceding symptoms",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E6",
+      "kind": "direct",
+      "content": "Returned to baseline within 1 minute",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E7",
+      "kind": "direct",
+      "content": "No known medical problems",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E8",
+      "kind": "direct",
+      "content": "Recently started seeing a primary care physician",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E9",
+      "kind": "direct",
+      "content": "Took ondansetron for nausea",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E10",
+      "kind": "direct",
+      "content": "Temperature: 99.3°F (37.4°C)",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E11",
+      "kind": "direct",
+      "content": "Blood pressure: 142/88 mmHg",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E12",
+      "kind": "direct",
+      "content": "Pulse: 107/min",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E13",
+      "kind": "direct",
+      "content": "Respirations: 14/min",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E14",
+      "kind": "direct",
+      "content": "Oxygen saturation: 99% on room air",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E15",
+      "kind": "direct",
+      "content": "Intact cranial nerves",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E16",
+      "kind": "direct",
+      "content": "Normal strength and sensation",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E17",
+      "kind": "direct",
+      "content": "Stable gait",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E18",
+      "kind": "direct",
+      "content": "Abdomen is soft and nontender",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E19",
+      "kind": "direct",
+      "content": "ECG performed",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    }
+  ]
+}
+----------------------------------------------------------------------
+PARSED RESULT:
+{
+  "vignette": "A 67-year-old man presents to the emergency department after fainting. He was outside tending to his lawn for several hours in the heat, when he stood up suddenly from pulling weeds and fainted. He denies any preceding symptoms and returned to baseline within 1 minute. The patient is not aware of any medical problems and just started seeing a primary care physician last week. He recently used a friend's prescription for ondansetron for nausea. His temperature is 99.3°F (37.4°C), blood pressure is 142/88 mmHg, pulse is 107/min, respirations are 14/min, and oxygen saturation is 99% on room air. Physical exam reveals intact cranial nerves, normal strength and sensation, and a stable gait. His abdomen is soft and nontender. An ECG is performed as seen in Figure A.",
+  "question": "Which of the following is the most likely diagnosis based on this patient’s ECG?",
+  "options": [
+    {
+      "id": "A",
+      "description": "Acute myocardial infarction"
+    },
+    {
+      "id": "B",
+      "description": "Hypokalemia"
+    },
+    {
+      "id": "C",
+      "description": "Intermittent torsades des pointes"
+    },
+    {
+      "id": "D",
+      "description": "Previous myocardial ischemia"
+    },
+    {
+      "id": "E",
+      "description": "Pulmonary embolism"
+    }
+  ],
+  "evidence_items": [
+    {
+      "id": "E1",
+      "kind": "direct",
+      "content": "Chief complaint: fainting",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E2",
+      "kind": "direct",
+      "content": "Age: 67 years",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E3",
+      "kind": "direct",
+      "content": "Activity at time of fainting: tending to lawn in the heat",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E4",
+      "kind": "direct",
+      "content": "Sudden standing from pulling weeds preceded fainting",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E5",
+      "kind": "direct",
+      "content": "Denies any preceding symptoms",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E6",
+      "kind": "direct",
+      "content": "Returned to baseline within 1 minute",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E7",
+      "kind": "direct",
+      "content": "No known medical problems",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E8",
+      "kind": "direct",
+      "content": "Recently started seeing a primary care physician",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E9",
+      "kind": "direct",
+      "content": "Took ondansetron for nausea",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E10",
+      "kind": "direct",
+      "content": "Temperature: 99.3°F (37.4°C)",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E11",
+      "kind": "direct",
+      "content": "Blood pressure: 142/88 mmHg",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E12",
+      "kind": "direct",
+      "content": "Pulse: 107/min",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E13",
+      "kind": "direct",
+      "content": "Respirations: 14/min",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E14",
+      "kind": "direct",
+      "content": "Oxygen saturation: 99% on room air",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E15",
+      "kind": "direct",
+      "content": "Intact cranial nerves",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E16",
+      "kind": "direct",
+      "content": "Normal strength and sensation",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E17",
+      "kind": "direct",
+      "content": "Stable gait",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E18",
+      "kind": "direct",
+      "content": "Abdomen is soft and nontender",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E19",
+      "kind": "direct",
+      "content": "ECG performed",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    }
+  ]
+}
+================================================================================
+
+[2026-05-18 05:42:01] >>> Module: RootSelector
+----------------------------------------------------------------------
+SYSTEM PROMPT:
+Role: RootSelector
+
+Choose the best ROOT NODE for the current diagnostic problem. The root node is NOT
+a diagnosis — it is the clinical syndrome frame that organises the entire differential.
+It must encode the pathophysiological pattern, NOT merely restate the chief complaint.
+
+━━━ What makes a GOOD root node ━━━
+A good root encodes at least two of:
+  (a) Anatomical localisation  — where the lesion likely resides (cortex / cord /
+      plexus / root / peripheral nerve / vascular / systemic / visceral mass …)
+  (b) Mechanism category       — compressive, infiltrative, demyelinating, ischaemic,
+      inflammatory, metabolic, toxic, neoplastic …
+  (c) Temporal pattern         — acute onset (<24 h), subacute (days–weeks),
+      chronic-progressive (months–years)
+  (d) Alarming systemic context — constitutional features (weight loss, night sweats),
+      risk-factor cluster, high-danger urgency tier
+
+Good examples:
+  ✓ "Subacute Progressive Unilateral Upper-Limb Motor-Sensory Deficit with
+     Constitutional Alarm Signs"
+  ✓ "Acute Anterior Circulation Ischaemic Stroke Syndrome"
+  ✓ "Subacute Compressive Brachial Plexopathy Syndrome"
+  ✓ "Acute Decompensated Heart Failure Syndrome"
+  ✓ "Subacute Bilateral Lower-Limb Weakness with Bladder Dysfunction (Cord Level)"
+
+━━━ What is FORBIDDEN ━━━
+  ✗ Paraphrasing the chief complaint: "Acute Right Arm Weakness Syndrome"
+  ✗ Single-symptom labels:            "Right Arm Weakness"
+  ✗ Premature diagnosis:              "Pancoast Tumour Syndrome"
+  ✗ Vague filler:                     "Neurological Syndrome"
+
+━━━ Algorithm ━━━
+1. Enumerate ALL key findings (not just the chief complaint):
+   motor/sensory deficits, constitutional features, risk factors,
+   vital-sign abnormalities, exam asymmetries, time course.
+2. Ask: which anatomical compartment and mechanism best unifies these findings?
+3. Note any systemic alarm features that raise urgency or suggest a specific
+   mechanism (e.g., weight loss + heavy smoking → suspect neoplasm).
+4. Compose a root label from: [temporal pattern] + [anatomical localisation] +
+   [mechanism hint if strong] + [alarm-feature qualifier if present].
+5. If the root node already exists and new evidence contradicts it, set
+   need_root_revision: true.
+
+━━━ Evidence hierarchy (apply when history and objective findings conflict) ━━━
+Objective findings OVERRIDE subjective history when naming the root:
+  Tier 1 (highest): ECG findings, imaging reports, pathology / biopsy results
+  Tier 2:           Lab values that define a physiological state (not isolated values)
+  Tier 3:           Physical examination findings (auscultation, neuro exam, fundoscopy …)
+  Tier 4:           Vital-sign pattern (not a single reading)
+  Tier 5 (lowest):  Patient-reported history, risk factors, social history
+
+Example: A patient faints and reports being dehydrated, but ECG shows complete
+heart block → the root must encode the conduction-system abnormality, NOT the
+dehydration. The patient's reported explanation is Tier 5; the ECG is Tier 1.
+
+━━━ Constraints ━━━
+- Do NOT use an isolated lab value or single vital sign as the root.
+- When a Tier-1 or Tier-2 finding is present, it MUST appear in the root label
+  or be explicitly explained in excluded_root_candidates.
+- External knowledge retrieval is permitted only if the case frame is genuinely
+  rare or specialty-specific and you cannot form a coherent root without it.
+
+Return strict JSON only, no markdown:
+{
+  "root_label": "syndrome-level label following the algorithm above",
+  "time_course": "acute | subacute | chronic | unspecified",
+  "supporting_facts": [
+    "fact 1 used in root selection",
+    "fact 2"
+  ],
+  "excluded_root_candidates": [
+    "candidate X: reason it was not chosen"
+  ],
+  "alarm_features": ["constitutional feature / risk factor that raises urgency"],
+  "need_external_knowledge": false,
+  "knowledge_query_if_needed": "",
+  "need_root_revision": false,
+  "revision_reason": "",
+  "confidence": 0.0
+}
+----------------------------------------------------------------------
+USER MESSAGE:
+Module: RootSelector
+Return strict JSON only, no markdown.
+Payload:
+{"case_id": "case_2", "timestep": 0, "case_summary": "A 67-year-old man presents to the emergency department after fainting. He was outside tending to his lawn for several hours in the heat, when he stood up suddenly from pulling weeds and fainted. He denies any preceding symptoms and returned to baseline within 1 minute. The patient is not aware of any medical problems and just started seeing a primary care physician last week. He recently used a friend's prescription for ondansetron for nausea. His temperature is 99.3°F (37.4°C), blood pressure is 142/88 mmHg, pulse is 107/min, respirations are 14/min, and oxygen saturation is 99% on room air. Physical exam reveals intact cranial nerves, normal strength and sensation, and a stable gait. His abdomen is soft and nontender. An ECG is performed as seen in Figure A. Which of the following is the most likely diagnosis based on this patient’s ECG?\n\nOptions:\nA. Acute myocardial infarction\nB. Hypokalemia\nC. Intermittent torsades des pointes\nD. Previous myocardial ischemia\nE. Pulmonary embolism", "root": null, "branches": {}, "frontier": [], "other_mass": 0.0, "candidate_leaves": [], "pending_results": [], "actions_taken": [], "differential_history": [], "deliberation": {"hypothesis_analysis": {}, "test_chooser_analysis": {}, "challenger_analysis": {}, "stewardship_analysis": {}, "checklist_analysis": {}, "consensus_action": null}, "interrupt": {"active": false, "reason": "", "required_actions": []}, "termination": {"ready_to_stop": false, "termination_type": "continue", "reason": ""}, "turn_budget_used": 0, "estimated_remaining_value": 0.0, "max_turn_budget": null, "latest_action_type": "", "diagnosis_readiness_score": 0.0, "benchmark_output_ready": false, "static_vignette": "A 67-year-old man presents to the emergency department after fainting. He was outside tending to his lawn for several hours in the heat, when he stood up suddenly from pulling weeds and fainted. He denies any preceding symptoms and returned to baseline within 1 minute. The patient is not aware of any medical problems and just started seeing a primary care physician last week. He recently used a friend's prescription for ondansetron for nausea. His temperature is 99.3°F (37.4°C), blood pressure is 142/88 mmHg, pulse is 107/min, respirations are 14/min, and oxygen saturation is 99% on room air. Physical exam reveals intact cranial nerves, normal strength and sensation, and a stable gait. His abdomen is soft and nontender. An ECG is performed as seen in Figure A.", "static_question": "Which of the following is the most likely diagnosis based on this patient’s ECG?", "static_options": [{"id": "A", "description": "Acute myocardial infarction"}, {"id": "B", "description": "Hypokalemia"}, {"id": "C", "description": "Intermittent torsades des pointes"}, {"id": "D", "description": "Previous myocardial ischemia"}, {"id": "E", "description": "Pulmonary embolism"}], "static_evidence_items": [{"id": "E1", "kind": "direct", "content": "Chief complaint: fainting", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E2", "kind": "direct", "content": "Age: 67 years", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E3", "kind": "direct", "content": "Activity at time of fainting: tending to lawn in the heat", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E4", "kind": "direct", "content": "Sudden standing from pulling weeds preceded fainting", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E5", "kind": "direct", "content": "Denies any preceding symptoms", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E6", "kind": "direct", "content": "Returned to baseline within 1 minute", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E7", "kind": "direct", "content": "No known medical problems", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E8", "kind": "direct", "content": "Recently started seeing a primary care physician", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E9", "kind": "direct", "content": "Took ondansetron for nausea", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E10", "kind": "direct", "content": "Temperature: 99.3°F (37.4°C)", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E11", "kind": "direct", "content": "Blood pressure: 142/88 mmHg", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E12", "kind": "direct", "content": "Pulse: 107/min", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E13", "kind": "direct", "content": "Respirations: 14/min", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E14", "kind": "direct", "content": "Oxygen saturation: 99% on room air", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E15", "kind": "direct", "content": "Intact cranial nerves", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E16", "kind": "direct", "content": "Normal strength and sensation", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E17", "kind": "direct", "content": "Stable gait", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E18", "kind": "direct", "content": "Abdomen is soft and nontender", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E19", "kind": "direct", "content": "ECG performed", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}], "seen_evidence_ids": [], "mode_policy": {}, "answer_option_mapping": {}, "tool_use_log": [], "root_revision_needed": false, "max_tree_depth": 3}
+----------------------------------------------------------------------
+RAW LLM RESPONSE:
+{
+  "root_label": "Acute Cardiovascular Event with Syncope",
+  "time_course": "acute",
+  "supporting_facts": [
+    "Chief complaint: fainting",
+    "Sudden standing from pulling weeds preceded fainting",
+    "ECG performed"
+  ],
+  "excluded_root_candidates": [
+    "Candidate: Acute Neurological Event - reason: no preceding neurological symptoms, intact cranial nerves, normal strength and sensation, and stable gait"
+  ],
+  "alarm_features": [
+    "Sudden loss of consciousness",
+    "Recent use of ondansetron for nausea"
+  ],
+  "need_external_knowledge": false,
+  "knowledge_query_if_needed": "",
+  "need_root_revision": false,
+  "revision_reason": "",
+  "confidence": 0.8
+}
+----------------------------------------------------------------------
+PARSED RESULT:
+{
+  "root_label": "Acute Cardiovascular Event with Syncope",
+  "time_course": "acute",
+  "supporting_facts": [
+    "Chief complaint: fainting",
+    "Sudden standing from pulling weeds preceded fainting",
+    "ECG performed"
+  ],
+  "excluded_root_candidates": [
+    "Candidate: Acute Neurological Event - reason: no preceding neurological symptoms, intact cranial nerves, normal strength and sensation, and stable gait"
+  ],
+  "alarm_features": [
+    "Sudden loss of consciousness",
+    "Recent use of ondansetron for nausea"
+  ],
+  "need_external_knowledge": false,
+  "knowledge_query_if_needed": "",
+  "need_root_revision": false,
+  "revision_reason": "",
+  "confidence": 0.8
+}
+================================================================================
+
+[2026-05-18 05:42:03] >>> Module: VignetteParser
+----------------------------------------------------------------------
+SYSTEM PROMPT:
+Role: VignetteParser
+
+Parse a static clinical vignette into structured fields for downstream reasoning.
+
+Instructions:
+1. Extract ALL clinical facts from the vignette text into evidence_items.
+   Each item's "content" should be a concise, self-contained factual phrase,
+   e.g. "Chief complaint: weakness of right arm" or "BP: 177/108 mmHg".
+2. Set "kind" for each item:
+   - "direct"     : explicitly stated in the vignette (most items)
+   - "derived"    : logically inferred combination of two stated facts
+3. Copy the exact question stem into "question".
+4. List every answer option under "options" using "id" and "description".
+5. Set "vignette" to the verbatim vignette text (question and options excluded).
+
+Return strict JSON only, no markdown:
+{
+  "vignette": "verbatim case text without the question/options block",
+  "question": "Which of the following is the most likely diagnosis?",
+  "options": [
+    {"id": "A", "description": "Apical lung tumor"},
+    {"id": "B", "description": "Brachial plexopathy"}
+  ],
+  "evidence_items": [
+    {
+      "id": "E1",
+      "kind": "direct",
+      "content": "Chief complaint: right arm weakness for several weeks",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E2",
+      "kind": "direct",
+      "content": "Social history: 2 pack/day smoking since age 25",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    }
+  ]
+}
+----------------------------------------------------------------------
+USER MESSAGE:
+Module: VignetteParser
+Return strict JSON only, no markdown.
+Payload:
+{"raw_case": "A 62-year-old man presents to the emergency department with chest pain and shortness of breath that he experienced while barbecuing. The pain is over his chest and in his left arm. The patient has a medical history of obesity, type 2 diabetes mellitus, and hypertension. His current medications include insulin, metformin, lisinopril, and hydrochlorothiazide. An ECG is performed and is seen in Figure A. His temperature is 99.5°F (37.5°C), pulse is 112/min, blood pressure is 100/70 mmHg, respirations are 18/min, and oxygen saturation is 95% on room air. The patient is appropriately managed and is admitted to the step-down unit. 2 days later, he complains of chest pain. A repeat ECG is performed and is seen in Figure B. Which of the following is the most appropriate next step in management for this patient's underlying condition?\n\nOptions:\nA. Angiography\nB. Aspirin\nC. Ibuprofen\nD. Prednisone\nE. Stenting"}
+----------------------------------------------------------------------
+RAW LLM RESPONSE:
+{
+  "vignette": "A 62-year-old man presents to the emergency department with chest pain and shortness of breath that he experienced while barbecuing. The pain is over his chest and in his left arm. The patient has a medical history of obesity, type 2 diabetes mellitus, and hypertension. His current medications include insulin, metformin, lisinopril, and hydrochlorothiazide. An ECG is performed and is seen in Figure A. His temperature is 99.5°F (37.5°C), pulse is 112/min, blood pressure is 100/70 mmHg, respirations are 18/min, and oxygen saturation is 95% on room air. The patient is appropriately managed and is admitted to the step-down unit. 2 days later, he complains of chest pain. A repeat ECG is performed and is seen in Figure B.",
+  "question": "Which of the following is the most appropriate next step in management for this patient's underlying condition?",
+  "options": [
+    {"id": "A", "description": "Angiography"},
+    {"id": "B", "description": "Aspirin"},
+    {"id": "C", "description": "Ibuprofen"},
+    {"id": "D", "description": "Prednisone"},
+    {"id": "E", "description": "Stenting"}
+  ],
+  "evidence_items": [
+    {
+      "id": "E1",
+      "kind": "direct",
+      "content": "Chief complaint: chest pain and shortness of breath",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E2",
+      "kind": "direct",
+      "content": "Pain location: over chest and in left arm",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E3",
+      "kind": "direct",
+      "content": "Medical history: obesity, type 2 diabetes mellitus, and hypertension",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E4",
+      "kind": "direct",
+      "content": "Current medications: insulin, metformin, lisinopril, and hydrochlorothiazide",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E5",
+      "kind": "direct",
+      "content": "ECG performed and shown in Figure A",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E6",
+      "kind": "direct",
+      "content": "Temperature: 99.5°F (37.5°C)",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E7",
+      "kind": "direct",
+      "content": "Pulse: 112/min",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E8",
+      "kind": "direct",
+      "content": "Blood pressure: 100/70 mmHg",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E9",
+      "kind": "direct",
+      "content": "Respirations: 18/min",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E10",
+      "kind": "direct",
+      "content": "Oxygen saturation: 95% on room air",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E11",
+      "kind": "direct",
+      "content": "Admitted to the step-down unit",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E12",
+      "kind": "direct",
+      "content": "2 days later, patient complains of chest pain again",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E13",
+      "kind": "direct",
+      "content": "Repeat ECG performed and shown in Figure B",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    }
+  ]
+}
+----------------------------------------------------------------------
+PARSED RESULT:
+{
+  "vignette": "A 62-year-old man presents to the emergency department with chest pain and shortness of breath that he experienced while barbecuing. The pain is over his chest and in his left arm. The patient has a medical history of obesity, type 2 diabetes mellitus, and hypertension. His current medications include insulin, metformin, lisinopril, and hydrochlorothiazide. An ECG is performed and is seen in Figure A. His temperature is 99.5°F (37.5°C), pulse is 112/min, blood pressure is 100/70 mmHg, respirations are 18/min, and oxygen saturation is 95% on room air. The patient is appropriately managed and is admitted to the step-down unit. 2 days later, he complains of chest pain. A repeat ECG is performed and is seen in Figure B.",
+  "question": "Which of the following is the most appropriate next step in management for this patient's underlying condition?",
+  "options": [
+    {
+      "id": "A",
+      "description": "Angiography"
+    },
+    {
+      "id": "B",
+      "description": "Aspirin"
+    },
+    {
+      "id": "C",
+      "description": "Ibuprofen"
+    },
+    {
+      "id": "D",
+      "description": "Prednisone"
+    },
+    {
+      "id": "E",
+      "description": "Stenting"
+    }
+  ],
+  "evidence_items": [
+    {
+      "id": "E1",
+      "kind": "direct",
+      "content": "Chief complaint: chest pain and shortness of breath",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E2",
+      "kind": "direct",
+      "content": "Pain location: over chest and in left arm",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E3",
+      "kind": "direct",
+      "content": "Medical history: obesity, type 2 diabetes mellitus, and hypertension",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E4",
+      "kind": "direct",
+      "content": "Current medications: insulin, metformin, lisinopril, and hydrochlorothiazide",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E5",
+      "kind": "direct",
+      "content": "ECG performed and shown in Figure A",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E6",
+      "kind": "direct",
+      "content": "Temperature: 99.5°F (37.5°C)",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E7",
+      "kind": "direct",
+      "content": "Pulse: 112/min",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E8",
+      "kind": "direct",
+      "content": "Blood pressure: 100/70 mmHg",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E9",
+      "kind": "direct",
+      "content": "Respirations: 18/min",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E10",
+      "kind": "direct",
+      "content": "Oxygen saturation: 95% on room air",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E11",
+      "kind": "direct",
+      "content": "Admitted to the step-down unit",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E12",
+      "kind": "direct",
+      "content": "2 days later, patient complains of chest pain again",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E13",
+      "kind": "direct",
+      "content": "Repeat ECG performed and shown in Figure B",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    }
+  ]
+}
+================================================================================
+
+[2026-05-18 05:42:04] >>> Module: RootSelector
+----------------------------------------------------------------------
+SYSTEM PROMPT:
+Role: RootSelector
+
+Choose the best ROOT NODE for the current diagnostic problem. The root node is NOT
+a diagnosis — it is the clinical syndrome frame that organises the entire differential.
+It must encode the pathophysiological pattern, NOT merely restate the chief complaint.
+
+━━━ What makes a GOOD root node ━━━
+A good root encodes at least two of:
+  (a) Anatomical localisation  — where the lesion likely resides (cortex / cord /
+      plexus / root / peripheral nerve / vascular / systemic / visceral mass …)
+  (b) Mechanism category       — compressive, infiltrative, demyelinating, ischaemic,
+      inflammatory, metabolic, toxic, neoplastic …
+  (c) Temporal pattern         — acute onset (<24 h), subacute (days–weeks),
+      chronic-progressive (months–years)
+  (d) Alarming systemic context — constitutional features (weight loss, night sweats),
+      risk-factor cluster, high-danger urgency tier
+
+Good examples:
+  ✓ "Subacute Progressive Unilateral Upper-Limb Motor-Sensory Deficit with
+     Constitutional Alarm Signs"
+  ✓ "Acute Anterior Circulation Ischaemic Stroke Syndrome"
+  ✓ "Subacute Compressive Brachial Plexopathy Syndrome"
+  ✓ "Acute Decompensated Heart Failure Syndrome"
+  ✓ "Subacute Bilateral Lower-Limb Weakness with Bladder Dysfunction (Cord Level)"
+
+━━━ What is FORBIDDEN ━━━
+  ✗ Paraphrasing the chief complaint: "Acute Right Arm Weakness Syndrome"
+  ✗ Single-symptom labels:            "Right Arm Weakness"
+  ✗ Premature diagnosis:              "Pancoast Tumour Syndrome"
+  ✗ Vague filler:                     "Neurological Syndrome"
+
+━━━ Algorithm ━━━
+1. Enumerate ALL key findings (not just the chief complaint):
+   motor/sensory deficits, constitutional features, risk factors,
+   vital-sign abnormalities, exam asymmetries, time course.
+2. Ask: which anatomical compartment and mechanism best unifies these findings?
+3. Note any systemic alarm features that raise urgency or suggest a specific
+   mechanism (e.g., weight loss + heavy smoking → suspect neoplasm).
+4. Compose a root label from: [temporal pattern] + [anatomical localisation] +
+   [mechanism hint if strong] + [alarm-feature qualifier if present].
+5. If the root node already exists and new evidence contradicts it, set
+   need_root_revision: true.
+
+━━━ Evidence hierarchy (apply when history and objective findings conflict) ━━━
+Objective findings OVERRIDE subjective history when naming the root:
+  Tier 1 (highest): ECG findings, imaging reports, pathology / biopsy results
+  Tier 2:           Lab values that define a physiological state (not isolated values)
+  Tier 3:           Physical examination findings (auscultation, neuro exam, fundoscopy …)
+  Tier 4:           Vital-sign pattern (not a single reading)
+  Tier 5 (lowest):  Patient-reported history, risk factors, social history
+
+Example: A patient faints and reports being dehydrated, but ECG shows complete
+heart block → the root must encode the conduction-system abnormality, NOT the
+dehydration. The patient's reported explanation is Tier 5; the ECG is Tier 1.
+
+━━━ Constraints ━━━
+- Do NOT use an isolated lab value or single vital sign as the root.
+- When a Tier-1 or Tier-2 finding is present, it MUST appear in the root label
+  or be explicitly explained in excluded_root_candidates.
+- External knowledge retrieval is permitted only if the case frame is genuinely
+  rare or specialty-specific and you cannot form a coherent root without it.
+
+Return strict JSON only, no markdown:
+{
+  "root_label": "syndrome-level label following the algorithm above",
+  "time_course": "acute | subacute | chronic | unspecified",
+  "supporting_facts": [
+    "fact 1 used in root selection",
+    "fact 2"
+  ],
+  "excluded_root_candidates": [
+    "candidate X: reason it was not chosen"
+  ],
+  "alarm_features": ["constitutional feature / risk factor that raises urgency"],
+  "need_external_knowledge": false,
+  "knowledge_query_if_needed": "",
+  "need_root_revision": false,
+  "revision_reason": "",
+  "confidence": 0.0
+}
+----------------------------------------------------------------------
+USER MESSAGE:
+Module: RootSelector
+Return strict JSON only, no markdown.
+Payload:
+{"case_id": "case_5", "timestep": 0, "case_summary": "A 62-year-old man presents to the emergency department with chest pain and shortness of breath that he experienced while barbecuing. The pain is over his chest and in his left arm. The patient has a medical history of obesity, type 2 diabetes mellitus, and hypertension. His current medications include insulin, metformin, lisinopril, and hydrochlorothiazide. An ECG is performed and is seen in Figure A. His temperature is 99.5°F (37.5°C), pulse is 112/min, blood pressure is 100/70 mmHg, respirations are 18/min, and oxygen saturation is 95% on room air. The patient is appropriately managed and is admitted to the step-down unit. 2 days later, he complains of chest pain. A repeat ECG is performed and is seen in Figure B. Which of the following is the most appropriate next step in management for this patient's underlying condition?\n\nOptions:\nA. Angiography\nB. Aspirin\nC. Ibuprofen\nD. Prednisone\nE. Stenting", "root": null, "branches": {}, "frontier": [], "other_mass": 0.0, "candidate_leaves": [], "pending_results": [], "actions_taken": [], "differential_history": [], "deliberation": {"hypothesis_analysis": {}, "test_chooser_analysis": {}, "challenger_analysis": {}, "stewardship_analysis": {}, "checklist_analysis": {}, "consensus_action": null}, "interrupt": {"active": false, "reason": "", "required_actions": []}, "termination": {"ready_to_stop": false, "termination_type": "continue", "reason": ""}, "turn_budget_used": 0, "estimated_remaining_value": 0.0, "max_turn_budget": null, "latest_action_type": "", "diagnosis_readiness_score": 0.0, "benchmark_output_ready": false, "static_vignette": "A 62-year-old man presents to the emergency department with chest pain and shortness of breath that he experienced while barbecuing. The pain is over his chest and in his left arm. The patient has a medical history of obesity, type 2 diabetes mellitus, and hypertension. His current medications include insulin, metformin, lisinopril, and hydrochlorothiazide. An ECG is performed and is seen in Figure A. His temperature is 99.5°F (37.5°C), pulse is 112/min, blood pressure is 100/70 mmHg, respirations are 18/min, and oxygen saturation is 95% on room air. The patient is appropriately managed and is admitted to the step-down unit. 2 days later, he complains of chest pain. A repeat ECG is performed and is seen in Figure B.", "static_question": "Which of the following is the most appropriate next step in management for this patient's underlying condition?", "static_options": [{"id": "A", "description": "Angiography"}, {"id": "B", "description": "Aspirin"}, {"id": "C", "description": "Ibuprofen"}, {"id": "D", "description": "Prednisone"}, {"id": "E", "description": "Stenting"}], "static_evidence_items": [{"id": "E1", "kind": "direct", "content": "Chief complaint: chest pain and shortness of breath", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E2", "kind": "direct", "content": "Pain location: over chest and in left arm", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E3", "kind": "direct", "content": "Medical history: obesity, type 2 diabetes mellitus, and hypertension", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E4", "kind": "direct", "content": "Current medications: insulin, metformin, lisinopril, and hydrochlorothiazide", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E5", "kind": "direct", "content": "ECG performed and shown in Figure A", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E6", "kind": "direct", "content": "Temperature: 99.5°F (37.5°C)", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E7", "kind": "direct", "content": "Pulse: 112/min", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E8", "kind": "direct", "content": "Blood pressure: 100/70 mmHg", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E9", "kind": "direct", "content": "Respirations: 18/min", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E10", "kind": "direct", "content": "Oxygen saturation: 95% on room air", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E11", "kind": "direct", "content": "Admitted to the step-down unit", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E12", "kind": "direct", "content": "2 days later, patient complains of chest pain again", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E13", "kind": "direct", "content": "Repeat ECG performed and shown in Figure B", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}], "seen_evidence_ids": [], "mode_policy": {}, "answer_option_mapping": {}, "tool_use_log": [], "root_revision_needed": false, "max_tree_depth": 3}
+----------------------------------------------------------------------
+RAW LLM RESPONSE:
+{
+  "root_label": "Acute Cardiac Ischaemic Syndrome",
+  "time_course": "acute",
+  "supporting_facts": [
+    "Chief complaint: chest pain and shortness of breath",
+    "Pain location: over chest and in left arm",
+    "ECG performed and shown in Figure A",
+    "Temperature: 99.5°F (37.5°C)",
+    "Pulse: 112/min",
+    "Blood pressure: 100/70 mmHg",
+    "Respirations: 18/min",
+    "Oxygen saturation: 95% on room air"
+  ],
+  "excluded_root_candidates": [
+    "Candidate X: Acute Pulmonary Embolism Syndrome - not chosen due to lack of specific symptoms such as cough or hemoptysis"
+  ],
+  "alarm_features": [
+    "Chest pain",
+    "Shortness of breath",
+    "History of hypertension",
+    "High pulse rate"
+  ],
+  "need_external_knowledge": false,
+  "knowledge_query_if_needed": "",
+  "need_root_revision": false,
+  "revision_reason": "",
+  "confidence": 0.8
+}
+----------------------------------------------------------------------
+PARSED RESULT:
+{
+  "root_label": "Acute Cardiac Ischaemic Syndrome",
+  "time_course": "acute",
+  "supporting_facts": [
+    "Chief complaint: chest pain and shortness of breath",
+    "Pain location: over chest and in left arm",
+    "ECG performed and shown in Figure A",
+    "Temperature: 99.5°F (37.5°C)",
+    "Pulse: 112/min",
+    "Blood pressure: 100/70 mmHg",
+    "Respirations: 18/min",
+    "Oxygen saturation: 95% on room air"
+  ],
+  "excluded_root_candidates": [
+    "Candidate X: Acute Pulmonary Embolism Syndrome - not chosen due to lack of specific symptoms such as cough or hemoptysis"
+  ],
+  "alarm_features": [
+    "Chest pain",
+    "Shortness of breath",
+    "History of hypertension",
+    "High pulse rate"
+  ],
+  "need_external_knowledge": false,
+  "knowledge_query_if_needed": "",
+  "need_root_revision": false,
+  "revision_reason": "",
+  "confidence": 0.8
+}
+================================================================================
+
+[2026-05-18 05:42:07] >>> Module: VignetteParser
+----------------------------------------------------------------------
+SYSTEM PROMPT:
+Role: VignetteParser
+
+Parse a static clinical vignette into structured fields for downstream reasoning.
+
+Instructions:
+1. Extract ALL clinical facts from the vignette text into evidence_items.
+   Each item's "content" should be a concise, self-contained factual phrase,
+   e.g. "Chief complaint: weakness of right arm" or "BP: 177/108 mmHg".
+2. Set "kind" for each item:
+   - "direct"     : explicitly stated in the vignette (most items)
+   - "derived"    : logically inferred combination of two stated facts
+3. Copy the exact question stem into "question".
+4. List every answer option under "options" using "id" and "description".
+5. Set "vignette" to the verbatim vignette text (question and options excluded).
+
+Return strict JSON only, no markdown:
+{
+  "vignette": "verbatim case text without the question/options block",
+  "question": "Which of the following is the most likely diagnosis?",
+  "options": [
+    {"id": "A", "description": "Apical lung tumor"},
+    {"id": "B", "description": "Brachial plexopathy"}
+  ],
+  "evidence_items": [
+    {
+      "id": "E1",
+      "kind": "direct",
+      "content": "Chief complaint: right arm weakness for several weeks",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E2",
+      "kind": "direct",
+      "content": "Social history: 2 pack/day smoking since age 25",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    }
+  ]
+}
+----------------------------------------------------------------------
+USER MESSAGE:
+Module: VignetteParser
+Return strict JSON only, no markdown.
+Payload:
+{"raw_case": "A 56-year-old woman presents to the emergency department with muscle weakness. Her symptoms have progressively worsened over the course of 2 weeks and are most significant in her lower extremities. She also notices increased urinary frequency. Approximately 1 month ago, she was diagnosed with calcium phosphate nephrolithiasis. Medical history is significant for rheumatoid arthritis diagnosed approximately 10 years ago and treated with methotrexate as well as type 2 diabetes mellitus treated with metformin. Her temperature is 98.6°F (37°C), blood pressure is 138/92 mmHg, pulse is 92/min, and respirations are 17/min. On physical exam, there is mild tenderness to palpation of the metacarpophalangeal and proximal interphalangeal joints. There is 4/5 power throughout the lower extremity. Laboratory testing is shown. Serum: Na+: 137 mEq/L Cl-: 106 mEq/L K+: 2.9 mEq/L HCO3-: 18 mEq/L Glucose: 115 mg/dL Creatinine: 1.0 mg/dL Urine pH: 5.6 Which of the following is the most appropriate next step in management?\n\nOptions:\nA. Administer hydrochlorothiazide\nB. Administer intravenous insulin\nC. Administer intravenous sodium bicarbonate\nD. Begin potassium replacement therapy with dextrose\nE. Increase methotrexate dose"}
+----------------------------------------------------------------------
+RAW LLM RESPONSE:
+{
+  "vignette": "A 56-year-old woman presents to the emergency department with muscle weakness. Her symptoms have progressively worsened over the course of 2 weeks and are most significant in her lower extremities. She also notices increased urinary frequency. Approximately 1 month ago, she was diagnosed with calcium phosphate nephrolithiasis. Medical history is significant for rheumatoid arthritis diagnosed approximately 10 years ago and treated with methotrexate as well as type 2 diabetes mellitus treated with metformin. Her temperature is 98.6°F (37°C), blood pressure is 138/92 mmHg, pulse is 92/min, and respirations are 17/min. On physical exam, there is mild tenderness to palpation of the metacarpophalangeal and proximal interphalangeal joints. There is 4/5 power throughout the lower extremity. Laboratory testing is shown. Serum: Na+: 137 mEq/L Cl-: 106 mEq/L K+: 2.9 mEq/L HCO3-: 18 mEq/L Glucose: 115 mg/dL Creatinine: 1.0 mg/dL Urine pH: 5.6",
+  "question": "Which of the following is the most appropriate next step in management?",
+  "options": [
+    {"id": "A", "description": "Administer hydrochlorothiazide"},
+    {"id": "B", "description": "Administer intravenous insulin"},
+    {"id": "C", "description": "Administer intravenous sodium bicarbonate"},
+    {"id": "D", "description": "Begin potassium replacement therapy with dextrose"},
+    {"id": "E", "description": "Increase methotrexate dose"}
+  ],
+  "evidence_items": [
+    {
+      "id": "E1",
+      "kind": "direct",
+      "content": "Chief complaint: muscle weakness",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E2",
+      "kind": "direct",
+      "content": "Symptoms have progressively worsened over 2 weeks",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E3",
+      "kind": "direct",
+      "content": "Symptoms are most significant in the lower extremities",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E4",
+      "kind": "direct",
+      "content": "Increased urinary frequency",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E5",
+      "kind": "direct",
+      "content": "Diagnosed with calcium phosphate nephrolithiasis 1 month ago",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E6",
+      "kind": "direct",
+      "content": "Medical history: rheumatoid arthritis diagnosed 10 years ago",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E7",
+      "kind": "direct",
+      "content": "Rheumatoid arthritis treated with methotrexate",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E8",
+      "kind": "direct",
+      "content": "Medical history: type 2 diabetes mellitus treated with metformin",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E9",
+      "kind": "direct",
+      "content": "Temperature: 98.6°F (37°C)",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E10",
+      "kind": "direct",
+      "content": "Blood pressure: 138/92 mmHg",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E11",
+      "kind": "direct",
+      "content": "Pulse: 92/min",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E12",
+      "kind": "direct",
+      "content": "Respirations: 17/min",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E13",
+      "kind": "direct",
+      "content": "Mild tenderness to palpation of the metacarpophalangeal and proximal interphalangeal joints",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E14",
+      "kind": "direct",
+      "content": "4/5 power throughout the lower extremity",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E15",
+      "kind": "direct",
+      "content": "Serum Na+: 137 mEq/L",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E16",
+      "kind": "direct",
+      "content": "Serum Cl-: 106 mEq/L",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E17",
+      "kind": "direct",
+      "content": "Serum K+: 2.9 mEq/L",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E18",
+      "kind": "direct",
+      "content": "Serum HCO3-: 18 mEq/L",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E19",
+      "kind": "direct",
+      "content": "Serum Glucose: 115 mg/dL",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E20",
+      "kind": "direct",
+      "content": "Serum Creatinine: 1.0 mg/dL",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E21",
+      "kind": "direct",
+      "content": "Urine pH: 5.6",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    }
+  ]
+}
+----------------------------------------------------------------------
+PARSED RESULT:
+{
+  "vignette": "A 56-year-old woman presents to the emergency department with muscle weakness. Her symptoms have progressively worsened over the course of 2 weeks and are most significant in her lower extremities. She also notices increased urinary frequency. Approximately 1 month ago, she was diagnosed with calcium phosphate nephrolithiasis. Medical history is significant for rheumatoid arthritis diagnosed approximately 10 years ago and treated with methotrexate as well as type 2 diabetes mellitus treated with metformin. Her temperature is 98.6°F (37°C), blood pressure is 138/92 mmHg, pulse is 92/min, and respirations are 17/min. On physical exam, there is mild tenderness to palpation of the metacarpophalangeal and proximal interphalangeal joints. There is 4/5 power throughout the lower extremity. Laboratory testing is shown. Serum: Na+: 137 mEq/L Cl-: 106 mEq/L K+: 2.9 mEq/L HCO3-: 18 mEq/L Glucose: 115 mg/dL Creatinine: 1.0 mg/dL Urine pH: 5.6",
+  "question": "Which of the following is the most appropriate next step in management?",
+  "options": [
+    {
+      "id": "A",
+      "description": "Administer hydrochlorothiazide"
+    },
+    {
+      "id": "B",
+      "description": "Administer intravenous insulin"
+    },
+    {
+      "id": "C",
+      "description": "Administer intravenous sodium bicarbonate"
+    },
+    {
+      "id": "D",
+      "description": "Begin potassium replacement therapy with dextrose"
+    },
+    {
+      "id": "E",
+      "description": "Increase methotrexate dose"
+    }
+  ],
+  "evidence_items": [
+    {
+      "id": "E1",
+      "kind": "direct",
+      "content": "Chief complaint: muscle weakness",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E2",
+      "kind": "direct",
+      "content": "Symptoms have progressively worsened over 2 weeks",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E3",
+      "kind": "direct",
+      "content": "Symptoms are most significant in the lower extremities",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E4",
+      "kind": "direct",
+      "content": "Increased urinary frequency",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E5",
+      "kind": "direct",
+      "content": "Diagnosed with calcium phosphate nephrolithiasis 1 month ago",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E6",
+      "kind": "direct",
+      "content": "Medical history: rheumatoid arthritis diagnosed 10 years ago",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E7",
+      "kind": "direct",
+      "content": "Rheumatoid arthritis treated with methotrexate",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E8",
+      "kind": "direct",
+      "content": "Medical history: type 2 diabetes mellitus treated with metformin",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E9",
+      "kind": "direct",
+      "content": "Temperature: 98.6°F (37°C)",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E10",
+      "kind": "direct",
+      "content": "Blood pressure: 138/92 mmHg",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E11",
+      "kind": "direct",
+      "content": "Pulse: 92/min",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E12",
+      "kind": "direct",
+      "content": "Respirations: 17/min",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E13",
+      "kind": "direct",
+      "content": "Mild tenderness to palpation of the metacarpophalangeal and proximal interphalangeal joints",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E14",
+      "kind": "direct",
+      "content": "4/5 power throughout the lower extremity",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E15",
+      "kind": "direct",
+      "content": "Serum Na+: 137 mEq/L",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E16",
+      "kind": "direct",
+      "content": "Serum Cl-: 106 mEq/L",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E17",
+      "kind": "direct",
+      "content": "Serum K+: 2.9 mEq/L",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E18",
+      "kind": "direct",
+      "content": "Serum HCO3-: 18 mEq/L",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E19",
+      "kind": "direct",
+      "content": "Serum Glucose: 115 mg/dL",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E20",
+      "kind": "direct",
+      "content": "Serum Creatinine: 1.0 mg/dL",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E21",
+      "kind": "direct",
+      "content": "Urine pH: 5.6",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    }
+  ]
+}
+================================================================================
+
+[2026-05-18 05:42:08] >>> Module: RootSelector
+----------------------------------------------------------------------
+SYSTEM PROMPT:
+Role: RootSelector
+
+Choose the best ROOT NODE for the current diagnostic problem. The root node is NOT
+a diagnosis — it is the clinical syndrome frame that organises the entire differential.
+It must encode the pathophysiological pattern, NOT merely restate the chief complaint.
+
+━━━ What makes a GOOD root node ━━━
+A good root encodes at least two of:
+  (a) Anatomical localisation  — where the lesion likely resides (cortex / cord /
+      plexus / root / peripheral nerve / vascular / systemic / visceral mass …)
+  (b) Mechanism category       — compressive, infiltrative, demyelinating, ischaemic,
+      inflammatory, metabolic, toxic, neoplastic …
+  (c) Temporal pattern         — acute onset (<24 h), subacute (days–weeks),
+      chronic-progressive (months–years)
+  (d) Alarming systemic context — constitutional features (weight loss, night sweats),
+      risk-factor cluster, high-danger urgency tier
+
+Good examples:
+  ✓ "Subacute Progressive Unilateral Upper-Limb Motor-Sensory Deficit with
+     Constitutional Alarm Signs"
+  ✓ "Acute Anterior Circulation Ischaemic Stroke Syndrome"
+  ✓ "Subacute Compressive Brachial Plexopathy Syndrome"
+  ✓ "Acute Decompensated Heart Failure Syndrome"
+  ✓ "Subacute Bilateral Lower-Limb Weakness with Bladder Dysfunction (Cord Level)"
+
+━━━ What is FORBIDDEN ━━━
+  ✗ Paraphrasing the chief complaint: "Acute Right Arm Weakness Syndrome"
+  ✗ Single-symptom labels:            "Right Arm Weakness"
+  ✗ Premature diagnosis:              "Pancoast Tumour Syndrome"
+  ✗ Vague filler:                     "Neurological Syndrome"
+
+━━━ Algorithm ━━━
+1. Enumerate ALL key findings (not just the chief complaint):
+   motor/sensory deficits, constitutional features, risk factors,
+   vital-sign abnormalities, exam asymmetries, time course.
+2. Ask: which anatomical compartment and mechanism best unifies these findings?
+3. Note any systemic alarm features that raise urgency or suggest a specific
+   mechanism (e.g., weight loss + heavy smoking → suspect neoplasm).
+4. Compose a root label from: [temporal pattern] + [anatomical localisation] +
+   [mechanism hint if strong] + [alarm-feature qualifier if present].
+5. If the root node already exists and new evidence contradicts it, set
+   need_root_revision: true.
+
+━━━ Evidence hierarchy (apply when history and objective findings conflict) ━━━
+Objective findings OVERRIDE subjective history when naming the root:
+  Tier 1 (highest): ECG findings, imaging reports, pathology / biopsy results
+  Tier 2:           Lab values that define a physiological state (not isolated values)
+  Tier 3:           Physical examination findings (auscultation, neuro exam, fundoscopy …)
+  Tier 4:           Vital-sign pattern (not a single reading)
+  Tier 5 (lowest):  Patient-reported history, risk factors, social history
+
+Example: A patient faints and reports being dehydrated, but ECG shows complete
+heart block → the root must encode the conduction-system abnormality, NOT the
+dehydration. The patient's reported explanation is Tier 5; the ECG is Tier 1.
+
+━━━ Constraints ━━━
+- Do NOT use an isolated lab value or single vital sign as the root.
+- When a Tier-1 or Tier-2 finding is present, it MUST appear in the root label
+  or be explicitly explained in excluded_root_candidates.
+- External knowledge retrieval is permitted only if the case frame is genuinely
+  rare or specialty-specific and you cannot form a coherent root without it.
+
+Return strict JSON only, no markdown:
+{
+  "root_label": "syndrome-level label following the algorithm above",
+  "time_course": "acute | subacute | chronic | unspecified",
+  "supporting_facts": [
+    "fact 1 used in root selection",
+    "fact 2"
+  ],
+  "excluded_root_candidates": [
+    "candidate X: reason it was not chosen"
+  ],
+  "alarm_features": ["constitutional feature / risk factor that raises urgency"],
+  "need_external_knowledge": false,
+  "knowledge_query_if_needed": "",
+  "need_root_revision": false,
+  "revision_reason": "",
+  "confidence": 0.0
+}
+----------------------------------------------------------------------
+USER MESSAGE:
+Module: RootSelector
+Return strict JSON only, no markdown.
+Payload:
+{"case_id": "case_9", "timestep": 0, "case_summary": "A 56-year-old woman presents to the emergency department with muscle weakness. Her symptoms have progressively worsened over the course of 2 weeks and are most significant in her lower extremities. She also notices increased urinary frequency. Approximately 1 month ago, she was diagnosed with calcium phosphate nephrolithiasis. Medical history is significant for rheumatoid arthritis diagnosed approximately 10 years ago and treated with methotrexate as well as type 2 diabetes mellitus treated with metformin. Her temperature is 98.6°F (37°C), blood pressure is 138/92 mmHg, pulse is 92/min, and respirations are 17/min. On physical exam, there is mild tenderness to palpation of the metacarpophalangeal and proximal interphalangeal joints. There is 4/5 power throughout the lower extremity. Laboratory testing is shown. Serum: Na+: 137 mEq/L Cl-: 106 mEq/L K+: 2.9 mEq/L HCO3-: 18 mEq/L Glucose: 115 mg/dL Creatinine: 1.0 mg/dL Urine pH: 5.6 Which of the following is the most appropriate next step in management?\n\nOptions:\nA. Administer hydrochlorothiazide\nB. Administer intravenous insulin\nC. Administer intravenous sodium bicarbonate\nD. Begin potassium replacement therapy with dextrose\nE. Increase methotrexate dose", "root": null, "branches": {}, "frontier": [], "other_mass": 0.0, "candidate_leaves": [], "pending_results": [], "actions_taken": [], "differential_history": [], "deliberation": {"hypothesis_analysis": {}, "test_chooser_analysis": {}, "challenger_analysis": {}, "stewardship_analysis": {}, "checklist_analysis": {}, "consensus_action": null}, "interrupt": {"active": false, "reason": "", "required_actions": []}, "termination": {"ready_to_stop": false, "termination_type": "continue", "reason": ""}, "turn_budget_used": 0, "estimated_remaining_value": 0.0, "max_turn_budget": null, "latest_action_type": "", "diagnosis_readiness_score": 0.0, "benchmark_output_ready": false, "static_vignette": "A 56-year-old woman presents to the emergency department with muscle weakness. Her symptoms have progressively worsened over the course of 2 weeks and are most significant in her lower extremities. She also notices increased urinary frequency. Approximately 1 month ago, she was diagnosed with calcium phosphate nephrolithiasis. Medical history is significant for rheumatoid arthritis diagnosed approximately 10 years ago and treated with methotrexate as well as type 2 diabetes mellitus treated with metformin. Her temperature is 98.6°F (37°C), blood pressure is 138/92 mmHg, pulse is 92/min, and respirations are 17/min. On physical exam, there is mild tenderness to palpation of the metacarpophalangeal and proximal interphalangeal joints. There is 4/5 power throughout the lower extremity. Laboratory testing is shown. Serum: Na+: 137 mEq/L Cl-: 106 mEq/L K+: 2.9 mEq/L HCO3-: 18 mEq/L Glucose: 115 mg/dL Creatinine: 1.0 mg/dL Urine pH: 5.6", "static_question": "Which of the following is the most appropriate next step in management?", "static_options": [{"id": "A", "description": "Administer hydrochlorothiazide"}, {"id": "B", "description": "Administer intravenous insulin"}, {"id": "C", "description": "Administer intravenous sodium bicarbonate"}, {"id": "D", "description": "Begin potassium replacement therapy with dextrose"}, {"id": "E", "description": "Increase methotrexate dose"}], "static_evidence_items": [{"id": "E1", "kind": "direct", "content": "Chief complaint: muscle weakness", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E2", "kind": "direct", "content": "Symptoms have progressively worsened over 2 weeks", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E3", "kind": "direct", "content": "Symptoms are most significant in the lower extremities", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E4", "kind": "direct", "content": "Increased urinary frequency", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E5", "kind": "direct", "content": "Diagnosed with calcium phosphate nephrolithiasis 1 month ago", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E6", "kind": "direct", "content": "Medical history: rheumatoid arthritis diagnosed 10 years ago", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E7", "kind": "direct", "content": "Rheumatoid arthritis treated with methotrexate", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E8", "kind": "direct", "content": "Medical history: type 2 diabetes mellitus treated with metformin", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E9", "kind": "direct", "content": "Temperature: 98.6°F (37°C)", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E10", "kind": "direct", "content": "Blood pressure: 138/92 mmHg", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E11", "kind": "direct", "content": "Pulse: 92/min", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E12", "kind": "direct", "content": "Respirations: 17/min", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E13", "kind": "direct", "content": "Mild tenderness to palpation of the metacarpophalangeal and proximal interphalangeal joints", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E14", "kind": "direct", "content": "4/5 power throughout the lower extremity", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E15", "kind": "direct", "content": "Serum Na+: 137 mEq/L", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E16", "kind": "direct", "content": "Serum Cl-: 106 mEq/L", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E17", "kind": "direct", "content": "Serum K+: 2.9 mEq/L", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E18", "kind": "direct", "content": "Serum HCO3-: 18 mEq/L", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E19", "kind": "direct", "content": "Serum Glucose: 115 mg/dL", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E20", "kind": "direct", "content": "Serum Creatinine: 1.0 mg/dL", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E21", "kind": "direct", "content": "Urine pH: 5.6", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}], "seen_evidence_ids": [], "mode_policy": {}, "answer_option_mapping": {}, "tool_use_log": [], "root_revision_needed": false, "max_tree_depth": 3}
+----------------------------------------------------------------------
+RAW LLM RESPONSE:
+{
+  "root_label": "Subacute Progressive Lower Extremity Muscle Weakness with Hypokalemia and Metabolic Acidosis",
+  "time_course": "subacute",
+  "supporting_facts": [
+    "Progressively worsening muscle weakness over 2 weeks",
+    "Lower extremity muscle weakness (4/5 power)",
+    "Hypokalemia (K+: 2.9 mEq/L)",
+    "Metabolic acidosis (HCO3-: 18 mEq/L)"
+  ],
+  "excluded_root_candidates": [
+    "Acute Right Arm Weakness Syndrome: does not match the subacute and bilateral nature of the patient's symptoms"
+  ],
+  "alarm_features": [
+    "Hypokalemia",
+    "Metabolic acidosis"
+  ],
+  "need_external_knowledge": false,
+  "knowledge_query_if_needed": "",
+  "need_root_revision": false,
+  "revision_reason": "",
+  "confidence": 0.8
+}
+----------------------------------------------------------------------
+PARSED RESULT:
+{
+  "root_label": "Subacute Progressive Lower Extremity Muscle Weakness with Hypokalemia and Metabolic Acidosis",
+  "time_course": "subacute",
+  "supporting_facts": [
+    "Progressively worsening muscle weakness over 2 weeks",
+    "Lower extremity muscle weakness (4/5 power)",
+    "Hypokalemia (K+: 2.9 mEq/L)",
+    "Metabolic acidosis (HCO3-: 18 mEq/L)"
+  ],
+  "excluded_root_candidates": [
+    "Acute Right Arm Weakness Syndrome: does not match the subacute and bilateral nature of the patient's symptoms"
+  ],
+  "alarm_features": [
+    "Hypokalemia",
+    "Metabolic acidosis"
+  ],
+  "need_external_knowledge": false,
+  "knowledge_query_if_needed": "",
+  "need_root_revision": false,
+  "revision_reason": "",
+  "confidence": 0.8
+}
+================================================================================
+
+[2026-05-18 05:42:11] >>> Module: VignetteParser
+----------------------------------------------------------------------
+SYSTEM PROMPT:
+Role: VignetteParser
+
+Parse a static clinical vignette into structured fields for downstream reasoning.
+
+Instructions:
+1. Extract ALL clinical facts from the vignette text into evidence_items.
+   Each item's "content" should be a concise, self-contained factual phrase,
+   e.g. "Chief complaint: weakness of right arm" or "BP: 177/108 mmHg".
+2. Set "kind" for each item:
+   - "direct"     : explicitly stated in the vignette (most items)
+   - "derived"    : logically inferred combination of two stated facts
+3. Copy the exact question stem into "question".
+4. List every answer option under "options" using "id" and "description".
+5. Set "vignette" to the verbatim vignette text (question and options excluded).
+
+Return strict JSON only, no markdown:
+{
+  "vignette": "verbatim case text without the question/options block",
+  "question": "Which of the following is the most likely diagnosis?",
+  "options": [
+    {"id": "A", "description": "Apical lung tumor"},
+    {"id": "B", "description": "Brachial plexopathy"}
+  ],
+  "evidence_items": [
+    {
+      "id": "E1",
+      "kind": "direct",
+      "content": "Chief complaint: right arm weakness for several weeks",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E2",
+      "kind": "direct",
+      "content": "Social history: 2 pack/day smoking since age 25",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    }
+  ]
+}
+----------------------------------------------------------------------
+USER MESSAGE:
+Module: VignetteParser
+Return strict JSON only, no markdown.
+Payload:
+{"raw_case": "A 3-year-old boy presents with his parents to a pediatrician for a new patient visit. The child was recently adopted and little is known about his medical or family history. The child seems to be doing well, but the patient is much larger than any of the other 3-year-olds in his preschool class. He eats a varied diet at home and with limited juice and snack foods. His temperature is 98.6°F (37°C), blood pressure is 101/67 mmHg, pulse is 110/min, and respirations are 24/min. On physical exam, the patient is in the 73rd percentile for weight, 99th percentile for height, and 86th percentile for head circumference. He appears mildly developmentally delayed. He has a fair complexion and tall stature with a prominent sternum. The patient also has joint hypermobility and hyperelastic skin. He appears to have poor visual acuity and is referred to an ophthalmologist, who finds downward lens subluxation of the right eye. This child is most likely to develop which of the following complications?\n\nOptions:\nA. Aortic dissection\nB. Medullary thyroid cancer\nC. Osteoarthritis\nD. Thromboembolic stroke\nE. Wilms tumor"}
+----------------------------------------------------------------------
+RAW LLM RESPONSE:
+{
+  "vignette": "A 3-year-old boy presents with his parents to a pediatrician for a new patient visit. The child was recently adopted and little is known about his medical or family history. The child seems to be doing well, but the patient is much larger than any of the other 3-year-olds in his preschool class. He eats a varied diet at home and with limited juice and snack foods. His temperature is 98.6°F (37°C), blood pressure is 101/67 mmHg, pulse is 110/min, and respirations are 24/min. On physical exam, the patient is in the 73rd percentile for weight, 99th percentile for height, and 86th percentile for head circumference. He appears mildly developmentally delayed. He has a fair complexion and tall stature with a prominent sternum. The patient also has joint hypermobility and hyperelastic skin. He appears to have poor visual acuity and is referred to an ophthalmologist, who finds downward lens subluxation of the right eye.",
+  "question": "This child is most likely to develop which of the following complications?",
+  "options": [
+    {"id": "A", "description": "Aortic dissection"},
+    {"id": "B", "description": "Medullary thyroid cancer"},
+    {"id": "C", "description": "Osteoarthritis"},
+    {"id": "D", "description": "Thromboembolic stroke"},
+    {"id": "E", "description": "Wilms tumor"}
+  ],
+  "evidence_items": [
+    {
+      "id": "E1",
+      "kind": "direct",
+      "content": "Chief complaint: evaluation of a large 3-year-old boy",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E2",
+      "kind": "direct",
+      "content": "Age: 3 years",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E3",
+      "kind": "direct",
+      "content": "Temperature: 98.6°F (37°C)",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E4",
+      "kind": "direct",
+      "content": "Blood pressure: 101/67 mmHg",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E5",
+      "kind": "direct",
+      "content": "Pulse: 110/min",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E6",
+      "kind": "direct",
+      "content": "Respirations: 24/min",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E7",
+      "kind": "direct",
+      "content": "Weight percentile: 73rd",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E8",
+      "kind": "direct",
+      "content": "Height percentile: 99th",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E9",
+      "kind": "direct",
+      "content": "Head circumference percentile: 86th",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E10",
+      "kind": "direct",
+      "content": "Mild developmental delay",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E11",
+      "kind": "direct",
+      "content": "Fair complexion",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E12",
+      "kind": "direct",
+      "content": "Tall stature",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E13",
+      "kind": "direct",
+      "content": "Prominent sternum",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E14",
+      "kind": "direct",
+      "content": "Joint hypermobility",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E15",
+      "kind": "direct",
+      "content": "Hyperelastic skin",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E16",
+      "kind": "direct",
+      "content": "Poor visual acuity",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E17",
+      "kind": "direct",
+      "content": "Downward lens subluxation of the right eye",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    }
+  ]
+}
+----------------------------------------------------------------------
+PARSED RESULT:
+{
+  "vignette": "A 3-year-old boy presents with his parents to a pediatrician for a new patient visit. The child was recently adopted and little is known about his medical or family history. The child seems to be doing well, but the patient is much larger than any of the other 3-year-olds in his preschool class. He eats a varied diet at home and with limited juice and snack foods. His temperature is 98.6°F (37°C), blood pressure is 101/67 mmHg, pulse is 110/min, and respirations are 24/min. On physical exam, the patient is in the 73rd percentile for weight, 99th percentile for height, and 86th percentile for head circumference. He appears mildly developmentally delayed. He has a fair complexion and tall stature with a prominent sternum. The patient also has joint hypermobility and hyperelastic skin. He appears to have poor visual acuity and is referred to an ophthalmologist, who finds downward lens subluxation of the right eye.",
+  "question": "This child is most likely to develop which of the following complications?",
+  "options": [
+    {
+      "id": "A",
+      "description": "Aortic dissection"
+    },
+    {
+      "id": "B",
+      "description": "Medullary thyroid cancer"
+    },
+    {
+      "id": "C",
+      "description": "Osteoarthritis"
+    },
+    {
+      "id": "D",
+      "description": "Thromboembolic stroke"
+    },
+    {
+      "id": "E",
+      "description": "Wilms tumor"
+    }
+  ],
+  "evidence_items": [
+    {
+      "id": "E1",
+      "kind": "direct",
+      "content": "Chief complaint: evaluation of a large 3-year-old boy",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E2",
+      "kind": "direct",
+      "content": "Age: 3 years",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E3",
+      "kind": "direct",
+      "content": "Temperature: 98.6°F (37°C)",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E4",
+      "kind": "direct",
+      "content": "Blood pressure: 101/67 mmHg",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E5",
+      "kind": "direct",
+      "content": "Pulse: 110/min",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E6",
+      "kind": "direct",
+      "content": "Respirations: 24/min",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E7",
+      "kind": "direct",
+      "content": "Weight percentile: 73rd",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E8",
+      "kind": "direct",
+      "content": "Height percentile: 99th",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E9",
+      "kind": "direct",
+      "content": "Head circumference percentile: 86th",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E10",
+      "kind": "direct",
+      "content": "Mild developmental delay",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E11",
+      "kind": "direct",
+      "content": "Fair complexion",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E12",
+      "kind": "direct",
+      "content": "Tall stature",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E13",
+      "kind": "direct",
+      "content": "Prominent sternum",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E14",
+      "kind": "direct",
+      "content": "Joint hypermobility",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E15",
+      "kind": "direct",
+      "content": "Hyperelastic skin",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E16",
+      "kind": "direct",
+      "content": "Poor visual acuity",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E17",
+      "kind": "direct",
+      "content": "Downward lens subluxation of the right eye",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    }
+  ]
+}
+================================================================================
+
+[2026-05-18 05:42:12] >>> Module: RootSelector
+----------------------------------------------------------------------
+SYSTEM PROMPT:
+Role: RootSelector
+
+Choose the best ROOT NODE for the current diagnostic problem. The root node is NOT
+a diagnosis — it is the clinical syndrome frame that organises the entire differential.
+It must encode the pathophysiological pattern, NOT merely restate the chief complaint.
+
+━━━ What makes a GOOD root node ━━━
+A good root encodes at least two of:
+  (a) Anatomical localisation  — where the lesion likely resides (cortex / cord /
+      plexus / root / peripheral nerve / vascular / systemic / visceral mass …)
+  (b) Mechanism category       — compressive, infiltrative, demyelinating, ischaemic,
+      inflammatory, metabolic, toxic, neoplastic …
+  (c) Temporal pattern         — acute onset (<24 h), subacute (days–weeks),
+      chronic-progressive (months–years)
+  (d) Alarming systemic context — constitutional features (weight loss, night sweats),
+      risk-factor cluster, high-danger urgency tier
+
+Good examples:
+  ✓ "Subacute Progressive Unilateral Upper-Limb Motor-Sensory Deficit with
+     Constitutional Alarm Signs"
+  ✓ "Acute Anterior Circulation Ischaemic Stroke Syndrome"
+  ✓ "Subacute Compressive Brachial Plexopathy Syndrome"
+  ✓ "Acute Decompensated Heart Failure Syndrome"
+  ✓ "Subacute Bilateral Lower-Limb Weakness with Bladder Dysfunction (Cord Level)"
+
+━━━ What is FORBIDDEN ━━━
+  ✗ Paraphrasing the chief complaint: "Acute Right Arm Weakness Syndrome"
+  ✗ Single-symptom labels:            "Right Arm Weakness"
+  ✗ Premature diagnosis:              "Pancoast Tumour Syndrome"
+  ✗ Vague filler:                     "Neurological Syndrome"
+
+━━━ Algorithm ━━━
+1. Enumerate ALL key findings (not just the chief complaint):
+   motor/sensory deficits, constitutional features, risk factors,
+   vital-sign abnormalities, exam asymmetries, time course.
+2. Ask: which anatomical compartment and mechanism best unifies these findings?
+3. Note any systemic alarm features that raise urgency or suggest a specific
+   mechanism (e.g., weight loss + heavy smoking → suspect neoplasm).
+4. Compose a root label from: [temporal pattern] + [anatomical localisation] +
+   [mechanism hint if strong] + [alarm-feature qualifier if present].
+5. If the root node already exists and new evidence contradicts it, set
+   need_root_revision: true.
+
+━━━ Evidence hierarchy (apply when history and objective findings conflict) ━━━
+Objective findings OVERRIDE subjective history when naming the root:
+  Tier 1 (highest): ECG findings, imaging reports, pathology / biopsy results
+  Tier 2:           Lab values that define a physiological state (not isolated values)
+  Tier 3:           Physical examination findings (auscultation, neuro exam, fundoscopy …)
+  Tier 4:           Vital-sign pattern (not a single reading)
+  Tier 5 (lowest):  Patient-reported history, risk factors, social history
+
+Example: A patient faints and reports being dehydrated, but ECG shows complete
+heart block → the root must encode the conduction-system abnormality, NOT the
+dehydration. The patient's reported explanation is Tier 5; the ECG is Tier 1.
+
+━━━ Constraints ━━━
+- Do NOT use an isolated lab value or single vital sign as the root.
+- When a Tier-1 or Tier-2 finding is present, it MUST appear in the root label
+  or be explicitly explained in excluded_root_candidates.
+- External knowledge retrieval is permitted only if the case frame is genuinely
+  rare or specialty-specific and you cannot form a coherent root without it.
+
+Return strict JSON only, no markdown:
+{
+  "root_label": "syndrome-level label following the algorithm above",
+  "time_course": "acute | subacute | chronic | unspecified",
+  "supporting_facts": [
+    "fact 1 used in root selection",
+    "fact 2"
+  ],
+  "excluded_root_candidates": [
+    "candidate X: reason it was not chosen"
+  ],
+  "alarm_features": ["constitutional feature / risk factor that raises urgency"],
+  "need_external_knowledge": false,
+  "knowledge_query_if_needed": "",
+  "need_root_revision": false,
+  "revision_reason": "",
+  "confidence": 0.0
+}
+----------------------------------------------------------------------
+USER MESSAGE:
+Module: RootSelector
+Return strict JSON only, no markdown.
+Payload:
+{"case_id": "case_18", "timestep": 0, "case_summary": "A 3-year-old boy presents with his parents to a pediatrician for a new patient visit. The child was recently adopted and little is known about his medical or family history. The child seems to be doing well, but the patient is much larger than any of the other 3-year-olds in his preschool class. He eats a varied diet at home and with limited juice and snack foods. His temperature is 98.6°F (37°C), blood pressure is 101/67 mmHg, pulse is 110/min, and respirations are 24/min. On physical exam, the patient is in the 73rd percentile for weight, 99th percentile for height, and 86th percentile for head circumference. He appears mildly developmentally delayed. He has a fair complexion and tall stature with a prominent sternum. The patient also has joint hypermobility and hyperelastic skin. He appears to have poor visual acuity and is referred to an ophthalmologist, who finds downward lens subluxation of the right eye. This child is most likely to develop which of the following complications?\n\nOptions:\nA. Aortic dissection\nB. Medullary thyroid cancer\nC. Osteoarthritis\nD. Thromboembolic stroke\nE. Wilms tumor", "root": null, "branches": {}, "frontier": [], "other_mass": 0.0, "candidate_leaves": [], "pending_results": [], "actions_taken": [], "differential_history": [], "deliberation": {"hypothesis_analysis": {}, "test_chooser_analysis": {}, "challenger_analysis": {}, "stewardship_analysis": {}, "checklist_analysis": {}, "consensus_action": null}, "interrupt": {"active": false, "reason": "", "required_actions": []}, "termination": {"ready_to_stop": false, "termination_type": "continue", "reason": ""}, "turn_budget_used": 0, "estimated_remaining_value": 0.0, "max_turn_budget": null, "latest_action_type": "", "diagnosis_readiness_score": 0.0, "benchmark_output_ready": false, "static_vignette": "A 3-year-old boy presents with his parents to a pediatrician for a new patient visit. The child was recently adopted and little is known about his medical or family history. The child seems to be doing well, but the patient is much larger than any of the other 3-year-olds in his preschool class. He eats a varied diet at home and with limited juice and snack foods. His temperature is 98.6°F (37°C), blood pressure is 101/67 mmHg, pulse is 110/min, and respirations are 24/min. On physical exam, the patient is in the 73rd percentile for weight, 99th percentile for height, and 86th percentile for head circumference. He appears mildly developmentally delayed. He has a fair complexion and tall stature with a prominent sternum. The patient also has joint hypermobility and hyperelastic skin. He appears to have poor visual acuity and is referred to an ophthalmologist, who finds downward lens subluxation of the right eye.", "static_question": "This child is most likely to develop which of the following complications?", "static_options": [{"id": "A", "description": "Aortic dissection"}, {"id": "B", "description": "Medullary thyroid cancer"}, {"id": "C", "description": "Osteoarthritis"}, {"id": "D", "description": "Thromboembolic stroke"}, {"id": "E", "description": "Wilms tumor"}], "static_evidence_items": [{"id": "E1", "kind": "direct", "content": "Chief complaint: evaluation of a large 3-year-old boy", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E2", "kind": "direct", "content": "Age: 3 years", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E3", "kind": "direct", "content": "Temperature: 98.6°F (37°C)", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E4", "kind": "direct", "content": "Blood pressure: 101/67 mmHg", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E5", "kind": "direct", "content": "Pulse: 110/min", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E6", "kind": "direct", "content": "Respirations: 24/min", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E7", "kind": "direct", "content": "Weight percentile: 73rd", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E8", "kind": "direct", "content": "Height percentile: 99th", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E9", "kind": "direct", "content": "Head circumference percentile: 86th", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E10", "kind": "direct", "content": "Mild developmental delay", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E11", "kind": "direct", "content": "Fair complexion", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E12", "kind": "direct", "content": "Tall stature", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E13", "kind": "direct", "content": "Prominent sternum", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E14", "kind": "direct", "content": "Joint hypermobility", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E15", "kind": "direct", "content": "Hyperelastic skin", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E16", "kind": "direct", "content": "Poor visual acuity", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E17", "kind": "direct", "content": "Downward lens subluxation of the right eye", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}], "seen_evidence_ids": [], "mode_policy": {}, "answer_option_mapping": {}, "tool_use_log": [], "root_revision_needed": false, "max_tree_depth": 3}
+----------------------------------------------------------------------
+RAW LLM RESPONSE:
+{
+  "root_label": "Chronic Progressive Multisystem Disorder with Skeletal, Ocular, and Developmental Abnormalities",
+  "time_course": "chronic",
+  "supporting_facts": [
+    "Mild developmental delay",
+    "Tall stature",
+    "Joint hypermobility",
+    "Hyperelastic skin",
+    "Poor visual acuity",
+    "Downward lens subluxation of the right eye"
+  ],
+  "excluded_root_candidates": [
+    "Acute monosymptomatic condition: reason - the patient has multiple systemic abnormalities"
+  ],
+  "alarm_features": [
+    "Mild developmental delay"
+  ],
+  "need_external_knowledge": false,
+  "knowledge_query_if_needed": "",
+  "need_root_revision": false,
+  "revision_reason": "",
+  "confidence": 0.8
+}
+----------------------------------------------------------------------
+PARSED RESULT:
+{
+  "root_label": "Chronic Progressive Multisystem Disorder with Skeletal, Ocular, and Developmental Abnormalities",
+  "time_course": "chronic",
+  "supporting_facts": [
+    "Mild developmental delay",
+    "Tall stature",
+    "Joint hypermobility",
+    "Hyperelastic skin",
+    "Poor visual acuity",
+    "Downward lens subluxation of the right eye"
+  ],
+  "excluded_root_candidates": [
+    "Acute monosymptomatic condition: reason - the patient has multiple systemic abnormalities"
+  ],
+  "alarm_features": [
+    "Mild developmental delay"
+  ],
+  "need_external_knowledge": false,
+  "knowledge_query_if_needed": "",
+  "need_root_revision": false,
+  "revision_reason": "",
+  "confidence": 0.8
+}
+================================================================================
+
+[2026-05-18 05:42:14] >>> Module: VignetteParser
+----------------------------------------------------------------------
+SYSTEM PROMPT:
+Role: VignetteParser
+
+Parse a static clinical vignette into structured fields for downstream reasoning.
+
+Instructions:
+1. Extract ALL clinical facts from the vignette text into evidence_items.
+   Each item's "content" should be a concise, self-contained factual phrase,
+   e.g. "Chief complaint: weakness of right arm" or "BP: 177/108 mmHg".
+2. Set "kind" for each item:
+   - "direct"     : explicitly stated in the vignette (most items)
+   - "derived"    : logically inferred combination of two stated facts
+3. Copy the exact question stem into "question".
+4. List every answer option under "options" using "id" and "description".
+5. Set "vignette" to the verbatim vignette text (question and options excluded).
+
+Return strict JSON only, no markdown:
+{
+  "vignette": "verbatim case text without the question/options block",
+  "question": "Which of the following is the most likely diagnosis?",
+  "options": [
+    {"id": "A", "description": "Apical lung tumor"},
+    {"id": "B", "description": "Brachial plexopathy"}
+  ],
+  "evidence_items": [
+    {
+      "id": "E1",
+      "kind": "direct",
+      "content": "Chief complaint: right arm weakness for several weeks",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E2",
+      "kind": "direct",
+      "content": "Social history: 2 pack/day smoking since age 25",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    }
+  ]
+}
+----------------------------------------------------------------------
+USER MESSAGE:
+Module: VignetteParser
+Return strict JSON only, no markdown.
+Payload:
+{"raw_case": "A 55-year-old man presents to the emergency department after fainting while moving furniture. He states that he has been working in a hot, humid attic all day and forgot his water bottle. He felt dizzy when standing up and then fainted and was unconscious for roughly 1 minute. He awoke at his neurologic baseline afterwards. The patient has a history of hypertension being managed by his primary care doctor. His temperature is 98.7°F (37.1°C), blood pressure is 149/82 mmHg, pulse is 86/min, respirations are 15/min, and oxygen saturation is 99% on room air. Physical exam reveals a diaphoretic man. He demonstrates an unremarkable cardiopulmonary exam. The patient walks with a steady gait and his neurologic exam is non-focal. An ECG is performed as seen in Figure A. The patient is given 2 liters of oral fluids and feels back to his baseline. Which of the following conditions is most likely to occur in this patient based on his current history and ECG?\n\nOptions:\nA. Atrial fibrillation\nB. Complete heart block\nC. Myocardial infarction\nD. Stroke\nE. Torsades des pointes"}
+----------------------------------------------------------------------
+RAW LLM RESPONSE:
+{
+  "vignette": "A 55-year-old man presents to the emergency department after fainting while moving furniture. He states that he has been working in a hot, humid attic all day and forgot his water bottle. He felt dizzy when standing up and then fainted and was unconscious for roughly 1 minute. He awoke at his neurologic baseline afterwards. The patient has a history of hypertension being managed by his primary care doctor. His temperature is 98.7°F (37.1°C), blood pressure is 149/82 mmHg, pulse is 86/min, respirations are 15/min, and oxygen saturation is 99% on room air. Physical exam reveals a diaphoretic man. He demonstrates an unremarkable cardiopulmonary exam. The patient walks with a steady gait and his neurologic exam is non-focal. An ECG is performed as seen in Figure A. The patient is given 2 liters of oral fluids and feels back to his baseline.",
+  "question": "Which of the following conditions is most likely to occur in this patient based on his current history and ECG?",
+  "options": [
+    {"id": "A", "description": "Atrial fibrillation"},
+    {"id": "B", "description": "Complete heart block"},
+    {"id": "C", "description": "Myocardial infarction"},
+    {"id": "D", "description": "Stroke"},
+    {"id": "E", "description": "Torsades des pointes"}
+  ],
+  "evidence_items": [
+    {
+      "id": "E1",
+      "kind": "direct",
+      "content": "Chief complaint: fainting while moving furniture",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E2",
+      "kind": "direct",
+      "content": "Duration of unconsciousness: 1 minute",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E3",
+      "kind": "direct",
+      "content": "Returning to baseline neurologically after fainting",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E4",
+      "kind": "direct",
+      "content": "History of hypertension",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E5",
+      "kind": "direct",
+      "content": "Temperature: 98.7°F (37.1°C)",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E6",
+      "kind": "direct",
+      "content": "Blood pressure: 149/82 mmHg",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E7",
+      "kind": "direct",
+      "content": "Pulse: 86/min",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E8",
+      "kind": "direct",
+      "content": "Respirations: 15/min",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E9",
+      "kind": "direct",
+      "content": "Oxygen saturation: 99% on room air",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E10",
+      "kind": "direct",
+      "content": "Diaphoretic",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E11",
+      "kind": "direct",
+      "content": "Unremarkable cardiopulmonary exam",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E12",
+      "kind": "direct",
+      "content": "Steady gait",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E13",
+      "kind": "direct",
+      "content": "Non-focal neurologic exam",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E14",
+      "kind": "direct",
+      "content": "Given 2 liters of oral fluids with return to baseline",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    }
+  ]
+}
+----------------------------------------------------------------------
+PARSED RESULT:
+{
+  "vignette": "A 55-year-old man presents to the emergency department after fainting while moving furniture. He states that he has been working in a hot, humid attic all day and forgot his water bottle. He felt dizzy when standing up and then fainted and was unconscious for roughly 1 minute. He awoke at his neurologic baseline afterwards. The patient has a history of hypertension being managed by his primary care doctor. His temperature is 98.7°F (37.1°C), blood pressure is 149/82 mmHg, pulse is 86/min, respirations are 15/min, and oxygen saturation is 99% on room air. Physical exam reveals a diaphoretic man. He demonstrates an unremarkable cardiopulmonary exam. The patient walks with a steady gait and his neurologic exam is non-focal. An ECG is performed as seen in Figure A. The patient is given 2 liters of oral fluids and feels back to his baseline.",
+  "question": "Which of the following conditions is most likely to occur in this patient based on his current history and ECG?",
+  "options": [
+    {
+      "id": "A",
+      "description": "Atrial fibrillation"
+    },
+    {
+      "id": "B",
+      "description": "Complete heart block"
+    },
+    {
+      "id": "C",
+      "description": "Myocardial infarction"
+    },
+    {
+      "id": "D",
+      "description": "Stroke"
+    },
+    {
+      "id": "E",
+      "description": "Torsades des pointes"
+    }
+  ],
+  "evidence_items": [
+    {
+      "id": "E1",
+      "kind": "direct",
+      "content": "Chief complaint: fainting while moving furniture",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E2",
+      "kind": "direct",
+      "content": "Duration of unconsciousness: 1 minute",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E3",
+      "kind": "direct",
+      "content": "Returning to baseline neurologically after fainting",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E4",
+      "kind": "direct",
+      "content": "History of hypertension",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E5",
+      "kind": "direct",
+      "content": "Temperature: 98.7°F (37.1°C)",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E6",
+      "kind": "direct",
+      "content": "Blood pressure: 149/82 mmHg",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E7",
+      "kind": "direct",
+      "content": "Pulse: 86/min",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E8",
+      "kind": "direct",
+      "content": "Respirations: 15/min",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E9",
+      "kind": "direct",
+      "content": "Oxygen saturation: 99% on room air",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E10",
+      "kind": "direct",
+      "content": "Diaphoretic",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E11",
+      "kind": "direct",
+      "content": "Unremarkable cardiopulmonary exam",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E12",
+      "kind": "direct",
+      "content": "Steady gait",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E13",
+      "kind": "direct",
+      "content": "Non-focal neurologic exam",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E14",
+      "kind": "direct",
+      "content": "Given 2 liters of oral fluids with return to baseline",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    }
+  ]
+}
+================================================================================
+
+[2026-05-18 05:42:15] >>> Module: RootSelector
+----------------------------------------------------------------------
+SYSTEM PROMPT:
+Role: RootSelector
+
+Choose the best ROOT NODE for the current diagnostic problem. The root node is NOT
+a diagnosis — it is the clinical syndrome frame that organises the entire differential.
+It must encode the pathophysiological pattern, NOT merely restate the chief complaint.
+
+━━━ What makes a GOOD root node ━━━
+A good root encodes at least two of:
+  (a) Anatomical localisation  — where the lesion likely resides (cortex / cord /
+      plexus / root / peripheral nerve / vascular / systemic / visceral mass …)
+  (b) Mechanism category       — compressive, infiltrative, demyelinating, ischaemic,
+      inflammatory, metabolic, toxic, neoplastic …
+  (c) Temporal pattern         — acute onset (<24 h), subacute (days–weeks),
+      chronic-progressive (months–years)
+  (d) Alarming systemic context — constitutional features (weight loss, night sweats),
+      risk-factor cluster, high-danger urgency tier
+
+Good examples:
+  ✓ "Subacute Progressive Unilateral Upper-Limb Motor-Sensory Deficit with
+     Constitutional Alarm Signs"
+  ✓ "Acute Anterior Circulation Ischaemic Stroke Syndrome"
+  ✓ "Subacute Compressive Brachial Plexopathy Syndrome"
+  ✓ "Acute Decompensated Heart Failure Syndrome"
+  ✓ "Subacute Bilateral Lower-Limb Weakness with Bladder Dysfunction (Cord Level)"
+
+━━━ What is FORBIDDEN ━━━
+  ✗ Paraphrasing the chief complaint: "Acute Right Arm Weakness Syndrome"
+  ✗ Single-symptom labels:            "Right Arm Weakness"
+  ✗ Premature diagnosis:              "Pancoast Tumour Syndrome"
+  ✗ Vague filler:                     "Neurological Syndrome"
+
+━━━ Algorithm ━━━
+1. Enumerate ALL key findings (not just the chief complaint):
+   motor/sensory deficits, constitutional features, risk factors,
+   vital-sign abnormalities, exam asymmetries, time course.
+2. Ask: which anatomical compartment and mechanism best unifies these findings?
+3. Note any systemic alarm features that raise urgency or suggest a specific
+   mechanism (e.g., weight loss + heavy smoking → suspect neoplasm).
+4. Compose a root label from: [temporal pattern] + [anatomical localisation] +
+   [mechanism hint if strong] + [alarm-feature qualifier if present].
+5. If the root node already exists and new evidence contradicts it, set
+   need_root_revision: true.
+
+━━━ Evidence hierarchy (apply when history and objective findings conflict) ━━━
+Objective findings OVERRIDE subjective history when naming the root:
+  Tier 1 (highest): ECG findings, imaging reports, pathology / biopsy results
+  Tier 2:           Lab values that define a physiological state (not isolated values)
+  Tier 3:           Physical examination findings (auscultation, neuro exam, fundoscopy …)
+  Tier 4:           Vital-sign pattern (not a single reading)
+  Tier 5 (lowest):  Patient-reported history, risk factors, social history
+
+Example: A patient faints and reports being dehydrated, but ECG shows complete
+heart block → the root must encode the conduction-system abnormality, NOT the
+dehydration. The patient's reported explanation is Tier 5; the ECG is Tier 1.
+
+━━━ Constraints ━━━
+- Do NOT use an isolated lab value or single vital sign as the root.
+- When a Tier-1 or Tier-2 finding is present, it MUST appear in the root label
+  or be explicitly explained in excluded_root_candidates.
+- External knowledge retrieval is permitted only if the case frame is genuinely
+  rare or specialty-specific and you cannot form a coherent root without it.
+
+Return strict JSON only, no markdown:
+{
+  "root_label": "syndrome-level label following the algorithm above",
+  "time_course": "acute | subacute | chronic | unspecified",
+  "supporting_facts": [
+    "fact 1 used in root selection",
+    "fact 2"
+  ],
+  "excluded_root_candidates": [
+    "candidate X: reason it was not chosen"
+  ],
+  "alarm_features": ["constitutional feature / risk factor that raises urgency"],
+  "need_external_knowledge": false,
+  "knowledge_query_if_needed": "",
+  "need_root_revision": false,
+  "revision_reason": "",
+  "confidence": 0.0
+}
+----------------------------------------------------------------------
+USER MESSAGE:
+Module: RootSelector
+Return strict JSON only, no markdown.
+Payload:
+{"case_id": "case_28", "timestep": 0, "case_summary": "A 55-year-old man presents to the emergency department after fainting while moving furniture. He states that he has been working in a hot, humid attic all day and forgot his water bottle. He felt dizzy when standing up and then fainted and was unconscious for roughly 1 minute. He awoke at his neurologic baseline afterwards. The patient has a history of hypertension being managed by his primary care doctor. His temperature is 98.7°F (37.1°C), blood pressure is 149/82 mmHg, pulse is 86/min, respirations are 15/min, and oxygen saturation is 99% on room air. Physical exam reveals a diaphoretic man. He demonstrates an unremarkable cardiopulmonary exam. The patient walks with a steady gait and his neurologic exam is non-focal. An ECG is performed as seen in Figure A. The patient is given 2 liters of oral fluids and feels back to his baseline. Which of the following conditions is most likely to occur in this patient based on his current history and ECG?\n\nOptions:\nA. Atrial fibrillation\nB. Complete heart block\nC. Myocardial infarction\nD. Stroke\nE. Torsades des pointes", "root": null, "branches": {}, "frontier": [], "other_mass": 0.0, "candidate_leaves": [], "pending_results": [], "actions_taken": [], "differential_history": [], "deliberation": {"hypothesis_analysis": {}, "test_chooser_analysis": {}, "challenger_analysis": {}, "stewardship_analysis": {}, "checklist_analysis": {}, "consensus_action": null}, "interrupt": {"active": false, "reason": "", "required_actions": []}, "termination": {"ready_to_stop": false, "termination_type": "continue", "reason": ""}, "turn_budget_used": 0, "estimated_remaining_value": 0.0, "max_turn_budget": null, "latest_action_type": "", "diagnosis_readiness_score": 0.0, "benchmark_output_ready": false, "static_vignette": "A 55-year-old man presents to the emergency department after fainting while moving furniture. He states that he has been working in a hot, humid attic all day and forgot his water bottle. He felt dizzy when standing up and then fainted and was unconscious for roughly 1 minute. He awoke at his neurologic baseline afterwards. The patient has a history of hypertension being managed by his primary care doctor. His temperature is 98.7°F (37.1°C), blood pressure is 149/82 mmHg, pulse is 86/min, respirations are 15/min, and oxygen saturation is 99% on room air. Physical exam reveals a diaphoretic man. He demonstrates an unremarkable cardiopulmonary exam. The patient walks with a steady gait and his neurologic exam is non-focal. An ECG is performed as seen in Figure A. The patient is given 2 liters of oral fluids and feels back to his baseline.", "static_question": "Which of the following conditions is most likely to occur in this patient based on his current history and ECG?", "static_options": [{"id": "A", "description": "Atrial fibrillation"}, {"id": "B", "description": "Complete heart block"}, {"id": "C", "description": "Myocardial infarction"}, {"id": "D", "description": "Stroke"}, {"id": "E", "description": "Torsades des pointes"}], "static_evidence_items": [{"id": "E1", "kind": "direct", "content": "Chief complaint: fainting while moving furniture", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E2", "kind": "direct", "content": "Duration of unconsciousness: 1 minute", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E3", "kind": "direct", "content": "Returning to baseline neurologically after fainting", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E4", "kind": "direct", "content": "History of hypertension", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E5", "kind": "direct", "content": "Temperature: 98.7°F (37.1°C)", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E6", "kind": "direct", "content": "Blood pressure: 149/82 mmHg", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E7", "kind": "direct", "content": "Pulse: 86/min", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E8", "kind": "direct", "content": "Respirations: 15/min", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E9", "kind": "direct", "content": "Oxygen saturation: 99% on room air", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E10", "kind": "direct", "content": "Diaphoretic", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E11", "kind": "direct", "content": "Unremarkable cardiopulmonary exam", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E12", "kind": "direct", "content": "Steady gait", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E13", "kind": "direct", "content": "Non-focal neurologic exam", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E14", "kind": "direct", "content": "Given 2 liters of oral fluids with return to baseline", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}], "seen_evidence_ids": [], "mode_policy": {}, "answer_option_mapping": {}, "tool_use_log": [], "root_revision_needed": false, "max_tree_depth": 3}
+----------------------------------------------------------------------
+RAW LLM RESPONSE:
+{
+  "root_label": "Acute Syncopal Episode with Orthostatic and Dehydration Components",
+  "time_course": "acute",
+  "supporting_facts": [
+    "Fainting while moving furniture",
+    "Duration of unconsciousness: 1 minute",
+    "Returning to baseline neurologically after fainting",
+    "History of hypertension",
+    "Diaphoretic",
+    "Unremarkable cardiopulmonary exam",
+    "Steady gait",
+    "Non-focal neurologic exam",
+    "Given 2 liters of oral fluids with return to baseline"
+  ],
+  "excluded_root_candidates": [
+    "Dehydration alone: does not account for the fainting episode's brevity and the patient's rapid return to baseline"
+  ],
+  "alarm_features": [
+    "History of hypertension"
+  ],
+  "need_external_knowledge": false,
+  "knowledge_query_if_needed": "",
+  "need_root_revision": false,
+  "revision_reason": "",
+  "confidence": 0.8
+}
+----------------------------------------------------------------------
+PARSED RESULT:
+{
+  "root_label": "Acute Syncopal Episode with Orthostatic and Dehydration Components",
+  "time_course": "acute",
+  "supporting_facts": [
+    "Fainting while moving furniture",
+    "Duration of unconsciousness: 1 minute",
+    "Returning to baseline neurologically after fainting",
+    "History of hypertension",
+    "Diaphoretic",
+    "Unremarkable cardiopulmonary exam",
+    "Steady gait",
+    "Non-focal neurologic exam",
+    "Given 2 liters of oral fluids with return to baseline"
+  ],
+  "excluded_root_candidates": [
+    "Dehydration alone: does not account for the fainting episode's brevity and the patient's rapid return to baseline"
+  ],
+  "alarm_features": [
+    "History of hypertension"
+  ],
+  "need_external_knowledge": false,
+  "knowledge_query_if_needed": "",
+  "need_root_revision": false,
+  "revision_reason": "",
+  "confidence": 0.8
+}
+================================================================================
+
+[2026-05-18 05:42:17] >>> Module: VignetteParser
+----------------------------------------------------------------------
+SYSTEM PROMPT:
+Role: VignetteParser
+
+Parse a static clinical vignette into structured fields for downstream reasoning.
+
+Instructions:
+1. Extract ALL clinical facts from the vignette text into evidence_items.
+   Each item's "content" should be a concise, self-contained factual phrase,
+   e.g. "Chief complaint: weakness of right arm" or "BP: 177/108 mmHg".
+2. Set "kind" for each item:
+   - "direct"     : explicitly stated in the vignette (most items)
+   - "derived"    : logically inferred combination of two stated facts
+3. Copy the exact question stem into "question".
+4. List every answer option under "options" using "id" and "description".
+5. Set "vignette" to the verbatim vignette text (question and options excluded).
+
+Return strict JSON only, no markdown:
+{
+  "vignette": "verbatim case text without the question/options block",
+  "question": "Which of the following is the most likely diagnosis?",
+  "options": [
+    {"id": "A", "description": "Apical lung tumor"},
+    {"id": "B", "description": "Brachial plexopathy"}
+  ],
+  "evidence_items": [
+    {
+      "id": "E1",
+      "kind": "direct",
+      "content": "Chief complaint: right arm weakness for several weeks",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E2",
+      "kind": "direct",
+      "content": "Social history: 2 pack/day smoking since age 25",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    }
+  ]
+}
+----------------------------------------------------------------------
+USER MESSAGE:
+Module: VignetteParser
+Return strict JSON only, no markdown.
+Payload:
+{"raw_case": "A 55-year-old man presents to the emergency department with worsening dyspnea over the past 48 hours. He recently had a cold that kept him home from work for the past week. He has a past medical history of diabetes, obesity, and hypertension. He had his Achilles tendon repaired 4 weeks ago and he has been less mobile. His temperature is 99.2°F (37.3°C), blood pressure is 150/85 mmHg, pulse is 82/min, respirations are 16/min, and oxygen saturation is 100% on room air. Physical exam is notable for dyspnea provoked by walking short distances. Jugular venous distension is noted on exam. The patient’s blood pressure is 130/70 mmHg during inspiration. A bedside echocardiogram demonstrates impaired diastolic filling with normal ventricular contractility. An ECG is performed as seen in Figure A. Which of the following is the most likely diagnosis?\n\nOptions:\nA. Cardiac tamponade\nB. Constrictive pericarditis\nC. Myocardial infarction\nD. Pulmonary embolism\nE. Restrictive cardiomyopathy"}
+----------------------------------------------------------------------
+RAW LLM RESPONSE:
+{
+  "vignette": "A 55-year-old man presents to the emergency department with worsening dyspnea over the past 48 hours. He recently had a cold that kept him home from work for the past week. He has a past medical history of diabetes, obesity, and hypertension. He had his Achilles tendon repaired 4 weeks ago and he has been less mobile. His temperature is 99.2°F (37.3°C), blood pressure is 150/85 mmHg, pulse is 82/min, respirations are 16/min, and oxygen saturation is 100% on room air. Physical exam is notable for dyspnea provoked by walking short distances. Jugular venous distension is noted on exam. The patient’s blood pressure is 130/70 mmHg during inspiration. A bedside echocardiogram demonstrates impaired diastolic filling with normal ventricular contractility. An ECG is performed as seen in Figure A.",
+  "question": "Which of the following is the most likely diagnosis?",
+  "options": [
+    {"id": "A", "description": "Cardiac tamponade"},
+    {"id": "B", "description": "Constrictive pericarditis"},
+    {"id": "C", "description": "Myocardial infarction"},
+    {"id": "D", "description": "Pulmonary embolism"},
+    {"id": "E", "description": "Restrictive cardiomyopathy"}
+  ],
+  "evidence_items": [
+    {
+      "id": "E1",
+      "kind": "direct",
+      "content": "Chief complaint: worsening dyspnea over the past 48 hours",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E2",
+      "kind": "direct",
+      "content": "Recent history of a cold",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E3",
+      "kind": "direct",
+      "content": "Past medical history: diabetes",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E4",
+      "kind": "direct",
+      "content": "Past medical history: obesity",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E5",
+      "kind": "direct",
+      "content": "Past medical history: hypertension",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E6",
+      "kind": "direct",
+      "content": "Recent Achilles tendon repair 4 weeks ago",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E7",
+      "kind": "direct",
+      "content": "Recent decreased mobility",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E8",
+      "kind": "direct",
+      "content": "Temperature: 99.2°F (37.3°C)",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E9",
+      "kind": "direct",
+      "content": "Blood pressure: 150/85 mmHg",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E10",
+      "kind": "direct",
+      "content": "Pulse: 82/min",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E11",
+      "kind": "direct",
+      "content": "Respirations: 16/min",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E12",
+      "kind": "direct",
+      "content": "Oxygen saturation: 100% on room air",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E13",
+      "kind": "direct",
+      "content": "Dyspnea provoked by walking short distances",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E14",
+      "kind": "direct",
+      "content": "Jugular venous distension",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E15",
+      "kind": "direct",
+      "content": "Blood pressure: 130/70 mmHg during inspiration",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E16",
+      "kind": "direct",
+      "content": "Bedside echocardiogram: impaired diastolic filling with normal ventricular contractility",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    }
+  ]
+}
+----------------------------------------------------------------------
+PARSED RESULT:
+{
+  "vignette": "A 55-year-old man presents to the emergency department with worsening dyspnea over the past 48 hours. He recently had a cold that kept him home from work for the past week. He has a past medical history of diabetes, obesity, and hypertension. He had his Achilles tendon repaired 4 weeks ago and he has been less mobile. His temperature is 99.2°F (37.3°C), blood pressure is 150/85 mmHg, pulse is 82/min, respirations are 16/min, and oxygen saturation is 100% on room air. Physical exam is notable for dyspnea provoked by walking short distances. Jugular venous distension is noted on exam. The patient’s blood pressure is 130/70 mmHg during inspiration. A bedside echocardiogram demonstrates impaired diastolic filling with normal ventricular contractility. An ECG is performed as seen in Figure A.",
+  "question": "Which of the following is the most likely diagnosis?",
+  "options": [
+    {
+      "id": "A",
+      "description": "Cardiac tamponade"
+    },
+    {
+      "id": "B",
+      "description": "Constrictive pericarditis"
+    },
+    {
+      "id": "C",
+      "description": "Myocardial infarction"
+    },
+    {
+      "id": "D",
+      "description": "Pulmonary embolism"
+    },
+    {
+      "id": "E",
+      "description": "Restrictive cardiomyopathy"
+    }
+  ],
+  "evidence_items": [
+    {
+      "id": "E1",
+      "kind": "direct",
+      "content": "Chief complaint: worsening dyspnea over the past 48 hours",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E2",
+      "kind": "direct",
+      "content": "Recent history of a cold",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E3",
+      "kind": "direct",
+      "content": "Past medical history: diabetes",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E4",
+      "kind": "direct",
+      "content": "Past medical history: obesity",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E5",
+      "kind": "direct",
+      "content": "Past medical history: hypertension",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E6",
+      "kind": "direct",
+      "content": "Recent Achilles tendon repair 4 weeks ago",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E7",
+      "kind": "direct",
+      "content": "Recent decreased mobility",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E8",
+      "kind": "direct",
+      "content": "Temperature: 99.2°F (37.3°C)",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E9",
+      "kind": "direct",
+      "content": "Blood pressure: 150/85 mmHg",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E10",
+      "kind": "direct",
+      "content": "Pulse: 82/min",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E11",
+      "kind": "direct",
+      "content": "Respirations: 16/min",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E12",
+      "kind": "direct",
+      "content": "Oxygen saturation: 100% on room air",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E13",
+      "kind": "direct",
+      "content": "Dyspnea provoked by walking short distances",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E14",
+      "kind": "direct",
+      "content": "Jugular venous distension",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E15",
+      "kind": "direct",
+      "content": "Blood pressure: 130/70 mmHg during inspiration",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E16",
+      "kind": "direct",
+      "content": "Bedside echocardiogram: impaired diastolic filling with normal ventricular contractility",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    }
+  ]
+}
+================================================================================
+
+[2026-05-18 05:42:19] >>> Module: RootSelector
+----------------------------------------------------------------------
+SYSTEM PROMPT:
+Role: RootSelector
+
+Choose the best ROOT NODE for the current diagnostic problem. The root node is NOT
+a diagnosis — it is the clinical syndrome frame that organises the entire differential.
+It must encode the pathophysiological pattern, NOT merely restate the chief complaint.
+
+━━━ What makes a GOOD root node ━━━
+A good root encodes at least two of:
+  (a) Anatomical localisation  — where the lesion likely resides (cortex / cord /
+      plexus / root / peripheral nerve / vascular / systemic / visceral mass …)
+  (b) Mechanism category       — compressive, infiltrative, demyelinating, ischaemic,
+      inflammatory, metabolic, toxic, neoplastic …
+  (c) Temporal pattern         — acute onset (<24 h), subacute (days–weeks),
+      chronic-progressive (months–years)
+  (d) Alarming systemic context — constitutional features (weight loss, night sweats),
+      risk-factor cluster, high-danger urgency tier
+
+Good examples:
+  ✓ "Subacute Progressive Unilateral Upper-Limb Motor-Sensory Deficit with
+     Constitutional Alarm Signs"
+  ✓ "Acute Anterior Circulation Ischaemic Stroke Syndrome"
+  ✓ "Subacute Compressive Brachial Plexopathy Syndrome"
+  ✓ "Acute Decompensated Heart Failure Syndrome"
+  ✓ "Subacute Bilateral Lower-Limb Weakness with Bladder Dysfunction (Cord Level)"
+
+━━━ What is FORBIDDEN ━━━
+  ✗ Paraphrasing the chief complaint: "Acute Right Arm Weakness Syndrome"
+  ✗ Single-symptom labels:            "Right Arm Weakness"
+  ✗ Premature diagnosis:              "Pancoast Tumour Syndrome"
+  ✗ Vague filler:                     "Neurological Syndrome"
+
+━━━ Algorithm ━━━
+1. Enumerate ALL key findings (not just the chief complaint):
+   motor/sensory deficits, constitutional features, risk factors,
+   vital-sign abnormalities, exam asymmetries, time course.
+2. Ask: which anatomical compartment and mechanism best unifies these findings?
+3. Note any systemic alarm features that raise urgency or suggest a specific
+   mechanism (e.g., weight loss + heavy smoking → suspect neoplasm).
+4. Compose a root label from: [temporal pattern] + [anatomical localisation] +
+   [mechanism hint if strong] + [alarm-feature qualifier if present].
+5. If the root node already exists and new evidence contradicts it, set
+   need_root_revision: true.
+
+━━━ Evidence hierarchy (apply when history and objective findings conflict) ━━━
+Objective findings OVERRIDE subjective history when naming the root:
+  Tier 1 (highest): ECG findings, imaging reports, pathology / biopsy results
+  Tier 2:           Lab values that define a physiological state (not isolated values)
+  Tier 3:           Physical examination findings (auscultation, neuro exam, fundoscopy …)
+  Tier 4:           Vital-sign pattern (not a single reading)
+  Tier 5 (lowest):  Patient-reported history, risk factors, social history
+
+Example: A patient faints and reports being dehydrated, but ECG shows complete
+heart block → the root must encode the conduction-system abnormality, NOT the
+dehydration. The patient's reported explanation is Tier 5; the ECG is Tier 1.
+
+━━━ Constraints ━━━
+- Do NOT use an isolated lab value or single vital sign as the root.
+- When a Tier-1 or Tier-2 finding is present, it MUST appear in the root label
+  or be explicitly explained in excluded_root_candidates.
+- External knowledge retrieval is permitted only if the case frame is genuinely
+  rare or specialty-specific and you cannot form a coherent root without it.
+
+Return strict JSON only, no markdown:
+{
+  "root_label": "syndrome-level label following the algorithm above",
+  "time_course": "acute | subacute | chronic | unspecified",
+  "supporting_facts": [
+    "fact 1 used in root selection",
+    "fact 2"
+  ],
+  "excluded_root_candidates": [
+    "candidate X: reason it was not chosen"
+  ],
+  "alarm_features": ["constitutional feature / risk factor that raises urgency"],
+  "need_external_knowledge": false,
+  "knowledge_query_if_needed": "",
+  "need_root_revision": false,
+  "revision_reason": "",
+  "confidence": 0.0
+}
+----------------------------------------------------------------------
+USER MESSAGE:
+Module: RootSelector
+Return strict JSON only, no markdown.
+Payload:
+{"case_id": "case_32", "timestep": 0, "case_summary": "A 55-year-old man presents to the emergency department with worsening dyspnea over the past 48 hours. He recently had a cold that kept him home from work for the past week. He has a past medical history of diabetes, obesity, and hypertension. He had his Achilles tendon repaired 4 weeks ago and he has been less mobile. His temperature is 99.2°F (37.3°C), blood pressure is 150/85 mmHg, pulse is 82/min, respirations are 16/min, and oxygen saturation is 100% on room air. Physical exam is notable for dyspnea provoked by walking short distances. Jugular venous distension is noted on exam. The patient’s blood pressure is 130/70 mmHg during inspiration. A bedside echocardiogram demonstrates impaired diastolic filling with normal ventricular contractility. An ECG is performed as seen in Figure A. Which of the following is the most likely diagnosis?\n\nOptions:\nA. Cardiac tamponade\nB. Constrictive pericarditis\nC. Myocardial infarction\nD. Pulmonary embolism\nE. Restrictive cardiomyopathy", "root": null, "branches": {}, "frontier": [], "other_mass": 0.0, "candidate_leaves": [], "pending_results": [], "actions_taken": [], "differential_history": [], "deliberation": {"hypothesis_analysis": {}, "test_chooser_analysis": {}, "challenger_analysis": {}, "stewardship_analysis": {}, "checklist_analysis": {}, "consensus_action": null}, "interrupt": {"active": false, "reason": "", "required_actions": []}, "termination": {"ready_to_stop": false, "termination_type": "continue", "reason": ""}, "turn_budget_used": 0, "estimated_remaining_value": 0.0, "max_turn_budget": null, "latest_action_type": "", "diagnosis_readiness_score": 0.0, "benchmark_output_ready": false, "static_vignette": "A 55-year-old man presents to the emergency department with worsening dyspnea over the past 48 hours. He recently had a cold that kept him home from work for the past week. He has a past medical history of diabetes, obesity, and hypertension. He had his Achilles tendon repaired 4 weeks ago and he has been less mobile. His temperature is 99.2°F (37.3°C), blood pressure is 150/85 mmHg, pulse is 82/min, respirations are 16/min, and oxygen saturation is 100% on room air. Physical exam is notable for dyspnea provoked by walking short distances. Jugular venous distension is noted on exam. The patient’s blood pressure is 130/70 mmHg during inspiration. A bedside echocardiogram demonstrates impaired diastolic filling with normal ventricular contractility. An ECG is performed as seen in Figure A.", "static_question": "Which of the following is the most likely diagnosis?", "static_options": [{"id": "A", "description": "Cardiac tamponade"}, {"id": "B", "description": "Constrictive pericarditis"}, {"id": "C", "description": "Myocardial infarction"}, {"id": "D", "description": "Pulmonary embolism"}, {"id": "E", "description": "Restrictive cardiomyopathy"}], "static_evidence_items": [{"id": "E1", "kind": "direct", "content": "Chief complaint: worsening dyspnea over the past 48 hours", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E2", "kind": "direct", "content": "Recent history of a cold", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E3", "kind": "direct", "content": "Past medical history: diabetes", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E4", "kind": "direct", "content": "Past medical history: obesity", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E5", "kind": "direct", "content": "Past medical history: hypertension", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E6", "kind": "direct", "content": "Recent Achilles tendon repair 4 weeks ago", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E7", "kind": "direct", "content": "Recent decreased mobility", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E8", "kind": "direct", "content": "Temperature: 99.2°F (37.3°C)", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E9", "kind": "direct", "content": "Blood pressure: 150/85 mmHg", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E10", "kind": "direct", "content": "Pulse: 82/min", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E11", "kind": "direct", "content": "Respirations: 16/min", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E12", "kind": "direct", "content": "Oxygen saturation: 100% on room air", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E13", "kind": "direct", "content": "Dyspnea provoked by walking short distances", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E14", "kind": "direct", "content": "Jugular venous distension", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E15", "kind": "direct", "content": "Blood pressure: 130/70 mmHg during inspiration", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E16", "kind": "direct", "content": "Bedside echocardiogram: impaired diastolic filling with normal ventricular contractility", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}], "seen_evidence_ids": [], "mode_policy": {}, "answer_option_mapping": {}, "tool_use_log": [], "root_revision_needed": false, "max_tree_depth": 3}
+----------------------------------------------------------------------
+RAW LLM RESPONSE:
+{
+  "root_label": "Subacute Cardiac Syndrome with Impaired Diastolic Filling and Normal Ventricular Contractility",
+  "time_course": "subacute",
+  "supporting_facts": [
+    "Dyspnea provoked by walking short distances",
+    "Jugular venous distension",
+    "Impaired diastolic filling with normal ventricular contractility on bedside echocardiogram"
+  ],
+  "excluded_root_candidates": [
+    "Cardiac Tamponade Syndrome: not supported by the provided echocardiogram results and absence of specific signs like pulsus paradoxus",
+    "Myocardial Infarction Syndrome: normal ventricular contractility on echocardiogram does not support this"
+  ],
+  "alarm_features": [
+    "Recent decreased mobility",
+    "Past medical history of hypertension and obesity"
+  ],
+  "need_external_knowledge": false,
+  "knowledge_query_if_needed": "",
+  "need_root_revision": false,
+  "revision_reason": "",
+  "confidence": 0.8
+}
+----------------------------------------------------------------------
+PARSED RESULT:
+{
+  "root_label": "Subacute Cardiac Syndrome with Impaired Diastolic Filling and Normal Ventricular Contractility",
+  "time_course": "subacute",
+  "supporting_facts": [
+    "Dyspnea provoked by walking short distances",
+    "Jugular venous distension",
+    "Impaired diastolic filling with normal ventricular contractility on bedside echocardiogram"
+  ],
+  "excluded_root_candidates": [
+    "Cardiac Tamponade Syndrome: not supported by the provided echocardiogram results and absence of specific signs like pulsus paradoxus",
+    "Myocardial Infarction Syndrome: normal ventricular contractility on echocardiogram does not support this"
+  ],
+  "alarm_features": [
+    "Recent decreased mobility",
+    "Past medical history of hypertension and obesity"
+  ],
+  "need_external_knowledge": false,
+  "knowledge_query_if_needed": "",
+  "need_root_revision": false,
+  "revision_reason": "",
+  "confidence": 0.8
+}
+================================================================================
+
+[2026-05-18 05:42:21] >>> Module: VignetteParser
+----------------------------------------------------------------------
+SYSTEM PROMPT:
+Role: VignetteParser
+
+Parse a static clinical vignette into structured fields for downstream reasoning.
+
+Instructions:
+1. Extract ALL clinical facts from the vignette text into evidence_items.
+   Each item's "content" should be a concise, self-contained factual phrase,
+   e.g. "Chief complaint: weakness of right arm" or "BP: 177/108 mmHg".
+2. Set "kind" for each item:
+   - "direct"     : explicitly stated in the vignette (most items)
+   - "derived"    : logically inferred combination of two stated facts
+3. Copy the exact question stem into "question".
+4. List every answer option under "options" using "id" and "description".
+5. Set "vignette" to the verbatim vignette text (question and options excluded).
+
+Return strict JSON only, no markdown:
+{
+  "vignette": "verbatim case text without the question/options block",
+  "question": "Which of the following is the most likely diagnosis?",
+  "options": [
+    {"id": "A", "description": "Apical lung tumor"},
+    {"id": "B", "description": "Brachial plexopathy"}
+  ],
+  "evidence_items": [
+    {
+      "id": "E1",
+      "kind": "direct",
+      "content": "Chief complaint: right arm weakness for several weeks",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E2",
+      "kind": "direct",
+      "content": "Social history: 2 pack/day smoking since age 25",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    }
+  ]
+}
+----------------------------------------------------------------------
+USER MESSAGE:
+Module: VignetteParser
+Return strict JSON only, no markdown.
+Payload:
+{"raw_case": "A 67-year-old man presents to the emergency room with difficulty speaking for the past 1 hour. He was having dinner at home with his wife when he suddenly noticed he had difficulty eating and speaking. He also noticed a new-onset weakness on his left side. His medical history is significant for type 2 diabetes mellitus, hypertension, and hyperlipidemia. His current medications include metformin, atorvastatin, and lisinopril. His temperature is 98.6°F (37°C), blood pressure is 130/80 mmHg, pulse is 70/min, and respirations are 15/min. On examination, strength is 5/5 in the right upper and lower extremities and 3/5 in the left upper and lower extremities. On cranial nerve examination, his tongue deviates to the right side. There is also decreased sensation to light touch and vibration on the left side of his body. Which of the following arteries is most likely involved in this patient’s presentation?\n\nOptions:\nA. Anterior inferior cerebellar artery\nB. Anterior spinal artery\nC. Lenticulostriate branches of the middle cerebral artery\nD. Pontine perforators of the basilar artery\nE. Posterior inferior cerebellar artery"}
+----------------------------------------------------------------------
+RAW LLM RESPONSE:
+{
+  "vignette": "A 67-year-old man presents to the emergency room with difficulty speaking for the past 1 hour. He was having dinner at home with his wife when he suddenly noticed he had difficulty eating and speaking. He also noticed a new-onset weakness on his left side. His medical history is significant for type 2 diabetes mellitus, hypertension, and hyperlipidemia. His current medications include metformin, atorvastatin, and lisinopril. His temperature is 98.6°F (37°C), blood pressure is 130/80 mmHg, pulse is 70/min, and respirations are 15/min. On examination, strength is 5/5 in the right upper and lower extremities and 3/5 in the left upper and lower extremities. On cranial nerve examination, his tongue deviates to the right side. There is also decreased sensation to light touch and vibration on the left side of his body.",
+  "question": "Which of the following arteries is most likely involved in this patient’s presentation?",
+  "options": [
+    {"id": "A", "description": "Anterior inferior cerebellar artery"},
+    {"id": "B", "description": "Anterior spinal artery"},
+    {"id": "C", "description": "Lenticulostriate branches of the middle cerebral artery"},
+    {"id": "D", "description": "Pontine perforators of the basilar artery"},
+    {"id": "E", "description": "Posterior inferior cerebellar artery"}
+  ],
+  "evidence_items": [
+    {
+      "id": "E1",
+      "kind": "direct",
+      "content": "Chief complaint: difficulty speaking for the past 1 hour",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E2",
+      "kind": "direct",
+      "content": "Chief complaint: new-onset weakness on the left side",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E3",
+      "kind": "direct",
+      "content": "Medical history: type 2 diabetes mellitus",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E4",
+      "kind": "direct",
+      "content": "Medical history: hypertension",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E5",
+      "kind": "direct",
+      "content": "Medical history: hyperlipidemia",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E6",
+      "kind": "direct",
+      "content": "Current medication: metformin",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E7",
+      "kind": "direct",
+      "content": "Current medication: atorvastatin",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E8",
+      "kind": "direct",
+      "content": "Current medication: lisinopril",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E9",
+      "kind": "direct",
+      "content": "Temperature: 98.6°F (37°C)",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E10",
+      "kind": "direct",
+      "content": "Blood pressure: 130/80 mmHg",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E11",
+      "kind": "direct",
+      "content": "Pulse: 70/min",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E12",
+      "kind": "direct",
+      "content": "Respirations: 15/min",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E13",
+      "kind": "direct",
+      "content": "Strength: 5/5 in the right upper and lower extremities",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E14",
+      "kind": "direct",
+      "content": "Strength: 3/5 in the left upper and lower extremities",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E15",
+      "kind": "direct",
+      "content": "Tongue deviation: to the right side",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E16",
+      "kind": "direct",
+      "content": "Decreased sensation to light touch and vibration on the left side of the body",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    }
+  ]
+}
+----------------------------------------------------------------------
+PARSED RESULT:
+{
+  "vignette": "A 67-year-old man presents to the emergency room with difficulty speaking for the past 1 hour. He was having dinner at home with his wife when he suddenly noticed he had difficulty eating and speaking. He also noticed a new-onset weakness on his left side. His medical history is significant for type 2 diabetes mellitus, hypertension, and hyperlipidemia. His current medications include metformin, atorvastatin, and lisinopril. His temperature is 98.6°F (37°C), blood pressure is 130/80 mmHg, pulse is 70/min, and respirations are 15/min. On examination, strength is 5/5 in the right upper and lower extremities and 3/5 in the left upper and lower extremities. On cranial nerve examination, his tongue deviates to the right side. There is also decreased sensation to light touch and vibration on the left side of his body.",
+  "question": "Which of the following arteries is most likely involved in this patient’s presentation?",
+  "options": [
+    {
+      "id": "A",
+      "description": "Anterior inferior cerebellar artery"
+    },
+    {
+      "id": "B",
+      "description": "Anterior spinal artery"
+    },
+    {
+      "id": "C",
+      "description": "Lenticulostriate branches of the middle cerebral artery"
+    },
+    {
+      "id": "D",
+      "description": "Pontine perforators of the basilar artery"
+    },
+    {
+      "id": "E",
+      "description": "Posterior inferior cerebellar artery"
+    }
+  ],
+  "evidence_items": [
+    {
+      "id": "E1",
+      "kind": "direct",
+      "content": "Chief complaint: difficulty speaking for the past 1 hour",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E2",
+      "kind": "direct",
+      "content": "Chief complaint: new-onset weakness on the left side",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E3",
+      "kind": "direct",
+      "content": "Medical history: type 2 diabetes mellitus",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E4",
+      "kind": "direct",
+      "content": "Medical history: hypertension",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E5",
+      "kind": "direct",
+      "content": "Medical history: hyperlipidemia",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E6",
+      "kind": "direct",
+      "content": "Current medication: metformin",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E7",
+      "kind": "direct",
+      "content": "Current medication: atorvastatin",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E8",
+      "kind": "direct",
+      "content": "Current medication: lisinopril",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E9",
+      "kind": "direct",
+      "content": "Temperature: 98.6°F (37°C)",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E10",
+      "kind": "direct",
+      "content": "Blood pressure: 130/80 mmHg",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E11",
+      "kind": "direct",
+      "content": "Pulse: 70/min",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E12",
+      "kind": "direct",
+      "content": "Respirations: 15/min",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E13",
+      "kind": "direct",
+      "content": "Strength: 5/5 in the right upper and lower extremities",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E14",
+      "kind": "direct",
+      "content": "Strength: 3/5 in the left upper and lower extremities",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E15",
+      "kind": "direct",
+      "content": "Tongue deviation: to the right side",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    },
+    {
+      "id": "E16",
+      "kind": "direct",
+      "content": "Decreased sensation to light touch and vibration on the left side of the body",
+      "source_ids": [],
+      "independent": true,
+      "branch_links": {},
+      "metadata": {}
+    }
+  ]
+}
+================================================================================
+
+[2026-05-18 05:42:21] >>> Module: RootSelector
+----------------------------------------------------------------------
+SYSTEM PROMPT:
+Role: RootSelector
+
+Choose the best ROOT NODE for the current diagnostic problem. The root node is NOT
+a diagnosis — it is the clinical syndrome frame that organises the entire differential.
+It must encode the pathophysiological pattern, NOT merely restate the chief complaint.
+
+━━━ What makes a GOOD root node ━━━
+A good root encodes at least two of:
+  (a) Anatomical localisation  — where the lesion likely resides (cortex / cord /
+      plexus / root / peripheral nerve / vascular / systemic / visceral mass …)
+  (b) Mechanism category       — compressive, infiltrative, demyelinating, ischaemic,
+      inflammatory, metabolic, toxic, neoplastic …
+  (c) Temporal pattern         — acute onset (<24 h), subacute (days–weeks),
+      chronic-progressive (months–years)
+  (d) Alarming systemic context — constitutional features (weight loss, night sweats),
+      risk-factor cluster, high-danger urgency tier
+
+Good examples:
+  ✓ "Subacute Progressive Unilateral Upper-Limb Motor-Sensory Deficit with
+     Constitutional Alarm Signs"
+  ✓ "Acute Anterior Circulation Ischaemic Stroke Syndrome"
+  ✓ "Subacute Compressive Brachial Plexopathy Syndrome"
+  ✓ "Acute Decompensated Heart Failure Syndrome"
+  ✓ "Subacute Bilateral Lower-Limb Weakness with Bladder Dysfunction (Cord Level)"
+
+━━━ What is FORBIDDEN ━━━
+  ✗ Paraphrasing the chief complaint: "Acute Right Arm Weakness Syndrome"
+  ✗ Single-symptom labels:            "Right Arm Weakness"
+  ✗ Premature diagnosis:              "Pancoast Tumour Syndrome"
+  ✗ Vague filler:                     "Neurological Syndrome"
+
+━━━ Algorithm ━━━
+1. Enumerate ALL key findings (not just the chief complaint):
+   motor/sensory deficits, constitutional features, risk factors,
+   vital-sign abnormalities, exam asymmetries, time course.
+2. Ask: which anatomical compartment and mechanism best unifies these findings?
+3. Note any systemic alarm features that raise urgency or suggest a specific
+   mechanism (e.g., weight loss + heavy smoking → suspect neoplasm).
+4. Compose a root label from: [temporal pattern] + [anatomical localisation] +
+   [mechanism hint if strong] + [alarm-feature qualifier if present].
+5. If the root node already exists and new evidence contradicts it, set
+   need_root_revision: true.
+
+━━━ Evidence hierarchy (apply when history and objective findings conflict) ━━━
+Objective findings OVERRIDE subjective history when naming the root:
+  Tier 1 (highest): ECG findings, imaging reports, pathology / biopsy results
+  Tier 2:           Lab values that define a physiological state (not isolated values)
+  Tier 3:           Physical examination findings (auscultation, neuro exam, fundoscopy …)
+  Tier 4:           Vital-sign pattern (not a single reading)
+  Tier 5 (lowest):  Patient-reported history, risk factors, social history
+
+Example: A patient faints and reports being dehydrated, but ECG shows complete
+heart block → the root must encode the conduction-system abnormality, NOT the
+dehydration. The patient's reported explanation is Tier 5; the ECG is Tier 1.
+
+━━━ Constraints ━━━
+- Do NOT use an isolated lab value or single vital sign as the root.
+- When a Tier-1 or Tier-2 finding is present, it MUST appear in the root label
+  or be explicitly explained in excluded_root_candidates.
+- External knowledge retrieval is permitted only if the case frame is genuinely
+  rare or specialty-specific and you cannot form a coherent root without it.
+
+Return strict JSON only, no markdown:
+{
+  "root_label": "syndrome-level label following the algorithm above",
+  "time_course": "acute | subacute | chronic | unspecified",
+  "supporting_facts": [
+    "fact 1 used in root selection",
+    "fact 2"
+  ],
+  "excluded_root_candidates": [
+    "candidate X: reason it was not chosen"
+  ],
+  "alarm_features": ["constitutional feature / risk factor that raises urgency"],
+  "need_external_knowledge": false,
+  "knowledge_query_if_needed": "",
+  "need_root_revision": false,
+  "revision_reason": "",
+  "confidence": 0.0
+}
+----------------------------------------------------------------------
+USER MESSAGE:
+Module: RootSelector
+Return strict JSON only, no markdown.
+Payload:
+{"case_id": "case_39", "timestep": 0, "case_summary": "A 67-year-old man presents to the emergency room with difficulty speaking for the past 1 hour. He was having dinner at home with his wife when he suddenly noticed he had difficulty eating and speaking. He also noticed a new-onset weakness on his left side. His medical history is significant for type 2 diabetes mellitus, hypertension, and hyperlipidemia. His current medications include metformin, atorvastatin, and lisinopril. His temperature is 98.6°F (37°C), blood pressure is 130/80 mmHg, pulse is 70/min, and respirations are 15/min. On examination, strength is 5/5 in the right upper and lower extremities and 3/5 in the left upper and lower extremities. On cranial nerve examination, his tongue deviates to the right side. There is also decreased sensation to light touch and vibration on the left side of his body. Which of the following arteries is most likely involved in this patient’s presentation?\n\nOptions:\nA. Anterior inferior cerebellar artery\nB. Anterior spinal artery\nC. Lenticulostriate branches of the middle cerebral artery\nD. Pontine perforators of the basilar artery\nE. Posterior inferior cerebellar artery", "root": null, "branches": {}, "frontier": [], "other_mass": 0.0, "candidate_leaves": [], "pending_results": [], "actions_taken": [], "differential_history": [], "deliberation": {"hypothesis_analysis": {}, "test_chooser_analysis": {}, "challenger_analysis": {}, "stewardship_analysis": {}, "checklist_analysis": {}, "consensus_action": null}, "interrupt": {"active": false, "reason": "", "required_actions": []}, "termination": {"ready_to_stop": false, "termination_type": "continue", "reason": ""}, "turn_budget_used": 0, "estimated_remaining_value": 0.0, "max_turn_budget": null, "latest_action_type": "", "diagnosis_readiness_score": 0.0, "benchmark_output_ready": false, "static_vignette": "A 67-year-old man presents to the emergency room with difficulty speaking for the past 1 hour. He was having dinner at home with his wife when he suddenly noticed he had difficulty eating and speaking. He also noticed a new-onset weakness on his left side. His medical history is significant for type 2 diabetes mellitus, hypertension, and hyperlipidemia. His current medications include metformin, atorvastatin, and lisinopril. His temperature is 98.6°F (37°C), blood pressure is 130/80 mmHg, pulse is 70/min, and respirations are 15/min. On examination, strength is 5/5 in the right upper and lower extremities and 3/5 in the left upper and lower extremities. On cranial nerve examination, his tongue deviates to the right side. There is also decreased sensation to light touch and vibration on the left side of his body.", "static_question": "Which of the following arteries is most likely involved in this patient’s presentation?", "static_options": [{"id": "A", "description": "Anterior inferior cerebellar artery"}, {"id": "B", "description": "Anterior spinal artery"}, {"id": "C", "description": "Lenticulostriate branches of the middle cerebral artery"}, {"id": "D", "description": "Pontine perforators of the basilar artery"}, {"id": "E", "description": "Posterior inferior cerebellar artery"}], "static_evidence_items": [{"id": "E1", "kind": "direct", "content": "Chief complaint: difficulty speaking for the past 1 hour", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E2", "kind": "direct", "content": "Chief complaint: new-onset weakness on the left side", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E3", "kind": "direct", "content": "Medical history: type 2 diabetes mellitus", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E4", "kind": "direct", "content": "Medical history: hypertension", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E5", "kind": "direct", "content": "Medical history: hyperlipidemia", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E6", "kind": "direct", "content": "Current medication: metformin", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E7", "kind": "direct", "content": "Current medication: atorvastatin", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E8", "kind": "direct", "content": "Current medication: lisinopril", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E9", "kind": "direct", "content": "Temperature: 98.6°F (37°C)", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E10", "kind": "direct", "content": "Blood pressure: 130/80 mmHg", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E11", "kind": "direct", "content": "Pulse: 70/min", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E12", "kind": "direct", "content": "Respirations: 15/min", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E13", "kind": "direct", "content": "Strength: 5/5 in the right upper and lower extremities", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E14", "kind": "direct", "content": "Strength: 3/5 in the left upper and lower extremities", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E15", "kind": "direct", "content": "Tongue deviation: to the right side", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}, {"id": "E16", "kind": "direct", "content": "Decreased sensation to light touch and vibration on the left side of the body", "source_ids": [], "independent": true, "branch_links": {}, "metadata": {}}], "seen_evidence_ids": [], "mode_policy": {}, "answer_option_mapping": {}, "tool_use_log": [], "root_revision_needed": false, "max_tree_depth": 3}
+----------------------------------------------------------------------
+RAW LLM RESPONSE:
+{"root_label": "Acute Unilateral Motor-Sensory Deficit with Cranial Nerve Involvement", "time_course": "acute", "supporting_facts": ["Difficulty speaking for the past 1 hour", "New-onset weakness on the left side", "Tongue deviation to the right side", "Decreased sensation to light touch and vibration on the left side of the body"], "excluded_root_candidates": ["Subacute Progressive Unilateral Upper-Limb Motor-Sensory Deficit with Constitutional Alarm Signs", "Chronic Bilateral Lower-Limb Weakness with Bladder Dysfunction"], "alarm_features": ["Sudden onset of symptoms", "Cranial nerve involvement"], "need_external_knowledge": false, "knowledge_query_if_needed": "", "need_root_revision": false, "revision_reason": "", "confidence": 0.8}
+----------------------------------------------------------------------
+PARSED RESULT:
+{
+  "root_label": "Acute Unilateral Motor-Sensory Deficit with Cranial Nerve Involvement",
+  "time_course": "acute",
+  "supporting_facts": [
+    "Difficulty speaking for the past 1 hour",
+    "New-onset weakness on the left side",
+    "Tongue deviation to the right side",
+    "Decreased sensation to light touch and vibration on the left side of the body"
+  ],
+  "excluded_root_candidates": [
+    "Subacute Progressive Unilateral Upper-Limb Motor-Sensory Deficit with Constitutional Alarm Signs",
+    "Chronic Bilateral Lower-Limb Weakness with Bladder Dysfunction"
+  ],
+  "alarm_features": [
+    "Sudden onset of symptoms",
+    "Cranial nerve involvement"
+  ],
+  "need_external_knowledge": false,
+  "knowledge_query_if_needed": "",
+  "need_root_revision": false,
+  "revision_reason": "",
+  "confidence": 0.8
+}
+================================================================================
+

@@ -1,0 +1,168 @@
+================================================================================
+CONCURRENT PIPELINE EVAL — 25 dx cases (9 text-only, 16 image-dependent)
+  model=qwen/qwen3-32b  workers=10  injection=ON  protocol_retries=2
+  log=/data2/wanghongyi/Agentclinic-Tree-Dx-Spec/logs/medbullets_conc_20260605_223924.log
+================================================================================
+[LLM] Warning: Could not parse JSON for BranchCreator. Raw: {
+  "branches": [
+    {
+      "id": "B1",
+      "label": "Cardiovascular Arrhythmia",
+      "status": "expanded",
+      "prior_estimate": 0.0,
+      "danger": 0.8,
+      "level_role": "family",
+      "classification_axis": "mechanism",
+      "askable_discriminators": ["Does the patient have a recent
+[LLM] Timeout: PostUpdateStateReviser exceeded 180s. Retrying (1/5) …
+[XX   ] case 2   gold=E pred=B (IMG,1304s) Vascular malformation
+[LLM] Warning: Could not parse JSON for TemporaryAnalyticLeafPlanner. Raw: {
+  "candidate_leaves_ranked": [
+    {
+      "branch_id": "B1",
+      "type": "ANALYZE_VIGNETTE",
+      "content": "Does the exertion-related chest pain with syncope and a history of cardiac risk factors (diabetes, hypertension) argue for acute cardiac ischemia over other differential branches?",
+  
+[LLM] Warning: Could not parse JSON for TerminationJudge. Raw: {
+  "ready_to_stop": true,
+  "termination_type": "working_differential",
+  "reason": "Leading terminal branch (B2.1: benign vascular proliferation) has posterior = 0.336 (lower bound for working_differential) and dangerous unresolved sibling (B2.2: malignant vascular proliferation, posterior = 0.107
+[OK   ] case 10  gold=D pred=D (IMG,1541s) Myocardial infarction
+[XX   ] case 4   gold=A pred=B (IMG,3038s) Arrhythmogenic right ventricular d
+[XX   ] case 1   gold=A pred=B (txt,3095s) Apical lung tumor
+[OK   ] case 3   gold=A pred=A (IMG,3188s) Benign capillary proliferation
+[LLM] Warning: Could not parse JSON for AnswerMapper. Raw: {
+  "final_answer": "D",
+  "answer_option_mapping": {
+    "A": 0.123 / 0.448,
+    "B": 0.099 / 0.448,
+    "C": 0.004 / 0.448,
+    "D": 0.22 / 0.448,
+    "E": 0.002 / 0.448
+  },
+  "reasoning": "Leading leaf branch: Benign Sinus Bradycardia with Athlete’s Cardiac Physiology (posterior=0.22). Best sema
+[XX   ] case 8   gold=B pred=D (IMG,3328s) Second degree atrioventricular blo
+[LLM] Timeout: AnswerMapper exceeded 180s. Retrying (1/5) …
+[LLM] Timeout: PostUpdateStateReviser exceeded 180s. Retrying (1/5) …
+[LLM] Warning: Could not parse JSON for TemporaryAnalyticLeafPlanner. Raw: {
+  "candidate_leaves_ranked": [
+    {
+      "branch_id": "B2",
+      "type": "SAFETY_ENSURE",
+      "content": "Do the patient's congenital tricuspid stenosis, chronic respiratory issues with structural airway dilation, and static growth metrics since birth rule out other dangerous diagnoses in fav
+[LLM] Error in 'PostUpdateStateReviser' attempt 2: Token limit exceeded.
+[LLM]  → Token/context overflow for 'PostUpdateStateReviser'; fast-failing (no retry).
+[LLM] Error: [Unable to generate PostUpdateStateReviser after 5 attempts]
+[LLM] Warning: Could not parse JSON for PostUpdateStateReviser. Raw: [Unable to generate PostUpdateStateReviser after 5 attempts]
+[XX   ] case 0   gold=D pred=C (IMG,4091s) Previous myocardial ischemia
+[LLM] Timeout: SubBranchCreator exceeded 180s. Retrying (1/5) …
+[LLM] Warning: Could not parse JSON for VignetteParser. Raw: {
+  "vignette": "A 62-year-old man presents to the emergency department with skin lesions. He felt itchy recently, then noticed skin lesions that broke out prompting him to come to the emergency department. He recently went camping and hiking in the woods. The patient drinks 1-2 beers per day and sm
+[LLM] Timeout: PostUpdateStateReviser exceeded 180s. Retrying (1/5) …
+[LLM] Warning: Could not parse JSON for SubBranchCreator. Raw: {
+  "needs_expansion": true,
+  "reason_if_not": "Differentiating infection mechanisms in neonatal Hb SS carriers has distinct management implications (e.g., prophylactic pneumococcal vaccines vs. targeted staph coverage)",
+  "sub_branches": [
+    {
+      "id": "B1.1",
+      "label": "Recurrent Encap
+[LLM] Warning: Could not parse JSON for SubBranchCreator. Raw: {
+  "needs_expansion": true,
+  "reason_if_not": "",
+  "sub_branches": [
+    {
+      "id": "B2.1",
+      "label": "Acute Mesenteric Cholesterol Embolism (e.g., Bowel Ischemia)",
+      "parent_id": "B2",
+      "level": 2,
+      "level_role": "specific_disease",
+      "classification_axis": "anatomy",
+
+[XX   ] case 7   gold=B pred=A (IMG,4930s) Constrictive pericarditis
+[LLM] Warning: Could not parse JSON for SubBranchCreator. Raw: {
+  "needs_expansion": true,
+  "reason_if_not": "",
+  "sub_branches": [
+    {
+      "id": "B1.1",
+      "label": "Duodenal Atresia / Stenosis",
+      "parent_id": "B1",
+      "level": 2,
+      "level_role": "disease_class",
+      "classification_axis": "anatomy",
+      "status": "live",
+      "prior
+[XX   ] case 12  gold=B pred=C (IMG,3607s) Hematuria
+[XX   ] case 16  gold=B pred=D (IMG,2582s) Linear IgG along the basement memb
+[XX   ] case 17  gold=D pred=B (txt,1767s) Chronic myelogenous leukemia
+[LLM] Timeout: PostUpdateStateReviser exceeded 180s. Retrying (1/5) …
+[OK   ] case 14  gold=A pred=A (txt,3582s) Diastolic murmur best heard along 
+[LLM] Timeout: PostUpdateStateReviser exceeded 180s. Retrying (2/5) …
+[LLM] Timeout: PostUpdateStateReviser exceeded 180s. Retrying (3/5) …
+[XX   ] case 11  gold=E pred=A (IMG,4340s) Retinal vein occlusion
+[XX   ] case 5   gold=B pred=A (IMG,7196s) Damage to the sphenoid bone
+[OK   ] case 9   gold=D pred=D (txt,8298s) Leukemoid reaction
+[LLM] Warning: Could not parse JSON for RootSelector. Raw: {
+  "root_label": "Acute Worsening of Sinusitis with Unilateral Purulent-Blood-Tinged Nasal Discharge and Mild Pyrexia",
+  "time_course": "acute",
+  "supporting_facts": [
+    "Previously diagnosed acute sinusitis",
+    "Unilateral purulent discharge mixed with blood",
+    "Mild fever (99.5°F / 37.5°
+[XX   ] case 21  gold=A pred=E (IMG,1611s) Cecal volvulus
+[LLM] Warning: Could not parse JSON for SubBranchCreator. Raw: {
+  "needs_expansion": true,
+  "reason_if_not": "",
+  "sub_branches": [
+    {
+      "id": "B1.1",
+      "label": "Adhesions-related Intestinal Obstruction",
+      "parent_id": "B1",
+      "level": 2,
+      "level_role": "disease_class",
+      "classification_axis": "anatomy",
+      "status": "live",
+[LLM] Timeout: PostUpdateStateReviser exceeded 180s. Retrying (1/5) …
+[LLM] Timeout: PostUpdateStateReviser exceeded 180s. Retrying (1/5) …
+[LLM] Timeout: EvidenceAnnotator exceeded 180s. Retrying (1/5) …
+[LLM] Timeout: PostUpdateStateReviser exceeded 180s. Retrying (1/5) …
+[LLM] Timeout: PostUpdateStateReviser exceeded 180s. Retrying (2/5) …
+[LLM] Timeout: PostUpdateStateReviser exceeded 180s. Retrying (2/5) …
+[LLM] Timeout: PostUpdateStateReviser exceeded 180s. Retrying (2/5) …
+[LLM] Timeout: PostUpdateStateReviser exceeded 180s. Retrying (1/5) …
+[LLM] Timeout: PostUpdateStateReviser exceeded 180s. Retrying (3/5) …
+[LLM] Timeout: PostUpdateStateReviser exceeded 180s. Retrying (2/5) …
+[LLM] Timeout: TemporaryAnalyticLeafPlanner exceeded 180s. Retrying (1/5) …
+[LLM] Timeout: PostUpdateStateReviser exceeded 180s. Retrying (3/5) …
+[LLM] Timeout: PostUpdateStateReviser exceeded 180s. Retrying (1/5) …
+[LLM] Timeout: PostUpdateStateReviser exceeded 180s. Retrying (4/5) …
+[LLM] Timeout: PostUpdateStateReviser exceeded 180s. Retrying (1/5) …
+[LLM] Warning: Could not parse JSON for BranchCreator. Raw: {
+  "branches": [
+    {
+      "id": "B1",
+      "label": "Cutaneous Hypersensitivity Reaction (including Drug Allergy, Allergen Exposure, or Idiopathic Mechanisms)",
+      "status": "live",
+      "prior_estimate": 0.4845814977973569, // Calculated as 1 - B2's prior (0.5154...)
+      "danger": 0.8,
+ 
+[OK   ] case 23  gold=A pred=A (txt,3640s) Adhesions
+[LLM] Warning: Could not parse JSON for EvidenceAnnotator. Raw: {
+  "result_summary": "The evidence supports a recurrent skin rash post-sexual activity being more consistent with an infectious etiology (e.g., HSV) rather than syphilis due to the absence of condylomata lata and mucosal involvement. However, the lack of typical STI findings weakens the direct like
+[XX   ] case 20  gold=D pred=A (IMG,4944s) Inclusion body myositis
+[XX   ] case 19  gold=A pred=C (IMG,5227s) Antigen exposure
+[XX   ] case 22  gold=C pred=D (txt,5003s) Increased parathyroid hormone
+[XX   ] case 24  gold=B pred=E (txt,4047s) Foreign body obstruction
+[XX   ] case 18  gold=E pred=D (txt,5740s) Vascular ectasia within the liver
+[LLM] Timeout: PostUpdateStateReviser exceeded 180s. Retrying (1/5) …
+[OK   ] case 6   gold=B pred=B (IMG,15876s) Hirschsprung disease
+[XX   ] case 13  gold=A pred=B (txt,13309s) Alpha cell tumor
+[XX   ] case 15  gold=A pred=D (IMG,13489s) Cholesterol embolism
+
+================================================================================
+RESULTS (two口径)
+================================================================================
+  全量    (full):     6/25 = 24.0%   (scored cases; 0 unscored)
+  不含图像(no-image): 3/9 = 33.3%
+  protocol failures (skipped): 0   runtime errors: 0
+  results JSON: /data2/wanghongyi/Agentclinic-Tree-Dx-Spec/logs/medbullets_conc_20260605_223924.json

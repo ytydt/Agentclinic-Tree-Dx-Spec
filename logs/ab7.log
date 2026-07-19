@@ -1,0 +1,117 @@
+TALP discrimination (model=meta-llama/llama-3.3-70b-instruct), 9 cases
+
+[mb11_pancoast   ] SEL@1=n @2=n valid=Y DIR=3/3 RO=1/1 SHARED=1/1 PC=0/0
+[mb34_leukemoid  ] SEL@1=Y @2=Y valid=Y DIR=3/3 RO=1/1 SHARED=1/1 PC=0/0
+[mb55_glucagonoma] SEL@1=n @2=n valid=Y DIR=2/2 RO=1/1 SHARED=1/1 PC=0/0
+[mb57_kartagener ] SEL@1=Y @2=Y valid=Y DIR=2/2 RO=1/1 SHARED=0/1 PC=0/0
+[mb65_cml        ] SEL@1=n @2=n valid=Y DIR=3/4 RO=0/0 SHARED=0/1 PC=2/2
+[mb66_peliosis   ] SEL@1=Y @2=Y valid=n DIR=1/2 RO=2/2 SHARED=1/1 PC=0/0
+[mb77_hyperpara  ] SEL@1=Y @2=Y valid=Y DIR=2/3 RO=0/1 SHARED=0/1 PC=0/0
+[mb82_adhesions  ] SEL@1=n @2=n valid=n DIR=1/1 RO=1/1 SHARED=1/2 PC=2/2
+[mb83_foreignbody] SEL@1=Y @2=Y valid=Y DIR=2/2 RO=1/1 SHARED=1/1 PC=0/0
+
+========================================================================
+[ab7] TALP DISCRIMINATION (n_cases=9, KB=OFF)
+  SELECT@1 (best = a decisive one):   5/9 (55%)
+  SELECT@2 (within top-2):            5/9 (55%)
+  SELECT valid (#1 = valid disc.):    7/9 (77%)
+  DIRECTION (rule-in gold):           19/22 (86%)
+  RULE-OUT (argues against distractor):8/9 (88%)
+  SHARED-trap avoided (answered none):6/10 (60%)
+  PARENT trap (does NOT rule out parent):2/2
+  PARENT lift (child rule-in -> supports parent):2/2
+  detail → /data2/wanghongyi/Agentclinic-Tree-Dx-Spec/logs/talp_discrim_ab7.json
+
+########################################################################
+Building fused best-knowledge blocks (LR + CPG + case_report) ...
+[FusedKB] Layer-A LIRICAL ...
+[FusedKB] Layer-B anchor retriever ...
+[FusedKB] CPG + case_report corpora ...
+/home/wanghongyi/.conda/envs/gnn-llm/lib/python3.10/site-packages/sklearn/base.py:376: InconsistentVersionWarning: Trying to unpickle estimator TfidfTransformer from version 0.23.2 when using version 1.4.1.post1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/wanghongyi/.conda/envs/gnn-llm/lib/python3.10/site-packages/sklearn/base.py:376: InconsistentVersionWarning: Trying to unpickle estimator TfidfVectorizer from version 0.23.2 when using version 1.4.1.post1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+
+LLM+KB arm:
+
+[mb11_pancoast   ] SEL@1=Y @2=Y valid=Y DIR=2/3 RO=1/1 SHARED=1/1 PC=0/0
+[mb34_leukemoid  ] SEL@1=Y @2=Y valid=n DIR=3/3 RO=1/1 SHARED=0/1 PC=0/0
+[mb55_glucagonoma] SEL@1=Y @2=Y valid=Y DIR=2/2 RO=1/1 SHARED=1/1 PC=0/0
+[mb57_kartagener ] SEL@1=Y @2=Y valid=Y DIR=1/2 RO=1/1 SHARED=0/1 PC=0/0
+[mb65_cml        ] SEL@1=Y @2=Y valid=Y DIR=3/4 RO=0/0 SHARED=0/1 PC=2/2
+[mb66_peliosis   ] SEL@1=Y @2=Y valid=Y DIR=2/2 RO=2/2 SHARED=1/1 PC=0/0
+[mb77_hyperpara  ] SEL@1=Y @2=Y valid=Y DIR=2/3 RO=0/1 SHARED=0/1 PC=0/0
+[mb82_adhesions  ] SEL@1=Y @2=Y valid=Y DIR=1/1 RO=1/1 SHARED=1/2 PC=2/2
+[mb83_foreignbody] SEL@1=n @2=n valid=Y DIR=1/2 RO=0/1 SHARED=1/1 PC=0/0
+
+========================================================================
+[kb] TALP DISCRIMINATION (n_cases=9, KB=ON)
+  SELECT@1 (best = a decisive one):   8/9 (88%)
+  SELECT@2 (within top-2):            8/9 (88%)
+  SELECT valid (#1 = valid disc.):    8/9 (88%)
+  DIRECTION (rule-in gold):           17/22 (77%)
+  RULE-OUT (argues against distractor):7/9 (77%)
+  SHARED-trap avoided (answered none):5/10 (50%)
+  PARENT trap (does NOT rule out parent):2/2
+  PARENT lift (child rule-in -> supports parent):2/2
+  detail → /data2/wanghongyi/Agentclinic-Tree-Dx-Spec/logs/talp_discrim_ab7_kb.json
+
+========================================================================
+LLM-alone  vs  LLM+KB  LIFT
+  SELECT@1     : alone 5/9 (55%)        -> +KB 8/9 (88%)
+  DIRECTION    : alone 19/22 (86%)      -> +KB 17/22 (77%)
+  RULE-OUT     : alone 8/9 (88%)        -> +KB 7/9 (77%)
+  SHARED-trap  : alone 6/10 (60%)       -> +KB 5/10 (50%)
+  PARENT trap  : alone 2/2 (100%)       -> +KB 2/2 (100%)
+  PARENT lift  : alone 2/2 (100%)       -> +KB 2/2 (100%)
+[disc-v2] loading PrimeKG phenotype index ...
+
+########################################################################
+Building v2 disc-agent blocks (stage=p7, symmetric=True normalize=True matrix=True gate=True veto=True entail=True route=True) ...
+[disc-v2/p7 mb11_pancoast   ] contested=4 USE=0 NEUTRAL=4 COMMON=4
+[disc-v2/p7 mb34_leukemoid  ] contested=1 USE=1 NEUTRAL=0 COMMON=0
+[disc-v2/p7 mb55_glucagonoma] contested=2 USE=0 NEUTRAL=2 COMMON=2
+[disc-v2/p7 mb57_kartagener ] contested=0 USE=0 NEUTRAL=0 COMMON=0
+[disc-v2/p7 mb65_cml        ] contested=0 USE=0 NEUTRAL=0 COMMON=0
+[disc-v2/p7 mb66_peliosis   ] contested=3 USE=2 NEUTRAL=2 COMMON=1
+[disc-v2/p7 mb77_hyperpara  ] contested=5 USE=1 NEUTRAL=1 COMMON=4
+[disc-v2/p7 mb82_adhesions  ] contested=3 USE=0 NEUTRAL=3 COMMON=3
+[disc-v2/p7 mb83_foreignbody] contested=4 USE=0 NEUTRAL=3 COMMON=4
+[audit p7] USE=1 contrast_not_retrieved=0 contrast_retrieved_but_ignored=1
+
+LLM+KB+DISC-v2 [p7] arm:
+
+[mb11_pancoast   ] SEL@1=Y @2=Y valid=Y DIR=2/3 RO=1/1 SHARED=1/1 PC=0/0
+[mb34_leukemoid  ] SEL@1=Y @2=Y valid=n DIR=3/3 RO=1/1 SHARED=0/1 PC=0/0
+[mb55_glucagonoma] SEL@1=Y @2=Y valid=Y DIR=2/2 RO=1/1 SHARED=1/1 PC=0/0
+[mb57_kartagener ] SEL@1=Y @2=Y valid=Y DIR=1/2 RO=1/1 SHARED=0/1 PC=0/0
+[mb65_cml        ] SEL@1=Y @2=Y valid=Y DIR=3/4 RO=0/0 SHARED=0/1 PC=2/2
+[mb66_peliosis   ] SEL@1=Y @2=Y valid=Y DIR=2/2 RO=2/2 SHARED=1/1 PC=0/0
+[mb77_hyperpara  ] SEL@1=Y @2=Y valid=Y DIR=2/3 RO=0/1 SHARED=0/1 PC=0/0
+[mb82_adhesions  ] SEL@1=n @2=n valid=Y DIR=1/1 RO=1/1 SHARED=1/2 PC=2/2
+[mb83_foreignbody] SEL@1=n @2=n valid=Y DIR=1/2 RO=0/1 SHARED=1/1 PC=0/0
+
+========================================================================
+[dv2_p7] TALP DISCRIMINATION (n_cases=9, KB=ON)
+  SELECT@1 (best = a decisive one):   7/9 (77%)
+  SELECT@2 (within top-2):            7/9 (77%)
+  SELECT valid (#1 = valid disc.):    8/9 (88%)
+  DIRECTION (rule-in gold):           17/22 (77%)
+  RULE-OUT (argues against distractor):7/9 (77%)
+  SHARED-trap avoided (answered none):5/10 (50%)
+  PARENT trap (does NOT rule out parent):2/2
+  PARENT lift (child rule-in -> supports parent):2/2
+  detail → /data2/wanghongyi/Agentclinic-Tree-Dx-Spec/logs/talp_discrim_ab7_dv2_p7.json
+
+prev-stage  vs  DISC-v2[p7]  LIFT
+
+========================================================================
+LLM-alone  vs  LLM+KB  LIFT
+  SELECT@1     : alone 8/9 (88%)        -> +KB 7/9 (77%)
+  DIRECTION    : alone 17/22 (77%)      -> +KB 17/22 (77%)
+  RULE-OUT     : alone 7/9 (77%)        -> +KB 7/9 (77%)
+  SHARED-trap  : alone 5/10 (50%)       -> +KB 5/10 (50%)
+  PARENT trap  : alone 2/2 (100%)       -> +KB 2/2 (100%)
+  PARENT lift  : alone 2/2 (100%)       -> +KB 2/2 (100%)

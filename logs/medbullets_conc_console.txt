@@ -1,0 +1,123 @@
+================================================================================
+CONCURRENT PIPELINE EVAL — 25 dx cases (9 text-only, 16 image-dependent)
+  model=qwen/qwen3-32b  workers=10  injection=ON  protocol_retries=2
+  log=/data2/wanghongyi/Agentclinic-Tree-Dx-Spec/logs/medbullets_conc_20260604_171145.log
+================================================================================
+[OK   ] case 2   gold=E pred=E (IMG,287s) Vascular malformation
+[XX   ] case 7   gold=B pred=A (IMG,287s) Constrictive pericarditis
+[LLM] Warning: Could not parse JSON for BranchCreator. Raw: {
+  "branches": [
+    {
+      "id": "B1",
+      "label": "Cardiac Conduction Disturbance with Intermittent Palpitations",
+      "status": "live",
+      "prior_estimate": 0.35,
+      "danger": 0.6,
+      "level_role": "family",
+      "classification_axis": "anatomy",
+      "askable_discriminators": [
+Module BranchCreator violated output contract (attempt 1/3): missing/empty 'branches' list
+[LLM] Warning: Could not parse JSON for TemporaryAnalyticLeafPlanner. Raw: {
+  "candidate_leaves_ranked": [
+    {
+      "branch_id": "B1",
+      "type": "ANALYZE_VIGNETTE",
+      "content": "Does the ECG in Figure A demonstrate consistent PR interval lengthening (suggestive of Mobitz type I) or intermittent non-conducted P waves (suggestive of second-degree block), directl
+Module TemporaryAnalyticLeafPlanner violated output contract (attempt 1/3): missing 'candidate_leaves_ranked' list
+[OK   ] case 10  gold=D pred=D (IMG,264s) Myocardial infarction
+[LLM] Error in 'PostUpdateStateReviser' attempt 1: Token limit exceeded.
+[XX   ] case 12  gold=B pred=E (IMG,293s) Hematuria
+[XX   ] case 8   gold=B pred=A (IMG,919s) Second degree atrioventricular blo
+[LLM] Warning: Could not parse JSON for PostUpdateStateReviser. Raw: {
+  "branch_decisions": [
+    {
+      "branch_id": "B1",
+      "decision": "keep_coarse",
+      "live_subtype": "live_competing",
+      "rationale": "Parent branch B1 is expanded and includes children B1.1 (posterior=0.0745) and B1.2 (posterior=0.0298). B1's posterior is 0.104, above test_threshold,
+[ERR  ] case 3   gold=A pred=? (IMG,923s) Benign capillary proliferation  KeyError: 'branch_decisions'
+[LLM] Warning: Could not parse JSON for SubBranchCreator. Raw: {
+  "needs_expansion": true,
+  "reason_if_not": "",
+  "sub_branches": [
+    {
+      "id": "B2.1",
+      "label": "Duodenal Atresia (Double-Bubble Sign)",
+      "parent_id": "B2",
+      "level": 2,
+      "level_role": "specific_disease",
+      "classification_axis": "anatomy",
+      "status": "live",
+Module SubBranchCreator violated output contract (attempt 1/3): missing 'sub_branches' list while needs_expansion is true
+[XX   ] case 4   gold=A pred=B (IMG,1379s) Arrhythmogenic right ventricular d
+Module TemporaryAnalyticLeafPlanner violated output contract (attempt 1/3): candidate_leaves_ranked[4] missing required 'content'
+[LLM] Timeout: AnswerMapper exceeded 180s. Retrying (1/5) …
+[LLM] Warning: Could not parse JSON for TemporaryAnalyticLeafPlanner. Raw: {
+  "candidate_leaves_ranked": [
+    {
+      "branch_id": "B1.1",
+      "type": "ANALYZE_VIGNETTE",
+      "content": "Does the presence of cardiovascular risk factors (prior MI and hypertension) combined with the absence of pain/halos provide strong support for central retinal artery occlusion (CRAO
+Module TemporaryAnalyticLeafPlanner violated output contract (attempt 1/3): missing 'candidate_leaves_ranked' list
+Module TemporaryAnalyticLeafPlanner violated output contract (attempt 2/3): candidate_leaves_ranked[4] missing required 'content'
+[OK   ] case 1   gold=A pred=A (txt,1456s) Apical lung tumor
+[XX   ] case 0   gold=D pred=C (IMG,1631s) Previous myocardial ischemia
+[XX   ] case 11  gold=E pred=A (IMG,1453s) Retinal vein occlusion
+[LLM] Warning: Could not parse JSON for RootSelector. Raw: {
+  "root_label": "Subacute Recurrent Cutaneous Rash Following Unprotected Sexual Intercourse with Uncharacterised ECG Abnormality and Uncertain Aetiology (Possible STI-related or Allergic Mechanism)",
+  "time_course": "subacute",
+  "supporting_facts": [
+    "Recurrent rash occurring with every sexu
+Module RootSelector violated output contract (attempt 1/3): missing/empty 'root_label'
+[XX   ] case 9   gold=D pred=C (txt,2024s) Leukemoid reaction
+[LLM] Warning: Could not parse JSON for SubBranchCreator. Raw: {
+  "needs_expansion": true,
+  "reason_if_not": "",
+  "sub_branches": [
+    {
+      "id": "B4.1",
+      "label": "Antibody Deficiency with Preserved T-Cell Function",
+      "parent_id": "B4",
+      "level": 2,
+      "level_role": "disease_class",
+      "classification_axis": "mechanism",
+      "stat
+Module SubBranchCreator violated output contract (attempt 1/3): missing 'sub_branches' list while needs_expansion is true
+[OK   ] case 6   gold=B pred=B (IMG,2067s) Hirschsprung disease
+[XX   ] case 5   gold=B pred=A (IMG,2078s) Damage to the sphenoid bone
+[XX   ] case 13  gold=A pred=E (txt,1438s) Alpha cell tumor
+[LLM] Error in 'EvidenceAnnotator' attempt 1: Token limit exceeded.
+[XX   ] case 15  gold=A pred=E (IMG,1490s) Cholesterol embolism
+[OK   ] case 14  gold=A pred=A (txt,1505s) Diastolic murmur best heard along 
+[XX   ] case 18  gold=E pred=A (txt,924s) Vascular ectasia within the liver
+[XX   ] case 17  gold=D pred=B (txt,1219s) Chronic myelogenous leukemia
+[XX   ] case 16  gold=B pred=E (IMG,1392s) Linear IgG along the basement memb
+[OK   ] case 19  gold=A pred=A (IMG,1345s) Antigen exposure
+Module TemporaryAnalyticLeafPlanner violated output contract (attempt 1/3): candidate_leaves_ranked[6] missing required 'content'
+[LLM] Warning: Could not parse JSON for SubBranchCreator. Raw: {
+  "needs_expansion": true,
+  "reason_if_not": "",
+  "sub_branches": [
+    {
+      "id": "B1.1.1",
+      "label": "Post-Appendectomy Adhesive Ileal Obstruction",
+      "parent_id": "B1.1",
+      "level": 3,
+      "level_role": "specific_disease",
+      "classification_axis": "anatomy",
+      "statu
+Module SubBranchCreator violated output contract (attempt 1/3): missing 'sub_branches' list while needs_expansion is true
+Module TemporaryAnalyticLeafPlanner violated output contract (attempt 1/3): candidate_leaves_ranked[7] missing required 'content'
+[XX   ] case 22  gold=C pred=D (txt,1433s) Increased parathyroid hormone
+[XX   ] case 21  gold=A pred=B (IMG,1498s) Cecal volvulus
+[OK   ] case 24  gold=B pred=B (txt,1225s) Foreign body obstruction
+[XX   ] case 20  gold=D pred=A (IMG,1654s) Inclusion body myositis
+[XX   ] case 23  gold=A pred=B (txt,1632s) Adhesions
+
+================================================================================
+RESULTS (two口径)
+================================================================================
+  全量    (full):     7/24 = 29.2%   (scored cases; 1 unscored)
+  不含图像(no-image): 3/9 = 33.3%
+  protocol failures (skipped): 0   runtime errors: 1
+  results JSON: /data2/wanghongyi/Agentclinic-Tree-Dx-Spec/logs/medbullets_conc_20260604_171145.json

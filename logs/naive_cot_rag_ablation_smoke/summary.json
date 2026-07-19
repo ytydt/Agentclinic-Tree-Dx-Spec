@@ -1,0 +1,505 @@
+{
+  "schema_version": 1,
+  "protocol_version": 1,
+  "model": "meta-llama/llama-3.3-70b-instruct",
+  "temperature": 0.0,
+  "replicates": 1,
+  "arms": {
+    "N0-CoT-live-production-RAG": {
+      "all17": {
+        "top1": null,
+        "top2": null,
+        "mrr2": null,
+        "n_records": 0
+      },
+      "gold_present": {
+        "top1": null,
+        "top2": null,
+        "mrr2": null,
+        "n_records": 0
+      },
+      "schema_valid_rate": 1.0,
+      "repair_rate": 0.0,
+      "mean_estimated_llm_calls": 2.0,
+      "mean_served_chunks": 12.0,
+      "error_attribution": {}
+    },
+    "N0-CoT-no-RAG": {
+      "all17": {
+        "top1": null,
+        "top2": null,
+        "mrr2": null,
+        "n_records": 0
+      },
+      "gold_present": {
+        "top1": null,
+        "top2": null,
+        "mrr2": null,
+        "n_records": 0
+      },
+      "schema_valid_rate": 1.0,
+      "repair_rate": 0.0,
+      "mean_estimated_llm_calls": 1.0,
+      "mean_served_chunks": 0.0,
+      "error_attribution": {}
+    }
+  },
+  "references": {
+    "N0-CoT-vignette-free": {
+      "all17": {
+        "top1": 0.3137254901960784,
+        "top2": 0.6470588235294118,
+        "mrr2": 0.4803921568627451,
+        "n_records": 51
+      },
+      "gold_present": {
+        "top1": 0.38095238095238093,
+        "top2": 0.7142857142857143,
+        "mrr2": 0.5476190476190477,
+        "n_records": 42
+      },
+      "schema_valid_rate": 0.9803921568627451,
+      "repair_rate": 0.0196078431372549,
+      "mean_estimated_llm_calls": 1.0196078431372548,
+      "top1_stability": 0.9607843137254901,
+      "error_attribution": {
+        "success": 16,
+        "free_text_rank2": 17,
+        "free_text_miss": 18
+      },
+      "knowledge_citation": {
+        "record_citation_rate": 0.7058823529411765,
+        "eligible_record_citation_rate": 0.9230769230769231,
+        "mean_unique_citations": 1.6666666666666667,
+        "records_without_served_knowledge": 12
+      }
+    },
+    "REF-A1-order-fixed-f2": {
+      "all17": {
+        "top1": 0.21568627450980393,
+        "top2": 0.6078431372549019,
+        "mrr2": 0.4117647058823529,
+        "n_records": 51
+      },
+      "gold_present": {
+        "top1": 0.2619047619047619,
+        "top2": 0.7380952380952381,
+        "mrr2": 0.5,
+        "n_records": 42
+      },
+      "schema_valid_rate": 0.9607843137254902,
+      "repair_rate": 0.0392156862745098,
+      "mean_estimated_llm_calls": 5.686274509803922,
+      "top1_stability": 0.8431372549019608,
+      "error_attribution": {
+        "final_ranking_miss": 26,
+        "success": 11,
+        "schema_failure": 2,
+        "gold_absent": 9,
+        "local_champion_elimination": 3
+      },
+      "knowledge_citation": {
+        "record_citation_rate": 0.0,
+        "eligible_record_citation_rate": null,
+        "mean_unique_citations": 0.0,
+        "records_without_served_knowledge": 51
+      }
+    }
+  },
+  "paired_case_cluster_bootstrap": {},
+  "paired_case_transitions": {},
+  "index_audit": {
+    "rag_index": {
+      "path": "/data2/wanghongyi/Agentclinic-Tree-Dx-Spec/data/corpus/rag_index",
+      "backend": "faiss",
+      "metadata_rows": 493646,
+      "config_sha256": "e10458931c7b7ac0fe7f7a107ecdf9d83679aedd443e10cb04a306af7d1c6f61",
+      "metadata_sha256": "e323e58b51042cdb2eebb6f52e5957bab931f0ea60551229ef6f880453154655"
+    },
+    "cpg_index": {
+      "path": "/data2/wanghongyi/Agentclinic-Tree-Dx-Spec/data/corpus/cpg_index",
+      "backend": "tfidf",
+      "metadata_rows": 205115,
+      "config_sha256": "8436146942b605404ec7981669d57746300bb6be2b2bdc851a24a2c5075953b4",
+      "metadata_sha256": "13f256687bfe0f15aeafba71ffb1f642d9f3af0000267a4541b7e366fd83ef4d"
+    }
+  },
+  "manual_adjudication_status": {
+    "path": "/data2/wanghongyi/Agentclinic-Tree-Dx-Spec/eval_fixtures/naive_cot_rag_ablation_manual_gold_v1.json",
+    "loaded": false,
+    "scored_records": 0,
+    "required_records": 2,
+    "answer_sheet": "logs/naive_cot_rag_ablation_smoke/manual_answer_sheet.json"
+  },
+  "records": [
+    {
+      "schema_version": 1,
+      "arm": "N0-CoT-live-production-RAG",
+      "replicate": 1,
+      "case_id": "mb11_pancoast",
+      "query_plan": {
+        "schema_valid": true,
+        "search_queries": [
+          "weakness and decreased sensation in one arm",
+          "differential diagnosis for arm weakness with history of anabolic steroid use",
+          "causes of unilateral arm weakness with decreased sensation and pain",
+          "diagnostic criteria for brachial plexopathy vs radiculopathy"
+        ],
+        "reasoning_summary": "The patient's symptoms of weakness, decreased sensation, and pain in one arm, combined with his history of anabolic steroid use and significant weight loss, suggest a possible neurological or musculoskeletal condition. The search queries aim to identify potential causes of these symptoms, including brachial plexopathy, radiculopathy, and other conditions that may be related to the patient's medical history and lifestyle.",
+        "rejected": [],
+        "raw": {
+          "search_queries": [
+            "weakness and decreased sensation in one arm",
+            "differential diagnosis for arm weakness with history of anabolic steroid use",
+            "causes of unilateral arm weakness with decreased sensation and pain",
+            "diagnostic criteria for brachial plexopathy vs radiculopathy"
+          ],
+          "reasoning_summary": "The patient's symptoms of weakness, decreased sensation, and pain in one arm, combined with his history of anabolic steroid use and significant weight loss, suggest a possible neurological or musculoskeletal condition. The search queries aim to identify potential causes of these symptoms, including brachial plexopathy, radiculopathy, and other conditions that may be related to the patient's medical history and lifestyle."
+        },
+        "repair_used": false
+      },
+      "retrieval_audit": {
+        "queries": [
+          "weakness and decreased sensation in one arm",
+          "differential diagnosis for arm weakness with history of anabolic steroid use",
+          "causes of unilateral arm weakness with decreased sensation and pain",
+          "diagnostic criteria for brachial plexopathy vs radiculopathy"
+        ],
+        "requests": [
+          {
+            "query": "weakness and decreased sensation in one arm",
+            "index": "rag_index",
+            "returned": 3
+          },
+          {
+            "query": "weakness and decreased sensation in one arm",
+            "index": "cpg_index",
+            "returned": 3
+          },
+          {
+            "query": "differential diagnosis for arm weakness with history of anabolic steroid use",
+            "index": "rag_index",
+            "returned": 3
+          },
+          {
+            "query": "differential diagnosis for arm weakness with history of anabolic steroid use",
+            "index": "cpg_index",
+            "returned": 3
+          },
+          {
+            "query": "causes of unilateral arm weakness with decreased sensation and pain",
+            "index": "rag_index",
+            "returned": 3
+          },
+          {
+            "query": "causes of unilateral arm weakness with decreased sensation and pain",
+            "index": "cpg_index",
+            "returned": 3
+          },
+          {
+            "query": "diagnostic criteria for brachial plexopathy vs radiculopathy",
+            "index": "rag_index",
+            "returned": 3
+          },
+          {
+            "query": "diagnostic criteria for brachial plexopathy vs radiculopathy",
+            "index": "cpg_index",
+            "returned": 3
+          }
+        ],
+        "candidate_chunks": 22,
+        "served_chunks": 12,
+        "max_chunks": 12,
+        "max_chunk_chars": 1600,
+        "served_access_ids": [
+          "live::cpg_index::merck19e_ch186_spinal-cord-disorders__chunk_00030",
+          "live::rag_index::Neurology_Adams_1711",
+          "live::cpg_index::merck19e_ch166_somatoform-factitious-disorders__chunk_00005",
+          "live::cpg_index::pmc_oa_ddx__PMC7138528__chunk_0048",
+          "live::cpg_index::pmc_oa_ddx__PMC8221672__chunk_0054",
+          "live::rag_index::Neurology_Adams_10161",
+          "live::rag_index::_p51",
+          "live::rag_index::_p8",
+          "live::cpg_index::pmc_oa_ddx__PMC11951253__chunk_0062",
+          "live::cpg_index::pmc_oa_ddx__PMC12435512__chunk_0007",
+          "live::cpg_index::pmc_oa_ddx__PMC8304267__chunk_0014",
+          "live::rag_index::InternalMed_Harrison_30828"
+        ],
+        "served_bundle_hash": "e1e39d4cfd666087b6dd14101578c052626ddc88fd4c837cf0e4da7e5c7df12e"
+      },
+      "input": {
+        "vignette": "A 55-year-old male bodybuilder presents to the emergency department with weakness of his right arm. The patient states he has experienced these symptoms for a few weeks; however, today his hand felt so weak he dropped his cup of tea. The patient has a medical history of diabetes. He drinks 2-7 alcoholic drinks per day and has smoked 2 packs of cigarettes per day since he was 25. The patient uses anabolic steroids. He has lost 17 pounds since he last came to the emergency department 1 month ago. His temperature is 99.5°F (37.5°C), blood pressure is 177/108 mmHg, pulse is 90/min, respirations are 17/min, and oxygen saturation is 98% on room air. Physical exam reveals decreased sensation in the right arm and 2/5 strength in the right arm and 5/5 strength in in the left arm. The patient states that he is experiencing a dull aching and burning pain in his right arm during the exam. Symptoms are not changed with changes in head and neck position. Which of the following is the most likely diagnosis?\n\nOptions:\nA. Apical lung tumor\nB. Brachial plexopathy\nC. Cerebral infarction\nD. Scalenus anticus syndrome\nE. Subclavian steal syndrome\n",
+        "knowledge_chunks": [
+          {
+            "access_id": "live::cpg_index::merck19e_ch186_spinal-cord-disorders__chunk_00030",
+            "source": "production:cpg_index",
+            "title": "Chapter 186. Spinal Cord Disorders > Diagnosis is by exclusion of other causes and sometimes by genetic testing. > Symptoms and Signs",
+            "text": "Symptoms usually begin insidiously between adolescence and age 45. Syringomyelia develops in the\n\ncenter of the spinal cord, causing a central cord syndrome (see\n\n). Pain and temperature\n\nsensory deficits occur early but may not be recognized for years. The first abnormality recognized may be\n\na painless burn or cut. Syringomyelia typically causes weakness, atrophy, and often fasciculations and\n\nhyporeflexia of the hands and arms; a deficit in pain and temperature sensation in a capelike distribution\n\nover the shoulders, arms, and back is characteristic. Light touch and position and vibration sensation are\n\nnot affected. Later, spastic leg weakness develops. Deficits may be asymmetric.\n\nSyringobulbia may cause vertigo, nystagmus, unilateral or bilateral loss of facial sensation, lingual\n\natrophy and weakness, dysarthria, dysphagia, hoarseness, and sometimes peripheral sensory or motor\n\ndeficits due to medullary compression.",
+            "source_chunk_id": "merck19e_ch186_spinal-cord-disorders__chunk_00030",
+            "retrieval_queries": [
+              "weakness and decreased sensation in one arm",
+              "causes of unilateral arm weakness with decreased sensation and pain"
+            ],
+            "rrf_score": 0.03252247488101534,
+            "raw_scores": [
+              0.2092837563629738,
+              0.24998588153240764
+            ]
+          },
+          {
+            "access_id": "live::rag_index::Neurology_Adams_1711",
+            "source": "production:rag_index",
+            "title": "Neurology_Adams",
+            "text": "A primarily neurologic problem may characterize the thoracic outlet syndrome. There is slight wasting and weakness of the hypothenar, interosseous, adductor pollicis, and deep flexor muscles of the fourth and fifth fingers (i.e., the muscles innervated by the lower trunk of the brachial plexus and ulnar nerve). Weakness of the flexor muscles of the forearm may be present in advanced cases. Tendon reflexes are usually preserved. In addition, most patients complain of an intermittent aching of the arm, particularly of the ulnar side, and about half of them complain also of numbness and tingling along the ulnar border of the forearm and hand. A loss of superficial sensation in these areas is variable. It may be possible to reproduce the sensory symptoms by firm pressure just above the clavicle or by traction on the arm. Vascular features are often absent or minimal in patients with the neurologic form of the syndrome.",
+            "source_chunk_id": "Neurology_Adams_1711",
+            "retrieval_queries": [
+              "weakness and decreased sensation in one arm",
+              "causes of unilateral arm weakness with decreased sensation and pain"
+            ],
+            "rrf_score": 0.032266458495966696,
+            "raw_scores": [
+              0.6838717460632324,
+              0.6730844378471375
+            ]
+          },
+          {
+            "access_id": "live::cpg_index::merck19e_ch166_somatoform-factitious-disorders__chunk_00005",
+            "source": "production:cpg_index",
+            "title": "Chapter 166. Somatoform & Factitious Disorders > It is more common among women. > Symptoms and Signs",
+            "text": "Symptoms often develop abruptly, and onset can often be linked to a stressful event. Symptoms involve\n\napparent deficits in voluntary motor or sensory function and sometimes include seizures, thus suggesting\n\na neurologic or general physical disorder. For example, patients may present with impaired coordination\n\nor balance, weakness, paralysis of an arm or a leg, loss of sensation in a body part, seizures, blindness,\n\ndouble vision, deafness, aphonia, difficulty swallowing, sensation of a lump in the throat, or urinary\n\nretention.\n\nThe symptoms are severe enough to cause significant distress or impair social, occupational, or other\n\nimportant areas of functioning. Patients may have a single episode or sporadic repeated ones; symptoms\n\nmay become chronic. Typically, episodes are brief.",
+            "source_chunk_id": "merck19e_ch166_somatoform-factitious-disorders__chunk_00005",
+            "retrieval_queries": [
+              "weakness and decreased sensation in one arm"
+            ],
+            "rrf_score": 0.01639344262295082,
+            "raw_scores": [
+              0.21338515173910685
+            ]
+          },
+          {
+            "access_id": "live::cpg_index::pmc_oa_ddx__PMC7138528__chunk_0048",
+            "source": "production:cpg_index",
+            "title": "Arrhythmogenic right ventricular cardiomyopathy: evaluation of the current diagnostic criteria and differential diagnosis. > Current diagnostic criteria: a critical appraisal > Key points",
+            "text": "The presence of epsilon waves should be evaluated with caution, especially in patients without other diagnostic criteria.",
+            "source_chunk_id": "pmc_oa_ddx__PMC7138528__chunk_0048",
+            "retrieval_queries": [
+              "diagnostic criteria for brachial plexopathy vs radiculopathy"
+            ],
+            "rrf_score": 0.01639344262295082,
+            "raw_scores": [
+              0.2091711162711255
+            ]
+          },
+          {
+            "access_id": "live::cpg_index::pmc_oa_ddx__PMC8221672__chunk_0054",
+            "source": "production:cpg_index",
+            "title": "Multisystem Inflammatory Syndrome in Children and Adolescents (MIS-C) under the Setting of COVID-19: A Review of Clinical Presentation, Workup and Management. > Shock, Steroid Use and Respiratory Support",
+            "text": "Patients suffering from shock benefit from fluid resuscitation, steroid use, invasive monitoring, vasopressors, intubation and mechanical ventilation. Extracorporeal membrane oxygenation (ECMO) is known to be beneficial in patients suffering from severe cytokine storm, cardiogenic or septic shock.",
+            "source_chunk_id": "pmc_oa_ddx__PMC8221672__chunk_0054",
+            "retrieval_queries": [
+              "differential diagnosis for arm weakness with history of anabolic steroid use"
+            ],
+            "rrf_score": 0.01639344262295082,
+            "raw_scores": [
+              0.22774630693573406
+            ]
+          },
+          {
+            "access_id": "live::rag_index::Neurology_Adams_10161",
+            "source": "production:rag_index",
+            "title": "Neurology_Adams",
+            "text": "The biceps and brachioradial reflexes on one or both sides may be depressed, sometimes in association with an increase in the triceps and finger reflexes. The hand or forearm muscles may undergo atrophy; in a few cases, the atrophy of hand muscles is severe. In such cases, the spondylotic compression, as judged by MRI or CT myelography, may be confined to the high cervical cord, well above the levels of the motor neurons that innervate these muscles. In patients with sensory loss, pain and thermal sensation often appear to be affected more than tactile sense. An unexpected Babinski sign has already been mentioned and a few fasciculations may be seen, especially in proximal arm muscles. Another unusual feature in advanced stages of cervical cord compression is the appearance of mirror movements of the hands, in which effortful attempts to make refined movements of the fingers of one hand, causes the opposite hand to move similarly.",
+            "source_chunk_id": "Neurology_Adams_10161",
+            "retrieval_queries": [
+              "weakness and decreased sensation in one arm"
+            ],
+            "rrf_score": 0.01639344262295082,
+            "raw_scores": [
+              0.6688734292984009
+            ]
+          },
+          {
+            "access_id": "live::rag_index::_p51",
+            "source": "production:rag_index",
+            "title": "Brachial and lumbosacral plexopathies: A review. > Differential Diagnosis",
+            "text": "Effective management relies on a thorough clinical examination and prudent use of diagnostic testing.",
+            "source_chunk_id": "_p51",
+            "retrieval_queries": [
+              "diagnostic criteria for brachial plexopathy vs radiculopathy"
+            ],
+            "rrf_score": 0.01639344262295082,
+            "raw_scores": [
+              0.4987737238407135
+            ]
+          },
+          {
+            "access_id": "live::rag_index::_p8",
+            "source": "production:rag_index",
+            "title": "Anabolic-androgenic steroid use in the United States. > Indications",
+            "text": "Anabolic Steroid Abuse",
+            "source_chunk_id": "_p8",
+            "retrieval_queries": [
+              "differential diagnosis for arm weakness with history of anabolic steroid use"
+            ],
+            "rrf_score": 0.01639344262295082,
+            "raw_scores": [
+              0.7575502991676331
+            ]
+          },
+          {
+            "access_id": "live::cpg_index::pmc_oa_ddx__PMC11951253__chunk_0062",
+            "source": "production:cpg_index",
+            "title": "Don't be perplexed by the plexus! A practical approach to brachial plexus ultrasound. > Learning brachial plexus ultrasound, reporting, and when to do a follow-up MRI",
+            "text": "For suspected brachial plexopathy, nerve sheath tumour, metastatic infiltration, or assessment of extra-foraminal trauma, there is little or no additional benefit in performing MRI after brachial plexus ultrasound, as the likelihood of finding an overlooked abnormality is very low. For neuralgic amyotrophy, inflammatory neuropathy, or TOS, MRI is still recommended if brachial plexus ultrasound is normal.",
+            "source_chunk_id": "pmc_oa_ddx__PMC11951253__chunk_0062",
+            "retrieval_queries": [
+              "diagnostic criteria for brachial plexopathy vs radiculopathy"
+            ],
+            "rrf_score": 0.016129032258064516,
+            "raw_scores": [
+              0.20337331112939475
+            ]
+          },
+          {
+            "access_id": "live::cpg_index::pmc_oa_ddx__PMC12435512__chunk_0007",
+            "source": "production:cpg_index",
+            "title": "Acupuncture for Ischemic Stroke: A Critical Evaluation of Biological Mechanisms and Methodological Challenges. > Clinical Manifestations",
+            "text": "The clinical manifestations of IS vary with infarct size and location. Sudden unilateral limb weakness or numbness is a primary sign, affecting the face, arm, and leg on one side, leading to facial drooping, arm weakness, or difficulty walking. Sensory abnormalities like numbness are also common, resulting from disrupted blood supply to motor and sensory brain regions, causing hypoxia and neuronal functional loss.",
+            "source_chunk_id": "pmc_oa_ddx__PMC12435512__chunk_0007",
+            "retrieval_queries": [
+              "causes of unilateral arm weakness with decreased sensation and pain"
+            ],
+            "rrf_score": 0.016129032258064516,
+            "raw_scores": [
+              0.22132865449533035
+            ]
+          },
+          {
+            "access_id": "live::cpg_index::pmc_oa_ddx__PMC8304267__chunk_0014",
+            "source": "production:cpg_index",
+            "title": "Differential Diagnosis of Azoospermia in Men with Infertility. > 2. Azoospermia Differential Diagnosis: An Overview > 2.1. Medical History",
+            "text": "The history may reveal the presence of congenital abnormalities, such as cryptorchidism, which could result in NOA-STF. Testicular infections (e.g., mumps orchitis), testicular trauma, testicular torsion, gonadotoxin exposure (e.g., radiotherapy/chemotherapy, anabolic steroid use, testosterone replacement therapy), or a history of brain surgery are informative to help establish a possible etiologic factor for NOA. Hypogonadotropic hypogonadism is caused by congenital (e.g., Kallmann syndrome) or acquired conditions (e.g., prolactinomas, pituitary surgery, or testosterone replacement therapy). Notably, testosterone injections—commonly prescribed nowadays to men at reproductive age with signs of hypogonadism—suppress the hypothalamic-pituitary-gonadal axis. Consequently, intratesticular testosterone levels—critical for normal spermatogenesis—remain very low and, therefore, unable to sustain spermatogenesis.",
+            "source_chunk_id": "pmc_oa_ddx__PMC8304267__chunk_0014",
+            "retrieval_queries": [
+              "differential diagnosis for arm weakness with history of anabolic steroid use"
+            ],
+            "rrf_score": 0.016129032258064516,
+            "raw_scores": [
+              0.22152940635213642
+            ]
+          },
+          {
+            "access_id": "live::rag_index::InternalMed_Harrison_30828",
+            "source": "production:rag_index",
+            "title": "InternalMed_Harrison",
+            "text": "in the arms, atrophy of intrinsic hand muscles, increased deep-tendon reflexes in the legs, and extensor plantar responses are common. Urinary urgency or incontinence occurs in advanced cases, but there are many alternative causes of these problems in older individuals. A tendon reflex in the arms is often diminished at some level; most often at the biceps (C5-C6). In individual cases, radicular, myelopathic, or combined signs may predominate. The diagnosis should be considered in appropriate cases of progressive cervical myelopathy, paresthesias of the feet and hands, or wasting of the hands.",
+            "source_chunk_id": "InternalMed_Harrison_30828",
+            "retrieval_queries": [
+              "causes of unilateral arm weakness with decreased sensation and pain"
+            ],
+            "rrf_score": 0.016129032258064516,
+            "raw_scores": [
+              0.6999264359474182
+            ]
+          }
+        ]
+      },
+      "output": {
+        "schema_valid": true,
+        "top2_diagnoses": [
+          {
+            "diagnosis": "Brachial Plexopathy",
+            "reasoning_summary": "The patient presents with weakness and decreased sensation in one arm, which is consistent with brachial plexopathy. The patient's history of anabolic steroid use and the absence of other explanatory symptoms or signs also support this diagnosis.",
+            "knowledge_access_ids": [
+              "live::rag_index::Neurology_Adams_1711",
+              "live::cpg_index::pmc_oa_ddx__PMC11951253__chunk_0062"
+            ]
+          },
+          {
+            "diagnosis": "Cervical Radiculopathy",
+            "reasoning_summary": "The patient's symptoms of unilateral arm weakness and decreased sensation could also be consistent with cervical radiculopathy, particularly given the patient's age and history of smoking and anabolic steroid use.",
+            "knowledge_access_ids": []
+          }
+        ],
+        "rejected": [],
+        "raw": {
+          "top2_diagnoses": [
+            {
+              "diagnosis": "Brachial Plexopathy",
+              "reasoning_summary": "The patient presents with weakness and decreased sensation in one arm, which is consistent with brachial plexopathy. The patient's history of anabolic steroid use and the absence of other explanatory symptoms or signs also support this diagnosis.",
+              "knowledge_access_ids": [
+                "live::rag_index::Neurology_Adams_1711",
+                "live::cpg_index::pmc_oa_ddx__PMC11951253__chunk_0062"
+              ]
+            },
+            {
+              "diagnosis": "Cervical Radiculopathy",
+              "reasoning_summary": "The patient's symptoms of unilateral arm weakness and decreased sensation could also be consistent with cervical radiculopathy, particularly given the patient's age and history of smoking and anabolic steroid use.",
+              "knowledge_access_ids": []
+            }
+          ]
+        },
+        "repair_used": false
+      },
+      "audit": null,
+      "schema_valid": true,
+      "repair_used": false,
+      "estimated_llm_calls": 2
+    },
+    {
+      "schema_version": 1,
+      "arm": "N0-CoT-no-RAG",
+      "replicate": 1,
+      "case_id": "mb11_pancoast",
+      "query_plan": null,
+      "retrieval_audit": {
+        "mode": "no_rag",
+        "queries": [],
+        "requests": [],
+        "candidate_chunks": 0,
+        "served_chunks": 0,
+        "served_access_ids": [],
+        "served_bundle_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "input": {
+        "vignette": "A 55-year-old male bodybuilder presents to the emergency department with weakness of his right arm. The patient states he has experienced these symptoms for a few weeks; however, today his hand felt so weak he dropped his cup of tea. The patient has a medical history of diabetes. He drinks 2-7 alcoholic drinks per day and has smoked 2 packs of cigarettes per day since he was 25. The patient uses anabolic steroids. He has lost 17 pounds since he last came to the emergency department 1 month ago. His temperature is 99.5°F (37.5°C), blood pressure is 177/108 mmHg, pulse is 90/min, respirations are 17/min, and oxygen saturation is 98% on room air. Physical exam reveals decreased sensation in the right arm and 2/5 strength in the right arm and 5/5 strength in in the left arm. The patient states that he is experiencing a dull aching and burning pain in his right arm during the exam. Symptoms are not changed with changes in head and neck position. Which of the following is the most likely diagnosis?\n\nOptions:\nA. Apical lung tumor\nB. Brachial plexopathy\nC. Cerebral infarction\nD. Scalenus anticus syndrome\nE. Subclavian steal syndrome\n",
+        "knowledge_chunks": []
+      },
+      "output": {
+        "schema_valid": true,
+        "top2_diagnoses": [
+          {
+            "diagnosis": "Brachial plexopathy",
+            "reasoning_summary": "The patient presents with weakness and decreased sensation in the right arm, which is consistent with brachial plexopathy. The use of anabolic steroids and history of weight loss may also contribute to this diagnosis.",
+            "knowledge_access_ids": []
+          },
+          {
+            "diagnosis": "Cerebral infarction",
+            "reasoning_summary": "Although less likely, cerebral infarction could also cause weakness in one arm. However, the lack of other symptoms such as facial weakness, speech changes, or changes in sensation with head and neck position make this diagnosis less likely.",
+            "knowledge_access_ids": []
+          }
+        ],
+        "rejected": [],
+        "raw": {
+          "top2_diagnoses": [
+            {
+              "diagnosis": "Brachial plexopathy",
+              "reasoning_summary": "The patient presents with weakness and decreased sensation in the right arm, which is consistent with brachial plexopathy. The use of anabolic steroids and history of weight loss may also contribute to this diagnosis.",
+              "knowledge_access_ids": []
+            },
+            {
+              "diagnosis": "Cerebral infarction",
+              "reasoning_summary": "Although less likely, cerebral infarction could also cause weakness in one arm. However, the lack of other symptoms such as facial weakness, speech changes, or changes in sensation with head and neck position make this diagnosis less likely.",
+              "knowledge_access_ids": []
+            }
+          ]
+        },
+        "repair_used": false
+      },
+      "audit": null,
+      "schema_valid": true,
+      "repair_used": false,
+      "estimated_llm_calls": 1
+    }
+  ]
+}

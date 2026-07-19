@@ -1,0 +1,2296 @@
+[
+  {
+    "ts": "2026-06-04 17:26:42",
+    "module": "VignetteParser",
+    "parsed": {
+      "vignette": "A 55-year-old man presents to his primary care physician with fatigue, malaise, and a painful rash. The patient states that his symptoms have been worsening over the past week. He also has experienced abdominal pain and diarrhea. He has a medical history of obesity and smokes regularly. His temperature is 97.5°F (36.4°C), blood pressure is 142/82 mmHg, pulse is 85/min, respirations are 15/min, and oxygen saturation is 98% on room air. Physical exam is notable for an erythematous rash with papules and plaques on the patient's face, torso, and extremities. He states that the rash is painful. A fingerstick blood glucose is unable to accurately read his blood glucose and gives a reading of > 500 mg/dL.",
+      "question": "Which of the following is the most likely underlying pathophysiology of this patient’s condition?",
+      "options": [
+        {
+          "id": "A",
+          "description": "Alpha cell tumor"
+        },
+        {
+          "id": "B",
+          "description": "Beta cell destruction"
+        },
+        {
+          "id": "C",
+          "description": "Beta cell tumor"
+        },
+        {
+          "id": "D",
+          "description": "Hypercortisolism"
+        },
+        {
+          "id": "E",
+          "description": "Insulin resistance"
+        }
+      ],
+      "evidence_items": [
+        {
+          "id": "E1",
+          "kind": "direct",
+          "content": "55-year-old man with fatigue, malaise, painful rash",
+          "source_ids": [],
+          "independent": true,
+          "branch_links": {},
+          "metadata": {}
+        },
+        {
+          "id": "E2",
+          "kind": "direct",
+          "content": "Symptoms worsening over the past week",
+          "source_ids": [],
+          "independent": true,
+          "branch_links": {},
+          "metadata": {}
+        },
+        {
+          "id": "E3",
+          "kind": "direct",
+          "content": "Experienced abdominal pain and diarrhea",
+          "source_ids": [],
+          "independent": true,
+          "branch_links": {},
+          "metadata": {}
+        },
+        {
+          "id": "E4",
+          "kind": "direct",
+          "content": "Medical history: obesity and regular smoking",
+          "source_ids": [],
+          "independent": true,
+          "branch_links": {},
+          "metadata": {}
+        },
+        {
+          "id": "E5",
+          "kind": "direct",
+          "content": "Vital signs: temp 97.5°F, BP 142/82, PP 85, RR 15, O2sat 98% on room air",
+          "source_ids": [],
+          "independent": true,
+          "branch_links": {},
+          "metadata": {}
+        },
+        {
+          "id": "E6",
+          "kind": "direct",
+          "content": "Physical exam: erythematous rash with papules and plaques on face, torso, extremities",
+          "source_ids": [],
+          "independent": true,
+          "branch_links": {},
+          "metadata": {}
+        },
+        {
+          "id": "E7",
+          "kind": "direct",
+          "content": "Patient states rash is painful",
+          "source_ids": [],
+          "independent": true,
+          "branch_links": {},
+          "metadata": {}
+        },
+        {
+          "id": "E8",
+          "kind": "direct",
+          "content": "Fingerstick blood glucose >500 mg/dL",
+          "source_ids": [],
+          "independent": true,
+          "branch_links": {},
+          "metadata": {}
+        }
+      ]
+    }
+  },
+  {
+    "ts": "2026-06-04 17:26:52",
+    "module": "SafetyController",
+    "parsed": {
+      "interrupt_active": true,
+      "reason": "The patient has a blood glucose level >500 mg/dL (severe hyperglycemia) and associated symptoms (fatigue, malaise), which may indicate diabetic ketoacidosis (DKA) or hyperosmolar hyperglycemic state (HHS). Uncontrolled hyperglycemia is a life-threatening emergency requiring immediate intervention.",
+      "required_actions": [
+        "Initiate IV fluids for volume resuscitation",
+        "Administer insulin therapy",
+        "Check electrolytes and arterial blood gas for acid-base derangements"
+      ],
+      "why_not_interrupt_if_false": []
+    }
+  },
+  {
+    "ts": "2026-06-04 17:27:35",
+    "module": "RootSelector",
+    "parsed": {
+      "root_label": "Subacute Severe Hyperglycemia with Constitutional and Gastrointestinal Symptoms and Uncharacterised Painful Erythema",
+      "time_course": "subacute",
+      "confidence": 0.62,
+      "supporting_facts": [
+        "Fingerstick blood glucose > 500 mg/dL (severe hyperglycemia)",
+        "Painful erythematous rash with papules and plaques on face/torso/extremities",
+        "Worsening constitutional symptoms over one week",
+        "Abdominal pain and diarrhea as systemic manifestations"
+      ]
+    }
+  },
+  {
+    "ts": "2026-06-04 17:27:49",
+    "module": "RootSelector",
+    "parsed": {
+      "root_label": "Subacute Progressive Metabolic Crisis with Hyperglycemia and Systemic Symptoms",
+      "time_course": "subacute",
+      "confidence": 0.82,
+      "supporting_facts": [
+        "Severe hyperglycemia (>500 mg/dL) as objective Tier-1 evidence",
+        "Symptoms worsening over the past week (temporal pattern)",
+        "Fatigue and malaise with associated rash, abdominal pain, and diarrhea (primary presenting syndrome)",
+        "Chronic risk factors (obesity, smoking) contributing to metabolic disease vulnerability"
+      ]
+    }
+  },
+  {
+    "ts": "2026-06-04 17:28:52",
+    "module": "BranchCreator",
+    "parsed": {
+      "branches": [
+        {
+          "id": "B1",
+          "label": "Insulin Secretion Deficiency",
+          "status": "live",
+          "prior_estimate": 0.25,
+          "danger": 0.9,
+          "level_role": "family",
+          "classification_axis": "mechanism",
+          "askable_discriminators": [
+            "History of diabetes type or autoimmune features",
+            "Presence of ketones in urine or blood",
+            "Family history of diabetes type 1 or 3c"
+          ],
+          "requestable_discriminators": [
+            "C-peptide level evaluation",
+            "Ketone testing (urine/blood)",
+            "Bilirubin/albumin (liver disease screen)"
+          ],
+          "turn_cost_to_refine": 1.0,
+          "diagnosis_commitment_gain": 0.8,
+          "interrupt_relevance": 0.9,
+          "why_included": "Acute hyperglycemia with high danger requiring emergency intervention. Covers de novo diabetes type 1, pancreatic exocrine failure (type 3c diabetes) with rash (like acanthosis nigricans), or other direct insuline deficits."
+        },
+        {
+          "id": "B2",
+          "label": "Insulin Resistance with Concomitant Hypercortisolemia",
+          "status": "live",
+          "prior_estimate": 0.6,
+          "danger": 0.5,
+          "level_role": "family",
+          "classification_axis": "mechanism",
+          "askable_discriminators": [
+            "History of Cushing's syndrome features (central obesity, purple striae, etc.)",
+            "Family history of insulin resistance or metabolic syndrome",
+            "Medications causing insulin resistance/hypercortisolism"
+          ],
+          "requestable_discriminators": [
+            "Dexamethasone suppression test",
+            "24-hour UFC (cortisol excretion in urine)",
+            "Insulin level assay at presentation"
+          ],
+          "turn_cost_to_refine": 2.0,
+          "diagnosis_commitment_gain": 0.7,
+          "interrupt_relevance": 0.3,
+          "why_included": "Insulin resistance syndromes (like type 2 diabetes, Cushing's) can cause progressive hyperglycemia. Systemic symptoms (fatigue, rash) align with hormonal or inflammatory mechanisms. High prior due to obesity risk profile."
+        },
+        {
+          "id": "B3",
+          "label": "Exocrine Pancreatic Dysfunction with Metabolic Compromise",
+          "status": "parked",
+          "prior_estimate": 0.1,
+          "danger": 0.6,
+          "level_role": "family",
+          "classification_axis": "anatomy",
+          "askable_discriminators": [
+            "History of pancreatitis, pancreatic surgery, or cholangitis",
+            "Alcohol use (acute/exacerbation risk)",
+            "Pancreatic imaging findings"
+          ],
+          "requestable_discriminators": [
+            "Amylase/lipase levels",
+            "CT/MRI of the pancreas",
+            "Stool fat measurement"
+          ],
+          "turn_cost_to_refine": 2.5,
+          "diagnosis_commitment_gain": 0.65,
+          "interrupt_relevance": 0.4,
+          "why_included": "Pancreatic exocrine insufficiency can produce type 3c diabetes with rash (steatorrhea, fungal infections), but prior low in absence of acute pancreatitis or other evidence."
+        },
+        {
+          "id": "B4",
+          "label": "Autoimmune/Paraneoplastic Endocrine Dysfunction",
+          "status": "parked",
+          "prior_estimate": 0.15,
+          "danger": 0.7,
+          "level_role": "family",
+          "classification_axis": "etiology",
+          "askable_discriminators": [
+            "History of other autoimmune diseases (e.g., thyroiditis)",
+            "Paraneoplastic syndromes with rash and GI symptoms",
+            "Tumor screening history"
+          ],
+          "requestable_discriminators": [
+            "Beta cell antibodies (GAD, IA-2)",
+            "Tumor markers (CA 19-9 for exocrine pancreas)",
+            "Paraneoplastic antibody panel"
+          ],
+          "turn_cost_to_refine": 3.0,
+          "diagnosis_commitment_gain": 0.5,
+          "interrupt_relevance": 0.8,
+          "why_included": "Includes LADA (Beta cell destruction with latent onset) and paraneoplastic hyperglycemia (glucagonomas). Painful rash and GI symptoms are indirect clues but less likely in a first-line scenario."
+        }
+      ]
+    }
+  },
+  {
+    "ts": "2026-06-04 17:29:55",
+    "module": "BranchCreator",
+    "parsed": {
+      "branches": [
+        {
+          "id": "B1",
+          "label": "Insulin resistance-related metabolic disorder",
+          "status": "live",
+          "prior_estimate": 0.45,
+          "danger": 0.6,
+          "level_role": "family",
+          "classification_axis": "mechanism",
+          "askable_discriminators": [
+            "History of prior hyperglycemia or diabetes diagnosis",
+            "Family history of insulin resistance",
+            "Presence of abdominal obesity or visceral fat distribution"
+          ],
+          "requestable_discriminators": [
+            "HbA1c testing for chronic hyperglycemia",
+            "Insulin level quantification",
+            "C-reactive protein (CRP) for systemic inflammation"
+          ],
+          "turn_cost_to_refine": 2.5,
+          "diagnosis_commitment_gain": 0.3,
+          "interrupt_relevance": 0.8,
+          "why_included": "Severe hyperglycemia in a patient with obesity (key risk factor) and systemic symptoms requiring differentiation from chronic vs. de novo pathophysiology"
+        },
+        {
+          "id": "B2",
+          "label": "Beta cell destruction diabetes spectrum",
+          "status": "live",
+          "prior_estimate": 0.25,
+          "danger": 0.9,
+          "level_role": "family",
+          "classification_axis": "mechanism",
+          "askable_discriminators": [
+            "History of progressive weight loss in context of hyperglycemia",
+            "Symptoms of polyuria/polydipsia onset acuity",
+            "Family history of autoimmune diabetes"
+          ],
+          "requestable_discriminators": [
+            "Autoimmune diabetes antibodies (GAD, IA-2)",
+            "C-peptide level assessment"
+          ],
+          "turn_cost_to_refine": 2.0,
+          "diagnosis_commitment_gain": 0.7,
+          "interrupt_relevance": 0.9,
+          "why_included": "Acute presentation of DKA/HHS with severe hyperglycemia, although less typical for this age group with obesity (LADA possible) requiring urgent differential consideration"
+        },
+        {
+          "id": "B3",
+          "label": "Hypercortisolism-related metabolic syndrome",
+          "status": "live",
+          "prior_estimate": 0.15,
+          "danger": 0.75,
+          "level_role": "family",
+          "classification_axis": "mechanism",
+          "askable_discriminators": [
+            "Clinical features of Cushing's syndrome (moon face/buffalo hump)",
+            "History of exogenous steroid use",
+            "Symptoms of hypokalemia/hypertension"
+          ],
+          "requestable_discriminators": [
+            "24-hour urinary cortisol",
+            "ACTH stimulation testing",
+            "Low-dose dexamethasone suppression test"
+          ],
+          "turn_cost_to_refine": 3.0,
+          "diagnosis_commitment_gain": 0.4,
+          "interrupt_relevance": 0.8,
+          "why_included": "Obesity + metabolic crisis + systemic symptoms (e.g., rash could suggest adrenal pathology), though rash distribution patterns differ from typical Cushing's features"
+        },
+        {
+          "id": "B4",
+          "label": "Paraneoplastic syndrome with metabolic derangements",
+          "status": "live",
+          "prior_estimate": 0.1,
+          "danger": 0.85,
+          "level_role": "family",
+          "classification_axis": "mechanism",
+          "askable_discriminators": [
+            "History of weight loss not explained by diet",
+            "Presence of non-metabolic paraneoplastic features (neurological/visual)",
+            "Painful rash distribution suggestive of tumor-associated vasculitis"
+          ],
+          "requestable_discriminators": [
+            "Computed tomography (CT) for occult tumors",
+            "Glucagon serum level",
+            "Tumor markers (CA 19-9, CEA)"
+          ],
+          "turn_cost_to_refine": 2.0,
+          "diagnosis_commitment_gain": 0.25,
+          "interrupt_relevance": 1.0,
+          "why_included": "Painful rash + hyperglycemia + systemic symptoms consistent with paraneoplastic syndromes (e.g., glucagonoma syndrome) despite low prior probability"
+        },
+        {
+          "id": "B5",
+          "label": "Reactive/Non-malignant Acute Hyperglycemic Crisis",
+          "status": "parked",
+          "prior_estimate": 0.05,
+          "danger": 0.6,
+          "level_role": "family",
+          "classification_axis": "mechanism",
+          "askable_discriminators": [
+            "Recent viral illness or infection (despite normal temperature)",
+            "History of glucocorticoid therapy",
+            "Evidence of stress-induced hyperglycemia (acute trauma/illness)"
+          ],
+          "requestable_discriminators": [
+            "Infectious workup (cultures, CRP, WBC)",
+            "Adrenal function panel",
+            "Cortisol/ACTH levels"
+          ],
+          "turn_cost_to_refine": 3.5,
+          "diagnosis_commitment_gain": 0.1,
+          "interrupt_relevance": 0.5,
+          "why_included": "Reactive hyperglycemia requires consideration for stress-induced patterns despite chronic risk factors"
+        }
+      ]
+    }
+  },
+  {
+    "ts": "2026-06-04 17:30:40",
+    "module": "TemporaryAnalyticLeafPlanner",
+    "parsed": {
+      "candidate_leaves_ranked": [
+        {
+          "branch_id": "B1",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Does the patient’s severe hyperglycemia with subacute onset but lack of polyuria or weight loss favor insulin resistance over beta cell destruction?",
+          "score": 0.35,
+          "expected_information_gain": 0.3,
+          "safety_value": 0.0,
+          "action_separation_value": 0.0,
+          "falsification_value": 0.0,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B1": "support",
+            "B2": "against",
+            "B4": "neutral"
+          },
+          "primary_function": "confirm",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "Insulin resistance in obese patients with subacute hyperglycemia is a strong differentiator against acute beta cell destruction."
+        },
+        {
+          "branch_id": "B1",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Is the absence of classic insulin resistance signs (e.g., acanthosis nigricans) in the physical exam inconsistent with this diagnosis?",
+          "score": 0.0,
+          "expected_information_gain": 0.0,
+          "safety_value": 0.0,
+          "action_separation_value": 0.0,
+          "falsification_value": 0.0,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B1": "neutral"
+          },
+          "primary_function": "challenge",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "No contradicting evidence identified for Insulin resistance-related metabolic disorder; all available findings are consistent."
+        },
+        {
+          "branch_id": "B2",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Could the absence of polyuria/dipsomania in subacute diabetes argue against beta cell destruction in favor of insulin resistance?",
+          "score": 0.42,
+          "expected_information_gain": 0.35,
+          "safety_value": 0.2,
+          "action_separation_value": 0.0,
+          "falsification_value": 0.4,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B2": "against",
+            "B1": "support",
+            "B3": "neutral"
+          },
+          "primary_function": "challenge",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "interrupt",
+          "why": "Subacute hyperglycemia without classical beta cell destruction markers weakens this high-danger diagnosis."
+        },
+        {
+          "branch_id": "B2",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Does the chronic metabolic risk profile (obesity) with progressive symptoms favor insidious beta cell destruction over reactive hyperglycemia?",
+          "score": 0.45,
+          "expected_information_gain": 0.4,
+          "safety_value": 0.05,
+          "action_separation_value": 0.0,
+          "falsification_value": 0.0,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B2": "support"
+          },
+          "primary_function": "confirm",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "Obesity and smoking align with insulin resistance but subacute onset could still suggest beta cell destruction."
+        },
+        {
+          "branch_id": "B3",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Does the presence of abdominal obesity alone (without classic cortisol excess signs like moon facies) argue against hypercortisolism?",
+          "score": 0.23,
+          "expected_information_gain": 0.2,
+          "safety_value": 0.15,
+          "action_separation_value": 0.0,
+          "falsification_value": 0.5,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B3": "against",
+            "B4": "support"
+          },
+          "primary_function": "confirm",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "Obesity is a red herring for hypercortisolism but supports paraneoplastic syndrome through metabolic pathways."
+        },
+        {
+          "branch_id": "B3",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Would the lack of specific Cushing’s features (hypertension, hypokalemia) in this case weaken the hypercortisolism hypothesis?",
+          "score": 0.0,
+          "expected_information_gain": 0.0,
+          "safety_value": 0.0,
+          "action_separation_value": 0.0,
+          "falsification_value": 0.0,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B3": "neutral"
+          },
+          "primary_function": "challenge",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "No contradicting evidence identified for Hypercortisolism-related metabolic syndrome; findings are non-specific for this diagnosis."
+        },
+        {
+          "branch_id": "B4",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Is the high blood glucose (>500 mg/dL) coupled with a non-diabetic rash more consistent with paraneoplastic hyperglycemia?",
+          "score": 0.28,
+          "expected_information_gain": 0.25,
+          "safety_value": 0.18,
+          "action_separation_value": 0.0,
+          "falsification_value": 0.6,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B4": "support",
+            "B3": "against",
+            "B2": "neutral"
+          },
+          "primary_function": "safe_ensure",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "urgent",
+          "why": "Need to ensure paraneoplastic tumor syndromes (high danger) are not being falsely ruled out by current evidence gaps."
+        },
+        {
+          "branch_id": "B4",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Could the absence of weight loss and localized non-systemic rash patterns reduce the likelihood of a paraneoplastic syndrome?",
+          "score": 0.0,
+          "expected_information_gain": 0.0,
+          "safety_value": 0.0,
+          "action_separation_value": 0.0,
+          "falsification_value": 0.0,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B4": "neutral"
+          },
+          "primary_function": "challenge",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "No contradicting evidence identified for Paraneoplastic syndrome; high glucose could still mask underlying malignancy."
+        }
+      ]
+    }
+  },
+  {
+    "ts": "2026-06-04 17:31:09",
+    "module": "EvidenceAnnotator",
+    "parsed": {}
+  },
+  {
+    "ts": "2026-06-04 17:32:47",
+    "module": "PostUpdateStateReviser",
+    "parsed": {
+      "branch_decisions": [
+        {
+          "branch_id": "B1",
+          "decision": "expand_now",
+          "live_subtype": "live_focus",
+          "rationale": "Posterior is above test_threshold (0.05) at 0.6353, remains the most decision-relevant despite not meeting commit_threshold (0.6353 < 0.75). Further refinement through available discriminators is valuable for clarifying management."
+        },
+        {
+          "branch_id": "B2",
+          "decision": "keep_coarse",
+          "live_subtype": "live_competing",
+          "rationale": "Posterior (0.098) is above test_threshold, but low explanatory coverage and no unresolved questions currently justify retaining in live state until new evidence necessitates expansion."
+        },
+        {
+          "branch_id": "B3",
+          "decision": "park",
+          "live_subtype": null,
+          "rationale": "Posterior (0.0941) is above test_threshold, but the presence of typical metabolic profile and lack of Cushing’s features make it a lower immediate refinement priority."
+        },
+        {
+          "branch_id": "B4",
+          "decision": "expand_now",
+          "live_subtype": "live_competing",
+          "rationale": "Posterior (0.1412) is above test_threshold, high danger (0.85) and atypical rash suggest paraneoplastic syndrome. Expansion is needed to exclude life-threatening tumor-related causes."
+        },
+        {
+          "branch_id": "B5",
+          "decision": "close_for_now",
+          "live_subtype": null,
+          "rationale": "Posterior (0.0314) is below test_threshold (0.05) with no unresolved critical evidence, and no further refinement would impact management decisions."
+        }
+      ]
+    }
+  },
+  {
+    "ts": "2026-06-04 17:33:58",
+    "module": "SubBranchCreator",
+    "parsed": {
+      "sub_branches": [
+        {
+          "id": "B1.1",
+          "label": "Type 2 Diabetes Mellitus with Insulin Resistance",
+          "parent_id": "B1",
+          "level": 2,
+          "level_role": "specific_disease",
+          "classification_axis": "mechanism",
+          "status": "live",
+          "prior_estimate": 0.8,
+          "danger": 0.6,
+          "askable_discriminators": [
+            "History of polyuria/polydipsia despite subacute onset",
+            "Familial clustering of type 2 diabetes"
+          ],
+          "requestable_discriminators": [
+            "HbA1c for chronic hyperglycemia confirmation",
+            "Fasting C-peptide levels (should be elevated in insulin resistance)"
+          ],
+          "turn_cost_to_refine": 1.0,
+          "diagnosis_commitment_gain": 0.35,
+          "interrupt_relevance": 0.7,
+          "why_included": "Represents canonical insulin resistance presentation with metabolic crisis; supports targeted diabetes-specific management pathways"
+        },
+        {
+          "id": "B1.2",
+          "label": "Non-Diabetic Insulin Resistance with Reactive Hyperglycemia",
+          "parent_id": "B1",
+          "level": 2,
+          "level_role": "anatomical_variant",
+          "classification_axis": "anatomy",
+          "status": "live",
+          "prior_estimate": 0.15,
+          "danger": 0.4,
+          "askable_discriminators": [
+            "Presence of stressor (illness/infection) preceding hyperglycemia",
+            "Abnormal liver enzymes or hepatic transaminases"
+          ],
+          "requestable_discriminators": [
+            "Insulin resistance indexes such as HOMA-IR",
+            "Lipid profile for dyslipidemia pattern"
+          ],
+          "turn_cost_to_refine": 1.5,
+          "diagnosis_commitment_gain": 0.2,
+          "interrupt_relevance": 0.3,
+          "why_included": "Accounts for rare cases of isolated insulin resistance without established diabetes; alters long-term but not urgent management"
+        },
+        {
+          "id": "B1.3",
+          "label": "Insulin Resistance in Context of Severe Inflammatory Process",
+          "parent_id": "B1",
+          "level": 2,
+          "level_role": "pathway_variant",
+          "classification_axis": "mechanism",
+          "status": "live",
+          "prior_estimate": 0.05,
+          "danger": 0.3,
+          "askable_discriminators": [
+            "Recent trauma/surgery/illness coinciding with symptom onset",
+            "Non-metabolic rash components (steatitis, etc.)"
+          ],
+          "requestable_discriminators": [
+            "C-reactive protein (CRP) for systemic inflammation",
+            "Liver biopsy for non-alcoholic steatohepatitis (NASH)"
+          ],
+          "turn_cost_to_refine": 2.0,
+          "diagnosis_commitment_gain": 0.15,
+          "interrupt_relevance": 0.6,
+          "why_included": "Highlights possible inflammatory underpinnings of insulin resistance; requires investigation for contributing infectious or autoimmune etiology"
+        }
+      ]
+    }
+  },
+  {
+    "ts": "2026-06-04 17:34:22",
+    "module": "SubBranchCreator",
+    "parsed": {
+      "sub_branches": [
+        {
+          "id": "B4.1",
+          "label": "Paraneoplastic Endocrinopathy with Glucagonoma",
+          "parent_id": "B4",
+          "level": 2,
+          "level_role": "specific_disease",
+          "classification_axis": "mechanism",
+          "status": "live",
+          "prior_estimate": 0.4,
+          "danger": 0.8,
+          "askable_discriminators": [
+            "History of necrolytic migratory rash (classic glucagonoma cutaneous findings)",
+            "Presence of glossitis or cheiroarthropathy (neurological signs)"
+          ],
+          "requestable_discriminators": [
+            "CT/MRI imaging for neuroendocrine tumors",
+            "Serum glucagon level testing",
+            "Tumor markers for glucagon-secreting tumors"
+          ],
+          "turn_cost_to_refine": 1.2,
+          "diagnosis_commitment_gain": 0.4,
+          "interrupt_relevance": 0.9,
+          "why_included": "Glucagonomas (alpha cell tumors) cause hyperglycemia via glucagon excess and can present with rash; requires imaging and tumor markers to confirm and differentiate from T2DM"
+        },
+        {
+          "id": "B4.2",
+          "label": "Malignancy-associated Vasculitis with Concomitant Hyperglycemia",
+          "parent_id": "B4",
+          "level": 2,
+          "level_role": "anatomical_variant",
+          "classification_axis": "anatomy",
+          "status": "live",
+          "prior_estimate": 0.3,
+          "danger": 0.7,
+          "askable_discriminators": [
+            "Presence of palpable purpuric rash (vasculitis-specific feature)",
+            "History of proteinuria/renal dysfunction alongside rash"
+          ],
+          "requestable_discriminators": [
+            "Skin biopsy with immunofluorescence",
+            "ANCA testing",
+            "Serum protein electrophoresis for plasma cell dyscrasias"
+          ],
+          "turn_cost_to_refine": 1.8,
+          "diagnosis_commitment_gain": 0.3,
+          "interrupt_relevance": 0.6,
+          "why_included": "Paraneoplastic vasculitis (e.g., with lymphomas) can mimic infectious/metabolic rashes; skin biopsy patterns distinguish from autoimmune or diabetic etiologies"
+        },
+        {
+          "id": "B4.3",
+          "label": "Paraneoplastic Syndrome from Hematologic Malignancy with Metabolic Derangement",
+          "parent_id": "B4",
+          "level": 2,
+          "level_role": "pathway_variant",
+          "classification_axis": "etiology",
+          "status": "live",
+          "prior_estimate": 0.2,
+          "danger": 0.65,
+          "askable_discriminators": [
+            "New-onset lymphadenopathy or hepatosplenomegaly",
+            "History of unexplained thrombocytopenia or pancytopenia"
+          ],
+          "requestable_discriminators": [
+            "Peripheral blood smear with flow cytometry",
+            "Bone marrow biopsy",
+            "Lactate dehydrogenase (LDH) level as tumor burden marker"
+          ],
+          "turn_cost_to_refine": 2.0,
+          "diagnosis_commitment_gain": 0.25,
+          "interrupt_relevance": 0.8,
+          "why_included": "Leukemias/lymphomas can cause paraneoplastic hyperglycemia and vasculitic-like rashes; requires hematologic workup distinct from T2DM"
+        }
+      ]
+    }
+  },
+  {
+    "ts": "2026-06-04 17:34:43",
+    "module": "TerminationJudge",
+    "parsed": {
+      "ready_to_stop": true,
+      "reason": "Severe hyperglycemia with risk of DKA/HHS triggers urgent intervention requirements (IV fluids, insulin, labs) which must precede continued diagnostic workup"
+    }
+  },
+  {
+    "ts": "2026-06-04 17:34:52",
+    "module": "SafetyController",
+    "parsed": {
+      "interrupt_active": true,
+      "reason": "Severe hyperglycemia (>500 mg/dL) indicates a life-threatening metabolic crisis (e.g., DKA/HHS), which requires immediate intervention prior to diagnostic clarification.",
+      "required_actions": [
+        "Initiate IV fluids for volume resuscitation",
+        "Administer insulin therapy",
+        "Check electrolytes and arterial blood gas for acid-base derangements"
+      ],
+      "why_not_interrupt_if_false": []
+    }
+  },
+  {
+    "ts": "2026-06-04 17:35:45",
+    "module": "TemporaryAnalyticLeafPlanner",
+    "parsed": {
+      "candidate_leaves_ranked": [
+        {
+          "branch_id": "B1.1",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Does the chronic metabolic risk profile (obesity, smoking) and progressive hyperglycemia over a week favor insulin resistance-mediated type 2 diabetes over acute destructive beta-cell processes?",
+          "score": 0.75,
+          "expected_information_gain": 0.6,
+          "safety_value": 0.0,
+          "action_separation_value": 0.15,
+          "falsification_value": 0.0,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B1.1": "support",
+            "B2": "against",
+            "B4.1": "neutral"
+          },
+          "primary_function": "confirm",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "insulin_resistance_vs_dka",
+          "urgency": "routine",
+          "why": "Chronic risk factors and subacute presentation align with insulin resistance pathophysiology"
+        },
+        {
+          "branch_id": "B1.1",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Is the absence of severe hyperketonemia or anuria/focal neurological deficits sufficient to rule out hyperglycemic crisis with beta-cell destruction despite >500 mg/dL glucose?",
+          "score": 0.5,
+          "expected_information_gain": 0.35,
+          "safety_value": 0.0,
+          "action_separation_value": 0.15,
+          "falsification_value": 0.2,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B1.1": "against",
+            "B2": "support",
+            "B4.2": "neutral"
+          },
+          "primary_function": "challenge",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "insulin_resistance_vs_dka",
+          "urgency": "routine",
+          "why": "Classic insulin resistance presentation without acute decompensation signs disfavors beta-cell destruction"
+        },
+        {
+          "branch_id": "B1.2",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Does the presence of chronic systemic symptoms (fatigue lasting ≥1 week with rash) support the idea that this represents non-diabetic insulin resistance rather than a reactive hyperglycemic event?",
+          "score": 0.6,
+          "expected_information_gain": 0.4,
+          "safety_value": 0.0,
+          "action_separation_value": 0.1,
+          "falsification_value": 0.0,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B1.2": "support",
+            "B1.1": "neutral",
+            "B4.1": "neutral"
+          },
+          "primary_function": "confirm",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "Duration and context of symptoms favor insidious non-diabetic insulin resistance"
+        },
+        {
+          "branch_id": "B1.2",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Are the absence of acute stressors (trauma, sepsis) and presence of obesity-related metabolic syndrome inconsistent with stress-induced reactive hyperglycemia as the mechanism?",
+          "score": 0.3,
+          "expected_information_gain": 0.2,
+          "safety_value": 0.0,
+          "action_separation_value": 0.05,
+          "falsification_value": 0.25,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B1.2": "against",
+            "B1.1": "against",
+            "B4.1": "support"
+          },
+          "primary_function": "challenge",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "Lack of precipitating stressor weakens reactive hyperglycemia hypothesis while favoring paraneoplastic"
+        },
+        {
+          "branch_id": "B2",
+          "type": "DIAGNOSIS_READY",
+          "content": "",
+          "score": 0.0,
+          "expected_information_gain": 0.0,
+          "safety_value": 0.0,
+          "action_separation_value": 0.0,
+          "falsification_value": 0.0,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B2": "against",
+            "B1.1": "support"
+          },
+          "primary_function": "safety_ensure",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "urgent",
+          "why": "No evidence rules out beta-cell destruction; dangerous differential requires exclusion before final diagnosis"
+        },
+        {
+          "branch_id": "B4.1",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Could the specific painful rash morphology (erythematous papules/plaques) represent neuroendocrine tumor's glucagonoma-associated 'necrolytic migratory rash' instead of inflammatory patterns?",
+          "score": 0.65,
+          "expected_information_gain": 0.45,
+          "safety_value": 0.0,
+          "action_separation_value": 0.15,
+          "falsification_value": 0.2,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B4.1": "support",
+            "B1.1": "neutral",
+            "B1.2": "against"
+          },
+          "primary_function": "confirm",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "paraneoplastic_rash_assessment",
+          "urgency": "routine",
+          "why": "Rash description aligns with glucagonoma's classical cutaneous findings over reactive patterns"
+        },
+        {
+          "branch_id": "B4.1",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Does the lack of characteristic glucagonoma features (glossitis, stomatitis) in this patient's presentation argue against paraneoplastic syndrome as the underlying mechanism?",
+          "score": 0.45,
+          "expected_information_gain": 0.3,
+          "safety_value": 0.0,
+          "action_separation_value": 0.05,
+          "falsification_value": 0.3,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B4.1": "against",
+            "B4.2": "neutral",
+            "B1.2": "support"
+          },
+          "primary_function": "challenge",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "paraneoplastic_rash_assessment",
+          "urgency": "routine",
+          "why": "Absence of classic glucagonoma-associated mucosal lesions weakens paraneoplastic hyperglycemia hypothesis"
+        },
+        {
+          "branch_id": "B4.2",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Does the combination of painful rash and metabolic derangement (without proteinuria) support malignancy-associated vasculitis or a paraneoplastic inflammatory process?",
+          "score": 0.55,
+          "expected_information_gain": 0.35,
+          "safety_value": 0.0,
+          "action_separation_value": 0.1,
+          "falsification_value": 0.1,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B4.2": "support",
+            "B1.3": "neutral",
+            "B3": "neutral"
+          },
+          "primary_function": "confirm",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "Painful rash with systemic metabolic presentation is consistent with paraneoplastic vasculitis manifestations"
+        },
+        {
+          "branch_id": "B4.2",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Is the absence of palpable purpura or histopathological confirmation of vasculitis inconsistent with this diagnosis compared to paraneoplastic endocrinopathy?",
+          "score": 0.35,
+          "expected_information_gain": 0.25,
+          "safety_value": 0.0,
+          "action_separation_value": 0.1,
+          "falsification_value": 0.3,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B4.2": "against",
+            "B4.1": "support",
+            "B1.1": "neutral"
+          },
+          "primary_function": "challenge",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "Classic vasculitis features are absent in this presentation"
+        },
+        {
+          "branch_id": "B2",
+          "type": "DIAGNOSIS_READY",
+          "content": "",
+          "score": 0.0,
+          "expected_information_gain": 0.0,
+          "safety_value": 0.0,
+          "action_separation_value": 0.0,
+          "falsification_value": 0.0,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B2": "against",
+            "B1.1": "support"
+          },
+          "primary_function": "safety_ensure",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "urgent",
+          "why": "Severe hyperglycemia requires ruling out urgent beta-cell destruction scenarios before diagnostic conclusion"
+        },
+        {
+          "branch_id": "B4.2",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Does the absence of renal abnormalities (e.g., proteinuria) challenge vasculitis as the underlying mechanism given current systemic manifestations?",
+          "score": 0.45,
+          "expected_information_gain": 0.3,
+          "safety_value": 0.0,
+          "action_separation_value": 0.1,
+          "falsification_value": 0.25,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B4.2": "against",
+            "B4.1": "support",
+            "B1.1": "neutral"
+          },
+          "primary_function": "challenge",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "Vasculitis typically presents with renal involvement that is absent in this case description"
+        },
+        {
+          "branch_id": "B1.1",
+          "type": "DIAGNOSIS_READY",
+          "content": "",
+          "score": 0.0,
+          "expected_information_gain": 0.0,
+          "safety_value": 0.0,
+          "action_separation_value": 0.0,
+          "falsification_value": 0.0,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {},
+          "primary_function": "diagnosis_ready",
+          "bundle_independence": 1.0,
+          "result_dependency": true,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "Type 2 diabetes with insulin resistance achieves posterior dominance >0.7 and no higher-danger competing explanation"
+        }
+      ]
+    }
+  },
+  {
+    "ts": "2026-06-04 17:36:21",
+    "module": "TemporaryAnalyticLeafPlanner",
+    "parsed": {
+      "candidate_leaves_ranked": [
+        {
+          "branch_id": "B1.1",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Does the combination of chronic metabolic risk factors (obesity) and lack of acute decompensation signs (no polyuria/diabetic ketoacidosis features) support type 2 diabetes mellitus with insulin resistance as the primary mechanism?",
+          "score": 0.635,
+          "expected_information_gain": 0.635,
+          "safety_value": 0.0,
+          "action_separation_value": 0.0,
+          "falsification_value": 0.0,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B1.1": "support",
+            "B2": "against",
+            "B4.1": "neutral"
+          },
+          "primary_function": "confirm",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "Chronic risk profile with subacute hyperglycemia and no acute complications most directly supports insulin resistance-based hyperglycemia"
+        },
+        {
+          "branch_id": "B1.1",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Could the presence of a painful erythematous rash without typical signs of glucagon excess (e.g., cheiroarthropathy) or recent infection suggest an alternative diagnosis over insulin resistance-related hyperglycemia?",
+          "score": 0.14,
+          "expected_information_gain": 0.14,
+          "safety_value": 0.0,
+          "action_separation_value": 0.0,
+          "falsification_value": 0.0,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B1.1": "neutral",
+            "B4.1": "support"
+          },
+          "primary_function": "challenge",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "Atypical rash distribution raises concern for paraneoplastic syndromes requiring further evaluation"
+        },
+        {
+          "branch_id": "B1.2",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Does the patient’s history of obesity and absence of stressors like acute illness/infection support reactive hyperglycemia from insulin resistance rather than non-malignant hyperglycemic crisis?",
+          "score": 0.095,
+          "expected_information_gain": 0.095,
+          "safety_value": 0.0,
+          "action_separation_value": 0.0,
+          "falsification_value": 0.0,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B1.2": "support",
+            "B1.1": "against",
+            "B5": "against"
+          },
+          "primary_function": "confirm",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "Obesity history and subacute course favor insulin resistance over acute reactive hyperglycemia"
+        },
+        {
+          "branch_id": "B1.2",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Is the presence of abdominal pain/diarrhea more consistent with non-diabetic insulin resistance than with established type 2 diabetes?",
+          "score": 0.095,
+          "expected_information_gain": 0.095,
+          "falsification_value": 0.0,
+          "safety_value": 0.0,
+          "action_separation_value": 0.0,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B1.2": "neutral"
+          },
+          "primary_function": "challenge",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "No current evidence definitively rules out non-diabetic insulin resistance mechanisms"
+        },
+        {
+          "branch_id": "B2",
+          "type": "DIAGNOSIS_READY",
+          "content": "",
+          "score": 0.0,
+          "expected_information_gain": 0.0,
+          "safety_value": 1.0,
+          "falsification_value": 0.0,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B2": "safety_ensure"
+          },
+          "primary_function": "safety_ensure",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "urgent",
+          "why": "Beta cell destruction (danger 0.9) is top priority for ruling out despite low posterior; requires metabolic stabilization before definitive diagnosis"
+        },
+        {
+          "branch_id": "B4.1",
+          "type": "DIAGNOSIS_READY",
+          "content": "",
+          "score": 0.0,
+          "expected_information_gain": 0.0,
+          "safety_value": 1.0,
+          "falsification_value": 0.0,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B4.1": "safety_ensure"
+          },
+          "primary_function": "safety_ensure",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "urgent",
+          "why": "Paraneoplastic glucagonoma (danger 0.6) requires immediate imaging to exclude neuroendocrine tumors in hyperglycemic crisis"
+        }
+      ]
+    }
+  },
+  {
+    "ts": "2026-06-04 17:37:11",
+    "module": "TemporaryAnalyticLeafPlanner",
+    "parsed": {
+      "candidate_leaves_ranked": [
+        {
+          "branch_id": "B1.1",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Does the presence of a chronic risk profile (obesity, older male) without classic DKA features or recent stressor support Type 2 DM with insulin resistance over paraneoplastic hyperglycemia?",
+          "score": 0.72,
+          "expected_information_gain": 0.45,
+          "safety_value": 0.2,
+          "action_separation_value": 0.05,
+          "falsification_value": 0.22,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B1.1": "support",
+            "B4.1": "neutral",
+            "B2": "against"
+          },
+          "primary_function": "confirm",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "Patient's chronic risk factors and lack of acute-onset diabetes signs strengthen insulin resistance mechanism"
+        },
+        {
+          "branch_id": "B1.1",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Does the atypical painful rash distribution (face/extremities) contradict typical insulin resistance presentations requiring more investigation for paraneoplastic causes?",
+          "score": 0.18,
+          "expected_information_gain": 0.12,
+          "safety_value": 0.0,
+          "action_separation_value": 0.04,
+          "falsification_value": 0.02,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B1.1": "against",
+            "B4.1": "support"
+          },
+          "primary_function": "challenge",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "Atypical rash location raises concern for non-metabolic causes though direct contradiction not established"
+        },
+        {
+          "branch_id": "B1.2",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Are the abdominal pain/diarrhea symptoms compatible with non-diabetic acute hyperglycemia as a reactive response rather than chronic insulin resistance?",
+          "score": 0.55,
+          "expected_information_gain": 0.4,
+          "safety_value": 0.0,
+          "action_separation_value": 0.08,
+          "falsification_value": 0.07,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B1.2": "support",
+            "B1.1": "against"
+          },
+          "primary_function": "confirm",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "Gastrointestinal symptoms could represent a transient stress-induced hyperglycemic trigger"
+        },
+        {
+          "branch_id": "B1.2",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Could the persistent rash and 7-day subacute trajectory argue against reactive hyperglycemia in favor of chronic mechanism like metabolic syndrome?",
+          "score": 0.08,
+          "expected_information_gain": 0.05,
+          "safety_value": 0.0,
+          "action_separation_value": 0.01,
+          "falsification_value": 0.02,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B1.2": "against",
+            "B1.1": "support"
+          },
+          "primary_function": "challenge",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "The 7-day duration and persistent rash pattern are more consistent with progressive metabolic disease"
+        },
+        {
+          "branch_id": "B1.3",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Is the painful rash with systemic constitutional symptoms (fatigue, malaise) better explained by a primary inflammatory process than metabolic derangement?",
+          "score": 0.28,
+          "expected_information_gain": 0.2,
+          "safety_value": 0.05,
+          "action_separation_value": 0.01,
+          "falsification_value": 0.07,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B1.3": "support",
+            "B1.1": "neutral"
+          },
+          "primary_function": "confirm",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "Painful rash combined with inflammatory symptoms could represent direct tissue effects of metabolic inflammation"
+        },
+        {
+          "branch_id": "B1.3",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "No contradicting evidence identified for Insulin Resistance in Context of Severe Inflammatory Process; all available findings are consistent.",
+          "score": 0.0,
+          "expected_information_gain": 0.0,
+          "safety_value": 0.0,
+          "action_separation_value": 0.0,
+          "falsification_value": 0.0,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B1.3": "neutral"
+          },
+          "primary_function": "challenge",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "No evidence from the vignette disfavors this inflammatory pathway variant of insulin resistance"
+        },
+        {
+          "branch_id": "B2",
+          "type": "SAFETY_ENSURE",
+          "content": "Does the absence of weight loss and 7-day subacute progression rule out life-threatening hyperglycemia from beta cell destruction as a safety concern?",
+          "score": 0.0,
+          "expected_information_gain": 0.68,
+          "safety_value": 0.8,
+          "action_separation_value": 0.5,
+          "falsification_value": 0.0,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B2": "against",
+            "B1.1": "for"
+          },
+          "primary_function": "safety_ensure",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "urgent",
+          "why": "Severe danger requires ensuring evidence rules out this life-threatening diagnosis before committing treatment"
+        },
+        {
+          "branch_id": "B2",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Does the patient's lack of polyuria/dipsomania despite severe hyperglycemia argue for a non-classic presentation of beta cell destruction?",
+          "score": 0.45,
+          "expected_information_gain": 0.35,
+          "safety_value": 0.0,
+          "action_separation_value": 0.02,
+          "falsification_value": 0.08,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B2": "support",
+            "B1.1": "weak_against"
+          },
+          "primary_function": "confirm",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "Atypical presentation features may represent variant manifestation rather than pure reactive hyperglycemia"
+        },
+        {
+          "branch_id": "B4.1",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Is the erythematous rash with painful plaques better explained by glucagonoma vs. insulin resistance in an obese diabetic?",
+          "score": 0.58,
+          "expected_information_gain": 0.38,
+          "safety_value": 0.0,
+          "action_separation_value": 0.14,
+          "falsification_value": 0.06,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B4.1": "support",
+            "B1.1": "weak_against"
+          },
+          "primary_function": "confirm",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "Atypical rash characteristics raise concern for glucagonoma-specific dermatological findings"
+        },
+        {
+          "branch_id": "B4.1",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Could the absence of glossitis/cheiroarthropathy (classic glucagonoma features) rule out this diagnosis with reasonable confidence?",
+          "score": 0.0,
+          "expected_information_gain": 0.95,
+          "safety_value": 0.0,
+          "action_separation_value": 0.0,
+          "falsification_value": 0.0,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B4.1": "neutral"
+          },
+          "primary_function": "challenge",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "Absence of signature non-skin clinical features reduces diagnostic plausibility of this specific tumor mechanism"
+        },
+        {
+          "branch_id": "B4.2",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Are the rash features (erythema with papules/plaques) compatible with vasculitis patterns seen in metabolic derangements?",
+          "score": 0.32,
+          "expected_information_gain": 0.26,
+          "safety_value": 0.0,
+          "action_separation_value": 0.03,
+          "falsification_value": 0.03,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B4.2": "support",
+            "B1.2": "neutral"
+          },
+          "primary_function": "confirm",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "The described rash morphology remains consistent with systemic vasculitis in metabolic contexts"
+        },
+        {
+          "branch_id": "B4.2",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Is the absence of renal findings in this hyperglycemic patient definitive evidence against vasculitis as the primary mechanism?",
+          "score": 0.12,
+          "expected_information_gain": 0.15,
+          "safety_value": 0.0,
+          "action_separation_value": 0.02,
+          "falsification_value": 0.01,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B4.2": "weak_against",
+            "B1.2": "neutral"
+          },
+          "primary_function": "challenge",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "Classic vascular compromise findings not present but could represent incomplete manifestation"
+        }
+      ]
+    }
+  },
+  {
+    "ts": "2026-06-04 17:38:10",
+    "module": "EvidenceAnnotator",
+    "parsed": {}
+  },
+  {
+    "ts": "2026-06-04 17:39:31",
+    "module": "PostUpdateStateReviser",
+    "parsed": {
+      "branch_decisions": [
+        {
+          "branch_id": "B1",
+          "decision": "keep_coarse",
+          "live_subtype": "live_safety_protected",
+          "rationale": "B1 has a positive ExpandScore and its children are still live; no evidence to close"
+        },
+        {
+          "branch_id": "B2",
+          "decision": "park",
+          "live_subtype": "live_competing",
+          "rationale": "Posterior below test threshold but safety override applies due to high danger (0.9)"
+        },
+        {
+          "branch_id": "B3",
+          "decision": "park",
+          "live_subtype": "live_coarse",
+          "rationale": "Still plausible due to safety override and potential for low-probability malignancy"
+        },
+        {
+          "branch_id": "B4",
+          "decision": "keep_coarse",
+          "live_subtype": "live_competing",
+          "rationale": "Parent-level ExpandScore positive; children require retention for safety override"
+        },
+        {
+          "branch_id": "B1.1",
+          "decision": "keep_coarse",
+          "live_subtype": "live_focus",
+          "rationale": "Most likely child of B1 with posterior above test threshold and no further expansion needed"
+        },
+        {
+          "branch_id": "B1.2",
+          "decision": "park",
+          "live_subtype": "live_competing",
+          "rationale": "Posterior below test threshold but retains low plausibility for differential context"
+        },
+        {
+          "branch_id": "B1.3",
+          "decision": "close_for_now",
+          "live_subtype": "",
+          "rationale": "Posterior below test threshold and no unresolved safety concerns"
+        },
+        {
+          "branch_id": "B4.1",
+          "decision": "park",
+          "live_subtype": "live_competing",
+          "rationale": "Safety override triggered due to danger (0.8) > 0.7 and posterior (0.034) > 0.01"
+        },
+        {
+          "branch_id": "B4.2",
+          "decision": "park",
+          "live_subtype": "live_competing",
+          "rationale": "Safety override triggered due to danger (0.7) and posterior (0.0255) > 0.01"
+        },
+        {
+          "branch_id": "B4.3",
+          "decision": "close_for_now",
+          "live_subtype": "",
+          "rationale": "Low posterior (0.014) with danger (0.65) below safety override threshold"
+        },
+        {
+          "branch_id": "B5",
+          "decision": "close_for_now",
+          "live_subtype": "",
+          "rationale": "Posterior significantly below test threshold and excluded by static analysis"
+        }
+      ]
+    }
+  },
+  {
+    "ts": "2026-06-04 17:39:42",
+    "module": "TerminationJudge",
+    "parsed": {
+      "ready_to_stop": false,
+      "reason": "Static mode enforces prioritization of safety interventions for DKA/HHS before diagnostic tree resolution despite available discriminators"
+    }
+  },
+  {
+    "ts": "2026-06-04 17:40:00",
+    "module": "SafetyController",
+    "parsed": {
+      "interrupt_active": true,
+      "reason": "Severe hyperglycemia (>500 mg/dL) indicates a life-threatening metabolic crisis (e.g., DKA/HHS), which requires immediate intervention prior to diagnostic clarification.",
+      "required_actions": [
+        "Initiate IV fluids for volume resuscitation",
+        "Administer insulin therapy",
+        "Check electrolytes and arterial blood gas for acid-base derangements"
+      ],
+      "why_not_interrupt_if_false": []
+    }
+  },
+  {
+    "ts": "2026-06-04 17:41:00",
+    "module": "TemporaryAnalyticLeafPlanner",
+    "parsed": {
+      "candidate_leaves_ranked": [
+        {
+          "branch_id": "B1.1",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Does the patient's chronic obesity, subacute rash, and absence of classic DKA symptoms argue for Type 2 Diabetes Mellitus with insulin resistance as the primary mechanism rather than paraneoplastic syndromes or hypercortisolism?",
+          "score": 0.77,
+          "expected_information_gain": 0.65,
+          "safety_value": 0.03,
+          "action_separation_value": 0.09,
+          "falsification_value": 0.0,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B1.1": "support",
+            "B4.1": "against",
+            "B3": "neutral"
+          },
+          "primary_function": "confirm",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "Chronic risk factors and non-acute presentation strongly favor Type 2 DM over glucagonoma."
+        },
+        {
+          "branch_id": "B1.1",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Does the combination of atypical rash distribution (face/extremities) and absence of polyuria weaken the diagnostic certainty of Type 2 Diabetes Mellitus in this patient, requiring consideration of paraneoplastic mechanisms or other hyperglycemia sources?",
+          "score": 0.38,
+          "expected_information_gain": 0.25,
+          "safety_value": 0.05,
+          "action_separation_value": 0.08,
+          "falsification_value": 0.0,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B1.1": "against",
+            "B4.1": "support",
+            "B3": "neutral"
+          },
+          "primary_function": "challenge",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "Painful rash location and missing cardinal diabetes symptoms suggest alternative mechanisms."
+        },
+        {
+          "branch_id": "B4.1",
+          "type": "SAFETY_ENSURE",
+          "content": "Does the absence of a necrolytic migratory rash, lack of glossitis, and 7-day subacute trajectory conclusively rule out glucagonoma as a life-threatening paraneoplastic cause of this patient's hyperglycemia and rash?",
+          "score": 0.82,
+          "expected_information_gain": 0.75,
+          "safety_value": 0.8,
+          "action_separation_value": 0.0,
+          "falsification_value": 0.75,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B4.1": "against",
+            "B1.1": "support",
+            "B5": "neutral"
+          },
+          "primary_function": "safety_ensure",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "urgent",
+          "why": "Absence of classic glucagonoma cutaneous findings reduces safety concern but doesn't exclude it entirely."
+        },
+        {
+          "branch_id": "B4.1",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Does the patient's obesity-related metabolic vulnerability and lack of tumor markers (no CEA/CA19-9 mentioned) make glucagonoma less probable compared to hypercortisolism-related syndromes despite the rash?",
+          "score": 0.35,
+          "expected_information_gain": 0.2,
+          "safety_value": 0.15,
+          "action_separation_value": 0.0,
+          "falsification_value": 0.2,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B4.1": "against",
+            "B3": "neutral"
+          },
+          "primary_function": "challenge",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "Chronic metabolic profile with atypical rash features weakens glucagonoma's pathophysiological alignment."
+        }
+      ]
+    }
+  },
+  {
+    "ts": "2026-06-04 17:41:24",
+    "module": "EvidenceAnnotator",
+    "parsed": {}
+  },
+  {
+    "ts": "2026-06-04 17:42:57",
+    "module": "PostUpdateStateReviser",
+    "parsed": {
+      "branch_decisions": [
+        {
+          "branch_id": "B1",
+          "decision": "keep_coarse",
+          "live_subtype": "live_coarse",
+          "rationale": "Parent branch remains viable with moderate posterior (0.523) and no resolution; children have active considerations but not yet at commitment threshold."
+        },
+        {
+          "branch_id": "B2",
+          "decision": "parked",
+          "live_subtype": "live_competing",
+          "rationale": "Posterior marginally above test threshold (0.051) with moderate danger (0.9); insufficient evidence for closure despite safety concerns."
+        },
+        {
+          "branch_id": "B3",
+          "decision": "parked",
+          "live_subtype": "parked",
+          "rationale": "Low posterior (0.027) and minimal danger (0.75) justify parking; chronic risk profile reduces its relevance."
+        },
+        {
+          "branch_id": "B4",
+          "decision": "close_for_now",
+          "live_subtype": "closed",
+          "rationale": "Posterior fell below test threshold (0.036); children (B4.1, B4.2, B4.3) all demonstrate low posterior values with minimal unresolved critical evidence."
+        },
+        {
+          "branch_id": "B4.1",
+          "decision": "parked",
+          "live_subtype": "live_safety_protected",
+          "rationale": "Posterior (0.0109) remains above 0.01 despite safety override requirements; atypical rash maintains its relevance."
+        },
+        {
+          "branch_id": "B1.1",
+          "decision": "live",
+          "live_subtype": "live_focus",
+          "rationale": "Highest posterior among B1 children (0.478); chronic risk profile supports insulin resistance but lacks commitment threshold yet."
+        }
+      ]
+    }
+  },
+  {
+    "ts": "2026-06-04 17:43:12",
+    "module": "TerminationJudge",
+    "parsed": {
+      "ready_to_stop": true,
+      "reason": "Emergency interrupt active: severe hyperglycemia (>500 mg/dL) requires immediate DKA/HHS intervention before resolving paraneoplastic vs insulin resistance differentials."
+    }
+  },
+  {
+    "ts": "2026-06-04 17:43:22",
+    "module": "SafetyController",
+    "parsed": {
+      "interrupt_active": true,
+      "reason": "Severe hyperglycemia (>500 mg/dL) indicates a life-threatening metabolic crisis (e.g., DKA/HHS), which requires immediate intervention prior to diagnostic clarification.",
+      "required_actions": [
+        "Initiate IV fluids for volume resuscitation",
+        "Administer insulin therapy",
+        "Check electrolytes and arterial blood gas for acid-base derangements"
+      ],
+      "why_not_interrupt_if_false": []
+    }
+  },
+  {
+    "ts": "2026-06-04 17:43:58",
+    "module": "TemporaryAnalyticLeafPlanner",
+    "parsed": {
+      "candidate_leaves_ranked": [
+        {
+          "branch_id": "B1.1",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Does the chronic risk profile (obesity, aging, lack of polyuria) and absence of acute decompensation signs (e.g., DKA/HHS features) conclusively favor Type 2 Diabetes Mellitus over paraneoplastic syndromes like glucagonoma or hypercortisolism?",
+          "score": 0.72,
+          "expected_information_gain": 0.6,
+          "safety_value": 0.0,
+          "action_separation_value": 0.12,
+          "falsification_value": 0.0,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B1.1": "support",
+            "B4.1": "against",
+            "B3": "against",
+            "B5": "neutral"
+          },
+          "primary_function": "confirm",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "Chronic metabolic profile and presentation patterns provide moderate support for Type 2 DM diagnosis while reducing hypercortisolism/paraneoplastic likelihood according to prior evidence chains."
+        },
+        {
+          "branch_id": "B1.1",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Are there any features in the patient's rash distribution (face/extremities) or systemic symptoms (diarrhea, pain) that contradict Type 2 Diabetes Mellitus with insulin resistance in a patient with chronic obesity?",
+          "score": 0.57,
+          "expected_information_gain": 0.5,
+          "safety_value": 0.0,
+          "action_separation_value": 0.07,
+          "falsification_value": 0.0,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B1.1": "neutral",
+            "B4.1": "support",
+            "B1.2": "neutral",
+            "B3": "neutral"
+          },
+          "primary_function": "challenge",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "Atypical rash raises paraneoplastic suspicion but chronic metabolic context still favors insulin resistance; resolving this conflict requires further analysis."
+        },
+        {
+          "branch_id": "B2",
+          "type": "SAFETY_ENSURE",
+          "content": "Does the absence of progressive weight loss and classic DKA symptoms (elevated temperature, severe dehydration) in a 7-day trajectory conclusively rule out life-threatening beta cell destruction as the root mechanism?",
+          "score": 0.32,
+          "expected_information_gain": 0.2,
+          "safety_value": 0.6,
+          "action_separation_value": 0.1,
+          "falsification_value": 0.4,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B2": "against",
+            "B4.1": "neutral"
+          },
+          "primary_function": "safety_ensure",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "urgent",
+          "why": "High-risk beta cell destruction diagnosis (posterior 0.05 vs danger 0.9) requires confirmation of exclusion to address safety gaps."
+        },
+        {
+          "branch_id": "B2",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Do the patient's chronic risk factors (obesity, smoking history) and lack of polyuria/polydipsia provide sufficient grounds to dismiss beta cell destruction in favor of insulin resistance mechanisms given the >7-day temporal pattern?",
+          "score": 0.65,
+          "expected_information_gain": 0.55,
+          "safety_value": 0.0,
+          "action_separation_value": 0.1,
+          "falsification_value": 0.05,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B2": "against",
+            "B1.1": "support"
+          },
+          "primary_function": "challenge",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "Classic beta cell destruction typically presents with polyuria; absence reduces urgency but doesn't eliminate possibility."
+        },
+        {
+          "branch_id": "B3",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Could the patient's chronic obesity (typical of insulin resistance) and absence of specific Cushing's features (moon face, buffalo hump) serve as strong differentiators against hypercortisolism-related metabolic syndrome in this case?",
+          "score": 0.55,
+          "expected_information_gain": 0.45,
+          "safety_value": 0.0,
+          "action_separation_value": 0.1,
+          "falsification_value": 0.05,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B3": "against",
+            "B1.1": "support"
+          },
+          "primary_function": "challenge",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "Standard risk factors for insulin resistance strongly reduce hypercortisolism probability despite abnormal glucose levels."
+        },
+        {
+          "branch_id": "B3",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Does the presence of pain as a prominent rash feature (rather than typical Cushingoid facies) provide better support for hypercortisolism or insulin resistance mechanisms?",
+          "score": 0.35,
+          "expected_information_gain": 0.3,
+          "safety_value": 0.0,
+          "action_separation_value": 0.05,
+          "falsification_value": 0.0,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B3": "neutral",
+            "B1.1": "support"
+          },
+          "primary_function": "confirm",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "Rash pain is more atypical for Cushing's syndrome than for Type 2 DM with inflammatory skin involvement."
+        },
+        {
+          "branch_id": "B4.1",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Does the absence of classic glucagonoma rash features (necrolytic border with erythematous islands on skin) definitively exclude this as the underlying mechanism for hyperglycemia and rash?",
+          "score": 0.45,
+          "expected_information_gain": 0.4,
+          "safety_value": 0.0,
+          "action_separation_value": 0.05,
+          "falsification_value": 0.0,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B4.1": "against",
+            "B1.1": "support",
+            "B4.2": "neutral"
+          },
+          "primary_function": "challenge",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "Clinical findings slightly reduce but don't eliminate paraneoplastic consideration; requires specific rash pattern verification."
+        },
+        {
+          "branch_id": "B4.1",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Does the patient's chronic obesity and subacute 7-day course make glucagonoma-associated acute hyperglycemic crisis (e.g., sudden rash onset, severe proteinuria) more or less likely in this presentation?",
+          "score": 0.68,
+          "expected_information_gain": 0.6,
+          "safety_value": 0.0,
+          "action_separation_value": 0.08,
+          "falsification_value": 0.0,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B4.1": "support",
+            "B1.1": "neutral"
+          },
+          "primary_function": "confirm",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "Subacute course and chronic metabolic vulnerability create ambiguity that needs evaluation for glucagonoma compatibility."
+        }
+      ]
+    }
+  },
+  {
+    "ts": "2026-06-04 17:44:35",
+    "module": "EvidenceAnnotator",
+    "parsed": {}
+  },
+  {
+    "ts": "2026-06-04 17:45:46",
+    "module": "PostUpdateStateReviser",
+    "parsed": {
+      "branch_decisions": [
+        {
+          "branch_id": "B1",
+          "decision": "keep_coarse",
+          "live_subtype": "live_focus",
+          "rationale": "Parent branch remains expanded; sub-branch B1.1 (posterior > 0.05) and safety concerns are resolved at parent level"
+        },
+        {
+          "branch_id": "B2",
+          "decision": "park",
+          "live_subtype": "live_competing",
+          "rationale": "Posterior (0.039) falls below test threshold (0.05), but safety override prevents closure due to danger (0.9) and posterior (> 0.01)"
+        },
+        {
+          "branch_id": "B3",
+          "decision": "close_for_now",
+          "live_subtype": "",
+          "rationale": "Posterior (0.0087) < 0.05 and < 0.01, danger (0.75) overrides only when posterior ≥ 0.01"
+        },
+        {
+          "branch_id": "B4",
+          "decision": "reopen",
+          "live_subtype": "",
+          "rationale": "Previously closed but posterior (0.023) ≥ 0.01 with danger (0.85) triggers safety override; requires revisiting"
+        },
+        {
+          "branch_id": "B5",
+          "decision": "close_for_now",
+          "live_subtype": "",
+          "rationale": "Posterior (0.0029) < 0.05; no unresolved critical evidence and no active refinement path"
+        },
+        {
+          "branch_id": "B1.1",
+          "decision": "keep_coarse",
+          "live_subtype": "live_coarse",
+          "rationale": "Posterior (0.546) > 0.05 but refine value low; no actionable sub-questions"
+        },
+        {
+          "branch_id": "B1.2",
+          "decision": "park",
+          "live_subtype": "",
+          "rationale": "Posterior (0.0176) marginally exceeds safety threshold; not currently dominant but requires retention due to alternative value"
+        },
+        {
+          "branch_id": "B1.3",
+          "decision": "close_for_now",
+          "live_subtype": "",
+          "rationale": "Posterior (0.0105) < 0.05; no acute safety risk after accounting for danger threshold"
+        },
+        {
+          "branch_id": "B4.1",
+          "decision": "close_for_now",
+          "live_subtype": "",
+          "rationale": "Posterior (0.0035) < 0.01; safety override no longer blocks closure despite moderate danger"
+        },
+        {
+          "branch_id": "B4.2",
+          "decision": "park",
+          "live_subtype": "",
+          "rationale": "Posterior (0.0104) between 0.01 and 0.05; danger (0.7) triggers retention as plausible alternative"
+        },
+        {
+          "branch_id": "B4.3",
+          "decision": "close_for_now",
+          "live_subtype": "",
+          "rationale": "Posterior (0.0058) < 0.05 and < 0.01; no acute risk or actionable discriminators"
+        }
+      ]
+    }
+  },
+  {
+    "ts": "2026-06-04 17:46:07",
+    "module": "TerminationJudge",
+    "parsed": {
+      "ready_to_stop": false,
+      "reason": "Leading branch posterior (0.5466) remains below 0.75, and dangerous alternatives (B4.2, B4.1) remain unresolved despite sub-threshold posterior probabilities. Active emergency interrupt requires intervention before full diagnostic resolution."
+    }
+  },
+  {
+    "ts": "2026-06-04 17:46:14",
+    "module": "SafetyController",
+    "parsed": {
+      "interrupt_active": true,
+      "reason": "Severe hyperglycemia (>500 mg/dL) indicates a life-threatening metabolic crisis (e.g., DKA/HHS), which requires immediate intervention prior to diagnostic clarification.",
+      "required_actions": [
+        "Initiate IV fluids for volume resuscitation",
+        "Administer insulin therapy",
+        "Check electrolytes and arterial blood gas for acid-base derangements"
+      ],
+      "why_not_interrupt_if_false": []
+    }
+  },
+  {
+    "ts": "2026-06-04 17:46:52",
+    "module": "TemporaryAnalyticLeafPlanner",
+    "parsed": {
+      "candidate_leaves_ranked": [
+        {
+          "branch_id": "B1.1",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Does the chronic risk profile (obesity) with subacute progression (7-day timeline) and absence of acute ketoacidosis/dehydration in the physical exam and vitals provide conclusive evidence for Type 2 Diabetes Mellitus with Insulin Resistance?",
+          "score": 0.524,
+          "expected_information_gain": 0.35,
+          "safety_value": 0.0,
+          "action_separation_value": 0.174,
+          "falsification_value": 0.0,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B1.1": "support",
+            "B4.1": "against"
+          },
+          "primary_function": "confirm",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "Chronic risk factors for insulin resistance (obesity) and subacute timeline (7 days) without signs of acute decompensation (e.g., DKA features) strongly align with Type 2 Diabetes Mellitus despite atypical rash"
+        },
+        {
+          "branch_id": "B1.1",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Is the painful erythematous rash with papules and plaques (non-specific to diabetes) inconsistent with Type 2 Diabetes Mellitus as the primary etiology of this hyperglycemic crisis?",
+          "score": 0.367,
+          "expected_information_gain": 0.3,
+          "safety_value": 0.0,
+          "action_separation_value": 0.067,
+          "falsification_value": 0.3,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B1.1": "against",
+            "B4.1": "support"
+          },
+          "primary_function": "challenge",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "critical",
+          "why": "Painful non-malignant rash (unlike necrolytic migrans) modestly reduces typical insulin resistance mechanisms but leaves room for rare paraneoplastic processes if rash pathologies remain unexplained"
+        },
+        {
+          "branch_id": "B4.1",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Does the absence of specific glucagonoma rash features (necrolytic islands with border) and normal ACTH levels in the provided evidence argue against this paraneoplastic diagnosis?",
+          "score": 0.347,
+          "expected_information_gain": 0.2,
+          "safety_value": 0.1,
+          "action_separation_value": 0.05,
+          "falsification_value": 0.09,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B4.1": "against"
+          },
+          "primary_function": "challenge",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "Classic glucagonoma rash features (NEOMAS) and hormonal confirmation are absent, reducing specific support for this rare differential"
+        },
+        {
+          "branch_id": "B4.2",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "No contradicting evidence identified for Malignancy-associated Vasculitis with Hyperglycemia; all findings are consistent with reactive or non-specific mechanisms.",
+          "score": 0.0,
+          "expected_information_gain": 0.0,
+          "safety_value": 0.0,
+          "action_separation_value": 0.0,
+          "falsification_value": 0.0,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B4.2": "neutral"
+          },
+          "primary_function": "challenge",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "No evidence directly contradicts this less dangerous hypothesis despite low posterior"
+        },
+        {
+          "branch_id": "B4.3",
+          "type": "ANALYZE_VIGNETTE",
+          "content": "Is the lack of documented systemic symptoms for hematologic malignancy (e.g., lymphadenopathy, bone marrow features, cytopenias) in the presentation inconsistent with this diagnosis?",
+          "score": 0.182,
+          "expected_information_gain": 0.15,
+          "safety_value": 0.0,
+          "action_separation_value": 0.032,
+          "falsification_value": 0.08,
+          "expected_cost": 0.0,
+          "expected_delay": 0.0,
+          "invasiveness": 0.0,
+          "target_branches": {
+            "B4.3": "against"
+          },
+          "primary_function": "challenge",
+          "bundle_independence": 1.0,
+          "result_dependency": false,
+          "redundancy_group": "",
+          "urgency": "routine",
+          "why": "Typical hematologic malignancy features (e.g., B symptoms, cytopenias) are absent in this hyperglycemic presentation"
+        }
+      ]
+    }
+  },
+  {
+    "ts": "2026-06-04 17:47:40",
+    "module": "EvidenceAnnotator",
+    "parsed": {}
+  },
+  {
+    "ts": "2026-06-04 17:50:04",
+    "module": "PostUpdateStateReviser",
+    "parsed": {
+      "branch_decisions": [
+        {
+          "branch_id": "B1",
+          "decision": "keep_coarse",
+          "live_subtype": "live_focus",
+          "rationale": "Parent branch remains expanded as B1.1 (posterior 0.586) continues to dominate despite needing further evidence, with remaining uncertainty and actionable differentiation potential at sub-branch level."
+        },
+        {
+          "branch_id": "B2",
+          "decision": "park",
+          "live_subtype": "live_safety_protected",
+          "rationale": "Posterior (0.0186) is below test threshold but cannot be closed due to high danger (0.9) and safety override requirements."
+        },
+        {
+          "branch_id": "B3",
+          "decision": "close_for_now",
+          "live_subtype": "",
+          "rationale": "Posterior (0.00517) is below test threshold and the danger override applies (0.75) only because the posterior is <0.01 (<1%), allowing safe closure."
+        },
+        {
+          "branch_id": "B4",
+          "decision": "keep_coarse",
+          "live_subtype": "live_competing",
+          "rationale": "Despite low parent posterior (0.0138), the high danger (0.85) and safety override prevents closure, so retain expansion while monitoring marginal but plausiblity of B4.2 (posterior 0.01117) remains above threshold."
+        },
+        {
+          "branch_id": "B5",
+          "decision": "close_for_now",
+          "live_subtype": "",
+          "rationale": "Posterior (0.0017) is below test threshold and danger (0.6) does not require safety override."
+        },
+        {
+          "branch_id": "B1.1",
+          "decision": "keep_coarse",
+          "live_subtype": "live_focus",
+          "rationale": "Top posterior (0.586) for insulin resistance-related diabetes but lacks definitive commitment threshold (0.75) confirmation and has weak evidence against polyuria/polydipsia."
+        },
+        {
+          "branch_id": "B1.2",
+          "decision": "park",
+          "live_subtype": "live_competing",
+          "rationale": "Posterior (0.01047) is below test threshold but insufficient to rule out non-diabetic insulin resistance in the context of prolonged hyperglycemia."
+        },
+        {
+          "branch_id": "B1.3",
+          "decision": "close_for_now",
+          "live_subtype": "",
+          "rationale": "Posterior (0.00628) is below test threshold and danger is low (0.3), no safety override applies."
+        },
+        {
+          "branch_id": "B4.1",
+          "decision": "close_for_now",
+          "live_subtype": "",
+          "rationale": "Posterior (0.00103) is below test threshold and danger (0.8) meets safety override but posterior is <0.01 (<1%), allowing closure."
+        },
+        {
+          "branch_id": "B4.2",
+          "decision": "park",
+          "live_subtype": "live_safety_protected",
+          "rationale": "Posterior (0.01116) is below test threshold but high danger (0.7) and posterior >=0.01 triggers safety override to retain this plausibly dangerous option."
+        },
+        {
+          "branch_id": "B4.3",
+          "decision": "close_for_now",
+          "live_subtype": "",
+          "rationale": "Posterior (0.00345) is below test threshold and danger (0.65) is not enough to trigger safety override."
+        }
+      ]
+    }
+  },
+  {
+    "ts": "2026-06-04 17:50:13",
+    "module": "TerminationJudge",
+    "parsed": {
+      "ready_to_stop": true,
+      "reason": "Emergency interrupt active due to severe hyperglycemia (>500 mg/dL) requiring immediate IV fluids, insulin therapy, and lab evaluation for life-threatening metabolic crisis (DKA/HHS). Diagnostic refinement cannot delay intervention."
+    }
+  },
+  {
+    "ts": "2026-06-04 17:50:22",
+    "module": "AnswerMapper",
+    "parsed": {
+      "final_answer": "E",
+      "answer_option_mapping": {
+        "A": 0.0,
+        "B": 0.02,
+        "C": 0.01,
+        "D": 0.01,
+        "E": 0.96
+      },
+      "reasoning": "Leading leaf branch: [Type 2 Diabetes Mellitus with Insulin Resistance] (posterior=0.5860). Best match: option [E]."
+    }
+  }
+]
