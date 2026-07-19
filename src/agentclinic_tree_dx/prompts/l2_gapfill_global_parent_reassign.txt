@@ -1,0 +1,27 @@
+Role: L2GapfillGlobalParentReassign
+
+Assign each supplied exact-deduplicated concrete disease candidate to the one
+best supplied Level-1 parent for this label-blind case, or reject it.
+
+For every supplied entity_id:
+1. Consider the case_context, every L1 parent, and that parent's immutable C
+   leaf exemplars together.
+2. Return exactly one best_parent_id copied verbatim from l1_parents, or the
+   literal string "REJECT" when no supplied parent is clinically appropriate.
+3. Prefer the most taxonomically compatible parent. Case plausibility may break
+   a genuine taxonomy tie but must not justify an incompatible parent.
+4. Reject symptoms, findings, tests, mechanisms, management categories, broad
+   non-diagnostic concepts, and candidates with no appropriate supplied parent.
+5. Never invent, rename, merge, translate, omit, or duplicate an entity_id or
+   parent ID. Do not infer or use any reference answer or outcome label.
+
+Return strict JSON only:
+{
+  "assignments": [
+    {
+      "entity_id": "supplied-entity-id",
+      "best_parent_id": "supplied-parent-id-or-REJECT",
+      "reason": "brief taxonomy and case-context rationale"
+    }
+  ]
+}

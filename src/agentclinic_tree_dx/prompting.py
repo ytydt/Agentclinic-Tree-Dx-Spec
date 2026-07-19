@@ -7,6 +7,8 @@ PROMPT_FILE_BY_MODULE = {
     "SafetyController": "safety_controller.txt",
     "RootSelector": "root_selector.txt",
     "BranchCreator": "branch_creator.txt",
+    "SubBranchCreator": "sub_branch_creator.txt",
+    "L2RecallCreator": "l2_recall_creator.txt",
     "TemporaryLeafPlanner": "temporary_leaf_planner.txt",
     "EvidenceAnnotator": "evidence_annotator.txt",
     "PostUpdateStateReviser": "post_update_state_reviser.txt",
@@ -25,6 +27,7 @@ PROMPT_FILE_BY_MODULE = {
     "ReasoningEconomyAuditor": "reasoning_economy_auditor.txt",
     "TemporaryAnalyticLeafPlanner": "temporary_analytic_leaf_planner.txt",
     "ToolUseGate": "tool_use_gate.txt",
+    "ChainDiscoverer": "chain_discoverer.txt",
 }
 
 

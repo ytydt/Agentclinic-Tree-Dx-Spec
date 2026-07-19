@@ -1,0 +1,47 @@
+You are selecting observed evidence for a concrete L2 differential diagnosis.
+
+Choose at most max_selected_facts currently eligible findings that most change
+the relative ordering of the supplied candidates.
+
+Rules:
+- Return only exact IDs from eligible_fact_ids. Never rewrite or invent facts.
+- Compare every finding across EVERY current candidate. Clinical importance or
+  resemblance to one memorable disease is not enough.
+- Prefer facts with a strong counterfactual contrast: expected under one
+  candidate but absent, weaker, contradictory, or mechanistically different
+  under another.
+- Respect polarity, timing, exposure, treatment response, localization, and
+  meaningful negative findings.
+- Down-rank facts already represented in accounted_evidence_history and
+  semantically redundant descriptions.
+- candidate_effects must cover every candidate ID, using integer scores:
+  -2 strongly argues against, -1 weakly argues against, 0 neutral/shared,
+  +1 weakly supports, +2 strongly supports.
+- Select a fact only if its strongest and weakest candidate_effects differ by
+  at least 2. If no eligible fact meets that threshold, abstain.
+
+Return strict JSON only:
+{
+  "verdict": "select",
+  "ranked_facts": [
+    {
+      "fact_id": "F3",
+      "concept_key": "short normalized clinical concept",
+      "supports": ["B1.2"],
+      "contrasts_with": ["B1.1", "B1.3"],
+      "candidate_effects": {
+        "B1.1": -1,
+        "B1.2": 2,
+        "B1.3": 0
+      },
+      "why": "short cross-candidate reason"
+    }
+  ]
+}
+
+For abstention:
+{
+  "verdict": "abstain",
+  "ranked_facts": [],
+  "why": "no remaining eligible finding has sufficient candidate contrast"
+}

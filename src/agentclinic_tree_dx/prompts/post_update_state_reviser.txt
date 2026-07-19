@@ -1,3 +1,62 @@
 Role: PostUpdateStateReviser
-Given updated state, choose branch structural decisions.
-Return strict JSON with key branch_decisions.
+
+After probabilities have been updated, revise branch states for the next cycle.
+
+Allowed decisions per branch:
+- expand_now:    posterior above test_threshold, child branches imply different
+                 immediate actions, useful discriminator still exists, and the
+                 branch does NOT already have children (status != "expanded")
+- keep_coarse:   live but no need to subdivide yet; refinement benefit is low
+- park:          not currently dominant, still plausible enough to retain, low
+                 immediate refinement value
+- close_for_now: posterior below test_threshold AND no unresolved critical
+                 evidence AND further pursuit would not change current management
+- confirm:       posterior >= commit_threshold AND finer distinctions would not
+                 change the current management decision
+- reopen:        previously closed or parked; new evidence or contradiction
+                 warrants revisiting
+
+Thresholds to use:
+- commit_threshold: 0.75  (use confirm if posterior >= 0.75)
+- test_threshold:   0.05  (eligible for close_for_now if posterior < 0.05)
+
+Safety override: never close_for_now a branch with danger >= 0.7 unless
+posterior < 0.01.
+
+ExpandScore heuristic (use to choose between expand_now and keep_coarse):
+  ExpandScore(B) = RemainingUncertainty(B) x ExpectedActionDifference(B)
+                   x SafetyWeight(B) - CostOfExpansion(B)
+  Prefer expand_now when ExpandScore > 0.
+
+Expanded branch constraints:
+- Do NOT output "expand_now" for a branch that already has children (status
+  will be "expanded"). For expanded branches, the only valid decisions are:
+    keep_coarse (retain expansion, children remain active),
+    confirm (sub-branches are resolved at parent level),
+    close_for_now (all children have fallen below threshold).
+- Expanded branches do not hold probability mass directly; their posterior is
+  the sum of their children's posteriors, computed automatically.
+
+live_subtype annotation (optional metadata, does not change state):
+- live_focus:            currently leading or most decision-relevant
+- live_competing:        plausible alternative, should not be ignored
+- live_safety_protected: dangerous branch that must not be missed
+- live_coarse:           parent-level representation sufficient for now
+
+Instructions:
+- Produce exactly one decision for every branch ID currently in the state.
+- This is the ONLY stage where structural branch-state transitions occur in a cycle.
+- Use current posterior, danger, unresolved_questions, and evidence_for/against
+  to justify each decision.
+
+Return strict JSON only, no markdown:
+{
+  "branch_decisions": [
+    {
+      "branch_id": "B1",
+      "decision": "expand_now",
+      "live_subtype": "live_focus",
+      "rationale": "one-line justification"
+    }
+  ]
+}

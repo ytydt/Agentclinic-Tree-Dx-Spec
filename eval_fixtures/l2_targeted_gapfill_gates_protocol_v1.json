@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "protocol_version": 1,
+  "asset_kind": "l2_targeted_gapfill_gates_protocol",
+  "frozen": true,
+  "frozen_date": "2026-07-18",
+  "study_design": "retrospective_replay_component_ablation",
+  "promotion_eligible": false,
+  "source_bindings": {
+    "ab_frozen_manifest_hash": "2e6ed5d58ef64b38a1cc2f6c9269bcdaf100008717798b2284837e66f42d3c0a",
+    "ab_generation_manifest_hash": "bf3434931a9549c31d117af203a9e37b18ef6fb6dcaec00ab41cef5c8130092f",
+    "hybrid_generation_manifest_hash": "b10936830f859c59c4f14f11e5c894512623f33e0c875180b3e1f3b014e8091d",
+    "source_arm": "ALL_B_b1"
+  },
+  "execution": {
+    "cases": 17,
+    "replicates": 3,
+    "model": "meta-llama/llama-3.3-70b-instruct",
+    "temperature": 0.0,
+    "candidate_cap": 12,
+    "selector_cap": 2,
+    "per_parent_budget": 1,
+    "parent_leaf_cap": 5,
+    "case_add_cap": 4,
+    "b_parent_retrieval": 0
+  },
+  "arms": [
+    "C",
+    "ALL_B_b1",
+    "ALL_B_b1_SD",
+    "ALL_B_b1_PG",
+    "ALL_B_b1_PG_SD"
+  ],
+  "component_order": [
+    "parent_consistency_gate",
+    "semantic_dedupe"
+  ],
+  "parent_gate": {
+    "scope": "proposal_only",
+    "case_context_exposed": false,
+    "gold_exposed": false,
+    "reject_when": "decision=invalid AND confidence=high AND task_adherence=true AND parent_axis_cited=true",
+    "failure_policy": "fail_open"
+  },
+  "semantic_dedupe": {
+    "scope": "full_C_tree_plus_proposals",
+    "equivalence": "same_diagnosis_or_true_synonym_only",
+    "subtype_preserving": true,
+    "baseline_C_priority": true,
+    "uncertain_merge_policy": "omit_and_keep",
+    "failure_policy": "fail_open"
+  },
+  "primary_endpoints": [
+    "actual_top1",
+    "actual_top2",
+    "actual_rr"
+  ],
+  "quality_endpoints": [
+    "added_duplicate_rate",
+    "added_parent_invalid_rate",
+    "added_specific_rate",
+    "gold_added_yield"
+  ],
+  "promotion_gates": {
+    "added_duplicate_rate_max": 0.1,
+    "c_success_preservation_min": 0.95,
+    "leaf_burden_max": 4.5,
+    "actual_top2_ci_lower_vs_C_min": -0.05,
+    "coverage_must_exceed_C": true,
+    "topology_lossless": true
+  },
+  "statistics": {
+    "bootstrap_samples": 10000,
+    "unit": "case_cluster",
+    "replicates_averaged_within_case": true
+  },
+  "adjudication": {
+    "mode": "blinded_manual_style_review",
+    "final_judge": "frozen_adjudication_fixture",
+    "human_signed_off": false,
+    "research_only": true
+  }
+}

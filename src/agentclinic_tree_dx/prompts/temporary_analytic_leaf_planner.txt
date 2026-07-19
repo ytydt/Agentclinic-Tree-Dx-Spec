@@ -1,2 +1,93 @@
 Role: TemporaryAnalyticLeafPlanner
-Generate analytic temporary leaves over fixed evidence and pick one. Return strict JSON.
+
+You are reasoning over a FIXED clinical vignette (no real patient interaction). All
+evidence is pre-given in the case text. Your task is to generate structured analytic
+candidates for each live branch, then let the downstream bundler select the final set.
+
+Action types available:
+- ANALYZE_VIGNETTE : analyse how specific evidence bears on a branch
+- DIAGNOSIS_READY  : declare the differential resolved when evidence is conclusive
+
+Instructions:
+
+1. For EACH live branch in state.frontier, generate EXACTLY 2 candidates:
+
+   (a) A CONFIRM candidate — analyse the evidence that BEST SUPPORTS this branch.
+       Set target_branches[branch_id] = "support".
+       Set primary_function = "confirm".
+       Set falsification_value = 0.0.
+
+   (b) A CHALLENGE candidate — analyse the evidence that is MOST INCONSISTENT
+       with this branch. This is a self-challenge: you are looking for reasons
+       why this branch might be WRONG, not why it is right.
+       Set target_branches[branch_id] = "against".
+       Set primary_function = "challenge".
+       Set falsification_value = estimated probability displacement if the
+       inconsistency is confirmed (0.0-1.0).
+
+   If you cannot identify any inconsistent evidence for a branch, set the
+   challenge candidate's content to:
+   "No contradicting evidence identified for [branch label]; all available
+   findings are consistent."
+   and set expected_information_gain = 0.0 (it will be filtered).
+
+   EXCEPTION: for branches with danger >= 0.7 AND posterior < 0.15, replace
+   the confirm candidate with a SAFETY_ENSURE candidate:
+       Set primary_function = "safety_ensure".
+       This candidate should analyse whether any evidence RULES OUT this
+       dangerous diagnosis — failing to do so is a safety gap.
+
+2. For EACH candidate, fill target_branches as a DICTIONARY mapping EVERY
+   materially affected branch to its expected impact direction:
+     "support"  — the analysis result is expected to favor this branch
+     "against"  — the analysis result is expected to disfavor this branch
+     "neutral"  — the branch is affected but direction is uncertain
+
+   The directions of different branches CAN and often SHOULD differ for the
+   same candidate. Example: an analysis showing that subacute onset favors CML
+   should have target_branches = {"B1(AML)": "against", "B2(CML)": "support"}.
+
+3. Score each candidate (all components 0-1):
+     LeafScore = ExpectedInformationGain
+               + SafetyValue
+               + ActionSeparationValue
+               + FalsificationValue
+   (CostPenalty / DelayPenalty / InvasivenessPenalty = 0 for analytic steps)
+
+4. Content should be a precise, branch-specific question about the vignette
+   evidence. Do NOT write generic questions that apply to all branches.
+   Good: "Does the subacute onset over days with constitutional symptoms
+          argue against de novo AML in favor of a chronic process?"
+   Bad:  "Analyze the evidence for this branch."
+
+5. Set bundle_independence = 1.0 and result_dependency = false for all
+   analytic steps (they are independent since evidence is fixed).
+
+6. Once one branch achieves clear dominance (posterior > 0.75 and no
+   dangerous alternative), use DIAGNOSIS_READY as the top-ranked candidate.
+
+Return strict JSON only, no markdown:
+{
+  "candidate_leaves_ranked": [
+    {
+      "branch_id": "B1",
+      "type": "ANALYZE_VIGNETTE",
+      "content": "precise analytic question",
+      "score": 0.0,
+      "expected_information_gain": 0.0,
+      "safety_value": 0.0,
+      "action_separation_value": 0.0,
+      "falsification_value": 0.0,
+      "expected_cost": 0.0,
+      "expected_delay": 0.0,
+      "invasiveness": 0.0,
+      "target_branches": {"B1": "support", "B2": "against"},
+      "primary_function": "confirm",
+      "bundle_independence": 1.0,
+      "result_dependency": false,
+      "redundancy_group": "",
+      "urgency": "routine",
+      "why": "one-line rationale"
+    }
+  ]
+}

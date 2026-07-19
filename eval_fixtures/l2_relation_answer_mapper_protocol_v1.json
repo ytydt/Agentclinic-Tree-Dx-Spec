@@ -1,0 +1,156 @@
+{
+  "schema_version": 1,
+  "name": "l2_relation_answer_mapper_ab_b1_offline_v1",
+  "scope": {
+    "pipeline": "offline_A_and_ALL_B_b1_only",
+    "production_integration": false,
+    "regenerate_tree_or_ranking": false,
+    "physical_l3_nodes": false
+  },
+  "corpus": {
+    "name": "TALP17",
+    "n_cases": 17,
+    "replicates": [1, 2, 3],
+    "expected_units_per_arm": 51
+  },
+  "arms": {
+    "A": {
+      "generation_manifest": "logs/l2_branch_generation_ab_v1/generation/manifest.json",
+      "generation_manifest_sha256": "7610decf599056a56983547c065e2aea453ff34a41c85fa97518ebc1bdcbd945",
+      "trace_pattern": "logs/l2_branch_generation_ab_v1/generation/traces/A/r{replicate:02d}__{case_id}.json"
+    },
+    "ALL_B_b1": {
+      "generation_manifest": "logs/l2_targeted_gapfill_hybrid_v1/generation/manifest.json",
+      "generation_manifest_sha256": "19fc04535805f4cb34782dfa6fd6a87ca0132268a58ae1b2965edfc932773ed1",
+      "trace_pattern": "logs/l2_targeted_gapfill_hybrid_v1/generation/traces/_case/r{replicate:02d}__{case_id}.json",
+      "nested_arm": "ALL_B_b1"
+    }
+  },
+  "frozen_ranking": {
+    "path": "logs/l2_mcq_option_from_ranking_v1/records.json",
+    "sha256": "a7edb194388518f7ab4f929d2b6212d3357ca90b5c660deb2dadb02273ea291d",
+    "expected_units": 102
+  },
+  "knowledge_assets": {
+    "disease_name_bridge": {
+      "path": "data/knowledge_raw/disease_name_bridge.json",
+      "sha256": "b67901c33685bedd8758620522a2a5740cf529eaf0e64b5ab20f784740732d74"
+    },
+    "mechanism_to_disease": {
+      "path": "data/knowledge_raw/mechanism_to_disease.json",
+      "sha256": "64c97786e2ea31ee461fd1bc2ec3efe623a39ca3e14b450b1fc1d59fe535707c"
+    },
+    "doclogica_umls": {
+      "path": "data/knowledge_raw/doclogica_cache.json",
+      "sha256": "1501847d5973ccf4bc9411de5927426ac546ebbf451d0423b41947444736f9cd"
+    },
+    "rag_index": {
+      "path": "data/corpus/rag_index",
+      "config_sha256": "e10458931c7b7ac0fe7f7a107ecdf9d83679aedd443e10cb04a306af7d1c6f61"
+    },
+    "cpg_index": {
+      "path": "data/corpus/cpg_index",
+      "config_sha256": "8436146942b605404ec7981669d57746300bb6be2b2bdc851a24a2c5075953b4"
+    }
+  },
+  "adjudication_assets": {
+    "binding_v1": {
+      "path": "eval_fixtures/l2_mcq_option_binding_adjudication_v1.json",
+      "sha256": "3471db389a1f13e762ea2420f6b187079748de505cdf9edc577276185140bf71"
+    },
+    "synonym_rank_v1": {
+      "path": "eval_fixtures/l2_mcq_option_synonym_rank_v1.json",
+      "sha256": "ef2a916264ad96158fb75a4b82c519cf374cac9669684040a64b06ba884fc068"
+    },
+    "v2_blind_fixture": "eval_fixtures/l2_relation_answer_mapper_adjudication_v2.json",
+    "human_signed_off": false
+  },
+  "gold_boundary": {
+    "mapper_payload_allow": [
+      "case_id",
+      "vignette",
+      "question",
+      "options",
+      "leaf_id",
+      "leaf_label",
+      "parent_id",
+      "parent_label",
+      "joint_rank",
+      "posterior",
+      "public_knowledge_snippets"
+    ],
+    "mapper_payload_forbid": [
+      "gold",
+      "gold_diagnosis",
+      "gold_option",
+      "gold_letter",
+      "acceptable_l2",
+      "is_gold",
+      "evaluation_alias"
+    ],
+    "scoring_after_mapping_only": true
+  },
+  "question_targets": [
+    "diagnosis",
+    "etiology_pathogen",
+    "mechanism",
+    "finding",
+    "treatment",
+    "prognosis",
+    "other"
+  ],
+  "relation_types": [
+    "equivalent",
+    "subtype_of",
+    "supertype_of",
+    "etiology_of",
+    "mechanism_of",
+    "manifestation_of",
+    "complication_of",
+    "treatment_for",
+    "unrelated",
+    "unknown"
+  ],
+  "relation_direction": "leaf_to_option",
+  "clone_rule": {
+    "closure_across_parents": true,
+    "best_rank": "minimum finite joint rank over all matched clones",
+    "support_score": "maximum support over all matched clones",
+    "posterior": "maximum posterior over all matched clones",
+    "sum_clone_mass": false,
+    "same_rank_is_non_strict_success": true
+  },
+  "mapper_arms": [
+    "historical_oracle_assisted",
+    "deterministic_gold_blind",
+    "typed_llm",
+    "typed_llm_disagreement_rag"
+  ],
+  "typed_llm": {
+    "model": "meta-llama/llama-3.3-70b-instruct",
+    "temperature": 0.0,
+    "schema_repair_attempts": 1
+  },
+  "rag_trigger": {
+    "on_unmatched": true,
+    "on_low_confidence": true,
+    "on_deterministic_llm_disagreement": true,
+    "confidence_threshold": 0.75,
+    "top_k_per_index": 3,
+    "max_snippets": 8,
+    "max_chars_per_snippet": 1200,
+    "fail_open": true
+  },
+  "outputs": {
+    "directory": "logs/l2_mcq_mapper_v2",
+    "required": [
+      "mapping_traces",
+      "rag_snippets",
+      "records.json",
+      "summary.json",
+      "bootstrap.json",
+      "case_transfers.tsv",
+      "blind_adjudication.tsv"
+    ]
+  }
+}

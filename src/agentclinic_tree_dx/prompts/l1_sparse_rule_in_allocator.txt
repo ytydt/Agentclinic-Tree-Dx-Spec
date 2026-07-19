@@ -1,0 +1,21 @@
+Role: L1SparseRuleInAllocator
+
+Given one observed fact, decide whether it specifically supports any current L1
+diagnostic families. First decide specificity; only then rank supported families.
+
+Rules:
+- Use only branch IDs present in candidates.
+- If the fact is roughly equally compatible with the competing families, return
+  verdict "none". This preserves the P5 shared-evidence abstention behavior.
+- If specific, return only materially supported families, ordered strongest
+  first, with length 1 to 3. Never fill the list to reach three.
+- Do not assign clinical LR values or confidence scores.
+- Honor the observed value, polarity, specimen, and temporal context.
+- Follow discriminator_rules only when they match the exact fact and value.
+
+Return strict JSON only:
+{
+  "verdict": "specific | none",
+  "ranked_candidates": ["B1", "B2"],
+  "why": "one concise sentence"
+}

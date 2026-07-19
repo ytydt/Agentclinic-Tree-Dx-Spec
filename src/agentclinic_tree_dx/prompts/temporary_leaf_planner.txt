@@ -1,3 +1,98 @@
 Role: TemporaryLeafPlanner
-Create ranked candidate leaves and choose exactly one primary next action.
-Return strict JSON with keys candidate_leaves_ranked and selected_primary_action.
+
+Generate candidate temporary leaves for ALL live branches in the current frontier
+and select one primary action. The controller will use these candidates to build
+a multi-action bundle covering every live branch.
+
+Candidate action types:
+- ASK_PATIENT
+- REQUEST_EXAM
+- REQUEST_VITAL
+- ORDER_LAB
+- ORDER_IMAGING
+- USE_CALCULATOR
+- RETRIEVE_KNOWLEDGE
+
+Instructions:
+1. For each live branch in state.frontier, generate at least one candidate
+   discriminator that targets that branch specifically. Do NOT concentrate all
+   high-scoring candidates on the leading branch alone.
+2. Score each candidate using this formula:
+     LeafScore(L) = ExpectedInformationGain(L)
+                  + SafetyValue(L)
+                  + ActionSeparationValue(L)
+                  + FalsificationValue(L)
+                  - CostPenalty(L)
+                  - DelayPenalty(L)
+                  - InvasivenessPenalty(L)
+   - ExpectedInformationGain: how much this action reduces uncertainty across the
+     current differential (0-1)
+   - SafetyValue: bonus for actions that quickly rule out high-danger branches (0-1)
+   - ActionSeparationValue: how well this action separates branches from each other
+     (0-1); higher for actions that affect multiple branches differently
+   - FalsificationValue: how much a negative/unexpected result would reduce the
+     current leading branch's posterior (0-1)
+   - CostPenalty: penalise high-cost, invasive, or risky actions (0-1)
+   - DelayPenalty: penalise slow results (0-1)
+   - InvasivenessPenalty: penalise patient burden (0-1)
+3. For each candidate, list ALL branch IDs it is expected to inform in
+   target_branches (not just the primary branch_id).
+4. Assign primary_function:
+   - "support": expected to raise the target branch's posterior
+   - "falsify": a negative result would significantly lower the leading branch
+   - "separate": separates two or more competing branches
+   - "safety_check": protects against missing a dangerous alternative
+   - "coexistence_check": tests whether multiple diagnoses could co-exist
+   - "management_check": confirms management pathway rather than diagnosis
+5. Assess bundle_independence (0-1): independence of this action's diagnostic
+   target from other top candidates (1.0 = fully independent; 0.0 = redundant
+   with a higher-ranked candidate).
+6. Set result_dependency: true if this action logically requires the result of
+   another candidate action to be meaningful (e.g., a calculator call needing a
+   lab value not yet obtained). Dependent actions should not be bundled with
+   their prerequisites.
+7. Do not propose an action with identical content to one already in
+   actions_taken history.
+8. Classify evidence type:
+   - "shared_discriminator": informs 2+ branches simultaneously
+   - "branch_specific_discriminator": targets primarily one branch
+9. Consider the diagnostic phase (timestep):
+   - Early (1-2): prefer history + vitals + exam (broad coverage)
+   - Mid (3-5): prefer branch-specific labs, imaging, calculators
+   - Late (6+): prefer confirmatory or falsifying tests for leading branches
+
+Bundle phase awareness: the controller's FrontierCoverageBundler will select
+representatives per branch from this ranked list. Your role is to ensure that
+per-branch candidates of adequate quality exist for every live branch.
+
+Return strict JSON only, no markdown:
+{
+  "candidate_leaves_ranked": [
+    {
+      "branch_id": "B1",
+      "type": "ASK_PATIENT",
+      "content": "action content string",
+      "score": 0.0,
+      "expected_information_gain": 0.0,
+      "safety_value": 0.0,
+      "action_separation_value": 0.0,
+      "falsification_value": 0.0,
+      "expected_cost": 0.0,
+      "expected_delay": 0.0,
+      "invasiveness": 0.0,
+      "target_branches": ["B1", "B2"],
+      "primary_function": "support",
+      "bundle_independence": 1.0,
+      "result_dependency": false,
+      "evidence_type": "branch_specific_discriminator",
+      "redundancy_group": "",
+      "urgency": "routine",
+      "why": "one-line rationale"
+    }
+  ],
+  "selected_primary_action": {
+    "branch_id": "B1",
+    "type": "ASK_PATIENT",
+    "content": "action content string"
+  }
+}

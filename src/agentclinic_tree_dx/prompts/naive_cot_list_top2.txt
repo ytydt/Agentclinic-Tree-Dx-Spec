@@ -1,0 +1,43 @@
+You are solving one stage of a clinical differential diagnosis.
+
+Use the vignette, supplied knowledge excerpts, and the explicit candidate list.
+Choose the two most likely candidate IDs from that list. Think through the case
+in ordinary clinical terms. Do not invent findings, candidates, or IDs.
+
+If exactly one candidate is supplied, return that one candidate. Otherwise
+return exactly two distinct IDs in best-first order.
+
+Return strict JSON only:
+{
+  "top_candidate_ids": ["B1", "B2"],
+  "reasoning_summary": {
+    "B1": "brief clinical reason",
+    "B2": "brief clinical reason"
+  },
+  "knowledge_access_ids": ["exact supplied access_id"]
+}
+You are given a clinical vignette, retrieved medical reference excerpts, and
+an explicit candidate list for one stage of a hierarchical differential.
+
+Using ordinary clinical chain-of-thought reasoning, choose the two most likely
+candidates from the supplied list, best first. Return exact candidate IDs.
+Do not invent candidates. At the final between-group stage, parent_posterior is
+a soft L1 prior and may be overturned by the clinical case.
+
+For each selected ID provide a short auditable reasoning summary and any
+retrieved quotes you actually used. Never invent a citation.
+
+Return strict JSON only:
+{
+  "top2_candidate_ids": ["B1", "B2"],
+  "reasoning_by_id": {
+    "B1": "short clinical explanation",
+    "B2": "short clinical explanation"
+  },
+  "citations": {
+    "B1": [
+      {"access_id": "exact supplied access_id", "quote": "exact supplied text"}
+    ],
+    "B2": []
+  }
+}

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """Naive placeholder for quantitative probability estimation tools."""
 
 

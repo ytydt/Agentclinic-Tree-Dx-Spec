@@ -24,9 +24,16 @@ def _base_modules():
         },
         "TemporaryLeafPlanner": {
             "candidate_leaves_ranked": [
-                {"branch_id": "B1", "type": "ASK_PATIENT", "content": "radiation?", "score": 0.9}
+                {
+                    "branch_id": "B1",
+                    "type": "ASK_PATIENT",
+                    "content": "radiation?",
+                    "score": 0.9,
+                    "expected_information_gain": 0.5,
+                    "target_branches": {"B1": "support"},
+                    "primary_function": "confirm",
+                }
             ],
-            "selected_primary_action": {"branch_id": "B1", "type": "ASK_PATIENT", "content": "radiation?"},
         },
         "EvidenceAnnotator": {
             "result_summary": "pain radiates to left arm",
@@ -42,6 +49,33 @@ def _base_modules():
                 {"branch_id": "B1", "decision": "expand_now", "rationale": "high posterior"},
                 {"branch_id": "B2", "decision": "park", "rationale": "lower posterior"},
             ]
+        },
+        "SubBranchCreator": {
+            "needs_expansion": True,
+            "reason_if_not": "",
+            "sub_branches": [
+                {
+                    "id": "B1.1", "label": "STEMI", "parent_id": "B1",
+                    "level": 2, "level_role": "specific_disease",
+                    "classification_axis": "mechanism",
+                    "status": "live", "prior_estimate": 0.6, "danger": 0.9,
+                    "askable_discriminators": [], "requestable_discriminators": [],
+                    "turn_cost_to_refine": 1.0, "diagnosis_commitment_gain": 0.8,
+                    "interrupt_relevance": 0.9, "why_included": "ST elevation",
+                },
+                {
+                    "id": "B1.2", "label": "NSTE-ACS", "parent_id": "B1",
+                    "level": 2, "level_role": "specific_disease",
+                    "classification_axis": "mechanism",
+                    "status": "live", "prior_estimate": 0.4, "danger": 0.7,
+                    "askable_discriminators": [], "requestable_discriminators": [],
+                    "turn_cost_to_refine": 1.5, "diagnosis_commitment_gain": 0.6,
+                    "interrupt_relevance": 0.7, "why_included": "no ST elevation",
+                },
+            ],
+            "sub_frontier": ["B1.1", "B1.2"],
+            "need_external_knowledge": False,
+            "knowledge_query_if_needed": "",
         },
         "TerminationJudge": {
             "ready_to_stop": True,
@@ -69,7 +103,7 @@ def test_controller_run_end_to_end():
     result = controller.run(DiagnosticState(case_id="demo"))
 
     assert result["leading_diagnosis_or_parent"] == "acute coronary syndrome"
-    assert env.asked == ["radiation?"]
+    assert "radiation?" in env.asked
 
 
 def test_interrupt_override_executes_emergent_actions():

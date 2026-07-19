@@ -34,9 +34,15 @@ def _static_modules():
         "Consensus": {"type": "ANALYZE_VIGNETTE", "content": "derive key finding"},
         "TemporaryAnalyticLeafPlanner": {
             "candidate_leaves_ranked": [
-                {"branch_id": "B1", "type": "ANALYZE_VIGNETTE", "content": "derive key finding", "score": 0.6}
+                {
+                    "branch_id": "B1",
+                    "type": "ANALYZE_VIGNETTE",
+                    "content": "derive key finding",
+                    "score": 0.6,
+                    "target_branches": {"B1": "support"},
+                    "primary_function": "confirm",
+                }
             ],
-            "selected_primary_action": {"branch_id": "B1", "type": "ANALYZE_VIGNETTE", "content": "derive key finding"},
         },
         "ToolUseGate": {"allow": True, "reason": "not needed", "justification": ""},
         "EvidenceAnnotator": {

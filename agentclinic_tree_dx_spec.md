@@ -737,25 +737,44 @@ Return strict JSON:
 
 ### 10.2 Root Selector
 
-```text
-Role: RootSelector
+> **版本注记（2026-05-18）**：本模块提示词经完整重设计（v6）。下方为当前规范摘要；完整提示词见 `src/agentclinic_tree_dx/prompts/root_selector.txt`。
 
-Choose the best syndrome-level root node.
+**核心设计变更**：
 
-Instructions:
-- Group findings by same episode/time window.
-- Prefer syndrome-level formulation over raw symptom or isolated test result.
-- Maximize explanatory coverage, urgency relevance, and management consequence.
-- If framing is unstable or rare, you may request external knowledge retrieval.
+| 维度 | 原版 | v6 |
+|------|------|-----|
+| 根节点定位 | "syndrome-level label" | **综合征框架（syndrome frame）**，不是诊断，须保留竞争机制 |
+| 机制表达 | 单一最可能机制 | "Possible X or Y Aetiology"，置信度 <0.85 时禁止单一承诺 |
+| `excluded_root_candidates` | 排除列表 | **竞争机制注册表**（含排名较低但未排除的机制） |
+| 选项污染防护 | 无 | `_root_selector_payload()` 代码层面裁剪 MCQ 选项 |
+| 图像缺失处理 | 无 | 自动检测 `image_reference` → 标签加修饰词 + `confidence ≤ 0.5` |
+| 证据层级 | 无 | Tier 1–5 加权优先（非强制覆盖） |
+| 神经解剖规则 | 无 | 4 条"通常"规则 + 例外进入注册表 |
+| 新输出字段 | — | `alarm_features: []` |
 
-Return strict JSON:
+**标签构成顺序**：
+```
+[temporal pattern]
++ [PRIMARY presenting syndrome]
++ [Possible/Uncertain aetiology phrase — 1-2 competing mechanisms]
++ [Uncharacterised ECG/Imaging Abnormality — when Figure referenced]
+```
+
+**JSON schema（当前）**：
+```json
 {
-  "root_label": "...",
-  "time_course": "...",
-  "supporting_facts": [...],
-  "excluded_root_candidates": [...],
-  "need_external_knowledge": true/false,
-  "knowledge_query_if_needed": "...",
+  "root_label": "syndrome-frame label",
+  "time_course": "acute | subacute | chronic | unspecified",
+  "supporting_facts": ["key finding"],
+  "excluded_root_candidates": [
+    "Competing mechanism A: reason ranked lower but not excluded",
+    "Competing mechanism B: ..."
+  ],
+  "alarm_features": ["constitutional / urgency feature"],
+  "need_external_knowledge": false,
+  "knowledge_query_if_needed": "",
+  "need_root_revision": false,
+  "revision_reason": "",
   "confidence": 0.0
 }
 ```

@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "protocol_version": 1,
+  "asset_kind": "l2_targeted_gapfill_global_reassign_protocol",
+  "frozen": true,
+  "frozen_date": "2026-07-18",
+  "study_design": "retrospective_frozen_source_pool_global_parent_reassignment",
+  "research_only": true,
+  "promotion_eligible": false,
+  "source_bindings": {
+    "ab_frozen_manifest_hash": "2e6ed5d58ef64b38a1cc2f6c9269bcdaf100008717798b2284837e66f42d3c0a",
+    "ab_generation_manifest_hash": "bf3434931a9549c31d117af203a9e37b18ef6fb6dcaec00ab41cef5c8130092f",
+    "hybrid_generation_manifest_hash": "b10936830f859c59c4f14f11e5c894512623f33e0c875180b3e1f3b014e8091d",
+    "gates_generation_manifest_hash": "9a809e41bfb498ec6da1c655bb69ffda7b004f82ea51d93395eb98388c52d49a",
+    "source_pool": "hybrid.source_audits.B[*].source_candidates",
+    "reused_base_arm": "ALL_B_b1",
+    "reused_parent_gate_arm": "ALL_B_b1_PG",
+    "reused_parent_gate_trace_binding": "per_case_replicate_gates_trace_sha256"
+  },
+  "execution": {
+    "cases": 17,
+    "replicates": 3,
+    "model": "meta-llama/llama-3.3-70b-instruct",
+    "temperature": 0.0,
+    "candidate_cap_per_frozen_parent_pool": 12,
+    "selector_cap": 2,
+    "per_parent_budget": 1,
+    "parent_leaf_cap": 5,
+    "case_add_cap": 4,
+    "b_parent_retrieval": 0
+  },
+  "arms": [
+    "C",
+    "ALL_B_b1",
+    "ALL_B_b1_PG",
+    "ALL_B_b1_GR",
+    "ALL_B_b1_GR_PG"
+  ],
+  "component_order": [
+    "exact_canonical_occurrence_collapse",
+    "global_parent_reassignment",
+    "exact_C_leaf_label_filter",
+    "per_parent_selector",
+    "parent_consistency_gate_when_enabled",
+    "b1_allocator"
+  ],
+  "global_reassignment": {
+    "scope": "frozen_B_source_pool_before_per_parent_selector",
+    "joint_call_per_case_replicate": 1,
+    "candidate_view": "each_exact_deduplicated_entity_once",
+    "context": [
+      "case_context",
+      "all_L1_parents",
+      "C_leaf_exemplars_by_parent"
+    ],
+    "decision": "exactly_one_supplied_best_parent_id_or_REJECT",
+    "lineage": [
+      "entity_id",
+      "occurrence_ids",
+      "current_parent_ids"
+    ],
+    "failure_policy": "fail_open_replay_frozen_occurrence_parent_mapping"
+  },
+  "ordering_constraints": {
+    "GR_then_PG": true,
+    "exact_C_leaf_label_filter_after_GR": true,
+    "broad_family_or_fallback_labels_do_not_count_as_disease_coverage": true,
+    "selector_rerun_after_rebucket": true,
+    "allocator": "hybrid_allocate_additions_with_identical_b1_caps",
+    "reused_arms_must_not_rerun": [
+      "ALL_B_b1",
+      "ALL_B_b1_PG"
+    ]
+  },
+  "duplicate_metrics": {
+    "source_pool_semantic_redundancy_rate": {
+      "scope": "all frozen B source_candidates occurrences before GR",
+      "numerator": "occurrence_count_minus_blindly_adjudicated_semantic_concept_count",
+      "denominator": "occurrence_count",
+      "equivalence": "same diagnosis or true synonym; meaningful subtypes remain distinct",
+      "adjudication": "gold-blind source_pool_semantic_units",
+      "zero_denominator": 0.0
+    },
+    "source_pool_occurrence_exact_redundancy_rate": {
+      "scope": "all frozen B source_candidates occurrences before GR",
+      "numerator": "occurrence_count_minus_exact_canonical_entity_count",
+      "denominator": "occurrence_count",
+      "equivalence": "hybrid.canonical_disease exact equality only",
+      "zero_denominator": 0.0
+    },
+    "source_pool_repeated_occurrence_rate": {
+      "scope": "all frozen B source_candidates occurrences before GR",
+      "numerator": "occurrences whose exact canonical entity has at least two occurrences",
+      "denominator": "occurrence_count",
+      "equivalence": "hybrid.canonical_disease exact equality only",
+      "zero_denominator": 0.0
+    },
+    "final_tree_semantic_duplicate_rate": {
+      "scope": "emitted tree after allocation",
+      "numerator": "adjudicated added leaves semantically equivalent to another emitted leaf",
+      "denominator": "all added leaves",
+      "zero_denominator": 0.0
+    },
+    "legacy_mixed": {
+      "historical_value": 0.667,
+      "status": "reported_for_historical_comparability_only",
+      "definition": "legacy fixture mixed source-pool cross-parent occurrence flags with final-tree semantic duplicates",
+      "must_not_be_renamed_or_interpreted_as": [
+        "source_pool_occurrence_exact_redundancy_rate",
+        "source_pool_repeated_occurrence_rate",
+        "final_tree_semantic_duplicate_rate"
+      ]
+    }
+  },
+  "best_tree_selection": {
+    "method": "lexicographic",
+    "eligible_arms": [
+      "ALL_B_b1",
+      "ALL_B_b1_PG",
+      "ALL_B_b1_GR",
+      "ALL_B_b1_GR_PG"
+    ],
+    "ordered_objectives": [
+      {
+        "metric": "actual_top2",
+        "direction": "maximize"
+      },
+      {
+        "metric": "actual_rr",
+        "direction": "maximize"
+      },
+      {
+        "metric": "added_parent_invalid_rate",
+        "direction": "minimize"
+      },
+      {
+        "metric": "gold_l2_coverage",
+        "direction": "maximize"
+      },
+      {
+        "metric": "generation_llm_calls",
+        "direction": "minimize"
+      }
+    ],
+    "missing_primary_endpoint_policy": "no_best_tree_claim"
+  },
+  "adjudication": {
+    "quality_first_gold_blind": true,
+    "final_judge": "frozen_adjudication_fixture",
+    "human_signed_off": false,
+    "research_only": true
+  }
+}

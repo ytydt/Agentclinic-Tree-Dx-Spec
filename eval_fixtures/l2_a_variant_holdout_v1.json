@@ -1,0 +1,2913 @@
+{
+  "schema_version": 1,
+  "fixture_id": "l2_a_variant_holdout_v1",
+  "frozen": true,
+  "status": "blocked",
+  "cohort_role": "holdout",
+  "promotion_eligible": false,
+  "protocol_binding": {
+    "protocol_path": "eval_fixtures/l2_a_variant_protocol_v1.json",
+    "protocol_sha256": "c18ff4d20f8249a7fc533b84a343d2999042991425048a09b486206feb4854cc",
+    "development_case_ids": [
+      "mb11_pancoast",
+      "mb34_leukemoid",
+      "mb55_glucagonoma",
+      "mb57_kartagener",
+      "mb65_cml",
+      "mb66_peliosis",
+      "mb77_hyperpara",
+      "mb82_adhesions",
+      "mb83_foreignbody",
+      "mxh011",
+      "mxh014",
+      "mxh036",
+      "mxh045",
+      "mxh046",
+      "mxh055",
+      "mxh068",
+      "mxh075"
+    ],
+    "holdout_spec": {
+      "fixture_path": "eval_fixtures/l2_a_variant_holdout_v1.json",
+      "must_be_created_and_sealed_before_combination_results_are_read": true,
+      "must_exclude_development_cases": true,
+      "stratification": [
+        "case_source",
+        "syndrome_type",
+        "parent_complexity",
+        "rare_disease_fraction"
+      ],
+      "deduplicate_before_sealing": true,
+      "sample_size_rule": {
+        "method": "paired_discordance_formula",
+        "target_gain_15pp_min_cases": 80,
+        "target_gain_10pp_discordance_20_to_25pct_case_range": [
+          150,
+          190
+        ],
+        "replicates_do_not_increase_external_sample_size": true
+      },
+      "replicates_per_case": 3,
+      "arms": [
+        "C-prod",
+        "frozen_development_winner"
+      ],
+      "bootstrap": {
+        "method": "paired_case_cluster",
+        "minimum_iterations": 20000,
+        "cluster": "case_id"
+      },
+      "quality_weighting": "case_equal",
+      "hard_gates": {
+        "leakage_count": 0,
+        "topology_loss_count": 0,
+        "runtime_failure_rate_max": 0.05
+      },
+      "quality_gates": {
+        "one_sided_confidence_level": 0.975,
+        "parent_invalid_rate_ucb_max": 0.1,
+        "semantic_duplicate_excess_rate_ucb_max": 0.1,
+        "clean_rate_lcb_not_below_c": true,
+        "c_success_preservation_min": 0.95
+      },
+      "confirmatory_closed_test_order": [
+        {
+          "test": "actual_top2_noninferiority_vs_c",
+          "lcb_delta_strictly_greater_than": -0.05
+        },
+        {
+          "test": "gold_l2_coverage_superiority_vs_c"
+        },
+        {
+          "test": "actual_top2_superiority_vs_c"
+        },
+        {
+          "test": "mrr_at_2_superiority_vs_c"
+        }
+      ],
+      "reuse_policy": "If any holdout result changes the algorithm, the cohort becomes development data and a new holdout is required."
+    }
+  },
+  "sample_size_rule": {
+    "min_cases_required": 80,
+    "preferred_case_range": [
+      150,
+      190
+    ],
+    "replicates_do_not_increase_external_sample_size": true
+  },
+  "stratification_axes": [
+    "case_source",
+    "syndrome_type",
+    "parent_complexity",
+    "rare_disease_fraction"
+  ],
+  "case_count": 0,
+  "case_ids": [],
+  "cases": [],
+  "available_legal_candidates": 0,
+  "gap_to_minimum": 80,
+  "gap_to_preferred_lower_bound": 150,
+  "development_overlap_count": 0,
+  "development_overlap_case_ids": [],
+  "deduplicate_before_sealing": true,
+  "algorithm_outputs_present": false,
+  "algorithm_output_paths_detected": [],
+  "candidate_pool_audit": {
+    "medbullets_hard_diagnosis": {
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medbullets_hard_test.tsv",
+      "source_exists": true,
+      "raw_row_count": 89,
+      "row_count": null,
+      "candidate_count": 25,
+      "notes": null,
+      "sources": null
+    },
+    "medxpertqar_hard": {
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_exists": true,
+      "raw_row_count": 100,
+      "row_count": null,
+      "candidate_count": 100,
+      "notes": null,
+      "sources": null
+    },
+    "in_repo_curated_eval_json": {
+      "source_path": null,
+      "source_exists": null,
+      "raw_row_count": null,
+      "row_count": null,
+      "candidate_count": 82,
+      "notes": null,
+      "sources": null
+    },
+    "case_reports_corpus": {
+      "source_path": "data/case_reports/case_reports.jsonl",
+      "source_exists": true,
+      "raw_row_count": null,
+      "row_count": 77849,
+      "candidate_count": 0,
+      "notes": [
+        "retrieval_corpus_not_mcq_talp_cases",
+        "lacks_options_gold_calibration_for_l2_holdout"
+      ],
+      "sources": {
+        "rarearena": 72661,
+        "findzebra": 3232,
+        "ddxplus": 1956
+      }
+    }
+  },
+  "legality_audit": {
+    "scanned_candidate_count": 207,
+    "legal_candidate_count": 0,
+    "exclusion_reason_counts": {
+      "curated_annotation_without_vignette": 56,
+      "curated_but_not_holdout_ready_calibration": 66,
+      "development_case_id": 58,
+      "explicit_talp_expansion_exclusion": 4,
+      "historical_scheme_selection_case_id": 66,
+      "lacks_options_gold_calibration_for_l2_holdout": 1,
+      "medbullets_hard_full_diagnosis_pool_historically_run": 25,
+      "missing_gold": 22,
+      "missing_parent_complexity_stratum": 207,
+      "missing_rare_disease_fraction_stratum": 207,
+      "missing_syndrome_type_stratum": 163,
+      "missing_vignette": 56,
+      "retrieval_corpus_not_mcq_talp_cases": 77850,
+      "uncalibrated_raw_tsv_not_talp_legal": 100,
+      "weak_or_non_vignette_stem": 5
+    },
+    "historical_scheme_selection_case_id_count": 19,
+    "exclusion_count": 208
+  },
+  "exclusions": [
+    {
+      "case_id": "mb_raw_002",
+      "case_source": "medbullets_hard_test",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medbullets_hard_test.tsv",
+      "source_index": 2,
+      "reasons": [
+        "medbullets_hard_full_diagnosis_pool_historically_run",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb_raw_011",
+      "case_source": "medbullets_hard_test",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medbullets_hard_test.tsv",
+      "source_index": 11,
+      "reasons": [
+        "medbullets_hard_full_diagnosis_pool_historically_run",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb_raw_014",
+      "case_source": "medbullets_hard_test",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medbullets_hard_test.tsv",
+      "source_index": 14,
+      "reasons": [
+        "medbullets_hard_full_diagnosis_pool_historically_run",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb_raw_016",
+      "case_source": "medbullets_hard_test",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medbullets_hard_test.tsv",
+      "source_index": 16,
+      "reasons": [
+        "medbullets_hard_full_diagnosis_pool_historically_run",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb_raw_023",
+      "case_source": "medbullets_hard_test",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medbullets_hard_test.tsv",
+      "source_index": 23,
+      "reasons": [
+        "medbullets_hard_full_diagnosis_pool_historically_run",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb_raw_029",
+      "case_source": "medbullets_hard_test",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medbullets_hard_test.tsv",
+      "source_index": 29,
+      "reasons": [
+        "medbullets_hard_full_diagnosis_pool_historically_run",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb_raw_030",
+      "case_source": "medbullets_hard_test",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medbullets_hard_test.tsv",
+      "source_index": 30,
+      "reasons": [
+        "medbullets_hard_full_diagnosis_pool_historically_run",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb_raw_032",
+      "case_source": "medbullets_hard_test",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medbullets_hard_test.tsv",
+      "source_index": 32,
+      "reasons": [
+        "medbullets_hard_full_diagnosis_pool_historically_run",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb_raw_035",
+      "case_source": "medbullets_hard_test",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medbullets_hard_test.tsv",
+      "source_index": 35,
+      "reasons": [
+        "medbullets_hard_full_diagnosis_pool_historically_run",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb_raw_036",
+      "case_source": "medbullets_hard_test",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medbullets_hard_test.tsv",
+      "source_index": 36,
+      "reasons": [
+        "medbullets_hard_full_diagnosis_pool_historically_run",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb_raw_040",
+      "case_source": "medbullets_hard_test",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medbullets_hard_test.tsv",
+      "source_index": 40,
+      "reasons": [
+        "medbullets_hard_full_diagnosis_pool_historically_run",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb_raw_043",
+      "case_source": "medbullets_hard_test",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medbullets_hard_test.tsv",
+      "source_index": 43,
+      "reasons": [
+        "medbullets_hard_full_diagnosis_pool_historically_run",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb_raw_048",
+      "case_source": "medbullets_hard_test",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medbullets_hard_test.tsv",
+      "source_index": 48,
+      "reasons": [
+        "medbullets_hard_full_diagnosis_pool_historically_run",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb_raw_058",
+      "case_source": "medbullets_hard_test",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medbullets_hard_test.tsv",
+      "source_index": 58,
+      "reasons": [
+        "medbullets_hard_full_diagnosis_pool_historically_run",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb_raw_060",
+      "case_source": "medbullets_hard_test",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medbullets_hard_test.tsv",
+      "source_index": 60,
+      "reasons": [
+        "medbullets_hard_full_diagnosis_pool_historically_run",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb_raw_064",
+      "case_source": "medbullets_hard_test",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medbullets_hard_test.tsv",
+      "source_index": 64,
+      "reasons": [
+        "medbullets_hard_full_diagnosis_pool_historically_run",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb_raw_065",
+      "case_source": "medbullets_hard_test",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medbullets_hard_test.tsv",
+      "source_index": 65,
+      "reasons": [
+        "medbullets_hard_full_diagnosis_pool_historically_run",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb_raw_068",
+      "case_source": "medbullets_hard_test",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medbullets_hard_test.tsv",
+      "source_index": 68,
+      "reasons": [
+        "medbullets_hard_full_diagnosis_pool_historically_run",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb_raw_069",
+      "case_source": "medbullets_hard_test",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medbullets_hard_test.tsv",
+      "source_index": 69,
+      "reasons": [
+        "medbullets_hard_full_diagnosis_pool_historically_run",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb_raw_071",
+      "case_source": "medbullets_hard_test",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medbullets_hard_test.tsv",
+      "source_index": 71,
+      "reasons": [
+        "medbullets_hard_full_diagnosis_pool_historically_run",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb_raw_079",
+      "case_source": "medbullets_hard_test",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medbullets_hard_test.tsv",
+      "source_index": 79,
+      "reasons": [
+        "medbullets_hard_full_diagnosis_pool_historically_run",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb_raw_081",
+      "case_source": "medbullets_hard_test",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medbullets_hard_test.tsv",
+      "source_index": 81,
+      "reasons": [
+        "medbullets_hard_full_diagnosis_pool_historically_run",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb_raw_082",
+      "case_source": "medbullets_hard_test",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medbullets_hard_test.tsv",
+      "source_index": 82,
+      "reasons": [
+        "medbullets_hard_full_diagnosis_pool_historically_run",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb_raw_087",
+      "case_source": "medbullets_hard_test",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medbullets_hard_test.tsv",
+      "source_index": 87,
+      "reasons": [
+        "medbullets_hard_full_diagnosis_pool_historically_run",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb_raw_088",
+      "case_source": "medbullets_hard_test",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medbullets_hard_test.tsv",
+      "source_index": 88,
+      "reasons": [
+        "medbullets_hard_full_diagnosis_pool_historically_run",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh000",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 0,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh001",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 1,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh002",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 2,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh003",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 3,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh004",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 4,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh005",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 5,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh006",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 6,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh007",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 7,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh008",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 8,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh009",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 9,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh010",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 10,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh011",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 11,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh012",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 12,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "weak_or_non_vignette_stem",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh013",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 13,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh014",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 14,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh015",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 15,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh016",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 16,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh017",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 17,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh018",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 18,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh019",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 19,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "weak_or_non_vignette_stem",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh020",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 20,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh021",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 21,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh022",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 22,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh023",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 23,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh024",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 24,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh025",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 25,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh026",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 26,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh027",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 27,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh028",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 28,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh029",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 29,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh030",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 30,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh031",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 31,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh032",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 32,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh033",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 33,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh034",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 34,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh035",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 35,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh036",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 36,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh037",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 37,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh038",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 38,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh039",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 39,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh040",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 40,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh041",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 41,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh042",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 42,
+      "reasons": [
+        "historical_scheme_selection_case_id",
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "weak_or_non_vignette_stem",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh043",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 43,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh044",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 44,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh045",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 45,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh046",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 46,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh047",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 47,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh048",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 48,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh049",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 49,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh050",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 50,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh051",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 51,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh052",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 52,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh053",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 53,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh054",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 54,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh055",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 55,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh056",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 56,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "weak_or_non_vignette_stem",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh057",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 57,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh058",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 58,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh059",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 59,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh060",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 60,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh061",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 61,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh062",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 62,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh063",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 63,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh064",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 64,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh065",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 65,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh066",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 66,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh067",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 67,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh068",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 68,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh069",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 69,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh070",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 70,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh071",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 71,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh072",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 72,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh073",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 73,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh074",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 74,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh075",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 75,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh076",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 76,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh077",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 77,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh078",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 78,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh079",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 79,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh080",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 80,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh081",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 81,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh082",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 82,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh083",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 83,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh084",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 84,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh085",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 85,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh086",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 86,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh087",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 87,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh088",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 88,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh089",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 89,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "weak_or_non_vignette_stem",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh090",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 90,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh091",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 91,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh092",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 92,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh093",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 93,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh094",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 94,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh095",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 95,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh096",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 96,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh097",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 97,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh098",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 98,
+      "reasons": [
+        "historical_scheme_selection_case_id",
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh099",
+      "case_source": "medxpertqar_hard",
+      "source_path": "/home/wanghongyi/LLM-Structured-Data-main/som/MMLU/test/medxpertqar_hard_test.tsv",
+      "source_index": 99,
+      "reasons": [
+        "uncalibrated_raw_tsv_not_talp_legal",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb11_pancoast",
+      "case_source": "medbullets",
+      "source_path": "data/eval/talp_discrimination_cases.json",
+      "source_index": 11,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_vignette",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb34_leukemoid",
+      "case_source": "medbullets",
+      "source_path": "data/eval/talp_discrimination_cases.json",
+      "source_index": 34,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_vignette",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb55_glucagonoma",
+      "case_source": "medbullets",
+      "source_path": "data/eval/talp_discrimination_cases.json",
+      "source_index": 55,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_vignette",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb57_kartagener",
+      "case_source": "medbullets",
+      "source_path": "data/eval/talp_discrimination_cases.json",
+      "source_index": 57,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_vignette",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb65_cml",
+      "case_source": "medbullets",
+      "source_path": "data/eval/talp_discrimination_cases.json",
+      "source_index": 65,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_vignette",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb66_peliosis",
+      "case_source": "medbullets",
+      "source_path": "data/eval/talp_discrimination_cases.json",
+      "source_index": 66,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_vignette",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb77_hyperpara",
+      "case_source": "medbullets",
+      "source_path": "data/eval/talp_discrimination_cases.json",
+      "source_index": 77,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_vignette",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb82_adhesions",
+      "case_source": "medbullets",
+      "source_path": "data/eval/talp_discrimination_cases.json",
+      "source_index": 82,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_vignette",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb83_foreignbody",
+      "case_source": "medbullets",
+      "source_path": "data/eval/talp_discrimination_cases.json",
+      "source_index": 83,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_vignette",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh011",
+      "case_source": "medxpertqar_hard",
+      "source_path": "data/eval/talp_medxpert_expansion_cases.draft.json",
+      "source_index": 11,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "curated_but_not_holdout_ready_calibration",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh014",
+      "case_source": "medxpertqar_hard",
+      "source_path": "data/eval/talp_medxpert_expansion_cases.draft.json",
+      "source_index": 14,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "curated_but_not_holdout_ready_calibration",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh036",
+      "case_source": "medxpertqar_hard",
+      "source_path": "data/eval/talp_medxpert_expansion_cases.draft.json",
+      "source_index": 36,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "curated_but_not_holdout_ready_calibration",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh042",
+      "case_source": "medxpertqar_hard",
+      "source_path": "data/eval/talp_medxpert_expansion_cases.draft.json",
+      "source_index": 42,
+      "reasons": [
+        "historical_scheme_selection_case_id",
+        "curated_but_not_holdout_ready_calibration",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh045",
+      "case_source": "medxpertqar_hard",
+      "source_path": "data/eval/talp_medxpert_expansion_cases.draft.json",
+      "source_index": 45,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "curated_but_not_holdout_ready_calibration",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh046",
+      "case_source": "medxpertqar_hard",
+      "source_path": "data/eval/talp_medxpert_expansion_cases.draft.json",
+      "source_index": 46,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "curated_but_not_holdout_ready_calibration",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh055",
+      "case_source": "medxpertqar_hard",
+      "source_path": "data/eval/talp_medxpert_expansion_cases.draft.json",
+      "source_index": 55,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "curated_but_not_holdout_ready_calibration",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh068",
+      "case_source": "medxpertqar_hard",
+      "source_path": "data/eval/talp_medxpert_expansion_cases.draft.json",
+      "source_index": 68,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "curated_but_not_holdout_ready_calibration",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh075",
+      "case_source": "medxpertqar_hard",
+      "source_path": "data/eval/talp_medxpert_expansion_cases.draft.json",
+      "source_index": 75,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "curated_but_not_holdout_ready_calibration",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh098",
+      "case_source": "medxpertqar_hard",
+      "source_path": "data/eval/talp_medxpert_expansion_cases.draft.json",
+      "source_index": 98,
+      "reasons": [
+        "historical_scheme_selection_case_id",
+        "curated_but_not_holdout_ready_calibration",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh011",
+      "case_source": "medxpertqar_hard",
+      "source_path": "data/eval/talp_medxpert_expansion_cases.json",
+      "source_index": 11,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh014",
+      "case_source": "medxpertqar_hard",
+      "source_path": "data/eval/talp_medxpert_expansion_cases.json",
+      "source_index": 14,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh036",
+      "case_source": "medxpertqar_hard",
+      "source_path": "data/eval/talp_medxpert_expansion_cases.json",
+      "source_index": 36,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh045",
+      "case_source": "medxpertqar_hard",
+      "source_path": "data/eval/talp_medxpert_expansion_cases.json",
+      "source_index": 45,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh046",
+      "case_source": "medxpertqar_hard",
+      "source_path": "data/eval/talp_medxpert_expansion_cases.json",
+      "source_index": 46,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh055",
+      "case_source": "medxpertqar_hard",
+      "source_path": "data/eval/talp_medxpert_expansion_cases.json",
+      "source_index": 55,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh068",
+      "case_source": "medxpertqar_hard",
+      "source_path": "data/eval/talp_medxpert_expansion_cases.json",
+      "source_index": 68,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh075",
+      "case_source": "medxpertqar_hard",
+      "source_path": "data/eval/talp_medxpert_expansion_cases.json",
+      "source_index": 75,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh042",
+      "case_source": "medxpertqar_hard_excluded",
+      "source_path": "data/eval/talp_medxpert_expansion_cases.json",
+      "source_index": 42,
+      "reasons": [
+        "historical_scheme_selection_case_id",
+        "missing_vignette",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "explicit_talp_expansion_exclusion",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh098",
+      "case_source": "medxpertqar_hard_excluded",
+      "source_path": "data/eval/talp_medxpert_expansion_cases.json",
+      "source_index": 98,
+      "reasons": [
+        "historical_scheme_selection_case_id",
+        "missing_vignette",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "explicit_talp_expansion_exclusion",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh011",
+      "case_source": "medxpertqar_hard",
+      "source_path": "data/eval/talp_medxpert_expansion_cases_v2.json",
+      "source_index": 11,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh014",
+      "case_source": "medxpertqar_hard",
+      "source_path": "data/eval/talp_medxpert_expansion_cases_v2.json",
+      "source_index": 14,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh036",
+      "case_source": "medxpertqar_hard",
+      "source_path": "data/eval/talp_medxpert_expansion_cases_v2.json",
+      "source_index": 36,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh045",
+      "case_source": "medxpertqar_hard",
+      "source_path": "data/eval/talp_medxpert_expansion_cases_v2.json",
+      "source_index": 45,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh046",
+      "case_source": "medxpertqar_hard",
+      "source_path": "data/eval/talp_medxpert_expansion_cases_v2.json",
+      "source_index": 46,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh055",
+      "case_source": "medxpertqar_hard",
+      "source_path": "data/eval/talp_medxpert_expansion_cases_v2.json",
+      "source_index": 55,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh068",
+      "case_source": "medxpertqar_hard",
+      "source_path": "data/eval/talp_medxpert_expansion_cases_v2.json",
+      "source_index": 68,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh075",
+      "case_source": "medxpertqar_hard",
+      "source_path": "data/eval/talp_medxpert_expansion_cases_v2.json",
+      "source_index": 75,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh042",
+      "case_source": "medxpertqar_hard_excluded",
+      "source_path": "data/eval/talp_medxpert_expansion_cases_v2.json",
+      "source_index": 42,
+      "reasons": [
+        "historical_scheme_selection_case_id",
+        "missing_vignette",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "explicit_talp_expansion_exclusion",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mxh098",
+      "case_source": "medxpertqar_hard_excluded",
+      "source_path": "data/eval/talp_medxpert_expansion_cases_v2.json",
+      "source_index": 98,
+      "reasons": [
+        "historical_scheme_selection_case_id",
+        "missing_vignette",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "explicit_talp_expansion_exclusion",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb11_pancoast",
+      "case_source": "medbullets",
+      "source_path": "data/eval/lr_coverage_cases.json",
+      "source_index": 11,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_vignette",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb34_leukemoid",
+      "case_source": "medbullets",
+      "source_path": "data/eval/lr_coverage_cases.json",
+      "source_index": 34,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_vignette",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb55_glucagonoma",
+      "case_source": "medbullets",
+      "source_path": "data/eval/lr_coverage_cases.json",
+      "source_index": 55,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_vignette",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb57_kartagener",
+      "case_source": "medbullets",
+      "source_path": "data/eval/lr_coverage_cases.json",
+      "source_index": 57,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_vignette",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb65_cml",
+      "case_source": "medbullets",
+      "source_path": "data/eval/lr_coverage_cases.json",
+      "source_index": 65,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_vignette",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb66_peliosis",
+      "case_source": "medbullets",
+      "source_path": "data/eval/lr_coverage_cases.json",
+      "source_index": 66,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_vignette",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb77_hyperpara",
+      "case_source": "medbullets",
+      "source_path": "data/eval/lr_coverage_cases.json",
+      "source_index": 77,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_vignette",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb82_adhesions",
+      "case_source": "medbullets",
+      "source_path": "data/eval/lr_coverage_cases.json",
+      "source_index": 82,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_vignette",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb83_foreignbody",
+      "case_source": "medbullets",
+      "source_path": "data/eval/lr_coverage_cases.json",
+      "source_index": 83,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_vignette",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "ra_wilson",
+      "case_source": "rarearena",
+      "source_path": "data/eval/lr_coverage_cases.json",
+      "source_index": -1,
+      "reasons": [
+        "missing_vignette",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "ra_nf1",
+      "case_source": "rarearena",
+      "source_path": "data/eval/lr_coverage_cases.json",
+      "source_index": -1,
+      "reasons": [
+        "missing_vignette",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "ra_homocystinuria",
+      "case_source": "rarearena",
+      "source_path": "data/eval/lr_coverage_cases.json",
+      "source_index": 17,
+      "reasons": [
+        "missing_vignette",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb11_pancoast",
+      "case_source": "lr_discrimination_matrix",
+      "source_path": "data/eval/lr_discrimination_matrix.json",
+      "source_index": 11,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_vignette",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb34_leukemoid",
+      "case_source": "lr_discrimination_matrix",
+      "source_path": "data/eval/lr_discrimination_matrix.json",
+      "source_index": 34,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_vignette",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb55_glucagonoma",
+      "case_source": "lr_discrimination_matrix",
+      "source_path": "data/eval/lr_discrimination_matrix.json",
+      "source_index": 55,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_vignette",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb57_pcd",
+      "case_source": "lr_discrimination_matrix",
+      "source_path": "data/eval/lr_discrimination_matrix.json",
+      "source_index": 57,
+      "reasons": [
+        "missing_vignette",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb65_cml",
+      "case_source": "lr_discrimination_matrix",
+      "source_path": "data/eval/lr_discrimination_matrix.json",
+      "source_index": 65,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_vignette",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb66_peliosis",
+      "case_source": "lr_discrimination_matrix",
+      "source_path": "data/eval/lr_discrimination_matrix.json",
+      "source_index": 66,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_vignette",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb77_hyperpara",
+      "case_source": "lr_discrimination_matrix",
+      "source_path": "data/eval/lr_discrimination_matrix.json",
+      "source_index": 77,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_vignette",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb82_adhesions",
+      "case_source": "lr_discrimination_matrix",
+      "source_path": "data/eval/lr_discrimination_matrix.json",
+      "source_index": 82,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_vignette",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "mb83_foreignbody",
+      "case_source": "lr_discrimination_matrix",
+      "source_path": "data/eval/lr_discrimination_matrix.json",
+      "source_index": 83,
+      "reasons": [
+        "development_case_id",
+        "historical_scheme_selection_case_id",
+        "missing_vignette",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "hypercalcemia",
+      "case_source": "branch_recall_eval_set",
+      "source_path": "data/cpg/eval/branch_recall_eval_set.json",
+      "source_index": null,
+      "reasons": [
+        "missing_vignette",
+        "missing_gold",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "hyponatremia",
+      "case_source": "branch_recall_eval_set",
+      "source_path": "data/cpg/eval/branch_recall_eval_set.json",
+      "source_index": null,
+      "reasons": [
+        "missing_vignette",
+        "missing_gold",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "jaundice",
+      "case_source": "branch_recall_eval_set",
+      "source_path": "data/cpg/eval/branch_recall_eval_set.json",
+      "source_index": null,
+      "reasons": [
+        "missing_vignette",
+        "missing_gold",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "pleural_effusion",
+      "case_source": "branch_recall_eval_set",
+      "source_path": "data/cpg/eval/branch_recall_eval_set.json",
+      "source_index": null,
+      "reasons": [
+        "missing_vignette",
+        "missing_gold",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "microcytic_anemia",
+      "case_source": "branch_recall_eval_set",
+      "source_path": "data/cpg/eval/branch_recall_eval_set.json",
+      "source_index": null,
+      "reasons": [
+        "missing_vignette",
+        "missing_gold",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "acute_pancreatitis",
+      "case_source": "branch_recall_eval_set",
+      "source_path": "data/cpg/eval/branch_recall_eval_set.json",
+      "source_index": null,
+      "reasons": [
+        "missing_vignette",
+        "missing_gold",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "thunderclap_headache",
+      "case_source": "branch_recall_eval_set",
+      "source_path": "data/cpg/eval/branch_recall_eval_set.json",
+      "source_index": null,
+      "reasons": [
+        "missing_vignette",
+        "missing_gold",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "acute_kidney_injury",
+      "case_source": "branch_recall_eval_set",
+      "source_path": "data/cpg/eval/branch_recall_eval_set.json",
+      "source_index": null,
+      "reasons": [
+        "missing_vignette",
+        "missing_gold",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "hyperthyroidism",
+      "case_source": "branch_recall_eval_set",
+      "source_path": "data/cpg/eval/branch_recall_eval_set.json",
+      "source_index": null,
+      "reasons": [
+        "missing_vignette",
+        "missing_gold",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "cushing_syndrome",
+      "case_source": "branch_recall_eval_set",
+      "source_path": "data/cpg/eval/branch_recall_eval_set.json",
+      "source_index": null,
+      "reasons": [
+        "missing_vignette",
+        "missing_gold",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "wide_complex_tachycardia",
+      "case_source": "branch_recall_eval_set",
+      "source_path": "data/cpg/eval/branch_recall_eval_set.json",
+      "source_index": null,
+      "reasons": [
+        "missing_vignette",
+        "missing_gold",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "secondary_hypertension",
+      "case_source": "branch_recall_eval_set",
+      "source_path": "data/cpg/eval/branch_recall_eval_set.json",
+      "source_index": null,
+      "reasons": [
+        "missing_vignette",
+        "missing_gold",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "macrocytic_anemia",
+      "case_source": "branch_recall_eval_set",
+      "source_path": "data/cpg/eval/branch_recall_eval_set.json",
+      "source_index": null,
+      "reasons": [
+        "missing_vignette",
+        "missing_gold",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "lower_gi_bleeding",
+      "case_source": "branch_recall_eval_set",
+      "source_path": "data/cpg/eval/branch_recall_eval_set.json",
+      "source_index": null,
+      "reasons": [
+        "missing_vignette",
+        "missing_gold",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "c1_pancoast",
+      "case_source": "branch_recall_eval_set_hard",
+      "source_path": "data/cpg/eval/branch_recall_eval_set_hard.json",
+      "source_index": null,
+      "reasons": [
+        "missing_vignette",
+        "missing_gold",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "c9_leukemoid",
+      "case_source": "branch_recall_eval_set_hard",
+      "source_path": "data/cpg/eval/branch_recall_eval_set_hard.json",
+      "source_index": null,
+      "reasons": [
+        "missing_vignette",
+        "missing_gold",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "c13_glucagonoma",
+      "case_source": "branch_recall_eval_set_hard",
+      "source_path": "data/cpg/eval/branch_recall_eval_set_hard.json",
+      "source_index": null,
+      "reasons": [
+        "missing_vignette",
+        "missing_gold",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "c17_cml",
+      "case_source": "branch_recall_eval_set_hard",
+      "source_path": "data/cpg/eval/branch_recall_eval_set_hard.json",
+      "source_index": null,
+      "reasons": [
+        "missing_vignette",
+        "missing_gold",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "c18_peliosis",
+      "case_source": "branch_recall_eval_set_hard",
+      "source_path": "data/cpg/eval/branch_recall_eval_set_hard.json",
+      "source_index": null,
+      "reasons": [
+        "missing_vignette",
+        "missing_gold",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "c22_phpt",
+      "case_source": "branch_recall_eval_set_hard",
+      "source_path": "data/cpg/eval/branch_recall_eval_set_hard.json",
+      "source_index": null,
+      "reasons": [
+        "missing_vignette",
+        "missing_gold",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "c23_adhesions",
+      "case_source": "branch_recall_eval_set_hard",
+      "source_path": "data/cpg/eval/branch_recall_eval_set_hard.json",
+      "source_index": null,
+      "reasons": [
+        "missing_vignette",
+        "missing_gold",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "c24_foreign_body",
+      "case_source": "branch_recall_eval_set_hard",
+      "source_path": "data/cpg/eval/branch_recall_eval_set_hard.json",
+      "source_index": null,
+      "reasons": [
+        "missing_vignette",
+        "missing_gold",
+        "curated_but_not_holdout_ready_calibration",
+        "curated_annotation_without_vignette",
+        "missing_syndrome_type_stratum",
+        "missing_parent_complexity_stratum",
+        "missing_rare_disease_fraction_stratum"
+      ]
+    },
+    {
+      "case_id": "case_reports_corpus",
+      "case_source": "case_reports",
+      "source_path": "data/case_reports/case_reports.jsonl",
+      "source_index": null,
+      "reasons": [
+        "retrieval_corpus_not_mcq_talp_cases",
+        "lacks_options_gold_calibration_for_l2_holdout"
+      ]
+    }
+  ],
+  "selection": {
+    "selected_count": 0,
+    "strata_counts": {},
+    "target_min": 80,
+    "target_max": 190
+  },
+  "blockers": [
+    "legal_candidate_count_below_min:0<80",
+    "refusing_to_fabricate_holdout_cases",
+    "refusing_to_run_confirmatory_results"
+  ],
+  "builder": {
+    "script": "scripts/build_l2_a_variant_holdout.py",
+    "code_sha256": "da461300b670df5bbbdda8d22ee797687b2e941269324f9a4bbbc1deb4f31b7d",
+    "reproducible": true
+  },
+  "arms": [
+    "C-prod",
+    "frozen_development_winner"
+  ],
+  "notes": [
+    "Holdout cases must exclude the 17 development/scheme-selection cases.",
+    "Raw MedXpert/MedBullets TSV rows are inventoried but not legal until TALP-grade calibration, strata, and contamination clearance exist.",
+    "Confirmatory execution requires a separately frozen development winner."
+  ],
+  "fixture_hash": "69fea2b19cf038bc09dd0148d19b247b3e55c20ff6da7cd0fc03e813bdf5e5c9"
+}
