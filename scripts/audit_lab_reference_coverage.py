@@ -34,7 +34,7 @@ DEFAULT_EXTENSION = ROOT / "data" / "knowledge_raw" / "lab_reference_range_exten
 DEFAULT_CATALOG = ROOT / "data" / "knowledge_raw" / "lab_reference_ranges.json"
 DEFAULT_LOINC = ROOT / "data" / "knowledge_raw" / "loinc2hpo_annotations.json"
 DEFAULT_CONVERSIONS = ROOT / "data" / "knowledge_raw" / "unit_conversions.json"
-DEFAULT_DATASET_DIR = ROOT / ".cache" / "lab-reference-audit"
+DEFAULT_DATASET_DIR = ROOT / "data" / "eval" / "lab_reference_datasets"
 DEFAULT_JSON = ROOT / "data" / "eval" / "lab_reference_coverage_report.json"
 DEFAULT_MARKDOWN = ROOT / "LAB_REFERENCE_RANGE_DATA_SOURCES.md"
 
@@ -568,7 +568,7 @@ def render_markdown(report: dict, sources: dict, datasets: dict) -> str:
             "python scripts/audit_lab_reference_coverage.py",
             "```",
             "",
-            "The downloader pins every artifact by revision, byte count, and SHA-256. Raw datasets remain local because their redistribution terms differ.",
+            "The committed snapshots and downloader are pinned by revision, byte count, and SHA-256. Each dataset retains its upstream terms; see the dataset README and manifest before reuse or redistribution.",
             "",
             "## Safety and limitations",
             "",

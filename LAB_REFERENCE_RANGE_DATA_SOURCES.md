@@ -201,7 +201,7 @@ python scripts/extend_lab_reference_data.py --check
 python scripts/audit_lab_reference_coverage.py
 ```
 
-The downloader pins every artifact by revision, byte count, and SHA-256. Raw datasets remain local because their redistribution terms differ.
+The committed snapshots and downloader are pinned by revision, byte count, and SHA-256. Each dataset retains its upstream terms; see the dataset README and manifest before reuse or redistribution.
 
 ## Safety and limitations
 

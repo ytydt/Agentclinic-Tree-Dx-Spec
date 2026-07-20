@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-"""Download the pinned diagnostic benchmark artifacts used by the lab audit.
+"""Restore or verify the pinned diagnostic benchmark artifacts used by the lab audit.
 
-Raw datasets are deliberately not committed. Every artifact is pinned by
-revision, byte size, and SHA-256 in ``lab_reference_dataset_manifest.json``.
+The benchmark snapshots are committed under ``data/eval/lab_reference_datasets``.
+Every artifact is pinned by revision, byte size, and SHA-256 in
+``lab_reference_dataset_manifest.json`` so a missing or damaged snapshot can be
+restored deterministically.
 """
 
 from __future__ import annotations
@@ -18,7 +20,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_MANIFEST = ROOT / "data" / "eval" / "lab_reference_dataset_manifest.json"
-DEFAULT_OUTPUT = ROOT / ".cache" / "lab-reference-audit"
+DEFAULT_OUTPUT = ROOT / "data" / "eval" / "lab_reference_datasets"
 
 
 def sha256(path: Path) -> str:
