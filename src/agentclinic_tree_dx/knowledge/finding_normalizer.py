@@ -17,11 +17,18 @@ from typing import Optional
 
 logger = logging.getLogger(__name__)
 
+_UNIT_CAPTURE = (
+    r"[a-zA-Zμµ0-9/%°×^{}.]+"
+    r"(?:/[a-zA-Zμµ0-9^{}.]+)*"
+    r"(?:\s*(?:FEU|DDU))?"
+)
+
 PATTERNS = [
     re.compile(
-        r"(?P<name>[A-Za-z][A-Za-z0-9 /\-]*?)\s*[:=]\s*"
+        r"(?P<name>[A-Za-zβ][A-Za-z0-9β /\-]*?)\s*[:=]\s*"
         r"(?P<value>[\d,]+\.?\d*)\s*"
-        r"(?P<unit>[a-zA-Zμµ/%°×^]+(?:/[a-zA-Zμµ0-9^]+)*)?"
+        rf"(?P<unit>{_UNIT_CAPTURE})?",
+        re.IGNORECASE,
     ),
     re.compile(
         r"(?P<value>\d+\.?\d*)\s*%\s*"
@@ -29,10 +36,10 @@ PATTERNS = [
         re.IGNORECASE,
     ),
     re.compile(
-        r"(?P<name>[A-Za-z][A-Za-z \-]+?)\s+"
+        r"(?P<name>[A-Za-zβ][A-Za-zβ \-]+?)\s+"
         r"(?:of|at|is|was|level)\s+"
         r"(?P<value>[\d,]+\.?\d*)\s*"
-        r"(?P<unit>[a-zA-Zμµ/%°×^]+(?:/[a-zA-Zμµ0-9^]+)*)?",
+        rf"(?P<unit>{_UNIT_CAPTURE})?",
         re.IGNORECASE,
     ),
     re.compile(
@@ -42,11 +49,27 @@ PATTERNS = [
         re.IGNORECASE,
     ),
     re.compile(
-        r"(?P<name>[A-Za-z][A-Za-z0-9 /\-]*?)\s+"
+        r"(?P<name>[A-Za-zβ][A-Za-z0-9β /\-]*?)\s+"
         r"(?P<value>[\d,]+\.?\d*)\s*"
-        r"(?P<unit>[a-zA-Zμµ/%°×^]+(?:/[a-zA-Zμµ0-9^]+)*)"
+        rf"(?P<unit>{_UNIT_CAPTURE})",
+        re.IGNORECASE,
     ),
 ]
+
+_INLINE_REFERENCE_RE = re.compile(
+    r"(?:reference\s*(?:range|interval|value|limit)?|"
+    r"normal(?:\s*(?:range|value|limit))?|upper\s+limit\s+of\s+normal|uln)"
+    r"\s*(?:is|of|:|=|,)?\s*"
+    r"(?:"
+    r"(?P<op><=?|>=?|≤|≥)\s*(?P<limit>-?[\d,]+(?:\.\d+)?)"
+    r"|(?P<low>-?[\d,]+(?:\.\d+)?)\s*(?:-|–|—|to)\s*"
+    r"(?P<high>-?[\d,]+(?:\.\d+)?)"
+    r")\s*"
+    rf"(?P<unit>{_UNIT_CAPTURE})?",
+    re.IGNORECASE,
+)
+
+_SUPERSCRIPT_TRANSLATION = str.maketrans("⁰¹²³⁴⁵⁶⁷⁸⁹", "0123456789")
 
 # Compound lab strings such as "Leukocyte count: 57,500/mm3 with 35% blasts"
 # carry TWO independent findings. Split on connectors only when the segment to
@@ -114,6 +137,8 @@ _BP_RE = re.compile(
 )
 
 _UNIT_NORMALIZE_MAP: dict[str, str] = {
+    "u": "U",
+    "iu": "U",
     "ul": "/μL",
     "µl": "/μL",
     "μl": "/μL",
@@ -125,19 +150,46 @@ _UNIT_NORMALIZE_MAP: dict[str, str] = {
     "cells/ul": "/μL",
     "cells/µl": "/μL",
     "cells/μl": "/μL",
+    "cells/mm3": "/μL",
+    "/mm3": "/μL",
+    "mm3": "/μL",
+    "k/ul": "×10^3/μL",
+    "k/μl": "×10^3/μL",
+    "m/ul": "×10^6/μL",
+    "m/μl": "×10^6/μL",
+    "×10^9/l": "×10^9/L",
+    "10^9/l": "×10^9/L",
+    "×10^3/ul": "×10^3/μL",
+    "×10^3/μl": "×10^3/μL",
+    "×1000/ul": "×10^3/μL",
+    "×1000/μl": "×10^3/μL",
+    "10^3/ul": "×10^3/μL",
+    "10^3/μl": "×10^3/μL",
+    "×10^6/ul": "×10^6/μL",
+    "×10^6/μl": "×10^6/μL",
+    "×10^12/l": "×10^12/L",
     "g/dl": "g/dL",
     "mg/dl": "mg/dL",
     "meq/l": "mEq/L",
     "mmol/l": "mmol/L",
     "u/l": "U/L",
     "iu/l": "U/L",
+    "u/ml": "U/mL",
+    "iu/ml": "IU/mL",
     "ng/ml": "ng/mL",
+    "ng/l": "ng/L",
     "pg/ml": "pg/mL",
+    "miu/ml": "mIU/mL",
+    "mu/ml": "mIU/mL",
+    "kiu/l": "kIU/L",
     "μg/dl": "μg/dL",
     "µg/dl": "μg/dL",
     "ug/dl": "μg/dL",
     "mcg/dl": "μg/dL",
     "ng/dl": "ng/dL",
+    "μg/l": "μg/L",
+    "µg/l": "μg/L",
+    "ug/l": "μg/L",
     "μmol/l": "μmol/L",
     "µmol/l": "μmol/L",
     "umol/l": "μmol/L",
@@ -162,6 +214,14 @@ _UNIT_NORMALIZE_MAP: dict[str, str] = {
     "ug/ml": "μg/mL",
     "mg/l": "mg/L",
     "g/l": "g/L",
+    "mg/24h": "mg/24h",
+    "g/24h": "g/24h",
+    "mmhg": "mmHg",
+    "kpa": "kPa",
+    "mosm/kgh2o": "mOsm/kg",
+    "mosmol/kgh2o": "mOsm/kg",
+    "{ph}": "{pH}",
+    "{ratio}": "{ratio}",
 }
 
 _TEST_GROUP_MAP: dict[str, str] = {
@@ -179,6 +239,21 @@ _TEST_GROUP_MAP: dict[str, str] = {
     "Monocytes_abs": "WBC",
     "Eosinophils_abs": "WBC",
     "Basophils_abs": "WBC",
+    "Immunoglobulin_IgA": "Immunoglobulin",
+    "Immunoglobulin_IgE": "Immunoglobulin",
+    "Immunoglobulin_IgG": "Immunoglobulin",
+    "Immunoglobulin_IgM": "Immunoglobulin",
+    "Arterial_PCO2": "Blood_gas_pressure",
+    "Arterial_PO2": "Blood_gas_pressure",
+    "Troponin_I": "Troponin",
+    "Troponin_T": "Troponin",
+    "Troponin_I_hs": "Troponin_hs",
+    "Troponin_T_hs": "Troponin_hs",
+    "NT_proBNP": "BNP",
+    "Complement_C3": "Complement",
+    "Complement_C4": "Complement",
+    "CA_125": "CA_marker",
+    "CA_19_9": "CA_marker",
 }
 
 
@@ -201,6 +276,11 @@ class NormalizedFinding:
     test_name: str | None = None
     value: float | None = None
     unit: str | None = None
+    narrative: str | None = None
+    reference_low: float | None = None
+    reference_high: float | None = None
+    reference_unit: str | None = None
+    reference_source: str | None = None
     # When direction == "N" (value in normal range), the abnormal phenotype(s)
     # this NORMAL result negates — i.e. the LR- rule-out targets. Empty for
     # abnormal/unknown findings. Used by the controller's LR- channel.
@@ -234,14 +314,23 @@ class FindingNormalizer:
             for alias in info.get("aliases", []):
                 self._alias_map[alias.lower()] = std_name
 
-    def normalize(self, finding: str) -> NormalizedFinding | None:
+    def normalize(
+        self,
+        finding: str,
+        *,
+        gender: str | None = None,
+        age_years: float | None = None,
+        specimen: str | None = None,
+    ) -> NormalizedFinding | None:
         """主入口: 尝试将单条 finding 正规化. 返回 None 如果不是数值型描述.
 
         复合串（如 "Leukocyte count: 57,500/mm3 with 35% blasts"）返回其中
         **方向异常**（H/L）的首个分句结果；若无异常分句则返回首个可解析分句。
         需要全部分句结果时用 :meth:`normalize_multi`。
         """
-        results = self.normalize_multi(finding)
+        results = self.normalize_multi(
+            finding, gender=gender, age_years=age_years, specimen=specimen
+        )
         if not results:
             return None
         for r in results:
@@ -249,7 +338,14 @@ class FindingNormalizer:
                 return r
         return results[0]
 
-    def normalize_multi(self, finding: str) -> list[NormalizedFinding]:
+    def normalize_multi(
+        self,
+        finding: str,
+        *,
+        gender: str | None = None,
+        age_years: float | None = None,
+        specimen: str | None = None,
+    ) -> list[NormalizedFinding]:
         """将一条（可能复合的）finding 拆成多个原子化验并分别正规化.
 
         - 单一化验 → 单元素列表
@@ -270,7 +366,9 @@ class FindingNormalizer:
                 parsed = self._parse_lab(clause)
                 if parsed is None:
                     continue
-                res = self._classify(parsed)
+                res = self._classify(
+                    parsed, gender=gender, age_years=age_years, specimen=specimen
+                )
             if res is None:
                 continue
             key = (res.hpo_term or res.test_name or clause).lower()
@@ -288,13 +386,24 @@ class FindingNormalizer:
         parts = [p.strip() for p in _COMPOUND_SPLIT_RE.split(text) if p and p.strip()]
         return parts or [text]
 
-    def normalize_batch(self, findings: list[str]) -> list[NormalizedFinding | None]:
-        return [self.normalize(f) for f in findings]
+    def normalize_batch(
+        self,
+        findings: list[str],
+        *,
+        gender: str | None = None,
+        age_years: float | None = None,
+        specimen: str | None = None,
+    ) -> list[NormalizedFinding | None]:
+        return [
+            self.normalize(f, gender=gender, age_years=age_years, specimen=specimen)
+            for f in findings
+        ]
 
     def _parse_lab(self, text: str) -> LabParsed | None:
         """Layer 1: 正则提取 test_name + value + unit."""
+        parse_text = self._prepare_lab_text(text)
         for pat in PATTERNS:
-            m = pat.search(text)
+            m = pat.search(parse_text)
             if m is None:
                 continue
             gd = m.groupdict()
@@ -331,7 +440,98 @@ class FindingNormalizer:
                 )
         return None
 
-    def _classify(self, parsed: LabParsed) -> NormalizedFinding | None:
+    @staticmethod
+    def _prepare_lab_text(text: str) -> str:
+        """Canonicalize typography without changing the preserved original."""
+        prepared = text.translate(_SUPERSCRIPT_TRANSLATION)
+        prepared = re.sub(r"(?i)mm\s+hg", "mmHg", prepared)
+        prepared = re.sub(
+            r"(?i)(?:x|×)\s*1000\s*/\s*([a-zμµ]+)",
+            lambda m: f"×1000/{m.group(1)}",
+            prepared,
+        )
+        # Case reports frequently flatten ×10⁹/L to either "× 10 9/L" or
+        # "× 109/L". Both are restored to an unambiguous parser token.
+        prepared = re.sub(
+            r"(?i)(?:x|×)\s*10(?!\s*00\s*/)\s*\^?\s*([0-9]{1,2})(?![0-9])\s*/\s*([a-zμµ]+)",
+            lambda m: f"×10^{m.group(1)}/{m.group(2)}",
+            prepared,
+        )
+        return prepared
+
+    def _extract_inline_reference(self, text: str, result_unit: str) -> dict | None:
+        """Return a report-local interval explicitly printed beside a result."""
+        prepared = self._prepare_lab_text(text)
+        match = _INLINE_REFERENCE_RE.search(prepared)
+        if match is None:
+            return None
+
+        def _number(value: str | None) -> float | None:
+            return float(value.replace(",", "")) if value else None
+
+        low = _number(match.group("low"))
+        high = _number(match.group("high"))
+        limit = _number(match.group("limit"))
+        op = match.group("op")
+        if limit is not None and op in {"<", "<=", "≤"}:
+            high = limit
+        elif limit is not None and op in {">", ">=", "≥"}:
+            low = limit
+
+        raw_unit = (match.group("unit") or result_unit or "").strip()
+        return {
+            "low": low,
+            "high": high,
+            "unit": self._normalize_unit(raw_unit) if raw_unit else "",
+            "source": "case_local_reference",
+            "reference_type": "report_local",
+        }
+
+    @staticmethod
+    def _direction_narrative(std_name: str, direction: str) -> str:
+        label = std_name.replace("_", " ").replace("-", " ")
+        if direction == "H":
+            return f"Increased {label}"
+        if direction == "L":
+            return f"Decreased {label}"
+        if direction == "N":
+            return f"{label} within the applicable reference interval"
+        return f"{label} could not be interpreted"
+
+    def _unknown_lab(
+        self,
+        parsed: LabParsed,
+        std_name: str,
+        source: str,
+        narrative: str,
+        ref: dict | None = None,
+    ) -> NormalizedFinding:
+        ref = ref or {}
+        return NormalizedFinding(
+            original=parsed.original,
+            hpo_term=None,
+            hpo_id=None,
+            direction="unknown",
+            confidence="low",
+            source=source,
+            test_name=std_name,
+            value=parsed.value,
+            unit=parsed.unit,
+            narrative=narrative,
+            reference_low=ref.get("low"),
+            reference_high=ref.get("high"),
+            reference_unit=ref.get("unit"),
+            reference_source=ref.get("source"),
+        )
+
+    def _classify(
+        self,
+        parsed: LabParsed,
+        *,
+        gender: str | None = None,
+        age_years: float | None = None,
+        specimen: str | None = None,
+    ) -> NormalizedFinding | None:
         """Layer 2: 结构化查表判断方向 + loinc2hpo 映射."""
         pct_result = self._try_percent_classification(parsed)
         if pct_result is not None:
@@ -339,50 +539,88 @@ class FindingNormalizer:
 
         std_name = self._resolve_std_name(parsed.test_name)
         if std_name is None:
-            return NormalizedFinding(
-                original=parsed.original,
-                hpo_term=None,
-                hpo_id=None,
-                direction="unknown",
-                confidence="low",
-                source="alias_miss",
-                test_name=parsed.test_name,
-                value=parsed.value,
-                unit=parsed.unit,
+            return self._unknown_lab(
+                parsed,
+                parsed.test_name,
+                "alias_miss",
+                "Laboratory test name was not found in the catalog",
             )
 
         info = self._lab_ranges[std_name]
         ref_ranges: list[dict] = info.get("reference_ranges", [])
-        if not ref_ranges:
-            return NormalizedFinding(
-                original=parsed.original,
-                hpo_term=None,
-                hpo_id=None,
-                direction="unknown",
-                confidence="low",
-                source="no_ref_range",
-                test_name=std_name,
-                value=parsed.value,
-                unit=parsed.unit,
+        inline_ref = self._extract_inline_reference(parsed.original, parsed.unit)
+        if inline_ref is not None:
+            ref = inline_ref
+        elif not ref_ranges:
+            source = (
+                "clinical_context_required"
+                if info.get("requires_local_or_clinical_context")
+                else "no_ref_range"
             )
+            return self._unknown_lab(
+                parsed,
+                std_name,
+                source,
+                "No universal reference interval is safe for this test; use the reporting laboratory interval and required clinical context",
+            )
+        else:
+            ref = self._pick_ref_range(
+                ref_ranges,
+                parsed_unit=parsed.unit,
+                gender=gender,
+                age_years=age_years,
+                specimen=specimen,
+            )
+            if (
+                ref is None
+                and gender is None
+                and age_years is None
+                and specimen is None
+            ):
+                ref = self._pick_consensus_ref_range(std_name, ref_ranges, parsed)
+            if ref is None:
+                return self._unknown_lab(
+                    parsed,
+                    std_name,
+                    "reference_context_required",
+                    "Sex, age, specimen, phase, or assay context is required to select a reference interval",
+                )
 
-        ref = self._pick_ref_range(ref_ranges)
         value = parsed.value
         confidence = "high"
 
-        ref_unit = ref.get("unit", "")
-        parsed_unit = parsed.unit or ""
+        ref_unit = self._normalize_unit(ref.get("unit", "")) if ref.get("unit") else ""
+        parsed_unit = self._normalize_unit(parsed.unit) if parsed.unit else ""
 
         if parsed_unit and ref_unit and parsed_unit != ref_unit:
             converted = self._convert_unit(std_name, value, parsed_unit, ref_unit)
             if converted is not None:
                 value = converted
             else:
-                confidence = "medium"
                 logger.debug(
                     "Unit mismatch for %s: got %s, expected %s, no conversion found",
                     std_name, parsed_unit, ref_unit,
                 )
+                return self._unknown_lab(
+                    parsed,
+                    std_name,
+                    "unit_mismatch",
+                    f"Unit {parsed_unit} is not compatible with reference unit {ref_unit}",
+                    ref,
+                )
+        elif not parsed_unit and ref_unit:
+            # Preserve historical support for unitless case-table values, but
+            # make the assumption visible and lower confidence.
+            confidence = "medium"
+
+        if inline_ref is None and (
+            info.get("prefer_local_reference")
+            or ref.get("reference_type") in {
+                "assay_specific_representative",
+                "method_specific_decision_limit",
+            }
+        ):
+            confidence = "medium"
 
         low = ref.get("low")
         high = ref.get("high")
@@ -391,6 +629,7 @@ class FindingNormalizer:
         loinc_codes = info.get("loinc_codes", [])
         scale = info.get("scale", "Qn")
         hpo_term, hpo_id = self._lookup_hpo(loinc_codes, scale, direction)
+        narrative = hpo_term or self._direction_narrative(std_name, direction)
 
         negated: list[str] = []
         if direction == "N":
@@ -406,10 +645,15 @@ class FindingNormalizer:
             hpo_id=hpo_id,
             direction=direction,
             confidence=confidence,
-            source="loinc2hpo",
+            source="case_local_reference+loinc2hpo" if inline_ref is not None else "loinc2hpo",
             test_name=std_name,
             value=parsed.value,
             unit=parsed.unit,
+            narrative=narrative,
+            reference_low=low,
+            reference_high=high,
+            reference_unit=ref_unit,
+            reference_source=ref.get("source"),
             negated_hpo_terms=negated,
         )
 
@@ -563,23 +807,125 @@ class FindingNormalizer:
         return best
 
     def _normalize_unit(self, raw_unit: str) -> str:
-        key = raw_unit.lower().strip().lstrip("/")
-        if raw_unit.startswith("/"):
-            key = "/" + key
-        normalized = _UNIT_NORMALIZE_MAP.get(key)
-        if normalized:
-            return normalized
-        full_key = raw_unit.lower().strip()
-        normalized = _UNIT_NORMALIZE_MAP.get(full_key)
-        if normalized:
-            return normalized
-        return raw_unit
+        unit = self._prepare_lab_text(raw_unit or "").strip().strip(".,;()")
+        if not unit:
+            return ""
+        unit = unit.replace("µ", "μ")
+        suffix = ""
+        suffix_match = re.search(r"(?i)\s+(FEU|DDU)$", unit)
+        if suffix_match:
+            suffix = " " + suffix_match.group(1).upper()
+            unit = unit[: suffix_match.start()].strip()
+        key = re.sub(r"\s+", "", unit).lower()
+        normalized = _UNIT_NORMALIZE_MAP.get(key, unit)
+        return normalized + suffix
 
-    def _pick_ref_range(self, ranges: list[dict]) -> dict:
-        for r in ranges:
-            if r.get("gender") == "any":
-                return r
-        return ranges[0]
+    def _pick_ref_range(
+        self,
+        ranges: list[dict],
+        *,
+        parsed_unit: str = "",
+        gender: str | None = None,
+        age_years: float | None = None,
+        specimen: str | None = None,
+    ) -> dict | None:
+        candidates = list(ranges)
+
+        if specimen:
+            specimen_key = specimen.casefold().strip()
+            matched = [
+                r
+                for r in candidates
+                if not r.get("specimen")
+                or specimen_key in str(r["specimen"]).casefold()
+                or str(r["specimen"]).casefold() in specimen_key
+            ]
+            if matched:
+                candidates = matched
+
+        normalized_gender = (gender or "").casefold().strip()
+        normalized_gender = {"m": "male", "man": "male", "f": "female", "woman": "female"}.get(
+            normalized_gender, normalized_gender
+        )
+        if normalized_gender:
+            matched = [
+                r
+                for r in candidates
+                if str(r.get("gender", "any")).casefold() in {"any", normalized_gender}
+            ]
+            if matched:
+                exact = [
+                    r for r in matched if str(r.get("gender", "any")).casefold() == normalized_gender
+                ]
+                candidates = exact or matched
+        else:
+            any_gender = [
+                r for r in candidates if str(r.get("gender", "any")).casefold() == "any"
+            ]
+            if any_gender:
+                candidates = any_gender
+
+        if age_years is not None:
+            matched = [
+                r
+                for r in candidates
+                if (r.get("age_min") is None or age_years >= r["age_min"])
+                and (r.get("age_max") is None or age_years <= r["age_max"])
+            ]
+            if matched:
+                candidates = matched
+        else:
+            unstratified = [
+                r for r in candidates if r.get("age_min") is None and r.get("age_max") is None
+            ]
+            if unstratified:
+                candidates = unstratified
+
+        unit = self._normalize_unit(parsed_unit) if parsed_unit else ""
+        if unit:
+            exact_unit = [
+                r for r in candidates if self._normalize_unit(str(r.get("unit", ""))) == unit
+            ]
+            if exact_unit:
+                candidates = exact_unit
+
+        if not candidates:
+            return None
+        distinct = {
+            (r.get("low"), r.get("high"), self._normalize_unit(str(r.get("unit", ""))))
+            for r in candidates
+        }
+        # Never silently select male/female, cycle-phase, or assay-stratified
+        # limits when the caller did not provide enough context.
+        if len(distinct) > 1:
+            return None
+        return candidates[0]
+
+    def _pick_consensus_ref_range(
+        self, std_name: str, ranges: list[dict], parsed: LabParsed
+    ) -> dict | None:
+        """Use stratified ranges only when every stratum yields one direction.
+
+        A hemoglobin of 7 g/dL is low for every adult sex stratum and can be
+        safely normalized without sex metadata; 13 g/dL is ambiguous and must
+        remain unknown. The same rule protects sex-specific hs-troponin limits.
+        """
+        directions: set[str] = set()
+        observed_unit = self._normalize_unit(parsed.unit) if parsed.unit else ""
+        for ref in ranges:
+            target_unit = self._normalize_unit(str(ref.get("unit", "")))
+            value = parsed.value
+            if observed_unit and target_unit and observed_unit != target_unit:
+                converted = self._convert_unit(
+                    std_name, value, observed_unit, target_unit
+                )
+                if converted is None:
+                    return None
+                value = converted
+            directions.add(
+                self._determine_direction(value, ref.get("low"), ref.get("high"))
+            )
+        return ranges[0] if len(directions) == 1 else None
 
     def _convert_unit(
         self, std_name: str, value: float, from_unit: str, to_unit: str
@@ -587,13 +933,15 @@ class FindingNormalizer:
         test_group = _TEST_GROUP_MAP.get(std_name, std_name)
 
         convs = self._unit_conversions.get(test_group, [])
+        from_unit = self._normalize_unit(from_unit)
+        to_unit = self._normalize_unit(to_unit)
         for conv in convs:
             conv_from = self._normalize_unit(conv["from"])
             conv_to = self._normalize_unit(conv["to"])
             if conv_from == from_unit and conv_to == to_unit:
                 return value * conv["factor"]
-            if conv_from == from_unit:
-                return value * conv["factor"]
+            if conv_to == from_unit and conv_from == to_unit:
+                return value / conv["factor"]
 
         return None
 

@@ -1,0 +1,837 @@
+{
+  "schema_version": "1.0",
+  "generated_on": "2026-07-19",
+  "source_manifest": "lab_reference_sources.json",
+  "unit_conversion_sources": ["UCUM_2_2", "NBME_2026", "ABIM_2026"],
+  "patches": {
+    "WBC": {
+      "add_aliases": ["leukocyte count", "white blood cells", "total leucocyte count", "total leukocyte count"]
+    },
+    "BUN": {
+      "remove_aliases": ["urea"]
+    },
+    "BNP": {
+      "remove_aliases": ["nt-probnp"],
+      "add_aliases": ["brain-type natriuretic peptide", "b-type natriuretic protein"]
+    },
+    "CRP": {
+      "remove_aliases": ["hs-crp", "high sensitivity crp"]
+    },
+    "Troponin_I": {
+      "remove_aliases": ["troponin", "hs-troponin", "high sensitivity troponin"],
+      "add_aliases": ["conventional troponin i"]
+    },
+    "D-dimer": {
+      "remove_aliases": ["fibrin degradation product"],
+      "replace_loinc_codes": ["48067-3"],
+      "replace_reference_ranges": [
+        {
+          "low": 0,
+          "high": 500,
+          "unit": "ng/mL FEU",
+          "gender": "any",
+          "age": "adult",
+          "specimen": "citrated plasma",
+          "reference_type": "method_specific_decision_limit",
+          "source": "MAYO_DDIMER_FEU"
+        }
+      ],
+      "set": {
+        "caution": "FEU and DDU are distinct reporting systems. Do not classify an unqualified D-dimer unit or convert FEU to DDU without assay validation."
+      }
+    },
+    "Triglycerides": {
+      "add_aliases": ["triglyceride"]
+    },
+    "GGT": {
+      "add_aliases": ["gamma-glutamyltransferase", "gamma glutamyltransferase"]
+    },
+    "PSA": {
+      "add_aliases": ["serum prostatic-specific antigen", "prostatic-specific antigen"],
+      "replace_reference_ranges": [],
+      "set": {
+        "requires_local_or_clinical_context": true,
+        "interpretation_sources": ["ABIM_2026", "AUA 2023"],
+        "caution": "ABIM 2026 lists no single normal or abnormal PSA level. Interpret using age, prior results, screening context, and the reporting laboratory rather than a universal 4 ng/mL cutoff."
+      }
+    },
+    "Vitamin_D": {
+      "set": {
+        "prefer_local_reference": true,
+        "caution": "The legacy 30-100 ng/mL interval comes from the superseded 2011 Endocrine Society guideline. The 2024 disease-prevention guideline does not endorse a universal serum target for healthy adults."
+      }
+    },
+    "TSH": {
+      "set": {
+        "prefer_local_reference": true
+      }
+    },
+    "Free_T4": {
+      "set": {
+        "prefer_local_reference": true
+      }
+    },
+    "Free_T3": {
+      "set": {
+        "prefer_local_reference": true
+      }
+    }
+  },
+  "additions": {
+    "Globulin": {
+      "loinc_codes": ["10834-0"],
+      "reference_ranges": [
+        {"low": 2.3, "high": 3.5, "unit": "g/dL", "gender": "any", "age": "adult", "specimen": "serum", "source": "NBME_2026"}
+      ],
+      "aliases": ["globulin", "serum globulin", "calculated globulin", "total globulin"],
+      "scale": "Qn"
+    },
+    "Transferrin": {
+      "loinc_codes": ["3034-6"],
+      "reference_ranges": [
+        {"low": 200, "high": 360, "unit": "mg/dL", "gender": "any", "age": "adult", "specimen": "serum or plasma", "source": "NBME_2026"}
+      ],
+      "aliases": ["transferrin", "serum transferrin"],
+      "scale": "Qn"
+    },
+    "Immunoglobulin_IgA": {
+      "loinc_codes": ["2458-8"],
+      "reference_ranges": [
+        {"low": 76, "high": 390, "unit": "mg/dL", "gender": "any", "age": "adult", "specimen": "serum or plasma", "source": "NBME_2026"}
+      ],
+      "aliases": ["immunoglobulin a", "serum iga", "iga level", "iga"],
+      "scale": "Qn"
+    },
+    "Immunoglobulin_IgE": {
+      "loinc_codes": ["19113-0"],
+      "reference_ranges": [
+        {"low": 0, "high": 380, "unit": "IU/mL", "gender": "any", "age": "adult", "specimen": "serum or plasma", "source": "NBME_2026"}
+      ],
+      "aliases": ["immunoglobulin e", "total ige", "serum ige", "ige level", "ige"],
+      "scale": "Qn"
+    },
+    "Immunoglobulin_IgG": {
+      "loinc_codes": ["2465-3"],
+      "reference_ranges": [
+        {"low": 650, "high": 1500, "unit": "mg/dL", "gender": "any", "age": "adult", "specimen": "serum or plasma", "source": "NBME_2026"}
+      ],
+      "aliases": ["immunoglobulin g", "total igg", "serum igg", "igg level", "igg"],
+      "scale": "Qn"
+    },
+    "Immunoglobulin_IgM": {
+      "loinc_codes": ["2472-9"],
+      "reference_ranges": [
+        {"low": 50, "high": 300, "unit": "mg/dL", "gender": "any", "age": "adult", "specimen": "serum or plasma", "source": "NBME_2026"}
+      ],
+      "aliases": ["immunoglobulin m", "total igm", "serum igm", "igm level", "igm"],
+      "scale": "Qn"
+    },
+    "Complement_C3": {
+      "loinc_codes": ["4485-9"],
+      "reference_ranges": [
+        {"low": 100, "high": 233, "unit": "mg/dL", "gender": "any", "age": "adult", "specimen": "serum", "source": "ABIM_2026"}
+      ],
+      "aliases": ["complement c3", "c3 complement", "serum c3", "c3 level", "c3"],
+      "scale": "Qn"
+    },
+    "Complement_C4": {
+      "loinc_codes": ["4498-2"],
+      "reference_ranges": [
+        {"low": 14, "high": 48, "unit": "mg/dL", "gender": "any", "age": "adult", "specimen": "serum", "source": "ABIM_2026"}
+      ],
+      "aliases": ["complement c4", "c4 complement", "serum c4", "c4 level", "c4"],
+      "scale": "Qn"
+    },
+    "CD4_count": {
+      "loinc_codes": ["24467-3"],
+      "reference_ranges": [
+        {"low": 500, "high": null, "unit": "/μL", "gender": "any", "age": "adult", "specimen": "blood", "source": "NBME_2026"}
+      ],
+      "aliases": ["cd4 count", "absolute cd4 count", "cd4 t-lymphocyte count", "cd4 cells"],
+      "scale": "Qn",
+      "caution": "Do not confuse absolute CD4 count with CD4 percentage."
+    },
+    "Arterial_pH": {
+      "loinc_codes": ["2744-1"],
+      "reference_ranges": [
+        {"low": 7.35, "high": 7.45, "unit": "{pH}", "gender": "any", "age": "adult", "specimen": "arterial blood", "source": "NBME_2026"}
+      ],
+      "aliases": ["arterial ph", "abg ph", "blood gas ph", "arterial blood ph"],
+      "scale": "Qn"
+    },
+    "Arterial_PCO2": {
+      "loinc_codes": ["2019-8"],
+      "reference_ranges": [
+        {"low": 33, "high": 45, "unit": "mmHg", "gender": "any", "age": "adult", "specimen": "arterial blood", "source": "NBME_2026"}
+      ],
+      "aliases": ["arterial pco2", "paco2", "abg pco2", "pco2", "arterial carbon dioxide pressure"],
+      "scale": "Qn"
+    },
+    "Arterial_PO2": {
+      "loinc_codes": ["2703-7"],
+      "reference_ranges": [
+        {"low": 75, "high": 105, "unit": "mmHg", "gender": "any", "age": "adult", "specimen": "arterial blood", "source": "NBME_2026"}
+      ],
+      "aliases": ["arterial po2", "pao2", "abg po2", "po2", "arterial oxygen pressure"],
+      "scale": "Qn"
+    },
+    "CSF_WBC": {
+      "loinc_codes": ["806-0"],
+      "reference_ranges": [
+        {"low": 0, "high": 5, "unit": "/μL", "gender": "any", "age": "adult", "specimen": "cerebrospinal fluid", "source": "NBME_2026"}
+      ],
+      "aliases": ["csf wbc", "csf leukocytes", "csf white cell count", "csf cell count"],
+      "scale": "Qn"
+    },
+    "CSF_glucose": {
+      "loinc_codes": ["2342-4"],
+      "reference_ranges": [
+        {"low": 40, "high": 70, "unit": "mg/dL", "gender": "any", "age": "adult", "specimen": "cerebrospinal fluid", "source": "NBME_2026"}
+      ],
+      "aliases": ["csf glucose", "cerebrospinal fluid glucose", "spinal fluid glucose"],
+      "scale": "Qn"
+    },
+    "CSF_protein": {
+      "loinc_codes": ["2880-3"],
+      "reference_ranges": [
+        {"low": null, "high": 40, "unit": "mg/dL", "gender": "any", "age": "adult", "specimen": "cerebrospinal fluid", "source": "NBME_2026"}
+      ],
+      "aliases": ["csf protein", "csf total protein", "cerebrospinal fluid protein", "spinal fluid protein"],
+      "scale": "Qn"
+    },
+    "Urea": {
+      "loinc_codes": ["22664-7", "3091-6"],
+      "reference_ranges": [
+        {"low": 2.5, "high": 7.8, "unit": "mmol/L", "gender": "any", "age": "adult", "specimen": "serum or plasma", "source": "NHS_UREA"}
+      ],
+      "aliases": ["serum urea", "plasma urea", "urea level", "urea"],
+      "scale": "Qn",
+      "caution": "Urea and blood urea nitrogen (BUN) are different quantities and must not share an unqualified numeric range."
+    },
+    "Total_T3": {
+      "loinc_codes": ["3053-6"],
+      "reference_ranges": [
+        {"low": 100, "high": 200, "unit": "ng/dL", "gender": "any", "age": "adult", "specimen": "serum", "source": "NBME_2026"}
+      ],
+      "aliases": ["total t3", "serum t3", "total triiodothyronine", "triiodothyronine total"],
+      "scale": "Qn"
+    },
+    "Total_T4": {
+      "loinc_codes": ["3026-2"],
+      "reference_ranges": [
+        {"low": 5, "high": 12, "unit": "μg/dL", "gender": "any", "age": "adult", "specimen": "serum", "source": "NBME_2026"}
+      ],
+      "aliases": ["total t4", "serum t4", "total thyroxine", "thyroxine total"],
+      "scale": "Qn"
+    },
+    "Troponin_T": {
+      "loinc_codes": ["6598-7"],
+      "reference_ranges": [
+        {"low": 0, "high": 0.01, "unit": "ng/mL", "gender": "any", "age": "adult", "specimen": "serum", "reference_type": "representative_upper_reference_limit", "source": "ABIM_2026"}
+      ],
+      "aliases": ["troponin t", "cardiac troponin t", "ctnt", "tnt", "conventional troponin t"],
+      "scale": "Qn",
+      "caution": "Do not apply this conventional-assay limit to high-sensitivity troponin T."
+    },
+    "Troponin_I_hs": {
+      "loinc_codes": ["89579-7"],
+      "reference_ranges": [
+        {"low": 0, "high": 15, "unit": "ng/L", "gender": "female", "age": "adult", "specimen": "plasma", "reference_type": "assay_specific_representative", "source": "ABIM_2026"},
+        {"low": 0, "high": 20, "unit": "ng/L", "gender": "male", "age": "adult", "specimen": "plasma", "reference_type": "assay_specific_representative", "source": "ABIM_2026"}
+      ],
+      "aliases": ["high sensitivity troponin i", "high-sensitivity troponin i", "hs troponin i", "hs-troponin i", "hs-ctni", "hsctni"],
+      "scale": "Qn",
+      "prefer_local_reference": true,
+      "caution": "Vendor assays have different 99th-percentile limits. Use the reporting laboratory limit when available."
+    },
+    "Troponin_T_hs": {
+      "loinc_codes": ["67151-1"],
+      "reference_ranges": [
+        {"low": 0, "high": 10, "unit": "ng/L", "gender": "female", "age": "adult", "specimen": "plasma", "reference_type": "assay_specific_representative", "source": "ABIM_2026"},
+        {"low": 0, "high": 15, "unit": "ng/L", "gender": "male", "age": "adult", "specimen": "plasma", "reference_type": "assay_specific_representative", "source": "ABIM_2026"}
+      ],
+      "aliases": ["high sensitivity troponin t", "high-sensitivity troponin t", "hs troponin t", "hs-troponin t", "hs-ctnt", "hsctnt"],
+      "scale": "Qn",
+      "prefer_local_reference": true,
+      "caution": "Vendor assays have different 99th-percentile limits. Use the reporting laboratory limit when available."
+    },
+    "NT_proBNP": {
+      "loinc_codes": ["33762-6"],
+      "reference_ranges": [],
+      "decision_limits": [
+        {"interpretation": "heart_failure_unlikely", "operator": "<=", "value": 300, "unit": "pg/mL", "age_min": 18, "source": "ABIM_2026"},
+        {"interpretation": "high_probability_heart_failure", "operator": ">=", "value": 450, "unit": "pg/mL", "age_min": 18, "age_max": 49, "egfr_min": 60, "source": "ABIM_2026"},
+        {"interpretation": "high_probability_heart_failure", "operator": ">=", "value": 900, "unit": "pg/mL", "age_min": 50, "age_max": 75, "egfr_min": 60, "source": "ABIM_2026"},
+        {"interpretation": "high_probability_heart_failure", "operator": ">=", "value": 1800, "unit": "pg/mL", "age_min": 75, "egfr_min": 60, "source": "ABIM_2026"},
+        {"interpretation": "high_probability_heart_failure", "operator": ">=", "value": 1200, "unit": "pg/mL", "age_min": 18, "egfr_max": 60, "source": "ABIM_2026"}
+      ],
+      "aliases": ["nt-probnp", "nt probnp", "nt-pro-bnp", "nt probnp level", "n-terminal pro-bnp", "n-terminal pro bnp"],
+      "scale": "Qn",
+      "requires_local_or_clinical_context": true,
+      "caution": "These are diagnostic decision limits, not a single normal interval; age, renal function, and clinical setting are required."
+    },
+    "hs_CRP": {
+      "loinc_codes": ["30522-7"],
+      "reference_ranges": [],
+      "decision_limits": [
+        {"interpretation": "low_cardiovascular_risk", "operator": "<", "value": 1, "unit": "mg/L", "source": "ABIM_2026"},
+        {"interpretation": "average_cardiovascular_risk", "low": 1, "high": 3, "unit": "mg/L", "source": "ABIM_2026"},
+        {"interpretation": "high_cardiovascular_risk", "operator": ">", "value": 3, "unit": "mg/L", "source": "ABIM_2026"}
+      ],
+      "aliases": ["hs-crp", "hs crp", "high sensitivity crp", "high-sensitivity c-reactive protein"],
+      "scale": "Qn",
+      "requires_local_or_clinical_context": true,
+      "caution": "Cardiovascular-risk categories are not interchangeable with the inflammatory CRP reference interval."
+    },
+    "Gastrin": {
+      "loinc_codes": ["2333-3"],
+      "reference_ranges": [
+        {"low": 0, "high": 100, "unit": "pg/mL", "gender": "any", "age": "adult", "specimen": "serum", "source": "ABIM_2026"}
+      ],
+      "aliases": ["gastrin", "serum gastrin", "fasting gastrin", "gastrin level"],
+      "scale": "Qn",
+      "caution": "Fasting status, proton-pump inhibitors, gastric acidity, and assay method affect interpretation."
+    },
+    "CA_125": {
+      "loinc_codes": ["10334-1"],
+      "reference_ranges": [
+        {"low": 0, "high": 35, "unit": "U/mL", "gender": "any", "age": "adult", "specimen": "serum or plasma", "reference_type": "decision_limit", "source": "ABIM_2026"}
+      ],
+      "aliases": ["ca-125", "ca 125", "ca125", "cancer antigen 125"],
+      "scale": "Qn",
+      "caution": "A tumor-marker decision limit is not a cancer screening diagnosis and can be elevated in benign conditions."
+    },
+    "CA_19_9": {
+      "loinc_codes": ["24108-3"],
+      "reference_ranges": [
+        {"low": 0, "high": 37, "unit": "U/mL", "gender": "any", "age": "adult", "specimen": "serum", "reference_type": "decision_limit", "source": "ABIM_2026"}
+      ],
+      "aliases": ["ca 19-9", "ca19-9", "ca 19 9", "carbohydrate antigen 19-9"],
+      "scale": "Qn",
+      "caution": "A tumor-marker decision limit is not a cancer screening diagnosis and depends on method and clinical context."
+    },
+    "CEA": {
+      "loinc_codes": ["2039-6"],
+      "reference_ranges": [
+        {"low": 0, "high": 2.5, "unit": "ng/mL", "gender": "any", "age": "adult", "specimen": "plasma", "reference_type": "decision_limit", "source": "ABIM_2026"}
+      ],
+      "aliases": ["cea", "carcinoembryonic antigen", "serum cea", "plasma cea"],
+      "scale": "Qn",
+      "caution": "Smoking status, assay, and clinical purpose affect interpretation."
+    },
+    "Beta_hCG": {
+      "loinc_codes": ["21198-7"],
+      "reference_ranges": [],
+      "decision_limits": [
+        {"population": "female_premenopausal_nonpregnant", "operator": "<", "value": 1.0, "unit": "U/L", "source": "ABIM_2026"},
+        {"population": "female_postmenopausal", "operator": "<", "value": 7.0, "unit": "U/L", "source": "ABIM_2026"},
+        {"population": "male", "operator": "<", "value": 1.4, "unit": "U/L", "source": "ABIM_2026"}
+      ],
+      "aliases": ["beta-hcg", "beta hcg", "β-hcg", "serum beta hcg", "human chorionic gonadotropin beta"],
+      "scale": "Qn",
+      "requires_local_or_clinical_context": true,
+      "caution": "Pregnancy and menopausal status are mandatory for interpretation; no universal adult interval is applied."
+    },
+    "Ionized_calcium": {
+      "loinc_codes": ["1994-3"],
+      "reference_ranges": [
+        {"low": 1.16, "high": 1.31, "unit": "mmol/L", "gender": "any", "age": "adult", "specimen": "serum", "source": "ABIM_2026"}
+      ],
+      "aliases": ["ionized calcium", "ionised calcium", "free calcium", "ica"],
+      "scale": "Qn",
+      "caution": "Do not compare ionized calcium with total calcium ranges."
+    },
+    "Beta2_microglobulin": {
+      "loinc_codes": ["1952-1"],
+      "reference_ranges": [
+        {"low": 0.54, "high": 2.75, "unit": "mg/L", "gender": "any", "age": "adult", "specimen": "serum", "source": "ABIM_2026"}
+      ],
+      "aliases": ["beta2-microglobulin", "beta-2-microglobulin", "β2-microglobulin", "b2m"],
+      "scale": "Qn"
+    },
+    "Rheumatoid_factor": {
+      "loinc_codes": ["11572-5"],
+      "reference_ranges": [
+        {"low": 0, "high": 24, "unit": "IU/mL", "gender": "any", "age": "adult", "specimen": "serum", "reference_type": "method_specific_decision_limit", "source": "ABIM_2026"}
+      ],
+      "aliases": ["rheumatoid factor", "rf level", "serum rf"],
+      "scale": "Qn",
+      "caution": "The 24 IU/mL limit is for nephelometry; latex titers use a different reporting system."
+    },
+    "ACE": {
+      "loinc_codes": ["2742-5"],
+      "reference_ranges": [
+        {"low": 8, "high": 53, "unit": "U/L", "gender": "any", "age": "adult", "specimen": "serum", "source": "ABIM_2026"}
+      ],
+      "aliases": ["angiotensin-converting enzyme", "angiotensin converting enzyme", "serum ace", "ace level"],
+      "scale": "Qn"
+    },
+    "Aldolase": {
+      "loinc_codes": ["1761-6"],
+      "reference_ranges": [
+        {"low": 0.8, "high": 3.0, "unit": "IU/mL", "gender": "any", "age": "adult", "specimen": "serum", "source": "ABIM_2026"}
+      ],
+      "aliases": ["aldolase", "serum aldolase", "aldolase level"],
+      "scale": "Qn",
+      "prefer_local_reference": true
+    },
+    "Alpha1_antitrypsin": {
+      "loinc_codes": ["1825-9"],
+      "reference_ranges": [
+        {"low": 150, "high": 350, "unit": "mg/dL", "gender": "any", "age": "adult", "specimen": "serum", "source": "ABIM_2026"}
+      ],
+      "aliases": ["alpha1-antitrypsin", "alpha-1-antitrypsin", "alpha 1 antitrypsin", "aat level"],
+      "scale": "Qn"
+    },
+    "ACTH": {
+      "loinc_codes": ["2141-0"],
+      "reference_ranges": [
+        {"low": 10, "high": 60, "unit": "pg/mL", "gender": "any", "age": "adult", "specimen": "plasma", "source": "ABIM_2026"}
+      ],
+      "aliases": ["acth", "adrenocorticotropic hormone", "corticotropin", "plasma acth"],
+      "scale": "Qn",
+      "caution": "Collection time and handling materially affect ACTH interpretation."
+    },
+    "FSH": {
+      "loinc_codes": ["15067-2"],
+      "reference_ranges": [],
+      "decision_limits": [
+        {"population": "female_follicular_or_luteal", "low": 2, "high": 9, "unit": "mIU/mL", "source": "ABIM_2026"},
+        {"population": "female_midcycle", "low": 4, "high": 22, "unit": "mIU/mL", "source": "ABIM_2026"},
+        {"population": "female_postmenopausal", "operator": ">", "value": 30, "unit": "mIU/mL", "source": "ABIM_2026"},
+        {"population": "male_adult", "low": 1, "high": 7, "unit": "mIU/mL", "source": "ABIM_2026"}
+      ],
+      "aliases": ["fsh", "follicle-stimulating hormone", "follicle stimulating hormone", "follitropin"],
+      "scale": "Qn",
+      "requires_local_or_clinical_context": true
+    },
+    "LH": {
+      "loinc_codes": ["10501-5"],
+      "reference_ranges": [],
+      "decision_limits": [
+        {"population": "female_follicular_or_luteal", "low": 1, "high": 12, "unit": "mIU/mL", "source": "ABIM_2026"},
+        {"population": "female_midcycle", "low": 9, "high": 80, "unit": "mIU/mL", "source": "ABIM_2026"},
+        {"population": "female_postmenopausal", "operator": ">", "value": 30, "unit": "mIU/mL", "source": "ABIM_2026"},
+        {"population": "male_adult", "low": 2, "high": 9, "unit": "mIU/mL", "source": "ABIM_2026"}
+      ],
+      "aliases": ["luteinizing hormone", "luteinising hormone", "lutropin", "lh level"],
+      "scale": "Qn",
+      "requires_local_or_clinical_context": true
+    },
+    "Testosterone_total": {
+      "loinc_codes": ["2986-8"],
+      "reference_ranges": [
+        {"low": 18, "high": 54, "unit": "ng/dL", "gender": "female", "age": "adult", "specimen": "serum", "source": "ABIM_2026"},
+        {"low": 291, "high": 1100, "unit": "ng/dL", "gender": "male", "age": "adult", "specimen": "serum", "source": "ABIM_2026"}
+      ],
+      "aliases": ["total testosterone", "serum testosterone", "testosterone level", "testosterone"],
+      "scale": "Qn",
+      "prefer_local_reference": true
+    },
+    "Estradiol": {
+      "loinc_codes": ["2243-4"],
+      "reference_ranges": [],
+      "decision_limits": [
+        {"population": "female_follicular", "low": 10, "high": 180, "unit": "pg/mL", "source": "ABIM_2026"},
+        {"population": "female_midcycle", "low": 100, "high": 300, "unit": "pg/mL", "source": "ABIM_2026"},
+        {"population": "female_luteal", "low": 40, "high": 200, "unit": "pg/mL", "source": "ABIM_2026"},
+        {"population": "female_postmenopausal", "operator": "<", "value": 10, "unit": "pg/mL", "source": "ABIM_2026"},
+        {"population": "male", "low": 20, "high": 50, "unit": "pg/mL", "source": "ABIM_2026"}
+      ],
+      "aliases": ["estradiol", "e2 level", "serum e2", "oestradiol"],
+      "scale": "Qn",
+      "requires_local_or_clinical_context": true
+    },
+    "Free_kappa_light_chain": {
+      "loinc_codes": [],
+      "reference_ranges": [
+        {"low": 3.3, "high": 19.4, "unit": "mg/L", "gender": "any", "age": "adult", "specimen": "serum", "source": "ABIM_2026"}
+      ],
+      "aliases": ["free kappa light chain", "serum free kappa", "kappa free light chain"],
+      "scale": "Qn"
+    },
+    "Free_lambda_light_chain": {
+      "loinc_codes": [],
+      "reference_ranges": [
+        {"low": 5.7, "high": 26.3, "unit": "mg/L", "gender": "any", "age": "adult", "specimen": "serum", "source": "ABIM_2026"}
+      ],
+      "aliases": ["free lambda light chain", "serum free lambda", "lambda free light chain"],
+      "scale": "Qn"
+    },
+    "Kappa_lambda_ratio": {
+      "loinc_codes": [],
+      "reference_ranges": [
+        {"low": 0.26, "high": 1.65, "unit": "{ratio}", "gender": "any", "age": "adult", "specimen": "serum", "source": "ABIM_2026"}
+      ],
+      "aliases": ["kappa lambda ratio", "kappa-to-lambda ratio", "free light chain ratio", "flc ratio"],
+      "scale": "Qn",
+      "prefer_local_reference": true
+    },
+    "Interleukin_6": {
+      "loinc_codes": ["26881-3"],
+      "reference_ranges": [],
+      "aliases": ["il-6", "il 6", "interleukin-6", "interleukin 6"],
+      "scale": "Qn",
+      "requires_local_or_clinical_context": true,
+      "interpretation_sources": ["LOINC_2_82"],
+      "caution": "No platform-independent reference interval; use the assay and reporting laboratory interval."
+    },
+    "Interferon_gamma": {
+      "loinc_codes": [],
+      "reference_ranges": [],
+      "aliases": ["ifn-γ", "ifn γ", "ifn-gamma", "interferon gamma", "interferon-γ"],
+      "scale": "Qn",
+      "requires_local_or_clinical_context": true,
+      "interpretation_sources": ["LOINC_2_82"],
+      "caution": "No platform-independent reference interval; use the assay and reporting laboratory interval."
+    },
+    "Interleukin_8": {
+      "loinc_codes": [],
+      "reference_ranges": [],
+      "aliases": ["il-8", "il 8", "interleukin-8", "interleukin 8"],
+      "scale": "Qn",
+      "requires_local_or_clinical_context": true,
+      "interpretation_sources": ["LOINC_2_82"],
+      "caution": "No platform-independent reference interval; use the assay and reporting laboratory interval."
+    },
+    "TNF_alpha": {
+      "loinc_codes": [],
+      "reference_ranges": [],
+      "aliases": ["tnf-α", "tnf α", "tnf-alpha", "tumor necrosis factor alpha"],
+      "scale": "Qn",
+      "requires_local_or_clinical_context": true,
+      "interpretation_sources": ["LOINC_2_82"],
+      "caution": "No platform-independent reference interval; use the assay and reporting laboratory interval."
+    },
+    "Adenosine_deaminase": {
+      "loinc_codes": [],
+      "reference_ranges": [],
+      "aliases": ["adenosine deaminase", "ada level", "ada activity"],
+      "scale": "Qn",
+      "requires_local_or_clinical_context": true,
+      "interpretation_sources": ["LOINC_2_82"],
+      "caution": "Cutoffs depend on specimen (for example pleural, peritoneal, or CSF), method, and diagnostic purpose."
+    },
+    "Anti_factor_Xa": {
+      "loinc_codes": [],
+      "reference_ranges": [],
+      "decision_limits": [
+        {"low": 0.3, "high": 0.7, "unit": "IU/mL", "population": "unfractionated_heparin_therapeutic", "source": "ABIM_2026"}
+      ],
+      "aliases": ["anti-factor xa activity", "anti factor xa activity", "anti-xa activity", "anti xa activity"],
+      "scale": "Qn",
+      "requires_local_or_clinical_context": true,
+      "caution": "This is a therapeutic target for standard unfractionated heparin, not a normal population reference interval; drug and sampling time are required."
+    },
+    "Anti_thyroglobulin_antibody": {
+      "loinc_codes": [],
+      "reference_ranges": [
+        {"low": 0, "high": 20, "unit": "U/mL", "gender": "any", "age": "adult", "specimen": "serum", "reference_type": "method_specific_representative", "source": "ABIM_2026"}
+      ],
+      "aliases": ["anti-thyroglobulin antibody", "antithyroglobulin antibody", "anti-tg antibody", "anti-tg antibody titer"],
+      "scale": "Qn",
+      "prefer_local_reference": true
+    },
+    "Beta_D_glucan": {
+      "loinc_codes": [],
+      "reference_ranges": [
+        {"low": 0, "high": 60, "unit": "pg/mL", "gender": "any", "age": "adult", "specimen": "serum", "reference_type": "method_specific_representative", "source": "ABIM_2026"}
+      ],
+      "aliases": ["beta-d-glucan", "β-d-glucan", "(1,3)-beta-d-glucan", "d-glucan level", "beta d glucan"],
+      "scale": "Qn",
+      "prefer_local_reference": true,
+      "caution": "Assays and positivity cutoffs differ; prefer the reporting laboratory interpretation."
+    },
+    "Beta_hydroxybutyrate": {
+      "loinc_codes": [],
+      "reference_ranges": [
+        {"low": 0, "high": 0.4, "unit": "mmol/L", "gender": "any", "age": "adult", "specimen": "serum", "source": "ABIM_2026"}
+      ],
+      "aliases": ["beta-hydroxybutyrate", "β-hydroxybutyrate", "serum beta hydroxybutyrate", "serum β-hydroxybutyrate"],
+      "scale": "Qn"
+    },
+    "Growth_hormone": {
+      "loinc_codes": [],
+      "reference_ranges": [
+        {"low": 0, "high": 5, "unit": "ng/mL", "gender": "any", "age": "adult", "specimen": "serum", "population": "resting", "source": "ABIM_2026"}
+      ],
+      "aliases": ["growth hormone", "serum growth hormone", "gh level"],
+      "scale": "Qn",
+      "prefer_local_reference": true,
+      "caution": "Growth hormone is pulsatile; provocative or suppression-test interpretation cannot use the resting interval."
+    },
+    "CD8_count": {
+      "loinc_codes": [],
+      "reference_ranges": [
+        {"low": 430, "high": 1060, "unit": "/μL", "gender": "any", "age": "adult", "specimen": "blood", "source": "ABIM_2026"}
+      ],
+      "aliases": ["cd8 count", "absolute cd8 count", "cd8 t-lymphocyte count", "cd8 cells"],
+      "scale": "Qn",
+      "caution": "Do not confuse absolute CD8 count with CD8 percentage."
+    },
+    "Methemoglobin": {
+      "loinc_codes": [],
+      "reference_ranges": [
+        {"low": 0.5, "high": 3.0, "unit": "%", "gender": "any", "age": "adult", "specimen": "arterial blood", "source": "ABIM_2026"}
+      ],
+      "aliases": ["methemoglobin", "methaemoglobin", "methemoglobin level"],
+      "scale": "Qn"
+    },
+    "Methylmalonic_acid": {
+      "loinc_codes": [],
+      "reference_ranges": [
+        {"low": 0, "high": 0.4, "unit": "μmol/L", "gender": "any", "age": "adult", "specimen": "serum", "source": "ABIM_2026"}
+      ],
+      "aliases": ["methylmalonic acid", "serum methylmalonic acid", "mma level"],
+      "scale": "Qn"
+    },
+    "Urine_protein_24h": {
+      "loinc_codes": [],
+      "reference_ranges": [
+        {"low": 0, "high": 100, "unit": "mg/24h", "gender": "any", "age": "adult", "specimen": "24-hour urine", "source": "ABIM_2026"}
+      ],
+      "aliases": ["24-hour urine protein", "24 hour urine protein", "24-h urine protein", "proteinuria"],
+      "scale": "Qn",
+      "caution": "Do not apply this interval to a random spot urine protein concentration."
+    },
+    "Immunoglobulin_IgG4": {
+      "loinc_codes": ["2469-5"],
+      "reference_ranges": [
+        {"low": 2.4, "high": 121.0, "unit": "mg/dL", "gender": "any", "age": "adult", "age_min": 18, "specimen": "serum", "reference_type": "method_specific", "source": "MAYO_IGG4"}
+      ],
+      "aliases": ["serum igg4", "serum igg4 level", "serum igg4 levels", "igg4 level", "igg4"],
+      "scale": "Qn",
+      "prefer_local_reference": true,
+      "caution": "Elevated IgG4 is not diagnostic of IgG4-related disease and the interval is method-specific."
+    },
+    "Mercury_blood": {
+      "loinc_codes": [],
+      "reference_ranges": [
+        {"low": 0, "high": 10, "unit": "ng/mL", "gender": "any", "age": "any", "specimen": "whole blood", "reference_type": "method_specific", "source": "MAYO_MERCURY_BLOOD"}
+      ],
+      "aliases": ["blood mercury", "blood mercury level", "mercury blood", "whole blood mercury"],
+      "scale": "Qn",
+      "prefer_local_reference": true
+    },
+    "Ascites_cell_count": {
+      "loinc_codes": [],
+      "reference_ranges": [],
+      "aliases": ["ascites cell count", "ascitic fluid cell count"],
+      "scale": "Qn",
+      "requires_local_or_clinical_context": true,
+      "interpretation_sources": ["LOINC_2_82"],
+      "caution": "Interpretation requires cell type (especially neutrophils), specimen context, and the reporting laboratory."
+    },
+    "Amyloid_beta_40": {
+      "loinc_codes": [],
+      "reference_ranges": [],
+      "aliases": ["aβ40 level", "amyloid beta 40", "amyloid-beta 40", "abeta40"],
+      "scale": "Qn",
+      "requires_local_or_clinical_context": true,
+      "interpretation_sources": ["LOINC_2_82"],
+      "caution": "Reference values depend on specimen, platform, and whether a ratio is used."
+    },
+    "CA_50": {
+      "loinc_codes": [],
+      "reference_ranges": [],
+      "aliases": ["ca50", "ca 50", "carbohydrate antigen 50"],
+      "scale": "Qn",
+      "requires_local_or_clinical_context": true,
+      "interpretation_sources": ["LOINC_2_82"],
+      "caution": "Tumor-marker cutoffs are assay-specific; use the reporting laboratory interval."
+    },
+    "CSF_blast_count": {
+      "loinc_codes": [],
+      "reference_ranges": [],
+      "aliases": ["csf blast count", "cerebrospinal fluid blast count"],
+      "scale": "Qn",
+      "requires_local_or_clinical_context": true,
+      "interpretation_sources": ["LOINC_2_82"]
+    },
+    "EBV_DNA": {
+      "loinc_codes": [],
+      "reference_ranges": [],
+      "aliases": ["ebv dna quantitative level", "ebv dna level", "ebv viral load", "epstein-barr virus dna"],
+      "scale": "Qn",
+      "requires_local_or_clinical_context": true,
+      "interpretation_sources": ["LOINC_2_82"],
+      "caution": "Viral-load results and clinical cutoffs are specimen- and assay-specific."
+    },
+    "KL_6": {
+      "loinc_codes": [],
+      "reference_ranges": [],
+      "aliases": ["krebs von den lungen-6 level", "krebs von den lungen-6", "kl-6", "kl 6"],
+      "scale": "Qn",
+      "requires_local_or_clinical_context": true,
+      "interpretation_sources": ["LOINC_2_82"],
+      "caution": "KL-6 decision limits are assay- and population-specific."
+    },
+    "Soluble_CD25": {
+      "loinc_codes": [],
+      "reference_ranges": [],
+      "aliases": ["soluble cd25 level", "soluble cd25", "soluble interleukin-2 receptor", "sil-2r"],
+      "scale": "Qn",
+      "requires_local_or_clinical_context": true,
+      "interpretation_sources": ["LOINC_2_82"],
+      "caution": "Units and reference limits vary substantially by assay."
+    },
+    "Monoclonal_protein": {
+      "loinc_codes": [],
+      "reference_ranges": [],
+      "aliases": ["monoclonal protein level", "monoclonal protein levels", "m protein level", "m-spike"],
+      "scale": "Qn",
+      "requires_local_or_clinical_context": true,
+      "interpretation_sources": ["LOINC_2_82"],
+      "caution": "Interpretation depends on electrophoresis/immunofixation method and clinical context."
+    },
+    "Digoxin_level": {
+      "loinc_codes": [],
+      "reference_ranges": [],
+      "aliases": ["serum digoxin concentration", "digoxin level", "serum digoxin"],
+      "scale": "Qn",
+      "requires_local_or_clinical_context": true,
+      "interpretation_sources": ["LOINC_2_82"],
+      "caution": "Therapeutic interpretation requires indication, dose, renal function, and sampling time."
+    },
+    "Iodine_serum": {
+      "loinc_codes": [],
+      "reference_ranges": [],
+      "aliases": ["serum iodine level", "serum iodine", "blood iodine level"],
+      "scale": "Qn",
+      "requires_local_or_clinical_context": true,
+      "interpretation_sources": ["LOINC_2_82"],
+      "caution": "Serum iodine is method- and exposure-dependent and is not interchangeable with urinary iodine."
+    },
+    "Olanzapine_level": {
+      "loinc_codes": [],
+      "reference_ranges": [],
+      "aliases": ["serum olanzapine", "olanzapine level", "olanzapine concentration"],
+      "scale": "Qn",
+      "requires_local_or_clinical_context": true,
+      "interpretation_sources": ["LOINC_2_82"],
+      "caution": "Therapeutic drug monitoring is assay-, dose-, and sampling-time dependent."
+    },
+    "Sirolimus_level": {
+      "loinc_codes": [],
+      "reference_ranges": [],
+      "aliases": ["sirolimus blood level", "sirolimus level", "sirolimus level measurements", "sirolimus concentration"],
+      "scale": "Qn",
+      "requires_local_or_clinical_context": true,
+      "interpretation_sources": ["LOINC_2_82"],
+      "caution": "Target trough varies by transplant type, regimen, time after transplant, and assay."
+    },
+    "Tacrolimus_level": {
+      "loinc_codes": [],
+      "reference_ranges": [],
+      "aliases": ["tacrolimus blood level", "tacrolimus level", "tacrolimus concentration"],
+      "scale": "Qn",
+      "requires_local_or_clinical_context": true,
+      "interpretation_sources": ["LOINC_2_82"],
+      "caution": "Target trough varies by transplant type, regimen, time after transplant, and assay."
+    },
+    "Valproate_level": {
+      "loinc_codes": [],
+      "reference_ranges": [],
+      "aliases": ["valproate concentration", "valproate level", "valproic acid level"],
+      "scale": "Qn",
+      "requires_local_or_clinical_context": true,
+      "interpretation_sources": ["LOINC_2_82"],
+      "caution": "Therapeutic interpretation requires indication, albumin/free fraction, dose, and sampling time."
+    },
+    "Total_bile_acids": {
+      "loinc_codes": [],
+      "reference_ranges": [],
+      "aliases": ["total bile acid", "total bile acids", "serum bile acids"],
+      "scale": "Qn",
+      "requires_local_or_clinical_context": true,
+      "interpretation_sources": ["LOINC_2_82"],
+      "caution": "Reference and decision limits depend on fasting status, pregnancy, method, and clinical purpose."
+    }
+  },
+  "unit_conversion_patches": [
+    {"test_group": "D-dimer", "replace": true, "canonical_unit": "ng/mL FEU", "conversions": [
+      {"from": "μg/mL FEU", "to": "ng/mL FEU", "factor": 1000},
+      {"from": "mg/L FEU", "to": "ng/mL FEU", "factor": 1000},
+      {"from": "μg/L FEU", "to": "ng/mL FEU", "factor": 1}
+    ]},
+    {"test_group": "Globulin", "canonical_unit": "g/dL", "conversions": [{"from": "g/L", "to": "g/dL", "factor": 0.1}]},
+    {"test_group": "Transferrin", "canonical_unit": "mg/dL", "conversions": [{"from": "g/L", "to": "mg/dL", "factor": 100}]},
+    {"test_group": "Immunoglobulin", "canonical_unit": "mg/dL", "conversions": [{"from": "g/L", "to": "mg/dL", "factor": 100}]},
+    {"test_group": "Blood_gas_pressure", "canonical_unit": "mmHg", "conversions": [{"from": "kPa", "to": "mmHg", "factor": 7.50062}]},
+    {"test_group": "CSF_glucose", "canonical_unit": "mg/dL", "conversions": [{"from": "mmol/L", "to": "mg/dL", "factor": 18.0182}]},
+    {"test_group": "CSF_protein", "canonical_unit": "mg/dL", "conversions": [{"from": "g/L", "to": "mg/dL", "factor": 100}, {"from": "mg/L", "to": "mg/dL", "factor": 0.1}]},
+    {"test_group": "Urea", "canonical_unit": "mmol/L", "conversions": [{"from": "mg/dL", "to": "mmol/L", "factor": 0.1665}]},
+    {"test_group": "Total_T3", "canonical_unit": "ng/dL", "conversions": [{"from": "nmol/L", "to": "ng/dL", "factor": 65.1}]},
+    {"test_group": "Total_T4", "canonical_unit": "μg/dL", "conversions": [{"from": "nmol/L", "to": "μg/dL", "factor": 0.0777}]},
+    {"test_group": "Troponin", "canonical_unit": "ng/mL", "conversions": [{"from": "μg/L", "to": "ng/mL", "factor": 1}]},
+    {"test_group": "Chloride", "canonical_unit": "mEq/L", "conversions": [{"from": "mmol/L", "to": "mEq/L", "factor": 1}]},
+    {"test_group": "Bicarbonate", "canonical_unit": "mEq/L", "conversions": [{"from": "mmol/L", "to": "mEq/L", "factor": 1}]},
+    {"test_group": "RBC", "canonical_unit": "×10^6/μL", "conversions": [{"from": "/μL", "to": "×10^6/μL", "factor": 0.000001}]},
+    {"test_group": "BNP", "canonical_unit": "pg/mL", "conversions": [{"from": "ng/L", "to": "pg/mL", "factor": 1}]},
+    {"test_group": "Procalcitonin", "canonical_unit": "ng/mL", "conversions": [{"from": "μg/L", "to": "ng/mL", "factor": 1}]},
+    {"test_group": "Complement", "canonical_unit": "mg/dL", "conversions": [{"from": "g/L", "to": "mg/dL", "factor": 100}, {"from": "mg/L", "to": "mg/dL", "factor": 0.1}]},
+    {"test_group": "CA_marker", "canonical_unit": "U/mL", "conversions": [{"from": "kIU/L", "to": "U/mL", "factor": 1}, {"from": "U/L", "to": "U/mL", "factor": 0.001}]},
+    {"test_group": "CEA", "canonical_unit": "ng/mL", "conversions": [{"from": "μg/L", "to": "ng/mL", "factor": 1}]},
+    {"test_group": "Ionized_calcium", "canonical_unit": "mmol/L", "conversions": [{"from": "mg/dL", "to": "mmol/L", "factor": 0.2495}]},
+    {"test_group": "Testosterone_total", "canonical_unit": "ng/dL", "conversions": [{"from": "nmol/L", "to": "ng/dL", "factor": 28.843}]},
+    {"test_group": "ACTH", "canonical_unit": "pg/mL", "conversions": [{"from": "ng/L", "to": "pg/mL", "factor": 1}, {"from": "pmol/L", "to": "pg/mL", "factor": 4.54}]},
+    {"test_group": "Urine_protein_24h", "canonical_unit": "mg/24h", "conversions": [{"from": "g/24h", "to": "mg/24h", "factor": 1000}]},
+    {"test_group": "Mercury_blood", "canonical_unit": "ng/mL", "conversions": [{"from": "μg/L", "to": "ng/mL", "factor": 1}]},
+    {"test_group": "WBC", "canonical_unit": "/μL", "conversions": [{"from": "g/L", "to": "/μL", "factor": 1000}]},
+    {"test_group": "Platelets", "canonical_unit": "/μL", "conversions": [{"from": "g/L", "to": "/μL", "factor": 1000}]},
+    {"test_group": "RBC", "canonical_unit": "×10^6/μL", "conversions": [{"from": "×10^9/L", "to": "×10^6/μL", "factor": 0.001}]},
+    {"test_group": "Glucose", "canonical_unit": "mg/dL", "conversions": [{"from": "g/L", "to": "mg/dL", "factor": 100}, {"from": "mg/L", "to": "mg/dL", "factor": 0.1}, {"from": "g/dL", "to": "mg/dL", "factor": 1000}, {"from": "μmol/L", "to": "mg/dL", "factor": 0.0180182}]},
+    {"test_group": "BUN", "canonical_unit": "mg/dL", "conversions": [{"from": "g/L", "to": "mg/dL", "factor": 100}, {"from": "mg/L", "to": "mg/dL", "factor": 0.1}]},
+    {"test_group": "Albumin", "canonical_unit": "g/dL", "conversions": [{"from": "mg/dL", "to": "g/dL", "factor": 0.001}]},
+    {"test_group": "CRP", "canonical_unit": "mg/dL", "conversions": [{"from": "ng/mL", "to": "mg/dL", "factor": 0.0001}]},
+    {"test_group": "Ferritin", "canonical_unit": "ng/mL", "conversions": [{"from": "ng/L", "to": "ng/mL", "factor": 0.001}]},
+    {"test_group": "Immunoglobulin", "canonical_unit": "mg/dL", "conversions": [{"from": "mg/L", "to": "mg/dL", "factor": 0.1}, {"from": "g/dL", "to": "mg/dL", "factor": 1000}]},
+    {"test_group": "Total_protein", "canonical_unit": "g/dL", "conversions": [{"from": "g/L", "to": "g/dL", "factor": 0.1}, {"from": "mg/dL", "to": "g/dL", "factor": 0.001}, {"from": "mg/L", "to": "g/dL", "factor": 0.0001}]},
+    {"test_group": "Anion_gap", "canonical_unit": "mEq/L", "conversions": [{"from": "mmol/L", "to": "mEq/L", "factor": 1}]},
+    {"test_group": "PTH", "canonical_unit": "pg/mL", "conversions": [{"from": "ng/L", "to": "pg/mL", "factor": 1}, {"from": "pmol/L", "to": "pg/mL", "factor": 9.43}]},
+    {"test_group": "Prolactin", "canonical_unit": "ng/mL", "conversions": [{"from": "μg/L", "to": "ng/mL", "factor": 1}]},
+    {"test_group": "Fibrinogen", "canonical_unit": "mg/dL", "conversions": [{"from": "g/L", "to": "mg/dL", "factor": 100}]},
+    {"test_group": "Free_T4", "canonical_unit": "ng/dL", "conversions": [{"from": "pmol/L", "to": "ng/dL", "factor": 0.0777}, {"from": "pg/mL", "to": "ng/dL", "factor": 0.1}]},
+    {"test_group": "Troponin", "canonical_unit": "ng/mL", "conversions": [{"from": "pg/mL", "to": "ng/mL", "factor": 0.001}, {"from": "ng/L", "to": "ng/mL", "factor": 0.001}]},
+    {"test_group": "Troponin_hs", "canonical_unit": "ng/L", "conversions": [{"from": "pg/mL", "to": "ng/L", "factor": 1}, {"from": "ng/mL", "to": "ng/L", "factor": 1000}]},
+    {"test_group": "AFP", "canonical_unit": "ng/mL", "conversions": [{"from": "μg/L", "to": "ng/mL", "factor": 1}]},
+    {"test_group": "Gastrin", "canonical_unit": "pg/mL", "conversions": [{"from": "ng/L", "to": "pg/mL", "factor": 1}]},
+    {"test_group": "Vitamin_B12", "canonical_unit": "pg/mL", "conversions": [{"from": "ng/L", "to": "pg/mL", "factor": 1}]},
+    {"test_group": "Magnesium", "canonical_unit": "mg/dL", "conversions": [{"from": "g/L", "to": "mg/dL", "factor": 100}]},
+    {"test_group": "Rheumatoid_factor", "canonical_unit": "IU/mL", "conversions": [{"from": "kIU/L", "to": "IU/mL", "factor": 1}]},
+    {"test_group": "Folate", "canonical_unit": "ng/mL", "conversions": [{"from": "nmol/L", "to": "ng/mL", "factor": 0.441}]}
+  ],
+  "loinc2hpo_patches": {
+    "10839-9": {"Qn": {"H": {"hpo_id": "HP:0410173", "hpo_term": "Increased circulating troponin I concentration"}, "L": null, "N": null}},
+    "10834-0": {"Qn": {"L": {"hpo_id": "HP:0032312", "hpo_term": "Decreased circulating globulin concentration"}, "N": null, "H": {"hpo_id": "HP:0032311", "hpo_term": "Elevated circulating globulin concentration"}}},
+    "3034-6": {"Qn": {"L": {"hpo_id": "HP:0032387", "hpo_term": "Decreased circulating transferrin concentration"}, "N": null, "H": {"hpo_id": "HP:0032386", "hpo_term": "Elevated circulating transferrin concentration"}}},
+    "2458-8": {"Qn": {"L": {"hpo_id": "HP:0002720", "hpo_term": "Decreased circulating IgA concentration"}, "N": null, "H": {"hpo_id": "HP:0003261", "hpo_term": "Increased circulating IgA concentration"}}},
+    "19113-0": {"Qn": {"L": {"hpo_id": "HP:0005479", "hpo_term": "Decreased circulating IgE concentration"}, "N": null, "H": {"hpo_id": "HP:0003212", "hpo_term": "Increased circulating IgE concentration"}}},
+    "2465-3": {"Qn": {"L": {"hpo_id": "HP:0004315", "hpo_term": "Decreased circulating IgG concentration"}, "N": null, "H": {"hpo_id": "HP:0003237", "hpo_term": "Increased circulating IgG concentration"}}},
+    "2472-9": {"Qn": {"L": {"hpo_id": "HP:0002850", "hpo_term": "Decreased circulating IgM concentration"}, "N": null, "H": {"hpo_id": "HP:0003496", "hpo_term": "Increased circulating IgM concentration"}}},
+    "4485-9": {"Qn": {"L": {"hpo_id": "HP:0005421", "hpo_term": "Decreased circulating complement C3 concentration"}, "N": null, "H": null}},
+    "4498-2": {"Qn": {"L": {"hpo_id": "HP:0045042", "hpo_term": "Decreased circulating complement C4 concentration"}, "N": null, "H": null}},
+    "2744-1": {"Qn": {"L": {"hpo_id": "HP:0032368", "hpo_term": "Acidemia"}, "N": null, "H": {"hpo_id": "HP:0032369", "hpo_term": "Alkalemia"}}},
+    "2019-8": {"Qn": {"L": {"hpo_id": "HP:0012417", "hpo_term": "Hypocapnia"}, "N": null, "H": {"hpo_id": "HP:0012416", "hpo_term": "Hypercapnia"}}},
+    "2703-7": {"Qn": {"L": {"hpo_id": "HP:0012418", "hpo_term": "Hypoxemia"}, "N": null, "H": {"hpo_id": "HP:0012419", "hpo_term": "Hyperoxemia"}}},
+    "2880-3": {"Qn": {"L": {"hpo_id": "HP:0025457", "hpo_term": "Decreased CSF protein concentration"}, "N": null, "H": {"hpo_id": "HP:0002922", "hpo_term": "Increased CSF protein concentration"}}},
+    "2342-4": {"Qn": {"L": {"hpo_id": "HP:0011972", "hpo_term": "Hypoglycorrhachia"}, "N": null, "H": {"hpo_id": "HP:0031885", "hpo_term": "Hyperglycorrhachia"}}},
+    "3016-3": {"Qn": {"L": {"hpo_id": "HP:0031098", "hpo_term": "Decreased thyroid-stimulating hormone level"}, "N": null, "H": {"hpo_id": "HP:0002925", "hpo_term": "Elevated circulating thyroid-stimulating hormone concentration"}}},
+    "3024-7": {"Qn": {"L": {"hpo_id": "HP:0033078", "hpo_term": "Decreased circulating free T4 concentration"}, "N": null, "H": {"hpo_id": "HP:0033077", "hpo_term": "Increased circulating free T4 concentration"}}},
+    "3026-2": {"Qn": {"L": {"hpo_id": "HP:0031507", "hpo_term": "Decreased circulating T4 concentration"}, "N": null, "H": {"hpo_id": "HP:0031506", "hpo_term": "Increased circulating T4 concentration"}}},
+    "3051-0": {"Qn": {"L": {"hpo_id": "HP:0032210", "hpo_term": "Decreased circulating free T3"}, "N": null, "H": {"hpo_id": "HP:0011788", "hpo_term": "Increased circulating free T3"}}},
+    "3053-6": {"Qn": {"L": null, "N": null, "H": null}},
+    "6598-7": {"Qn": {"L": null, "N": null, "H": {"hpo_id": "HP:0410174", "hpo_term": "Increased circulating troponin T concentration"}}},
+    "67151-1": {"Qn": {"L": null, "N": null, "H": {"hpo_id": "HP:0410174", "hpo_term": "Increased circulating troponin T concentration"}}},
+    "33762-6": {"Qn": {"L": null, "N": null, "H": {"hpo_id": "HP:0031185", "hpo_term": "Elevated circulating NT-proBNP concentration"}}},
+    "2333-3": {"Qn": {"L": null, "N": null, "H": {"hpo_id": "HP:0500167", "hpo_term": "Hypergastrinemia"}}},
+    "24108-3": {"Qn": {"L": null, "N": null, "H": {"hpo_id": "HP:0032345", "hpo_term": "Elevated circulating CA19-9 concentration"}}},
+    "2039-6": {"Qn": {"L": null, "N": null, "H": {"hpo_id": "HP:0031029", "hpo_term": "Elevated circulating CEA concentration"}}},
+    "1994-3": {"Qn": {"L": {"hpo_id": "HP:0002901", "hpo_term": "Hypocalcemia"}, "N": null, "H": {"hpo_id": "HP:0003072", "hpo_term": "Hypercalcemia"}}},
+    "1952-1": {"Qn": {"L": {"hpo_id": "HP:0025347", "hpo_term": "Decreased circulating beta-2-microglobulin concentration"}, "N": null, "H": {"hpo_id": "HP:0025346", "hpo_term": "Elevated circulating beta-2-microglobulin concentration"}}},
+    "11572-5": {"Qn": {"L": null, "N": null, "H": {"hpo_id": "HP:0002923", "hpo_term": "Rheumatoid factor positive"}}},
+    "1761-6": {"Qn": {"L": {"hpo_id": "HP:0012545", "hpo_term": "Reduced circulating aldolase concentration"}, "N": null, "H": {"hpo_id": "HP:0012544", "hpo_term": "Elevated circulating aldolase concentration"}}},
+    "2141-0": {"Qn": {"L": {"hpo_id": "HP:0002920", "hpo_term": "Decreased circulating ACTH level"}, "N": null, "H": {"hpo_id": "HP:0003154", "hpo_term": "Increased circulating ACTH level"}}},
+    "2986-8": {"Qn": {"L": {"hpo_id": "HP:0040171", "hpo_term": "Decreased circulating testosterone concentration"}, "N": null, "H": {"hpo_id": "HP:0030088", "hpo_term": "Increased circulating testosterone concentration"}}}
+  }
+}
