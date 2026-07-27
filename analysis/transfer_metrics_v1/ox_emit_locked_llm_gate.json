@@ -1,0 +1,109 @@
+{
+  "protocol": "ox_emit_locked_llm_gate_v1",
+  "formal_combo": {
+    "emit": "emit_v1",
+    "l1_evidence_budget": 4,
+    "l2_local_evidence_budget": 4,
+    "l2_candidate_max_per_live_family": 6,
+    "pool_n": 15,
+    "k": 5,
+    "reranker": "closed_live_mac_supervisor",
+    "fair_live_name": "closed_live_mac_supervisor",
+    "live_fresh": true
+  },
+  "emit_run": "logs/open_xddx_ox_seq100_v1/compat_synonym_emit_v1",
+  "arms": {
+    "b00": {
+      "micro_precision": 0.526,
+      "micro_recall": 0.5607675906183369,
+      "micro_f1": 0.542827657378741
+    },
+    "mac": {
+      "micro_precision": 0.552,
+      "micro_recall": 0.5884861407249466,
+      "micro_f1": 0.5696594427244582
+    },
+    "gated": {
+      "micro_precision": 0.53,
+      "micro_recall": 0.5650319829424307,
+      "micro_f1": 0.5469556243550052
+    },
+    "live": {
+      "micro_precision": 0.566,
+      "micro_recall": 0.603411513859275,
+      "micro_f1": 0.5841073271413829
+    },
+    "emit_locked_remap": {
+      "micro_precision": 0.568,
+      "micro_recall": 0.605543710021322,
+      "micro_f1": 0.5861713106295149
+    },
+    "emit_locked": {
+      "micro_precision": 0.57,
+      "micro_recall": 0.6076759061833689,
+      "micro_f1": 0.5882352941176471
+    }
+  },
+  "paired": {
+    "emit_minus_live": {
+      "n": 100,
+      "n_win": 9,
+      "n_tie": 84,
+      "n_lose": 7,
+      "delta_bootstrap": {
+        "mean": 0.0033181818181818147,
+        "lo": -0.011848484848484863,
+        "hi": 0.019272727272727278,
+        "n": 100.0
+      }
+    },
+    "emit_minus_b00": {
+      "n": 100,
+      "n_win": 36,
+      "n_tie": 38,
+      "n_lose": 26,
+      "delta_bootstrap": {
+        "mean": 0.03989177489177488,
+        "lo": -0.003537518037518038,
+        "hi": 0.08192424242424245,
+        "n": 100.0
+      }
+    },
+    "emit_minus_mac": {
+      "n": 100,
+      "n_win": 30,
+      "n_tie": 40,
+      "n_lose": 30,
+      "delta_bootstrap": {
+        "mean": 0.0138008658008658,
+        "lo": -0.029235209235209236,
+        "hi": 0.05820851370851371,
+        "n": 100.0
+      }
+    }
+  },
+  "gate": {
+    "promote": false,
+    "cond_f1_or_delta_live": true,
+    "cond_b00_ci_lo_gt0": false,
+    "cond_full_tree_r": true,
+    "emit_f1": 0.5882352941176471,
+    "emit_p": 0.57,
+    "live_f1": 0.5841073271413829,
+    "delta_f1_vs_live": 0.0041279669762641635,
+    "delta_p_vs_live": 0.0040000000000000036,
+    "b00_ci": {
+      "mean": 0.03989177489177488,
+      "lo": -0.003537518037518038,
+      "hi": 0.08192424242424245,
+      "n": 100.0
+    },
+    "verdict": "REJECT"
+  },
+  "boundaries": [
+    "Formal arm = emit_v1 overlay trees + fresh closed_live_mac_supervisor @ pool15/K5.",
+    "Budget lock L1=4/L2local=4/cand6 is offline proxy for future re-annotate; this LLM arm uses full emit trees.",
+    "Remap arm (emit_locked_remap) reported for reference only.",
+    "E_open_oracle not used."
+  ]
+}

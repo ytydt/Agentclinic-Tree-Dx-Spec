@@ -705,3 +705,38 @@ Top-2 和平均倒数排名只反映给定题集上的排序。该系统不应�
   的原始分数。
 - **Top-1/Top-2**：正确诊断是否位于最终排序的第一位/前两位。
 - **平均倒数排名**：正确诊断名次倒数的平均值；越高表示正确答案总体越靠前。
+
+- **MergeCalibCompat / compat_parallel**：Fine 拥挤→merge-only，否则→both_l1fallback 的互斥选路（**当前默认**）；详见 `analysis/at1_gap_v1/compat_parallel_mechanism_explainer.md`。
+- **Approach A / synonym bind-repair / `--synonym-bind-repair`**：mapper 阶段对空 `matched_leaf_ids` 做短名单同义/桥接回填再 `_rank_and_expand`（默认 **off**；live 候选约 0.81/0.93）；详见 `analysis/l1_recall_failure_v1/synonym_bind_repair_mechanism_explainer.md`。
+- **FineCrowdGate**：金标盲门控——Top1 同义簇成员数 ≥2，或 Top1–Top2 `labels_synonymish`；触发则走 merge_only。
+- **L1FamilyCalib / `--l1-calib`**：F6 冻结后对 L1 家族封闭重排（support/pair/b12）；默认 **off**（Pilot24 未过门）。
+- **Fine / Coarse**：树粒度失败的两类——平行同义挤占 vs 单叶绑定多个下位选项。
+
+---
+
+## 11. 三分集本方法最佳配置与基线对照
+
+本节汇总当前仓库已锁定的**本方法最优配置**及其主指标，并与各数据集最强外部基线并列。三数据集主指标不同（DA：Mapper option@k；MCR：单轨迹 Acc + Reasoning Recall；OX：开集 micro-F1），**禁止横比绝对数**。权威分表与 Bxx 全表见 [`runs/paper_v1/diagnosisarena_d2_seq100_baselines_summary.md`](runs/paper_v1/diagnosisarena_d2_seq100_baselines_summary.md) §2/§5/§6/§7。
+
+### 11.1 最佳配置与点估计
+
+| 数据集 | 最佳本方法配置 | 主指标 | Ours | 最强外部基线 | 基线分 |
+|--------|----------------|--------|------|--------------|--------|
+| **DiagnosisArena** `d2_seq100` | `granularity=compat`（`compat_parallel`）+ **`--synonym-bind-repair`（Approach A live）**；预算沿用 paper 默认 F6 / L2local=4 / between=2 | option @1 / @2 / MRR@2 | **0.81 / 0.93 / 0.95** | B07 MEDDx | 0.62 / 0.71 / 0.665 |
+| **MedCaseReasoning** `mcr_val_seq100` | 同转移栈 `compat` + synonym_bind；开放投影 **`compat_parallel_final_ranking`（B0）**；L1=F6 | LLM Acc / LLM Reasoning Recall | **0.50 / 0.753** | B07 MEDDx | 0.24 / 0.412 |
+| **Open-XDDx** `ox_seq100` | **无 force-emit**；锁定 **L1=4 / L2local=4 / between=2 / cand_max=6**；**live 后验写回**；短列表 **`closed_live_mac_supervisor` @ pool15 / K=5** + LLM judge | micro-P / R / F1 / Interp Acc（K=5，LLM） | **0.631 / 0.672 / 0.651 / 0.355** | B06 MAC | 0.552 / 0.588 / 0.570 / 0.221 |
+
+说明：
+
+1. **DA**：用户指定以 synonym_bind live **0.81/0.93** 为本方法对照分；生产 harness 默认仍可将 Approach A 保持 opt-in。无 bind 的正式 compat 锚点仍为 **0.72/0.78**。  
+2. **MCR**：Acc=0.50 时 Reasoning Recall 须用 **LLM Prompt 5**（非 lexical）；产物见 `official_eval_llm_compat_rr`。  
+3. **OX**：相对无写回的公平 closed_live（F1≈0.584）再抬约 +0.067；增益主因是校准预算下的后验写回，而非补叶。专论见 [`analysis/transfer_metrics_v1/ox_specific_mechanisms_explainer.md`](analysis/transfer_metrics_v1/ox_specific_mechanisms_explainer.md)。
+
+### 11.2 机制 explainer 索引
+
+| 机制 | 文档 |
+|------|------|
+| 流水线总览（本文） | 第 1–8 节 |
+| DA `compat_parallel` | [`analysis/at1_gap_v1/compat_parallel_mechanism_explainer.md`](analysis/at1_gap_v1/compat_parallel_mechanism_explainer.md) |
+| DA Approach A 同义修绑 | [`analysis/l1_recall_failure_v1/synonym_bind_repair_mechanism_explainer.md`](analysis/l1_recall_failure_v1/synonym_bind_repair_mechanism_explainer.md) |
+| OX 闭集 live-MAC / 预算 / 后验写回 | [`analysis/transfer_metrics_v1/ox_specific_mechanisms_explainer.md`](analysis/transfer_metrics_v1/ox_specific_mechanisms_explainer.md) |

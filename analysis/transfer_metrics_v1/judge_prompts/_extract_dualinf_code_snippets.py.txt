@@ -1,0 +1,73 @@
+### evaluate_whether_reason_wrong
+def evaluate_whether_reason_wrong(disease_k, disease_k_gnd_symptom_list, disease_k_reason_j):
+    example_disease_symptom_list = ["Malaise",
+                                    "Loss of appetite",
+                                    "Bloating",
+                                    "Nausea"]
+    example_disease_symptom_A = "have a jaded appetite"
+    example_disease_symptom_B = "knee swelling and pain"
+
+    Prompt_whether_reason_wrong = f"""
+    You are an experienced doctor. 
+    I need you to determine whether a symptom```{disease_k_reason_j}``` belongs to the clinical manifestations or test results of the disease ```{disease_k}```.
+    Specifically, please use your medical knowledge and the provided symptom list ```{disease_k_gnd_symptom_list}``` for the disease ```{disease_k}``` to \ 
+    determine if ```{disease_k_reason_j}``` also belongs to the clinical manifestations or test results of this disease. \
+    Please DO IT STEP-BY-STEP.
+
+    Below, I provide two complete examples for you to understand the task and reference the response format. 
+    Based on medical knowledge and the symptom list of the disease```{example_disease_symptom_list}```, ```{example_disease_symptom_A}```also belongs to the clinical manifestations or test results of this disease, so the output is 'Yes'. 
+    Based on medical knowledge and the symptom list of the disease```{example_disease_symptom_list}```, ```{example_disease_symptom_B}``` does not belong to the clinical manifestations or test results of this disease, so the output is 'No'.
+
+    Please note that the output should be only 'Yes' or 'No'. \
+    Do not include any extraneous characters, such as ```; just output the two or three letters.
+
+    """
+    whether_valid_symptom = get_completion_whether_reason_wrong(Prompt_whether_reason_wrong)
+    if whether_valid_symptom == 'Yes' or whether_valid_symptom == 'yes':
+        return "Yes"
+    if whether_valid_symptom == 'No' or whether_valid_symptom == 'no':
+        return "No"
+
+#####
+
+### evaluate_whether_reason_missing
+def evaluate_whether_reason_missing(disease_k, patient_EHR, disease_k_reason_j):
+    eg_prompt_EHR_patient = "An 8-year-old boy is brought to the physician by his foster mother because of complaints \
+    from his teachers regarding poor performance at school for the past 8 months. He does not listen to their instructions, \
+    often talks during class, and rarely completes his school assignments. \
+    He does not sit in his seat in the classroom and often cuts in line at the cafeteria. \
+    His foster mother reports that he runs around a lot inside the house and refuses to help his sister with chores and errands. \
+    He frequently interrupts his foster mother's conversations with others and talks excessively. \
+    She has found him trying to climb on the roof on multiple occasions. He was placed in foster care \
+    because of neglect by his biological parents 3 years ago. Physical examination shows no abnormalities. \
+    Neurologic examination shows no focal findings. Mental status examination shows a neutral affect. "
+
+    eg_prompt_disease_symptom_A = "talks excessively"
+    eg_prompt_disease_symptom_B = "do noy follow parent's words"
+    eg_prompt_disease_symptom_C = "Low-grade fever"
+    eg_prompt_disease_symptom_D = "A flushed face"
+
+    Prompt_whether_reason_missing = f"""
+    You are an experienced doctor. 
+    I need you to determine whether the patient’s condition description (electronic health record) ```{patient_EHR}``` mentions the clinical manifestations or test results of the disease ```{disease_k}```.
+
+    Specifically, please use your medical knowledge to determine if a symptom ```{disease_k_reason_j}``` of the disease```{disease_k}``` appears in this patient’s condition description ```{patient_EHR}```.\
+    In other words, does the patient’s condition description```{patient_EHR}``` mention this symptom```{disease_k_reason_j}```? Please USE STEP-BY-STEP DEDUCTION TO DO IT.
+
+    Please note, this is not asking for an exact word-for-word match, but rather whether the patient’s condition description```{patient_EHR}```includes clinical manifestations similar to ```{disease_k_reason_j}```.
+
+    Below, I provide several complete examples for you to understand the task and reference the response format. 
+    Based on medical knowledge, a common symptom of a disease```{eg_prompt_disease_symptom_A}```appears in this patient’s condition description```{eg_prompt_EHR_patient}```, so the output is 'Yes'. 
+    Based on medical knowledge, a common symptom of a disease```{eg_prompt_disease_symptom_B}```appears in this patient’s condition description```{eg_prompt_EHR_patient}```, so the output is 'Yes'. 
+    Based on medical knowledge, a common symptom of a disease```{eg_prompt_disease_symptom_C}```does not appears in this patient’s condition description```{eg_prompt_EHR_patient}```, so the output is 'No'.
+    Based on medical knowledge, a common symptom of a disease```{eg_prompt_disease_symptom_D}```does not appears in this patient’s condition description```{eg_prompt_EHR_patient}```, so the output is 'No'.
+
+    Please note that the output should be only 'Yes' or 'No'. \
+    Do not include any extraneous characters, such as ```; just output the two or three letters.
+
+    """
+    whether_valid_symptom = get_completion_whether_reason_wrong(Prompt_whether_reason_missing)
+    if whether_valid_symptom == 'Yes' or whether_valid_symptom == 'yes':
+        return "Yes"
+    if whether_valid_symptom == 'No' or whether_valid_symptom == 'no':
+        return "No"

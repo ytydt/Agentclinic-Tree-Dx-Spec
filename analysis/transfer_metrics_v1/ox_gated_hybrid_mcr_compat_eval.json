@@ -1,0 +1,32 @@
+{
+  "protocol": "ox_gated_hybrid_mcr_compat_eval_v1",
+  "created_at": "2026-07-26",
+  "judge": "lexical",
+  "input_pool": "gated_hybrid_top2_posterior_sorted",
+  "compat_dialect": "mcr_r3",
+  "mcr_r3_vs_run_compat": {
+    "preserve_full_top2_when_no_gold": true,
+    "calib_k": "final_shortlist_K",
+    "merge_pads_to_K": true
+  },
+  "k5_list_diff": {
+    "eq_pure_gated": "11/100",
+    "eq_run_compat_dialect": "31/100",
+    "jaccard_vs_gated": 0.9319,
+    "jaccard_vs_posterior": 0.7017,
+    "branches": {"calib_only": 76, "merge_only_pad": 24}
+  },
+  "arms": [
+    {"name": "posterior", "k": 5, "P": 0.444, "R": 0.4733, "F1": 0.4582},
+    {"name": "gated_hybrid_top2_compress", "k": 5, "P": 0.446, "R": 0.4755, "F1": 0.4603},
+    {"name": "gated_hybrid_top2_compat_then_compress", "k": 5, "P": 0.43, "R": 0.4584, "F1": 0.4438, "note": "run_compat_parallel dialect"},
+    {"name": "gated_hybrid_top2_mcr_compat", "k": 5, "P": 0.452, "R": 0.4819, "F1": 0.4665, "delta_f1_vs_posterior_pp": 0.83, "delta_f1_vs_gated_pp": 0.62},
+    {"name": "compat_then_pad", "k": 5, "P": 0.46, "R": 0.4904, "F1": 0.4747},
+    {"name": "gated_hybrid_top2_mcr_compat", "k": 7, "P": 0.3903, "R": 0.5160, "F1": 0.4444, "n_pred": 620}
+  ],
+  "verdict": {
+    "mcr_on_gated_k5": "research_candidate_beats_posterior_and_run_compat",
+    "vs_compat_then_pad": "still_below",
+    "k7": "tied_with_pure_gated_pool_short"
+  }
+}

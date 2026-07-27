@@ -1,0 +1,101 @@
+{
+  "generated_at": "2026-07-23T20:30:24.619428+00:00",
+  "protocol": "l1_calib_b12_ablation_v1",
+  "cohort": "pilot24",
+  "rows": [
+    {
+      "tag": "tau015",
+      "note": "tau_post=0.15 baseline",
+      "tau_post": 0.15,
+      "force_misrank_ids": [],
+      "ours_family_top1": 0.5833333333333334,
+      "ours_family_top2": 0.6666666666666666,
+      "ours_misrank": 2,
+      "b12_family_top1": 0.5833333333333334,
+      "b12_family_top2": 0.6666666666666666,
+      "b12_misrank": 2,
+      "b12_skip_gate": 0.7916666666666666,
+      "gate": {
+        "pass": false,
+        "delta_family_top1": 0.0,
+        "delta_family_top2": 0.0,
+        "misrank_delta": 0,
+        "ok_at1_rule": false,
+        "ok_at2_guard": true
+      }
+    },
+    {
+      "tag": "tau005",
+      "note": "tau_post=0.05",
+      "tau_post": 0.05,
+      "force_misrank_ids": [],
+      "ours_family_top1": 0.5833333333333334,
+      "ours_family_top2": 0.6666666666666666,
+      "ours_misrank": 2,
+      "b12_family_top1": 0.5833333333333334,
+      "b12_family_top2": 0.6666666666666666,
+      "b12_misrank": 2,
+      "b12_skip_gate": 0.7916666666666666,
+      "gate": {
+        "pass": false,
+        "delta_family_top1": 0.0,
+        "delta_family_top2": 0.0,
+        "misrank_delta": 0,
+        "ok_at1_rule": false,
+        "ok_at2_guard": true
+      }
+    },
+    {
+      "tag": "tau000",
+      "note": "tau_post=0.0 never-skip (fixed)",
+      "tau_post": 0.0,
+      "force_misrank_ids": [],
+      "ours_family_top1": 0.5833333333333334,
+      "ours_family_top2": 0.6666666666666666,
+      "ours_misrank": 2,
+      "b12_family_top1": 0.5416666666666666,
+      "b12_family_top2": 0.5833333333333334,
+      "b12_misrank": 4,
+      "b12_skip_gate": 0.0,
+      "gate": {
+        "pass": false,
+        "delta_family_top1": -0.04166666666666674,
+        "delta_family_top2": -0.08333333333333326,
+        "misrank_delta": -2,
+        "ok_at1_rule": false,
+        "ok_at2_guard": false
+      }
+    },
+    {
+      "tag": "force_misrank_tau015",
+      "note": "force MISRANK {4,21} + tau=0.15",
+      "tau_post": 0.15,
+      "force_misrank_ids": [
+        "21",
+        "4"
+      ],
+      "ours_family_top1": 0.5833333333333334,
+      "ours_family_top2": 0.6666666666666666,
+      "ours_misrank": 2,
+      "b12_family_top1": 0.5833333333333334,
+      "b12_family_top2": 0.6666666666666666,
+      "b12_misrank": 2,
+      "b12_skip_gate": 0.7916666666666666,
+      "gate": {
+        "pass": false,
+        "delta_family_top1": 0.0,
+        "delta_family_top2": 0.0,
+        "misrank_delta": 0,
+        "ok_at1_rule": false,
+        "ok_at2_guard": true
+      }
+    }
+  ],
+  "verdict": {
+    "b12_ablation": "REJECT",
+    "reason": "All tau settings fail Pilot gate. tau=0.0 (calibrate all) harms family @1/@2 and increases MISRANK 2→4. force-MISRANK on cases 4/21 does not lift @1 or clear MISRANK.",
+    "production_default": "off",
+    "claim_allowed": false
+  },
+  "gate_rule": "Δ@1≥+0.04 OR MISRANKΔ≥3, AND Δ@2≥−0.01"
+}

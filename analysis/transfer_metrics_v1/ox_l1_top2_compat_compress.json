@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-07-26",
+  "dataset": "open_xddx",
+  "subset": "ox_seq100_v1",
+  "run_dir": "logs/open_xddx_ox_seq100_v1/compat_synonym_v1",
+  "protocol": "compatible_metrics_lexical_v1",
+  "judge": "lexical",
+  "ddx_source": "l1_top2_compat_then_compress",
+  "order": ["per_l1_top2_expand", "compat_parallel_on_pool", "compress_to_k"],
+  "dry_calib": true,
+  "pool_stats": {
+    "pool_len_mean": 8.86,
+    "pool_len_min": 6,
+    "pool_len_max": 10,
+    "gate_triggered": 29,
+    "branch_counts": {"calib_only": 71, "merge_only": 29},
+    "mean_unique_l1_in_pred_k5": 4.22,
+    "mean_unique_l1_posterior_k5": 2.68,
+    "mean_jaccard_vs_posterior_k5": 0.4915
+  },
+  "arms": [
+    {
+      "name": "posterior",
+      "ddx_k": 5,
+      "micro_precision": 0.444,
+      "micro_recall": 0.47334754797441364,
+      "micro_f1": 0.45820433436532504,
+      "eval_dir": "annotate/official_eval"
+    },
+    {
+      "name": "compat_then_pad",
+      "ddx_k": 5,
+      "micro_precision": 0.46,
+      "micro_recall": 0.4904051172707889,
+      "micro_f1": 0.4747162022703818,
+      "eval_dir": "annotate/official_eval_compat_then_pad"
+    },
+    {
+      "name": "l1_top2_compat_then_compress",
+      "ddx_k": 5,
+      "micro_precision": 0.428,
+      "micro_recall": 0.4562899786780384,
+      "micro_f1": 0.44169246646026833,
+      "delta_f1_vs_posterior_pp": -1.65,
+      "eval_dir": "annotate/official_eval_l1_top2_compat"
+    },
+    {
+      "name": "posterior",
+      "ddx_k": 7,
+      "micro_precision": 0.37857142857142856,
+      "micro_recall": 0.5650319829424307,
+      "micro_f1": 0.4533789563729684,
+      "eval_dir": "annotate/official_eval_k7"
+    },
+    {
+      "name": "compat_then_pad",
+      "ddx_k": 7,
+      "micro_precision": 0.38142857142857145,
+      "micro_recall": 0.5692963752665245,
+      "micro_f1": 0.4568006843455945,
+      "eval_dir": "annotate/official_eval_compat_then_pad_k7"
+    },
+    {
+      "name": "l1_top2_compat_then_compress",
+      "ddx_k": 7,
+      "micro_precision": 0.36194563662374823,
+      "micro_recall": 0.5394456289978679,
+      "micro_f1": 0.43321917808219185,
+      "delta_f1_vs_posterior_pp": -2.02,
+      "eval_dir": "annotate/official_eval_l1_top2_compat_k7"
+    }
+  ],
+  "verdict": "research_only_negative_on_dry_lexical"
+}
