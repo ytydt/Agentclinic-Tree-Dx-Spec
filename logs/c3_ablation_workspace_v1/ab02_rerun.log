@@ -1,0 +1,501 @@
+RUN: /home/wanghongyi/.conda/envs/gnn-llm/bin/python3 -u /data2/wanghongyi/Agentclinic-Tree-Dx-Spec/scripts/paper/run_diagnosisarena_pipeline_staged.py --cases-json /data2/wanghongyi/Agentclinic-Tree-Dx-Spec/logs/diagnosisarena_d2_m01_v1/c3_ab02_v1/normalized_cases.json --cases 3,4,5,7,11,12,15,19,21,22,27,28,29,33,36,39,40,45,57,59,60,62,63,67,72,74,76,81,83,87,89,90,95,97,99,100,102,103,107,111,114,117,118,119,120,122,124,125,128,129,132,134,137,139,140,147,149,150,151,156,158,161,163,164,165,167,173,174,177,181,182,183,186,187,188,190,194,198,202,205,206,207,211,214,216,219,220,225,226,227,228,229,231,233,237,241,242,243,246,249 --output-dir /data2/wanghongyi/Agentclinic-Tree-Dx-Spec/logs/diagnosisarena_d2_m01_v1/c3_ab02_v1 --workers 12 --model meta-llama/llama-3.3-70b-instruct --granularity-mode compat --l1-calib off --from-stage annotate --to-stage mapper --fixed-l1-budget 6 --l2-local-evidence-budget 4 --l2-between-evidence-budget 2 --l2-candidate-max-per-live-family 6 --l1-bfs-preset p5_anti_anchor_direct --l1-axis-mode flat --mapper-mode typed_llm_disagreement_rag --resume
+=== pipeline remaining cases=100 workers=12 stages=annotate,mapper resume=True ===
+
+######## stage=annotate workers=12 n=100 skip_stage=False targeted_gapfill=False ########
+{
+  "phase": "stage",
+  "n_cases": 100,
+  "case_ids": [
+    "3",
+    "4",
+    "5",
+    "7",
+    "11",
+    "12",
+    "15",
+    "19",
+    "21",
+    "22",
+    "27",
+    "28",
+    "29",
+    "33",
+    "36",
+    "39",
+    "40",
+    "45",
+    "57",
+    "59",
+    "60",
+    "62",
+    "63",
+    "67",
+    "72",
+    "74",
+    "76",
+    "81",
+    "83",
+    "87",
+    "89",
+    "90",
+    "95",
+    "97",
+    "99",
+    "100",
+    "102",
+    "103",
+    "107",
+    "111",
+    "114",
+    "117",
+    "118",
+    "119",
+    "120",
+    "122",
+    "124",
+    "125",
+    "128",
+    "129",
+    "132",
+    "134",
+    "137",
+    "139",
+    "140",
+    "147",
+    "149",
+    "150",
+    "151",
+    "156",
+    "158",
+    "161",
+    "163",
+    "164",
+    "165",
+    "167",
+    "173",
+    "174",
+    "177",
+    "181",
+    "182",
+    "183",
+    "186",
+    "187",
+    "188",
+    "190",
+    "194",
+    "198",
+    "202",
+    "205",
+    "206",
+    "207",
+    "211",
+    "214",
+    "216",
+    "219",
+    "220",
+    "225",
+    "226",
+    "227",
+    "228",
+    "229",
+    "231",
+    "233",
+    "237",
+    "241",
+    "242",
+    "243",
+    "246",
+    "249"
+  ],
+  "tree_dir": "logs/diagnosisarena_d2_m01_v1/c3_ab02_v1/annotate/shared_trees",
+  "p5_arm": "logs/diagnosisarena_d2_m01_v1/c3_ab02_v1/annotate/p5_headline_frozen.json",
+  "fixture": "logs/diagnosisarena_d2_m01_v1/c3_ab02_v1/annotate/finding_fixture_v1.json",
+  "mean_p5_rules": 17.55,
+  "mean_findings": 17.55
+}
+
+=== downstream top2 workers=12 n=100 ===
+/home/wanghongyi/.conda/envs/gnn-llm/lib/python3.10/site-packages/sklearn/base.py:376: InconsistentVersionWarning: Trying to unpickle estimator TfidfTransformer from version 0.23.2 when using version 1.4.1.post1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/wanghongyi/.conda/envs/gnn-llm/lib/python3.10/site-packages/sklearn/base.py:376: InconsistentVersionWarning: Trying to unpickle estimator TfidfVectorizer from version 0.23.2 when using version 1.4.1.post1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+[LLM] JSON parse retry 2/3 for LLMDdxEntrance (output_cap→16384)
+[downstream] 1/100 15 OK at1=True at2=True dur=303.651
+[downstream] 2/100 7 OK at1=True at2=True dur=304.222
+[downstream] 3/100 19 OK at1=True at2=True dur=307.186
+[downstream] 4/100 11 OK at1=False at2=False dur=307.177
+[downstream] 5/100 27 OK at1=False at2=False dur=309.255
+[LLM] JSON parse retry 2/3 for TopKCalibrationExamine (output_cap→32768)
+[downstream] 6/100 3 OK at1=True at2=True dur=310.535
+[downstream] 7/100 28 OK at1=False at2=False dur=312.432
+[downstream] 8/100 5 OK at1=False at2=False dur=314.211
+[downstream] 9/100 21 OK at1=False at2=False dur=315.957
+[downstream] 10/100 12 OK at1=True at2=True dur=315.999
+[downstream] 11/100 22 OK at1=False at2=False dur=315.925
+[downstream] 12/100 4 OK at1=True at2=True dur=319.294
+[LLM] OpenRouter response missing choices[0] ('types.SimpleNamespace' object has no attribute 'choices'). Retrying OpenRouter … body={'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] Attempt 1/3 error: OpenRouter response missing choices: {'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[downstream] 13/100 33 OK at1=False at2=False dur=287.136
+[downstream] 14/100 39 OK at1=False at2=False dur=285.748
+[downstream] 15/100 29 OK at1=False at2=False dur=291.746
+[downstream] 16/100 60 OK at1=True at2=True dur=279.519
+[downstream] 17/100 40 OK at1=False at2=False dur=286.401
+[downstream] 18/100 45 OK at1=False at2=False dur=285.066
+[downstream] 19/100 67 OK at1=False at2=False dur=276.324
+[downstream] 20/100 63 OK at1=False at2=False dur=279.91
+[downstream] 21/100 57 OK at1=True at2=True dur=287.298
+[downstream] 22/100 36 OK at1=True at2=True dur=294.199
+[downstream] 23/100 59 OK at1=True at2=True dur=286.12
+[downstream] 24/100 62 OK at1=True at2=True dur=286.344
+[downstream] 25/100 74 OK at1=False at2=False dur=276.7
+[downstream] 26/100 76 OK at1=False at2=False dur=276.924
+[downstream] 27/100 89 OK at1=False at2=False dur=277.762
+[downstream] 28/100 87 OK at1=True at2=True dur=278.184
+[downstream] 29/100 100 OK at1=True at2=True dur=272.856
+[downstream] 30/100 72 OK at1=True at2=True dur=286.283
+[downstream] 31/100 83 OK at1=False at2=False dur=281.539
+[downstream] 32/100 99 OK at1=False at2=False dur=280.628
+[downstream] 33/100 90 OK at1=False at2=False dur=287.658
+[downstream] 34/100 81 OK at1=False at2=False dur=289.435
+[downstream] 35/100 97 OK at1=True at2=True dur=286.1
+[downstream] 36/100 95 OK at1=True at2=True dur=287.904
+[LLM] JSON parse retry 2/3 for LLMDdxEntrance (output_cap→32768)
+[downstream] 37/100 117 OK at1=False at2=False dur=288.253
+[downstream] 38/100 125 OK at1=False at2=False dur=278.099
+[downstream] 39/100 102 OK at1=False at2=False dur=298.924
+[downstream] 40/100 111 OK at1=True at2=True dur=300.949
+[downstream] 41/100 119 OK at1=True at2=True dur=292.388
+[downstream] 42/100 118 OK at1=False at2=False dur=297.44
+[downstream] 43/100 103 OK at1=True at2=True dur=307.91
+[downstream] 44/100 107 OK at1=False at2=False dur=305.775
+[downstream] 45/100 122 OK at1=False at2=False dur=295.16
+[downstream] 46/100 114 OK at1=False at2=False dur=305.49
+[downstream] 47/100 124 OK at1=False at2=False dur=299.405
+[downstream] 48/100 120 OK at1=True at2=True dur=305.827
+[LLM] OpenRouter response missing choices[0] ('types.SimpleNamespace' object has no attribute 'choices'). Retrying OpenRouter … body={'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] Attempt 1/3 error: OpenRouter response missing choices: {'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[downstream] 49/100 134 OK at1=False at2=False dur=250.503
+[downstream] 50/100 149 OK at1=True at2=True dur=246.986
+[downstream] 51/100 128 OK at1=True at2=True dur=266.295
+[downstream] 52/100 150 OK at1=True at2=True dur=253.798
+[downstream] 53/100 129 OK at1=False at2=False dur=271.54
+[downstream] 54/100 137 OK at1=True at2=True dur=264.216
+[downstream] 55/100 140 OK at1=False at2=False dur=258.055
+[downstream] 56/100 151 OK at1=False at2=False dur=252.158
+[downstream] 57/100 147 OK at1=False at2=False dur=263.291
+[downstream] 58/100 156 OK at1=True at2=True dur=254.223
+[downstream] 59/100 139 OK at1=True at2=True dur=278.616
+[downstream] 60/100 132 OK at1=False at2=False dur=288.266
+[LLM] JSON parse retry 2/3 for LLMDdxEntrance (output_cap→32768)
+[downstream] 61/100 164 OK at1=True at2=True dur=262.75
+[downstream] 62/100 158 OK at1=True at2=True dur=273.798
+[downstream] 63/100 182 OK at1=True at2=True dur=245.396
+[downstream] 64/100 183 OK at1=False at2=False dur=243.541
+[downstream] 65/100 167 OK at1=False at2=False dur=263.917
+[downstream] 66/100 165 OK at1=False at2=False dur=265.272
+[downstream] 67/100 161 OK at1=True at2=True dur=275.331
+[downstream] 68/100 163 OK at1=False at2=False dur=278.096
+[downstream] 69/100 173 OK at1=True at2=True dur=271.805
+[LLM] JSON parse retry 2/3 for TopKCalibrationExamine (output_cap→32768)
+[downstream] 70/100 174 OK at1=True at2=True dur=276.961
+[downstream] 71/100 177 OK at1=False at2=False dur=272.522
+[downstream] 72/100 181 OK at1=False at2=False dur=276.547
+[LLM] OpenRouter response missing choices[0] ('types.SimpleNamespace' object has no attribute 'choices'). Retrying OpenRouter … body={'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] Attempt 1/3 error: OpenRouter response missing choices: {'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[downstream] 73/100 194 OK at1=False at2=False dur=273.996
+[downstream] 74/100 207 OK at1=False at2=False dur=263.122
+[downstream] 75/100 186 OK at1=False at2=False dur=285.581
+[downstream] 76/100 188 OK at1=False at2=False dur=283.67
+[downstream] 77/100 187 OK at1=False at2=False dur=286.286
+[downstream] 78/100 190 OK at1=True at2=True dur=282.603
+[downstream] 79/100 202 OK at1=False at2=False dur=283.27
+[downstream] 80/100 214 OK at1=True at2=True dur=268.46
+[downstream] 81/100 211 OK at1=False at2=False dur=277.059
+[downstream] 82/100 198 OK at1=False at2=False dur=290.882
+[downstream] 83/100 205 OK at1=False at2=False dur=288.533
+[downstream] 84/100 206 OK at1=True at2=True dur=298.628
+[LLM] OpenRouter response missing choices[0] ('types.SimpleNamespace' object has no attribute 'choices'). Retrying OpenRouter … body={'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] Attempt 1/3 error: OpenRouter response missing choices: {'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] OpenRouter response missing choices[0] ('types.SimpleNamespace' object has no attribute 'choices'). Retrying OpenRouter … body={'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] Attempt 1/3 error: OpenRouter response missing choices: {'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] OpenRouter response missing choices[0] ('types.SimpleNamespace' object has no attribute 'choices'). Retrying OpenRouter … body={'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] Attempt 1/3 error: OpenRouter response missing choices: {'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] OpenRouter response missing choices[0] ('types.SimpleNamespace' object has no attribute 'choices'). Retrying OpenRouter … body={'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] Attempt 1/3 error: OpenRouter response missing choices: {'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] OpenRouter response missing choices[0] ('types.SimpleNamespace' object has no attribute 'choices'). Retrying OpenRouter … body={'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] Attempt 1/3 error: OpenRouter response missing choices: {'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] OpenRouter response missing choices[0] ('types.SimpleNamespace' object has no attribute 'choices'). Retrying OpenRouter … body={'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] Attempt 1/3 error: OpenRouter response missing choices: {'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] OpenRouter response missing choices[0] ('types.SimpleNamespace' object has no attribute 'choices'). Retrying OpenRouter … body={'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] Attempt 2/3 error: OpenRouter response missing choices: {'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] OpenRouter response missing choices[0] ('types.SimpleNamespace' object has no attribute 'choices'). Retrying OpenRouter … body={'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] Attempt 1/3 error: OpenRouter response missing choices: {'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] OpenRouter response missing choices[0] ('types.SimpleNamespace' object has no attribute 'choices'). Retrying OpenRouter … body={'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] Attempt 1/3 error: OpenRouter response missing choices: {'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] OpenRouter response missing choices[0] ('types.SimpleNamespace' object has no attribute 'choices'). Retrying OpenRouter … body={'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] Attempt 1/3 error: OpenRouter response missing choices: {'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] OpenRouter response missing choices[0] ('types.SimpleNamespace' object has no attribute 'choices'). Retrying OpenRouter … body={'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] Attempt 2/3 error: OpenRouter response missing choices: {'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] OpenRouter response missing choices[0] ('types.SimpleNamespace' object has no attribute 'choices'). Retrying OpenRouter … body={'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] Attempt 1/3 error: OpenRouter response missing choices: {'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] OpenRouter response missing choices[0] ('types.SimpleNamespace' object has no attribute 'choices'). Retrying OpenRouter … body={'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] Attempt 2/3 error: OpenRouter response missing choices: {'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] OpenRouter response missing choices[0] ('types.SimpleNamespace' object has no attribute 'choices'). Retrying OpenRouter … body={'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] Attempt 1/3 error: OpenRouter response missing choices: {'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] OpenRouter response missing choices[0] ('types.SimpleNamespace' object has no attribute 'choices'). Retrying OpenRouter … body={'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] Attempt 1/3 error: OpenRouter response missing choices: {'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] OpenRouter response missing choices[0] ('types.SimpleNamespace' object has no attribute 'choices'). Retrying OpenRouter … body={'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] Attempt 1/3 error: OpenRouter response missing choices: {'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] OpenRouter response missing choices[0] ('types.SimpleNamespace' object has no attribute 'choices'). Retrying OpenRouter … body={'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] Attempt 1/3 error: OpenRouter response missing choices: {'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[downstream] 85/100 241 OK at1=False at2=False dur=252.622
+[LLM] OpenRouter response missing choices[0] ('types.SimpleNamespace' object has no attribute 'choices'). Retrying OpenRouter … body={'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] Attempt 1/3 error: OpenRouter response missing choices: {'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] OpenRouter response missing choices[0] ('types.SimpleNamespace' object has no attribute 'choices'). Retrying OpenRouter … body={'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] Attempt 1/3 error: OpenRouter response missing choices: {'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] OpenRouter response missing choices[0] ('types.SimpleNamespace' object has no attribute 'choices'). Retrying OpenRouter … body={'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] Attempt 1/3 error: OpenRouter response missing choices: {'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[downstream] 86/100 227 OK at1=False at2=False dur=282.33
+[LLM] OpenRouter response missing choices[0] ('types.SimpleNamespace' object has no attribute 'choices'). Retrying OpenRouter … body={'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] Attempt 1/3 error: OpenRouter response missing choices: {'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[downstream] 87/100 219 OK at1=True at2=True dur=292.193
+[LLM] OpenRouter response missing choices[0] ('types.SimpleNamespace' object has no attribute 'choices'). Retrying OpenRouter … body={'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[downstream] 88/100 225 OK at1=False at2=False dur=293.008[LLM] Attempt 1/3 error: OpenRouter response missing choices: {'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+
+[downstream] 89/100 216 OK at1=False at2=False dur=303.584
+[downstream] 90/100 237 OK at1=False at2=False dur=284.331
+[downstream] 91/100 233 OK at1=True at2=True dur=287.453
+[downstream] 92/100 226 OK at1=False at2=False dur=298.533
+[downstream] 93/100 231 OK at1=False at2=False dur=289.734
+[downstream] 94/100 229 OK at1=False at2=False dur=296.063
+[downstream] 95/100 228 OK at1=False at2=False dur=303.605
+[downstream] 96/100 220 OK at1=True at2=True dur=309.306
+[downstream] 97/100 242 OK at1=False at2=False dur=102.488
+[downstream] 98/100 249 OK at1=False at2=False dur=92.603
+[downstream] 99/100 246 OK at1=True at2=True dur=99.225
+[downstream] 100/100 243 OK at1=False at2=False dur=105.631
+{
+  "schema_version": 1,
+  "created_at": "2026-07-28T12:03:49.982282+00:00",
+  "phase": "downstream-top2",
+  "workers": 12,
+  "n_cases": 100,
+  "n_ok": 100,
+  "n_error": 0,
+  "wall_seconds": 2375.623,
+  "throughput_cases_per_hour": 151.539,
+  "mean_case_seconds": 277.479,
+  "max_case_seconds": 319.294,
+  "performance": {
+    "judge": "agent_label_match_v1",
+    "at1": 39,
+    "at2": 39,
+    "at1_rate": 0.39,
+    "at2_rate": 0.39,
+    "note": "No AnswerMapper; agent semantic label-match vs gold. Review adjudication_sheet.json for disagreements."
+  },
+  "fixed_l1_budget": 6,
+  "joint_arm": "A3-joint-primary",
+  "calibration_arm": "both_l1fallback",
+  "granularity_mode": "compat",
+  "l1_calib": "off",
+  "targeted_l2_gapfill": false,
+  "targeted_l2_gapfill_arm": "ALL_B_b1",
+  "run_fingerprint": "abe14806f80bf8182bf797176b6a3080b6c8dab89e6010381e172f379a3daaf6",
+  "errors": []
+}
+{
+  "stage": "annotate",
+  "status": "OK",
+  "annotate_dir": "logs/diagnosisarena_d2_m01_v1/c3_ab02_v1/annotate"
+}
+
+######## stage=mapper workers=12 n=100 mode=typed_llm_disagreement_rag synonym_bind=False ########
+=== mapper workers=12 n=100 mode=typed_llm_disagreement_rag synonym_bind=False ===
+[mapper] 1/100 111 OK opt@1=True opt@2=True dur=218.765
+[mapper] 2/100 102 OK opt@1=False opt@2=False dur=220.589
+[mapper] 3/100 118 OK opt@1=False opt@2=False dur=220.1
+[mapper] 4/100 100 OK opt@1=True opt@2=True dur=220.217
+[mapper] 5/100 107 OK opt@1=False opt@2=False dur=221.953
+[mapper] 6/100 117 OK opt@1=False opt@2=False dur=220.127
+[mapper] 7/100 120 OK opt@1=True opt@2=True dur=238.776
+[mapper] 8/100 114 OK opt@1=False opt@2=False dur=261.983
+[mapper] 9/100 11 OK opt@1=False opt@2=False dur=271.564
+[mapper] 10/100 103 OK opt@1=True opt@2=True dur=274.518
+[mapper] 11/100 119 OK opt@1=True opt@2=True dur=280.831
+/home/wanghongyi/.conda/envs/gnn-llm/lib/python3.10/site-packages/sklearn/base.py:376: InconsistentVersionWarning: Trying to unpickle estimator TfidfTransformer from version 0.23.2 when using version 1.4.1.post1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+[mapper] 12/100 12 OK opt@1=True opt@2=True dur=288.061
+/home/wanghongyi/.conda/envs/gnn-llm/lib/python3.10/site-packages/sklearn/base.py:376: InconsistentVersionWarning: Trying to unpickle estimator TfidfVectorizer from version 0.23.2 when using version 1.4.1.post1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+[mapper] 13/100 128 OK opt@1=True opt@2=True dur=171.971
+[mapper] 14/100 132 OK opt@1=True opt@2=True dur=169.541
+[mapper] 15/100 125 OK opt@1=False opt@2=False dur=176.009
+[mapper] 16/100 129 OK opt@1=False opt@2=False dur=172.082
+[mapper] 17/100 124 OK opt@1=True opt@2=True dur=175.66
+[mapper] 18/100 122 OK opt@1=True opt@2=True dur=180.473
+[mapper] 19/100 134 OK opt@1=True opt@2=True dur=158.549
+[mapper] 20/100 137 OK opt@1=True opt@2=True dur=137.302
+[mapper] 21/100 140 OK opt@1=False opt@2=False dur=123.607
+[mapper] 22/100 147 OK opt@1=False opt@2=False dur=116.96
+[mapper] 23/100 139 OK opt@1=True opt@2=True dur=178.215
+[mapper] 24/100 149 OK opt@1=True opt@2=True dur=175.455
+[LLM] OpenRouter response missing choices[0] ('types.SimpleNamespace' object has no attribute 'choices'). Retrying OpenRouter … body={'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[LLM] Attempt 1/3 error: OpenRouter response missing choices: {'error': {'message': 'Provider returned error', 'code': 400, 'metadata': {'raw': '{\n  "error": {\n    "code": 400,\n    "message": "Unable to submit request because it has a maxOutputTokens value of 32768 but the supported range is from 1 (inclusive) to 8193 (exclusive). Update the value and try again.",\n    "status": "INVALID_ARGUMENT"\n  }\n}\n', 'provider_name': 'Google', 'is_byok': False, 'provider_error_code': '400', 'previous_errors': [{'code': 429, 'message': 'Provider returned error',
+[mapper] 25/100 167 OK opt@1=True opt@2=True dur=149.67
+[mapper] 26/100 158 OK opt@1=True opt@2=True dur=155.413
+[mapper] 27/100 163 OK opt@1=True opt@2=True dur=153.025
+[mapper] 28/100 150 OK opt@1=True opt@2=True dur=158.058
+[mapper] 29/100 165 OK opt@1=True opt@2=True dur=152.749
+[mapper] 30/100 161 OK opt@1=True opt@2=True dur=164.013
+[mapper] 31/100 164 OK opt@1=True opt@2=True dur=166.728
+[mapper] 32/100 15 OK opt@1=True opt@2=True dur=200.297
+[mapper] 33/100 156 OK opt@1=True opt@2=True dur=216.42
+[mapper] 34/100 174 OK opt@1=True opt@2=True dur=163.101
+[mapper] 35/100 151 OK opt@1=True opt@2=True dur=234.813
+[mapper] 36/100 173 OK opt@1=True opt@2=True dur=190.687
+[mapper] 37/100 182 OK opt@1=True opt@2=True dur=175.943
+[mapper] 38/100 183 OK opt@1=False opt@2=False dur=175.125
+[mapper] 39/100 177 OK opt@1=True opt@2=True dur=177.931
+[mapper] 40/100 186 OK opt@1=True opt@2=True dur=178.283
+[mapper] 41/100 181 OK opt@1=False opt@2=False dur=183.663
+[mapper] 42/100 187 OK opt@1=False opt@2=False dur=184.603
+[mapper] 43/100 19 OK opt@1=True opt@2=True dur=169.748
+[mapper] 44/100 188 OK opt@1=False opt@2=False dur=196.142
+[mapper] 45/100 194 OK opt@1=False opt@2=False dur=145.626
+[mapper] 46/100 190 OK opt@1=True opt@2=True dur=162.044
+[mapper] 47/100 202 OK opt@1=False opt@2=False dur=154.568
+[mapper] 48/100 198 OK opt@1=False opt@2=False dur=169.151
+[mapper] 49/100 205 OK opt@1=False opt@2=False dur=177.087
+[mapper] 50/100 206 OK opt@1=True opt@2=True dur=179.173
+[mapper] 51/100 21 OK opt@1=False opt@2=False dur=175.577
+[mapper] 52/100 211 OK opt@1=True opt@2=True dur=180.569
+[mapper] 53/100 216 OK opt@1=True opt@2=True dur=160.592
+[mapper] 54/100 207 OK opt@1=True opt@2=True dur=193.011
+[mapper] 55/100 214 OK opt@1=True opt@2=True dur=180.822
+[mapper] 56/100 225 OK opt@1=True opt@2=True dur=146.757
+[mapper] 57/100 219 OK opt@1=True opt@2=True dur=176.508
+[mapper] 58/100 22 OK opt@1=False opt@2=False dur=191.899
+[mapper] 59/100 220 OK opt@1=True opt@2=True dur=193.412
+[mapper] 60/100 226 OK opt@1=False opt@2=False dur=177.07
+[mapper] 61/100 237 OK opt@1=True opt@2=True dur=152.074
+[mapper] 62/100 227 OK opt@1=True opt@2=True dur=170.877
+[mapper] 63/100 233 OK opt@1=True opt@2=True dur=156.477
+[mapper] 64/100 241 OK opt@1=False opt@2=False dur=150.043
+[mapper] 65/100 229 OK opt@1=False opt@2=False dur=169.75
+[mapper] 66/100 228 OK opt@1=True opt@2=True dur=181.253
+[mapper] 67/100 243 OK opt@1=False opt@2=False dur=150.743
+[mapper] 68/100 242 OK opt@1=False opt@2=False dur=160.685
+[mapper] 69/100 246 OK opt@1=True opt@2=True dur=150.832
+[mapper] 70/100 249 OK opt@1=True opt@2=True dur=155.267
+[mapper] 71/100 27 OK opt@1=False opt@2=False dur=153.67
+[mapper] 72/100 4 OK opt@1=True opt@2=True dur=124.788
+[mapper] 73/100 33 OK opt@1=True opt@2=True dur=154.662
+[mapper] 74/100 39 OK opt@1=True opt@2=True dur=142.885
+[mapper] 75/100 36 OK opt@1=True opt@2=True dur=149.327
+[mapper] 76/100 29 OK opt@1=True opt@2=True dur=158.336
+[mapper] 77/100 28 OK opt@1=True opt@2=True dur=165.362
+[mapper] 78/100 3 OK opt@1=True opt@2=True dur=168.698
+[mapper] 79/100 45 OK opt@1=True opt@2=True dur=134.766
+[mapper] 80/100 40 OK opt@1=False opt@2=False dur=151.995
+[mapper] 81/100 231 OK opt@1=False opt@2=False dur=341.897
+[mapper] 82/100 57 OK opt@1=True opt@2=True dur=145.898
+[mapper] 83/100 5 OK opt@1=False opt@2=False dur=161.217
+[mapper] 84/100 59 OK opt@1=True opt@2=True dur=155.448
+[mapper] 85/100 81 OK opt@1=True opt@2=True dur=137.371
+[mapper] 86/100 62 OK opt@1=True opt@2=True dur=172.004
+[mapper] 87/100 7 OK opt@1=True opt@2=True dur=167.982
+[mapper] 88/100 60 OK opt@1=True opt@2=True dur=175.806
+[mapper] 89/100 63 OK opt@1=True opt@2=True dur=173.945
+[mapper] 90/100 72 OK opt@1=True opt@2=True dur=168.773
+[mapper] 91/100 67 OK opt@1=True opt@2=True dur=180.441
+[mapper] 92/100 76 OK opt@1=True opt@2=True dur=165.983
+[mapper] 93/100 74 OK opt@1=False opt@2=False dur=174.174
+[mapper] 94/100 87 OK opt@1=True opt@2=True dur=141.081
+[mapper] 95/100 83 OK opt@1=False opt@2=False dur=148.328
+[mapper] 96/100 89 OK opt@1=False opt@2=False dur=89.506
+[mapper] 97/100 90 OK opt@1=True opt@2=True dur=71.497
+[mapper] 98/100 99 OK opt@1=True opt@2=True dur=60.444
+[mapper] 99/100 95 OK opt@1=True opt@2=True dur=66.207
+[mapper] 100/100 97 OK opt@1=True opt@2=True dur=65.84
+{
+  "schema_version": 1,
+  "created_at": "2026-07-28T12:28:48.647592+00:00",
+  "phase": "mapper",
+  "mapper_mode": "typed_llm_disagreement_rag",
+  "synonym_bind_repair": false,
+  "synonym_bind_min_score": 0.7,
+  "workers": 12,
+  "n_cases": 100,
+  "n_ok": 100,
+  "n_error": 0,
+  "wall_seconds": 1498.582,
+  "throughput_cases_per_hour": 240.227,
+  "mean_case_seconds": 172.499,
+  "option_top1": 0.68,
+  "option_top2": 0.68,
+  "option_top1_count": 68,
+  "option_top2_count": 68,
+  "mean_option_rr": 0.68,
+  "downstream_dir": "logs/diagnosisarena_d2_m01_v1/c3_ab02_v1/annotate",
+  "errors": [],
+  "note": "MCQ option @1/@2 via RelationAwareAnswerMapper on joint ranking leaves; gold_option from normalized_cases (evaluation only). synonym_bind_repair=OFF (default)."
+}
+{
+  "stage": "mapper",
+  "status": "OK",
+  "exit_code": 0,
+  "synonym_bind_repair": false
+}
+{
+  "exit_code": 0,
+  "wall_seconds": 3877.731,
+  "stages": [
+    {
+      "stage": "annotate",
+      "status": "OK"
+    },
+    {
+      "stage": "mapper",
+      "status": "OK"
+    }
+  ],
+  "summary": "logs/diagnosisarena_d2_m01_v1/c3_ab02_v1/pipeline_summary.json"
+}
+{
+  "ab02": {
+    "label": "AB02 flat / no L1",
+    "output_dir": "/data2/wanghongyi/Agentclinic-Tree-Dx-Spec/logs/diagnosisarena_d2_m01_v1/c3_ab02_v1",
+    "exit_code": 0,
+    "l1_axis_mode": "flat",
+    "mapper": {
+      "created_at": "2026-07-28T12:28:48.647592+00:00",
+      "downstream_dir": "logs/diagnosisarena_d2_m01_v1/c3_ab02_v1/annotate",
+      "errors": [],
+      "mapper_mode": "typed_llm_disagreement_rag",
+      "mean_case_seconds": 172.499,
+      "mean_option_rr": 0.68,
+      "n_cases": 100,
+      "n_error": 0,
+      "n_ok": 100,
+      "note": "MCQ option @1/@2 via RelationAwareAnswerMapper on joint ranking leaves; gold_option from normalized_cases (evaluation only). synonym_bind_repair=OFF (default).",
+      "option_top1": 0.68,
+      "option_top1_count": 68,
+      "option_top2": 0.68,
+      "option_top2_count": 68,
+      "phase": "mapper",
+      "schema_version": 1,
+      "synonym_bind_min_score": 0.7,
+      "synonym_bind_repair": false,
+      "throughput_cases_per_hour": 240.227,
+      "wall_seconds": 1498.582,
+      "workers": 12
+    },
+    "synonym_bind": false
+  }
+}
+WROTE /data2/wanghongyi/Agentclinic-Tree-Dx-Spec/runs/paper_v1/ablations_c3_da_raw.json

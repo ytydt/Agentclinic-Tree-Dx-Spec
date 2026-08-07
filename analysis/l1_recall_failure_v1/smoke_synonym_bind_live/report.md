@@ -1,9 +1,9 @@
 # Approach A live: synonym bind-repair on compat_parallel
 
-**generated**: `2026-07-24T22:13:23.212378+00:00`
-**cohort**: `all100`
-**protocol**: `compat_parallel` (gold_g2 off, at1_compat cache) → synonym bind → rematch
-**KB**: lexical leaf_match + `disease_name_bridge`
+**generated**: `2026-07-27T09:24:10+00:00`（**pair_match_score 修复后重跑**）  
+**cohort**: `all100`  
+**protocol**: `compat_parallel` (gold_g2 off, at1_compat cache) → synonym bind → rematch  
+**KB**: lexical `leaf_match_score` + `disease_name_bridge.pair_match_score`（**不含** `syn:leaf`/`syn:option` 自 chunk）  
 **no typed LLM**
 
 ## Main table (live rematch protocol)
@@ -11,31 +11,28 @@
 | arm | @1 | @2 | MRR | gold_matched | repair_case_rate |
 |-----|---:|---:|----:|-------------:|-----------------:|
 | R_compat_live | 0.710 | 0.780 | 0.748 | 0.790 | — |
-| **R_compat_synonym_bind_live** | **0.810** | **0.930** | **0.877** | **0.950** | 0.670 |
+| **R_compat_synonym_bind_live** | **0.730** | **0.820** | **0.778** | **0.830** | 0.280 |
 | formal anchor compat_parallel | 0.72 | 0.78 | — | — | — |
+
+> **作废**：修前误用 `search_option_leaves()[0]`（自 chunk score=1.0）曾报 **0.81/0.93**；见 `report_BUGGED_selfchunk.md` / `summary_all100_BUGGED_selfchunk.json`。
 
 ## Gate
 
 - decision: **PASS**
 - claim_allowed: `True`
 - production_default: **off**
-- synonym_bind_live vs compat_live Δ@1=+0.100 Δ@2=+0.150
-- opt1 guard (Δ≥0): OK
-- opt2 guard (Δ≥-0.01): OK
-- matched 0.790 → 0.950
-- vs formal 0.72/0.78: Δ@1=+0.090 Δ@2=+0.150
-- baseline reproduce check: compat_live @1=0.710 @2=0.780
+- synonym_bind_live vs compat_live Δ@1=+0.020 Δ@2=+0.040
+- matched 0.790 → 0.830
+- vs formal 0.72/0.78: Δ@1=+0.010 Δ@2=+0.040
 
 ## Notes
 
-- Live table is comparable to formal **0.72/0.78** (same compat_parallel path).
-- Empty ranking (e.g. case 97 calib_only) scored as miss 0/0 for both arms (at1口径).
-- Baseline reproduce: this run compat **0.71/0.78** (formal 0.72/0.78; only case **214** @1 differs).
-- Frozen rematch A/B lives in `smoke_synonym_bind_rematch/` (I5: do not mix).
-- Even on PASS: default stays off until explicitly enabled.
+- 桥接功能保留：真实同义/粒度 pair（如 AML↔acute myeloid leukemia）仍可 ≥0.70 加分。
+- 空绑不再因「叶名在库中可 resolve」一律绑到 pred_1。
+- Live table comparable to formal **0.72/0.78** (same compat_parallel path).
 
 ```bash
 PYTHONPATH=src:scripts/paper:scripts \
   python3 -u scripts/paper/run_synonym_bind_live_smoke.py \
-    --cohort all100 --auto-escalate
+    --cohort all100 --dry-run
 ```

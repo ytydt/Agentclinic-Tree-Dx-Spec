@@ -343,6 +343,14 @@ class ControllerConfig:
     l2_recall_snippet_budget: int = 12
     # Shared A/B candidate-to-child coverage assignment + one-shot repair.
     l2_recall_gap_fill: bool = False
+    # C2a opt-in: after gap repair (or when repair fails/rejects), deterministically
+    # append still-uncovered candidate disease names as child leaves. Default OFF.
+    l2_gap_force_emit_uncovered: bool = False
+    # emit_v1: max force-emitted leaves per parent (and thus per gap call). ≤3.
+    l2_gap_force_emit_max: int = 3
+    # C3: when False, L2RecallCreator omits synonym/variant de-dupe guidance;
+    # exact-string id/label de-dupe in `_dedupe_l2_subbranches` is always kept.
+    tree_semantic_dedupe: bool = True
 
     # §13 discrimination gate for the per-turn posterior update. When ON, a turn
     # whose evidence is ENTIRELY non-discriminative (only neutral/weak labels, or

@@ -103,7 +103,8 @@ def salient_from(text: str, n: int = 6) -> list:
 def make_llm_poster(model: str):
     import os
     import requests
-    key = os.environ.get("OPENROUTER_API_KEY2", "")
+    key = os.environ.get("OPENROUTER_API_KEY2",
+                         "")
     headers = {"Authorization": f"Bearer {key}", "HTTP-Referer": "google.com",
                "X-Title": "eval", "Content-Type": "application/json"}
     prov = {"order": ["novita", "deepinfra/base", "groq"], "allow_fallbacks": True}

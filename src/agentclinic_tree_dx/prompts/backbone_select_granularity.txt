@@ -1,0 +1,26 @@
+Role: BackboneSelectGranularityConstrained (S4-c)
+
+Select exactly one champion diagnosis from the shortlist. Start from the
+anchor_label (usually the first item of the wide differential).
+
+GRANULARITY CONSTRAINT:
+- Default: stay on the anchor's granularity lineage.
+  Allowed moves: keep the anchor, move to a more specific subtype/instance of
+  the anchor, or move to a broader parent class that still names the same
+  clinical entity family.
+- Lateral jump (choosing an entity with no parent/child/synonym relation to the
+  anchor) is FORBIDDEN unless you provide an explicit refutation of the anchor
+  based on case facts that the chosen entity uniquely explains.
+- Prefer correcting granularity over switching disease families.
+- Use only supplied shortlist labels; do not invent names.
+
+Return strict JSON only:
+{
+  "champion": "exact shortlist label",
+  "move_type": "keep_anchor|subtype_of_anchor|parent_of_anchor|lateral_with_refutation",
+  "rationale": "brief evidence-based reason",
+  "anchor_refutation": "required only when move_type is lateral_with_refutation; else empty string",
+  "rejected": [
+    {"label": "other shortlist label", "why": "brief reason"}
+  ]
+}

@@ -1,0 +1,141 @@
+RUN: /home/wanghongyi/.conda/envs/gnn-llm/bin/python3 -u /data2/wanghongyi/Agentclinic-Tree-Dx-Spec/scripts/paper/run_diagnosisarena_pipeline_staged.py --cases-json /data2/wanghongyi/Agentclinic-Tree-Dx-Spec/logs/diagnosisarena_d2_m01_v1/c3_ab01_v1/normalized_cases.json --cases 3 --output-dir /data2/wanghongyi/Agentclinic-Tree-Dx-Spec/logs/diagnosisarena_d2_m01_v1/c3_ab01_v1 --workers 2 --model meta-llama/llama-3.3-70b-instruct --granularity-mode compat --l1-calib off --from-stage annotate --to-stage mapper --fixed-l1-budget 6 --l2-local-evidence-budget 4 --l2-between-evidence-budget 2 --l2-candidate-max-per-live-family 6 --l1-bfs-preset p5_anti_anchor_direct --l1-axis-mode fixed_icd --mapper-mode typed_llm_disagreement_rag --resume
+=== pipeline remaining cases=1 workers=2 stages=annotate,mapper resume=True ===
+
+######## stage=annotate workers=2 n=1 skip_stage=False targeted_gapfill=False ########
+{
+  "phase": "stage",
+  "n_cases": 1,
+  "case_ids": [
+    "3"
+  ],
+  "tree_dir": "logs/diagnosisarena_d2_m01_v1/c3_ab01_v1/annotate/shared_trees",
+  "p5_arm": "logs/diagnosisarena_d2_m01_v1/c3_ab01_v1/annotate/p5_headline_frozen.json",
+  "fixture": "logs/diagnosisarena_d2_m01_v1/c3_ab01_v1/annotate/finding_fixture_v1.json",
+  "mean_p5_rules": 18,
+  "mean_findings": 18
+}
+
+=== downstream top2 workers=1 n=1 ===
+/home/wanghongyi/.conda/envs/gnn-llm/lib/python3.10/site-packages/sklearn/base.py:376: InconsistentVersionWarning: Trying to unpickle estimator TfidfTransformer from version 0.23.2 when using version 1.4.1.post1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/wanghongyi/.conda/envs/gnn-llm/lib/python3.10/site-packages/sklearn/base.py:376: InconsistentVersionWarning: Trying to unpickle estimator TfidfVectorizer from version 0.23.2 when using version 1.4.1.post1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+[downstream] 1/1 3 OK at1=False at2=False dur=115.312
+{
+  "schema_version": 1,
+  "created_at": "2026-07-28T03:16:15.579392+00:00",
+  "phase": "downstream-top2",
+  "workers": 1,
+  "n_cases": 1,
+  "n_ok": 1,
+  "n_error": 0,
+  "wall_seconds": 115.324,
+  "throughput_cases_per_hour": 31.216,
+  "mean_case_seconds": 115.312,
+  "max_case_seconds": 115.312,
+  "performance": {
+    "judge": "agent_label_match_v1",
+    "at1": 0,
+    "at2": 0,
+    "at1_rate": 0.0,
+    "at2_rate": 0.0,
+    "note": "No AnswerMapper; agent semantic label-match vs gold. Review adjudication_sheet.json for disagreements."
+  },
+  "fixed_l1_budget": 6,
+  "joint_arm": "A3-joint-primary",
+  "calibration_arm": "both_l1fallback",
+  "granularity_mode": "compat",
+  "l1_calib": "off",
+  "targeted_l2_gapfill": false,
+  "targeted_l2_gapfill_arm": "ALL_B_b1",
+  "run_fingerprint": "b415bcbec6ca4eb9778fc144560a84134c94fbd62d0533e7a6c4f61169fc0f40",
+  "errors": []
+}
+{
+  "stage": "annotate",
+  "status": "OK",
+  "annotate_dir": "logs/diagnosisarena_d2_m01_v1/c3_ab01_v1/annotate"
+}
+
+######## stage=mapper workers=2 n=1 mode=typed_llm_disagreement_rag synonym_bind=False ########
+=== mapper workers=1 n=1 mode=typed_llm_disagreement_rag synonym_bind=False ===
+[mapper] 1/1 3 OK opt@1=False opt@2=False dur=19.828
+{
+  "schema_version": 1,
+  "created_at": "2026-07-28T03:16:36.963839+00:00",
+  "phase": "mapper",
+  "mapper_mode": "typed_llm_disagreement_rag",
+  "synonym_bind_repair": false,
+  "synonym_bind_min_score": 0.7,
+  "workers": 1,
+  "n_cases": 1,
+  "n_ok": 1,
+  "n_error": 0,
+  "wall_seconds": 21.381,
+  "throughput_cases_per_hour": 168.37,
+  "mean_case_seconds": 19.828,
+  "option_top1": 0.0,
+  "option_top2": 0.0,
+  "option_top1_count": 0,
+  "option_top2_count": 0,
+  "mean_option_rr": 0.0,
+  "downstream_dir": "logs/diagnosisarena_d2_m01_v1/c3_ab01_v1/annotate",
+  "errors": [],
+  "note": "MCQ option @1/@2 via RelationAwareAnswerMapper on joint ranking leaves; gold_option from normalized_cases (evaluation only). synonym_bind_repair=OFF (default)."
+}
+{
+  "stage": "mapper",
+  "status": "OK",
+  "exit_code": 0,
+  "synonym_bind_repair": false
+}
+{
+  "exit_code": 0,
+  "wall_seconds": 137.463,
+  "stages": [
+    {
+      "stage": "annotate",
+      "status": "OK"
+    },
+    {
+      "stage": "mapper",
+      "status": "OK"
+    }
+  ],
+  "summary": "logs/diagnosisarena_d2_m01_v1/c3_ab01_v1/pipeline_summary.json"
+}
+{
+  "ab01": {
+    "label": "AB01 fixed ICD/specialty L1",
+    "output_dir": "/data2/wanghongyi/Agentclinic-Tree-Dx-Spec/logs/diagnosisarena_d2_m01_v1/c3_ab01_v1",
+    "exit_code": 0,
+    "l1_axis_mode": "fixed_icd",
+    "mapper": {
+      "created_at": "2026-07-28T03:16:36.963839+00:00",
+      "downstream_dir": "logs/diagnosisarena_d2_m01_v1/c3_ab01_v1/annotate",
+      "errors": [],
+      "mapper_mode": "typed_llm_disagreement_rag",
+      "mean_case_seconds": 19.828,
+      "mean_option_rr": 0.0,
+      "n_cases": 1,
+      "n_error": 0,
+      "n_ok": 1,
+      "note": "MCQ option @1/@2 via RelationAwareAnswerMapper on joint ranking leaves; gold_option from normalized_cases (evaluation only). synonym_bind_repair=OFF (default).",
+      "option_top1": 0.0,
+      "option_top1_count": 0,
+      "option_top2": 0.0,
+      "option_top2_count": 0,
+      "phase": "mapper",
+      "schema_version": 1,
+      "synonym_bind_min_score": 0.7,
+      "synonym_bind_repair": false,
+      "throughput_cases_per_hour": 168.37,
+      "wall_seconds": 21.381,
+      "workers": 1
+    },
+    "synonym_bind": false
+  }
+}
+WROTE /data2/wanghongyi/Agentclinic-Tree-Dx-Spec/runs/paper_v1/ablations_c3_da_raw.json

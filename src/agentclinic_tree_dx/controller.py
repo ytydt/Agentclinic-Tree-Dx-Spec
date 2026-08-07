@@ -1242,6 +1242,17 @@ class AgentClinicTreeController:
             return self.env.call_module(module_name, payload)
 
         prompt_text = load_module_prompt(module_name)
+        # C3 AB04/AB06: drop synonym/variant de-dupe guidance in L2RecallCreator
+        # while retaining exact-string de-dupe in `_dedupe_l2_subbranches`.
+        if (
+            module_name == "L2RecallCreator"
+            and not getattr(self.config, "tree_semantic_dedupe", True)
+        ):
+            prompt_text = prompt_text.replace(
+                "- De-duplicate synonyms and spelling variants; emit each disease once.\n",
+                "- Exact-string duplicates only; do not merge clinical synonyms or "
+                "spelling variants that differ as written.\n",
+            )
         # §21.10.3: the `representative_diseases` field (Fix A) is gated OUT of the
         # static BranchCreator/SubBranchCreator prompts so the clean baseline is
         # reproducible. Inject the directive ONLY when Fix A is enabled, so asking
@@ -4448,7 +4459,9 @@ class AgentClinicTreeController:
                 "L2 recall repair failed (%s); retaining original children", e
             )
             audit["gap_fill"] = "repair_failed_open"
-            return result
+            return self._maybe_force_emit_uncovered_l2(
+                result, uncovered, audit
+            )
 
         repaired_rows = list(repaired.get("sub_branches", []) or [])
         old_coverage = {
@@ -4465,9 +4478,85 @@ class AgentClinicTreeController:
         audit["repair_no_coverage_loss"] = no_loss
         if repaired_rows and no_shrink and no_loss:
             audit["gap_fill"] = "repair_accepted"
-            return repaired
-        audit["gap_fill"] = "repair_rejected"
-        return result
+            result = repaired
+        else:
+            audit["gap_fill"] = "repair_rejected"
+            result = result
+        return self._maybe_force_emit_uncovered_l2(
+            result, uncovered, audit
+        )
+
+    @staticmethod
+    def _child_labels_cover(name: str, child_labels: list[str]) -> bool:
+        key = re.sub(r"\s+", " ", str(name or "").strip()).casefold()
+        if not key:
+            return True
+        for lab in child_labels:
+            other = re.sub(r"\s+", " ", str(lab or "").strip()).casefold()
+            if not other:
+                continue
+            if key == other or key in other or other in key:
+                return True
+        return False
+
+    def _force_emit_uncovered_subbranches(
+        self,
+        rows: list,
+        uncovered: list[str],
+    ) -> tuple[list, list[str]]:
+        """Deterministically append still-missing uncovered names as children."""
+        out = list(rows)
+        child_labels = [str(r.get("label", "")) for r in out]
+        emitted: list[str] = []
+        max_emit = int(getattr(self.config, "l2_gap_force_emit_max", 3) or 0)
+        if max_emit < 0:
+            max_emit = 0
+        for name in uncovered:
+            if max_emit and len(emitted) >= max_emit:
+                break
+            label = str(name or "").strip()
+            if not label:
+                continue
+            key = re.sub(r"\s+", " ", label).casefold()
+            covered = False
+            for lab in child_labels:
+                other = re.sub(r"\s+", " ", str(lab or "").strip()).casefold()
+                if other and (key == other or key in other or other in key):
+                    covered = True
+                    break
+            if covered:
+                continue
+            out.append({
+                "label": label,
+                "danger": 0.0,
+                "force_emitted_uncovered": True,
+            })
+            child_labels.append(label)
+            emitted.append(label)
+        return out, emitted
+
+    def _maybe_force_emit_uncovered_l2(
+        self,
+        result: dict,
+        uncovered: list[str],
+        audit: dict,
+    ) -> dict:
+        if not getattr(self.config, "l2_gap_force_emit_uncovered", False):
+            return result
+        if not uncovered:
+            return result
+        rows = list(result.get("sub_branches", []) or [])
+        new_rows, emitted = self._force_emit_uncovered_subbranches(rows, uncovered)
+        audit["force_emit_uncovered"] = True
+        audit["force_emitted_labels"] = emitted
+        if not emitted:
+            audit["force_emit_status"] = "already_covered"
+            return result
+        out = dict(result)
+        out["sub_branches"] = new_rows
+        audit["force_emit_status"] = "appended"
+        audit["force_emit_n"] = len(emitted)
+        return out
 
     def expand_branch(self, state: DiagnosticState, parent_branch: Branch) -> dict:
         """Attach children through legacy or opt-in L2 recall generation."""

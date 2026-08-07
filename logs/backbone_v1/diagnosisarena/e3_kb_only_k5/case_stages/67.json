@@ -1,0 +1,336 @@
+{
+  "case_id": "diagnosisarena__000067",
+  "source_id": "67",
+  "champion": "sepsis",
+  "ordered_diagnoses": [
+    "sepsis",
+    "encephalopathy",
+    "respiratory failure",
+    "stroke",
+    "hypoglycemia"
+  ],
+  "llm_calls": 2,
+  "stages": {
+    "s1": {
+      "syndrome_frame": "Acute presentation with altered mental status and cardiovascular instability",
+      "salient_findings": [
+        "Altered mental status",
+        "Bradycardia with pulse rate in the 20s",
+        "Respiratory distress requiring intubation",
+        "Pulmonary consolidation on chest radiography"
+      ],
+      "key_facts": [
+        "Patient is a woman in her 80s",
+        "Presented to the emergency department with altered mental status",
+        "Experienced weakness, slurred speech, emesis, and headache",
+        "Initial blood pressure was 100/73 mm Hg",
+        "Initial heart rate was 49 beats/min",
+        "Initial respiratory rate was 27 breaths/min",
+        "Oxygen saturation was 95% on a nonrebreather mask",
+        "Required intubation for airway protection",
+        "Computed tomography of the head showed no acute pathology",
+        "Chest radiography showed pulmonary consolidation",
+        "Electrocardiogram showed intrinsic junctional rhythm at rate of about 60 beats/min"
+      ],
+      "raw": {
+        "syndrome_frame": "Acute presentation with altered mental status and cardiovascular instability",
+        "salient_findings": [
+          "Altered mental status",
+          "Bradycardia with pulse rate in the 20s",
+          "Respiratory distress requiring intubation",
+          "Pulmonary consolidation on chest radiography"
+        ],
+        "key_facts": [
+          "Patient is a woman in her 80s",
+          "Presented to the emergency department with altered mental status",
+          "Experienced weakness, slurred speech, emesis, and headache",
+          "Initial blood pressure was 100/73 mm Hg",
+          "Initial heart rate was 49 beats/min",
+          "Initial respiratory rate was 27 breaths/min",
+          "Oxygen saturation was 95% on a nonrebreather mask",
+          "Required intubation for airway protection",
+          "Computed tomography of the head showed no acute pathology",
+          "Chest radiography showed pulmonary consolidation",
+          "Electrocardiogram showed intrinsic junctional rhythm at rate of about 60 beats/min"
+        ]
+      }
+    },
+    "s2": {
+      "differentials": [
+        "hypertension",
+        "vomiting",
+        "encephalopathy",
+        "meningitis",
+        "encephalitis",
+        "influenza",
+        "acute disseminated encephalomyelitis",
+        "respiratory failure",
+        "acute respiratory distress syndrome",
+        "stroke",
+        "meningioma",
+        "listeria monocytogenes meningitis",
+        "hypoglycemia",
+        "cysticercal encephalitis",
+        "brash syndrome",
+        "dehydration",
+        "hypotension",
+        "autoimmune subacute encephalitis",
+        "nystagmus",
+        "hydrocephalus",
+        "diarrhea",
+        "pediatric multiple sclerosis",
+        "acute kidney injury",
+        "anemia"
+      ],
+      "source": "kb_rrf",
+      "retrieval_calls": 2,
+      "meta": {
+        "retrieval_calls": 2,
+        "n_sources": 2,
+        "n_fused": 24
+      }
+    },
+    "s3": {
+      "shortlist": [
+        "encephalopathy",
+        "respiratory failure",
+        "stroke",
+        "sepsis",
+        "hypoglycemia"
+      ],
+      "max_k": 5,
+      "raw": {
+        "shortlist": [
+          {
+            "label": "encephalopathy",
+            "why_kept": "altered mental status and weakness"
+          },
+          {
+            "label": "respiratory failure",
+            "why_kept": "required intubation for airway protection and pulmonary consolidation"
+          },
+          {
+            "label": "stroke",
+            "why_kept": "altered mental status, weakness, and slurred speech"
+          },
+          {
+            "label": "sepsis",
+            "why_kept": "fever, tachypnea, and pulmonary consolidation"
+          },
+          {
+            "label": "hypoglycemia",
+            "why_kept": "altered mental status and potential cause of weakness"
+          }
+        ]
+      }
+    },
+    "s3_max_k": 5,
+    "s4": {
+      "variant": "b",
+      "champion": "sepsis",
+      "llm_calls": 1,
+      "raw": {
+        "champion": "sepsis",
+        "rationale": "The patient presented with altered mental status, weakness, and other systemic symptoms, along with pulmonary consolidation on chest radiography, which suggests an infectious process. The presence of tachypnea (respiratory rate of 27 breaths/min) and the need for intubation also support this diagnosis.",
+        "rejected": [
+          {
+            "label": "encephalopathy",
+            "why": "While the patient has altered mental status, the presence of systemic symptoms and pulmonary consolidation suggests a more comprehensive diagnosis like sepsis."
+          },
+          {
+            "label": "respiratory failure",
+            "why": "Although the patient required intubation, this is a consequence of the underlying condition rather than the primary diagnosis."
+          },
+          {
+            "label": "stroke",
+            "why": "The computed tomography of the head showed no acute pathology, making stroke less likely."
+          },
+          {
+            "label": "hypoglycemia",
+            "why": "There is no mention of low blood glucose levels, which are necessary for this diagnosis."
+          }
+        ]
+      }
+    },
+    "s4_variant": "b"
+  },
+  "config": {
+    "select_variant": "b",
+    "max_k": 5,
+    "entrance": "kb_only"
+  },
+  "prediction": {
+    "arm": "e3_kb_only_k5",
+    "case_id": "diagnosisarena__000067",
+    "source_id": "67",
+    "dataset": "diagnosisarena",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "sepsis",
+      "encephalopathy",
+      "respiratory failure",
+      "stroke",
+      "hypoglycemia"
+    ],
+    "top2_diagnoses": [
+      "sepsis",
+      "encephalopathy"
+    ],
+    "cost": {
+      "llm_calls": 2,
+      "retrieval_calls": 2
+    },
+    "stages": {
+      "s1": {
+        "syndrome_frame": "Acute presentation with altered mental status and cardiovascular instability",
+        "salient_findings": [
+          "Altered mental status",
+          "Bradycardia with pulse rate in the 20s",
+          "Respiratory distress requiring intubation",
+          "Pulmonary consolidation on chest radiography"
+        ],
+        "key_facts": [
+          "Patient is a woman in her 80s",
+          "Presented to the emergency department with altered mental status",
+          "Experienced weakness, slurred speech, emesis, and headache",
+          "Initial blood pressure was 100/73 mm Hg",
+          "Initial heart rate was 49 beats/min",
+          "Initial respiratory rate was 27 breaths/min",
+          "Oxygen saturation was 95% on a nonrebreather mask",
+          "Required intubation for airway protection",
+          "Computed tomography of the head showed no acute pathology",
+          "Chest radiography showed pulmonary consolidation",
+          "Electrocardiogram showed intrinsic junctional rhythm at rate of about 60 beats/min"
+        ],
+        "raw": {
+          "syndrome_frame": "Acute presentation with altered mental status and cardiovascular instability",
+          "salient_findings": [
+            "Altered mental status",
+            "Bradycardia with pulse rate in the 20s",
+            "Respiratory distress requiring intubation",
+            "Pulmonary consolidation on chest radiography"
+          ],
+          "key_facts": [
+            "Patient is a woman in her 80s",
+            "Presented to the emergency department with altered mental status",
+            "Experienced weakness, slurred speech, emesis, and headache",
+            "Initial blood pressure was 100/73 mm Hg",
+            "Initial heart rate was 49 beats/min",
+            "Initial respiratory rate was 27 breaths/min",
+            "Oxygen saturation was 95% on a nonrebreather mask",
+            "Required intubation for airway protection",
+            "Computed tomography of the head showed no acute pathology",
+            "Chest radiography showed pulmonary consolidation",
+            "Electrocardiogram showed intrinsic junctional rhythm at rate of about 60 beats/min"
+          ]
+        }
+      },
+      "s2": {
+        "differentials": [
+          "hypertension",
+          "vomiting",
+          "encephalopathy",
+          "meningitis",
+          "encephalitis",
+          "influenza",
+          "acute disseminated encephalomyelitis",
+          "respiratory failure",
+          "acute respiratory distress syndrome",
+          "stroke",
+          "meningioma",
+          "listeria monocytogenes meningitis",
+          "hypoglycemia",
+          "cysticercal encephalitis",
+          "brash syndrome",
+          "dehydration",
+          "hypotension",
+          "autoimmune subacute encephalitis",
+          "nystagmus",
+          "hydrocephalus",
+          "diarrhea",
+          "pediatric multiple sclerosis",
+          "acute kidney injury",
+          "anemia"
+        ],
+        "source": "kb_rrf",
+        "retrieval_calls": 2,
+        "meta": {
+          "retrieval_calls": 2,
+          "n_sources": 2,
+          "n_fused": 24
+        }
+      },
+      "s3": {
+        "shortlist": [
+          "encephalopathy",
+          "respiratory failure",
+          "stroke",
+          "sepsis",
+          "hypoglycemia"
+        ],
+        "max_k": 5,
+        "raw": {
+          "shortlist": [
+            {
+              "label": "encephalopathy",
+              "why_kept": "altered mental status and weakness"
+            },
+            {
+              "label": "respiratory failure",
+              "why_kept": "required intubation for airway protection and pulmonary consolidation"
+            },
+            {
+              "label": "stroke",
+              "why_kept": "altered mental status, weakness, and slurred speech"
+            },
+            {
+              "label": "sepsis",
+              "why_kept": "fever, tachypnea, and pulmonary consolidation"
+            },
+            {
+              "label": "hypoglycemia",
+              "why_kept": "altered mental status and potential cause of weakness"
+            }
+          ]
+        }
+      },
+      "s3_max_k": 5,
+      "s4": {
+        "variant": "b",
+        "champion": "sepsis",
+        "llm_calls": 1,
+        "raw": {
+          "champion": "sepsis",
+          "rationale": "The patient presented with altered mental status, weakness, and other systemic symptoms, along with pulmonary consolidation on chest radiography, which suggests an infectious process. The presence of tachypnea (respiratory rate of 27 breaths/min) and the need for intubation also support this diagnosis.",
+          "rejected": [
+            {
+              "label": "encephalopathy",
+              "why": "While the patient has altered mental status, the presence of systemic symptoms and pulmonary consolidation suggests a more comprehensive diagnosis like sepsis."
+            },
+            {
+              "label": "respiratory failure",
+              "why": "Although the patient required intubation, this is a consequence of the underlying condition rather than the primary diagnosis."
+            },
+            {
+              "label": "stroke",
+              "why": "The computed tomography of the head showed no acute pathology, making stroke less likely."
+            },
+            {
+              "label": "hypoglycemia",
+              "why": "There is no mention of low blood glucose levels, which are necessary for this diagnosis."
+            }
+          ]
+        }
+      },
+      "s4_variant": "b"
+    },
+    "config": {
+      "select_variant": "b",
+      "max_k": 5,
+      "entrance": "kb_only"
+    },
+    "runtime_hash": "a89f85a73eff88b0e75d06a912f27975e28a70a7cc60e409c85f50d31a32ef42",
+    "wall_s": 7.438
+  },
+  "created_at": "2026-08-06T07:20:32.367784+00:00"
+}

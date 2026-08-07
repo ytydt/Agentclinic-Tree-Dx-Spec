@@ -1,0 +1,298 @@
+% !TEX root = ../main.tex
+\appendix
+
+\section{Glossary of Terms and Repository Codes}
+\label{app:glossary}
+
+\begin{description}
+  \item[APHHM.] Alignment-Preserving Hierarchical Hypothesis Management; the framing of this paper.
+  \item[Recall--Discrimination Dilemma.] Increasing recall admits correct diseases but also redundant/similar candidates that harden discrimination; retained as motivation, upgraded by alignment requirements.
+  \item[L1 / L2.] Level-1 family / Level-2 concrete disease leaf.
+  \item[RRF.] Reciprocal Rank Fusion~\cite{rrf2009}.
+  \item[Anti-anchor.] Candidate-relative evidence selector that resists headline prototype bias; open hypothesis in this draft.
+  \item[Soft prior.] Overturnable L1 score used in global arbitration.
+  \item[Belief state.] Shared tree carrying identities, membership, and posteriors for later stages.
+  \item[A1 / A2 / A3.] Representation, state, and interface alignment invariants (Section~\ref{sec:dilemma}).
+  \item[Fine crowding.] Near-synonym leaves occupy multiple top frontier slots, so a $k$-slot budget covers fewer than $k$ canonical concepts.
+  \item[Quotient / canonical concept space.] The set $L/\!\sim$ of clinical equivalence classes; competition should be scored there rather than over raw label strings.
+  \item[open-MRR@$k$.] Reciprocal rank of the first delivered diagnosis judged correct among the top $k$, $0$ if none. A ranking metric over \emph{delivered diagnoses}; distinct from reasoning recall (RR), which measures coverage of reasoning facts. The two are not comparable.
+  \item[any-hit@$k$.] Whether any of the top-$k$ delivered diagnoses is judged correct.
+  \item[Count-matched semantics-blind merge.] Control operator with the deployed gate, class count and class-size profile, but randomized class membership; isolates equivalence semantics from candidate-count reduction (\Cref{sec:res-eq}).
+  \item[Endpoint admissibility / algebraic identity.] An endpoint is inadmissible for a module if its per-case value is constant under randomized perturbation of that module, i.e.\ null variance exactly $0$. Such endpoints yield $p$-values that carry no information.
+  \item[Selector abstention cascade.] Non-case-adaptive L1 axis $\rightarrow$ candidate-relative selector abstains ($n_{\mathrm{sel}}{=}0$) $\rightarrow$ empty ranking $\rightarrow$ mapper miss (\Cref{sec:res-org}).
+  \item[\texttt{structural\_reach}.] Gold present anywhere in the tree before ranking; a coverage process metric, not end-task @1.
+  \item[Factorial decomposition.] Crossing factors (e.g.\ budget${\times}$write-back) so main effects are not read off a confounded joint contrast (\Cref{sec:res-state}).
+  \item[Gap-fill.] One-shot non-reducing L1 repair when a high-ranked recalled disease has no parent; not claimed as a major end-to-end recall win here.
+  \item[compat\_parallel.] Heuristic exclusive merge-vs-calibrate compressor behind FineCrowdGate.
+  \item[FineCrowdGate.] Gold-blind detector of synonym crowding among top-ranked leaves.
+  \item[Live posterior write-back.] Writing local evidence posteriors into the shared tree before global decoding.
+  \item[Bounded frontier / posterior pool.] Uncertainty-aware multi-leaf submission or Top-$N$ closed decoding set.
+  \item[closed\_live\_mac\_supervisor.] Closed-pool multi-doctor + supervisor shortlist used on OX.
+  \item[B02-SC10.] Flat retrieve--rerank control with ten self-consistent trajectories fused by reciprocal rank ($\approx 90$ model calls per case); the budget-matched baseline used in Section~\ref{sec:rq4}.
+  \item[Synonym bind-repair / Approach~A.] Offline repair of empty option--leaf bindings at the scoring interface. Diagnosed in Section~\ref{sec:protocol} but \emph{excluded from all reported results}, because it raises baseline scores at least as much as ours.
+  \item[\texttt{TREE\_PARENT\_ABSENT}.] No acceptable L1 parent for the gold disease.
+  \item[\texttt{L2\_MISS}.] Parent exists but no gold-equivalent L2 leaf in the tree universe.
+  \item[\texttt{LOCAL\_ELIMINATION}.] Leaf exists in-family but is dropped before global decoding.
+  \item[\texttt{GLOBAL\_MISRANK}.] Leaf enters the global pool but ranks too low.
+  \item[\texttt{MAPPER\_UNBIND}.] Leaf present/rank-sufficient, but evaluation binding is empty.
+  \item[F2 / F4 / F6.] Evidence prefix lengths in logs; implementation detail only.
+  \item[Config~A.] Branch-conditioned L2 generation recipe; implementation detail.
+  \item[Interp.\ Acc / IAcc.] OX interpretation accuracy under LLM judge template \texttt{ox.interpretation\_consistency}.
+\end{description}
+
+\section{Extended Baseline Tables}
+\label{app:tables}
+
+Values match repository summaries under \texttt{runs/paper\_v1/}.
+Every row uses the unmodified evaluation interface; no arm receives synonym bind-repair.
+Table~\ref{tab:compute} reports the call-budget comparison underlying Section~\ref{sec:rq4}.
+
+\begin{table}[t]
+\centering
+\scriptsize
+\caption{DiagnosisArena~\cite{diagnosisarena} \texttt{d2\_seq100}: all completed external arms under the unmodified interface, matching \texttt{diagnosisarena\_d2\_seq100\_baselines\_summary.md} §2. B11a uses a different local backbone (DiagnosisGPT-6B). B02-SC10 is the budget-matched control, listed separately.}
+\label{tab:da-full}
+\begin{tabular}{lccc}
+\toprule
+Arm & @1 & @2 & MRR@2 \\
+\midrule
+APHHM (organization + compression) & 0.71 & 0.78 & 0.748 \\
+\midrule
+B07 MEDDxAgent~\cite{meddxagent2025} & 0.62 & 0.71 & 0.665 \\
+B06 MAC~\cite{chen2025mac,mac2026} & 0.61 & 0.67 & 0.640 \\
+B04 Dual-Inf~\cite{dualinf2025} & 0.60 & 0.70 & 0.650 \\
+B17 i-MedRAG~\cite{imedrag} & 0.60 & 0.67 & 0.635 \\
+B05 MDAgents~\cite{mdagents} & 0.58 & 0.67 & 0.625 \\
+B13 self-refine~\cite{madaan2023selfrefine} & 0.57 & 0.62 & 0.595 \\
+B02 flat rerank (native) & 0.56 & 0.63 & 0.595 \\
+B01 CoT+RAG & 0.55 & 0.63 & 0.590 \\
+B00 Direct CoT & 0.54 & 0.61 & 0.575 \\
+B11b CoD+shared KB~\cite{chainofdiagnosis} & 0.54 & 0.55 & 0.545 \\
+B12 SC-CoT-5~\cite{wang2023selfconsistency} & 0.52 & 0.61 & 0.565 \\
+B03 flat beam & 0.52 & 0.60 & 0.560 \\
+B15 Medprompt-style~\cite{medprompt} & 0.52 & 0.57 & 0.545 \\
+B16 MedRAG~\cite{medrag,xiong2024medrag} & 0.48 & 0.52 & 0.500 \\
+B11a DiagnosisGPT-6B~\cite{chainofdiagnosis} & 0.14 & 0.14 & 0.140 \\
+\midrule
+\textbf{B02-SC10 (budget matched)} & \textbf{0.47} & \textbf{0.59} & \textbf{0.530} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\scriptsize
+\caption{MedCaseReasoning~\cite{medcasereasoning} \texttt{mcr\_val\_seq100}: all completed external arms (single-trajectory Acc and LLM reasoning recall), matching \texttt{mcr\_val\_seq100\_baselines\_summary.md}. B02-SC10 is the budget-matched control, listed separately.}
+\label{tab:mcr-full}
+\begin{tabular}{lcc}
+\toprule
+Arm & Acc & Reasoning Recall \\
+\midrule
+APHHM hierarchical stack & 0.50 & 0.753 \\
+\midrule
+B07 MEDDxAgent~\cite{meddxagent2025} & 0.24 & 0.412 \\
+B06 MAC~\cite{chen2025mac,mac2026} & 0.23 & 0.527 \\
+B01 CoT+RAG & 0.22 & 0.478 \\
+B03 flat beam & 0.21 & 0.447 \\
+B13 self-refine~\cite{madaan2023selfrefine} & 0.21 & 0.447 \\
+B05 MDAgents~\cite{mdagents} & 0.20 & 0.570 \\
+B17 i-MedRAG~\cite{imedrag} & 0.19 & 0.482 \\
+B12 SC-CoT-5~\cite{wang2023selfconsistency} & 0.19 & 0.369 \\
+B00 Direct CoT & 0.18 & 0.510 \\
+B15 Medprompt-style~\cite{medprompt} & 0.18 & 0.294 \\
+B16 MedRAG~\cite{medrag,xiong2024medrag} & 0.17 & 0.557 \\
+B04 Dual-Inf~\cite{dualinf2025} & 0.17 & 0.444 \\
+B02 flat rerank (native) & 0.17 & 0.404 \\
+B11b CoD+shared KB~\cite{chainofdiagnosis} & 0.14 & 0.430 \\
+\midrule
+\textbf{B02-SC10 (budget matched)} & \textbf{0.15} & 0.383 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\scriptsize
+\caption{Open-XDDx~\cite{dualinf2025} \texttt{ox\_seq100} ($K{=}5$): APHHM cut, cold-tree references, and all completed external arms, matching \texttt{ox\_seq100\_baselines\_summary.md}. SC10 interpretation accuracy collapses because rank fusion discards per-trajectory explanations.}
+\label{tab:ox-full}
+\begin{tabular}{lcc}
+\toprule
+Arm & micro-F1 & Interp.\ Acc \\
+\midrule
+APHHM write-back + closed pool & 0.651 & 0.355 \\
+Cold tree, locked budget (AB13) & 0.576 & 0.352 \\
+Cold tree, default budget (AB16) & 0.584 & 0.355 \\
+\midrule
+B06 MAC~\cite{chen2025mac,mac2026} & 0.570 & 0.221 \\
+B00 Direct CoT & 0.543 & 0.233 \\
+B05 MDAgents~\cite{mdagents} & 0.543 & 0.424 \\
+B12 SC-CoT-5~\cite{wang2023selfconsistency} & 0.539 & 0.000 \\
+B13 self-refine~\cite{madaan2023selfrefine} & 0.530 & 0.206 \\
+B15 Medprompt-style~\cite{medprompt} & 0.522 & 0.000 \\
+B03 flat beam & 0.510 & 0.642 \\
+B04 Dual-Inf~\cite{dualinf2025} & 0.507 & 0.319 \\
+B02 flat rerank (native) & 0.495 & 0.419 \\
+B07 MEDDxAgent~\cite{meddxagent2025} & 0.491 & 0.403 \\
+B16 MedRAG~\cite{medrag,xiong2024medrag} & 0.485 & 0.224 \\
+B11b CoD+shared KB~\cite{chainofdiagnosis} & 0.475 & 0.215 \\
+B01 CoT+RAG & 0.466 & 0.240 \\
+B17 i-MedRAG~\cite{imedrag} & 0.419 & 0.237 \\
+\midrule
+\textbf{B02-SC10 (budget matched)} & \textbf{0.487} & \textbf{0.044} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\scriptsize
+\caption{Mean model calls per case for APHHM versus flat B02 budget ladders ($n{=}100$). APHHM counts are LLM-cache entry proxies (no official token ledger). B02 proxy matched equalizes a structural schedule derived from the tree ($\approx9$ calls) and is \emph{not} the paper's budget control; B02-SC10 is the call-matched flat control used in Section~\ref{sec:rq4}. Sources: \texttt{b02\_vs\_m00\_token\_gap\_v1.md}, \texttt{b02\_compute\_matched\_sc10\_three\_datasets.md}.}
+\label{tab:compute}
+\begin{tabular}{lccccc}
+\toprule
+Dataset & APHHM & B02 native & B02 proxy & \textbf{B02-SC10} & SC10 / APHHM \\
+\midrule
+DA & 94.3 & 2.0 & 9.24 & \textbf{92.4} & 0.98 \\
+OX & 68.6 & 2.0 & 8.98 & \textbf{89.8} & 1.31 \\
+MCR & 81.2 & 2.0 & 9.32 & \textbf{93.2} & 1.15 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent
+Table~\ref{tab:compute} makes the RQ4 budget claim auditable: B02-SC10 is within a few percent of APHHM on DA and \emph{above} APHHM's cache-proxy call count on OX and MCR, so the flat control is not under-provisioned.
+The earlier proxy arm remains an order of magnitude below APHHM on every slice.
+Completion-token estimates (output-only cache for APHHM; reconstructed I/O for B02 proxy) show the same direction---APHHM completes roughly $5$--$9\times$ more tokens than proxy-matched B02---but we do not treat them as a formal ledger.
+
+\section{Compression Variants: Equivalence Bounds}
+\label{app:eq-equiv}
+
+This appendix reports every pre-registered variant of the equivalence-compression operator (\Cref{sec:res-eq}), including those that produce no difference.
+We report them as equivalences with bounds rather than as null results, for a reason specific to the paired design: the difference between two arms is bounded by $m/n$, where $m$ is the number of cases discordant \emph{on the endpoint}, so few moving cases give a narrow interval rather than a weak test.
+Intervals are exact conditional McNemar intervals~\cite{mcnemar1947} (Clopper--Pearson on the discordant pairs, mapped to the difference scale) on $n=98$ commonly scored MCR cases with the frozen judge at $K{=}5$.
+The pre-declared non-inferiority margin is $\pm 5$~pp, half the effect size our pre-registration treats as substantive.
+
+\begin{table}[t]
+\centering
+\scriptsize
+\caption{Pre-registered compression variants against the deployed configuration. ``Output disc.'' counts cases whose delivered list differs at all; endpoint columns give the $95\%$ interval on the paired difference in percentage points, positive meaning the deployed arm scores higher. any-hit@5 is an algebraic identity for most arms (see note below) and is reported for completeness only.}
+\label{tab:eq-equiv}
+\begin{tabular}{llcccl}
+\toprule
+Code & Variant & Disc. & Acc@1 & open-MRR & Verdict \\
+\midrule
+AB05 & no decision-time routing & 94 & $[-1.4,+2.0]$ & $\mathbf{[+2.1,+8.2]}$ & \textbf{effect}, $p=0.008$ \\
+AB07 & unconditional merge & 16 & $[-1.4,+2.0]$ & $[-1.4,+2.0]$ & equivalent \\
+AB08 & calibration only & 82 & $[-2.5,+3.0]$ & $[-3.4,+5.6]$ & equiv., bidirectional \\
+AB09 & serial merge $\rightarrow$ calibrate & 7 & $[0,0]$ & $[0,0]$ & identity \\
+AB10 & freq.-matched random routing & 28 & $[-1.3,+3.1]$ & $[-1.3,+3.1]$ & equivalent \\
+AB10b & count-matched blind merge & 33 & $[0,0]$ & $[-1.3,+3.1]$ & identity at @1 \\
+AB10c & blind merge, rank-1 size matched & 26 & $[0,0]$ & $[-1.4,+2.0]$ & identity at @1 \\
+AB11 & concept-identity predicate & 37 & $[-1.4,+2.0]$ & $[-1.3,+3.1]$ & equivalent \\
+AB20 & no L1 soft prior & 10 & $[-1.0,+1.0]$ & $[-1.0,+1.0]$ & near-identity \\
+\bottomrule
+\end{tabular}
+
+\noindent
+AB10b and AB10c are identities at @1 by construction and are judged instead by the permutation test of \Cref{sec:res-eq}, where they are significantly worse than the deployed operator on both live endpoints ($p=0.015$).
+AB08 is the one variant whose discordant cases run in both directions ($4$ for the deployed arm, $2$ against), so no unidirectional claim is available for it at any sample size.
+\end{table}
+
+\paragraph{Why any-hit@5 is an identity here.}
+The deployed configuration delivers $2.20$ candidates per case on average and fewer than $K{=}5$ in $86$ of $98$ cases, so there is no padding headroom: any-hit@5 reduces to whether gold is in the surviving set.
+Because merge is a deletion operator that always retains the best-ranked member of a class, none of the arms above can drop a label that matched gold, and seven of the nine have zero moving cases on this endpoint.
+The identical column values across those arms are therefore the \emph{same number}, not a converging null, and no sample size changes this.
+We flag it explicitly rather than tabulating it as evidence.
+
+\paragraph{Structural identities.}
+Serial composition (AB09) delivers the identical set, the identical rank-1 leaf, and zero moving cases on all three endpoints in this configuration; removing the L1 soft prior (AB20) moves one case.
+Neither can produce a difference at any sample size on this slice, so we do not report them as evidence about the mechanism in either direction.
+This also corrects an earlier reading of AB09 as evidence of operator interference: on the reconstructed pre-compat input the serial arm is not merely similar to exclusive routing, it is indistinguishable from it.
+
+\paragraph{Conditional effect sizes.}
+Restricted to cases where the delivered list actually differs, the deployed arm gains $+0.125$ Acc@1 over unconditional merge ($16$ cases) and $+0.107$ over frequency-matched random routing ($28$ cases).
+Conditioning corrects the estimand but does \emph{not} add power---the sign test still counts only endpoint-moving cases---so we report these only alongside the full-sample intervals above.
+
+\paragraph{Attainable resolution on this slice.}
+The gate fires on $82/101$ cases, so any frequency-matched routing contrast can differ from the deployed arm on at most $2\min(82,19)=38$ cases; AB10 already reaches $28$ of them.
+A sign test here needs six unidirectional moving cases for $p<0.05$, which linear extrapolation puts at $n\approx196$ for AB10, AB10b and AB11, $n\approx294$ for AB07 and AB10c, and $n\approx588$ for AB20.
+Resolving predicate-level questions therefore requires either a larger slice or a slice stratified to a gate firing rate near $0.5$, where the discordance ceiling is maximal.
+We state this as the cost of the next experiment rather than as a property of the mechanism.
+
+\section{Axis Cascade and Organization Details}
+\label{app:org-axis}
+
+\Cref{tab:org-cascade} expands the process metrics behind \Cref{sec:res-org}.
+Empty rankings are uniformly \texttt{selector\_abstained} with zero selected facts on the random axis; they are the terminal state of the cascade, not mapper failures.
+
+\begin{table}[t]
+\centering
+\small
+\caption{Selector cascade under three L1 axes on DA ($n{=}100$).}
+\label{tab:org-cascade}
+\begin{tabular}{lcccc}
+\toprule
+Axis & mean $n_{\mathrm{sel}}$ & $n_{\mathrm{sel}}{=}0$ & empty rank & @1 \\
+\midrule
+Case-adaptive & $4.94$ & $17$ & $1$ & $0.71$ \\
+Fixed ICD & $0.65$ & $89$ & $11$ & $0.51$ \\
+Random & $0.13$ & $97$ & $45$ & $0.37$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{State-Consistency Factorial Details}
+\label{app:state-fact}
+
+\Cref{tab:state-detail} records the nested cap arms and the decode-only contrast of \Cref{sec:res-state}.
+
+\begin{table}[t]
+\centering
+\small
+\caption{Nested OX arms at locked budget with write-back, plus decode-only variants on the same hot tree.}
+\label{tab:state-detail}
+\begin{tabular}{llcc}
+\toprule
+Arm & Change & micro-F1 & $\Delta$ vs.\ deployed \\
+\midrule
+Deployed & L1${=}4$, wb, cap${=}6$, closed & $0.651$ & --- \\
+AB17 & cap${=}1$ (single champion) & $0.657$ & $-0.006$ \\
+AB19 & cap${=}999$ (uncapped) & $0.649$ & $+0.002$ \\
+AB15-post & decode ${=}$ posterior Top-$5$ & $0.593$ & $+0.058$ \\
+AB15-pool & decode ${=}$ post\_n\_mcr & $0.610$ & $+0.041$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Five Confirmatory Contrasts (Holm)}
+\label{app:holm}
+
+\Cref{tab:holm5} reports the five pre-registered confirmatory contrasts under Holm step-down~\cite{holm1979} at $\alpha{=}0.05$.
+Endpoint heterogeneity across blocks is intentional and registered; Holm is applied to the five confirmatory $p$-values, not to a common endpoint.
+C3 uses a paired case-bootstrap of OX micro-F1; C4 uses the exact sign test on per-case \texttt{compat\_opt1} vs.\ \texttt{typed\_opt1}.
+C5 is an exclusion control whose surviving null is the intended outcome.
+
+\begin{table}[t]
+\centering
+\small
+\caption{Pre-registered confirmatory family. Effects are oriented so that positive favours the deployed configuration (or, for C5, the magnitude of the selector drop).}
+\label{tab:holm5}
+\begin{tabular}{llcccc}
+\toprule
+ID & Contrast & Endpoint & Effect & $p$ & $p_{\mathrm{Holm}}$ \\
+\midrule
+C1 & vs.\ random axis & DA @1 (full) & $+0.34$ & ${\approx}0$ & ${\approx}0$ \\
+C2 & vs.\ blind merge & MCR any-hit@5 & $+0.097$ & $0.015$ & $0.030$ \\
+C3 & vs.\ cold write-back & OX micro-F1 boot. & $+0.075$ & $4.0{\times}10^{-4}$ & $1.2{\times}10^{-3}$ \\
+C4 & vs.\ leaf inject & DA @1 ($39/9$) & $+0.30$ & $1.5{\times}10^{-5}$ & $6.0{\times}10^{-5}$ \\
+C5 & vs.\ salience selector & DA @1 & $+0.04$ & $0.48$ & $0.48$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Ethical Considerations}
+\label{app:ethics}
+
+Public research vignettes only.
+No patient-care decisions.
+LLM judges may inherit model biases; prompts and judge identities are frozen when reporting official-style numbers.

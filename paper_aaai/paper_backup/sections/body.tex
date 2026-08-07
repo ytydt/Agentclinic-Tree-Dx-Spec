@@ -1,0 +1,711 @@
+% !TEX root = ../main.tex
+\section{Introduction}
+\label{sec:intro}
+
+Large language models (LLMs) can propose differential diagnoses from clinical vignettes, and retrieval-augmented generation (RAG) can enlarge the set of disease hypotheses drawn from case reports, guidelines, and textbooks~\cite{lewis2020rag,wei2022cot,xiong2024medrag}.
+Difficult open-ended diagnosis is therefore often framed as a tension between coverage and ranking quality.
+We still call this tension the \textbf{Recall--Discrimination Dilemma}: increasing recall admits the correct disease more often, but also admits redundant, near-duplicate, and granularity-mismatched hypotheses that make discrimination harder.
+
+That dilemma is necessary but no longer sufficient as a research framing.
+In a hierarchical pipeline, failures also arise when representations and beliefs fall out of alignment across stages:
+\begin{itemize}
+  \item \textbf{Synonym fragmentation:} near-equivalent disease strings compete as separate leaves and consume frontier budget.
+  \item \textbf{State discontinuity:} local evidence updates improve a branch score that is never written back into the tree state used for global decoding.
+  \item \textbf{Name--concept detachment:} the ranked clinical entity is present, yet the evaluation interface fails to bind the output string (or multiple-choice option) to the canonical leaf.
+\end{itemize}
+We therefore study \textbf{alignment-preserving hierarchical hypothesis management (APHHM)}: case-adaptive organization of hypotheses; candidate-relative evidence updating; equivalence-class-aware candidate compression; local posterior write-back into a shared belief state; and bounded global decoding over that state.
+
+Existing systems typically address only part of this problem.
+Direct chain-of-thought (CoT) and flat RAG couple retrieval, organization, and ranking in one generation step~\cite{wei2022cot,medrag,imedrag}.
+Verification methods such as Dual-Inf improve reflection over a flat differential list~\cite{dualinf2025}.
+Multi-agent frameworks such as MDAgents and MAC diversify \emph{roles} rather than the geometry of the disease hypothesis space~\cite{mdagents,chen2025mac,mac2026}.
+Fixed specialty or knowledge-graph hierarchies provide reusable routing, not a case-specific comparison coordinate system~\cite{kg4diagnosis}.
+Interactive diagnosis benchmarks emphasize information acquisition, which is adjacent to---but distinct from---keeping a large static evidence set organized and state-consistent~\cite{sdbench2025,meddxagent2025}.
+
+\paragraph{Contributions.}
+\begin{enumerate}
+  \item \textbf{Case-adaptive hierarchical hypothesis space.}
+  We organize multi-source disease recalls into a case-specific, single-axis Level-1 (L1) partition that serves as a temporary comparison coordinate system.
+  Pre-registered ablations show that a case-irrelevant random partition collapses the cascade; gap-fill is retained as a structural repair but is not credited with large end-to-end recall wins.
+  \item \textbf{Equivalence-class-aware candidate compression.}
+  We raise Fine synonym crowding from a post-processing detail to a stated research problem: a $k$-item decision budget should be spent on $k$ distinct canonical concepts, so candidates must compete in a quotient space rather than letting one concept's surface forms occupy several frontier slots.
+  Our current heuristic, \texttt{compat\_parallel}, is one implementation of that requirement; the requirement is load-bearing, the particular gate predicate is not.
+  \item \textbf{State-consistent local-to-global propagation.}
+  Local evidence updates change final decisions only if they are written back into the shared belief state and thereby reshape the global candidate pool.
+  Single-champion elimination is rejected as a design default; on our OX slice a forced single-champion cap does not lower end-task F1, so we report that null and retain the argument as an audit concern.
+  Open-XDDx gives the most direct support for write-back and closed-panel decoding~\cite{dualinf2025}.
+  \item \textbf{Stage-attributable evaluation.}
+  We require a strict failure cascade
+  \[
+  \texttt{TREE\_PARENT\_ABSENT}
+  \rightarrow
+  \texttt{L2\_MISS}
+  \rightarrow
+  \texttt{LOCAL\_ELIMINATION}
+  \rightarrow
+  \texttt{GLOBAL\_MISRANK}
+  \rightarrow
+  \texttt{MAPPER\_UNBIND},
+  \]
+  because our audits show that an unstratified reading reports scoring-interface failures as recall failures---and then motivates interventions that measurably hurt accuracy.
+\end{enumerate}
+
+Candidate-relative selectors such as anti-prototype anchoring (\textbf{anti-anchor}) and optional discrimination-compiler hints remain \emph{method components and open hypotheses} as to strategy; the case-adaptive axis that feeds them is supported by ablation.
+
+\paragraph{Reporting standard: unmodified scoring interface.}
+Name--concept detachment is a real failure mode, and a repair operator for it exists (synonym bind-repair, Section~\ref{sec:protocol}).
+We nevertheless report \emph{all} results with that repair disabled.
+The reason is methodological rather than technical: applying the same repair to external baselines raises their scores by a comparable or larger margin than ours, so any gap measured with the repair enabled would partly reflect name-normalization coverage rather than hierarchical reasoning.
+Treating the unmodified interface as the standard keeps the comparison attributable to the reasoning stack, and relegates interface alignment to a protocol issue that any system may adopt.
+
+\section{Related Work}
+\label{sec:related}
+
+Prior work improves generation, verification, collaboration, or routing, yet typically leaves open at least one of the three alignment failures that APHHM targets: synonym fragmentation of the frontier, local evidence that never updates the state read by global decoding, and scoring-interface detachment that looks like a recall miss.
+The missing object is rarely ``another medical agent''; it is a \emph{case-adaptive hierarchical hypothesis space} whose recall, organization, candidate-relative evidence, within-branch ranking, and cross-branch arbitration are separable operations over a shared belief state.
+
+\paragraph{Flat generation and retrieval.}
+Direct CoT~\cite{wei2022cot}, self-consistency~\cite{wang2023selfconsistency}, self-refine~\cite{madaan2023selfrefine}, Medprompt-style prompting~\cite{medprompt}, and medical RAG~\cite{lewis2020rag,xiong2024medrag,medrag,imedrag} solve access to knowledge and list generation.
+They leave candidates as a flat set in which recall, organization, and ranking remain coupled, so enlarging the list increases synonym crowding and granularity mix rather than spending a bounded budget on distinct canonical concepts.
+
+\paragraph{Verification and multi-agent collaboration.}
+Dual-Inf improves disease-to-symptom reverse verification and self-reflection, but still over a flat differential~\cite{dualinf2025}.
+MDAgents~\cite{mdagents} and MAC~\cite{chen2025mac,mac2026} structure \emph{agent roles and discussion protocols}; MEDDxAgent unifies diagnosis-agent tooling~\cite{meddxagent2025}; Chain-of-Diagnosis / DiagnosisGPT specialize diagnostic dialogue~\cite{chainofdiagnosis}.
+What is structured is interaction, not the geometry of the disease hypothesis space: a supervisor still aggregates a flat disease list, and local evidence updates are rarely written into an explicit shared belief state that subsequent global decoding must read.
+
+\paragraph{Hierarchies that route, evaluate, or specialize---but do not organize the case.}
+KG4Diagnosis uses GP-to-specialist routing over a knowledge graph~\cite{kg4diagnosis}: the hierarchy is a reusable specialty path, not a syndrome-specific family partition for comparing competing diseases under a common case axis.
+DeepRare integrates phenotype and genetic tooling for rare disease~\cite{deeprare2025}, yet still emits a unified disease list rather than studying a case-adaptive comparison structure across common and rare hypotheses.
+H-DDx uses ICD structure mainly after prediction, to score clinically near misses~\cite{hddx2025}; the hierarchy does not participate in runtime candidate generation, evidence selection, or ranking.
+Our hierarchy is therefore a temporary case-specific coordinate system that makes representation, state, and interface alignment checkable---not a claim of ontology uniqueness or fixed departmental routing.
+
+\paragraph{Interactive acquisition versus static organization.}
+SDBench-style settings optimize which question or test to request next~\cite{sdbench2025}.
+We study static vignettes---DiagnosisArena~\cite{diagnosisarena}, MedCaseReasoning~\cite{medcasereasoning}, and Open-XDDx~\cite{dualinf2025}---where the evidence set is given and the hard problem is organizational and state-propagational rather than acquisitional.
+
+\paragraph{Evaluation interfaces and stage attribution.}
+Flat Top-$k$ accuracy and unstratified ``coverage'' miss rates do not separate representation failures from interface failures: a correctly ranked leaf can still be scored as absent when the name--concept bind fails (\texttt{MAPPER\_UNBIND}).
+Without a stage cascade, such cases are misread as recall gaps and motivate interventions that do not address the true bottleneck.
+We therefore treat unmodified scoring contracts and stage-attributable audits as part of the research problem, not only as reporting hygiene.
+
+\section{Problem Formulation}
+\label{sec:problem}
+
+\subsection{Task}
+\label{sec:task}
+
+\paragraph{Input.}
+A static vignette $V$; observed facts $F$ traceable to spans in $V$; and a shared corpus $K$ available to all retrieval-using methods.
+
+\paragraph{Output.}
+An ordered list of at most $k$ concrete diseases; a case-adaptive diagnostic tree; and an audit of which facts updated which candidates and whether those updates entered the global state.
+
+\paragraph{Objective.}
+Improve end-task ranking under bounded budgets \emph{while} preserving alignment among (i)~candidate strings and canonical concepts, (ii)~local evidence and global belief state, and (iii)~stage-wise error labels and the interventions they justify.
+Internal scores are relative ranking scores, not clinically calibrated probabilities.
+
+\paragraph{Out of scope.}
+Active questioning, test selection, treatment, multi-primary comorbidity, pixel-level imaging, and clinical deployment claims.
+
+\subsection{From Recall--Discrimination to Alignment Preservation}
+\label{sec:dilemma}
+
+Let $\mathcal{C}$ be the candidate set after recall.
+Increasing $|\mathcal{C}|$ can raise coverage, but it also multiplies synonym fragments and mixes abstraction levels, so the classical dilemma is really a statement about \emph{how} the enlarged set is represented and carried between stages.
+We make that explicit by naming three invariants that a hierarchical diagnostic pipeline should preserve.
+
+\begin{description}
+  \item[A1 (representation alignment).]
+  Two candidate strings denoting the same clinical concept must occupy one competitive slot.
+  Violation: near-synonyms compete as distinct leaves and jointly consume the frontier budget.
+  \item[A2 (state alignment).]
+  Evidence consumed at a local stage must update the belief state that the next stage reads.
+  Violation: a locally revised posterior is discarded when the global candidate pool is formed, so local reasoning is computed and then ignored.
+  \item[A3 (interface alignment).]
+  The emitted name must bind to the canonical concept the scoring contract expects.
+  Violation: a correct leaf is ranked highly, yet the evaluation map records no binding and the case is scored as a miss.
+\end{description}
+
+Each invariant maps to one contribution: A1 to equivalence-class compression, A2 to write-back and bounded decoding, A3 to name normalization treated as a protocol obligation.
+Case-adaptive organization is the substrate that makes all three checkable, because it defines what a family, a slot, and a state are for the current case.
+Stage-attributable evaluation is the audit that tells us \emph{which} invariant a given failure violated---without it, an A3 violation is easily reported as insufficient recall.
+
+\subsection{Stage Failure Taxonomy}
+\label{sec:taxonomy}
+
+A failed case must be attributed to the \emph{earliest} applicable stage in the cascade
+\[
+\texttt{TREE\_PARENT\_ABSENT}
+\rightarrow
+\texttt{L2\_MISS}
+\rightarrow
+\texttt{LOCAL\_ELIMINATION}
+\rightarrow
+\texttt{GLOBAL\_MISRANK}
+\rightarrow
+\texttt{MAPPER\_UNBIND},
+\]
+and later stages are examined only if all earlier ones succeeded.
+We use these exact labels throughout, including in released audit records.
+
+\begin{description}
+  \item[\texttt{TREE\_PARENT\_ABSENT}.]
+  No clinically acceptable L1 parent exists for the gold (or gold-equivalent) disease; the chosen axis cannot host it.
+  This is a genuine structural miss.
+  \item[\texttt{L2\_MISS}.]
+  An acceptable parent exists, but no L2 leaf---exact or synonym-equivalent---representing the gold disease exists in the live tree.
+  \item[\texttt{LOCAL\_ELIMINATION}.]
+  The gold-equivalent leaf exists in the correct family but is dropped by within-family ranking or per-family budget before global decoding.
+  \item[\texttt{GLOBAL\_MISRANK}.]
+  The leaf reaches the global pool or frontier but is ranked below the protocol's cutoff.
+  \item[\texttt{MAPPER\_UNBIND}.]
+  The leaf is present and ranked high enough, yet the scoring interface records an empty binding (or equivalent name detachment), so the case is counted as a miss.
+\end{description}
+
+\begin{table}[t]
+\centering
+\small
+\caption{Each stage licenses a different intervention. Misattributing a late stage to an early one motivates the wrong fix, which is how coverage-driven interventions become harmful.}
+\label{tab:stages}
+\begin{tabular}{llp{3.1cm}p{3.1cm}}
+\toprule
+Stage & Invariant & Correct response & Wrong response if misread as recall failure \\
+\midrule
+\texttt{TREE\_PARENT\_ABSENT} & organization & revise axis; gap-fill & --- \\
+\texttt{L2\_MISS} & organization & branch-conditioned recall & --- \\
+\texttt{LOCAL\_ELIMINATION} & A2 & bounded frontier; relax family cap & inject more leaves \\
+\texttt{GLOBAL\_MISRANK} & A2 & posterior write-back; wider pool & inject more leaves \\
+\texttt{MAPPER\_UNBIND} & A3 & fix name-binding contract & inject leaves / escalate gap-fill \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Why the cascade is a contribution, not logging.}
+Our audits make the risk concrete.
+Among apparent coverage misses on the DiagnosisArena slice, roughly $18$ of $20$ were \texttt{MAPPER\_UNBIND} and only about $2$ were true \texttt{TREE\_PARENT\_ABSENT}; the intermediate diagnostic \texttt{PARENT\_NOT\_IN\_L1\_SET} was empty.
+An unstratified reading of the same 20 cases says ``the hierarchy fails to recall $20\%$ of gold diseases,'' which points to leaf injection and gap-fill escalation.
+When we actually ran that intervention---injecting the full leaf inventory and re-running typed mapping---option @1 fell substantially, because the added candidates perturbed bindings and relative ranks for cases that had been correct.
+The two remaining absences were axis mismatches that gap-fill does not repair.
+So the cascade is what separates a fixable interface defect from a structural one, and it is the reason we treat name normalization as a protocol obligation (A3) rather than a recall problem.
+
+\subsection{Notation}
+\label{sec:notation}
+
+\begin{description}
+  \item[L1 / L2.] Family on a single case-chosen axis / concrete disease leaf under a family.
+  \item[Canonical concept / quotient space.] Equivalence class of synonym or near-synonym disease strings that should share one frontier slot.
+  \item[Fine crowding.] Multiple members of one equivalence class occupy distinct top ranks.
+  \item[Soft prior.] Overturnable L1 relative score used during global arbitration.
+  \item[Belief state.] The shared tree object carrying leaf identities, family membership, and posteriors used by later stages.
+\end{description}
+
+\section{Method: Alignment-Preserving Hierarchical Hypothesis Management}
+\label{sec:method}
+
+Figure~\ref{fig:pipeline} summarizes APHHM.
+Modules R1--R5 are the reasoning stack; R3 enforces A1, R4--R5 enforce A2, and A3 is handled as a protocol obligation in Section~\ref{sec:protocol} rather than as a scored component.
+
+\begin{figure}[t]
+\centering
+\fbox{\parbox{0.95\linewidth}{\centering\small
+\textbf{R1 Organization:} multi-source recall $\rightarrow$ case-adaptive L1 (+ optional non-reducing gap-fill)\\[2pt]
+\textbf{R2 Evidence (open):} candidate-relative fact selection $\rightarrow$ sparse L1 updates\\[2pt]
+\textbf{R3 Compression:} equivalence-class merge / exclusive calibrate (\texttt{compat\_parallel} heuristic)\\[2pt]
+\textbf{R4 Propagation:} local evidence $\rightarrow$ posterior write-back $\rightarrow$ belief state\\[2pt]
+\textbf{R5 Decoding:} uncertainty-aware bounded frontier or posterior pool $\rightarrow$ global shortlist\\[4pt]
+\textit{Scoring interface held fixed for all systems; bind-repair disabled (Section~\ref{sec:protocol}).}
+}}
+\caption{APHHM overview. R1--R5 are the reasoning/alignment modules evaluated in this paper. Interface-level name repair is diagnosed but excluded from reported scores.}
+\label{fig:pipeline}
+\end{figure}
+
+\subsection{R1: Case-Adaptive Hypothesis Organization}
+\label{sec:m1}
+
+\paragraph{Multi-source concrete-disease recall.}
+Diseases are gathered from case-report corpora, guideline/textbook corpora, and zero-temperature LLM enumeration, then merged by reciprocal rank fusion (RRF)~\cite{rrf2009}.
+
+\paragraph{Single-axis L1 partition.}
+An LLM proposes L1 families under constraints: one shared axis; labels broader than a single disease; near-exclusivity among siblings; a residual family; optional can't-miss low-prior families.
+The partition is a temporary comparison coordinate system for the current syndrome, not a universal ontology.
+
+\paragraph{Gap-fill as structural repair, not a proven recall win.}
+If a high-ranked recalled disease has no home, one non-reducing repair call may enlarge or add families.
+We keep this operator because \texttt{TREE\_PARENT\_ABSENT} is a real stage that nothing else addresses.
+We do \emph{not} claim, on the present locked slices, that enabling gap-fill produces large end-to-end recall or Top-$k$ gains.
+The audit in Section~\ref{sec:taxonomy} explains why such a claim would be unsafe: most apparent coverage misses were interface unbinds, and the residual absences were axis mismatches that a repair call operating within the existing axis does not fix.
+Organization is therefore presented as the substrate that makes A1--A3 checkable, not as a recall mechanism with its own headline number.
+
+\subsection{R2: Candidate-Relative Evidence Updating (Component; Open Hypothesis)}
+\label{sec:m2}
+
+Salient symptoms often support many families and therefore have low discriminative value.
+APHHM can select unused facts expected to change \emph{relative} L1 order.
+
+\paragraph{Anti-prototype anchoring (anti-anchor).}
+\textbf{Definition.}
+An evidence selector that discounts the most tempting vignette prototype and requires a fact to survive adversary-style comparison across live families (and frozen L2 exemplars when available); it may abstain.
+
+\paragraph{Sparse symmetric update.}
+Each consumed fact updates at most one primary support target and one distinct oppose target among L1 families.
+
+\paragraph{Status in this paper.}
+Anti-anchor and optional discrimination-compiler hints (fact-level direction resources) are retained as implementable components.
+They are \textbf{not} claimed as the primary cause of the end-to-end improvements reported in Section~\ref{sec:results}.
+Pre-registered selector ablations on the DA slice leave option @1 within $4$~pp of the deployed configuration (salience selector $0.67$ vs.\ $0.71$; no-compiler $0.67$ vs.\ $0.71$), both below the $0.10$ minimum-explainable threshold and non-significant on paired sign tests (\Cref{sec:res-org}).
+What \emph{is} load-bearing is the selector's \emph{input structure}: when the L1 axis is not case-adaptive, the same selector abstains and the cascade collapses (\Cref{sec:res-org}).
+The selector strategy is therefore an open component; the axis that feeds it is not.
+
+\subsection{R3: Equivalence-Class-Aware Candidate Compression}
+\label{sec:m3}
+
+This module addresses invariant A1.
+We state it formally, because we regard it as a research problem rather than a formatting step.
+
+\paragraph{Quotient-space competition.}
+Let $L$ be the live leaf set and let $\sim$ denote clinical equivalence: $\ell_i \sim \ell_j$ when both labels denote the same diagnosis at the granularity the task scores.
+Write $\pi: L \rightarrow L/\!\sim$ for the map sending a leaf to its canonical concept.
+A ranking protocol that reports $k$ items should allocate its budget over \emph{classes}, not strings: the decision set must satisfy
+\[
+\bigl|\pi(\text{Top-}k)\bigr| = k ,
+\]
+whereas an unconstrained ranker only guarantees $|\text{Top-}k| = k$.
+The gap between these two conditions is wasted budget.
+Concretely, if three of the top five leaves belong to one class, the system has spent $60\%$ of its decision budget restating one hypothesis while alternative classes go unexamined.
+
+\paragraph{Why this is not merely cosmetic.}
+Fine crowding degrades accuracy through two distinct channels.
+First, \emph{slot dilution}: competing classes are pushed below the cutoff, which manifests as \texttt{GLOBAL\_MISRANK}.
+Second, \emph{decision splitting}: when the scoring contract expects one canonical name, the ranker's belief mass is divided across surface forms, so the highest-ranked \emph{string} may not be the highest-ranked \emph{concept}.
+The remedy therefore belongs before scoring rather than inside it: once $\pi$ is applied at decision time, the interface has no way to recover the intended class.
+Which of the two channels a given benchmark can expose depends on its scoring contract, and we show in \Cref{sec:res-eq} that closed-set option rematch cannot expose either---so the asymmetric @1/@2 signature on DA, while real as an observation, is \emph{not} usable as evidence for this module.
+
+\paragraph{Current heuristic: \texttt{compat\_parallel}.}
+A gold-blind \textbf{FineCrowdGate} inspects whether the top ranks are synonym-crowded.
+If triggered, only synonym merge is applied (\texttt{merge\_only}); otherwise only closed-pool Top-$K$ calibration with L1 fallback is applied (\texttt{calib\_only}).
+The operators are applied exclusively rather than in series, a design choice we originally justified by operator interference; the ablation withdraws that justification, since serial composition turns out to be indistinguishable from exclusive routing on our slice (\Cref{app:eq-equiv}).
+Merge is single-linkage over the synonym relation, so the surviving representatives of any case are \emph{pairwise non-synonymous by construction}---the delivered set is a genuine quotient, not merely a shorter list.
+On the MCR slice the gate fires on $82/101$ cases and the operator removes $56.5\%$ of surviving candidates ($4.64 \rightarrow 2.02$ per case).
+
+\paragraph{A structural property that constrains what can be measured.}
+Each class is represented by its best-ranked member, and classes are ordered by that member's rank.
+Merge is therefore a pure \emph{deletion} operator: the globally rank-1 leaf heads every partition, so no change of class membership can move rank~1.
+We verified this invariance on $15{,}400$ perturbed partitions (rank-1 representative unchanged in $100\%$).
+This is a property of the deployed rule, not a limitation of our evaluation, and it has a direct consequence we act on in \Cref{sec:res-eq}: any endpoint that reads only the top slot is algebraically insensitive to this module and must not be used to test it.
+
+\paragraph{Claim boundary.}
+\texttt{compat\_parallel} is one implementation of equivalence-aware compression, not a finalized theory of medical synonymy.
+Our ablations (\Cref{sec:res-eq}) support the quotient requirement while showing that the particular gate predicate, its timing, and serial-versus-exclusive composition are \emph{not} load-bearing; we therefore state the contribution at the level of the structural requirement and report the predicate as an implementation detail.
+
+\subsection{R4: State-Consistent Local-to-Global Propagation}
+\label{sec:m4}
+
+Branch-conditioned L2 generation builds leaves under each live L1 family with per-family budgets and consistency checks.
+Local evidence annotation then produces case-conditioned leaf support.
+
+\paragraph{Write-back requirement.}
+If those local posteriors are not written into the shared belief state, global decoding still reads ``cold'' build-time scores.
+\textbf{Live posterior write-back} copies local posteriors onto leaves so that the global pool reflects the same evidence the local stage just used.
+A per-family candidate cap is applied in the deployed configuration but is \emph{not} load-bearing on our OX slice (\Cref{sec:res-state}).
+
+\paragraph{Empirical anchor (OX).}
+On Open-XDDx, a fair closed shortlist over cold trees at the locked budget yields micro-F1 $0.576$; the same budget with live write-back reaches $0.651$ (paired case-bootstrap $\Delta{=}{+}0.075$, $95\%$ CI $[0.036,0.113]$, two-sided add-one $p{=}4.0{\times}10^{-4}$).
+Changing the evidence budget alone moves F1 by at most ${+}0.008$ at either write-back setting.
+Force-emitting missing leaves did not add leaves on this slice and did not beat the no-emit write-back arm---supporting state consistency over open-set leaf invention as the operative mechanism.
+
+\subsection{R5: Bounded Global Decoding}
+\label{sec:m5}
+
+\paragraph{Against the single champion.}
+A natural hierarchical design lets each family submit exactly one winner.
+We argue this is the wrong default \emph{as a design rule}, because it contradicts the rest of the pipeline: a system that spends branch-conditioned retrieval to keep a long-tail disease alive should not delete it on the basis of a single within-family comparison made under sparse evidence.
+If family $g$ submits $b_g$ candidates, single-champion decoding fixes $b_g \equiv 1$ however close the local margin is, so every local ranking error becomes unrecoverable.
+Worse, the resulting \texttt{LOCAL\_ELIMINATION} is invisible downstream, because the global stage only ever sees survivors---a real stage in the audit taxonomy even when end-task F1 does not move.
+
+APHHM instead makes $b_g$ uncertainty-aware:
+\begin{itemize}
+  \item a \textbf{bounded local frontier}, with $b_g = 1$ when the local margin is decisive and $b_g = 2$ when the top two are close or the evidence is thin; and/or
+  \item a \textbf{posterior pool}, which drops per-family quotas entirely and admits the Top-$N$ leaves of the belief state for closed decoding.
+\end{itemize}
+Single-champion decoding survives only as the special case $b_g = 1$, selected by evidence rather than imposed by construction.
+On OX, closed live-MAC decoding takes the posterior-pool route: multi-doctor discussion is restricted to the Top-$N{=}15$ leaves of the written-back state, and outputs are projected back into that pool before emitting $K{=}5$ names~\cite{chen2025mac,mac2026}.
+This is also why A2 and this module are inseparable in the OX result: the pool is only meaningful if the posteriors that define it were updated.
+\textbf{Empirical caveat.}
+Forcing $b_g{=}1$ (cap${=}1$) on the same OX slice does \emph{not} lower micro-F1 relative to the deployed cap${=}6$ ($0.657$ vs.\ $0.651$), and removing the cap entirely (cap${=}999$) is likewise within noise ($0.649$).
+The single-champion bottleneck is therefore a design and audit concern that this slice does not expose as an end-task cost; we retain the argument and report the null (\Cref{sec:res-state}).
+L1 scores enter only as soft priors; incomparable within-family scores are not concatenated into a fake global probability.
+
+\subsection{Interface Alignment: Diagnosed, Not Credited}
+\label{sec:protocol}
+
+Benchmarks differ in how a ranked belief state becomes a score, and that conversion can fail independently of reasoning quality.
+On DA, a relation-aware answer mapper sometimes writes an empty option-to-leaf binding even when a synonym-equivalent leaf sits in the ranked shortlist; this is the \texttt{MAPPER\_UNBIND} stage of Section~\ref{sec:taxonomy}.
+A repair operator is straightforward: fill \emph{empty} bindings by synonym/bridge matching against the current shortlist and re-score without re-running the typed mapper.
+
+We nonetheless exclude this operator from every number we report, for two reasons.
+
+First, \textbf{the lever is not method-specific}.
+Applied offline to the same frozen projections, it raises external baselines by roughly $+0.02$ to $+0.08$ option @1---for example, the strongest baseline improves from $0.62$ to $0.67$, and a self-refine baseline by $+0.08$---while improving our stack by about $+0.02$.
+Because baselines have more unbound gold options to recover, enabling repair for everyone \emph{narrows} the measured gap and mixes name-normalization coverage into a reasoning comparison.
+Reporting the unmodified interface is therefore the conservative choice, and it is also the more informative one: it isolates R1--R5.
+
+Second, \textbf{interface repairs are easy to over-credit}.
+An earlier implementation of ours awarded bridge-match credit from a self-referential retrieval chunk with maximal similarity, which promoted essentially any empty binding to the top option and inflated scores; the affected tables were retracted.
+This experience is itself evidence for Contribution~4: an interface-stage operator can silently manufacture apparent recall gains unless the failure cascade and the scoring contract are audited separately.
+
+The scientific claim we retain is diagnostic, not competitive: \texttt{MAPPER\_UNBIND} dominates apparent coverage misses on DA, so name normalization deserves protocol-level standardization across the field rather than per-paper opt-in gains.
+
+\paragraph{MCR projection.}
+MCR uses open single-trajectory scoring plus LLM reasoning-fact recall over the same hierarchical ranking stack; no option-mapping interface is involved.
+
+\section{Experimental Setup}
+\label{sec:experiments}
+
+\subsection{Datasets and Slices}
+\label{sec:data}
+
+Frozen 100-case sequential slices of three open-ended diagnostic benchmarks:
+DA~\cite{diagnosisarena} \texttt{d2\_seq100\_v1} (option-mapped Top-2);
+MCR~\cite{medcasereasoning} \texttt{mcr\_val\_seq100\_v1} (single-trajectory Acc + LLM reasoning recall);
+OX~\cite{dualinf2025} \texttt{ox\_seq100\_v1} (multi-gold micro-F1 at $K{=}5$ + LLM interpretation accuracy).
+Adjacent interactive settings such as SDBench~\cite{sdbench2025} motivate the information-acquisition contrast in Related Work but are not scored here.
+Knowledge-exam and structured-vignette resources such as MedQA~\cite{jin2021medqa}, DDXPlus~\cite{fansi2022ddxplus}, and RareBench~\cite{rarebench} inform the broader landscape but are outside the locked slices.
+Gold never enters runtime generation, evidence selection, write-back, or arbitration.
+Slices are mechanism-locking cohorts, not full-benchmark leaderboards.
+All arms are scored with the unmodified evaluation interface (Section~\ref{sec:protocol}).
+
+\subsection{Backbone, Knowledge, Judges}
+\label{sec:backbone}
+
+Shared API backbone: \texttt{meta-llama/llama-3.3-70b-instruct}~\cite{llama33}.
+Shared RAG indices for retrieval arms.
+MCR/OX judges: Gemini 2.5 Flash with fixed prompts (no lexical substitution for official interpretation / reasoning-recall numbers).
+
+\subsection{Baselines}
+\label{sec:baselines}
+
+Direct CoT~\cite{wei2022cot}; CoT+RAG~\cite{lewis2020rag,xiong2024medrag}; flat retrieve--rerank; flat beam; Dual-Inf~\cite{dualinf2025}; MDAgents~\cite{mdagents}; single-vendor MAC~\cite{chen2025mac,mac2026}; MEDDxAgent~\cite{meddxagent2025}; self-consistency~\cite{wang2023selfconsistency} and self-refine~\cite{madaan2023selfrefine}; Medprompt-style prompting~\cite{medprompt} and MedRAG-style RAG~\cite{medrag}; iterative i-MedRAG~\cite{imedrag}; and a Chain-of-Diagnosis / DiagnosisGPT-style arm where transferable~\cite{chainofdiagnosis}.
+
+\paragraph{Budget-matched flat control.}
+Comparing a multi-stage hierarchical system against a two-call flat baseline is not informative about mechanism.
+We therefore construct a flat control whose inference budget approaches the hierarchical stack's, rather than merely exceeding the native baseline.
+An earlier ``matched'' variant equalized only a structural proxy and used about $9$ model calls per case---an order of magnitude below the hierarchical pipeline's cached call volume---so it was not in fact budget matched.
+The control used here, \textbf{B02-SC10}, runs the flat retrieve--rerank pipeline with ten self-consistent trajectories~\cite{wang2023selfconsistency} fused by reciprocal rank~\cite{rrf2009}, reaching roughly $90$ calls per case ($92.4$ on DA, $89.8$ on OX, $93.2$ on MCR).
+This is the strictest flat control available to us and the one we use for the budget argument.
+
+\subsection{What Each Result Is Allowed to Support}
+\label{sec:claim-map}
+
+\begin{description}
+  \item[Contribution 1.] Pre-registered axis ablations on DA: a case-irrelevant random partition costs $0.34$ option @1 on the full sample (exact sign $p{\approx}0$; Holm-surviving confirmatory contrast); the same selector abstains when the axis is not case-adaptive (mean selected facts $4.94 \rightarrow 0.13$). Gap-fill is not credited with large recall wins (\Cref{sec:res-org}).
+  \item[Contribution 2.] Pre-registered ablations on MCR: removing equivalence handling costs $0.102$ Acc@1 (Holm-corrected $p=0.030$); compression removes $56.5\%$ of candidates at no accuracy cost and better graded ranking; a candidate-count-matched semantics-blind merge is worse ($p=0.015$). The gate \emph{predicate} is an implementation detail (equivalent within $\pm 3$~pp). \textbf{The earlier DA claim ($0.59\rightarrow0.71$ option @1) is retracted} as a closed-set scoring artifact (\Cref{sec:res-eq}).
+  \item[Contribution 3.] OX write-back at locked budget: cold $\rightarrow$ hot F1 $0.576\rightarrow 0.651$ (paired micro-F1 bootstrap $p{=}4.0{\times}10^{-4}$); budget alone moves ${\leq}0.008$; closed-panel decode beats posterior Top-$K$ on the same hot tree; per-family cap is \emph{not} load-bearing (\Cref{sec:res-state}).
+  \item[Contribution 4.] Audit dominance of \texttt{MAPPER\_UNBIND} over \texttt{TREE\_PARENT\_ABSENT} among apparent coverage misses; retraction of an interface-inflated result; full-tree leaf injection with re-typed mapping lowers option @1 from $0.72$ to $0.42$ (paired $39/9$, $p{=}1.5{\times}10^{-5}$; \Cref{sec:res-tax}).
+  \item[Not claimed as proven.] Anti-anchor / discrimination compiler as the main driver of Table~\ref{tab:main} (selector-strategy exclusion holds; axis structure does not).
+\end{description}
+
+\section{Results}
+\label{sec:results}
+
+\subsection{End-Task Comparison under the Unmodified Interface}
+\label{sec:main-results}
+
+\begin{table}[t]
+\centering
+\small
+\caption{Main results on 100-case slices, all with the evaluation interface unmodified (no bind-repair for any system). Absolute scores are not comparable across datasets.}
+\label{tab:main}
+\begin{tabular}{llp{3.4cm}cc}
+\toprule
+Dataset & Metric & APHHM configuration & Score & Best external \\
+\midrule
+DA & @1 / @2 & organization + equivalence compression & 0.71 / 0.78 & 0.62 / 0.71 (B07) \\
+MCR & Acc / RR & hierarchical ranking stack & 0.50 / 0.753 & 0.24 / 0.412 (B07) \\
+OX & F1 / IAcc & write-back + closed pool & 0.651 / 0.355 & 0.570 / 0.221 (B06) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:main} reports a single cut per dataset.
+On DA the compressed hierarchical ranking reaches option @1/@2 $=0.71/0.78$ (MRR@2 $=0.748$); an independently frozen run of the same configuration gives $0.72/0.78$, which we treat as the run-to-run range rather than a separate result.
+On MCR it reaches single-trajectory accuracy $0.50$ with LLM reasoning recall $0.753$.
+On OX it reaches micro-P/R/F1 $=0.631/0.672/0.651$ with LLM interpretation accuracy $0.355$ ($357/1007$ items).
+No row includes interface bind-repair for any system, ours or baseline.
+
+\subsection{Ablation: Case-Adaptive Organization (Contribution 1)}
+\label{sec:res-org}
+
+This subsection asks whether the L1 axis must be decided by the case, or whether any equal-cardinality partition would do.
+We compare the deployed case-adaptive axis against a frozen ICD/specialty taxonomy and against a case-irrelevant random partition that preserves family count and candidate budget.
+A flat no-L1 arm was run but is excluded here: its leaf budget collapsed to $28\%$ of the deployed pool and its ranking depth collapsed to $1$ by construction, so it cannot support either direction of the claim.
+
+\paragraph{Default caliber: full sample.}
+\Cref{tab:org-axis} reports option @1/@2 on the DA slice under the unmodified interface.
+The confirmatory contrast is the random axis: $\Delta$@1 ${=}{+}0.340$ (exact sign $40/6$, $p{\approx}0$), which survives Holm correction~\cite{holm1979} among the five pre-registered confirmatory contrasts (\Cref{app:holm}).
+A fixed ICD axis also loses ($\Delta$@1 ${=}{+}0.200$, $25/5$), and does so despite emitting \emph{more} leaves than the deployed configuration ($30.1$ vs.\ $17.8$ per case)---so the loss is not a coverage deficit.
+
+\begin{table}[t]
+\centering
+\small
+\caption{L1 axis ablations on DA ($n{=}100$, synonym bind-repair off). $\Delta$ is M00${-}$arm. Full-sample is the default reporting caliber; the nonempty row conditions on cases that produced a joint ranking.}
+\label{tab:org-axis}
+\begin{tabular}{llcccc}
+\toprule
+Axis & Caliber & @1 & @2 & $\Delta$@1 & disc.\ $b/c$ \\
+\midrule
+Case-adaptive (deployed) & full & \textbf{0.71} & \textbf{0.78} & --- & --- \\
+Fixed ICD/specialty & full & 0.51 & 0.60 & $+0.20$ & $25/5$ \\
+Random (case-irrelevant) & full & 0.37 & 0.42 & $+0.34$ & $40/6$ \\
+\midrule
+Fixed ICD/specialty & nonempty ($n{=}89$) & 0.57 & --- & $+0.135$ & $17/5$ \\
+Random (case-irrelevant) & nonempty ($n{=}55$) & 0.67 & --- & $+0.018$ & $7/6$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Cascade: why empty rankings are a consequence, not a bug.}
+The same candidate-relative evidence selector runs under every axis.
+Mean selected L1 facts fall from $4.94$ (deployed) to $0.65$ (fixed ICD) to $0.13$ (random); empty joint rankings rise from $1$ to $11$ to $45$.
+Every empty ranking on the random arm has \texttt{stop\_reason}${=}$\texttt{selector\_abstained} with zero facts selected.
+When families are not case-coherent, there is nothing for a contrastive selector to prefer, so it abstains and the cascade never produces a ranking the mapper can score.
+We therefore treat empty-ranking rate as a process endpoint of axis quality, and keep the full sample as the default narrative caliber.
+Conditioning on nonempty rankings is a stricter advanced check: under it the random-axis accuracy residual collapses ($7/6$), while the fixed-ICD residual remains ($17/5$, $p{=}0.017$).
+
+\paragraph{Selector strategy vs.\ selector input.}
+Replacing the deployed anti-anchor selector with a salience-driven alternative, or removing discrimination-compiler hints while keeping anti-anchor, each costs $0.04$ option @1 ($11/7$ and $9/5$; both $p{>}0.4$), below the $0.10$ minimum-explainable threshold.
+Pre-registered exclusion therefore holds: end-to-end gains are not explained by the selector \emph{strategy}.
+Crossed with the axis result above, the load-bearing object is the selector's \emph{input structure}---a case-adaptive partition---not which contrastive rule consumes that partition.
+
+\paragraph{Boundaries.}
+Axis effects are mediated by evidence selection in this design and cannot be separated from it.
+The slice used here is the DA confirmatory-copy cohort; the plan's primary registration named a not-yet-materialized development freeze.
+We claim that the axis must be case-adaptive, not that any particular axis-proposal prompt is optimal.
+
+\subsection{Ablation: Equivalence-Class Compression (Contribution 2)}
+\label{sec:res-eq}
+
+This subsection reports the pre-registered ablation of the compression module.
+Because the module is a deletion operator with an invariant top slot (\Cref{sec:m3}), we first fixed which endpoints are able to respond to it at all, and we report that audit before any comparison.
+
+\paragraph{Endpoint admissibility.}
+For every candidate endpoint we counted, over $200$ randomized re-partitions per case, how many cases take more than one value.
+An endpoint with zero such cases is an algebraic identity: its null variance is exactly $0$ and no $p$-value computed from it carries information.
+Top-1 endpoints are identities under re-partition on both slices (MCR $0/42$, DA $0/35$; null s.d.\ $=0.0000$), as the deletion property predicts.
+On DA, \emph{every} endpoint we could construct is an identity or near-identity, including after we removed both structural locks (see the dissociation result below).
+On MCR two endpoints are live: \textbf{any-hit@5} (gold matched anywhere in the delivered top-5) and \textbf{open-MRR@5} (reciprocal rank of the first judged-correct delivered label, $0$ if none).
+We therefore judge this module on MCR with those two endpoints plus Acc@1 reported as an equivalence bound.
+All values use the frozen judge of \Cref{sec:backbone} at $K{=}5$ on $98$ commonly scored cases.
+\textbf{open-MRR@5 is a ranking metric over delivered diagnoses and is unrelated to the reasoning recall (RR) column of \Cref{tab:main}}, which measures coverage of reasoning facts; the two are not comparable.
+
+\paragraph{Execution-site factor.}
+Equivalence handling occurs at two places: semantic de-duplication while the hypothesis tree is built, and gated compression at decision time.
+\Cref{tab:eq-site} crosses both.
+
+\begin{table}[t]
+\centering
+\small
+\caption{Equivalence handling on MCR, both execution sites crossed. Paired exact tests on the $98$ commonly scored cases; $\Delta$ is against the deployed configuration. Only the joint removal survives Holm correction across the $15$ tests of this family.}
+\label{tab:eq-site}
+\begin{tabular}{llcccc}
+\toprule
+Configuration & Sites & Acc@1 & any-hit@5 & open-MRR & cand./case \\
+\midrule
+Deployed (\texttt{compat\_parallel}) & both on & \textbf{0.50} & \textbf{0.58} & \textbf{0.53} & 2.02 \\
+No decision-time routing & build only & 0.50 & 0.58 & 0.52 & 4.64 \\
+No build-time de-duplication & decision only & 0.50 & 0.55 & 0.52 & 1.81 \\
+Neither & none & 0.42 & 0.56 & 0.48 & 2.11 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Necessity, and a substitutive relationship between the two sites.}
+Removing equivalence handling at both sites costs $0.102$ Acc@1 on the $98$ paired cases---roughly a fifth of the deployed configuration's accuracy---with exact paired $p=0.002$ (Holm-corrected $p=0.030$ across the $15$ tests of this family; all $10$ discordant cases favour the deployed arm) and a $95\%$ interval on the paired difference of $[+3.9, +10.2]$~pp.
+Removing either site alone leaves Acc@1 at $0.50$: the marginal effects sum to $0.031$ while the joint effect is $0.102$, i.e.\ strongly super-additive.
+The two sites are thus largely substitutive---an \textsc{or}-gate---so the architecture is redundant in a way we report as robustness rather than discovering later as dead weight.
+This also means a single-arm ablation of either site is uninformative by construction, which is why we ran the full cross rather than the one arm our pre-registration originally specified.
+
+\paragraph{Compression is free, and improves graded ranking.}
+Decision-time compression removes $56.5\%$ of surviving candidates ($4.64 \rightarrow 2.02$ per case).
+Accuracy does not pay for this: with only one discordant case, the paired difference in Acc@1 is bounded to $[-1.0, +1.0]$~pp at $95\%$.
+Graded ranking improves: open-MRR $0.52 \rightarrow 0.53$ with a $95\%$ interval of $[+1.3, +7.1]$~pp, excluding zero ($p=0.016$ unadjusted; an independent operator-level replay of the same contrast reproduces the direction with $[+2.1, +8.2]$~pp, $p=0.008$).
+We stress the form of this result: in a paired design the difference is bounded by the discordant count over $n$, so a small number of moving cases yields a \emph{narrow} interval rather than an underpowered test.
+Reported this way, most arms of this family are equivalence results with explicit bounds, not failures to reject.
+
+\paragraph{Specificity: the semantics matter, not the candidate count.}
+The obvious alternative explanation is that any shortening of the candidate list would help.
+We reject it three times.
+First, a \emph{candidate-count-matched, semantics-blind} merge---same gate, same number of classes, same class-size profile, but randomized membership---delivers an identical mean of $2.405$ surviving labels and is worse on both live endpoints: any-hit@5 $0.571$ versus a $200$-draw null of $0.475 \pm 0.039$ and open-MRR $0.486$ versus $0.444 \pm 0.014$, both $p=0.015$.
+Second, accuracy is not monotone in candidate count across \Cref{tab:eq-site}: $1.81 \rightarrow 0.50$, $2.02 \rightarrow 0.50$, $2.11 \rightarrow 0.42$, $4.64 \rightarrow 0.50$.
+Third, the cross-caliber dissociation below produces a \emph{larger} candidate reduction with exactly zero effect.
+The mechanism is visible in the failure mode: our merge absorbs a leaf only into a synonymous representative, so a gold match is inherited by the representative, whereas blind merge absorbs leaves into unrelated representatives and destroys the match.
+Semantics-blind merge also leaves $0.79$ synonymous duplicate pairs per draw among survivors, against $0.00$ for the deployed operator in $100\%$ of cases.
+
+\paragraph{Cross-caliber dissociation, and a retraction.}
+The module acts on the candidate space \emph{the system itself constructs}, so its value should scale with how much of that space the system must disambiguate.
+Closed-set option rematch supplies a pre-enumerated, mutually exclusive answer set and credits absorbed leaves through the member-to-representative map, i.e.\ the scoring contract performs the de-duplication on the system's behalf.
+The architecture therefore predicts an effect under open-set scoring and none under closed-set rematch.
+\Cref{tab:eq-dissoc} confirms both halves, and the null half is structural rather than empirical.
+
+\begin{table}[t]
+\centering
+\small
+\caption{Predicted dissociation. The closed-set caliber compresses \emph{more} and responds not at all; its apparent option-@1 gain is the retracted artifact discussed below.}
+\label{tab:eq-dissoc}
+\begin{tabular}{lcc}
+\toprule
+ & DA (closed-set rematch) & MCR (open-set) \\
+\midrule
+Candidates per case & $4.60 \rightarrow 1.47$ & $4.64 \rightarrow 2.02$ \\
+Reduction & $-68.0\%$ & $-56.5\%$ \\
+Open-set @1, $\Delta$ & $+0.0000$ & $+0.010$ \\
+Graded ranking, $\Delta$ & $-0.0028$ & $+0.071$, CI $[+1.3,+7.1]$~pp \\
+Under re-partition & identity (s.d.\ $0.0000$) & live ($p=0.015$) \\
+Closed-set option @1, $\Delta$ & $+0.112$ \textbf{(retracted)} & n/a \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+An earlier version of this work reported the last row as the primary evidence for this contribution: raw joint ranking at option @1 $\approx 0.59$ against $0.71$ with compression.
+We audited that gain and now retract it.
+The two arms emit \emph{character-identical} rank-1 labels in all $89$ gated cases, so no reordering occurs; in the $12$ cases where a gold-bound option is promoted to rank~1, the delivered rank-1 label already matched gold under open scoring in $12/12$; promotion is not selective for gold (Fisher $p=0.199$); it is unidirectional because absorption can only raise an option's binding, converting a strict loss into a tie that dense ranking credits as top-1; and $0/12$ of the promotions join concept-identical labels---all are coarsenings such as \emph{microvenular hemangioma} into \emph{hemangioma}.
+The effect is exactly zero once member-to-representative credit is removed ($\Delta = +0.0000$ on open @1).
+We report this retraction because it is the sharpest available test of our own evidence: the closed-set caliber manufactures a favourable number that the open-set caliber does not, and the MCR results above survive a filter the DA result failed.
+
+\paragraph{The requirement is load-bearing; the heuristic is not.}
+Pre-registered variants of the operator---unconditional merge, calibration only, serial rather than exclusive composition, frequency-matched random routing, and a stricter concept-identity predicate---are all equivalent to the deployed gate within $\pm 3$~pp on the audited endpoints (\Cref{tab:eq-equiv}).
+Two of them are structural identities in this setup and produce no difference at any $n$.
+We therefore state the contribution at the level of the quotient requirement and demote the gate predicate to an implementation detail, as our pre-registration specified should happen if the concept-identity variant reached parity.
+A structural claim that survives changes of its own implementation is stronger evidence for the requirement than one tied to a particular threshold.
+
+\paragraph{Limitations.}
+Of the $15$ paired tests in this family only the joint removal survives Holm correction; the remaining contrasts are reported as bounded equivalences, not as effects.
+The execution-site cross exists on MCR only, and we do not claim cross-caliber replication of it---the dissociation above is why we regard the closed-set slice as a predicted boundary rather than a missing replication, but that argument is theoretical and the DA cross was not run.
+Both live endpoints were selected after Top-1 endpoints were found to be identities; the selection criterion is the structural audit, which is independent of any $p$-value, but the endpoints still require confirmation on an independent slice.
+Sign tests on this slice need six unidirectional moving cases for $p<0.05$, which the smaller contrasts do not reach at $n\approx100$.
+
+\subsection{Ablation: State Consistency and Bounded Decoding (Contribution 3)}
+\label{sec:res-state}
+
+This subsection decouples three operators that the OX main result bundles: evidence budget, posterior write-back, and closed-panel decoding.
+\Cref{tab:state-2x2} crosses budget with write-back at a fixed per-family cap of $6$.
+
+\begin{table}[t]
+\centering
+\small
+\caption{OX micro-F1 under a $2{\times}2$ of evidence budget and write-back (cap${=}6$, closed live-MAC decode, $n{=}100$). Write-back moves ${\approx}0.075$; budget moves ${\approx}0.008$.}
+\label{tab:state-2x2}
+\begin{tabular}{lcc}
+\toprule
+ & Cold (no write-back) & Hot (write-back) \\
+\midrule
+Locked budget (L1${=}4$) & $0.576$ & $\mathbf{0.651}$ \\
+Default budget (L1${=}6$) & $0.584$ & $0.658$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Write-back is load-bearing; budget is not.}
+At the locked budget the confirmatory cold arm loses $0.075$ micro-F1 against the deployed configuration.
+A paired case-bootstrap of micro-F1 (the registered OX diagnostic aggregate) gives $\Delta{=}{+}0.075$ with $95\%$ CI $[0.036,0.113]$ and two-sided add-one $p{=}4.0{\times}10^{-4}$ ($5000$ resamples); the contrast survives Holm correction among the five confirmatory tests (\Cref{app:holm}).
+An auxiliary per-case F1 sign test agrees in direction (mean $\Delta{=}{+}0.073$; $42/14$; $p{=}2.3{\times}10^{-4}$).
+The clean budget contrast---default vs.\ locked, holding write-back fixed---moves F1 by at most ${+}0.008$ on either side of the write-back factor, with interaction $-0.001$.
+An earlier draft reading that attributed the gain to budget calibration compared the joint (budget${+}$write-back) arm against cold and is retracted: that contrast confounds the two factors.
+Pre-registered falsification clauses ``write-back is inert'' and ``budget alone explains the gain'' are both unmet.
+
+\paragraph{Closed-panel decode beats posterior Top-$K$ on the same hot tree.}
+Holding the written-back tree fixed and changing only the decoder: closed live-MAC micro-F1 $0.651$, posterior-pool MCR $0.610$, global posterior Top-$5$ $0.593$.
+Paired case-F1 favours the closed panel against posterior Top-$5$ (mean $\Delta{=}{+}0.056$, $32/9$, $p{=}4{\times}10^{-4}$) and against posterior-pool MCR (mean $\Delta{=}{+}0.040$, $30/13$, $p{=}0.014$).
+Interpretation accuracy stays within $0.35$--$0.36$ across the three, so the gain is diagnostic rather than explanatory.
+This isolates bounded closed decoding as an increment on top of write-back, not a substitute for it.
+
+\paragraph{Per-family cap is not load-bearing on this slice.}
+Forcing a single champion per family (cap${=}1$) yields micro-F1 $0.657$; removing the cap (cap${=}999$) yields $0.649$.
+Both sit within noise of the deployed $0.651$.
+The pre-registered clause ``if uncapping does not harm, delete cap from the mechanism claim'' therefore fires: we retain write-back and closed-panel decoding, and demote the cap to an implementation choice.
+The design argument against imposing $b_g{\equiv}1$ by construction (\Cref{sec:m5}) stands as an audit concern (\texttt{LOCAL\_ELIMINATION} remains a real stage); this slice simply does not price that stage in end-task F1.
+
+\paragraph{Emit vs.\ write-back.}
+The no-emit write-back arm still beats an emit-enabled arm ($0.651$ vs.\ $0.645$) that emitted zero new leaves---evidence that updating the belief state, not inventing leaves, drives the gain.
+
+\subsection{Stage Attribution (Contribution 4)}
+\label{sec:res-tax}
+
+Table~\ref{tab:stages} and Section~\ref{sec:taxonomy} give the cascade; here we record what it changed in practice.
+Stratifying the $20$ apparent coverage misses on DA moved roughly $18$ of them from ``recall failure'' to \texttt{MAPPER\_UNBIND}, leaving about $2$ genuine \texttt{TREE\_PARENT\_ABSENT} cases.
+The revised priority is interface standardization and equivalence compression first, indiscriminate leaf injection last.
+The counterfactual is measurable: full-tree leaf injection with re-run typed mapping---the intervention that unstratified coverage numbers recommend---lowered option @1 from $0.72$ to $0.42$ ($\Delta{=}{-}0.30$; mean ${+}16.1$ extra leaves per case; coverage $0.93$).
+On the $100$ paired cases the discordance is $39$ favouring the uninjected arm against $9$ favouring injection (exact sign $p{=}1.5{\times}10^{-5}$); that contrast is the confirmatory arm for this contribution and survives Holm correction (\Cref{app:holm}).
+It is a historical reuse and has not been re-verified under the frozen judge contract of this draft.
+We therefore report stage counts alongside end-task scores, and treat any coverage statistic that has not been stratified as uninterpretable.
+
+\subsection{Budget-Matched Flat Control (B02-SC10)}
+\label{sec:rq4}
+
+\begin{table}[t]
+\centering
+\small
+\caption{Flat retrieve--rerank under increasing inference budget, unmodified interface. B02-SC10 is the budget-matched control; the earlier structural-proxy variant was not truly matched.}
+\label{tab:budget}
+\begin{tabular}{llccc}
+\toprule
+Dataset & Metric & native ($\approx2$ calls) & proxy ($\approx9$ calls) & \textbf{SC10} ($\approx90$ calls) \\
+\midrule
+DA & option @1 & 0.56 & 0.48 & \textbf{0.47} \\
+OX & micro-F1 & 0.495 & 0.479 & \textbf{0.487} \\
+MCR & Acc & 0.17 & 0.17 & \textbf{0.15} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:budget} shows that scaling the flat pipeline to roughly $90$ model calls per case does not recover hierarchical performance.
+Across all three datasets, ten-sample self-consistency with rank fusion stays at or below the native two-call configuration: DA option @1 $0.47$ versus $0.56$ native, MCR accuracy $0.15$ versus $0.17$, and OX micro-F1 $0.487$ versus $0.495$.
+Every value remains far below the corresponding APHHM row in Table~\ref{tab:main}.
+
+Two observations matter for interpretation.
+First, the earlier proxy-matched variant was never a valid budget control: at about $9$ calls per case it sat an order of magnitude below the hierarchical stack, so its weakness could have been attributed to insufficient compute.
+B02-SC10 removes that objection, and the conclusion strengthens rather than weakens.
+Second, the failure mode of self-consistency here is informative: on OX, aggregating ten trajectories by rank fusion raised diagnostic micro-F1 slightly while collapsing interpretation accuracy from $0.445$ to $0.044$, because fusion keeps names but discards the per-trajectory explanation structure.
+Additional sampling in a flat space buys marginal list reordering; it does not buy an organized hypothesis space or a shared belief state.
+
+\section{Discussion}
+\label{sec:discussion}
+
+\paragraph{What the hierarchy is for.}
+APHHM does not imitate hospital org charts.
+It provides a case-specific coordinate system and a shared belief state that later stages must read.
+
+\paragraph{What we no longer over-claim.}
+Gap-fill is not presented as a major recall success.
+Anti-anchor is not presented as the proven headline mechanism: selector-\emph{strategy} ablations are directional nulls, while the selector's \emph{input} (a case-adaptive axis) is load-bearing (\Cref{sec:res-org}).
+Interface bind-repair is not presented at all as a result: it is diagnosed as a shared protocol gap, and excluded because it benefits baselines at least as much as our stack.
+The DA option-@1 gain we previously attributed to equivalence compression is retracted (\Cref{sec:res-eq}); the contribution now rests on open-set MCR endpoints, and the gate predicate is reported as an implementation detail rather than as a mechanism.
+Per-family candidate caps are likewise demoted: uncapping and single-champion forcing are both within noise of the deployed OX configuration (\Cref{sec:res-state}).
+
+\paragraph{On interface levers as a community issue.}
+That exclusion has a wider implication.
+If a single offline name-matching pass can move published option accuracy by several points for most systems, then differences between recent diagnostic agents may be partly differences in name normalization coverage.
+We suggest that benchmarks fix the name-binding contract, and that papers report which contract they used, rather than each system supplying its own repair.
+
+\paragraph{Open risks.}
+The quotient requirement is supported on one slice by one Holm-surviving contrast; the predicate-level questions are bounded rather than resolved, and resolving them needs roughly twice our sample or a slice stratified to a balanced gate firing rate (\Cref{app:eq-equiv}).
+Endpoint admissibility for compression was established structurally but after the fact, and needs independent-slice confirmation.
+The single-champion bottleneck was not priced by OX end-task F1 under a posterior-pool decoder; stress-testing it needs a route where \texttt{LOCAL\_ELIMINATION} can reach the scored shortlist.
+Axis effects are mediated by evidence selection and were measured on a DA confirmatory-copy slice rather than the not-yet-materialized development freeze.
+100-case slices are not full-benchmark significance tests, and B02-SC10 matches call counts rather than audited token ledgers.
+
+\paragraph{A note on reporting nulls.}
+Much of \Cref{sec:res-eq} consists of arms that did not move the endpoint.
+We report these as intervals rather than as $p$-values because the paired design bounds the difference by the discordant count over $n$, which makes such results statements about how small an effect can be rather than failures to detect one.
+We recommend this form generally for module ablations of pipelines whose operators are, like ours, partly redundant by design: a difference test on a substitutive component is close to uninterpretable, whereas a bound is not.
+
+\paragraph{Safety.}
+Offline research only; not a clinical decision-support claim.
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+We upgraded the Recall--Discrimination Dilemma into alignment-preserving hierarchical hypothesis management.
+The central problems are not only whether the correct disease is retrieved, but whether candidates compete as canonical concepts, whether local evidence updates the global belief state, and whether evaluation errors are attributed to the correct stage.
+Under that framing, case-adaptive organization, equivalence-aware compression, state-consistent write-back with bounded decoding, and stage-attributable evaluation are first-class contributions; candidate-relative selector \emph{strategies} remain open components whose input structure, not whose particular rule, is what the ablations support.
+All comparisons are made with the evaluation interface untouched, and against a flat control scaled to comparable inference budget, so that the remaining gaps are attributable to how hypotheses are organized and propagated rather than to name matching or sampling volume.
+We hope future diagnostic systems fix the name-binding contract before reporting gains, and refuse to treat \texttt{MAPPER\_UNBIND} as \texttt{L2\_MISS}.

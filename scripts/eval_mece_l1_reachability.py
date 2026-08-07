@@ -46,7 +46,8 @@ def _gold_names(case: dict) -> list:
 
 def make_poster(model: str):
     import requests
-    key = os.environ.get("OPENROUTER_API_KEY2", "")
+    key = os.environ.get("OPENROUTER_API_KEY2",
+                         "")
     headers = {"Authorization": f"Bearer {key}", "HTTP-Referer": "google.com",
                "X-Title": "eval", "Content-Type": "application/json"}
     prov = {"order": ["novita", "deepinfra/base", "groq"], "allow_fallbacks": True}

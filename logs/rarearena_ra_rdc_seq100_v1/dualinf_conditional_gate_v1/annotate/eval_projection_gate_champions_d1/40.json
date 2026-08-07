@@ -1,0 +1,97 @@
+{
+  "case_id": "40",
+  "schema_version": 1,
+  "pred_ddx": [
+    {
+      "id": "B2.1",
+      "label": "Wilms Tumor",
+      "posterior": 0.4427191890716611,
+      "parent_id": "B2",
+      "support_count": 9,
+      "supports": [
+        "Microscopic examination: tumor highly cellular with epithelial, blastemic, and stromal elements",
+        "Microscopic examination: tubular lining cells with elongated, molded, and wedge-shaped nuclei exhibiting frequent mitoses",
+        "Microscopic examination: epithelial element with tubules admixed with blastemic cells",
+        "Microscopic examination: blastemic component with solid areas showing cells with oval nuclei and scanty cytoplasm",
+        "Microscopic examination: tubular pattern resembling pseudo-rosettes",
+        "Microscopic examination: stroma with spindle cells and no specific differentiation",
+        "abdominal mass",
+        "hematuria",
+        "renal ultrasound showing a solid mass"
+      ],
+      "fill_source": "conditional_gate_override",
+      "rank": 1
+    },
+    {
+      "id": "B3.1",
+      "label": "renal cell carcinoma",
+      "posterior": 0.00014514806832201994,
+      "parent_id": "B3",
+      "rank": 2,
+      "fill_source": "arbiter",
+      "support_count": 3
+    },
+    {
+      "id": "B2.3",
+      "label": "Teratoid Wilms Tumor",
+      "posterior": 0.4427191890716611,
+      "parent_id": "B2",
+      "rank": 3,
+      "fill_source": "posterior_pad",
+      "support_count": 0
+    },
+    {
+      "id": "B1.2",
+      "label": "Papillary Renal Cell Carcinoma",
+      "posterior": 0.006649080339900185,
+      "parent_id": "B1",
+      "rank": 4,
+      "fill_source": "posterior_pad",
+      "support_count": 3
+    },
+    {
+      "id": "B1.1",
+      "label": "Clear Cell Renal Cell Carcinoma",
+      "posterior": 0.003940195756977886,
+      "parent_id": "B1",
+      "rank": 5,
+      "fill_source": "posterior_pad",
+      "support_count": 0
+    }
+  ],
+  "pred_interpretation": {
+    "renal cell carcinoma": [
+      "Observed: Microscopic examination: tumor highly cellular with epithelial, blastemic, and stromal elements",
+      "Observed: Urine analysis: significant number of red blood cells under high power field"
+    ],
+    "Wilms Tumor": [
+      "Observed: Microscopic examination: tumor highly cellular with epithelial, blastemic, and stromal elements",
+      "Observed: Urine analysis: significant number of red blood cells under high power field"
+    ]
+  },
+  "pred_diagnosis": "Wilms Tumor",
+  "pred_reasoning_trace": "Observed:\n- Microscopic examination: tumor highly cellular with epithelial, blastemic, and stromal elements\n- Urine analysis: significant number of red blood cells under high power field\n- Microscopic examination: tubular lining cells with elongated, molded, and wedge-shaped nuclei exhibiting frequent mitoses\n- Microscopic examination: epithelial element with tubules admixed with blastemic cells\n- Microscopic examination: blastemic component with solid areas showing cells with oval nuclei and scanty cytoplasm\n- Microscopic examination: no area showing anaplasia\nAxes:\n- Wilms Tumor\n- Renal Cell Carcinoma\n- Inflammatory and Infectious Renal Conditions\n- Other Renal Conditions\n- Benign Renal Tumors\nDifferential diagnosis:\n1. renal cell carcinoma (posterior=0.0001)\n   - Observed: Microscopic examination: tumor highly cellular with epithelial, blastemic, and stromal elements\n   - Observed: Urine analysis: significant number of red blood cells under high power field\n2. Wilms Tumor (posterior=0.4427)\n   - Observed: Microscopic examination: tumor highly cellular with epithelial, blastemic, and stromal elements\n   - Observed: Urine analysis: significant number of red blood cells under high power field\nRank note: Top-1 by compat_parallel final_ranking is renal cell carcinoma.",
+  "sources": {
+    "ddx_source": "dualinf_conditional_gate",
+    "ddx_k": 5,
+    "evidence": [
+      "p5_audit.support_oppose_why",
+      "l1.selected_fact_ids"
+    ],
+    "final_ranking_len": 2,
+    "compat_path": "merge_only",
+    "n_leaves_considered": 21,
+    "policy_meta": {
+      "reason": "support_delta_ge_1",
+      "arbiter_support": 3,
+      "challenger_support": 9,
+      "support_gap": 6,
+      "protocol": "ra_dualinf_conditional_gate_v1"
+    },
+    "fallback": null,
+    "pool_n": null,
+    "pool": "champions",
+    "delta": 1,
+    "overridden": true
+  }
+}

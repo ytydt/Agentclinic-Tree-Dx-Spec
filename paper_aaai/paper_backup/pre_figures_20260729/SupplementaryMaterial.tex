@@ -1,0 +1,337 @@
+\documentclass[letterpaper]{article}
+\usepackage[submission]{aaai2027}
+\usepackage[hyphens]{url}
+\usepackage{graphicx}
+\urlstyle{rm}
+\def\UrlFont{\rm}
+\usepackage{natbib}
+\usepackage{caption}
+\frenchspacing
+
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+
+\pdfinfo{
+/TemplateVersion (2027.1)
+}
+
+\setcounter{secnumdepth}{0}
+
+\title{Supplementary Material}
+\author{Anonymous Submission}
+\affiliations{}
+
+\begin{document}
+\maketitle
+
+This document reports method details, the complete baseline comparison, case accounting, and secondary analyses under the same fixed subsets, backbones, and unmodified benchmark interfaces as the main paper.
+It expands the evidence map by connecting each contrast to the mechanism and inferential unit it measures.
+
+\section{Method Details and Audit Rationale}
+
+\begin{table}[tb]
+\centering
+\small
+\begin{tabular}{@{}lp{5.0cm}@{}}
+\toprule
+Symbol & Meaning \\
+\midrule
+$\mathcal{K}$ & corpus shared by retrieval-based methods \\
+$k_{\mathrm{out}}$ & maximum number of emitted diagnoses \\
+$B_t$ & shared belief state at stage $t$ \\
+$B_{\mathrm{evid}}$ & maximum selected L1 evidence facts supplied to the updater \\
+$N$ & size of the updated-score pool before bounded decoding \\
+$r$ / $\sim$ & pairwise semantic predicate / its component closure \\
+\bottomrule
+\end{tabular}
+\caption{Notation used consistently in the main paper and supplement.}
+\label{tab:notation}
+\end{table}
+
+\paragraph{Case-adaptive organization.}
+The Level-1 (L1) partition is constrained to use one case-specific comparison axis, labels broader than a single disease, near-exclusive sibling families, a residual family, and optional low-prior families for cannot-miss alternatives.
+It serves as a temporary coordinate system specialized to the current syndrome.
+If a high-ranked recalled disease has no suitable parent, one non-reducing gap-fill call may enlarge or add families.
+Gap-fill supplies a targeted structural repair for parent absence.
+
+\paragraph{Candidate-relative evidence.}
+The deployed anti-prototype selector discounts the most tempting vignette prototype and requires a fact to remain discriminative under comparison with live alternatives; it may abstain.
+Each consumed fact updates at most one primary support target and one distinct opposing target among L1 families.
+Replacing this selector with a salience selector or removing its discrimination hints changes DA Top-1 by $0.04$ (both $p>0.4$), whereas replacing its case-adaptive input axis sharply reduces fact selection and ranking.
+This contrast locates the observed gain in the interaction between the case axis and candidate-relative selection.
+
+\paragraph{Concept-aware compression.}
+Synonym crowding causes two distinct failures.
+\emph{Slot dilution} pushes competing concepts below the output cutoff; \emph{decision splitting} distributes support across several strings for one concept when the scoring contract expects a canonical name.
+Concept-aware compression addresses both by preserving clinical equivalence while reallocating slots to distinct hypotheses.
+
+\paragraph{Equivalence construction.}
+The implementation first applies a gold-blind pairwise predicate $r$ to candidate labels at the benchmark's scored granularity.
+The predicate is symmetrized, candidates become vertices in an undirected graph, and connected components define the transitive closure $\sim$ used for competition.
+Within each component, the highest pre-compression rank is retained as representative; ties preserve the frozen input order.
+This is single-linkage closure: two labels may share a component through an intermediate chain even when $r$ does not directly relate the endpoints.
+The quotient guarantee applies to the closed relation $\sim$; the pairwise predicate, closure, and representative rule are independently auditable implementation components.
+
+\paragraph{Belief-state transition.}
+The persisted state is $B_t=(G_t,q_t,s_t,E_t)$: hierarchy, concept-class assignment, relative leaf scores, and evidence annotations.
+Local annotation returns updated leaf fields $B_{t+1}=U(B_t,e_t)$.
+The arm without score write-back constructs the global pool from the stale $s_t$ fields; the evidence-conditioned score write-back arm replaces them with the corresponding fields in $s_{t+1}$ before any pool or decoder is run.
+These updated scores act as relative ranking quantities rather than calibrated probabilities.
+
+\paragraph{Bounded multi-candidate decoding.}
+If family $g$ submits $b_g$ leaves, fixing $b_g{=}1$ makes every local ordering error irreversible and hides the eliminated leaf from global arbitration.
+APHHM instead permits $b_g{=}2$ when the local margin is small or evidence is thin, or discards family quotas and decodes from the Top-$N$ updated-score pool; OX uses $N{=}15$ before emitting $k_{\mathrm{out}}{=}5$ names.
+The cap sweep scores $0.657$, $0.651$, and $0.649$ for cap${=}1$, cap${=}6$, and cap${=}999$, respectively, making decoding robust across these settings on the current OX subset.
+
+\begin{table}[tb]
+\centering
+\small
+\begin{tabular}{@{}p{2.15cm}p{4.45cm}@{}}
+\toprule
+Decoder arm & Operation on the same score-updated tree \\
+\midrule
+Closed panel & Restrict discussion to the Top-$15$ pool and project the five emitted names back into that pool. \\
+Updated-score-pool decoder & Decode from the same Top-$15$ pool without the closed-panel discussion step. \\
+Direct updated-score Top-5 & Emit the five highest-scored leaves directly, without discussion. \\
+\bottomrule
+\end{tabular}
+\caption{Operational distinction among the OX decoder arms.}
+\label{tab:decoder-contract}
+\end{table}
+
+\section{Evaluation Protocol Details}
+
+Each evaluation uses the first 100 cases under a fixed benchmark order; the released artifacts include the corresponding subset manifests.
+All retrieval arms share the same indices and \path{meta-llama/llama-3.3-70b-instruct} backbone~\cite{llama33}; MCR reasoning recall uses the \texttt{gemini-2.5-flash} endpoint~\cite{gemini25flash} with a fixed prompt and no lexical substitution.
+Each point estimate is one fixed evaluation pass per configuration.
+Candidate enumeration uses temperature zero, although provider-side nondeterminism may remain; paired resampling is used for uncertainty rather than for averaging repeated system runs.
+Gold labels are excluded from generation, evidence selection, state update, and arbitration, and every reported result uses the original benchmark scoring interface.
+
+\begin{table}[tb]
+\centering
+\small
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Dataset & Raw & Main scored & Audit $n$ \\
+\midrule
+DA & 100 & 100 & 20 \\
+MCR & 100 & 98 & 42 \\
+OX & 100 & 100 & 100 \\
+\bottomrule
+\end{tabular}
+\caption{Case accounting. Audit $n$ denotes the stage audit on DA, perturbable-partition audit on MCR, and state factorial on OX. Two MCR cases lack a common fixed-judge score; endpoint tables state further conditioning explicitly.}
+\label{tab:case-accounting}
+\end{table}
+
+\section{Complete Baseline Table}
+
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+& \multicolumn{3}{c}{DA} & \multicolumn{2}{c}{MCR} & OX \\
+Method & @1 & @2 & MRR@2 & Acc@1 & R-Recall & micro-F1 \\
+\midrule
+\textbf{APHHM} & \textbf{0.71} & \textbf{0.78} & \textbf{0.748} & \textbf{0.50} & \textbf{0.753} & \textbf{0.651} \\
+MEDDxAgent & 0.62 & 0.71 & 0.665 & 0.24 & 0.412 & 0.491 \\
+MAC & 0.61 & 0.67 & 0.640 & 0.23 & 0.527 & 0.570 \\
+Dual-Inf & 0.60 & 0.70 & 0.650 & 0.17 & 0.444 & 0.507 \\
+i-MedRAG & 0.60 & 0.67 & 0.635 & 0.19 & 0.482 & 0.419 \\
+MDAgents & 0.58 & 0.67 & 0.625 & 0.20 & 0.570 & 0.543 \\
+Self-refine & 0.57 & 0.62 & 0.595 & 0.21 & 0.447 & 0.530 \\
+Flat rerank & 0.56 & 0.63 & 0.595 & 0.17 & 0.404 & 0.495 \\
+CoT+RAG & 0.55 & 0.63 & 0.590 & 0.22 & 0.478 & 0.466 \\
+Direct CoT & 0.54 & 0.61 & 0.575 & 0.18 & 0.510 & 0.543 \\
+Chain-of-Diagnosis + shared corpus & 0.54 & 0.55 & 0.545 & 0.14 & 0.430 & 0.475 \\
+Self-consistent CoT (5 samples) & 0.52 & 0.61 & 0.565 & 0.19 & 0.369 & 0.539 \\
+Flat beam search & 0.52 & 0.60 & 0.560 & 0.21 & 0.447 & 0.510 \\
+Medprompt-style & 0.52 & 0.57 & 0.545 & 0.18 & 0.294 & 0.522 \\
+MedRAG & 0.48 & 0.52 & 0.500 & 0.17 & 0.557 & 0.485 \\
+DiagnosisGPT-6B$^{\dagger}$ & 0.14 & 0.14 & 0.140 & --- & --- & --- \\
+\midrule
+Flat rerank $\times 10$ (RRF) & 0.47 & 0.59 & 0.530 & 0.15 & 0.383 & 0.487 \\
+\bottomrule
+\end{tabular}
+\caption{Every completed baseline arm under the unmodified benchmark interfaces. $^{\dagger}$DiagnosisGPT-6B is shown as a local-backbone reference point.}
+\label{tab:all-baselines}
+\end{table*}
+
+\section{Call-Count Audit}
+
+The approximately nine-call structural proxy reproduces a tree-derived schedule and provides an intermediate inference-volume point.
+The ten-trajectory flat reranking control, denoted Flat rerank $\times 10$ (RRF), fuses ten independently generated retrieve--rerank lists with reciprocal rank fusion.
+The resource axis is mean model calls per case, measured from LLM cache entries.
+
+\begin{table}[tb]
+\centering
+\small
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+Dataset & APHHM & Native & Proxy & Flat $\times 10$ & Ratio \\
+\midrule
+DA & 94.3 & 2.0 & 9.24 & 92.4 & 0.98 \\
+OX & 68.6 & 2.0 & 8.98 & 89.8 & 1.31 \\
+MCR & 81.2 & 2.0 & 9.32 & 93.2 & 1.15 \\
+\bottomrule
+\end{tabular}
+\caption{Mean model calls per case ($n{=}100$). Flat rerank $\times 10$ (RRF) is matched within $2\%$ on DA and is call-richer than APHHM on OX and MCR.}
+\label{tab:compute-audit}
+\end{table}
+
+The ten-trajectory control supplies $0.98\times$, $1.31\times$, and $1.15\times$ the APHHM call count on DA, OX, and MCR, respectively.
+The nine-call proxy anchors the lower end of the inference-volume ladder, while the ten-trajectory arm provides the similar-call-count comparison.
+Output-token reconstructions show the same qualitative separation for the proxy arm; formal resource accounting in the main paper uses the audited call-count axis.
+
+\section{Statistical Evidence Map}
+
+The contemporaneous contrast family contains the adaptive-axis, semantic-partition, evidence-conditioned score write-back, and selector comparisons, with Holm step-down used as conservative multiplicity control.
+The axis comparison uses an exact paired binary test, the evidence-conditioned score write-back comparison uses a paired case-bootstrap that recomputes micro-F1, and the selector comparison serves as a negative control.
+The semantic-partition comparison permutes equivalence-class membership under fixed cases; its responsive endpoints were selected through the admissibility audit.
+The leaf-injection comparison appears separately as a retrospective diagnostic from the earlier judge configuration.
+
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{@{}lllcc l@{}}
+\toprule
+Contrast & Endpoint & Effect & $p$ & $p_{\mathrm{Holm}}$ & Inference unit \\
+\midrule
+Adaptive vs.\ random axis pipeline & DA Top-1 & $+0.34$ & $3.1{\times}10^{-7}$ & $1.2{\times}10^{-6}$ & pipeline effect \\
+Semantic vs.\ blind merge & MCR any-hit@5 & $+0.097$ & $0.015$ & $0.030$ & partition-level \\
+Evidence-conditioned score write-back vs.\ none & OX micro-F1 & $+0.075$ & $4.0{\times}10^{-4}$ & $1.2{\times}10^{-3}$ & case-sampled \\
+Case-relative vs.\ salience selector & DA Top-1 & $+0.04$ & $0.48$ & $0.48$ & negative control \\
+\midrule
+No injection vs.\ leaf injection & DA Top-1 & $+0.30$ & $1.5{\times}10^{-5}$ & --- & historical diagnostic \\
+\bottomrule
+\end{tabular}
+\caption{Reported contrasts and their inferential units. Holm values control the four contemporaneous comparisons; leaf injection is listed as a retrospective diagnostic.}
+\label{tab:confirmatory}
+\end{table*}
+
+\section{Compression Variants and Structural Bounds}
+
+This section reports variants of the equivalence-compression operator, including structurally invariant variants.
+For binary Acc@1, paired binary intervals can be defined from endpoint-discordant cases on $n=98$ commonly scored MCR cases.
+Open-MRR@5 is summarized descriptively as a paired nonbinary endpoint.
+The analysis plan used a $\pm5$ percentage-point non-inferiority margin for binary accuracy.
+
+The count-matched blind merge and its rank-1-size-matched variant are identities at @1 by construction and are evaluated with the responsive any-hit@5 and open-MRR@5 endpoints; the reported $p=0.015$ samples semantic partitions of the fixed cases.
+Calibration-only routing is the one variant whose endpoint discordances run in both directions ($4$ favoring the full model and $2$ favoring the comparison).
+
+\paragraph{Endpoint admissibility audit.}
+For each candidate endpoint, we generated $200$ randomized equivalence re-partitions per case and counted cases whose endpoint changed.
+Top-1 changed in $0/42$ audited MCR cases and $0/35$ audited DA cases, with null standard deviation exactly zero, as predicted for a deletion operator that retains each class's best-ranked member.
+MCR any-hit@5 and open-MRR@5 were responsive and are therefore used for the semantic-compression analysis.
+This audit distinguishes responsive endpoints from algebraic identities and defines the target endpoints for independent-subset confirmation.
+
+\paragraph{Semantic structure beyond candidate count.}
+Across the execution-site cross, the (candidates per case, accuracy) pairs are $(1.81,0.50)$, $(2.02,0.50)$, $(2.11,0.42)$, and $(4.64,0.50)$, showing that list length alone does not order accuracy.
+The count-matched blind merge further preserves the deployed class-count and class-size profile while randomizing membership, yet is worse on both responsive endpoints.
+The observed difference therefore tracks clinical equivalence structure beyond list shortening.
+
+\paragraph{Partition-semantics randomization.}
+The randomized control changes quotient structure while preserving the aggregate partition profile.
+The synonym graph is complete in $0/35$ perturbable DA cases and $0/42$ perturbable MCR cases; $82.8\%$ and $85.1\%$ of draws, respectively, commit at least one quotient violation.
+Across draws, the control wrongly merges an average of $1.99$ non-synonymous pairs and splits $1.98$ synonymous pairs.
+It leaves $0.79$ synonymous duplicate pairs among surviving representatives, whereas the deployed single-linkage merge guarantees $0.00$.
+The resulting permutation $p$-value quantifies sensitivity to class membership across randomized partitions of the fixed cases.
+
+\paragraph{Closed-set binding audit.}
+On DA, the compared compression configurations emit identical rank-1 labels in all $89$ gated cases, so the open-set Top-1 difference is exactly zero.
+All $12$ option promotions under closed rematching already match the target under open scoring, and promotion is not selective for the target (Fisher $p=0.199$).
+The $0.112$ closed-set increase is consequently localized to option binding, while the emitted disease concept remains unchanged.
+
+\paragraph{Concept-identity predicate on DA.}
+The concept-identity predicate scores $0.57$ option Top-1 on DA, compared with $0.71$ for the deployed configuration; unconditional synonym merging exceeds it by $0.11$ on the same caliber.
+The concept-identity predicate yields more concept clusters than the deployed synonym-oriented predicate in $37$ cases and fewer in $0$.
+The deployed advantage is concentrated in $10$ cases where a wider surface-form merge absorbs the target into the rank-1 representative class, which closed-set option rematching then credits.
+This cross-caliber dissociation shows how closed-set option binding can reward a wider surface-form class even when clinical ranking is unchanged.
+
+\paragraph{Why any-hit@5 is an identity for most variants.}
+The full model delivers fewer than $k_{\mathrm{out}}{=}5$ candidates in $86$ of $98$ cases, so any-hit@5 usually reduces to whether the target is in the surviving set.
+Because merging retains the best-ranked member of each class, matched labels remain represented, and seven of nine variants have zero moving cases on this endpoint.
+Their identical values are structural identities.
+
+\paragraph{Structural identities.}
+Serial merge--calibration composition delivers the identical set, the identical rank-1 leaf, and zero moving cases on all three endpoints in this configuration; removing the L1 soft prior moves one case.
+These configurations are therefore invariant or near-invariant on this evaluation subset.
+
+\paragraph{Conditional effect sizes.}
+Restricted to cases where the delivered list differs, the full model gains $+0.125$ Acc@1 over unconditional merge ($16$ cases) and $+0.107$ over frequency-matched random routing ($28$ cases).
+These conditional estimates describe the changed-output cases alongside the full-sample intervals above.
+
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{lccl}
+\toprule
+Variant & Changed outputs & Acc@1 $95\%$ CI & Structural status \\
+\midrule
+No decision-time routing & 94 & $[-1.4,+2.0]$ & open-MRR differs descriptively \\
+Unconditional merge & 16 & $[-1.4,+2.0]$ & accuracy within margin \\
+Calibration only & 82 & $[-2.5,+3.0]$ & bidirectional accuracy changes \\
+Serial merge $\rightarrow$ calibrate & 7 & $[0,0]$ & endpoint identity \\
+Frequency-matched random routing & 28 & $[-1.3,+3.1]$ & accuracy within margin \\
+Count-matched blind merge & 33 & $[0,0]$ & rank-1 identity \\
+Blind merge, rank-1 size matched & 26 & $[0,0]$ & rank-1 identity \\
+Concept-identity predicate & 37 & $[-1.4,+2.0]$ & accuracy within margin \\
+No L1 soft prior & 10 & $[-1.0,+1.0]$ & near-identity \\
+\bottomrule
+\end{tabular}
+\caption{Compression variants against the full model. ``Changed outputs'' counts cases with any delivered-list difference. The interval column reports paired binary Acc@1 bounds and is positive when the full model scores higher; open-MRR@5 is summarized descriptively.}
+\label{tab:eq-equiv}
+\end{table*}
+
+\section{Axis Cascade and Organization Details}
+
+Empty rankings uniformly reflect selector abstention with zero selected facts on the random axis, localizing them to the terminal state of the selector cascade.
+
+\begin{table}[tb]
+\centering
+\small
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Axis & mean $n_{\mathrm{sel}}$ & $n_{\mathrm{sel}}{=}0$ & empty rank & @1 \\
+\midrule
+Case-adaptive & $4.94$ & $17$ & $1$ & $0.71$ \\
+Fixed ICD & $0.65$ & $89$ & $11$ & $0.51$ \\
+Random & $0.13$ & $97$ & $45$ & $0.37$ \\
+\bottomrule
+\end{tabular}
+\caption{Selector cascade under three L1 axes on DA ($n{=}100$).}
+\label{tab:org-cascade}
+\end{table}
+
+\section{State-Consistency Factorial Details}
+
+Table~\ref{tab:state-detail} separates the family-cap variants from the decoder-only comparisons on the same score-updated tree.
+
+\begin{table}[tb]
+\centering
+\small
+\begin{tabular}{@{}p{2.35cm}ccc@{}}
+\toprule
+Variant & F1 & closed $-$ variant & $95\%$ CI \\
+\midrule
+Full model (closed) & $0.651$ & --- & --- \\
+One candidate per family & $0.657$ & $-0.006$ & --- \\
+Uncapped family frontier & $0.649$ & $+0.002$ & --- \\
+Direct updated-score Top-$5$ & $0.593$ & $+0.058$ & $[0.028,0.085]$ \\
+Updated-score-pool decoder & $0.610$ & $+0.041$ & $[0.013,0.069]$ \\
+\bottomrule
+\end{tabular}
+\caption{OX cap and decoder variants at fixed budget with evidence-conditioned score write-back. Paired case-bootstrap intervals are reported for the decoder alternatives.}
+\label{tab:state-detail}
+\end{table}
+
+\section{Mechanistic Synthesis}
+
+The audits converge on a single representation-centered account.
+The case-adaptive axis creates families that support discriminative evidence selection; equivalence-aware competition converts string-level redundancy into concept-level frontier capacity; and evidence-conditioned score write-back carries local evidence into global arbitration.
+Stage attribution then connects each observed error to the state transition or interface responsible for it.
+Together, these mechanisms explain why APHHM preserves its end-task margins while using a smaller, semantically denser decision frontier.
+
+\bibliography{references}
+
+\end{document}

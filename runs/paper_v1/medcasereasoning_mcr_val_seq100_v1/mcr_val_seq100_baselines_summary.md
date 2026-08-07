@@ -80,6 +80,15 @@
 
 本方法评测：`logs/medcasereasoning_mcr_val_seq100_v1/compat_synonym_v1/annotate/official_eval_llm_compat_rr/`；短记 [`mcr_compat_llm_reasoning_recall.md`](../../../analysis/transfer_metrics_v1/mcr_compat_llm_reasoning_recall.md)。跨集对照总表：[`diagnosisarena_d2_seq100_baselines_summary.md`](../diagnosisarena_d2_seq100_baselines_summary.md) §7。
 
+## 4.1 B02 预算匹配对照（native vs matched）
+
+| 臂 | 模式 | Acc (single traj.) | Hits | Reasoning Recall | 均值 LLM | G5 |
+|---|---|---:|---:|---:|---:|---|
+| `B02-flat-matched-rerank` | native | 0.17 | 17 | 0.404 | ~2 | — |
+| `B02-flat-compute-matched` | matched | 0.17 | 17 | 0.378 | 9.32 | **PASS** |
+
+专档：[`../medcasereasoning_b02_compute_matched_v1/b02_compute_matched_summary.md`](../medcasereasoning_b02_compute_matched_v1/b02_compute_matched_summary.md)。RQ4 / 公平主检验应报 matched 行。
+
 ## 5. 复现命令
 
 ```bash

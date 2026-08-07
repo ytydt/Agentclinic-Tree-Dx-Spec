@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-07-28T16:38:57.384719+00:00",
+  "slice": "DA d2_seq100 proxy, n=100, synonym_bind OFF",
+  "purpose": "Block-1 assumes matched candidate budget and comparable ranking depth across AB01/AB02/AB03; this audit measures whether that held.",
+  "arms": {
+    "m00": {
+      "arm": "m00",
+      "n_cases": 100,
+      "n_status_ok": 100,
+      "mean_n_l1": 4.63,
+      "mean_n_l2_leaves": 17.8,
+      "mean_ranking_depth": 4.56,
+      "frac_ranking_depth_1": 0.0,
+      "n_empty_ranking": 1,
+      "structural_reach": 0.79,
+      "local_champion_recall": 0.55
+    },
+    "ab01": {
+      "arm": "ab01",
+      "n_cases": 100,
+      "n_status_ok": 100,
+      "mean_n_l1": 6.0,
+      "mean_n_l2_leaves": 30.1,
+      "mean_ranking_depth": 1.68,
+      "frac_ranking_depth_1": 0.43,
+      "n_empty_ranking": 11,
+      "structural_reach": 0.8,
+      "local_champion_recall": 0.59
+    },
+    "ab02": {
+      "arm": "ab02",
+      "n_cases": 100,
+      "n_status_ok": 100,
+      "mean_n_l1": 1.0,
+      "mean_n_l2_leaves": 4.98,
+      "mean_ranking_depth": 1.0,
+      "frac_ranking_depth_1": 1.0,
+      "n_empty_ranking": 0,
+      "structural_reach": 0.66,
+      "local_champion_recall": 0.39
+    },
+    "ab03": {
+      "arm": "ab03",
+      "n_cases": 100,
+      "n_status_ok": 100,
+      "mean_n_l1": 4.63,
+      "mean_n_l2_leaves": 24.36,
+      "mean_ranking_depth": 1.01,
+      "frac_ranking_depth_1": 0.26,
+      "n_empty_ranking": 45,
+      "structural_reach": 0.73,
+      "local_champion_recall": 0.49
+    }
+  },
+  "violations": {
+    "candidate_budget_not_matched": "mean L2 leaves diverge from M00: per-parent generation emits ~5-6 children per L1, so pool size scales with the number of L1 families. Raising l2_candidate_max_per_live_family / candidate_budget only widens the recall pool fed to L2RecallCreator, not the number of emitted leaves.",
+    "ab02_ranking_depth_collapsed": "Joint keeps one champion per L1 parent; a single FLAT parent yields one champion, so the arbiter ranks a single leaf in 100/100 cases and option@2 equals option@1 by construction.",
+    "empty_rankings_confound_ab03": "Empty joint rankings leave the mapper with no leaf to project, scoring as a miss; AB03/AB01 hit this far more than M00, so their deltas mix axis quality with a pipeline failure mode."
+  }
+}

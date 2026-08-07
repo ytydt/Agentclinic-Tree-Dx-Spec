@@ -1,0 +1,346 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-07-28T11:32:33.249473+00:00",
+  "purpose": "Score the block-2 execution-site 2x2 on the endpoints block 2 is judged on (Prompt7 any-hit@5 / open-MRR), not just open Acc@1, and test every edge with paired exact McNemar.",
+  "judge": {
+    "prompt_id": "mcr.diag_accuracy",
+    "model": "google/gemini-2.5-flash",
+    "k": 5
+  },
+  "cache_path": "/data2/wanghongyi/Agentclinic-Tree-Dx-Spec/logs/medcasereasoning_mcr_val_seq100_v1/compat_synonym_v1/annotate/judge_cache_llm_rank_metrics.json",
+  "pair_stats": {
+    "n_pairs": 400,
+    "n_cached": 400,
+    "n_missing": 0
+  },
+  "n_common_cases": 98,
+  "arms": {
+    "M00": {
+      "dedupe": "on",
+      "route": "on",
+      "run_dir": "/data2/wanghongyi/Agentclinic-Tree-Dx-Spec/logs/medcasereasoning_mcr_val_seq100_v1/compat_synonym_v1",
+      "projection_subdir": "eval_projection_compat",
+      "n": 100,
+      "llm_acc_at_1": 0.5,
+      "llm_any_hit_at_k": 0.58,
+      "open_mrr_at_k": 0.53,
+      "mean_surviving_candidates": 2.02
+    },
+    "AB05": {
+      "dedupe": "on",
+      "route": "off",
+      "run_dir": "/data2/wanghongyi/Agentclinic-Tree-Dx-Spec/logs/medcasereasoning_mcr_val_seq100_v1/compat_synonym_v1",
+      "projection_subdir": "eval_projection_c1_mcr_ab05_precompat",
+      "n": 98,
+      "llm_acc_at_1": 0.5,
+      "llm_any_hit_at_k": 0.5816,
+      "open_mrr_at_k": 0.5192,
+      "mean_surviving_candidates": 4.6429
+    },
+    "AB06": {
+      "dedupe": "off",
+      "route": "on",
+      "run_dir": "/data2/wanghongyi/Agentclinic-Tree-Dx-Spec/logs/medcasereasoning_mcr_val_seq100_v1/c3_ab06_v1",
+      "projection_subdir": "eval_projection_compat",
+      "n": 100,
+      "llm_acc_at_1": 0.5,
+      "llm_any_hit_at_k": 0.55,
+      "open_mrr_at_k": 0.5217,
+      "mean_surviving_candidates": 1.81
+    },
+    "AB04": {
+      "dedupe": "off",
+      "route": "off",
+      "run_dir": "/data2/wanghongyi/Agentclinic-Tree-Dx-Spec/logs/medcasereasoning_mcr_val_seq100_v1/c3_ab04_v1",
+      "projection_subdir": "eval_projection_compat",
+      "n": 100,
+      "llm_acc_at_1": 0.42,
+      "llm_any_hit_at_k": 0.56,
+      "open_mrr_at_k": 0.4783,
+      "mean_surviving_candidates": 2.11
+    }
+  },
+  "paired_tests": [
+    {
+      "contrast": "route effect | dedupe ON",
+      "a": "M00",
+      "b": "AB05",
+      "n": 98,
+      "top1": {
+        "delta": 0.0102,
+        "b_a_only": 1,
+        "c_b_only": 0,
+        "p_mcnemar_exact": 1.0
+      },
+      "any_hit": {
+        "delta": 0.0,
+        "b_a_only": 0,
+        "c_b_only": 0,
+        "p_mcnemar_exact": 1.0
+      },
+      "rr": {
+        "delta": 0.0182,
+        "n_a_better": 7,
+        "n_b_better": 0,
+        "p_sign_exact": 0.0156
+      }
+    },
+    {
+      "contrast": "route effect | dedupe OFF",
+      "a": "AB06",
+      "b": "AB04",
+      "n": 98,
+      "top1": {
+        "delta": 0.0816,
+        "b_a_only": 10,
+        "c_b_only": 2,
+        "p_mcnemar_exact": 0.0386
+      },
+      "any_hit": {
+        "delta": -0.0102,
+        "b_a_only": 3,
+        "c_b_only": 4,
+        "p_mcnemar_exact": 1.0
+      },
+      "rr": {
+        "delta": 0.0442,
+        "n_a_better": 11,
+        "n_b_better": 5,
+        "p_sign_exact": 0.2101
+      }
+    },
+    {
+      "contrast": "dedupe effect | route ON",
+      "a": "M00",
+      "b": "AB06",
+      "n": 98,
+      "top1": {
+        "delta": 0.0204,
+        "b_a_only": 4,
+        "c_b_only": 2,
+        "p_mcnemar_exact": 0.6875
+      },
+      "any_hit": {
+        "delta": 0.0408,
+        "b_a_only": 8,
+        "c_b_only": 4,
+        "p_mcnemar_exact": 0.3877
+      },
+      "rr": {
+        "delta": 0.0255,
+        "n_a_better": 9,
+        "n_b_better": 5,
+        "p_sign_exact": 0.424
+      }
+    },
+    {
+      "contrast": "dedupe effect | route OFF",
+      "a": "AB05",
+      "b": "AB04",
+      "n": 98,
+      "top1": {
+        "delta": 0.0918,
+        "b_a_only": 9,
+        "c_b_only": 0,
+        "p_mcnemar_exact": 0.0039
+      },
+      "any_hit": {
+        "delta": 0.0306,
+        "b_a_only": 7,
+        "c_b_only": 4,
+        "p_mcnemar_exact": 0.5488
+      },
+      "rr": {
+        "delta": 0.0515,
+        "n_a_better": 15,
+        "n_b_better": 6,
+        "p_sign_exact": 0.0784
+      }
+    },
+    {
+      "contrast": "joint (both removed)",
+      "a": "M00",
+      "b": "AB04",
+      "n": 98,
+      "top1": {
+        "delta": 0.102,
+        "b_a_only": 10,
+        "c_b_only": 0,
+        "p_mcnemar_exact": 0.002
+      },
+      "any_hit": {
+        "delta": 0.0306,
+        "b_a_only": 7,
+        "c_b_only": 4,
+        "p_mcnemar_exact": 0.5488
+      },
+      "rr": {
+        "delta": 0.0697,
+        "n_a_better": 15,
+        "n_b_better": 5,
+        "p_sign_exact": 0.0414
+      }
+    }
+  ],
+  "holm": [
+    {
+      "contrast": "joint (both removed)",
+      "endpoint": "top1",
+      "p_raw": 0.002,
+      "p_holm": 0.03,
+      "survives_holm_05": true
+    },
+    {
+      "contrast": "dedupe effect | route OFF",
+      "endpoint": "top1",
+      "p_raw": 0.0039,
+      "p_holm": 0.0546,
+      "survives_holm_05": false
+    },
+    {
+      "contrast": "route effect | dedupe ON",
+      "endpoint": "rr",
+      "p_raw": 0.0156,
+      "p_holm": 0.2028,
+      "survives_holm_05": false
+    },
+    {
+      "contrast": "route effect | dedupe OFF",
+      "endpoint": "top1",
+      "p_raw": 0.0386,
+      "p_holm": 0.4632,
+      "survives_holm_05": false
+    },
+    {
+      "contrast": "joint (both removed)",
+      "endpoint": "rr",
+      "p_raw": 0.0414,
+      "p_holm": 0.4632,
+      "survives_holm_05": false
+    },
+    {
+      "contrast": "dedupe effect | route OFF",
+      "endpoint": "rr",
+      "p_raw": 0.0784,
+      "p_holm": 0.784,
+      "survives_holm_05": false
+    },
+    {
+      "contrast": "route effect | dedupe OFF",
+      "endpoint": "rr",
+      "p_raw": 0.2101,
+      "p_holm": 1.0,
+      "survives_holm_05": false
+    },
+    {
+      "contrast": "dedupe effect | route ON",
+      "endpoint": "any_hit",
+      "p_raw": 0.3877,
+      "p_holm": 1.0,
+      "survives_holm_05": false
+    },
+    {
+      "contrast": "dedupe effect | route ON",
+      "endpoint": "rr",
+      "p_raw": 0.424,
+      "p_holm": 1.0,
+      "survives_holm_05": false
+    },
+    {
+      "contrast": "dedupe effect | route OFF",
+      "endpoint": "any_hit",
+      "p_raw": 0.5488,
+      "p_holm": 1.0,
+      "survives_holm_05": false
+    },
+    {
+      "contrast": "joint (both removed)",
+      "endpoint": "any_hit",
+      "p_raw": 0.5488,
+      "p_holm": 1.0,
+      "survives_holm_05": false
+    },
+    {
+      "contrast": "dedupe effect | route ON",
+      "endpoint": "top1",
+      "p_raw": 0.6875,
+      "p_holm": 1.0,
+      "survives_holm_05": false
+    },
+    {
+      "contrast": "route effect | dedupe OFF",
+      "endpoint": "any_hit",
+      "p_raw": 1.0,
+      "p_holm": 1.0,
+      "survives_holm_05": false
+    },
+    {
+      "contrast": "route effect | dedupe ON",
+      "endpoint": "any_hit",
+      "p_raw": 1.0,
+      "p_holm": 1.0,
+      "survives_holm_05": false
+    },
+    {
+      "contrast": "route effect | dedupe ON",
+      "endpoint": "top1",
+      "p_raw": 1.0,
+      "p_holm": 1.0,
+      "survives_holm_05": false
+    }
+  ],
+  "interaction": {
+    "top1": {
+      "marginal_route_given_dedupe_on": 0.0102,
+      "marginal_dedupe_given_route_on": 0.0204,
+      "sum_of_marginals": 0.0306,
+      "joint_removal": 0.102,
+      "interaction_joint_minus_sum": 0.0714
+    },
+    "any_hit": {
+      "marginal_route_given_dedupe_on": 0.0,
+      "marginal_dedupe_given_route_on": 0.0408,
+      "sum_of_marginals": 0.0408,
+      "joint_removal": 0.0306,
+      "interaction_joint_minus_sum": -0.0102
+    },
+    "rr": {
+      "marginal_route_given_dedupe_on": 0.0182,
+      "marginal_dedupe_given_route_on": 0.0255,
+      "sum_of_marginals": 0.0437,
+      "joint_removal": 0.0697,
+      "interaction_joint_minus_sum": 0.026
+    }
+  },
+  "candidate_count_monotonicity": [
+    {
+      "arm": "AB06",
+      "mean_surviving_candidates": 1.81,
+      "llm_acc_at_1": 0.5,
+      "dedupe": "off",
+      "route": "on"
+    },
+    {
+      "arm": "M00",
+      "mean_surviving_candidates": 2.02,
+      "llm_acc_at_1": 0.5,
+      "dedupe": "on",
+      "route": "on"
+    },
+    {
+      "arm": "AB04",
+      "mean_surviving_candidates": 2.11,
+      "llm_acc_at_1": 0.42,
+      "dedupe": "off",
+      "route": "off"
+    },
+    {
+      "arm": "AB05",
+      "mean_surviving_candidates": 4.6429,
+      "llm_acc_at_1": 0.5,
+      "dedupe": "on",
+      "route": "off"
+    }
+  ],
+  "caliber_note": "Site arms AB04/AB06 are C3 rebuilds scored in their own run dirs; AB05 is a C1 replay on the reconstructed pre-compat joint. All four cells share the same judge, prompt and K, and M00 reproduces 0.50."
+}

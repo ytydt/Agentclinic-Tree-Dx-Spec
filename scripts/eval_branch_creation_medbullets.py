@@ -61,7 +61,8 @@ def make_judge(model: str):
     from agentclinic_tree_dx import llm_client
     sess = llm_client._openrouter_session
     key = os.environ.get("OPENROUTER_API_KEY") or os.environ.get(
-        "OPENROUTER_API_KEY2", "")
+        "OPENROUTER_API_KEY2",
+        "")
     headers = {"Authorization": f"Bearer {key}", "Content-Type": "application/json"}
 
     def _json_of(txt: str) -> dict:
@@ -200,8 +201,23 @@ def build_controller(
     return controller, env, config, prov
 
 
-def run_case_branches(controller, env, case_text: str):
-    """Execute ONLY select_root → create_branches (production code paths)."""
+def run_case_branches(
+    controller,
+    env,
+    case_text: str,
+    *,
+    parse_vignette: bool = True,
+    prepare_state=None,
+):
+    """Execute ONLY select_root → create_branches (production code paths).
+
+    parse_vignette=False skips the live VignetteParser call so callers can
+    inject a frozen evidence catalog (DiagnosisArena M01 path).
+
+    prepare_state, if given, runs after case_summary is set and before
+    select_root / create_branches — matching the 17-case order where evidence
+    is present before BranchCreator (e.g. apply frozen VignetteParser fields).
+    """
     from agentclinic_tree_dx.state import DiagnosticState
     env.set_case(case_text)
     state = DiagnosticState(case_id="MB_BC")
@@ -209,9 +225,12 @@ def run_case_branches(controller, env, case_text: str):
     state.max_turn_budget = controller.config.max_turn_budget
     state.case_summary = env.get_case_summary()
     if controller._in_static_qa_mode():
-        controller.parse_static_vignette(state)
+        if parse_vignette:
+            controller.parse_static_vignette(state)
         state.mode_policy = {"benchmark_purity": True,
                              "allow_external_knowledge": controller.config.allow_external_knowledge}
+    if prepare_state is not None:
+        prepare_state(state)
     try:
         state.interrupt = controller.safety_screen(state)
     except Exception:

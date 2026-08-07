@@ -422,6 +422,217 @@ def _rank_and_expand(
     return output, ordered
 
 
+_RELATION_PRIORITY = {
+    "equivalent": 0,
+    "subtype_of": 1,
+    "supertype_of": 2,
+    "etiology_of": 3,
+    "mechanism_of": 4,
+    "manifestation_of": 5,
+    "complication_of": 6,
+    "treatment_for": 7,
+    "unrelated": 90,
+    "unknown": 91,
+}
+
+
+def option_rank_ties(
+    option_maps: Mapping[str, Mapping[str, Any]],
+) -> dict[int, list[str]]:
+    """Return option_rank → letters for ranks shared by ≥2 options."""
+    buckets: dict[int, list[str]] = defaultdict(list)
+    for letter, row in sorted(option_maps.items()):
+        rank = row.get("option_rank")
+        if rank is None:
+            continue
+        buckets[int(rank)].append(str(letter).upper())
+    return {rank: letters for rank, letters in buckets.items() if len(letters) > 1}
+
+
+def has_option_rank_ties(option_maps: Mapping[str, Mapping[str, Any]]) -> bool:
+    return bool(option_rank_ties(option_maps))
+
+
+def competition_total_order(
+    option_maps: Mapping[str, Mapping[str, Any]],
+) -> list[str]:
+    """Deterministic strict total order (no LLM). Breaks dense-rank ties."""
+    return sorted(
+        (str(letter).upper() for letter in option_maps),
+        key=lambda letter: (
+            option_maps[letter].get("best_rank") is None
+            and not bool(option_maps[letter].get("matched")),
+            option_maps[letter].get("best_rank")
+            if option_maps[letter].get("best_rank") is not None else 10**9,
+            _RELATION_PRIORITY.get(
+                str(option_maps[letter].get("relation_type") or "unknown"), 91,
+            ),
+            -float(option_maps[letter].get("support_score") or 0.0),
+            -float(option_maps[letter].get("confidence_score") or 0.0),
+            letter,
+        ),
+    )
+
+
+def _apply_total_order(
+    option_maps: Mapping[str, Mapping[str, Any]],
+    order: Sequence[str],
+    *,
+    matched_before_unmatched: bool = True,
+) -> tuple[dict[str, dict[str, Any]], list[str]]:
+    letters = [str(x).upper() for x in order]
+    expected = sorted(str(k).upper() for k in option_maps)
+    if sorted(letters) != expected or len(set(letters)) != len(letters):
+        raise ValueError(
+            "strict order must be a permutation of option letters; "
+            f"got {letters}, expected {expected}"
+        )
+    key_by_upper = {
+        str(k).upper(): k for k in option_maps
+    }
+
+    def _matched(letter: str) -> bool:
+        row = option_maps[key_by_upper[letter]]
+        if row.get("best_rank") is not None:
+            return True
+        if row.get("matched"):
+            return True
+        ids = list(row.get("matched_leaf_ids") or row.get("clone_leaf_ids") or ())
+        rel = str(row.get("relation_type") or "")
+        return bool(ids) and rel not in {"", "unrelated", "unknown"}
+
+    if matched_before_unmatched:
+        matched = [L for L in letters if _matched(L)]
+        unmatched = [L for L in letters if not _matched(L)]
+        letters = matched + unmatched
+
+    out = {k: dict(v) for k, v in option_maps.items()}
+    for index, letter in enumerate(letters, start=1):
+        key = key_by_upper[letter]
+        out[key]["option_rank"] = index
+        out[key]["strict_order_position"] = index
+        out[key]["matched_gate_partition"] = (
+            "matched" if _matched(letter) else "unmatched"
+        )
+    return out, letters
+
+
+def llm_strict_total_order(
+    *,
+    llm: Any,
+    prompt: str,
+    vignette: str,
+    question: str,
+    options: Mapping[str, str],
+    leaves: Sequence[Mapping[str, Any]],
+    option_maps: Mapping[str, Mapping[str, Any]],
+    case_id: str = "",
+) -> tuple[list[str], dict[str, Any]]:
+    """Ask LLM for a strict permutation of option letters."""
+    compact_maps = {}
+    for letter, row in sorted(option_maps.items()):
+        compact_maps[str(letter).upper()] = {
+            "option_text": str(options.get(letter) or options.get(str(letter).upper()) or ""),
+            "relation_type": row.get("relation_type"),
+            "matched": bool(row.get("matched")),
+            "matched_leaf_ids": list(row.get("matched_leaf_ids") or ()),
+            "best_rank": row.get("best_rank"),
+            "support_score": row.get("support_score"),
+            "confidence_score": row.get("confidence_score"),
+            "prior_option_rank": row.get("option_rank"),
+        }
+    payload = {
+        "case_id": str(case_id),
+        "vignette": str(vignette),
+        "question": str(question),
+        "options": {
+            str(k).upper(): str(v) for k, v in sorted(options.items())
+        },
+        "leaves": [dict(row) for row in leaves],
+        "option_maps": compact_maps,
+        "require_strict_total_order": True,
+    }
+    assert_gold_blind(payload)
+    raw = _call_module(llm, "L2OptionStrictTotalOrder", prompt, payload)
+    order = [str(x).upper() for x in (raw.get("order") or ())]
+    expected = sorted(str(k).upper() for k in option_maps)
+    if sorted(order) != expected or len(set(order)) != len(order):
+        raise ValueError(
+            "L2OptionStrictTotalOrder returned invalid permutation: %s" % order
+        )
+    return order, {
+        "called": True,
+        "schema_valid": True,
+        "rationale": str(raw.get("rationale") or ""),
+        "raw_order": order,
+    }
+
+
+def enforce_strict_total_order(
+    *,
+    option_maps: Mapping[str, Mapping[str, Any]],
+    llm: Any = None,
+    prompt: str = "",
+    vignette: str = "",
+    question: str = "",
+    options: Optional[Mapping[str, str]] = None,
+    leaves: Optional[Sequence[Mapping[str, Any]]] = None,
+    case_id: str = "",
+    force_llm: bool = False,
+) -> tuple[dict[str, dict[str, Any]], list[str], dict[str, Any]]:
+    """Force unique option_rank 1..n.
+
+    If the dense-rank maps already have unique ranks and ``force_llm`` is false,
+    keep them. Otherwise prefer an LLM permutation; fall back to deterministic
+    competition order when the LLM is unavailable or returns an invalid order.
+    """
+    ties = option_rank_ties(option_maps)
+    meta: dict[str, Any] = {
+        "had_ties": bool(ties),
+        "tie_ranks": {str(k): v for k, v in sorted(ties.items())},
+        "method": "identity",
+        "llm": {"called": False},
+    }
+    if not ties and not force_llm:
+        ordered = sorted(
+            option_maps,
+            key=lambda letter: (
+                int(option_maps[letter].get("option_rank") or 10**9),
+                str(letter).upper(),
+            ),
+        )
+        out = {k: dict(v) for k, v in option_maps.items()}
+        return out, [str(x).upper() for x in ordered], meta
+
+    if llm is not None and prompt and options is not None:
+        try:
+            order, llm_meta = llm_strict_total_order(
+                llm=llm,
+                prompt=prompt,
+                vignette=vignette,
+                question=question,
+                options=options,
+                leaves=list(leaves or ()),
+                option_maps=option_maps,
+                case_id=case_id,
+            )
+            out, ordered = _apply_total_order(option_maps, order)
+            meta["method"] = "llm_strict_total_order"
+            meta["llm"] = llm_meta
+            return out, ordered, meta
+        except (RuntimeError, TypeError, ValueError) as exc:
+            meta["llm"] = {
+                "called": True,
+                "schema_valid": False,
+                "error": "%s: %s" % (type(exc).__name__, exc),
+            }
+
+    order = competition_total_order(option_maps)
+    out, ordered = _apply_total_order(option_maps, order)
+    meta["method"] = "competition_fallback" if meta["llm"].get("called") else "competition"
+    return out, ordered, meta
+
+
 class RelationAwareAnswerMapper:
     """Typed LLM mapper with deterministic checks and optional RAG critic."""
 
@@ -432,21 +643,25 @@ class RelationAwareAnswerMapper:
         llm: Any = None,
         relation_prompt: str = "",
         critic_prompt: str = "",
+        strict_order_prompt: str = "",
         retrievers: Optional[Mapping[str, Any]] = None,
         confidence_threshold: float = 0.75,
         rag_top_k: int = 3,
         rag_max_snippets: int = 8,
         rag_max_chars: int = 1200,
+        strict_total_order: bool = False,
     ) -> None:
         self.resolver = resolver
         self.llm = llm
         self.relation_prompt = relation_prompt
         self.critic_prompt = critic_prompt
+        self.strict_order_prompt = strict_order_prompt
         self.retrievers = dict(retrievers or {})
         self.confidence_threshold = confidence_threshold
         self.rag_top_k = rag_top_k
         self.rag_max_snippets = rag_max_snippets
         self.rag_max_chars = rag_max_chars
+        self.strict_total_order = bool(strict_total_order)
 
     def _typed_mapping(
         self, payload: Mapping[str, Any],
@@ -512,7 +727,17 @@ class RelationAwareAnswerMapper:
         snippets: list[dict[str, Any]] = []
         requests: list[dict[str, Any]] = []
         for source, retriever in sorted(self.retrievers.items()):
-            hits = retriever.search(query, top_k=self.rag_top_k, score_threshold=0.0)
+            if hasattr(retriever, "search_option_leaves"):
+                hits = retriever.search_option_leaves(
+                    str(option_text),
+                    list(candidate_labels),
+                    top_k=self.rag_top_k,
+                    score_threshold=0.0,
+                )
+            else:
+                hits = retriever.search(
+                    query, top_k=self.rag_top_k, score_threshold=0.0,
+                )
             requests.append({
                 "source": source, "query": query, "returned": len(hits),
             })
@@ -640,7 +865,7 @@ class RelationAwareAnswerMapper:
     ) -> dict[str, Any]:
         if mode not in {
             "deterministic_gold_blind", "typed_llm",
-            "typed_llm_disagreement_rag",
+            "typed_llm_disagreement_rag", "typed_llm_synonym_kb",
         }:
             raise ValueError("unsupported mapper mode: %s" % mode)
         payload = {
@@ -704,6 +929,11 @@ class RelationAwareAnswerMapper:
             else {letter: dict(row) for letter, row in typed_rows.items()}
         )
         disputes: list[dict[str, Any]] = []
+        all_leaf_ids = [
+            str(row.get("leaf_id"))
+            for row in leaves
+            if str(row.get("leaf_id") or "").strip()
+        ]
         for letter, option_text in payload["options"].items():
             det = deterministic[letter]
             typed = typed_rows.get(letter, {})
@@ -715,7 +945,20 @@ class RelationAwareAnswerMapper:
             )
             unmatched = not typed_ids
             disagreement = bool(det_ids) and det_ids != typed_ids
-            if (
+            if mode == "typed_llm_synonym_kb":
+                # Symmetric: every option gets synonym/granularity critic.
+                # Candidate pool = shortlist leaves (gold-blind; enables re-bind
+                # when typed said unrelated with empty matched ids).
+                cands = sorted(set(all_leaf_ids) | det_ids | typed_ids)
+                disputes.append({
+                    "option_letter": letter,
+                    "option_text": option_text,
+                    "deterministic_relation": det,
+                    "typed_relation": typed,
+                    "candidate_leaf_ids": cands,
+                    "trigger_reasons": ["synonym_kb_all_options"],
+                })
+            elif (
                 mode == "typed_llm_disagreement_rag"
                 and (
                     typed_fail_open or unmatched or low_confidence or disagreement
@@ -750,6 +993,20 @@ class RelationAwareAnswerMapper:
         option_maps, option_order = _rank_and_expand(
             mappings=selected, leaves=leaves, clone_groups=clone_groups,
         )
+        strict_meta: dict[str, Any] = {"enabled": False}
+        if self.strict_total_order:
+            option_maps, option_order, strict_meta = enforce_strict_total_order(
+                option_maps=option_maps,
+                llm=self.llm,
+                prompt=self.strict_order_prompt,
+                vignette=str(vignette),
+                question=str(question),
+                options=payload["options"],
+                leaves=leaves,
+                case_id=str(case_id),
+                force_llm=has_option_rank_ties(option_maps),
+            )
+            strict_meta["enabled"] = True
         return {
             "schema_version": 1,
             "case_id": case_id,
@@ -765,5 +1022,6 @@ class RelationAwareAnswerMapper:
                 "typed": typed_audit,
                 "disputes": disputes,
                 "rag": rag_audit,
+                "strict_total_order": strict_meta,
             },
         }

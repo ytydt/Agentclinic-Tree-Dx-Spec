@@ -1,0 +1,73 @@
+\documentclass[11pt,a4paper]{article}
+
+% ---------------------------------------------------------------------------
+% Packages
+% ---------------------------------------------------------------------------
+\usepackage[margin=1in]{geometry}
+\usepackage{times}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage[nameinlink,capitalize]{cleveref}
+\usepackage{enumitem}
+\usepackage{microtype}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!50!black,
+  citecolor=blue!50!black,
+  urlcolor=blue!50!black
+}
+
+\title{%
+Alignment-Preserving Hierarchical Hypothesis Management\\
+for Difficult Open-Ended Differential Diagnosis%
+}
+\author{%
+Anonymous Authors%
+\thanks{Draft revised to an alignment-preserving narrative. Not a camera-ready submission.}%
+}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Difficult open-ended differential diagnosis requires recalling enough disease hypotheses \emph{and} keeping candidate representations and belief states consistent across stages of hierarchical reasoning.
+Simply enlarging the candidate space creates synonym fragmentation, local evidence that never updates the global decision state, and output names that drift from canonical concepts.
+We retain the \emph{Recall--Discrimination Dilemma} as motivation, but upgrade the research object to \textbf{alignment-preserving hierarchical hypothesis management (APHHM)}: case-adaptive organization, candidate-relative evidence updating, equivalence-class-aware candidate compression, local posterior write-back, and bounded global decoding.
+All reported scores use an unmodified scoring interface: we deliberately exclude synonym bind-repair, because that interface-level lever raises baseline scores at least as much as ours and therefore measures protocol alignment rather than reasoning quality.
+On frozen 100-case slices of DiagnosisArena (DA)~\cite{diagnosisarena}, MedCaseReasoning (MCR)~\cite{medcasereasoning}, and Open-XDDx (OX)~\cite{dualinf2025}, the hierarchical stack reaches DA option @1/@2 of $0.71/0.78$ versus $0.62/0.71$ for the strongest external baseline.
+A case-irrelevant random L1 axis costs $0.34$ option @1 on DA and collapses candidate-relative evidence selection (mean selected facts $4.94\rightarrow0.13$).
+State-consistent write-back at locked budget raises OX micro-F1 from $0.576$ (cold) to $0.651$ (paired bootstrap $p{=}4.0{\times}10^{-4}$); budget alone moves at most $0.008$, and per-family caps are not load-bearing.
+Pre-registered ablations locate the compression contribution in the structural requirement rather than in our heuristic: removing equivalence handling costs $0.102$ accuracy on MCR (about a fifth of the deployed configuration's), a candidate-count-matched semantics-blind control is significantly worse, yet the gate predicate, its timing and its composition are equivalent within $\pm 3$~pp---and we retract an earlier closed-set option-accuracy gain that an audit shows to be a scoring artifact.
+A genuinely budget-matched flat control (ten-sample self-consistent retrieve--rerank~\cite{wang2023selfconsistency,rrf2009}, roughly $90$ model calls per case) does not close these gaps.
+We insist on stage-attributable errors---\texttt{TREE\_PARENT\_ABSENT}, \texttt{L2\_MISS}, \texttt{LOCAL\_ELIMINATION}, \texttt{GLOBAL\_MISRANK}, \texttt{MAPPER\_UNBIND}---because our audits show that conflating scoring-interface failures with recall failures recommends interventions that measurably reduce accuracy (full-tree leaf injection: option @1 $0.72\rightarrow0.42$, paired $39/9$).
+Candidate-relative evidence selector \emph{strategies} (including anti-prototype anchoring) remain open components; what the ablations support is the case-adaptive axis that feeds them, not a particular selection rule.
+\end{abstract}
+
+\section*{Terminology at a Glance}
+\textbf{LLM}: large language model;
+\textbf{RAG}: retrieval-augmented generation;
+\textbf{CoT}: chain-of-thought;
+\textbf{L1/L2}: Level-1 diagnostic family / Level-2 concrete disease leaf;
+\textbf{DA/MCR/OX}: DiagnosisArena / MedCaseReasoning / Open-XDDx;
+\textbf{APHHM}: Alignment-Preserving Hierarchical Hypothesis Management (this paper);
+\textbf{RRF}: reciprocal rank fusion;
+\textbf{Fine crowding}: multiple near-synonym L2 leaves occupying top frontier slots;
+\textbf{soft prior}: overturnable L1 relative score used in global arbitration;
+\textbf{SC}: self-consistency (multi-sample decoding with rank fusion);
+\textbf{A1/A2/A3}: the representation, state, and interface alignment invariants defined in Section~\ref{sec:dilemma}.
+Failure-stage labels are defined in Section~\ref{sec:taxonomy}.
+A fuller glossary is in Appendix~\ref{app:glossary}.
+
+\input{sections/body}
+\input{sections/appendix}
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

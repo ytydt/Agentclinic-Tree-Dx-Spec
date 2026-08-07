@@ -1,0 +1,32 @@
+RUN: /home/wanghongyi/.conda/envs/gnn-llm/bin/python3 -u /data2/wanghongyi/Agentclinic-Tree-Dx-Spec/scripts/paper/run_diagnosisarena_pipeline_staged.py --cases-json /data2/wanghongyi/Agentclinic-Tree-Dx-Spec/logs/diagnosisarena_d2_m01_v1/c3_ab02_v1/normalized_cases.json --cases 3 --output-dir /data2/wanghongyi/Agentclinic-Tree-Dx-Spec/logs/diagnosisarena_d2_m01_v1/c3_ab02_v1 --workers 2 --model meta-llama/llama-3.3-70b-instruct --granularity-mode compat --l1-calib off --from-stage annotate --to-stage mapper --fixed-l1-budget 6 --l2-local-evidence-budget 4 --l2-between-evidence-budget 2 --l2-candidate-max-per-live-family 6 --l1-bfs-preset p5_anti_anchor_direct --l1-axis-mode flat --mapper-mode typed_llm_disagreement_rag --resume
+=== pipeline remaining cases=1 workers=2 stages=annotate,mapper resume=True ===
+
+######## stage=annotate workers=2 n=1 skip_stage=False targeted_gapfill=False ########
+{
+  "stage": "annotate",
+  "status": "ERROR",
+  "error": "RuntimeError: VP freeze missing 100",
+  "traceback": "Traceback (most recent call last):\n  File \"/data2/wanghongyi/Agentclinic-Tree-Dx-Spec/scripts/paper/run_diagnosisarena_pipeline_staged.py\", line 884, in main\n    row = runners[name](args, case_ids)\n  File \"/data2/wanghongyi/Agentclinic-Tree-Dx-Spec/scripts/paper/run_diagnosisarena_pipeline_staged.py\", line 567, in stage_annotate\n    down.stage_assets(down_args)\n  File \"/data2/wanghongyi/Agentclinic-Tree-Dx-Spec/scripts/paper/run_diagnosisarena_downstream_top2.py\", line 201, in stage_assets\n    case_ids, disc_audit, source_note = _collect_frozen_trees_and_p5(\n  File \"/data2/wanghongyi/Agentclinic-Tree-Dx-Spec/scripts/paper/run_diagnosisarena_downstream_top2.py\", line 144, in _collect_frozen_trees_and_p5\n    raise RuntimeError(\"VP freeze missing %s\" % case_id)\nRuntimeError: VP freeze missing 100\n"
+}
+{
+  "exit_code": 1,
+  "wall_seconds": 0.956,
+  "stages": [
+    {
+      "stage": "annotate",
+      "status": "ERROR"
+    }
+  ],
+  "summary": "logs/diagnosisarena_d2_m01_v1/c3_ab02_v1/pipeline_summary.json"
+}
+{
+  "ab02": {
+    "label": "AB02 flat / no L1",
+    "output_dir": "/data2/wanghongyi/Agentclinic-Tree-Dx-Spec/logs/diagnosisarena_d2_m01_v1/c3_ab02_v1",
+    "exit_code": 1,
+    "l1_axis_mode": "flat",
+    "mapper": null,
+    "synonym_bind": false
+  }
+}
+WROTE /data2/wanghongyi/Agentclinic-Tree-Dx-Spec/runs/paper_v1/ablations_c3_da_raw.json

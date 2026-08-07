@@ -232,6 +232,7 @@ Dual-Inf 本身也靠 examination **过滤**低置信诊断；Eq.1 若以预测�
 | P1 | MCR 开放 Acc@1 离线重排消融（D/C/A） | 抬开放 Acc | **done（未过 G1）** — 见 §6.2 |
 | P1b | MCR `mcr_val_seq100` 基线全量推理 + LLM 正式评测（14 臂） | 基线 MCR 主表 | **done**（2026-07-25）— [`mcr_val_seq100_baselines_summary.md`](../../runs/paper_v1/medcasereasoning_mcr_val_seq100_v1/mcr_val_seq100_baselines_summary.md)；`JUDGE=llm` `workers=50` |
 | P1b | OX `ox_seq100` 基线全量推理 + LLM 正式评测（14 臂，`list_k=5`） | 基线 OX 主表 | **done**（2026-07-26）— [`ox_seq100_baselines_summary.md`](../../runs/paper_v1/open_xddx_ox_seq100_v1/ox_seq100_baselines_summary.md)；`JUDGE=llm` `workers=50` |
+| P1b | B02 compute-matched（DA `d2_seq100`；structural_proxy_v1） | G5 公平对照 | **done**（2026-07-27）— [`b02_compute_matched_summary.md`](../../runs/paper_v1/diagnosisarena_b02_compute_matched_v1/b02_compute_matched_summary.md)；G5 PASS；@1=0.48（native 0.56） |
 | P2 | 严格 10-shot 采样协议（或书面声明单轨迹变体） | 与官方数字可对齐度 | **deferred**（summary 已声明 single_trajectory） |
 | P2 | D3 人工盲评导出（PAPER §15.2） | 审稿可信度 | **deferred** |
 | P2 | E 类生成覆盖（树无金标叶） | 吃掉 ~30% miss | **deferred_generation**（15/15 轴也不在） |

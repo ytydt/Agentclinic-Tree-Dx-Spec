@@ -1,0 +1,103 @@
+{
+  "case_id": "10",
+  "schema_version": 1,
+  "pred_ddx": [
+    {
+      "id": "B1.1",
+      "label": "Idiopathic Portal Hypertension",
+      "posterior": 0.4908164004245319,
+      "parent_id": "B1",
+      "support_count": 9,
+      "supports": [
+        "Urgent gastroscopy: oesophageal varices, fresh blood, and clots in the stomach",
+        "Spleen: enlarged (bipolar length 12.8 cm)",
+        "Repeat gastroscopy: two columns of grade II oesophageal varices",
+        "Oesophageal varices began to bleed during gastroscopy",
+        "Moderate amount of free peritoneal fluid noted",
+        "portal hypertension without cirrhosis",
+        "splenomegaly",
+        "varices",
+        "ascites"
+      ],
+      "fill_source": "conditional_gate_override",
+      "rank": 1
+    },
+    {
+      "id": "B5.1",
+      "label": "oesophageal variceal haemorrhage",
+      "posterior": 0.001310332426869729,
+      "parent_id": "B5",
+      "rank": 2,
+      "fill_source": "arbiter",
+      "support_count": 6
+    },
+    {
+      "id": "B4.1",
+      "label": "Portal Hypertensive Gastropathy",
+      "posterior": 0.0006259654594148548,
+      "parent_id": "B4",
+      "rank": 3,
+      "fill_source": "arbiter",
+      "support_count": 6
+    },
+    {
+      "id": "B1.5",
+      "label": "Esophageal Varices",
+      "posterior": 0.2524775722348415,
+      "parent_id": "B1",
+      "rank": 4,
+      "fill_source": "posterior_pad",
+      "support_count": 0
+    },
+    {
+      "id": "B1.6",
+      "label": "Cirrhosis",
+      "posterior": 0.13088437344654186,
+      "parent_id": "B1",
+      "rank": 5,
+      "fill_source": "posterior_pad",
+      "support_count": 0
+    }
+  ],
+  "pred_interpretation": {
+    "oesophageal variceal haemorrhage": [
+      "Observed: Urgent gastroscopy: oesophageal varices, fresh blood, and clots in the stomach",
+      "Observed: Spleen: enlarged (bipolar length 12.8 cm)"
+    ],
+    "Idiopathic Portal Hypertension": [
+      "Observed: Urgent gastroscopy: oesophageal varices, fresh blood, and clots in the stomach",
+      "Observed: Spleen: enlarged (bipolar length 12.8 cm)"
+    ],
+    "Portal Hypertensive Gastropathy": [
+      "Observed: Urgent gastroscopy: oesophageal varices, fresh blood, and clots in the stomach",
+      "Observed: Spleen: enlarged (bipolar length 12.8 cm)"
+    ]
+  },
+  "pred_diagnosis": "Idiopathic Portal Hypertension",
+  "pred_reasoning_trace": "Observed:\n- Urgent gastroscopy: oesophageal varices, fresh blood, and clots in the stomach\n- Spleen: enlarged (bipolar length 12.8 cm)\n- Repeat gastroscopy: two columns of grade II oesophageal varices\n- Oesophageal varices began to bleed during gastroscopy\n- Ultrasound scan of abdomen: small liver with coarse texture and no focal lesion\n- Moderate amount of free peritoneal fluid noted\nAxes:\n- Gastrointestinal Bleeding due to Portal Hypertension\n- Gastrointestinal Bleeding due to Vascular Anomalies\n- Other Causes of Gastrointestinal Bleeding\n- Gastrointestinal Bleeding due to Mucosal Injury\n- Gastrointestinal Bleeding due to Neoplastic Lesions\nDifferential diagnosis:\n1. oesophageal variceal haemorrhage (posterior=0.0013)\n   - Observed: Urgent gastroscopy: oesophageal varices, fresh blood, and clots in the stomach\n   - Observed: Spleen: enlarged (bipolar length 12.8 cm)\n2. Idiopathic Portal Hypertension (posterior=0.4908)\n   - Observed: Urgent gastroscopy: oesophageal varices, fresh blood, and clots in the stomach\n   - Observed: Spleen: enlarged (bipolar length 12.8 cm)\n3. Portal Hypertensive Gastropathy (posterior=0.0006)\n   - Observed: Urgent gastroscopy: oesophageal varices, fresh blood, and clots in the stomach\n   - Observed: Spleen: enlarged (bipolar length 12.8 cm)\nRank note: Top-1 by compat_parallel final_ranking is oesophageal variceal haemorrhage.",
+  "sources": {
+    "ddx_source": "transfer_combo",
+    "ddx_k": 5,
+    "evidence": [
+      "p5_audit.support_oppose_why",
+      "l1.selected_fact_ids"
+    ],
+    "final_ranking_len": 3,
+    "compat_path": "merge_only",
+    "n_leaves_considered": 23,
+    "policy_meta": {},
+    "fallback": null,
+    "pool_n": null,
+    "delta": 3,
+    "tau": 0.15,
+    "stages": {
+      "gate_overridden": true,
+      "gate_reason": "support_delta_ge_3",
+      "pair_triggered": false,
+      "pair_skipped": "gate_overrode",
+      "grain_changed": false,
+      "grain_reason": "keep"
+    },
+    "protocol": "ra_transfer_combo_v1"
+  }
+}

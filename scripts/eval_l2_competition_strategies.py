@@ -55,6 +55,7 @@ EFFECTS = frozenset({
     "strong_for", "moderate_for", "weak_for", "neutral",
     "weak_against", "moderate_against", "strong_against",
 })
+SUPPORTING_EFFECTS = frozenset({"strong_for", "moderate_for", "weak_for"})
 ARMS = (
     "S0-global",
     "S1-top1-parent",
@@ -94,7 +95,21 @@ def _fixture_cases(path: Path) -> tuple[dict[str, Any], dict[str, Any]]:
     return fixture, cases
 
 
-def _runtime_cases(case_filter: str = "", limit: int = 0):
+def _runtime_cases(
+    case_filter: str = "",
+    limit: int = 0,
+    cases_json: Path | str | None = None,
+):
+    if cases_json:
+        path = Path(cases_json)
+        doc = _read_json(path)
+        cases = list(doc.get("cases") or ())
+        if not cases:
+            raise ValueError(f"cases json has no cases: {path}")
+        partial = bfs._load_module(
+            "l2_competition_partial", bfs.PARTIAL_SCRIPT,
+        )
+        return partial._select_cases(cases, case_filter, limit)
     partial = bfs._load_module(
         "l2_competition_partial", bfs.PARTIAL_SCRIPT,
     )
@@ -122,7 +137,9 @@ def _l1_identity(args: argparse.Namespace, case_ids: Sequence[str]) -> dict[str,
         "case_ids": list(case_ids),
         "input_mode": "raw vignette + production static_evidence_items only",
         "annotation_findings_injected": False,
-        "compiler_rules_injected": False,
+        "compiler_rules_injected": bool(
+            getattr(args, "inject_compiler_rules", False)
+        ),
         "fixture_hash": stable_hash(fixture),
         "tree_hashes": {
             case_id: stable_hash(_tree_payload(args.tree_dir, case_id))
@@ -133,6 +150,10 @@ def _l1_identity(args: argparse.Namespace, case_ids: Sequence[str]) -> dict[str,
         ),
         "harness_sha256": _sha256(Path(__file__)),
         "selector_prompt_sha256": _sha256(L1_SELECTOR_PROMPT_PATH),
+        "p5_arm_output": (
+            str(getattr(args, "p5_arm_output", "") or "")
+            if getattr(args, "inject_compiler_rules", False) else ""
+        ),
     }
 
 
@@ -186,7 +207,18 @@ def _run_l1_replicate(
         tree_payload = _tree_payload(args.tree_dir, case_id)
         frozen_tree = composed._deserialize_state(tree_payload["state"])
         facts = auto_matrix._facts(asset["full_findings"])
-        blocks = {fact.id: {} for fact in facts}
+        if getattr(args, "inject_compiler_rules", False):
+            arm_path = Path(getattr(args, "p5_arm_output"))
+            if not arm_path.is_file():
+                raise FileNotFoundError(
+                    f"--p5-arm-output required for compiler injection: {arm_path}"
+                )
+            frozen_arms = composed.FrozenOfflineArms(
+                talp, {"p5_headline": arm_path},
+            )
+            blocks = frozen_arms.blocks("p5_headline", case_id, facts)
+        else:
+            blocks = {fact.id: {} for fact in facts}
         try:
             final_state, trace = L1EvidenceBFSPipeline(
                 preset="p5_anti_anchor_direct",
@@ -254,7 +286,11 @@ def _run_l1_replicate(
 def run_l1_full(args: argparse.Namespace) -> dict[str, Any]:
     args.output_dir.mkdir(parents=True, exist_ok=True)
     _, fixture_cases = _fixture_cases(args.fixture)
-    cases = _runtime_cases(args.cases, args.limit)
+    cases = _runtime_cases(
+        args.cases,
+        args.limit,
+        cases_json=getattr(args, "cases_json", None),
+    )
     missing = {str(case["id"]) for case in cases} - set(fixture_cases)
     if missing:
         raise ValueError(f"fixture missing cases: {sorted(missing)}")
@@ -419,33 +455,48 @@ def _prefix_cycles(trace: Mapping[str, Any], round_limit: int) -> list[dict[str,
 
 def freeze_l1_prefix(args: argparse.Namespace) -> dict[str, Any]:
     full_manifest, records = _load_full_records(args.output_dir)
-    gold_doc = _read_json(args.gold)
-    gold_cases = validate_l2_gold(
-        gold_doc,
-        tree_dir=args.tree_dir,
-        expected_case_ids=full_manifest["case_ids"],
-    )
-    budgets = list(range(2, int(full_manifest["max_micro_rounds"]) + 1, 2))
+    fixed_budget = int(getattr(args, "fixed_l1_budget", 0) or 0)
     curve = []
-    for budget in budgets:
-        values = []
-        for row in records:
-            gold = gold_cases[row["case_id"]]
-            if gold["status"] == "absent":
-                continue
-            parents = {
-                str(item["parent_id"]) for item in gold["acceptable_l2"]
-            }
-            values.append(_parent_rank(
-                prefix_snapshot(row["trace"], budget)["posteriors"], parents,
-            ))
-        curve.append({
-            "budget": budget,
-            "n": len(values),
-            "top1": statistics.fmean(item[0] for item in values),
-            "mrr": statistics.fmean(item[1] for item in values),
-        })
-    n_star = select_n_star(curve)
+    gold_doc: dict[str, Any] = {"cases": []}
+    gold_hash = ""
+    if fixed_budget > 0:
+        n_star = fixed_budget
+        selection_rule = (
+            "fixed_l1_budget=%d (DiagnosisArena / paper adapter; "
+            "matches M01 F6 freeze without gold-selected n*)" % n_star
+        )
+    else:
+        gold_doc = _read_json(args.gold)
+        gold_cases = validate_l2_gold(
+            gold_doc,
+            tree_dir=args.tree_dir,
+            expected_case_ids=full_manifest["case_ids"],
+        )
+        budgets = list(range(2, int(full_manifest["max_micro_rounds"]) + 1, 2))
+        for budget in budgets:
+            values = []
+            for row in records:
+                gold = gold_cases[row["case_id"]]
+                if gold["status"] == "absent":
+                    continue
+                parents = {
+                    str(item["parent_id"]) for item in gold["acceptable_l2"]
+                }
+                values.append(_parent_rank(
+                    prefix_snapshot(row["trace"], budget)["posteriors"], parents,
+                ))
+            curve.append({
+                "budget": budget,
+                "n": len(values),
+                "top1": statistics.fmean(item[0] for item in values),
+                "mrr": statistics.fmean(item[1] for item in values),
+            })
+        n_star = select_n_star(curve)
+        selection_rule = (
+            "maximize acceptable-parent L1 Top-1 on gold-L2-present cases; "
+            "then maximize parent-set MRR; then choose smallest budget"
+        )
+        gold_hash = stable_hash(gold_doc)
     frozen_dir = args.output_dir / "l1_frozen" / "assets"
     frozen_assets = []
     for row in records:
@@ -498,12 +549,9 @@ def freeze_l1_prefix(args: argparse.Namespace) -> dict[str, Any]:
         "schema_version": 1,
         "stage": "freeze-l1-prefix",
         "n_star": n_star,
-        "selection_rule": (
-            "maximize acceptable-parent L1 Top-1 on gold-L2-present cases; "
-            "then maximize parent-set MRR; then choose smallest budget"
-        ),
+        "selection_rule": selection_rule,
         "curve": curve,
-        "gold_hash": stable_hash(gold_doc),
+        "gold_hash": gold_hash,
         "source_l1_manifest_hash": stable_hash(full_manifest),
         "source_run_fingerprint": full_manifest["run_fingerprint"],
         "assets": frozen_assets,
@@ -676,6 +724,24 @@ def _annotate_scope(
         for branch_id, posterior in posteriors.items():
             updated[branch_id].prior = updated[branch_id].posterior
             updated[branch_id].posterior = posterior
+    # Dual-Inf-style coverage: count supporting effects across selected facts.
+    coverage: dict[str, float] = {str(bid): 0.0 for bid in updated}
+    for fact_id, effects in (cleaned.get("per_fact_effects") or {}).items():
+        if not isinstance(effects, Mapping):
+            continue
+        for branch_id, effect in effects.items():
+            if str(effect) in SUPPORTING_EFFECTS:
+                coverage[str(branch_id)] = coverage.get(str(branch_id), 0.0) + 1.0
+    for branch_id, branch in updated.items():
+        cov = float(coverage.get(str(branch_id), 0.0))
+        if hasattr(branch, "explanatory_coverage"):
+            branch.explanatory_coverage = cov
+        # Mirror onto live tree_state so writeback / champions see the signal.
+        live = getattr(tree_state, "branches", None)
+        if isinstance(live, Mapping) and str(branch_id) in live:
+            target = live[str(branch_id)]
+            if hasattr(target, "explanatory_coverage"):
+                target.explanatory_coverage = cov
     posterior_rows = sorted(
         (
             {
@@ -683,10 +749,17 @@ def _annotate_scope(
                 "label": branch.label,
                 "parent_id": branch.parent,
                 "posterior": float(branch.posterior),
+                "explanatory_coverage": float(
+                    getattr(branch, "explanatory_coverage", 0.0) or 0.0
+                ),
             }
             for branch in updated.values()
         ),
-        key=lambda row: (-row["posterior"], row["id"]),
+        key=lambda row: (
+            -float(row.get("explanatory_coverage") or 0.0),
+            -row["posterior"],
+            row["id"],
+        ),
     )
     return {
         **cleaned,
@@ -694,6 +767,7 @@ def _annotate_scope(
         "ranking": [str(row["id"]) for row in posterior_rows],
         "posteriors": posterior_rows,
         "candidates": candidates,
+        "explanatory_coverage": coverage,
     }
 
 
@@ -1296,7 +1370,11 @@ def aggregate_l2_records(
 def evaluate_l2(args: argparse.Namespace) -> dict[str, Any]:
     frozen_manifest, frozen_assets = _load_frozen_assets(args.output_dir)
     _, fixture_cases = _fixture_cases(args.fixture)
-    cases = _runtime_cases(args.cases, args.limit)
+    cases = _runtime_cases(
+        args.cases,
+        args.limit,
+        cases_json=getattr(args, "cases_json", None),
+    )
     gold_doc = _read_json(args.gold)
     gold_cases = validate_l2_gold(
         gold_doc,
@@ -1781,7 +1859,11 @@ def evaluate_l2_budget_marginals(args: argparse.Namespace) -> dict[str, Any]:
     full_manifest, full_rows = _load_full_records(args.output_dir)
     frozen_manifest, frozen_assets = _load_frozen_assets(args.output_dir)
     _, fixture_cases = _fixture_cases(args.fixture)
-    cases = _runtime_cases(args.cases, args.limit)
+    cases = _runtime_cases(
+        args.cases,
+        args.limit,
+        cases_json=getattr(args, "cases_json", None),
+    )
     gold_doc = _read_json(args.gold)
     gold_cases = validate_l2_gold(
         gold_doc,
@@ -1918,10 +2000,33 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--n-boot", type=int, default=5000)
     parser.add_argument("--cases", default="")
     parser.add_argument("--limit", type=int, default=0)
+    parser.add_argument(
+        "--cases-json",
+        type=Path,
+        default=None,
+        help="optional runtime cases JSON (DiagnosisArena / paper adapters)",
+    )
     parser.add_argument("--fixture", type=Path, default=DEFAULT_FIXTURE)
     parser.add_argument("--gold", type=Path, default=DEFAULT_GOLD)
     parser.add_argument("--tree-dir", type=Path, default=DEFAULT_TREE_DIR)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument(
+        "--inject-compiler-rules",
+        action="store_true",
+        help="inject frozen p5_headline blocks into anti-anchor L1 BFS",
+    )
+    parser.add_argument(
+        "--p5-arm-output",
+        type=Path,
+        default=None,
+        help="frozen disc_audit JSON used when --inject-compiler-rules",
+    )
+    parser.add_argument(
+        "--fixed-l1-budget",
+        type=int,
+        default=0,
+        help="if >0, freeze L1 prefix at this budget instead of gold-selected n*",
+    )
     return parser.parse_args()
 
 

@@ -690,17 +690,24 @@ def _arbiter_rows(
         row = {
             key: champion[key]
             for key in ("id", "label", "parent_id", "parent_label")
+            if key in champion
         }
         if include_prior:
             row["parent_posterior"] = champion["parent_posterior"]
         if include_audit:
             row["local_score"] = champion["local_score"]
+            row["explanatory_coverage"] = float(
+                champion.get("explanatory_coverage") or 0.0
+            )
             row["local_audit"] = {
                 "evidence_ids": list(
                     champion.get("local_evidence_ids") or ()
                 ),
                 "fact_rationales": dict(
                     champion.get("local_fact_rationales") or {}
+                ),
+                "explanatory_coverage": float(
+                    champion.get("explanatory_coverage") or 0.0
                 ),
             }
         rows.append(row)
@@ -1329,7 +1336,11 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         args.base_output_dir,
     )
     fixture_doc, fixture_cases = base._fixture_cases(args.fixture)
-    cases = base._runtime_cases(args.cases, args.limit)
+    cases = base._runtime_cases(
+        args.cases,
+        args.limit,
+        cases_json=getattr(args, "cases_json", None),
+    )
     gold_doc = json.loads(args.gold.read_text(encoding="utf-8"))
     gold_cases = base.validate_l2_gold(
         gold_doc,
@@ -1406,6 +1417,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--n-boot", type=int, default=5000)
     parser.add_argument("--cases", default="")
     parser.add_argument("--limit", type=int, default=0)
+    parser.add_argument("--cases-json", type=Path, default=None)
     parser.add_argument("--fixture", type=Path, default=base.DEFAULT_FIXTURE)
     parser.add_argument("--gold", type=Path, default=base.DEFAULT_GOLD)
     parser.add_argument(

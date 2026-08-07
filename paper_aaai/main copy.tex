@@ -1,0 +1,694 @@
+\documentclass[letterpaper]{article} % DO NOT CHANGE THIS
+\usepackage[submission]{aaai2027} % DO NOT CHANGE THIS
+\usepackage[hyphens]{url} % DO NOT CHANGE THIS
+\usepackage{graphicx} % DO NOT CHANGE THIS
+\urlstyle{rm} % DO NOT CHANGE THIS
+\def\UrlFont{\rm} % DO NOT CHANGE THIS
+\usepackage{natbib} % DO NOT CHANGE THIS AND DO NOT ADD OPTIONS
+\usepackage{caption} % DO NOT CHANGE THIS AND DO NOT ADD OPTIONS
+\frenchspacing % DO NOT CHANGE THIS
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+
+% \modelid is declared before tikz, which redefines url's \path.
+\DeclareUrlCommand\modelid{}
+
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+
+\definecolor{apblue}{HTML}{1F4E79}
+\definecolor{apteal}{HTML}{2E6F6B}
+\definecolor{apwarm}{HTML}{9C4A1A}
+\definecolor{apgray}{HTML}{555555}
+\definecolor{appale}{HTML}{EDF3F8}
+\definecolor{apmint}{HTML}{EAF3F2}
+\definecolor{apcream}{HTML}{FBF1E8}
+
+\usepackage[capitalize]{cleveref}
+
+\pdfinfo{
+/TemplateVersion (2027.1)
+}
+
+\setcounter{secnumdepth}{2}
+
+\title{%
+Alignment-Preserving Hierarchical Hypothesis Management\\
+for Difficult Open-Ended Differential Diagnosis%
+}
+\author{Anonymous Submission}
+\affiliations{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Difficult open-ended differential diagnosis requires preserving concept identity and evidence-conditioned belief state across reasoning stages.
+Flat pipelines fragment synonyms, discard branch-local updates before global ranking, and conflate name binding with reasoning quality.
+We call this cross-stage consistency \emph{alignment} and introduce \textbf{alignment-preserving hierarchical hypothesis management (APHHM)}, which combines a case-adaptive comparison axis, concept-level competition, evidence-conditioned score write-back, and bounded global decoding.
+We evaluate APHHM on fixed 100-case subsets of DiagnosisArena~\cite{diagnosisarena}, MedCaseReasoning~\cite{medcasereasoning}, and Open-XDDx~\cite{dualinf2025} under an unmodified scoring interface.
+On DiagnosisArena, changing from a matched random axis to the case-adaptive axis within the deployed selector cascade raises Top-1 accuracy from $0.37$ to $0.71$.
+On audited open-set MedCaseReasoning endpoints, jointly disabling concept-equivalence handling lowers accuracy from $0.50$ to $0.42$; semantic compression removes $56.5\%$ of candidates without reducing accuracy and exceeds a count-matched blind merge under partition randomization.
+On Open-XDDx, evidence-conditioned score write-back improves micro-F1 from $0.576$ to $0.651$ at fixed evidence budget, whereas increasing the budget changes F1 by at most $0.008$.
+APHHM remains above a similar-call-count flat control on all three end-task metrics, while a retrospective stage audit localizes many apparent recall misses to the evaluation interface.
+The results show that preserving concept identity and belief state turns large hypothesis spaces into coherent decision spaces.
+\end{abstract}
+
+\section{Introduction}
+\label{sec:intro}
+
+Large language models (LLMs) can propose differential diagnoses from clinical vignettes, and retrieval-augmented generation (RAG) can enlarge the set of disease hypotheses drawn from case reports, guidelines, and textbooks~\cite{lewis2020rag,wei2022cot,xiong2024medrag}.
+Difficult open-ended diagnosis is therefore often framed as a \emph{recall--discrimination dilemma}: increasing coverage admits the correct disease more often, but also introduces redundant and granularity-mismatched candidates that make ranking harder.
+
+Coverage alone does not characterize the difficulty of a multi-stage system. Even after a correct hypothesis has been retrieved, cross-stage failures can prevent it from reaching the final output.
+Three cross-stage failures characterize this problem:
+\begin{itemize}
+  \item \textbf{Synonym fragmentation:} near-equivalent disease strings compete as separate leaves and consume frontier budget.
+  \item \textbf{State discontinuity:} evidence changes a branch-local score but not the belief state used by global decoding.
+  \item \textbf{Evaluation detachment:} the ranked concept is correct, but the emitted name fails to bind to the benchmark's canonical target.
+\end{itemize}
+Our central view is that open-ended diagnosis should be treated as \textbf{hierarchical hypothesis management}: candidates must be organized for comparison, compete as clinical concepts rather than strings, and share an evidence-conditioned state across local and global decisions.
+
+Existing systems organize different components of this process.
+Direct chain-of-thought (CoT) and flat RAG couple retrieval, organization, and ranking in one generation step~\cite{wei2022cot,medrag,imedrag}.
+Verification methods such as Dual-Inf improve reflection over a flat differential list~\cite{dualinf2025}.
+Multi-agent frameworks such as MDAgents and MAC diversify computational \emph{roles}~\cite{mdagents,chen2025mac,mac2026}; APHHM complements this role structure by organizing the geometry of the disease hypothesis space.
+Fixed specialty or knowledge-graph hierarchies provide reusable routing~\cite{kg4diagnosis}, whereas APHHM constructs a case-specific comparison coordinate system.
+Interactive diagnosis benchmarks emphasize information acquisition, which is adjacent to---but distinct from---keeping a large static evidence set organized and state-consistent~\cite{sdbench2025,meddxagent2025}.
+
+\paragraph{Contributions.}
+\begin{enumerate}
+  \item \textbf{A cross-stage formulation of open-ended diagnosis.}
+  We distinguish concept, state, and evaluation consistency, and show why operator-sensitive endpoints and earliest-stage error attribution are necessary to evaluate them.
+  \item \textbf{A hierarchical method that preserves concept and state consistency.}
+  APHHM combines a case-adaptive comparison axis, equivalence-class-aware candidate competition, evidence-conditioned score write-back, and bounded global decoding.
+  \item \textbf{Mechanism-focused empirical evidence.}
+  Comparisons across three diagnostic benchmarks support an axis-conditioned pipeline effect, concept-aware competition on audited open-set endpoints, and evidence-conditioned score write-back on Open-XDDx; APHHM retains its end-task margins under a similar-call-count flat control.
+\end{enumerate}
+
+All systems are evaluated with the benchmark interfaces unchanged, and Section~\ref{sec:protocol} separately audits name--concept binding at the evaluation interface.
+
+\section{Related Work}
+\label{sec:related}
+
+Direct CoT~\cite{wei2022cot}, self-consistency~\cite{wang2023selfconsistency}, self-refine~\cite{madaan2023selfrefine}, Medprompt-style prompting~\cite{medprompt}, and medical RAG~\cite{lewis2020rag,xiong2024medrag,medrag,imedrag} improve knowledge access and list generation.
+Their candidate spaces remain largely flat, so recall, organization, and ranking are coupled: increasing coverage can also increase synonym crowding and mix incompatible levels of specificity.
+
+Verification and collaboration methods address a different part of the pipeline.
+Dual-Inf adds reverse verification and reflection~\cite{dualinf2025}; MDAgents~\cite{mdagents}, MAC~\cite{chen2025mac,mac2026}, and MEDDxAgent~\cite{meddxagent2025} structure agent roles or discussion; Chain-of-Diagnosis specializes diagnostic dialogue~\cite{chainofdiagnosis}.
+These approaches organize computation, whereas APHHM explicitly organizes the disease hypotheses and maintains a shared state that later stages must read.
+
+Existing medical hierarchies are typically fixed or used outside runtime reasoning.
+KG4Diagnosis routes through a knowledge graph~\cite{kg4diagnosis}, DeepRare combines specialized tools for rare disease~\cite{deeprare2025}, and H-DDx uses ICD structure to evaluate clinically related predictions~\cite{hddx2025}.
+APHHM instead constructs a temporary, case-specific comparison axis and uses it during candidate generation, evidence updating, and final arbitration.
+
+Interactive benchmarks such as SDBench optimize information acquisition~\cite{sdbench2025}; we instead consider static vignettes, where the evidence is already available and the central problem is how a large hypothesis set is represented and propagated.
+Our stage-aware evaluation separates generation, local selection, global ranking, and name binding, which standard Top-$k$ accuracy combines into one outcome.
+
+\section{Problem Formulation}
+\label{sec:problem}
+
+\subsection{Task and Belief State}
+\label{sec:task}
+
+The input is a static clinical vignette $V$, observed facts $F$ traceable to spans in $V$, and a corpus $\mathcal{K}$ shared by all retrieval-based methods.
+The system outputs an ordered list of at most $k_{\mathrm{out}}$ concrete diseases and a case-specific belief state
+$B_t=(G_t,q_t,s_t,E_t)$, containing the hierarchy $G_t$, concept identities $q_t$, relative scores $s_t$, and evidence annotations $E_t$ at stage $t$.
+Every reasoning stage reads this state and returns an updated state.
+The objective is accurate ranking of static, text-based, single-primary vignettes under bounded retrieval and inference budgets; internal scores are relative ranking quantities rather than clinically calibrated probabilities.
+
+\subsection{Cross-Stage Consistency Requirements}
+\label{sec:dilemma}
+
+Let $\mathcal{C}$ be the candidate set after recall.
+Increasing $|\mathcal{C}|$ can raise coverage, but the benefit depends on how candidates are represented and propagated, so we require three forms of consistency.
+\emph{Concept consistency}: candidate strings denoting the same clinical concept should share one competitive slot, or else surface variants consume a budget intended for distinct hypotheses.
+\emph{State consistency}: evidence used by a local stage must update the belief state read by subsequent stages, or else local reasoning cannot affect the final decision.
+\emph{Evaluation consistency}: the emitted name must bind to the canonical concept expected by the scoring contract, or else a correct ranked concept can be recorded as absent.
+Case-adaptive organization defines the families and slots over which the first two requirements operate, and stage-aware evaluation then distinguishes failures of organization, local selection, global ranking, and name binding.
+
+\subsection{Stage-Aware Error Attribution}
+\label{sec:taxonomy}
+
+A failed case is assigned to the earliest applicable stage; later stages are considered only after earlier ones succeed.
+This ordering prevents an evaluation-interface error from being reported as insufficient recall.
+The cascade has five stages.
+\emph{Parent absent}: no clinically acceptable Level-1 (L1) family can host the target disease.
+\emph{Leaf absent}: a suitable family exists, but no equivalent Level-2 (L2) disease leaf is generated.
+\emph{Local elimination}: the target leaf exists but is removed before global decoding.
+\emph{Global misranking}: the target reaches the global pool but falls below the cutoff.
+\emph{Binding failure}: the target ranks sufficiently high, but the scoring interface records no canonical binding.
+Each stage admits a different repair (\Cref{tab:stages}), so the attributed stage, rather than the aggregate error rate, determines which component should be changed.
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{@{}ll@{}}
+\toprule
+Earliest failed stage & Required intervention \\
+\midrule
+Parent absent & Revise the case axis \\
+Leaf absent & Improve branch-conditioned recall \\
+Local elimination & Preserve a bounded local frontier \\
+Global misranking & Improve state update or arbitration \\
+Binding failure & Standardize name--concept binding \\
+\bottomrule
+\end{tabular}
+\caption{Earliest failed stage and the intervention it implies.}
+\label{tab:stages}
+
+\end{table}
+
+\section{Method: Alignment-Preserving Hierarchical Hypothesis Management}
+\label{sec:method}
+
+Figure~\ref{fig:pipeline} summarizes APHHM and the state fields shared across stages.
+The method has three stages: case-adaptive organization, concept-level competition, and shared-state decoding.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{aphhm1.png}
+\caption{APHHM preserves comparison structure, concept identity, and evidence-conditioned state across stages: recalled diseases are organized on a case-specific L1/L2 axis, equivalence-aware competition allocates frontier slots to clinical concept classes rather than surface strings, and local evidence-conditioned scores are written into the shared belief state before bounded global decoding. The footer bands identify the comparison structure and the requirement enforced at each stage; name--concept binding and earliest-stage attribution are evaluation-only.}
+\label{fig:pipeline}
+\end{figure*}
+
+% Earlier TikZ rendering of Figure~\ref{fig:pipeline}, superseded by aphhm.png.
+\iffalse
+\begin{figure*}[t]
+\centering
+\begin{tikzpicture}[
+  x=1cm,y=1cm,font=\scriptsize,
+  stage/.style={draw=apblue,line width=0.6pt,fill=appale,rounded corners=2pt,
+                inner sep=3pt,anchor=north west,align=left,minimum height=2.05cm},
+  iface/.style={stage,draw=apgray,fill=white},
+  band/.style={draw=apteal,line width=0.6pt,fill=apmint,rounded corners=2pt,
+               inner sep=3pt,anchor=north west,align=center,minimum height=0.62cm},
+  need/.style={draw=apwarm,line width=0.5pt,fill=apcream,rounded corners=2pt,
+               inner sep=3pt,anchor=north west,align=left,minimum height=1.62cm},
+  pre/.style={need,draw=apgray,fill=white},
+  flow/.style={-{Latex[length=1.7mm,width=1.5mm]},draw=apblue,line width=0.7pt},
+  link/.style={{Latex[length=1.3mm,width=1.2mm]}-{Latex[length=1.3mm,width=1.2mm]},
+               draw=apteal,line width=0.5pt,dash pattern=on 1.4pt off 1.2pt},
+]
+
+\node[anchor=north west,align=left,text width=1.35cm,inner sep=0pt] at (0,4.85)
+  {Vignette $V$\\ Facts $F$\\ Corpus $\mathcal{K}$};
+
+\node[stage,text width=3.3cm] at (1.65,5.20)
+  {\textbf{1. Case-adaptive organization}\\[1.5pt]
+   One case-specific axis\\
+   Near-exclusive families\\
+   Candidate-relative facts\\
+   Branch-conditioned leaves};
+
+\node[stage,text width=3.3cm] at (5.46,5.20)
+  {\textbf{2. Concept-level competition}\\[1.5pt]
+   Pairwise predicate $r$\\
+   Component closure $\sim$\\
+   Best-ranked representative\\
+   One slot per concept class};
+
+\node[stage,text width=3.3cm] at (9.27,5.20)
+  {\textbf{3. Shared-state decoding}\\[1.5pt]
+   Local update $U(B_t,e_t)$\\
+   Score write-back\\
+   Top-$N$ updated-score pool\\
+   Bounded decoding};
+
+\node[iface,text width=3.45cm] at (13.08,5.20)
+  {\textbf{Scoring interface}\\[1.5pt]
+   Ranked names, $\leq k_{\mathrm{out}}$\\
+   Name--concept binding\\
+   Benchmark score};
+
+\draw[flow] (1.40,4.15) -- (1.62,4.15);
+\draw[flow] (5.18,4.15) -- (5.43,4.15);
+\draw[flow] (8.99,4.15) -- (9.24,4.15);
+\draw[flow] (12.80,4.15) -- (13.05,4.15);
+
+\node[band,text width=10.92cm] at (1.65,2.85)
+  {\textbf{Shared belief state} \mbox{$B_t=(G_t,q_t,s_t,E_t)$}\\
+   hierarchy $\cdot$ concept identity $\cdot$ relative scores $\cdot$ evidence annotations};
+
+\draw[link] (3.40,3.15) -- (3.40,2.85);
+\draw[link] (7.21,3.15) -- (7.21,2.85);
+\draw[link] (11.02,3.15) -- (11.02,2.85);
+
+\node[pre,text width=3.3cm] at (1.65,1.78)
+  {\textbf{Comparison structure}\\[1.5pt]
+   Case-adaptive families define the slots over which the following requirements are defined.};
+
+\node[need,text width=3.3cm] at (5.46,1.78)
+  {\textbf{Concept consistency}\\[1.5pt]
+   One clinical concept must occupy one slot.\\[1.5pt]
+   \textit{Violated by synonym fragmentation.}};
+
+\node[need,text width=3.3cm] at (9.27,1.78)
+  {\textbf{State consistency}\\[1.5pt]
+   Local evidence must update the state read downstream.\\[1.5pt]
+   \textit{Violated by decoding from stale scores.}};
+
+\node[need,text width=3.45cm] at (13.08,1.78)
+  {\textbf{Evaluation consistency}\\[1.5pt]
+   The emitted name must bind to the canonical concept.\\[1.5pt]
+   \textit{Violated by a correct concept recorded as absent.}};
+
+\end{tikzpicture}
+\caption{APHHM and the three cross-stage consistency requirements.}
+\label{fig:pipeline-tikz}
+\end{figure*}
+\fi
+
+\subsection{Case-Adaptive Organization and Evidence}
+\label{sec:m1}
+\label{sec:m2}
+
+APHHM gathers concrete diseases from case-report corpora, guideline and textbook corpora, and zero-temperature LLM enumeration, then combines the ranked lists with reciprocal rank fusion (RRF)~\cite{rrf2009}.
+An LLM organizes these candidates into L1 families using one case-specific axis, near-exclusive siblings, and a residual family.
+The partition serves as a temporary comparison coordinate system specialized to the current syndrome.
+Branch-conditioned retrieval generates L2 disease leaves within each family.
+When a high-ranked disease has no suitable family, a non-reducing repair step revises the axis to restore structural coverage.
+
+Candidate-relative evidence selection prioritizes facts expected to change the order among live families rather than facts that are merely salient.
+The implementation uses sparse symmetric updates: each selected fact primarily supports one family and opposes at most one distinct alternative.
+The selector may abstain when the families do not support a meaningful contrast.
+The axis comparison therefore evaluates how the representation reshapes the full selector cascade.
+
+\subsection{Concept-Level Candidate Competition}
+\label{sec:m3}
+
+Let $L$ be the live leaf set and let $r(\ell_i,\ell_j)$ be the gold-blind pairwise predicate that two labels denote the same diagnosis at the scored granularity.
+APHHM symmetrizes $r$ and uses connected components of the resulting graph; the induced transitive closure is denoted by $\sim$, and $\pi:L\rightarrow L/\!\sim$ maps leaves to concept classes.
+The highest-ranked leaf represents each component.
+A decision set $S_{k_{\mathrm{out}}}$ should allocate its budget over \emph{classes}, not strings:
+\[
+S_{k_{\mathrm{out}}}\subseteq L,\qquad
+|S_{k_{\mathrm{out}}}|\leq k_{\mathrm{out}},\qquad
+|\pi(S_{k_{\mathrm{out}}})|=|S_{k_{\mathrm{out}}}|.
+\]
+When all available distinct slots are filled,
+$|S_{k_{\mathrm{out}}}|=\min\{k_{\mathrm{out}},|L/\!\sim|\}$.
+Concretely, if three of the top five leaves belong to one class, the system has spent $60\%$ of its decision budget restating one hypothesis while alternative classes go unexamined.
+
+The resulting frontier contains at most one representative per component and concentrates the output budget on distinct concept classes.
+Because connected-component closure can join a pair through an intermediate synonym chain, the pairwise predicate, closure rule, and representative selection are separate implementation choices specified in the Supplementary Material.
+The current routing heuristic chooses between synonym merging and closed-pool calibration to enforce concept-level competition at the appropriate execution site.
+
+\paragraph{Structural property: rank-1 invariance.}
+Under deletion-only compression, retaining the highest-ranked member of every component preserves the global rank-1 leaf.
+We verified this property over $15{,}400$ perturbed partitions.
+Section~\ref{sec:res-eq} therefore evaluates the operator with candidate diversity, open-set coverage, and graded ranking endpoints that respond to compression.
+
+\subsection{Shared Belief-State Update and Bounded Decoding}
+\label{sec:m4}
+\label{sec:m5}
+
+Branch-conditioned L2 generation builds leaves under each live L1 family with per-family budgets and consistency checks.
+Local evidence annotation produces a local evidence-conditioned score for each updated leaf, represented abstractly as $B_{t+1}=U(B_t,e_t)$ for selected evidence $e_t$.
+Without score write-back, global decoding reads the stale build-time state $D(B_t)$; with \textbf{evidence-conditioned score write-back}, it reads $D(B_{t+1})$ after the updated leaf fields have been copied into the shared tree.
+The updated scores are relative ranking quantities, not calibrated probabilities.
+
+APHHM supports two bounded decoding strategies: a local frontier that retains a second candidate when the within-family margin is small, and an updated-score pool containing the Top-$N$ leaves from the score-updated state.
+On Open-XDDx, multi-doctor discussion is restricted to the Top-$N{=}15$ leaves of this pool, and the final $k_{\mathrm{out}}{=}5$ outputs are projected back into it~\cite{chen2025mac,mac2026}.
+L1 scores enter arbitration as soft priors, while the score-updated leaf state drives final comparison.
+Independently normalized within-family scores are not treated as globally calibrated probabilities.
+
+\subsection{Evaluation Consistency}
+\label{sec:protocol}
+
+Benchmarks convert a ranked belief state into a score through an additional name--concept binding stage.
+On DiagnosisArena (DA), the answer mapper can leave an option-to-leaf binding empty even when a synonym-equivalent leaf appears in the ranked shortlist.
+An offline synonym/bridge repair raises external-baseline Top-1 accuracy by approximately $0.02$--$0.08$ and APHHM by approximately $0.02$, demonstrating that binding quality affects all compared systems.
+We report every system under the original benchmark interface and analyze binding failures separately.
+MedCaseReasoning (MCR) uses open single-trajectory scoring and directly scores the emitted disease names.
+
+\section{Experimental Setup}
+\label{sec:experiments}
+
+\subsection{Datasets and Evaluation}
+\label{sec:data}
+
+We use fixed sequential 100-case evaluation subsets from three open-ended diagnostic benchmarks:
+DiagnosisArena (DA)~\cite{diagnosisarena} for option-mapped Top-1/Top-2 accuracy,
+MedCaseReasoning (MCR)~\cite{medcasereasoning} for single-trajectory accuracy and reasoning-fact recall, and
+Open-XDDx (OX)~\cite{dualinf2025} for multi-label micro-F1 at $k_{\mathrm{out}}{=}5$.
+Each subset supports a paired mechanism comparison under its benchmark-native metric.
+For compression, any-hit@5 records whether at least one of the first five delivered diagnoses matches the target; open-MRR@5 is the reciprocal rank of the first match and is zero when no match occurs.
+Gold labels are never used during generation, evidence selection, state update, or arbitration.
+All methods use the original benchmark interfaces described in Section~\ref{sec:protocol}.
+
+\subsection{Implementation and Comparisons}
+\label{sec:backbone}
+\label{sec:baselines}
+
+All retrieval-based systems use the same indices, and the shared generation backbone is \modelid{meta-llama/llama-3.3-70b-instruct}~\cite{llama33}.
+MCR reasoning-recall scores use the \texttt{gemini-2.5-flash} endpoint~\cite{gemini25flash} with a fixed prompt and no lexical substitution.
+Completed comparison arms include direct CoT~\cite{wei2022cot}, CoT+RAG~\cite{lewis2020rag,xiong2024medrag}, flat retrieve--rerank and beam variants, Dual-Inf~\cite{dualinf2025}, MDAgents~\cite{mdagents}, MAC~\cite{chen2025mac,mac2026}, MEDDxAgent~\cite{meddxagent2025}, self-consistency~\cite{wang2023selfconsistency}, self-refine~\cite{madaan2023selfrefine}, Medprompt~\cite{medprompt}, MedRAG~\cite{medrag}, i-MedRAG~\cite{imedrag}, and Chain-of-Diagnosis variants~\cite{chainofdiagnosis}.
+All API-based arms use the shared backbone; the DiagnosisGPT-6B local-model row is retained as a separately marked reference point.
+
+To separate structure from inference volume, we use a ten-trajectory flat reranking control with reciprocal rank fusion (Flat rerank $\times 10$ (RRF)), requiring approximately $90$ model calls per case ($92.4$ on DA, $89.8$ on OX, and $93.2$ on MCR).
+Each point estimate uses one fixed evaluation pass per configuration; paired resampling estimates uncertainty rather than averaging repeated runs.
+Candidate enumeration uses temperature zero, while prompts, judge identities, case order, retrieval indices, and scoring interfaces are fixed within each comparison.
+
+\subsection{Research Questions and Statistical Tests}
+
+The evaluation addresses three questions:
+\textbf{RQ1}: Does a case-adaptive axis improve hypothesis organization?
+\textbf{RQ2}: Does competition over canonical concepts improve a fixed candidate budget?
+\textbf{RQ3}: Does writing local evidence into the shared belief state improve global decoding independently of evidence budget?
+The reported contrast family contains the axis comparison on DA Top-1, semantic versus count-matched blind compression on MCR any-hit@5, evidence-conditioned score write-back versus no score write-back at fixed budget on OX micro-F1, and a selector negative control.
+Holm adjustment controls multiplicity across these four contemporaneous contrasts~\cite{holm1979}.
+We use paired exact tests for binary outcomes and a paired case bootstrap that resamples cases and recomputes OX micro-F1.
+Open-MRR@5 is reported descriptively as a paired bounded nonbinary outcome.
+
+\paragraph{Evidence scope.}
+The experiments use fixed 100-case subsets for mechanism analysis.
+RQ1 estimates the effect of changing the case axis within the deployed selector cascade; RQ2 tests partition semantics on audited open-set MCR endpoints, with open-MRR@5 descriptive; and RQ3 isolates score write-back within the fixed OX decoder and evidence-budget design.
+The leaf-injection arm is a retrospective diagnostic from an earlier judge configuration.
+The flat control matches model-call counts; token, latency, and monetary cost remain future audit dimensions.
+
+\section{Results}
+\label{sec:results}
+
+\subsection{Overall Performance}
+\label{sec:main-results}
+
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+& \multicolumn{3}{c}{DA~\cite{diagnosisarena}} &
+\multicolumn{2}{c}{MCR~\cite{medcasereasoning}} &
+\multicolumn{1}{c}{OX~\cite{dualinf2025}} \\
+Method & @1 & @2 & MRR & Acc & R-Recall & micro-F1 \\
+\midrule
+\textbf{APHHM} & \textbf{0.71} & \textbf{0.78} & \textbf{0.748} & \textbf{0.50} & \textbf{0.753} & \textbf{0.651} \\
+MEDDxAgent & 0.62 & 0.71 & 0.665 & 0.24 & 0.412 & 0.491 \\
+MAC & 0.61 & 0.67 & 0.640 & 0.23 & 0.527 & 0.570 \\
+Dual-Inf & 0.60 & 0.70 & 0.650 & 0.17 & 0.444 & 0.507 \\
+i-MedRAG & 0.60 & 0.67 & 0.635 & 0.19 & 0.482 & 0.419 \\
+MDAgents & 0.58 & 0.67 & 0.625 & 0.20 & 0.570 & 0.543 \\
+Self-refine & 0.57 & 0.62 & 0.595 & 0.21 & 0.447 & 0.530 \\
+Flat rerank & 0.56 & 0.63 & 0.595 & 0.17 & 0.404 & 0.495 \\
+CoT+RAG & 0.55 & 0.63 & 0.590 & 0.22 & 0.478 & 0.466 \\
+Direct CoT & 0.54 & 0.61 & 0.575 & 0.18 & 0.510 & 0.543 \\
+Chain-of-Diagnosis + shared corpus & 0.54 & 0.55 & 0.545 & 0.14 & 0.430 & 0.475 \\
+Self-consistent CoT (5 samples) & 0.52 & 0.61 & 0.565 & 0.19 & 0.369 & 0.539 \\
+Flat beam search & 0.52 & 0.60 & 0.560 & 0.21 & 0.447 & 0.510 \\
+Medprompt-style & 0.52 & 0.57 & 0.545 & 0.18 & 0.294 & 0.522 \\
+MedRAG & 0.48 & 0.52 & 0.500 & 0.17 & 0.557 & 0.485 \\
+\midrule
+Flat rerank $\times 10$ (RRF) & 0.47 & 0.59 & 0.530 & 0.15 & 0.383 & 0.487 \\
+\bottomrule
+\end{tabular}
+\caption{Completed shared-backbone arms on the fixed 100-case subsets under unmodified benchmark interfaces. DA MRR is MRR@2; R-Recall is LLM reasoning recall; bold marks the best value per column. The separately backboned DiagnosisGPT-6B row is in the Supplementary Material.}
+\label{tab:main}
+
+\end{table*}
+
+APHHM ranks first in all six columns among the completed shared-backbone arms in Table~\ref{tab:main}.
+On the benchmark-native end tasks, it exceeds the strongest external result by $+0.09/+0.07$ on DA Top-1/Top-2, $+0.26$ on MCR accuracy, and $+0.081$ on OX micro-F1.
+Its MCR reasoning recall is also highest ($0.753$ vs.\ $0.570$), consistent with a belief state that preserves diagnostically relevant facts.
+The mechanism tests below attribute these margins to organization, concept competition, and state propagation.
+
+\subsection{RQ1: Case-Adaptive Organization}
+\label{sec:res-org}
+
+We compare the case-adaptive L1-axis pipeline with fixed ICD/specialty and case-irrelevant random axes while preserving family count and candidate budget.
+As shown in \Cref{tab:org-axis}, changing the axis within the current pipeline raises DA Top-1 accuracy by $0.34$ relative to the random axis (paired discordance $40/6$, exact $p=3.1{\times}10^{-7}$, Holm-adjusted $p=1.2{\times}10^{-6}$ across the four contemporaneous contrasts) and by $0.20$ relative to the fixed taxonomy ($25/5$, $p=3.2{\times}10^{-4}$).
+The fixed taxonomy emits more leaves than the case-adaptive system ($30.1$ vs.\ $17.8$ per case), showing that the case-adaptive gain accompanies more effective organization of a smaller frontier.
+
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{llcccc}
+\toprule
+Axis & Evaluation set & @1 & @2 & $\Delta$@1 & disc.\ $b/c$ \\
+\midrule
+Case-adaptive (full model) & full & \textbf{0.71} & \textbf{0.78} & --- & --- \\
+Fixed ICD/specialty & full & 0.51 & 0.60 & $+0.20$ & $25/5$ \\
+Random (case-irrelevant) & full & 0.37 & 0.42 & $+0.34$ & $40/6$ \\
+\midrule
+Fixed ICD/specialty & nonempty ($n{=}89$) & 0.57 & --- & $+0.135$ & $17/5$ \\
+Random (case-irrelevant) & nonempty ($n{=}55$) & 0.67 & --- & $+0.018$ & $7/6$ \\
+\bottomrule
+\end{tabular}
+\caption{L1-axis comparisons on DA ($n{=}100$). $\Delta$ is the case-adaptive minus the comparison score; nonempty rows condition on cases that produced a ranking.}
+\label{tab:org-axis}
+
+\end{table*}
+
+The same candidate-relative evidence selector runs under every axis.
+Mean selected L1 facts decrease from $4.94$ under the case-adaptive axis to $0.65$ under the fixed taxonomy and $0.13$ under the random partition; empty rankings increase from $1$ to $11$ and $45$, respectively.
+Thus, the intervention changes both grouping and whether candidate-relative evidence can distinguish the resulting families.
+Conditioning on nonempty rankings largely removes the random-axis difference ($7/6$) but leaves a fixed-taxonomy difference ($17/5$, $p=0.017$), suggesting both a selector-mediated effect and a residual organizational effect.
+
+Replacing the evidence selector with a salience-based alternative, or removing its discrimination hints, changes Top-1 accuracy by only $0.04$ (both $p>0.4$).
+Together with the axis intervention, these comparisons locate the large gain in the compatibility between case-adaptive organization and downstream candidate-relative selection.
+
+\subsection{RQ2: Concept-Level Candidate Competition}
+\label{sec:res-eq}
+
+Because concept compression retains the best-ranked member of each equivalence class, its rank-1 output is invariant to class membership (Section~\ref{sec:m3}).
+We verify endpoint sensitivity with $200$ randomized re-partitions per case: Top-1 is an algebraic identity on both MCR and DA, whereas MCR any-hit@5 and open-MRR@5 respond to changes in equivalence structure.
+The analysis therefore uses these open-set endpoints together with aggregate accuracy over the $98$ commonly scored MCR cases.
+
+Equivalence handling occurs during tree construction and again during decision-time compression.
+Table~\ref{tab:eq-site} crosses the two sites.
+
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{llcccc}
+\toprule
+Configuration & Sites & Acc@1 & any-hit@5 & open-MRR & cand./case \\
+\midrule
+Full model & both on & \textbf{0.50} & \textbf{0.58} & \textbf{0.53} & 2.02 \\
+No decision-time routing & build only & 0.50 & 0.58 & 0.52 & 4.64 \\
+No build-time de-duplication & decision only & 0.50 & 0.55 & 0.52 & 1.81 \\
+Neither & none & 0.42 & 0.56 & 0.48 & 2.11 \\
+\bottomrule
+\end{tabular}
+\caption{Equivalence handling on MCR with build-time and decision-time sites crossed ($n{=}98$).}
+\label{tab:eq-site}
+
+\end{table*}
+
+Removing equivalence handling from both sites lowers aggregate accuracy from $0.50$ to $0.42$; the paired difference is $+10.2$ percentage points with exact interval $[+3.9,+10.2]$ over $10/0$ discordant pairs (unadjusted $p=0.002$).
+Removing either site alone leaves accuracy at $0.50$, indicating that build-time and decision-time handling are partially substitutable rather than independently additive.
+
+Decision-time compression removes $56.5\%$ of surviving candidates ($4.64 \rightarrow 2.02$ per case) while bounding the paired binary accuracy difference to $[-1.0,+1.0]$ percentage points.
+Open-MRR@5 increases descriptively from $0.52$ to $0.53$.
+A count-matched blind merge is worse on both responsive endpoints (any-hit@5 $0.475\pm0.039$ vs.\ $0.571$; open-MRR@5 $0.444\pm0.014$ vs.\ $0.486$), where $\pm$ denotes the standard deviation over $200$ randomized partitions.
+The partition-randomization result ($p=0.015$; Holm-adjusted $p=0.030$) shows that semantic class membership matters beyond the number and sizes of compressed groups.
+The blind-merge null is nondegenerate: the synonym graph is complete in $0/35$ perturbable DA cases and $0/42$ perturbable MCR cases, $82.8\%/85.1\%$ of draws violate the quotient, and each draw averages $1.99$ false merges and $1.98$ false splits; the full audit is in the Supplementary Material.
+Blind merge leaves $0.79$ synonymous duplicate pairs, whereas the deployed operator's $0.00$ is guaranteed by construction.
+
+DA provides a complementary binding audit.
+Closed-set rematching reports a $0.112$ Top-1 increase even though the two configurations emit identical rank-1 labels in all $89$ gated cases and the open-set Top-1 difference is exactly zero.
+The contrast localizes this increase to member-to-representative option binding, while the responsive open-set MCR endpoints measure changes in concept competition.
+
+\Cref{fig:bounds} separates the two questions that the compression ablations answer.
+Substituting one policy or component for another stays inside the pre-registered $\pm5$ percentage-point non-inferiority margin in every case, whereas removing equivalence handling altogether clears it.
+The narrow bounds follow from the paired design rather than from limited power, because a paired difference cannot exceed the discordant-pair count divided by $n$; reporting them as bounds therefore states how small an effect can be instead of failing to detect one.
+On DA, the stricter concept-identity predicate scores $0.57$ versus $0.71$ and produces more clusters in $37$ cases and fewer in none; the closed-set member-to-representative audit explains this cross-caliber difference.
+Across these analyses, the stable mechanism is competition over concept classes, with several routing realizations reaching similar binary accuracy.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+  x=1cm,y=1cm,font=\scriptsize,
+  axisline/.style={draw=apgray,line width=0.5pt},
+  ci/.style={draw=apblue,line width=0.7pt,
+             {Bar[width=1.1mm]}-{Bar[width=1.1mm]}},
+  cikey/.style={draw=apwarm,line width=0.8pt,
+                {Bar[width=1.3mm]}-{Bar[width=1.3mm]}},
+]
+
+\fill[apmint] (3.70,1.77) rectangle (6.20,5.22);
+\draw[draw=apteal,line width=0.4pt,dash pattern=on 1.2pt off 1.2pt]
+  (3.70,1.77) -- (3.70,5.22)  (6.20,1.77) -- (6.20,5.22);
+\draw[draw=apgray,line width=0.5pt,dash pattern=on 1.6pt off 1.4pt]
+  (4.95,1.77) -- (4.95,5.22);
+
+\node[anchor=west,text=apgray] at (-0.15,5.42)
+  {\itshape Substituting one policy};
+
+\node[anchor=east] at (3.30,5.00) {Unconditional merge};
+\draw[ci] ({4.95+0.25*(-1.4)},5.00) -- ({4.95+0.25*(2.0)},5.00);
+\fill[apblue] ({4.95+0.25*(2.0)},5.00) circle (1.15pt);
+
+\node[anchor=east] at (3.30,4.67) {Calibration only};
+\draw[ci] ({4.95+0.25*(-2.5)},4.67) -- ({4.95+0.25*(3.0)},4.67);
+\fill[apblue] ({4.95+0.25*(1.0)},4.67) circle (1.15pt);
+
+\node[anchor=east] at (3.30,4.34) {Serial merge $\rightarrow$ calibrate};
+\fill[apblue] (4.95,4.34) circle (1.15pt);
+
+\node[anchor=east] at (3.30,4.01) {Frequency-matched random routing};
+\draw[ci] ({4.95+0.25*(-1.3)},4.01) -- ({4.95+0.25*(3.1)},4.01);
+\fill[apblue] ({4.95+0.25*(3.1)},4.01) circle (1.15pt);
+
+\node[anchor=east] at (3.30,3.68) {Count-matched blind merge};
+\fill[apblue] (4.95,3.68) circle (1.15pt);
+
+\node[anchor=east] at (3.30,3.35) {Blind merge, rank-1 size matched};
+\fill[apblue] (4.95,3.35) circle (1.15pt);
+
+\node[anchor=east] at (3.30,3.02) {Concept-identity predicate};
+\draw[ci] ({4.95+0.25*(-1.4)},3.02) -- ({4.95+0.25*(2.0)},3.02);
+\fill[apblue] ({4.95+0.25*(2.0)},3.02) circle (1.15pt);
+
+\node[anchor=east] at (3.30,2.69) {No family-level soft prior};
+\draw[ci] ({4.95+0.25*(-1.0)},2.69) -- ({4.95+0.25*(1.0)},2.69);
+\fill[apblue] ({4.95+0.25*(1.0)},2.69) circle (1.15pt);
+
+\draw[draw=apgray,line width=0.4pt] (-0.15,2.49) -- (7.95,2.49);
+\node[anchor=west,text=apwarm] at (-0.15,2.31)
+  {\itshape Removing equivalence handling};
+
+\node[anchor=east] at (3.30,1.99) {\textbf{Both execution sites off}};
+\draw[cikey] ({4.95+0.25*(3.9)},1.99) -- ({4.95+0.25*(10.2)},1.99);
+\fill[apwarm] ({4.95+0.25*(10.2)},1.99) circle (1.35pt);
+
+\draw[axisline] (3.45,1.59) -- (7.95,1.59);
+\foreach \v/\lbl in {-5/{-5},0/{0},5/{+5},10/{+10}}{%
+  \draw[axisline] ({4.95+0.25*(\v)},1.59) -- ({4.95+0.25*(\v)},1.51);
+  \node[anchor=north,inner sep=1.5pt] at ({4.95+0.25*(\v)},1.49) {$\lbl$};
+}
+\node[anchor=north,inner sep=1pt] at (5.70,1.15)
+  {paired difference (percentage points)};
+
+\end{tikzpicture}
+\caption{Paired bounds for the equivalence-compression variants on MedCaseReasoning accuracy ($n{=}98$, full model minus variant). Shading marks the pre-registered $\pm5$ percentage-point non-inferiority margin. Intervals are exact conditional intervals over discordant pairs, unadjusted for multiplicity; a point estimate on the upper bound means every discordant pair favors the full model, and the three variants without an interval have no discordant pair.}
+\label{fig:bounds}
+\end{figure}
+
+\subsection{RQ3: State Consistency and Bounded Decoding}
+\label{sec:res-state}
+
+Table~\ref{tab:state-2x2} crosses evidence budget $B_{\mathrm{evid}}$ with evidence-conditioned score write-back while holding the per-family cap and global decoder fixed.
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{@{}lcc@{}}
+\toprule
+Evidence budget & No write-back & Score write-back \\
+\midrule
+Fixed ($B_{\mathrm{evid}}{=}4$) & $0.576$ & $\mathbf{0.651}$ \\
+Default ($B_{\mathrm{evid}}{=}6$) & $0.584$ & $0.658$ \\
+\bottomrule
+\end{tabular}
+\caption{OX micro-F1 under a $2{\times}2$ comparison of evidence budget and evidence-conditioned score write-back ($n{=}100$).}
+\label{tab:state-2x2}
+
+\end{table}
+
+At the fixed budget, evidence-conditioned score write-back increases micro-F1 by $0.075$, with a paired bootstrap $95\%$ interval of $[0.036,0.113]$ and $p=4.0{\times}10^{-4}$ ($5000$ resamples; Holm-adjusted $p=1.2{\times}10^{-3}$).
+A per-case sign test agrees in direction ($42/14$, $p=2.3{\times}10^{-4}$).
+By contrast, increasing the evidence budget changes F1 by at most $0.008$ with or without score write-back, and the interaction is $-0.001$, so within this OX configuration the write-back accounts for the main gain.
+
+Holding the score-updated tree fixed, closed-panel decoding reaches micro-F1 $0.651$, compared with $0.610$ for the updated-score-pool decoder and $0.593$ for direct updated-score Top-5.
+Paired case-F1 favors the closed panel over direct updated-score Top-5 by $+0.056$ (bootstrap $95\%$ CI $[0.028,0.085]$) and over the updated-score-pool decoder by $+0.040$ (CI $[0.013,0.069]$).
+Forcing one candidate per family ($0.657$) and removing the family cap ($0.649$) both remain close to the full model ($0.651$), making the cap empirically secondary in this configuration.
+An emit-enabled variant scores similarly to score write-back alone ($0.645$ vs.\ $0.651$), further localizing the gain to belief-state updates.
+
+\subsection{Evaluation Analysis: Stage Attribution}
+\label{sec:res-tax}
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+  x=1cm,y=1cm,font=\scriptsize,
+  axisline/.style={draw=apgray,line width=0.5pt},
+  note/.style={draw=apwarm,line width=0.5pt,fill=apcream,rounded corners=2pt,
+               inner sep=3pt,anchor=north west,align=left,minimum height=1.40cm},
+]
+
+\node[rotate=90,anchor=center,text=apgray] at (0.18,3.85) {cascade order};
+\draw[-{Latex[length=1.4mm,width=1.3mm]},draw=apgray,line width=0.5pt]
+  (0.52,4.82) -- (0.52,2.88);
+
+\node[anchor=east] at (2.55,4.75) {Parent absent};
+\node[anchor=east] at (2.55,4.30) {Leaf absent};
+\node[anchor=east] at (2.55,3.85) {Local elimination};
+\node[anchor=east] at (2.55,3.40) {Global misranking};
+\node[anchor=east] at (2.55,2.95) {Binding failure};
+
+\fill[apblue] (2.70,4.63) rectangle (3.18,4.87);
+\fill[apwarm] (2.70,2.83) rectangle (7.02,3.07);
+
+\node[anchor=west] at (3.26,4.75) {$2$};
+\node[anchor=west,text=apgray] at (2.78,4.30) {$0$};
+\node[anchor=west,text=apgray] at (2.78,3.85) {$0$};
+\node[anchor=west,text=apgray] at (2.78,3.40) {$0$};
+\node[anchor=west] at (7.10,2.95) {$\mathbf{18}$};
+
+\draw[axisline] (2.70,2.72) -- (7.50,2.72);
+\foreach \x/\lbl in {2.70/0,3.90/5,5.10/10,6.30/15,7.50/20}{%
+  \draw[axisline] (\x,2.72) -- (\x,2.64);
+  \node[anchor=north,inner sep=1.5pt] at (\x,2.62) {\lbl};
+}
+\node[anchor=north,inner sep=1pt] at (5.10,2.30) {cases attributed ($n{=}20$)};
+
+\node[note,text width=7.28cm] at (0,1.80)
+  {\textbf{Counterfactual.} Acting on the unstratified reading and injecting
+   leaves across the full tree adds $16.1$ leaves per case and raises coverage
+   to $0.93$, yet Top-1 accuracy falls
+   \textcolor{apwarm}{$\mathbf{0.72 \rightarrow 0.42}$}
+   ($39/9$ discordant pairs, $p{=}1.5{\times}10^{-5}$).};
+
+\end{tikzpicture}
+\caption{Stage attribution of the $20$ apparent coverage misses on DiagnosisArena; the evaluation-interface stage is in the second colour. Under earliest-stage assignment the three intermediate stages receive no cases, and reading the same misses as insufficient recall motivates the intervention below, which enlarges the candidate space and lowers accuracy. The audit is retrospective.}
+\label{fig:attribution}
+\end{figure}
+
+A retrospective stage audit of the $20$ apparent coverage misses on DA attributes $18$ to binding failure and $2$ to absence of a suitable L1 family, so nine tenths of an apparent recall gap is an evaluation-interface failure (\Cref{fig:attribution}).
+Treating all $20$ as recall failures would suggest generating more leaves, yet full-tree leaf injection lowers Top-1 accuracy from $0.72$ to $0.42$, which is why stage attribution should precede a recall intervention.
+
+\subsection{Ten-Trajectory Flat Reranking Control}
+\label{sec:rq4}
+
+Flat retrieve--rerank performance does not improve with inference volume.
+Moving from its native configuration (about two model calls per case) to a structural proxy (about nine) and to Flat rerank $\times 10$ (RRF) (about $90$) gives $0.56/0.48/0.47$ Top-1 on DA, $0.495/0.479/0.487$ micro-F1 on OX, and $0.17/0.17/0.15$ accuracy on MCR, whereas APHHM reaches $0.71$, $0.651$, and $0.50$.
+The Supplementary call audit shows that the ten-trajectory control is matched within $2\%$ on DA and is call-richer on OX and MCR.
+The persistent margin at similar or higher call counts indicates that structured hypothesis management contributes beyond repeated flat sampling.
+
+\section{Discussion}
+\label{sec:discussion}
+
+The results establish a state-management view of hierarchical reasoning that complements fixed specialty routing.
+The case-specific hierarchy provides a coordinate system for comparing hypotheses, concept-level competition prevents surface forms from exhausting the decision budget, and evidence-conditioned score write-back keeps locally used evidence available globally.
+These three principles sit above prompt-level implementation choices, and they motivate extensions to other open-ended tasks with synonymous hypotheses and multi-stage local/global decisions.
+
+The evaluation analysis also has implications beyond APHHM.
+When an offline name-matching pass moves accuracy for several systems, the reported score reflects both hypothesis quality and normalization coverage.
+Benchmarks should therefore specify a common name--concept binding contract, and papers should report mapping failures separately from generation and ranking failures.
+
+The transferable contribution is therefore a coherent representation of concept identity and belief state throughout the reasoning trajectory, realized here by case-dependent organization compatible with downstream selection, equivalence-aware competition, and evidence-conditioned score write-back.
+
+Future validation should extend the mechanism tests to independently sampled and full-benchmark evaluations, cross axis and selector choices factorially, replicate evidence-conditioned score write-back across datasets, and validate the reasoning-recall judge against independent human or model judgments.
+Token-, latency-, and cost-level resource audits would complement the current call-count analysis, while larger samples would resolve smaller design choices and nonbinary endpoints.
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+Open-ended differential diagnosis requires more than a sufficiently broad candidate list: candidates must compete as clinical concepts, local evidence must update the state used by global decoding, and evaluation failures must be distinguished from reasoning failures.
+APHHM implements these requirements through case-adaptive organization, equivalence-aware competition, evidence-conditioned score write-back, and bounded decoding.
+Across three diagnostic benchmarks, the comparisons support an axis-conditioned pipeline effect, concept-aware competition on audited open-set endpoints, and score write-back on Open-XDDx; APHHM retains its end-task margins against a similar-call-count flat pipeline.
+The broader implication is that consistent hypothesis identity and belief state convert recall into reliable downstream decisions.
+ %
+%
+\section*{Ethical Statement}
+
+This study uses public research vignettes and does not involve patient care or clinical deployment.
+The evaluated models may reproduce demographic, geographic, and documentation biases present in their training data and retrieval corpora.
+The LLM-based reasoning-recall judge may add model-specific bias; its identity and prompt are fixed across comparisons, but independent human validation remains necessary.
+The system should not be used for diagnosis without prospective clinical evaluation, calibrated uncertainty, privacy safeguards, and expert oversight.
+ 
+\bibliography{references}
+
+\end{document}

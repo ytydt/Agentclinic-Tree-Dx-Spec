@@ -281,8 +281,17 @@ def _new_cached_adapter(
 
 
 def _runtime_cases(args: argparse.Namespace) -> list[Mapping[str, Any]]:
-    cases = list(competition._runtime_cases(args.case_filter, args.limit))
-    if not args.case_filter and not args.limit and len(cases) != DEFAULT_CASE_COUNT:
+    cases = list(competition._runtime_cases(
+        args.case_filter,
+        args.limit,
+        cases_json=getattr(args, "cases_json", None),
+    ))
+    if (
+        not args.case_filter
+        and not args.limit
+        and not getattr(args, "cases_json", None)
+        and len(cases) != DEFAULT_CASE_COUNT
+    ):
         raise ValueError(
             f"primary protocol requires {DEFAULT_CASE_COUNT} cases; got {len(cases)}"
         )
@@ -626,9 +635,16 @@ def _generate_one(
 def generate(args: argparse.Namespace) -> dict[str, Any]:
     manifest = _load_frozen_manifest(args.output_dir)
     rows = list(manifest["cases"])
+    arms = tuple(
+        token.strip()
+        for token in str(getattr(args, "arms", "") or ",".join(ARMS)).split(",")
+        if token.strip()
+    )
+    if set(arms) - set(ARMS):
+        raise ValueError("unsupported arms: %s" % sorted(set(arms) - set(ARMS)))
     tasks = [
         (arm, replicate, row)
-        for arm in ARMS
+        for arm in arms
         for replicate in range(1, args.replicates + 1)
         for row in rows
     ]
@@ -1821,9 +1837,20 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--snippet-budget", type=int, default=12)
     parser.add_argument("--replicates", type=int, default=DEFAULT_REPLICATES)
     parser.add_argument("--workers", type=int, default=3)
+    parser.add_argument(
+        "--arms",
+        default=",".join(ARMS),
+        help="comma-separated generation arms (default: C,A,B)",
+    )
     parser.add_argument("--bootstrap", type=int, default=5000)
     parser.add_argument("--case-filter", default="")
     parser.add_argument("--limit", type=int, default=0)
+    parser.add_argument(
+        "--cases-json",
+        type=Path,
+        default=None,
+        help="optional runtime cases JSON for non-TALP17 corpora",
+    )
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--skip-downstream", action="store_true")
     args = parser.parse_args(argv)

@@ -1,9 +1,13 @@
+> **文档状态：v2（2026-07-27 修订）**  
+> v1 主线为「召回—判别矛盾」。v2 保留该矛盾作为动机，但把研究对象升级为 **alignment-preserving hierarchical hypothesis management（APHHM，保持对齐的层级假设空间管理）**。  
+> 本次修订同时校正了 v1 中若干**与已落地实测不符**的表述，逐条见 [§十](#十v1--v2-修订对照必读)。落地论文稿见 `paper/`。
+
 清理后，论文的核心命题不应是“我们设计了一套两层诊断 pipeline”，而应是：
 
-> 困难开放式诊断的瓶颈不仅是医学知识不足，更是如何在开放、长尾且粒度混杂的诊断假设空间中，同时维持候选召回率和候选判别力。
-> 本研究把诊断建模为“病例自适应的层级假设空间构造—候选相对证据更新—局部到全局排序”，以解决平面 RAG 中召回增强反而导致候选拥挤和排序退化的问题。
+> 困难开放式诊断不仅需要召回足够多的假设，还必须在层级推理的**各阶段保持候选表示与信念状态的一致性**。简单扩大候选空间会产生**同义候选碎片化**、**局部证据无法传递到全局决策状态**，以及**输出名称与规范概念脱节**等问题。
+> 本研究因此研究 alignment-preserving hierarchical hypothesis management：病例自适应组织、候选相对证据更新、等价类感知的候选压缩、局部后验写回和有界全局解码。
 
-这个“召回—判别矛盾”应当成为全文唯一的主线。L1/L2、反锚定、gap-fill、局部冠军、软先验都应当作为它的自然推论，而不是彼此并列的独立技巧。
+「召回—判别矛盾」仍是入口叙事，但它本身不足以支撑全文：矛盾之所以真正造成损失，是因为扩大后的候选集在**表示**、**状态**与**名称**三个层面失去对齐（见 [§二.6](#6-三条对齐不变式a1a2a3v2-新增)）。因此 L1/L2、等价类压缩、后验写回、有界解码与阶段归因应作为「维持对齐」的自然推论；而 gap-fill、反锚定、单冠军**不应**继续作为主线推论——前者未获实测支持，后者已被明确否决。
 
 ---
 
@@ -73,11 +77,19 @@ SDBench、MAI-DxO、MEDDxAgent 等重点研究“下一步问什么、查什么�
 
 ### 2. 但提高召回并不自动提高诊断准确率
 
-当前 17 例结果已经给出一个非常重要的观察：
+> **v2 校正**：v1 此处以「当前 17 例」为唯一证据。现已有 DA / MCR / OX 各 100 例冻结切片，17 例仅作回归与机制发现用途，**不得作为论文证据**。下述观察在 100 例上依然成立，但结论要换成更强的版本（见本节末与 §二.6）。
+
+早期 17 例观察：
 
 * Config A 提高了正确 L2 疾病的生成覆盖率；
 * 同时增加了候选数量、语义重复、错挂和比较负担；
 * 最终 Top-2 并未稳定提高。
+
+100 例切片上的补充事实（更关键）：
+
+* 在 DA 上，未后处理的联合叶序 option **@2 已达约 0.78，而 @1 仅约 0.59**——正确概念常已在前列，却拿不到首位；
+* 该缺口的主因**不是**候选不够，而是同义叶分占槽位（表示层）与评分接口空绑（名称层）；
+* 在 OX 上，同一棵树只换短列表而不写回局部后验，F1 停在 **0.584**；写回后升到 **0.651**——说明局部证据若不进入全局状态，等于没算。
 
 这揭示了一个比“知识不足”更深的问题：
 
@@ -160,6 +172,22 @@ U(f\mid C)
 
 因此，不能简单拼接或归一化各家族的 L2 分数，必须单独设计跨家族仲裁。
 
+### 6. 三条对齐不变式（A1/A2/A3）（v2 新增）
+
+v1 的动机链条止于「尺度不可比」。但实测表明，即使候选已被组织进 L1 家族、且尺度问题已由分层缓解，仍有三类**对齐**失效独立发生。把它们命名为不变式，是 v2 的核心改动：
+
+| 编号 | 不变式 | 违例表现 | 实测锚点 |
+|------|--------|----------|----------|
+| **A1** | **表示对齐**：指同一临床概念的候选串必须只占一个竞争槽位 | 近义叶各自为战，共同吃掉前沿预算 | DA @2≈0.78 而 @1≈0.59 的非对称缺口 |
+| **A2** | **状态对齐**：某阶段消费的证据必须更新下一阶段所读的信念状态 | 局部改好的后验在构造全局候选池时被丢弃，局部推理算了等于没算 | OX 冷树 0.584 → 写回 0.651 |
+| **A3** | **接口对齐**：输出名称必须绑定到评分契约所期望的规范概念 | 正确叶排位已够高，评分映射却记为空绑，计为 miss | DA 覆盖缺口 20 例中约 18 例为 `MAPPER_UNBIND` |
+
+三点说明：
+
+1. **这不是三个技巧，而是三条可检验的约束**。每条都能单独违反，且违反方式不同：A1 是表示层、A2 是状态层、A3 是接口层。
+2. **A1 与 A3 容易被混为一谈，但必须分开**。A1 发生在决策之前（谁参与竞争），A3 发生在决策之后（结果如何被记账）。把 A3 的违例当成召回不足，会直接导出错误干预（见 §四末行与 §七创新四）。
+3. **病例自适应层级本身不是第四条不变式，而是使前三条可检验的底座**——它定义了「什么是家族、什么是槽位、什么是状态」。这一定位变化是 v2 对 v1 创新一的降权理由。
+
 ---
 
 ## 三、现有研究留下的具体缺口
@@ -186,7 +214,7 @@ U(f\mid C)
 | ------------------- | ----------------------- | ----------------------------------- | ------------------------- |
 | 长尾疾病未进入候选空间         | 先解决 recall，而不是直接要求模型给答案 | 多来源具体疾病召回 + RRF                     | 正确疾病的结构覆盖率提高              |
 | 固定科室/ICD 分类不适合每种综合征 | 层级应由病例决定，而非由全局本体决定      | 单一分类轴的病例自适应 L1 家族构造                 | 在相同家族预算下，正确疾病更容易获得合适父家族   |
-| 检索到了疾病但树没有容纳它       | 检索与结构必须进行覆盖一致性检查        | 非缩减 L1 gap-fill                     | 减少结构性遗漏而不反复重写整棵树          |
+| 检索到了疾病但树没有容纳它       | 检索与结构必须进行覆盖一致性检查        | 非缩减 L1 gap-fill                     | ~~减少结构性遗漏~~ → **v2：假设未获支持**，见下表注 1 |
 | 全局查询稀释罕见病和局部鉴别      | 检索应以当前诊断家族为条件           | 逐 L1 家族的 L2 召回和生成                   | 在固定总候选预算下提高疾病级召回          |
 | 召回增强造成候选爆炸和语义重复     | 高召回后必须有预算化结构压缩          | 语义去重、父子一致性门、每家族叶预算                  | 降低冗余而尽量保留正确疾病             |
 | CoT 偏好最显眼、最典型事实     | 选择“候选间最有差异”的事实          | 反原型锚定证据选择                           | 提高证据的候选区分度                |
@@ -195,6 +223,17 @@ U(f\mid C)
 | 异质疾病在平面空间难以直接比较     | 先比较同尺度候选                | 每个 L1 家族内的 L2 evidence matrix 和局部排序 | 提高 gold-present 条件下的局部保留率 |
 | 各家族局部分数不可比较         | 跨家族必须重新直接比较             | 独立全局仲裁器 + L1 软先验                    | 优于简单拼接局部分数或统一先验           |
 | 端到端准确率无法说明失败发生在哪里   | 每个阶段必须冻结并单向传递           | 冻结清单、哈希和阶段性指标                       | 将错误分解为召回、局部排序和全局仲裁错误      |
+
+**v2 补入的三行**（对应 A1/A2/A3；v1 缺失或仅隐含）：
+
+| 现有缺陷 | 设计原则 | 算法模块 | 应验证的假设 | 当前状态 |
+|---|---|---|---|---|
+| 同一概念的多个近义叶分占前 $k$ 槽位（**A1**） | 候选应在**规范概念商空间**上竞争，而非在字符串上竞争 | 等价类合并与互斥选路（`compat_parallel` 为当前启发式） | 在 $k$ 不变时提高概念级 Top-1，而 @2 基本不变 | **已见支持**：DA @1 0.59→0.71/0.72，@2 约不变；启发式待独立测试集确认 |
+| 局部证据更新未进入全局候选池（**A2**） | 局部后验必须**写回**共享树状态，再据此构造全局池 | `apply_live_posteriors_and_cap`（写回叶后验 + 家族候选截断）＋ 后验池解码 | 仅换解码器不写回 < 写回后再解码 | **已见支持**：OX 0.584→0.651；补叶臂 0 新叶且未更优（0.645） |
+| 排序正确但名称未绑定到规范概念（**A3**） | 名称规范化属于**评分契约**，应由基准统一固定 | 观察事实/病名规范化 + option↔leaf 绑定契约 | 分层审计后，接口失败不再被计入召回失败 | **已见支持**：20 例覆盖缺口中约 18 例 `MAPPER_UNBIND`；修补算子不进论文结果（见 §八） |
+
+> **注 1（gap-fill 假设的实测修正）**：召回审计显示，DA 上被记为「覆盖缺口」的约 20 例中，约 18 例实为 `MAPPER_UNBIND`（接口空绑），仅约 2 例为真 `TREE_PARENT_ABSENT`，且这 2 例属**分类轴错位**——在既有轴内做非缩减修补并不能容纳金标。更强的反证是：按未分层读数所推荐的干预（注入全树叶并重跑类型化映射）实测使 option @1 **下降**。  
+> 因此 v2 的口径是：**保留 gap-fill 作为 `TREE_PARENT_ABSENT` 阶段唯一对症算子，但不宣称它带来显著端到端召回或 Top-$k$ 收益**。
 
 这张表实际上就是论文从 Introduction 到 Method 的逻辑骨架。
 
@@ -241,6 +280,8 @@ U(f\mid C)
 
 这样反锚定和 P5 就不是相互竞争的配置名，而是“选择器”和“更新器”两个正交模块。
 
+> **v2 定位调整**：本模块**保留为方法组件与待验证假设**，不再作为已被端到端结果证明的头号贡献。理由是当前 100 例主结果无法把增益归因到选择器：DA 的增益可追到等价类压缩，OX 的增益可追到后验写回，而 anti-anchor / P5 尚缺针对性消融（同栈内换选择器、控住其余变量）。论文正文应把它写成 open hypothesis 并给出计划中的消融，而不是写成已证机制。
+
 ### 模块三：分支条件化的疾病召回与局部判别
 
 1. 对每个 L1 家族重新构造查询。
@@ -255,19 +296,47 @@ U(f\mid C)
 * 它应作为“最大召回但未控制候选质量”的 ablation；
 * 最终方法应加入语义去重和每家族叶预算。
 
-### 模块四：软先验引导的局部—全局仲裁
+> **v2 升格（A1）**：v1 把「语义去重」与父子一致性、叶预算并列为工程化剪枝手段。v2 应把它单独提为正式研究问题，并给出形式化口径：
+>
+> 设 $L$ 为在场叶集合，$\sim$ 为「在评分粒度上指同一诊断」的等价关系，$\pi: L \to L/\!\sim$ 为规范概念映射。报告 $k$ 项的协议应满足
+>
+> $$|\pi(\text{Top-}k)| = k$$
+>
+> 而无约束排序只保证 $|\text{Top-}k| = k$。两者之差即被浪费的决策预算：若前 5 叶中有 3 叶同属一类，系统就把 60% 的决策预算用于复述同一个假设。
+>
+> 该视角还解释了两条可观测机制：**槽位稀释**（竞争类被挤到截断线下，表现为 `GLOBAL_MISRANK`）与**决策分裂**（信念质量被分散到多个表面形式，故最高分的**字符串**未必是最高分的**概念**——这正对应 DA 上 @2 健康而 @1 偏弱的特征）。
 
-每个家族向全局仲裁器提交：
+### 模块四：状态一致的局部—全局传播与有界解码
 
-* 一个或多个局部前沿疾病；
+> **v2 重写要点**：v1 本模块只写「提交局部前沿 + 冻结 L1 分数 → 仲裁」，**缺了最关键的一步：把局部后验写回树状态**。而 OX 结果恰恰只支持这一步。故 v2 把模块四从「软先验仲裁」改写为「状态传播 + 有界解码」，软先验降为其中一项约束。
+
+本模块分两个必需子步骤：
+
+**（1）后验写回与家族截断（A2）**
+
+局部证据标注完成后，必须把局部后验**写回**共享树的叶上，并按每家族候选上限截断，然后才允许下游读取该状态构造全局候选池。若跳过写回，全局解码读到的仍是建树期的「冷」后验，于是：
+
+> 局部证据被计算过，但从未改变过任何最终决策。
+
+这一步在实现上对应 `apply_live_posteriors_and_cap`，插入点在 joint 之后、树序列化之前。它是 OX 上 0.584 → 0.651 的直接来源；反证是「强制补叶」臂全例新增 0 叶且并不更优（0.645），说明起效的是**状态更新**而非**开集造叶**。
+
+**（2）有界全局解码**
+
+每个家族向全局阶段提交：
+
+* 一个或多个局部前沿疾病（见下 $b_g$）；
 * 家族内支持/反对证据；
-* 冻结的家族信念分数。
+* 冻结的家族信念分数（仅作软先验）。
 
-全局仲裁器重新比较具体疾病，L1 分数只作为可被病例证据推翻的软先验。
+全局仲裁器重新比较具体疾病，L1 分数只作为可被病例证据推翻的软先验；**不得**把不同家族的局部分数拼接或归一化成伪全局概率。
+
+除「每家族配额」路线外，v2 补入第二条已落地路线：**后验池解码**——不设家族配额，直接取信念状态中后验最高的 Top-$N$ 叶作为闭集池，在池内讨论并投影回池后提交 Top-$K$（OX 实现为 $N{=}15$、$K{=}5$）。该路线与（1）不可分割：池只有在定义它的后验被更新过之后才有意义。
 
 这里也建议把“每家族只传一个冠军”改写为更一般的：
 
 > bounded local frontier
+
+v2 应把措辞从「建议」改为**明确否决单冠军作为默认**：若家族 $g$ 提交 $b_g$ 个候选，单冠军解码等于把 $b_g \equiv 1$ 写死，无论局部 margin 多小，于是任何一次局部误排都不可恢复；更糟的是，由此产生的 `LOCAL_ELIMINATION` 对全局阶段**不可见**——全局只看得到幸存者。单冠军只应作为「由证据选出的 $b_g=1$」而保留。
 
 当前一个冠军只是 (b_g=1) 的特例。更稳健的论文方法可以根据组内 margin 或不确定度提交 1–2 个候选：
 
@@ -301,7 +370,43 @@ b_g =
 * 语义重复率；
 * 分支重叠和错挂率。
 
-### RQ2：候选相对证据选择是否优于显著性驱动的 CoT？
+### RQ2（v2 新增，优先级提到第二位）：等价类感知压缩是否改善概念级判别？
+
+比较：
+
+* 无后处理的联合叶序；
+* 全体强制同义合并；
+* 只做封闭池强校准；
+* 拥挤门控下的互斥选路（`compat_parallel`）；
+* 串行「先合并再强校准」。
+
+指标：
+
+* 概念级 Top-1（即 $|\pi(\text{Top-}k)|=k$ 约束下的首位命中）；
+* @1 与 @2 的**差值变化**（预期 @1 升、@2 基本不变）；
+* 前 $k$ 槽位的等价类重复率；
+* 门控触发率与两分支各自的净效应；
+* 独立测试集上的阈值稳定性（**必做**，当前仅有开发切片证据）。
+
+### RQ3（v2 新增）：局部证据只有写回状态才影响最终决策？
+
+比较（同一棵树、同一解码器，仅切换是否写回）：
+
+* 冷后验 + 闭集解码；
+* 写回后验 + 闭集解码；
+* 写回 + 家族截断；
+* 强制补叶（开集造叶）对照臂。
+
+指标：
+
+* 集合级 micro-P/R/F1；
+* 金标落入后验 Top-$N$ 池的比例（池覆盖曲线）；
+* `LOCAL_ELIMINATION` 与 `GLOBAL_MISRANK` 的计数迁移；
+* 新增叶数（用于排除「增益来自造叶」的解释）。
+
+### RQ4（原 RQ2，v2 降级为待验证）：候选相对证据选择是否优于显著性驱动的 CoT？
+
+> **降级理由**：当前主结果无法把增益归因到选择器；本 RQ 应作为 open hypothesis 报告，并需同栈受控消融。
 
 比较：
 
@@ -318,7 +423,7 @@ b_g =
 * 证据去除后的排名变化；
 * 与专家关键推理的覆盖率。
 
-### RQ3：层级局部—全局排序是否优于平面排序？
+### RQ5（原 RQ3）：层级局部—全局排序是否优于平面排序？
 
 比较：
 
@@ -327,6 +432,7 @@ b_g =
 * 每家族单冠军；
 * 每家族 Top-2；
 * 自适应 bounded frontier；
+* 后验池解码（v2 补入）；
 * 有/无 L1 软先验。
 
 指标：
@@ -336,22 +442,30 @@ b_g =
 * arbiter recovery/harm；
 * token 和候选预算。
 
-### RQ4：性能变化能否被阶段性机制解释？
+### RQ6（原 RQ4）：性能变化能否被阶段性机制解释？
 
 验证最终收益究竟来自：
 
 * 正确疾病以前没召回，现在被召回；
 * 正确疾病原来存在但局部排序错误，现在被保留；
 * 家族先验纠正了跨家族误排；
+* **接口空绑被修复**（v2 补入——必须与上三项分开计，否则会被误计成召回收益）；
 * 或者只是更多 LLM 调用带来的计算收益。
 
 这要求 compute-matched flat baseline 和完整错误路径审计。
 
+> **v2 校正：什么才算 compute-matched。**  
+> 早期「结构代理匹配」臂每例约 **9 次**模型调用，比主方法的实际调用规模低一个数量级，**不构成有效预算控制**——其弱势可被归因为算力不足。正式预算对照应为 **B02-SC10**：平面 retrieve→rerank 跑 10 条自洽轨迹并按倒数排名融合，每例约 **90 次**调用（DA 92.4 / OX 89.8 / MCR 93.2）。  
+> 该对照下三分集均未逼近主方法（DA @1 0.47、OX micro-F1 0.487、MCR Acc 0.15），且多数指标不优于原生两调用配置，因此「增益只是更多调用」的解释被排除。附带发现：OX 上 SC10 的解释一致性由 0.445 崩至 0.044——倒数排名融合保住病名却丢弃逐轨迹解释结构，可作为「平面加采样买不到组织结构」的正面证据。
+
 ---
 
-## 七、最终应保留的创新点
+## 七、最终应保留的创新点（v2 重组）
 
-### 创新一：病例自适应的诊断假设空间
+> v1 的四点为：病例自适应层级 / 召回—判别解耦 / 尺度一致仲裁 / 可归因评价。  
+> v2 保留「病例自适应层级」与「可归因评价」，但把中间两点替换为**等价类感知压缩**与**状态一致传播**——因为这两条才是 100 例实测直接支持的机制，而「解耦」偏叙事、「尺度一致」已被层级设计本身涵盖。
+
+### 创新一：病例自适应的层级假设空间（定位下调为「底座」）
 
 不同于固定 ICD 层级、科室路由或专家角色层级，本研究根据当前综合征动态构造单轴疾病家族，并将其作为临时推理结构。
 
@@ -359,48 +473,62 @@ b_g =
 
 * 层级由病例决定；
 * 具体疾病召回与家族组织解耦；
-* 检索结果反向约束结构覆盖，但不规定分类方式。
+* 检索结果**提示**结构覆盖，但不规定分类方式。
 
-### 创新二：召回与判别的显式解耦
+> **v2 两处收紧**：  
+> （1）它的作用是**作为候选组织坐标，并使 A1/A2/A3 可检验**，而不是自带一个端到端召回数字；  
+> （2）**不再声称 gap-fill 已显著改善疾病召回**（依据见 §四注 1）。v1 原句「检索结果反向约束结构覆盖」易被读成覆盖率收益，已改为「提示」。
 
-本研究把诊断拆为两个具有冲突目标的过程：
+### 创新二：等价类感知的候选空间压缩（A1）
 
-* recall：尽量不漏掉正确疾病；
-* discrimination：在有界、同尺度候选中使用差异性证据排序。
+把 **Fine 同义拥挤**从「后处理细节」提升为正式研究问题：
 
-分支条件化召回、gap-fill、语义去重和有界前沿共同处理二者之间的张力。
+> 诊断候选应在**规范概念商空间** $L/\!\sim$ 上竞争，而不是让同义叶重复占用前沿预算。
 
-这是比“使用多源 RAG”更稳定的创新叙事。
+形式化口径与两条机制（槽位稀释、决策分裂）见 §五模块三。要点：
 
-### 创新三：尺度一致的证据更新与局部—全局仲裁
+* $k$ 项决策预算应覆盖 $k$ 个**概念**，而非 $k$ 个**字符串**；
+* 该修补必须发生在评分**之前**——一旦在决策时刻才做等价类归并，接口已无法恢复本应参与竞争的类；
+* `compat_parallel`（拥挤门控下的互斥选路）是**当前启发式实现**，不是同义性理论；其阈值**必须在独立测试集上验证**，当前仅有开发切片证据。
 
-本研究不让模型一次性比较所有异质疾病，而是：
+### 创新三：状态一致的局部—全局传播（A2）
 
-1. 在家族级进行稀疏、候选相对的证据更新；
-2. 在同一家族内建立完整疾病效应矩阵；
-3. 在跨家族阶段重新比较有界前沿疾病；
-4. 只把 L1 信念作为软先验，而不直接混合局部分数。
+OX 结果最直接支持这一点：
 
-这是算法层面最可区别于普通 multi-agent discussion 的部分。
+> 局部证据更新只有**写回树状态并改变全局候选池**，才真正影响最终决策。
 
-### 创新四：可归因的诊断流水线评价
+因此：
 
-不是只报告最终准确率，而是显式测量：
+1. 写回是必需步骤，不是实现细节（0.584 → 0.651）；
+2. 增益来自**状态更新**而非开集造叶（补叶臂 0 新叶、并不更优）；
+3. **单冠军应改为不确定性感知的 bounded frontier 或后验池**；单冠军仅作为由证据选出的 $b_g=1$ 保留；
+4. L1 信念只作软先验，不与局部分数混合。
 
-[
-\text{Final success}
-====================
+这是算法层面最可区别于普通 multi-agent discussion 的部分：被结构化的不是角色与讨论流程，而是**被读写的信念状态**。
 
-\text{family coverage}
-\times
-\text{disease coverage}
-\times
-\text{local retention}
-\times
-\text{global arbitration success}
-]
+### 创新四：阶段可归因评价（v2 补齐接口级）
 
-这里不是要求真的把四个经验比例相乘，而是把它们作为因果式错误路径进行分解。
+不是只报告最终准确率，而是**严格分层**归因到最早失效阶段：
+
+```text
+TREE_PARENT_ABSENT → L2_MISS → LOCAL_ELIMINATION → GLOBAL_MISRANK → MAPPER_UNBIND
+```
+
+> **v2 关键修正**：v1 的四因子式
+> `family coverage × disease coverage × local retention × global arbitration success`
+> **漏掉了评分接口这一级**；而新审计恰好证明，DA 上最主要的失败通道正是被漏掉的那一级（约 18/20 为 `MAPPER_UNBIND`）。缺这一级会把接口错误误认为召回失败，并据此推荐注入叶/加大 gap-fill——该干预实测使 option @1 **下降**。
+
+因此级联本身即为科学主张，而非可选日志。配套要求：
+
+| 阶段 | 对应不变式 | 对症干预 | 误判为召回失败后的错误干预 |
+|------|------------|----------|----------------------------|
+| `TREE_PARENT_ABSENT` | 组织 | 改轴；gap-fill | — |
+| `L2_MISS` | 组织 | 分支条件化召回 | — |
+| `LOCAL_ELIMINATION` | A2 | bounded frontier；放宽家族上限 | 注入更多叶 |
+| `GLOBAL_MISRANK` | A2 | 后验写回；加宽池 | 注入更多叶 |
+| `MAPPER_UNBIND` | A3 | 修名称绑定契约 | 注入叶 / 加大 gap-fill |
+
+仍可保留乘积式作为**因果错误路径**的直觉表达，但必须补足第五项，且明确不是把经验比例真的相乘。
 
 ---
 
@@ -437,14 +565,54 @@ b_g =
 
 分别挑选最佳结果后拼成一个不存在的系统。论文中的 main method 必须对应单一、完整、冻结的端到端实现。
 
+> **v2 口径澄清（与落地现状对齐）**：上述禁令的**目标**是禁止跨实验挑最优拼成不存在的系统，这一点继续有效。但字面要求「单一冻结实现覆盖全部数据集」与实际不符：三数据集的**评分契约**本身不同（DA 为选项映射、MCR 为单轨迹开放诊断、OX 为多金标集合覆盖），因此解码与投影档位必然不同。
+>
+> v2 采用如下诚实口径：
+>
+> 1. **推理栈共享且冻结**：组织 → 候选相对证据 → 等价类压缩 → 后验写回 → 有界解码，在三集上为同一套模块；
+> 2. **仅解码/投影随评分契约变化**，且必须逐集声明（如 OX 的锁定预算、写回、后验池 $N{=}15/K{=}5$）；
+> 3. **禁止**把三集各自最优拼成单一标量或单一「最佳配置」宣称；每集分表报告，指标不可横比；
+> 4. 任何一集内部，**不得**在同一表中混用不同预算/不同选择器的最优行。
+
+### v2 补充：synonym bind（名称修绑）的安置
+
+v1 未涉及该算子。按 A3 定位与实测，安置规则为：
+
+* **归类**：属「统一名称规范化 / 评分协议」，**不是**主推理创新，不得写进方法贡献；
+* **不进结果**：论文所有分数在**未改动评分接口**下报告。原因是该算子对外部基线的增益不小于本方法（最强基线约 +0.05、某自反思基线约 +0.08，而本方法约 +0.02），启用后测得的差距会部分反映名称规范化覆盖度而非推理质量；
+* **保留为诊断结论**：`MAPPER_UNBIND` 主导表观覆盖缺口这一事实要写入创新四，并据此建议**基准层面统一名称绑定契约**，而非各家自带修补；
+* **风险入档**：接口级算子极易被过度记功——早期实现曾因自引用检索块相似度取满值而把空绑一律提到首位，造成虚高，相关表已作废。此案例本身就是创新四的反面证据。
+
 ---
 
 ## 九、可以直接用于论文的完整问题陈述
 
-> Existing LLM-based diagnostic systems typically formulate differential diagnosis as flat candidate generation followed by global reasoning or reranking. This formulation conflates two competing objectives: retrieving a sufficiently comprehensive set of disease hypotheses and discriminating among the retrieved candidates using limited clinical evidence. Although retrieval augmentation can improve disease recall, it also introduces redundant and semantically similar candidates, increasing comparison difficulty and potentially degrading final ranking. Moreover, flat candidate sets mix hypotheses at different levels of abstraction, while the diagnostic value of a clinical finding is conditional on the alternatives currently under consideration.
+**v2 版本（应采用）：**
+
+> Existing LLM-based diagnostic systems typically formulate differential diagnosis as flat candidate generation followed by global reasoning or reranking. This formulation conflates retrieving a sufficiently comprehensive set of disease hypotheses with discriminating among them under limited clinical evidence. Retrieval augmentation can improve disease recall, yet it also introduces redundant and semantically similar candidates. We argue that the resulting loss is better understood as a failure to preserve alignment across stages of hierarchical reasoning: near-synonymous candidates compete as distinct hypotheses and consume the decision budget (representation alignment); locally updated beliefs are discarded when the global candidate pool is formed, so local reasoning never affects the outcome (state alignment); and correctly ranked entities are recorded as misses when emitted names fail to bind to the canonical concepts a scoring contract expects (interface alignment).
 >
-> We therefore formulate difficult open-ended diagnosis as case-adaptive hierarchical hypothesis management. The proposed framework first organizes multi-source disease recalls into a case-specific, single-axis family structure; then selects evidence according to its relative discriminative value among current families; performs branch-conditioned disease retrieval and within-family comparison; and finally conducts cross-family arbitration using family-level belief scores as soft priors. This decomposition explicitly separates recall, organization, local discrimination, and global decision-making, enabling both improved diagnostic search and stage-wise attribution of failures.
+> We therefore formulate difficult open-ended diagnosis as alignment-preserving hierarchical hypothesis management. The framework organizes multi-source disease recalls into a case-specific, single-axis family structure; updates family beliefs using candidate-relative rather than salience-driven evidence; compresses candidates in a quotient space of canonical concepts so that a $k$-item budget covers $k$ distinct concepts; writes local posteriors back into the shared belief state before global decoding; and decodes over a bounded frontier or posterior pool instead of a single per-family champion. We further require that failures be attributed to the earliest stage in a strict cascade---absent parent, missing leaf, local elimination, global misrank, interface unbinding---because unstratified audits report interface failures as recall failures and thereby motivate interventions that measurably reduce accuracy.
+
+**v1 版本（保留备查，勿再采用）：** 见 git 历史；其表述止于 case-adaptive hierarchical hypothesis management，未包含商空间压缩、状态写回与接口归因。
 
 简化成一句中文就是：
 
-> 本研究不是用层级结构模仿医院组织，而是用病例自适应层级解决开放式诊断中“候选必须召回得足够多，但又必须在同一尺度上有效比较”的矛盾。
+> 本研究不是用层级结构模仿医院组织，而是用病例自适应层级维持开放式诊断中的三重对齐：同一概念只占一个竞争槽位、局部证据必须写回并改变全局候选池、输出名称必须绑定到规范概念——并把失败严格归因到最早失效的那一级。
+
+---
+
+## 十、v1 → v2 修订对照（必读）
+
+| # | v1 表述 | 与落地不符之处 | v2 处置 |
+|---|---------|----------------|---------|
+| 1 | 主线仅为「召回—判别矛盾」 | 矛盾成立，但不足以解释实测损失来源 | 保留为入口叙事；升级为 APHHM 与 A1/A2/A3（§二.6） |
+| 2 | 以「17 例」为核心证据 | 已有 DA/MCR/OX 各 100 例；17 例仅回归用 | §二.2 标注并补 100 例事实 |
+| 3 | gap-fill 假设「减少结构性遗漏」 | 覆盖缺口约 18/20 实为接口空绑；余 2 例轴错位修不了；照此推荐的注入干预实测掉点 | §四注 1；创新一收紧为「不宣称召回收益」 |
+| 4 | 语义去重仅作工程剪枝之一 | DA 上 @1 与 @2 的非对称缺口正由等价类分裂造成 | 升为创新二，给出商空间形式化（§五模块三） |
+| 5 | 模块四只有「提交前沿 + 软先验仲裁」 | **缺后验写回**；而 OX 唯一直接支持的正是写回 | 模块四重写为「状态传播 + 有界解码」；补后验池 |
+| 6 | 「建议」把单冠军改为 bounded frontier | 落地已否决单冠军作默认 | 改为明确否决，单冠军仅为 $b_g=1$ 特例 |
+| 7 | anti-anchor / P5 作既定组件，RQ2 位列第二 | 主结果无法归因到选择器 | 降级为待验证假设；RQ 重排为 RQ4 |
+| 8 | 创新四四因子式 | **漏评分接口一级**，而这正是最主要失败通道 | 补为五级级联 + 阶段/干预对照表 |
+| 9 | RQ4 只说 compute-matched | 早期代理匹配约 9 调用，非真匹配 | 正式对照改为 B02-SC10（约 90 调用/例） |
+| 10 | 未涉及 synonym bind | 该算子对基线增益 ≥ 本方法；且曾因实现缺陷虚高 | §八新增安置规则：归入评分协议、不进结果、保留为诊断结论 |
+| 11 | 要求单一冻结实现覆盖全部数据集 | 三集评分契约不同，解码/投影必然不同 | §八澄清：推理栈共享冻结，仅解码随契约变化，禁止跨集拼分 |

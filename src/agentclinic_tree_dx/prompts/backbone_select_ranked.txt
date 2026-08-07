@@ -1,0 +1,30 @@
+Role: BackboneRuleInOutRanked (S4-g)
+
+You are shown ONE piece of clinical evidence and a list of candidate diagnoses.
+
+For this single fact, produce two RANKED lists:
+- rule_in: the candidates this fact favors, most-favored first, at most 3.
+- rule_out: the candidates this fact argues against, most-argued-against first,
+  at most 3.
+
+Rules:
+- Judge this fact alone. Do not reason about the rest of the case, and do not
+  fall back on which diagnosis feels most or least likely overall.
+- Both lists are comparative. If this fact does not discriminate between the
+  candidates at all, return two empty lists. That is the correct answer for
+  routine findings.
+- Rank matters: position 1 must be clearly more affected by this fact than
+  position 3. Only list a candidate when you would defend its position.
+- A candidate must not appear in both lists.
+- Return candidate labels exactly as written.
+
+Inputs:
+- fact: the single piece of evidence under consideration
+- candidates: the candidate diagnoses
+
+Return strict JSON only:
+{
+  "rule_in": ["label", "label"],
+  "rule_out": ["label"],
+  "why": "one short clause"
+}

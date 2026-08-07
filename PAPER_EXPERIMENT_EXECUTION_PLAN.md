@@ -117,7 +117,7 @@
 | I02 | 病例报告污染清理 | `scripts/paper/audit_leakage.py` | 精确 ID、标题/作者、近重复文本三层清理；输出逐文档排除原因 |
 | I03 | 确定性诊断名称归一化 | `scripts/paper/normalize_diagnoses.py` | SNOMED/UMLS/ICD/ORPHA 优先；未映射项进入盲法人工裁决 |
 | I04 | 统一端到端方法 runner | `scripts/paper/run_experiment.py` | `M00` 从原始 runtime case 一次性产生冻结树、排名、trace 和成本 |
-| I05 | 逐病例预算账本与 compute-matched flat baseline | `scripts/paper/build_budget_schedule.py` | `B02` 在每例 token/call/tool/candidate 预算上与 `M00` 偏差不超过 5% |
+| I05 | 逐病例预算账本与 compute-matched flat baseline | `scripts/paper/build_budget_schedule.py` | 正式预算对照为 `B02-SC10`（约 92 次调用/例）；报告实际达成比而非仅 PASS/FAIL，见 §8.3 第 8–9 条 |
 | I06 | 固定层级与 flat beam 基线 | `scripts/paper/run_baseline.py` | 不读取 gold，复用相同知识库、模型与输出协议 |
 | I07 | 外部基线 wrapper | `baselines/` 下各适配器 | 保存上游 commit、环境、模型、提示和原始输出；可统一评分 |
 | I08 | 统一评分与统计 | `scripts/paper/score_results.py` | 精确/层级/过程/成本指标、McNemar、case-cluster bootstrap |
@@ -359,27 +359,34 @@ adaptive frontier 的阈值只允许在 `D1a` 上按预注册网格 `{0.10, 0.15
 4. 同一模型版本、provider、temperature、max tokens 和三组 replicate ID；
 5. 外部 baseline 无法替换 backbone 时保留官方设置，并单列，不宣称严格计算公平；
 6. 缓存命中也计入逻辑调用与原始未缓存成本估计，避免“谁先运行谁更便宜”；
-7. 同时报告 native/unconstrained 和 matched-budget 结果，主检验使用 matched-budget。
+7. 同时报告 native/unconstrained 和 matched-budget 结果，主检验使用 matched-budget；
+8. **预算对照的正式定义为 `B02-SC10`**（10 样本自一致 + RRF，每例约 92 次 LLM 调用），与层级栈的每例约 90 次调用同量级。此前基于结构代理的 compute-matched 变体每例仅约 9 次调用，比主方法低一个数量级，不构成有效控制，只能作为 proxy 参考列报告；
+9. 预算匹配必须报告**实际达成比**（每例 token/call/tool/candidate 的实测比值与分布），不得只报告 I05 门控的 PASS/FAIL。
 
-## 9. 消融臂注册
+## 9. 消融臂注册（已迁移）
 
-| Arm | 相对 `M00` 的唯一变化 | 回答问题 | 运行范围 |
-|---|---|---|---|
-| A01-fixed-hierarchy | L1 改为预先冻结的 ICD/专科家族，其他不变 | 病例自适应结构是否必要 | D1、D2、D5 |
-| A02-no-l1-flat-rerank | 删除 L1，保留同一召回池与总预算 | 层级本身是否必要 | D1、D2 |
-| A03-salience-selector | anti-anchor 改为显著性选择 | 候选相对选证是否有效 | D1、D3 |
-| A04-no-p5-compiler | 不注入 P5 blocks；保留 anti-anchor | P5 编译知识的增量 | D1、D3 |
-| A05-p5-forced-selector | anti-anchor 改为 `p5_single_direct` 强制选择 | 可弃权和反锚定的增量 | D1、D3 |
-| A06-no-semantic-dedupe | 仅精确字符串去重 | 语义重复的影响 | D1、D5 |
-| A07-frontier-1 | 每家族只传 1 个局部冠军 | 单冠军瓶颈 | D1、D2、D5 |
-| A08-frontier-2 | 每家族固定传 2 个 | 自适应前沿是否优于固定 Top-2 | D1、D2、D5 |
-| A09-uniform-prior | 跨家族仲裁不提供 L1 软先验 | L1 先验的增量 | D1、D2 |
-| A10-no-gap-fill | 关闭 L1/L2 gap-fill | 结构性补漏的增量 | D1、D4 |
-| A11-source-cpg-only | 只用 CPG/教材召回 | 多源互补性 | D1、D4 |
-| A12-source-case-only | 只用病例报告召回 | 长尾召回来源 | D1、D4 |
-| M01-legacy-joint | 当前已实测联合端点 | 历史锚点与新主方法差异 | D0、D1b |
+消融臂的权威注册表为 `paper_ablation_plan.md`。本节只保留旧 `A01–A12` 到新 `AB` 臂的映射，供历史结果溯源；**新运行一律使用 `AB` 编号**，本节不再定义臂。
 
-除 `A01/A02/A07/A08/A09` 外，消融不在完整 D2 上大规模扩展，除非 D1b 显示其对应机制是主方法性能的必要解释。这样控制多重比较和 API 成本。
+迁移原因：旧表按"模块"组织，对 v2 叙事中两个真正落地的机制（DA 的等价类压缩、OX 的后验写回）没有任何对照，同时把三个可归并的因子水平（frontier-1/2、uniform-prior）与两组同机制开关（gap-fill、召回源）当作独立臂，导致臂数虚高而关键因果对照缺失。
+
+| 旧 Arm | 处置 | 新 ID |
+|---|---|---|
+| A01-fixed-hierarchy | 保留，重写运行范围 | AB01 |
+| A02-no-l1-flat-rerank | 保留为栈内对照；跨系统对照由 `B02-SC10` 承担 | AB02 |
+| A03-salience-selector | 保留，重定位为排除对照（预期 null） | AB21 |
+| A04-no-p5-compiler | 保留并复用为解释效度轴的"无 trace"条件 | AB22 |
+| A05-p5-forced-selector | 保留，不与 A04 交叉 | AB23 |
+| A06-no-semantic-dedupe | 归并为等价性"执行位点"因子 | AB04 / AB06 |
+| A07-frontier-1 | 降为家族配额因子水平 | AB17 |
+| A08-frontier-2 | 降为家族配额因子水平 | AB18 |
+| A09-uniform-prior | 降为先验因子水平 | AB20 |
+| A10-no-gap-fill | 两开关合并为单臂，降 P1 但强制报告 | AB24 |
+| A11/A12-source | 合并为三水平召回源因子 | AB26 / AB27 |
+| M01-legacy-joint | 移出消融注册表，留在 D0 回归集 | — |
+
+新增且旧表完全缺失的对照：等价类的两个反事实（同频随机路由 `AB10`、确定性 concept-ID 合并 `AB11`）、随机轴组织对照 `AB03`、状态传播三因素解耦 `AB13–AB16`、cap 因子 `AB19`、阶段归因反事实 `AB28`。
+
+多重比较与成本纪律见 `paper_ablation_plan.md` §7–§8：五个 confirmatory 对照做 Holm 校正，其余只报效应量与 CI；P0 内 L3 臂上限 4、L2 臂上限 6。
 
 ## 10. 最低可发表运行矩阵
 
@@ -387,13 +394,13 @@ adaptive frontier 的阈值只允许在 `D1a` 上按预注册网格 `{0.10, 0.15
 
 | 数据 | 样本 | 必跑 arm | 重复 | 用途 |
 |---|---:|---|---:|---|
-| D0-regression | 17 | M00、M01、B00–B04、A01–A12 | R1 smoke；关键 arm R3 | 接口、泄漏、schema 与历史结果回归 |
-| D1a-dev-tune | 250 | M00、M01、B00–B04、A01–A12 | R1；入围 arm 再 R3 | 只调阈值、预算和 prompt；不作论文测试结论 |
-| D1b-dev-freeze | 250 | M00、M01、B02、B04、入围消融 | R3 | 选择整条联合端点并冻结；不得回到 D1a 修改后反复窥视 |
-| D2-DiagnosisArena | 全部合格例 | M00、B00–B06 | R3 | 主终点与一般疾病外部效度 |
-| D3-Open-XDDx | 全部合格例 | M00、B00–B04、A03–A05 | R3 | 解释、差异性证据和候选相对更新 |
+| D0-regression | 17 | M00、M01、B00–B04、P0 消融臂 | R1 smoke；关键 arm R3 | 接口、泄漏、schema 与历史结果回归 |
+| D1a-dev-tune | 250 | M00、M01、B00–B04、P0 消融臂 | R1；入围 arm 再 R3 | 只调阈值、预算和 prompt；不作论文测试结论 |
+| D1b-dev-freeze | 250 | M00、M01、B02-SC10、B04、AB01–AB03、AB20–AB23 | R3 | 选择整条联合端点并冻结；不得回到 D1a 修改后反复窥视 |
+| D2-DiagnosisArena | 全部合格例 | M00、B00–B06、AB04–AB12、AB24–AB28 | R3 | 主终点、等价类压缩与阶段归因 |
+| D3-Open-XDDx | 全部合格例 | M00、B00–B04、AB13–AB19 | R3 | 状态传播、有界解码与解释效度 |
 | D4-RareBench-498 | 498 | M00、B00–B02、B04、B06–B09 | LLM R3；确定性工具 R1 | 长尾与表型专用系统比较 |
-| D5-DDXPlus-980 | 980 | M00、B01–B03、B05、B07、A01/A02/A06–A09 | R3 | 候选覆盖、分支纯度和局部—全局机制 |
+| D5-DDXPlus-980 | 980 | M00、B01–B03、B05、B07 | R3 | 候选覆盖与分支纯度；消融只跑最优格 |
 | D6-RareArena-REP | 500 | M00、B01、B02、B08、B09 | R3/R1 | 可选长尾泛化与 Orphanet 层级评价 |
 | D7-ER-Reason-SCT | 194 | M00 evidence-update、B02、B04 | R3 | 可选序贯 belief update 探索性结果 |
 
@@ -633,11 +640,14 @@ python scripts/paper/score_results.py \
 
 每个病例/replicate 只赋一个 failure path，按顺序：
 
-1. `L1_MISS`：没有可接受 gold parent；
+1. `TREE_PARENT_ABSENT`：没有可接受 gold parent（原 `L1_MISS`）；
 2. `L2_MISS`：有 parent，但 gold 未生成；
 3. `LOCAL_ELIMINATION`：gold 已生成，但未进入本家族 bounded frontier；
 4. `GLOBAL_MISRANK`：gold 已进入 global frontier，但未进入目标 Top-k；
-5. `SUCCESS`。
+5. `MAPPER_UNBIND`：gold 已进入目标 Top-k，但输出名称未绑定到规范概念/评分选项，因而在评分接口处丢失；
+6. `SUCCESS`。
+
+第 5 级为必需项而非可选项：不含接口级的分解会把接口失败错误归入 `L2_MISS`，从而把干预导向扩大候选空间——该误导的后果由 `paper_ablation_plan.md` 的 `AB28` 直接检验。
 
 派生指标：
 
@@ -806,11 +816,11 @@ results/paper_v1/
 | Table 2 | D2 主结果与 McNemar | `primary_analysis.json` |
 | Table 3 | D3/D4/D5 外部与机制结果 | `main_results.tsv` |
 | Table 4 | 候选空间和 failure-path 分解 | `process_metrics.tsv` |
-| Table 5 | 必要消融 | `ablations.tsv` |
+| Table 5 | 必要消融（C1–C5 五个 confirmatory 对照 + 等价类算子因子） | `ablations.tsv` |
 | Table 6 | token/call/latency/美元 | `cost.tsv` |
 | Figure 1 | candidate count–coverage–Top-1 的 recall/discrimination 曲线 | D5 + 预算扫描 |
-| Figure 2 | L1 miss → L2 miss → local elimination → global misrank 漏斗 | 全数据 failure path |
-| Figure 3 | frontier=1/2/adaptive 的 local retention 与成本 | A07/A08/M00 |
+| Figure 2 | `TREE_PARENT_ABSENT` → `L2_MISS` → `LOCAL_ELIMINATION` → `GLOBAL_MISRANK` → `MAPPER_UNBIND` 五级漏斗 | 全数据 failure path |
+| Figure 3 | 家族配额 1/2/adaptive 与全局后验池的 local retention 与成本 | AB17/AB18/M00/AB15 |
 | Figure 4 | Open-XDDx 事实 × 候选效应示例与人工评分 | D3 human audit |
 
 ## 20. 结果解释与允许的主张

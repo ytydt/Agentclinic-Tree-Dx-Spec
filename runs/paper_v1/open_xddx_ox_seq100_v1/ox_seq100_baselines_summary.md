@@ -82,6 +82,15 @@
 
 本方法配置与产物：`logs/open_xddx_ox_seq100_v1/compat_synonym_noemit_fopt_live_v1/annotate/official_eval_llm_closed_live_mac/`；机制见 [`ox_specific_mechanisms_explainer.md`](../../../analysis/transfer_metrics_v1/ox_specific_mechanisms_explainer.md)。跨集对照总表：[`diagnosisarena_d2_seq100_baselines_summary.md`](../diagnosisarena_d2_seq100_baselines_summary.md) §7。
 
+## 4.1 B02 预算匹配对照（native vs matched）
+
+| 臂 | 模式 | micro-P | micro-R | micro-F1 | Interp Acc | 均值 LLM | G5 |
+|---|---|---:|---:|---:|---:|---:|---|
+| `B02-flat-matched-rerank` | native | 0.480 | 0.512 | 0.495 | 0.419 | ~2 | — |
+| `B02-flat-compute-matched` | matched | 0.464 | 0.495 | 0.479 | 0.445 | 8.98 | **PASS** |
+
+专档：[`../open_xddx_b02_compute_matched_v1/b02_compute_matched_summary.md`](../open_xddx_b02_compute_matched_v1/b02_compute_matched_summary.md)。RQ4 / 公平主检验应报 matched 行。
+
 ## 5. 复现命令
 
 ```bash

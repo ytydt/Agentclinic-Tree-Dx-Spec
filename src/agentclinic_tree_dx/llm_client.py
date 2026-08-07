@@ -197,12 +197,17 @@ if USE_PROXY:
 #     hard-coded values from debate.py as fallback defaults.
 # ══════════════════════════════════════════════════════════════════════════════
 
-_NOVITA_KEY      = os.environ.get("NOVITA_API_KEY", "")
-_REDPILL_KEY     = os.environ.get("REDPILL_API_KEY", "")
-_LAOZHANG_KEY    = os.environ.get("LAOZHANG_API_KEY", "")
+_NOVITA_KEY      = os.environ.get("NOVITA_API_KEY",
+                                  "")
+_REDPILL_KEY     = os.environ.get("REDPILL_API_KEY",
+                                  "")
+_LAOZHANG_KEY    = os.environ.get("LAOZHANG_API_KEY",
+                                  "")
 # OpenRouter: two keys — primary for openai.OpenAI client, secondary for direct POST
-_OPENROUTER_KEY  = os.environ.get("OPENROUTER_API_KEY", "")
-_OPENROUTER_KEY2 = os.environ.get("OPENROUTER_API_KEY2", "")
+_OPENROUTER_KEY  = os.environ.get("OPENROUTER_API_KEY",
+                                  "")
+_OPENROUTER_KEY2 = os.environ.get("OPENROUTER_API_KEY2",
+                                  "")
 
 # ── Set A: models that should use the OpenRouter API as base_url ─────────────
 # Corresponds to debate.py line 196 `elif model in [...]`.
@@ -219,10 +224,12 @@ _OPENROUTER_CLIENT_MODELS: frozenset[str] = frozenset({
     "qwen/qwen-2.5-72b-instruct",
     "qwen/qwen2.5-vl-72b-instruct",
     "deepseek/deepseek-r1-distill-llama-70b",
+    "deepseek/deepseek-v4-flash",
     "meta-llama/llama-3.3-70b-instruct",
     "meta-llama/llama-3.1-8b-instruct",
     "google/gemini-3.1-pro-preview",
     "google/gemini-2.5-pro",
+    "google/gemini-2.5-flash",
     "qwen/qwen3-32b",
     # qwen/qwq-32b absent (see note above)
 })
@@ -329,13 +336,19 @@ class RobustLLMClient:
     def _get_openrouter_provider(model: str, change_model: bool = False) -> dict:
         """Return the OpenRouter `provider` routing dict for models that need it."""
         if model == "meta-llama/llama-3.3-70b-instruct":
+            # Novita is retired for this project — do not route or fall back to it.
+            # google-vertex rejects max_tokens≥8193; when TREE_DX_DIRECT_POST_OUTPUT_CAP
+            # escalates past 8k (truncation/error retries), Vertex 400s the whole call.
+            # Prefer Groq / DeepInfra only for this backbone.
             if not change_model:
                 return {
-                    "order": ["groq", "google-vertex", "novita", "deepinfra/base"],
+                    "order": ["groq", "deepinfra/base"],
+                    "ignore": ["google-vertex", "google-ai-studio", "novita"],
                     "allow_fallbacks": False,
                 }
             return {
-                "order": ["deepinfra/base"],
+                "order": ["deepinfra/base", "groq"],
+                "ignore": ["google-vertex", "google-ai-studio", "novita"],
                 "allow_fallbacks": False,
             }
         if model in {"google/gemma-3-27b-it", "google/gemma-4-31b-it"}:
@@ -360,11 +373,16 @@ class RobustLLMClient:
                 "allow_fallbacks": False,
             }
         if model == "qwen/qwen2.5-vl-72b-instruct":
-            return {"order": ["novita"], "allow_fallbacks": False}
-        # generic fallback
+            return {
+                "order": ["deepinfra", "together"],
+                "ignore": ["novita"],
+                "allow_fallbacks": False,
+            }
+        # generic fallback — never prefer Novita; stay on OpenRouter providers
         return {
-            "ignore": ["nebius", "parasail"],
-            "order": ["novita", "together", "hyperbolic"],
+            "ignore": ["nebius", "parasail", "novita"],
+            "order": ["deepinfra", "together", "groq", "hyperbolic"],
+            "allow_fallbacks": True,
         }
 
     # ── single API call ─────────────────────────────────────────────────────
@@ -427,14 +445,20 @@ class RobustLLMClient:
                 http_client=_http_client,
             )
         else:
-            # Default (includes qwen/qwq-32b which uses direct-POST anyway)
+            # Never fall through to Novita / other non-OpenRouter endpoints.
+            # Unknown models go through OpenRouter; Set-B models skip the client
+            # entirely and use direct-POST above.
             client = openai.OpenAI(
-                api_key=_NOVITA_KEY,
-                base_url="https://api.novita.ai/v3/openai",
+                api_key=_OPENROUTER_KEY,
+                base_url="https://openrouter.ai/api/v1",
                 http_client=_http_client,
             )
 
         change_model = False
+        # Escalating direct-POST output budget across truncation retries.
+        # Without this, ``max_tokens += 10000`` is a no-op under a fixed 1024 cap
+        # (root cause of DiscriminatorAgentMatrix finish_reason=length storms).
+        attempt_output_cap: int | None = None
         for attempt in range(3):
             try:
                 if model == "gpt-3.5-turbo-instruct":
@@ -458,9 +482,18 @@ class RobustLLMClient:
                 else:
                     # Set B: provider-routed path via direct POST ──────────
                     provider = self._get_openrouter_provider(model, change_model)
+                    # Production default stays 1024. Dedicated long-output
+                    # probes / P5 compile may raise via env.
                     output_cap = (
                         32_768 if model == "google/gemma-4-31b-it" else 1024
                     )
+                    _env_cap = os.environ.get("TREE_DX_DIRECT_POST_OUTPUT_CAP")
+                    if _env_cap:
+                        output_cap = int(_env_cap)
+                    if attempt_output_cap is None:
+                        attempt_output_cap = output_cap
+                    else:
+                        attempt_output_cap = max(attempt_output_cap, output_cap)
                     headers = {
                         "Authorization": f"Bearer {_OPENROUTER_KEY2}",
                         "HTTP-Referer": "google.com",
@@ -475,50 +508,59 @@ class RobustLLMClient:
                                 "model": model,
                                 "messages": messages,
                                 "temperature": temperature,
-                                "max_tokens": min(max_tokens, output_cap),
+                                "max_tokens": min(max_tokens, attempt_output_cap),
                                 "provider": provider,
                             },
                             timeout=180,
                         )
-                        response = types.SimpleNamespace(**json.loads(raw.text))
+                        payload = json.loads(raw.text)
+                        response = types.SimpleNamespace(**payload)
                     except (_ssl.SSLError, requests.exceptions.SSLError,
                             requests.exceptions.ConnectionError) as ssl_exc:
                         print(f"[LLM] SSL/connection error (VPN overload?): {ssl_exc}. Sleeping 15s …")
                         sleep(15)
                         raise
 
-                    # Unpack choices[0]
+                    # Unpack choices[0]; on OpenRouter error payloads retry
+                    # OpenRouter with an alternate provider (never Novita).
                     try:
-                        response.choices[0] = types.SimpleNamespace(**response.choices[0])
-                    except Exception as unpack_exc:
-                        print(f"[LLM] Failed to unpack choices[0]: {unpack_exc}. Retrying with fallback …")
-                        # Retry the same model through the independent Novita
-                        # endpoint. OpenRouter may return a structured billing
-                        # or provider error without a ``choices`` field.
-                        model = "meta-llama/llama-3.3-70b-instruct"
-                        fallback_headers = {
-                            "Authorization": f"Bearer {_NOVITA_KEY}",
-                            "Content-Type": "application/json",
-                        }
-                        raw2 = _openrouter_session.post(
-                            "https://api.novita.ai/v3/openai/chat/completions",
-                            headers=fallback_headers,
-                            json={
-                                "model": model,
-                                "messages": messages,
-                                "temperature": temperature,
-                                "max_tokens": min(max_tokens, 1024),
-                            },
-                            timeout=180,
+                        response.choices[0] = types.SimpleNamespace(
+                            **response.choices[0]
                         )
-                        response = types.SimpleNamespace(**json.loads(raw2.text))
-                        response.choices[0] = types.SimpleNamespace(**response.choices[0])
+                    except Exception as unpack_exc:
+                        err_snip = str(payload)[:500]
+                        print(
+                            "[LLM] OpenRouter response missing choices[0] "
+                            "(%s). Retrying OpenRouter … body=%s"
+                            % (unpack_exc, err_snip),
+                            flush=True,
+                        )
+                        change_model = True
+                        raise RuntimeError(
+                            "OpenRouter response missing choices: %s"
+                            % err_snip
+                        ) from unpack_exc
 
                 # Check finish_reason
-                if response.choices[0].finish_reason != "stop":
+                finish_reason = getattr(
+                    response.choices[0], "finish_reason", None
+                )
+                if finish_reason != "stop":
                     max_tokens += 10_000
                     change_model = True
-                    raise RuntimeError("Completion did not finish (finish_reason != stop).")
+                    if attempt_output_cap is not None:
+                        # Length truncations must raise the hard cap, not only
+                        # max_tokens (otherwise min(max_tokens, 1024) stays 1024).
+                        # Soft ceiling 8192: several OpenRouter providers (esp.
+                        # Google Vertex) reject ≥8193; keep retries inside that band.
+                        attempt_output_cap = min(
+                            max(attempt_output_cap * 2, 4096), 8192
+                        )
+                    raise RuntimeError(
+                        "Completion did not finish "
+                        "(finish_reason=%r, next_output_cap=%s)."
+                        % (finish_reason, attempt_output_cap)
+                    )
 
                 try:
                     return response.choices[0].message.content
@@ -728,6 +770,63 @@ class RobustLLMClient:
 
     # ── controller interface ─────────────────────────────────────────────────
 
+    @staticmethod
+    def _strip_markdown_fences(raw: str) -> str:
+        raw_stripped = (raw or "").strip()
+        if raw_stripped.startswith("```"):
+            raw_stripped = "\n".join(
+                line for line in raw_stripped.splitlines()
+                if not line.strip().startswith("```")
+            ).strip()
+        return raw_stripped
+
+    @staticmethod
+    def _sanitize_jsonish(raw: str) -> str:
+        """Best-effort cleanup for common model JSON defects (trailing commas)."""
+        return re.sub(r",(\s*[}\]])", r"\1", raw or "")
+
+    @staticmethod
+    def _looks_truncated_json(raw: str) -> bool:
+        text = (raw or "").strip()
+        if not text:
+            return True
+        # Unbalanced braces / brackets are the usual signature of max_tokens cuts.
+        return text.count("{") != text.count("}") or text.count("[") != text.count("]")
+
+    @staticmethod
+    def _bump_direct_post_output_cap(*, floor: int = 8192, ceiling: int = 8192) -> int:
+        # Ceiling 8192: Google Vertex / AI Studio reject maxOutputTokens ≥ 8193.
+        # Even with those providers ignored for llama, keep the shared env cap
+        # inside the strictest OpenRouter provider band used by this project.
+        current = int(os.environ.get("TREE_DX_DIRECT_POST_OUTPUT_CAP") or "1024")
+        nxt = min(max(current * 2, floor), ceiling)
+        os.environ["TREE_DX_DIRECT_POST_OUTPUT_CAP"] = str(nxt)
+        return nxt
+
+    def _parse_json_object(self, raw: str) -> dict[str, Any]:
+        candidates = [raw, self._sanitize_jsonish(raw)]
+        for candidate in candidates:
+            if not candidate:
+                continue
+            try:
+                parsed = json.loads(candidate)
+                if isinstance(parsed, dict):
+                    return parsed
+            except json.JSONDecodeError:
+                pass
+            match = re.search(r"\{.*\}", candidate, re.DOTALL)
+            if not match:
+                continue
+            blob = match.group()
+            for item in (blob, self._sanitize_jsonish(blob)):
+                try:
+                    parsed = json.loads(item)
+                    if isinstance(parsed, dict):
+                        return parsed
+                except json.JSONDecodeError:
+                    continue
+        return {}
+
     def call_module(
         self,
         module_name: str,
@@ -741,48 +840,67 @@ class RobustLLMClient:
         this class is a drop-in replacement in AgentClinicTreeController.
         All inputs and outputs are written to the log file if one is configured
         via ``configure_logging()``.
+
+        On JSON parse failure, escalate ``TREE_DX_DIRECT_POST_OUTPUT_CAP`` and
+        retry (truncation / trailing-comma defects previously returned ``{}``
+        silently and poisoned fail-open downstream stages).
         """
         user_content = json.dumps(payload, default=str, ensure_ascii=False)
+        base_user = (
+            f"Module: {module_name}\n"
+            "Return strict JSON only, no markdown.\n"
+            f"Payload:\n{user_content}"
+        )
         messages = [
             {"role": "system", "content": prompt_text},
-            {
-                "role": "user",
-                "content": (
-                    f"Module: {module_name}\n"
-                    "Return strict JSON only, no markdown.\n"
-                    f"Payload:\n{user_content}"
-                ),
-            },
+            {"role": "user", "content": base_user},
         ]
-        raw = self.get_robust_completion(
-            messages,
-            description=module_name,
-            # JSON modules can legitimately return compact values such as
-            # {"verdict":"none"} (18–19 chars depending on spacing).  Honor
-            # the configured threshold instead of imposing a hidden 20-char
-            # override; downstream JSON/schema validation remains authoritative.
-            min_length=self.min_response_length,
-        )
-        # Strip markdown fences if the model wraps JSON in ```json … ```
-        raw_stripped = raw.strip()
-        if raw_stripped.startswith("```"):
-            raw_stripped = "\n".join(
-                line for line in raw_stripped.splitlines()
-                if not line.strip().startswith("```")
-            ).strip()
         parsed: dict[str, Any] = {}
-        try:
-            parsed = json.loads(raw_stripped)
-        except json.JSONDecodeError:
-            m = re.search(r"\{.*\}", raw_stripped, re.DOTALL)
-            if m:
-                try:
-                    parsed = json.loads(m.group())
-                except json.JSONDecodeError:
-                    pass
-            if not parsed:
-                print(f"[LLM] Warning: Could not parse JSON for {module_name}. "
-                      f"Raw: {raw_stripped[:300]}")
+        raw = ""
+        max_parse_attempts = 3
+        for attempt in range(max_parse_attempts):
+            if attempt > 0:
+                messages = [
+                    {"role": "system", "content": prompt_text},
+                    {
+                        "role": "user",
+                        "content": (
+                            base_user
+                            + "\n\nPrevious output was truncated or invalid JSON. "
+                            "Resend the complete valid JSON object only."
+                        ),
+                    },
+                ]
+                bumped = self._bump_direct_post_output_cap()
+                print(
+                    "[LLM] JSON parse retry %d/%d for %s (output_cap→%s)"
+                    % (attempt + 1, max_parse_attempts, module_name, bumped),
+                    flush=True,
+                )
+            raw = self.get_robust_completion(
+                messages,
+                description=module_name,
+                # JSON modules can legitimately return compact values such as
+                # {"verdict":"none"} (18–19 chars depending on spacing).  Honor
+                # the configured threshold instead of imposing a hidden 20-char
+                # override; downstream JSON/schema validation remains authoritative.
+                min_length=self.min_response_length,
+            )
+            raw_stripped = self._strip_markdown_fences(raw)
+            parsed = self._parse_json_object(raw_stripped)
+            if parsed:
+                break
+            if attempt + 1 < max_parse_attempts and (
+                self._looks_truncated_json(raw_stripped)
+                or bool(raw_stripped.strip())
+            ):
+                continue
+            print(
+                f"[LLM] Warning: Could not parse JSON for {module_name}. "
+                f"Raw: {raw_stripped[:300]}",
+                flush=True,
+            )
+            break
         self._write_log(module_name, messages, raw, parsed)
         return parsed
 
