@@ -1,0 +1,652 @@
+{
+  "case_id": "medcasereasoning__000013",
+  "source_id": "13",
+  "champion": "Odontoma",
+  "ordered_diagnoses": [
+    "Odontoma",
+    "Dens in dente",
+    "Fibro-osseous lesion"
+  ],
+  "llm_calls": 4,
+  "stages": {
+    "mode": "adaptive4",
+    "vignette_chars": 696,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Dens in dente",
+          "support_spans": [
+            "a well-defined radiopaque lesion in the left mandibular anterior region, surrounded by a thin radiolucent halo"
+          ],
+          "contradict_spans": [],
+          "why": "The presence of a well-defined radiopaque lesion with a radiolucent halo is consistent with dens in dente, which can obstruct tooth eruption."
+        },
+        {
+          "name": "Odontoma",
+          "support_spans": [
+            "a well-defined radiopaque lesion in the left mandibular anterior region"
+          ],
+          "contradict_spans": [],
+          "why": "The radiopaque lesion could be an odontoma, a type of benign tumor that can prevent tooth eruption."
+        },
+        {
+          "name": "Fibro-osseous lesion",
+          "support_spans": [
+            "a well-defined radiopaque lesion in the left mandibular anterior region, surrounded by a thin radiolucent halo"
+          ],
+          "contradict_spans": [],
+          "why": "The radiographic appearance is also consistent with a fibro-osseous lesion, which can cause tooth displacement or impaction."
+        }
+      ],
+      "key_evidence_spans": [
+        "a well-defined radiopaque lesion in the left mandibular anterior region, surrounded by a thin radiolucent halo",
+        "which appeared to obstruct the eruption path of the tooth"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Odontoma",
+          "support_spans": [
+            "a well-defined radiopaque lesion in the left mandibular anterior region, surrounded by a thin radiolucent halo"
+          ],
+          "contradict_spans": [],
+          "why": "The presence of a well-defined radiopaque lesion with a thin radiolucent halo is consistent with an odontoma, which can obstruct tooth eruption.",
+          "protected_reason": "Odontoma is a rare cause of tooth impaction and may be overlooked in favor of more common diagnoses."
+        },
+        {
+          "name": "Dens in dente",
+          "support_spans": [
+            "an unerupted lower left lateral incisor"
+          ],
+          "contradict_spans": [],
+          "why": "The unerupted lower left lateral incisor could be related to a dens in dente, a rare anomaly that can cause tooth impaction.",
+          "protected_reason": "Dens in dente is a rare dental anomaly that may not be immediately considered in the differential diagnosis."
+        },
+        {
+          "name": "Compound odontoma",
+          "support_spans": [
+            "a well-defined radiopaque lesion in the left mandibular anterior region"
+          ],
+          "contradict_spans": [],
+          "why": "The radiopaque lesion could be a compound odontoma, which can cause tooth impaction and malocclusion.",
+          "protected_reason": "Compound odontoma is a rare type of odontogenic tumor that may be underdiagnosed due to its rarity."
+        }
+      ],
+      "key_evidence_spans": [
+        "a well-defined radiopaque lesion in the left mandibular anterior region, surrounded by a thin radiolucent halo",
+        "an unerupted lower left lateral incisor"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "which appeared to obstruct the eruption path of the tooth"
+      ],
+      "generator_jaccard": 0.5,
+      "top1_same_across_views": true,
+      "top_margin": 0.0,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "frontier_after_g": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Dens in dente",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G2E004"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "Dens in dente is a rare dental anomaly that may not be immediately considered in the differential diagnosis.",
+        "score_logit": 2.6,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Odontoma",
+        "aliases": [
+          "Compound odontoma"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E001"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "Odontoma is a rare cause of tooth impaction and may be overlooked in favor of more common diagnoses.",
+        "score_logit": 2.6,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Fibro-osseous lesion",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E001"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 1.0,
+        "status": "live"
+      }
+    ],
+    "a1": {
+      "candidates": [
+        {
+          "name": "odontoma",
+          "support_spans": [
+            "which appeared to obstruct the eruption path of the tooth"
+          ],
+          "contradict_spans": [],
+          "why": "The radiopaque lesion with a radiolucent halo is consistent with an odontoma, which can obstruct tooth eruption.",
+          "protected_reason": "explains unexplained high-specificity evidence"
+        }
+      ]
+    },
+    "adaptive_action": "ORTHOGONAL_GENERATE",
+    "selector": {
+      "champion": "Odontoma",
+      "runner_up": "Dens in dente",
+      "rationale": "Odontoma best explains the well-defined radiopaque lesion obstructing the eruption path of the tooth",
+      "rejected": [
+        {
+          "label": "Fibro-osseous lesion",
+          "why": "less specific evidence support and lower score_logit"
+        }
+      ],
+      "margin": "medium"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "a well-defined radiopaque lesion in the left mandibular anterior region, surrounded by a thin radiolucent halo",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "which appeared to obstruct the eruption path of the tooth",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "a well-defined radiopaque lesion in the left mandibular anterior region",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E004",
+        "raw_span": "an unerupted lower left lateral incisor",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Dens in dente",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G2E004"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "Dens in dente is a rare dental anomaly that may not be immediately considered in the differential diagnosis.",
+        "score_logit": 2.6,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Odontoma",
+        "aliases": [
+          "Compound odontoma"
+        ],
+        "generator_views": [
+          "g1",
+          "g2",
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E001",
+          "G1E002"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "Odontoma is a rare cause of tooth impaction and may be overlooked in favor of more common diagnoses.",
+        "score_logit": 3.95,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Fibro-osseous lesion",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E001"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 1.0,
+        "status": "live"
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Dens in dente",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Odontoma",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Fibro-osseous lesion",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Odontoma",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Dens in dente",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Compound odontoma",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "odontoma",
+        "view": "a1"
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 3,
+    "n_evidence": 4,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.5,
+    "frontier_n": 3,
+    "protected_n": 2,
+    "g1_n": 3,
+    "g2_n": 3,
+    "adaptive_action": "ORTHOGONAL_GENERATE",
+    "llm_calls": 4,
+    "history_leakage": 0
+  },
+  "prediction": {
+    "arm": "mosaic_adaptive4_v1",
+    "case_id": "medcasereasoning__000013",
+    "source_id": "13",
+    "dataset": "medcasereasoning",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Odontoma",
+      "Dens in dente",
+      "Fibro-osseous lesion"
+    ],
+    "top2_diagnoses": [
+      "Odontoma",
+      "Dens in dente"
+    ],
+    "cost": {
+      "llm_calls": 4
+    },
+    "stages": {
+      "mode": "adaptive4",
+      "vignette_chars": 696,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Dens in dente",
+            "support_spans": [
+              "a well-defined radiopaque lesion in the left mandibular anterior region, surrounded by a thin radiolucent halo"
+            ],
+            "contradict_spans": [],
+            "why": "The presence of a well-defined radiopaque lesion with a radiolucent halo is consistent with dens in dente, which can obstruct tooth eruption."
+          },
+          {
+            "name": "Odontoma",
+            "support_spans": [
+              "a well-defined radiopaque lesion in the left mandibular anterior region"
+            ],
+            "contradict_spans": [],
+            "why": "The radiopaque lesion could be an odontoma, a type of benign tumor that can prevent tooth eruption."
+          },
+          {
+            "name": "Fibro-osseous lesion",
+            "support_spans": [
+              "a well-defined radiopaque lesion in the left mandibular anterior region, surrounded by a thin radiolucent halo"
+            ],
+            "contradict_spans": [],
+            "why": "The radiographic appearance is also consistent with a fibro-osseous lesion, which can cause tooth displacement or impaction."
+          }
+        ],
+        "key_evidence_spans": [
+          "a well-defined radiopaque lesion in the left mandibular anterior region, surrounded by a thin radiolucent halo",
+          "which appeared to obstruct the eruption path of the tooth"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Odontoma",
+            "support_spans": [
+              "a well-defined radiopaque lesion in the left mandibular anterior region, surrounded by a thin radiolucent halo"
+            ],
+            "contradict_spans": [],
+            "why": "The presence of a well-defined radiopaque lesion with a thin radiolucent halo is consistent with an odontoma, which can obstruct tooth eruption.",
+            "protected_reason": "Odontoma is a rare cause of tooth impaction and may be overlooked in favor of more common diagnoses."
+          },
+          {
+            "name": "Dens in dente",
+            "support_spans": [
+              "an unerupted lower left lateral incisor"
+            ],
+            "contradict_spans": [],
+            "why": "The unerupted lower left lateral incisor could be related to a dens in dente, a rare anomaly that can cause tooth impaction.",
+            "protected_reason": "Dens in dente is a rare dental anomaly that may not be immediately considered in the differential diagnosis."
+          },
+          {
+            "name": "Compound odontoma",
+            "support_spans": [
+              "a well-defined radiopaque lesion in the left mandibular anterior region"
+            ],
+            "contradict_spans": [],
+            "why": "The radiopaque lesion could be a compound odontoma, which can cause tooth impaction and malocclusion.",
+            "protected_reason": "Compound odontoma is a rare type of odontogenic tumor that may be underdiagnosed due to its rarity."
+          }
+        ],
+        "key_evidence_spans": [
+          "a well-defined radiopaque lesion in the left mandibular anterior region, surrounded by a thin radiolucent halo",
+          "an unerupted lower left lateral incisor"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "which appeared to obstruct the eruption path of the tooth"
+        ],
+        "generator_jaccard": 0.5,
+        "top1_same_across_views": true,
+        "top_margin": 0.0,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 0
+      },
+      "frontier_after_g": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Dens in dente",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G2E004"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "Dens in dente is a rare dental anomaly that may not be immediately considered in the differential diagnosis.",
+          "score_logit": 2.6,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Odontoma",
+          "aliases": [
+            "Compound odontoma"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E001"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "Odontoma is a rare cause of tooth impaction and may be overlooked in favor of more common diagnoses.",
+          "score_logit": 2.6,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Fibro-osseous lesion",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E001"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 1.0,
+          "status": "live"
+        }
+      ],
+      "a1": {
+        "candidates": [
+          {
+            "name": "odontoma",
+            "support_spans": [
+              "which appeared to obstruct the eruption path of the tooth"
+            ],
+            "contradict_spans": [],
+            "why": "The radiopaque lesion with a radiolucent halo is consistent with an odontoma, which can obstruct tooth eruption.",
+            "protected_reason": "explains unexplained high-specificity evidence"
+          }
+        ]
+      },
+      "adaptive_action": "ORTHOGONAL_GENERATE",
+      "selector": {
+        "champion": "Odontoma",
+        "runner_up": "Dens in dente",
+        "rationale": "Odontoma best explains the well-defined radiopaque lesion obstructing the eruption path of the tooth",
+        "rejected": [
+          {
+            "label": "Fibro-osseous lesion",
+            "why": "less specific evidence support and lower score_logit"
+          }
+        ],
+        "margin": "medium"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "a well-defined radiopaque lesion in the left mandibular anterior region, surrounded by a thin radiolucent halo",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "which appeared to obstruct the eruption path of the tooth",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "a well-defined radiopaque lesion in the left mandibular anterior region",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E004",
+          "raw_span": "an unerupted lower left lateral incisor",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Dens in dente",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G2E004"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "Dens in dente is a rare dental anomaly that may not be immediately considered in the differential diagnosis.",
+          "score_logit": 2.6,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Odontoma",
+          "aliases": [
+            "Compound odontoma"
+          ],
+          "generator_views": [
+            "g1",
+            "g2",
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E001",
+            "G1E002"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "Odontoma is a rare cause of tooth impaction and may be overlooked in favor of more common diagnoses.",
+          "score_logit": 3.95,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Fibro-osseous lesion",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E001"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 1.0,
+          "status": "live"
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Dens in dente",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Odontoma",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Fibro-osseous lesion",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Odontoma",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Dens in dente",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Compound odontoma",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "odontoma",
+          "view": "a1"
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 3,
+      "n_evidence": 4,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.5,
+      "frontier_n": 3,
+      "protected_n": 2,
+      "g1_n": 3,
+      "g2_n": 3,
+      "adaptive_action": "ORTHOGONAL_GENERATE",
+      "llm_calls": 4,
+      "history_leakage": 0
+    },
+    "wall_s": 4.206
+  },
+  "created_at": "2026-08-08T01:50:09.235251+00:00"
+}

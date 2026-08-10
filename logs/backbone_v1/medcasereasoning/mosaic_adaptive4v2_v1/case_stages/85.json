@@ -1,0 +1,894 @@
+{
+  "case_id": "medcasereasoning__000085",
+  "source_id": "85",
+  "champion": "Appendicitis",
+  "ordered_diagnoses": [
+    "Appendicitis",
+    "Cecal diverticulitis",
+    "Intussusception",
+    "Cecal volvulus"
+  ],
+  "llm_calls": 3,
+  "stages": {
+    "mode": "adaptive4v2",
+    "vignette_chars": 1002,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Appendicitis",
+          "support_spans": [
+            "abdominal pain that began around the umbilicus 2 days earlier and migrated to the right lower quadrant",
+            "voluntary guarding in the right lower quadrant",
+            "Ultrasound assessment was interpreted as compatible with plastron appendicitis"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's symptoms and imaging results are consistent with appendicitis."
+        },
+        {
+          "name": "Intussusception",
+          "support_spans": [
+            "Computed tomography of the abdomen revealed a linear lesion within the intestinal lumen in the right lower quadrant, causing partial luminal obliteration"
+          ],
+          "contradict_spans": [],
+          "why": "The CT findings suggest a possible intussusception, which could cause abdominal pain and obstruction."
+        },
+        {
+          "name": "Cecal diverticulitis",
+          "support_spans": [
+            "abdominal pain that began around the umbilicus 2 days earlier and migrated to the right lower quadrant",
+            "edema on the anterolateral aspect of the cecum"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's symptoms and location of edema on the cecum could suggest cecal diverticulitis."
+        }
+      ],
+      "key_evidence_spans": [
+        "abdominal pain that began around the umbilicus 2 days earlier and migrated to the right lower quadrant",
+        "Ultrasound assessment was interpreted as compatible with plastron appendicitis",
+        "Computed tomography of the abdomen revealed a linear lesion within the intestinal lumen in the right lower quadrant, causing partial luminal obliteration"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Appendicitis with intestinal obstruction",
+          "support_spans": [
+            "abdominal pain that began around the umbilicus 2 days earlier and migrated to the right lower quadrant",
+            "voluntary guarding in the right lower quadrant",
+            "plain abdominal X-rays demonstrated several air–fluid levels"
+          ],
+          "contradict_spans": [
+            "no prior abdominal surgeries or systemic disease"
+          ],
+          "why": "The patient's symptoms and laboratory results are consistent with appendicitis, and the presence of air-fluid levels on X-ray suggests possible intestinal obstruction.",
+          "protected_reason": "This diagnosis may be overlooked if the focus is solely on the appendicitis, without considering the potential for intestinal obstruction."
+        },
+        {
+          "name": "Intussusception",
+          "support_spans": [
+            "linear lesion within the intestinal lumen in the right lower quadrant, causing partial luminal obliteration"
+          ],
+          "contradict_spans": [
+            "ultrasound assessment was interpreted as compatible with plastron appendicitis"
+          ],
+          "why": "The computed tomography findings of a linear lesion within the intestinal lumen are suggestive of intussusception, which can cause abdominal pain and obstruction.",
+          "protected_reason": "Intussusception is a rare cause of abdominal pain in adults and may be missed if not considered in the differential diagnosis."
+        },
+        {
+          "name": "Cecal volvulus",
+          "support_spans": [
+            "abdominal pain that began around the umbilicus 2 days earlier and migrated to the right lower quadrant",
+            "edema on the anterolateral aspect of the cecum"
+          ],
+          "contradict_spans": [
+            "no prior abdominal surgeries or systemic disease"
+          ],
+          "why": "The patient's symptoms and the presence of edema on the anterolateral aspect of the cecum are consistent with cecal volvulus, which can cause abdominal pain and obstruction.",
+          "protected_reason": "Cecal volvulus is a rare condition that may be overlooked if not considered in the differential diagnosis, especially in the absence of prior abdominal surgery."
+        }
+      ],
+      "key_evidence_spans": [
+        "abdominal pain that began around the umbilicus 2 days earlier and migrated to the right lower quadrant",
+        "linear lesion within the intestinal lumen in the right lower quadrant, causing partial luminal obliteration",
+        "edema on the anterolateral aspect of the cecum"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "no prior abdominal surgeries or systemic disease",
+        "ultrasound assessment was interpreted as compatible with plastron appendicitis"
+      ],
+      "generator_jaccard": 0.2,
+      "top1_same_across_views": true,
+      "top_margin": 1.35,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 1
+    },
+    "state_after_a1": {
+      "unexplained_specific_evidence": [
+        "no prior abdominal surgeries or systemic disease",
+        "ultrasound assessment was interpreted as compatible with plastron appendicitis"
+      ],
+      "generator_jaccard": 0.2,
+      "top1_same_across_views": true,
+      "top_margin": 1.35,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 1
+    },
+    "adaptive_action": null,
+    "selector": {
+      "champion": "Appendicitis",
+      "runner_up": "Cecal diverticulitis",
+      "rationale": "The patient's symptoms, including abdominal pain that began around the umbilicus and migrated to the right lower quadrant, along with the ultrasound assessment compatible with plastron appendicitis, strongly support the diagnosis of appendicitis.",
+      "rejected": [
+        {
+          "label": "Intussusception",
+          "why": "The ultrasound assessment was interpreted as compatible with plastron appendicitis, contradicting the diagnosis of intussusception."
+        },
+        {
+          "label": "Cecal volvulus",
+          "why": "The absence of prior abdominal surgeries or systemic disease makes cecal volvulus less likely, and the symptoms are more consistent with appendicitis."
+        }
+      ],
+      "margin": "high"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "abdominal pain that began around the umbilicus 2 days earlier and migrated to the right lower quadrant",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "Ultrasound assessment was interpreted as compatible with plastron appendicitis",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "Computed tomography of the abdomen revealed a linear lesion within the intestinal lumen in the right lower quadrant, causing partial luminal obliteration",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "voluntary guarding in the right lower quadrant",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E005",
+        "raw_span": "edema on the anterolateral aspect of the cecum",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E006",
+        "raw_span": "linear lesion within the intestinal lumen in the right lower quadrant, causing partial luminal obliteration",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E007",
+        "raw_span": "plain abdominal X-rays demonstrated several air–fluid levels",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E008",
+        "raw_span": "no prior abdominal surgeries or systemic disease",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E009",
+        "raw_span": "ultrasound assessment was interpreted as compatible with plastron appendicitis",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Appendicitis",
+        "aliases": [
+          "Appendicitis with intestinal obstruction"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E004",
+          "G1E002",
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G2E008"
+        ],
+        "protected_reason": "This diagnosis may be overlooked if the focus is solely on the appendicitis, without considering the potential for intestinal obstruction.",
+        "score_logit": 3.35,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Intussusception",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E003",
+          "G2E006"
+        ],
+        "contradicting_evidence": [
+          "G2E009"
+        ],
+        "protected_reason": "Intussusception is a rare cause of abdominal pain in adults and may be missed if not considered in the differential diagnosis.",
+        "score_logit": 1.35,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Cecal diverticulitis",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E005"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 2.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Cecal volvulus",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E005"
+        ],
+        "contradicting_evidence": [
+          "G2E008"
+        ],
+        "protected_reason": "Cecal volvulus is a rare condition that may be overlooked if not considered in the differential diagnosis, especially in the absence of prior abdominal surgery.",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Appendicitis",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Intussusception",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Cecal diverticulitis",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Appendicitis with intestinal obstruction",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Intussusception",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C004",
+        "name": "Cecal volvulus",
+        "view": "g2"
+      }
+    ],
+    "frontier_final": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Appendicitis",
+        "aliases": [
+          "Appendicitis with intestinal obstruction"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E004",
+          "G1E002",
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G2E008"
+        ],
+        "protected_reason": "This diagnosis may be overlooked if the focus is solely on the appendicitis, without considering the potential for intestinal obstruction.",
+        "score_logit": 3.35,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Cecal diverticulitis",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E005"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 2.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Intussusception",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E003",
+          "G2E006"
+        ],
+        "contradicting_evidence": [
+          "G2E009"
+        ],
+        "protected_reason": "Intussusception is a rare cause of abdominal pain in adults and may be missed if not considered in the differential diagnosis.",
+        "score_logit": 1.35,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Cecal volvulus",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E005"
+        ],
+        "contradicting_evidence": [
+          "G2E008"
+        ],
+        "protected_reason": "Cecal volvulus is a rare condition that may be overlooked if not considered in the differential diagnosis, especially in the absence of prior abdominal surgery.",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 4,
+    "n_evidence": 9,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.2,
+    "frontier_n": 4,
+    "protected_n": 3,
+    "n_generators": 2,
+    "adaptive_action": null,
+    "llm_calls": 3,
+    "history_leakage": 0,
+    "mode": "adaptive4v2"
+  },
+  "prediction": {
+    "arm": "mosaic_adaptive4v2_v1",
+    "case_id": "medcasereasoning__000085",
+    "source_id": "85",
+    "dataset": "medcasereasoning",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Appendicitis",
+      "Cecal diverticulitis",
+      "Intussusception",
+      "Cecal volvulus"
+    ],
+    "top2_diagnoses": [
+      "Appendicitis",
+      "Cecal diverticulitis"
+    ],
+    "cost": {
+      "llm_calls": 3
+    },
+    "stages": {
+      "mode": "adaptive4v2",
+      "vignette_chars": 1002,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Appendicitis",
+            "support_spans": [
+              "abdominal pain that began around the umbilicus 2 days earlier and migrated to the right lower quadrant",
+              "voluntary guarding in the right lower quadrant",
+              "Ultrasound assessment was interpreted as compatible with plastron appendicitis"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's symptoms and imaging results are consistent with appendicitis."
+          },
+          {
+            "name": "Intussusception",
+            "support_spans": [
+              "Computed tomography of the abdomen revealed a linear lesion within the intestinal lumen in the right lower quadrant, causing partial luminal obliteration"
+            ],
+            "contradict_spans": [],
+            "why": "The CT findings suggest a possible intussusception, which could cause abdominal pain and obstruction."
+          },
+          {
+            "name": "Cecal diverticulitis",
+            "support_spans": [
+              "abdominal pain that began around the umbilicus 2 days earlier and migrated to the right lower quadrant",
+              "edema on the anterolateral aspect of the cecum"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's symptoms and location of edema on the cecum could suggest cecal diverticulitis."
+          }
+        ],
+        "key_evidence_spans": [
+          "abdominal pain that began around the umbilicus 2 days earlier and migrated to the right lower quadrant",
+          "Ultrasound assessment was interpreted as compatible with plastron appendicitis",
+          "Computed tomography of the abdomen revealed a linear lesion within the intestinal lumen in the right lower quadrant, causing partial luminal obliteration"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Appendicitis with intestinal obstruction",
+            "support_spans": [
+              "abdominal pain that began around the umbilicus 2 days earlier and migrated to the right lower quadrant",
+              "voluntary guarding in the right lower quadrant",
+              "plain abdominal X-rays demonstrated several air–fluid levels"
+            ],
+            "contradict_spans": [
+              "no prior abdominal surgeries or systemic disease"
+            ],
+            "why": "The patient's symptoms and laboratory results are consistent with appendicitis, and the presence of air-fluid levels on X-ray suggests possible intestinal obstruction.",
+            "protected_reason": "This diagnosis may be overlooked if the focus is solely on the appendicitis, without considering the potential for intestinal obstruction."
+          },
+          {
+            "name": "Intussusception",
+            "support_spans": [
+              "linear lesion within the intestinal lumen in the right lower quadrant, causing partial luminal obliteration"
+            ],
+            "contradict_spans": [
+              "ultrasound assessment was interpreted as compatible with plastron appendicitis"
+            ],
+            "why": "The computed tomography findings of a linear lesion within the intestinal lumen are suggestive of intussusception, which can cause abdominal pain and obstruction.",
+            "protected_reason": "Intussusception is a rare cause of abdominal pain in adults and may be missed if not considered in the differential diagnosis."
+          },
+          {
+            "name": "Cecal volvulus",
+            "support_spans": [
+              "abdominal pain that began around the umbilicus 2 days earlier and migrated to the right lower quadrant",
+              "edema on the anterolateral aspect of the cecum"
+            ],
+            "contradict_spans": [
+              "no prior abdominal surgeries or systemic disease"
+            ],
+            "why": "The patient's symptoms and the presence of edema on the anterolateral aspect of the cecum are consistent with cecal volvulus, which can cause abdominal pain and obstruction.",
+            "protected_reason": "Cecal volvulus is a rare condition that may be overlooked if not considered in the differential diagnosis, especially in the absence of prior abdominal surgery."
+          }
+        ],
+        "key_evidence_spans": [
+          "abdominal pain that began around the umbilicus 2 days earlier and migrated to the right lower quadrant",
+          "linear lesion within the intestinal lumen in the right lower quadrant, causing partial luminal obliteration",
+          "edema on the anterolateral aspect of the cecum"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "no prior abdominal surgeries or systemic disease",
+          "ultrasound assessment was interpreted as compatible with plastron appendicitis"
+        ],
+        "generator_jaccard": 0.2,
+        "top1_same_across_views": true,
+        "top_margin": 1.35,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 1
+      },
+      "state_after_a1": {
+        "unexplained_specific_evidence": [
+          "no prior abdominal surgeries or systemic disease",
+          "ultrasound assessment was interpreted as compatible with plastron appendicitis"
+        ],
+        "generator_jaccard": 0.2,
+        "top1_same_across_views": true,
+        "top_margin": 1.35,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 1
+      },
+      "adaptive_action": null,
+      "selector": {
+        "champion": "Appendicitis",
+        "runner_up": "Cecal diverticulitis",
+        "rationale": "The patient's symptoms, including abdominal pain that began around the umbilicus and migrated to the right lower quadrant, along with the ultrasound assessment compatible with plastron appendicitis, strongly support the diagnosis of appendicitis.",
+        "rejected": [
+          {
+            "label": "Intussusception",
+            "why": "The ultrasound assessment was interpreted as compatible with plastron appendicitis, contradicting the diagnosis of intussusception."
+          },
+          {
+            "label": "Cecal volvulus",
+            "why": "The absence of prior abdominal surgeries or systemic disease makes cecal volvulus less likely, and the symptoms are more consistent with appendicitis."
+          }
+        ],
+        "margin": "high"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "abdominal pain that began around the umbilicus 2 days earlier and migrated to the right lower quadrant",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "Ultrasound assessment was interpreted as compatible with plastron appendicitis",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "Computed tomography of the abdomen revealed a linear lesion within the intestinal lumen in the right lower quadrant, causing partial luminal obliteration",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "voluntary guarding in the right lower quadrant",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E005",
+          "raw_span": "edema on the anterolateral aspect of the cecum",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E006",
+          "raw_span": "linear lesion within the intestinal lumen in the right lower quadrant, causing partial luminal obliteration",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E007",
+          "raw_span": "plain abdominal X-rays demonstrated several air–fluid levels",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E008",
+          "raw_span": "no prior abdominal surgeries or systemic disease",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E009",
+          "raw_span": "ultrasound assessment was interpreted as compatible with plastron appendicitis",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Appendicitis",
+          "aliases": [
+            "Appendicitis with intestinal obstruction"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E004",
+            "G1E002",
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G2E008"
+          ],
+          "protected_reason": "This diagnosis may be overlooked if the focus is solely on the appendicitis, without considering the potential for intestinal obstruction.",
+          "score_logit": 3.35,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Intussusception",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E003",
+            "G2E006"
+          ],
+          "contradicting_evidence": [
+            "G2E009"
+          ],
+          "protected_reason": "Intussusception is a rare cause of abdominal pain in adults and may be missed if not considered in the differential diagnosis.",
+          "score_logit": 1.35,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Cecal diverticulitis",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E005"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 2.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Cecal volvulus",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E005"
+          ],
+          "contradicting_evidence": [
+            "G2E008"
+          ],
+          "protected_reason": "Cecal volvulus is a rare condition that may be overlooked if not considered in the differential diagnosis, especially in the absence of prior abdominal surgery.",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Appendicitis",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Intussusception",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Cecal diverticulitis",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Appendicitis with intestinal obstruction",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Intussusception",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C004",
+          "name": "Cecal volvulus",
+          "view": "g2"
+        }
+      ],
+      "frontier_final": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Appendicitis",
+          "aliases": [
+            "Appendicitis with intestinal obstruction"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E004",
+            "G1E002",
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G2E008"
+          ],
+          "protected_reason": "This diagnosis may be overlooked if the focus is solely on the appendicitis, without considering the potential for intestinal obstruction.",
+          "score_logit": 3.35,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Cecal diverticulitis",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E005"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 2.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Intussusception",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E003",
+            "G2E006"
+          ],
+          "contradicting_evidence": [
+            "G2E009"
+          ],
+          "protected_reason": "Intussusception is a rare cause of abdominal pain in adults and may be missed if not considered in the differential diagnosis.",
+          "score_logit": 1.35,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Cecal volvulus",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E005"
+          ],
+          "contradicting_evidence": [
+            "G2E008"
+          ],
+          "protected_reason": "Cecal volvulus is a rare condition that may be overlooked if not considered in the differential diagnosis, especially in the absence of prior abdominal surgery.",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 4,
+      "n_evidence": 9,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.2,
+      "frontier_n": 4,
+      "protected_n": 3,
+      "n_generators": 2,
+      "adaptive_action": null,
+      "llm_calls": 3,
+      "history_leakage": 0,
+      "mode": "adaptive4v2"
+    },
+    "wall_s": 4.888
+  },
+  "created_at": "2026-08-08T02:13:17.276938+00:00"
+}

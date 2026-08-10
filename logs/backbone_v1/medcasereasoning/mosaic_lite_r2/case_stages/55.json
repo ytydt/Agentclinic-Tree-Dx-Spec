@@ -1,0 +1,1054 @@
+{
+  "case_id": "medcasereasoning__000055",
+  "source_id": "55",
+  "champion": "Urinary Tract Infection",
+  "ordered_diagnoses": [
+    "Urinary Tract Infection",
+    "Bladder Cancer",
+    "Xanthogranulomatous pyelonephritis",
+    "Kidney Stone",
+    "Malakoplakia"
+  ],
+  "llm_calls": 3,
+  "stages": {
+    "mode": "lite",
+    "vignette_chars": 1145,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Urinary Tract Infection",
+          "support_spans": [
+            "foul-smelling urine",
+            "Urinalysis is positive for leukocyte esterase, nitrites, and white blood cells",
+            "Blood and urine cultures grow Escherichia coli"
+          ],
+          "contradict_spans": [],
+          "why": "The patient presents with symptoms and laboratory results consistent with a urinary tract infection."
+        },
+        {
+          "name": "Bladder Cancer",
+          "support_spans": [
+            "irregular, nodular thickening of the bladder wall, suspicious for neoplasm"
+          ],
+          "contradict_spans": [],
+          "why": "The CT scan of the abdomen and pelvis reveals irregular, nodular thickening of the bladder wall, which is suspicious for a neoplasm."
+        },
+        {
+          "name": "Kidney Stone",
+          "support_spans": [
+            "non-obstructing right nephrolithiasis"
+          ],
+          "contradict_spans": [],
+          "why": "The CT scan of the abdomen and pelvis reveals a non-obstructing right nephrolithiasis, which is consistent with a kidney stone."
+        }
+      ],
+      "key_evidence_spans": [
+        "foul-smelling urine",
+        "Urinalysis is positive for leukocyte esterase, nitrites, and white blood cells",
+        "Blood and urine cultures grow Escherichia coli",
+        "irregular, nodular thickening of the bladder wall, suspicious for neoplasm",
+        "non-obstructing right nephrolithiasis"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Xanthogranulomatous pyelonephritis",
+          "support_spans": [
+            "left-sided flank pain",
+            "foul-smelling urine",
+            "irregular, nodular thickening of the bladder wall"
+          ],
+          "contradict_spans": [
+            "CT of the abdomen and pelvis reveals a non-obstructing right nephrolithiasis"
+          ],
+          "why": "The patient's symptoms and imaging findings suggest a chronic infection and possible malignancy, but xanthogranulomatous pyelonephritis is a rare cause of these symptoms that could be missed.",
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare and easily missed condition that requires specific diagnostic criteria and treatment."
+        },
+        {
+          "name": "Malakoplakia",
+          "support_spans": [
+            "foul-smelling urine",
+            "irregular, nodular thickening of the bladder wall"
+          ],
+          "contradict_spans": [
+            "blood and urine cultures grow Escherichia coli"
+          ],
+          "why": "The patient's symptoms and imaging findings suggest a possible infectious or inflammatory condition, and malakoplakia is a rare cause of these symptoms that could be missed.",
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare and easily missed condition that requires specific diagnostic criteria and treatment."
+        },
+        {
+          "name": "Squamous cell carcinoma of the bladder",
+          "support_spans": [
+            "irregular, nodular thickening of the bladder wall",
+            "70–pack-year smoking history"
+          ],
+          "contradict_spans": [
+            "urinalysis is positive for leukocyte esterase, nitrites, and white blood cells"
+          ],
+          "why": "The patient's imaging findings and smoking history suggest a possible malignancy, and squamous cell carcinoma of the bladder is a rare cause of these symptoms that could be missed.",
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare and aggressive malignancy that requires prompt diagnosis and treatment."
+        }
+      ],
+      "key_evidence_spans": [
+        "left-sided flank pain",
+        "foul-smelling urine",
+        "irregular, nodular thickening of the bladder wall",
+        "70–pack-year smoking history"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "CT of the abdomen and pelvis reveals a non-obstructing right nephrolithiasis",
+        "blood and urine cultures grow Escherichia coli",
+        "urinalysis is positive for leukocyte esterase, nitrites, and white blood cells"
+      ],
+      "generator_jaccard": 0.0,
+      "top1_same_across_views": false,
+      "top_margin": 1.0,
+      "leave_one_view_instability": true,
+      "contradiction_mass": 0
+    },
+    "adaptive_action": null,
+    "selector": {
+      "champion": "Urinary Tract Infection",
+      "runner_up": "Bladder Cancer",
+      "rationale": "strong evidence of UTI with foul-smelling urine, positive urinalysis, and E. coli growth in blood and urine cultures",
+      "rejected": [
+        {
+          "label": "Xanthogranulomatous pyelonephritis",
+          "why": "contradicted by CT findings of non-obstructing right nephrolithiasis"
+        },
+        {
+          "label": "Kidney Stone",
+          "why": "nephrolithiasis is non-obstructing and not the primary cause of symptoms"
+        },
+        {
+          "label": "Malakoplakia",
+          "why": "contradicted by blood and urine cultures growing E. coli"
+        },
+        {
+          "label": "Squamous cell carcinoma of the bladder",
+          "why": "urinalysis suggests infection rather than malignancy"
+        }
+      ],
+      "margin": "high"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "foul-smelling urine",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "Urinalysis is positive for leukocyte esterase, nitrites, and white blood cells",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "Blood and urine cultures grow Escherichia coli",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "irregular, nodular thickening of the bladder wall, suspicious for neoplasm",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E005",
+        "raw_span": "non-obstructing right nephrolithiasis",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E006",
+        "raw_span": "left-sided flank pain",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E007",
+        "raw_span": "irregular, nodular thickening of the bladder wall",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E008",
+        "raw_span": "70–pack-year smoking history",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E009",
+        "raw_span": "CT of the abdomen and pelvis reveals a non-obstructing right nephrolithiasis",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E010",
+        "raw_span": "blood and urine cultures grow Escherichia coli",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E011",
+        "raw_span": "urinalysis is positive for leukocyte esterase, nitrites, and white blood cells",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Urinary Tract Infection",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G1E003"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 3.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Bladder Cancer",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E004"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Kidney Stone",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E005"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Xanthogranulomatous pyelonephritis",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G2E006",
+          "G1E001",
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G2E009"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare and easily missed condition that requires specific diagnostic criteria and treatment.",
+        "score_logit": 2.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Malakoplakia",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G2E010"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare and easily missed condition that requires specific diagnostic criteria and treatment.",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C006",
+        "preferred_name": "Squamous cell carcinoma of the bladder",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G2E007",
+          "G2E008"
+        ],
+        "contradicting_evidence": [
+          "G2E011"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare and aggressive malignancy that requires prompt diagnosis and treatment.",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Urinary Tract Infection",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Bladder Cancer",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Kidney Stone",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C004",
+        "name": "Xanthogranulomatous pyelonephritis",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C005",
+        "name": "Malakoplakia",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C006",
+        "name": "Squamous cell carcinoma of the bladder",
+        "view": "g2"
+      }
+    ],
+    "frontier_final": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Urinary Tract Infection",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G1E003"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 3.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Xanthogranulomatous pyelonephritis",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G2E006",
+          "G1E001",
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G2E009"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare and easily missed condition that requires specific diagnostic criteria and treatment.",
+        "score_logit": 2.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Bladder Cancer",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E004"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Kidney Stone",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E005"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Malakoplakia",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G2E010"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare and easily missed condition that requires specific diagnostic criteria and treatment.",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C006",
+        "preferred_name": "Squamous cell carcinoma of the bladder",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G2E007",
+          "G2E008"
+        ],
+        "contradicting_evidence": [
+          "G2E011"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare and aggressive malignancy that requires prompt diagnosis and treatment.",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 6,
+    "n_evidence": 11,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.0,
+    "frontier_n": 6,
+    "protected_n": 3,
+    "n_generators": 2,
+    "adaptive_action": null,
+    "llm_calls": 3,
+    "history_leakage": 0,
+    "mode": "lite"
+  },
+  "prediction": {
+    "arm": "mosaic_lite_r2",
+    "case_id": "medcasereasoning__000055",
+    "source_id": "55",
+    "dataset": "medcasereasoning",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Urinary Tract Infection",
+      "Bladder Cancer",
+      "Xanthogranulomatous pyelonephritis",
+      "Kidney Stone",
+      "Malakoplakia"
+    ],
+    "top2_diagnoses": [
+      "Urinary Tract Infection",
+      "Bladder Cancer"
+    ],
+    "cost": {
+      "llm_calls": 3
+    },
+    "stages": {
+      "mode": "lite",
+      "vignette_chars": 1145,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Urinary Tract Infection",
+            "support_spans": [
+              "foul-smelling urine",
+              "Urinalysis is positive for leukocyte esterase, nitrites, and white blood cells",
+              "Blood and urine cultures grow Escherichia coli"
+            ],
+            "contradict_spans": [],
+            "why": "The patient presents with symptoms and laboratory results consistent with a urinary tract infection."
+          },
+          {
+            "name": "Bladder Cancer",
+            "support_spans": [
+              "irregular, nodular thickening of the bladder wall, suspicious for neoplasm"
+            ],
+            "contradict_spans": [],
+            "why": "The CT scan of the abdomen and pelvis reveals irregular, nodular thickening of the bladder wall, which is suspicious for a neoplasm."
+          },
+          {
+            "name": "Kidney Stone",
+            "support_spans": [
+              "non-obstructing right nephrolithiasis"
+            ],
+            "contradict_spans": [],
+            "why": "The CT scan of the abdomen and pelvis reveals a non-obstructing right nephrolithiasis, which is consistent with a kidney stone."
+          }
+        ],
+        "key_evidence_spans": [
+          "foul-smelling urine",
+          "Urinalysis is positive for leukocyte esterase, nitrites, and white blood cells",
+          "Blood and urine cultures grow Escherichia coli",
+          "irregular, nodular thickening of the bladder wall, suspicious for neoplasm",
+          "non-obstructing right nephrolithiasis"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Xanthogranulomatous pyelonephritis",
+            "support_spans": [
+              "left-sided flank pain",
+              "foul-smelling urine",
+              "irregular, nodular thickening of the bladder wall"
+            ],
+            "contradict_spans": [
+              "CT of the abdomen and pelvis reveals a non-obstructing right nephrolithiasis"
+            ],
+            "why": "The patient's symptoms and imaging findings suggest a chronic infection and possible malignancy, but xanthogranulomatous pyelonephritis is a rare cause of these symptoms that could be missed.",
+            "protected_reason": "This diagnosis may deserve minority protection because it is a rare and easily missed condition that requires specific diagnostic criteria and treatment."
+          },
+          {
+            "name": "Malakoplakia",
+            "support_spans": [
+              "foul-smelling urine",
+              "irregular, nodular thickening of the bladder wall"
+            ],
+            "contradict_spans": [
+              "blood and urine cultures grow Escherichia coli"
+            ],
+            "why": "The patient's symptoms and imaging findings suggest a possible infectious or inflammatory condition, and malakoplakia is a rare cause of these symptoms that could be missed.",
+            "protected_reason": "This diagnosis may deserve minority protection because it is a rare and easily missed condition that requires specific diagnostic criteria and treatment."
+          },
+          {
+            "name": "Squamous cell carcinoma of the bladder",
+            "support_spans": [
+              "irregular, nodular thickening of the bladder wall",
+              "70–pack-year smoking history"
+            ],
+            "contradict_spans": [
+              "urinalysis is positive for leukocyte esterase, nitrites, and white blood cells"
+            ],
+            "why": "The patient's imaging findings and smoking history suggest a possible malignancy, and squamous cell carcinoma of the bladder is a rare cause of these symptoms that could be missed.",
+            "protected_reason": "This diagnosis may deserve minority protection because it is a rare and aggressive malignancy that requires prompt diagnosis and treatment."
+          }
+        ],
+        "key_evidence_spans": [
+          "left-sided flank pain",
+          "foul-smelling urine",
+          "irregular, nodular thickening of the bladder wall",
+          "70–pack-year smoking history"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "CT of the abdomen and pelvis reveals a non-obstructing right nephrolithiasis",
+          "blood and urine cultures grow Escherichia coli",
+          "urinalysis is positive for leukocyte esterase, nitrites, and white blood cells"
+        ],
+        "generator_jaccard": 0.0,
+        "top1_same_across_views": false,
+        "top_margin": 1.0,
+        "leave_one_view_instability": true,
+        "contradiction_mass": 0
+      },
+      "adaptive_action": null,
+      "selector": {
+        "champion": "Urinary Tract Infection",
+        "runner_up": "Bladder Cancer",
+        "rationale": "strong evidence of UTI with foul-smelling urine, positive urinalysis, and E. coli growth in blood and urine cultures",
+        "rejected": [
+          {
+            "label": "Xanthogranulomatous pyelonephritis",
+            "why": "contradicted by CT findings of non-obstructing right nephrolithiasis"
+          },
+          {
+            "label": "Kidney Stone",
+            "why": "nephrolithiasis is non-obstructing and not the primary cause of symptoms"
+          },
+          {
+            "label": "Malakoplakia",
+            "why": "contradicted by blood and urine cultures growing E. coli"
+          },
+          {
+            "label": "Squamous cell carcinoma of the bladder",
+            "why": "urinalysis suggests infection rather than malignancy"
+          }
+        ],
+        "margin": "high"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "foul-smelling urine",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "Urinalysis is positive for leukocyte esterase, nitrites, and white blood cells",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "Blood and urine cultures grow Escherichia coli",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "irregular, nodular thickening of the bladder wall, suspicious for neoplasm",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E005",
+          "raw_span": "non-obstructing right nephrolithiasis",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E006",
+          "raw_span": "left-sided flank pain",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E007",
+          "raw_span": "irregular, nodular thickening of the bladder wall",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E008",
+          "raw_span": "70–pack-year smoking history",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E009",
+          "raw_span": "CT of the abdomen and pelvis reveals a non-obstructing right nephrolithiasis",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E010",
+          "raw_span": "blood and urine cultures grow Escherichia coli",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E011",
+          "raw_span": "urinalysis is positive for leukocyte esterase, nitrites, and white blood cells",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Urinary Tract Infection",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G1E003"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 3.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Bladder Cancer",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E004"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Kidney Stone",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E005"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Xanthogranulomatous pyelonephritis",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G2E006",
+            "G1E001",
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G2E009"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare and easily missed condition that requires specific diagnostic criteria and treatment.",
+          "score_logit": 2.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C005",
+          "preferred_name": "Malakoplakia",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G2E010"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare and easily missed condition that requires specific diagnostic criteria and treatment.",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C006",
+          "preferred_name": "Squamous cell carcinoma of the bladder",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G2E007",
+            "G2E008"
+          ],
+          "contradicting_evidence": [
+            "G2E011"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare and aggressive malignancy that requires prompt diagnosis and treatment.",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Urinary Tract Infection",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Bladder Cancer",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Kidney Stone",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C004",
+          "name": "Xanthogranulomatous pyelonephritis",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C005",
+          "name": "Malakoplakia",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C006",
+          "name": "Squamous cell carcinoma of the bladder",
+          "view": "g2"
+        }
+      ],
+      "frontier_final": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Urinary Tract Infection",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G1E003"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 3.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Xanthogranulomatous pyelonephritis",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G2E006",
+            "G1E001",
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G2E009"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare and easily missed condition that requires specific diagnostic criteria and treatment.",
+          "score_logit": 2.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Bladder Cancer",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E004"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Kidney Stone",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E005"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C005",
+          "preferred_name": "Malakoplakia",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G2E010"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare and easily missed condition that requires specific diagnostic criteria and treatment.",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C006",
+          "preferred_name": "Squamous cell carcinoma of the bladder",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G2E007",
+            "G2E008"
+          ],
+          "contradicting_evidence": [
+            "G2E011"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare and aggressive malignancy that requires prompt diagnosis and treatment.",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 6,
+      "n_evidence": 11,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.0,
+      "frontier_n": 6,
+      "protected_n": 3,
+      "n_generators": 2,
+      "adaptive_action": null,
+      "llm_calls": 3,
+      "history_leakage": 0,
+      "mode": "lite"
+    },
+    "wall_s": 4.192
+  },
+  "created_at": "2026-08-10T01:59:20.053342+00:00"
+}

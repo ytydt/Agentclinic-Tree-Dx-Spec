@@ -1,0 +1,1396 @@
+{
+  "case_id": "diagnosisarena__000067",
+  "source_id": "67",
+  "champion": "Severe Sepsis",
+  "ordered_diagnoses": [
+    "Severe Sepsis",
+    "Pulmonary Infection",
+    "Bradycardia",
+    "Intracranial Hemorrhage",
+    "Myocardial Infarction"
+  ],
+  "llm_calls": 4,
+  "stages": {
+    "mode": "adaptive4v2",
+    "vignette_chars": 914,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Myocardial Infarction",
+          "support_spans": [
+            "ECG showing intrinsic junctional rhythm at rate of about 60 beats/min"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's ECG results and symptoms such as altered mental status, weakness, and bradycardia could be indicative of myocardial infarction."
+        },
+        {
+          "name": "Intracranial Hemorrhage",
+          "support_spans": [
+            "headache"
+          ],
+          "contradict_spans": [
+            "Computed tomography of the head: No acute pathology"
+          ],
+          "why": "The patient's headache could suggest intracranial hemorrhage, but the CT head scan did not show any acute pathology."
+        },
+        {
+          "name": "Pulmonary Infection",
+          "support_spans": [
+            "Chest radiography: Showed pulmonary consolidation",
+            "emesis"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's symptoms such as emesis and the chest radiography results could indicate a pulmonary infection."
+        },
+        {
+          "name": "Bradycardia",
+          "support_spans": [
+            "heart rate of 49 beats/min",
+            "pulse rate in the 20s"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's low heart rate could be indicative of bradycardia."
+        },
+        {
+          "name": "Severe Sepsis",
+          "support_spans": [
+            "altered mental status",
+            "weakness",
+            "emesis",
+            "respiratory rate of 27 breaths/min"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's symptoms such as altered mental status, weakness, and increased respiratory rate could suggest severe sepsis."
+        }
+      ],
+      "key_evidence_spans": [
+        "blood pressure of 100/73 mm Hg",
+        "heart rate of 49 beats/min",
+        "Chest radiography: Showed pulmonary consolidation",
+        "ECG showing intrinsic junctional rhythm at rate of about 60 beats/min"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Intracranial Hemorrhage with Brainstem Involvement",
+          "support_spans": [
+            "altered mental status, weakness, slurred speech, emesis, and headache"
+          ],
+          "contradict_spans": [
+            "Computed tomography of the head: No acute pathology"
+          ],
+          "why": "The patient's symptoms could be indicative of a brainstem lesion affecting vital functions, despite the initial CT scan not showing acute pathology.",
+          "protected_reason": "This diagnosis may deserve protection because it could explain the patient's severe symptoms and the need for intubation, even if the initial imaging did not show obvious pathology."
+        },
+        {
+          "name": "Myocardial Infarction with High-Degree AV Block",
+          "support_spans": [
+            "heart rate of 49 beats/min",
+            "ECG showing intrinsic junctional rhythm at rate of about 60 beats/min"
+          ],
+          "contradict_spans": [
+            "blood pressure of 100/73 mm Hg"
+          ],
+          "why": "The patient's bradycardia and junctional rhythm on ECG could be indicative of a myocardial infarction affecting the conduction system of the heart.",
+          "protected_reason": "This diagnosis may deserve protection because it could explain the patient's bradycardia and the need for transcutaneous pacing, even if the blood pressure is relatively stable."
+        },
+        {
+          "name": "Severe Pulmonary Infection with Sepsis",
+          "support_spans": [
+            "pulmonary consolidation",
+            "respiratory rate of 27 breaths/min"
+          ],
+          "contradict_spans": [
+            "oxygen saturation of 95% on a nonrebreather mask"
+          ],
+          "why": "The patient's symptoms and imaging findings could be indicative of a severe pulmonary infection leading to sepsis, which would explain the need for intubation and the patient's overall clinical presentation.",
+          "protected_reason": "This diagnosis may deserve protection because it could explain the patient's respiratory symptoms and the need for oxygen therapy, even if the oxygen saturation is currently adequate."
+        }
+      ],
+      "key_evidence_spans": [
+        "altered mental status, weakness, slurred speech, emesis, and headache",
+        "heart rate of 49 beats/min",
+        "pulmonary consolidation"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "blood pressure of 100/73 mm Hg",
+        "Computed tomography of the head: No acute pathology",
+        "oxygen saturation of 95% on a nonrebreather mask"
+      ],
+      "generator_jaccard": 0.0,
+      "top1_same_across_views": false,
+      "top_margin": 0.6499999999999999,
+      "leave_one_view_instability": true,
+      "contradiction_mass": 0
+    },
+    "a1": {
+      "candidates": [
+        {
+          "name": "Hypotension",
+          "support_spans": [
+            "blood pressure of 100/73 mm Hg"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's blood pressure is lower than normal, which could indicate hypotension.",
+          "protected_reason": "explains unexplained high-specificity evidence"
+        },
+        {
+          "name": "Hypoxemic Respiratory Failure",
+          "support_spans": [
+            "oxygen saturation of 95% on a nonrebreather mask"
+          ],
+          "contradict_spans": [],
+          "why": "The patient requires a nonrebreather mask to maintain oxygen saturation, indicating potential respiratory failure.",
+          "protected_reason": "explains unexplained high-specificity evidence"
+        },
+        {
+          "name": "Intracranial Hypertension",
+          "support_spans": [
+            "Computed tomography of the head: No acute pathology"
+          ],
+          "contradict_spans": [],
+          "why": "The lack of acute pathology on the CT head scan does not rule out increased intracranial pressure, which could explain the patient's altered mental status.",
+          "protected_reason": "explains unexplained high-specificity evidence"
+        }
+      ]
+    },
+    "state_after_a1": {
+      "unexplained_specific_evidence": [],
+      "generator_jaccard": 0.0,
+      "top1_same_across_views": false,
+      "top_margin": 0.6499999999999999,
+      "leave_one_view_instability": true,
+      "contradiction_mass": 0
+    },
+    "adaptive_action": "ORTHOGONAL_GENERATE",
+    "selector": {
+      "champion": "Severe Sepsis",
+      "runner_up": "Pulmonary Infection",
+      "rationale": "The patient's altered mental status, weakness, emesis, and low heart rate are best explained by severe sepsis, which is supported by multiple findings without strong contradictions.",
+      "rejected": [
+        {
+          "label": "Intracranial Hemorrhage",
+          "why": "No acute pathology on CT head"
+        },
+        {
+          "label": "Myocardial Infarction",
+          "why": "Relatively stable blood pressure"
+        },
+        {
+          "label": "Bradycardia",
+          "why": "Too specific, does not explain all symptoms"
+        },
+        {
+          "label": "Hypotension",
+          "why": "Blood pressure is not low enough to be the primary diagnosis"
+        }
+      ],
+      "margin": "medium"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "blood pressure of 100/73 mm Hg",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "heart rate of 49 beats/min",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "Chest radiography: Showed pulmonary consolidation",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "ECG showing intrinsic junctional rhythm at rate of about 60 beats/min",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E005",
+        "raw_span": "headache",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E006",
+        "raw_span": "Computed tomography of the head: No acute pathology",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E007",
+        "raw_span": "emesis",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E008",
+        "raw_span": "pulse rate in the 20s",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E009",
+        "raw_span": "altered mental status",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E010",
+        "raw_span": "weakness",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E011",
+        "raw_span": "respiratory rate of 27 breaths/min",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E012",
+        "raw_span": "altered mental status, weakness, slurred speech, emesis, and headache",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E013",
+        "raw_span": "pulmonary consolidation",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E014",
+        "raw_span": "oxygen saturation of 95% on a nonrebreather mask",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Myocardial Infarction",
+        "aliases": [
+          "Myocardial Infarction with High-Degree AV Block"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E004",
+          "G1E002"
+        ],
+        "contradicting_evidence": [
+          "G1E001"
+        ],
+        "protected_reason": "This diagnosis may deserve protection because it could explain the patient's bradycardia and the need for transcutaneous pacing, even if the blood pressure is relatively stable.",
+        "score_logit": 1.35,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Intracranial Hemorrhage",
+        "aliases": [
+          "Intracranial Hemorrhage with Brainstem Involvement"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E005",
+          "G2E012"
+        ],
+        "contradicting_evidence": [
+          "G1E006"
+        ],
+        "protected_reason": "This diagnosis may deserve protection because it could explain the patient's severe symptoms and the need for intubation, even if the initial imaging did not show obvious pathology.",
+        "score_logit": 1.35,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Pulmonary Infection",
+        "aliases": [
+          "Severe Pulmonary Infection with Sepsis"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E007",
+          "G2E013",
+          "G1E011"
+        ],
+        "contradicting_evidence": [
+          "G2E014"
+        ],
+        "protected_reason": "This diagnosis may deserve protection because it could explain the patient's respiratory symptoms and the need for oxygen therapy, even if the oxygen saturation is currently adequate.",
+        "score_logit": 3.35,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Bradycardia",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E002",
+          "G1E008"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 2.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Severe Sepsis",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E009",
+          "G1E010",
+          "G1E007",
+          "G1E011"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 4.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C006",
+        "preferred_name": "Hypotension",
+        "aliases": [],
+        "generator_views": [
+          "a1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "explains unexplained high-specificity evidence",
+        "score_logit": 1.25,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C007",
+        "preferred_name": "Hypoxemic Respiratory Failure",
+        "aliases": [],
+        "generator_views": [
+          "a1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G2E014"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "explains unexplained high-specificity evidence",
+        "score_logit": 1.25,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C008",
+        "preferred_name": "Intracranial Hypertension",
+        "aliases": [],
+        "generator_views": [
+          "a1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E006"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "explains unexplained high-specificity evidence",
+        "score_logit": 1.25,
+        "status": "live",
+        "agent_votes": 0
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Myocardial Infarction",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Intracranial Hemorrhage",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Pulmonary Infection",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C004",
+        "name": "Bradycardia",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C005",
+        "name": "Severe Sepsis",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Intracranial Hemorrhage with Brainstem Involvement",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Myocardial Infarction with High-Degree AV Block",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C003",
+        "name": "Severe Pulmonary Infection with Sepsis",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C006",
+        "name": "Hypotension",
+        "view": "a1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C007",
+        "name": "Hypoxemic Respiratory Failure",
+        "view": "a1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C008",
+        "name": "Intracranial Hypertension",
+        "view": "a1"
+      }
+    ],
+    "frontier_final": [
+      {
+        "concept_id": "C005",
+        "preferred_name": "Severe Sepsis",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E009",
+          "G1E010",
+          "G1E007",
+          "G1E011"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 4.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Pulmonary Infection",
+        "aliases": [
+          "Severe Pulmonary Infection with Sepsis"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E007",
+          "G2E013",
+          "G1E011"
+        ],
+        "contradicting_evidence": [
+          "G2E014"
+        ],
+        "protected_reason": "This diagnosis may deserve protection because it could explain the patient's respiratory symptoms and the need for oxygen therapy, even if the oxygen saturation is currently adequate.",
+        "score_logit": 3.35,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Bradycardia",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E002",
+          "G1E008"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 2.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Intracranial Hemorrhage",
+        "aliases": [
+          "Intracranial Hemorrhage with Brainstem Involvement"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E005",
+          "G2E012"
+        ],
+        "contradicting_evidence": [
+          "G1E006"
+        ],
+        "protected_reason": "This diagnosis may deserve protection because it could explain the patient's severe symptoms and the need for intubation, even if the initial imaging did not show obvious pathology.",
+        "score_logit": 1.35,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C001",
+        "preferred_name": "Myocardial Infarction",
+        "aliases": [
+          "Myocardial Infarction with High-Degree AV Block"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E004",
+          "G1E002"
+        ],
+        "contradicting_evidence": [
+          "G1E001"
+        ],
+        "protected_reason": "This diagnosis may deserve protection because it could explain the patient's bradycardia and the need for transcutaneous pacing, even if the blood pressure is relatively stable.",
+        "score_logit": 1.35,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C006",
+        "preferred_name": "Hypotension",
+        "aliases": [],
+        "generator_views": [
+          "a1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "explains unexplained high-specificity evidence",
+        "score_logit": 1.25,
+        "status": "live",
+        "agent_votes": 0
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 8,
+    "n_evidence": 14,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.0,
+    "frontier_n": 6,
+    "protected_n": 4,
+    "n_generators": 2,
+    "adaptive_action": "ORTHOGONAL_GENERATE",
+    "llm_calls": 4,
+    "history_leakage": 0,
+    "mode": "adaptive4v2"
+  },
+  "prediction": {
+    "arm": "mosaic_adaptive4v2_v1",
+    "case_id": "diagnosisarena__000067",
+    "source_id": "67",
+    "dataset": "diagnosisarena",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Severe Sepsis",
+      "Pulmonary Infection",
+      "Bradycardia",
+      "Intracranial Hemorrhage",
+      "Myocardial Infarction"
+    ],
+    "top2_diagnoses": [
+      "Severe Sepsis",
+      "Pulmonary Infection"
+    ],
+    "cost": {
+      "llm_calls": 4
+    },
+    "stages": {
+      "mode": "adaptive4v2",
+      "vignette_chars": 914,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Myocardial Infarction",
+            "support_spans": [
+              "ECG showing intrinsic junctional rhythm at rate of about 60 beats/min"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's ECG results and symptoms such as altered mental status, weakness, and bradycardia could be indicative of myocardial infarction."
+          },
+          {
+            "name": "Intracranial Hemorrhage",
+            "support_spans": [
+              "headache"
+            ],
+            "contradict_spans": [
+              "Computed tomography of the head: No acute pathology"
+            ],
+            "why": "The patient's headache could suggest intracranial hemorrhage, but the CT head scan did not show any acute pathology."
+          },
+          {
+            "name": "Pulmonary Infection",
+            "support_spans": [
+              "Chest radiography: Showed pulmonary consolidation",
+              "emesis"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's symptoms such as emesis and the chest radiography results could indicate a pulmonary infection."
+          },
+          {
+            "name": "Bradycardia",
+            "support_spans": [
+              "heart rate of 49 beats/min",
+              "pulse rate in the 20s"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's low heart rate could be indicative of bradycardia."
+          },
+          {
+            "name": "Severe Sepsis",
+            "support_spans": [
+              "altered mental status",
+              "weakness",
+              "emesis",
+              "respiratory rate of 27 breaths/min"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's symptoms such as altered mental status, weakness, and increased respiratory rate could suggest severe sepsis."
+          }
+        ],
+        "key_evidence_spans": [
+          "blood pressure of 100/73 mm Hg",
+          "heart rate of 49 beats/min",
+          "Chest radiography: Showed pulmonary consolidation",
+          "ECG showing intrinsic junctional rhythm at rate of about 60 beats/min"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Intracranial Hemorrhage with Brainstem Involvement",
+            "support_spans": [
+              "altered mental status, weakness, slurred speech, emesis, and headache"
+            ],
+            "contradict_spans": [
+              "Computed tomography of the head: No acute pathology"
+            ],
+            "why": "The patient's symptoms could be indicative of a brainstem lesion affecting vital functions, despite the initial CT scan not showing acute pathology.",
+            "protected_reason": "This diagnosis may deserve protection because it could explain the patient's severe symptoms and the need for intubation, even if the initial imaging did not show obvious pathology."
+          },
+          {
+            "name": "Myocardial Infarction with High-Degree AV Block",
+            "support_spans": [
+              "heart rate of 49 beats/min",
+              "ECG showing intrinsic junctional rhythm at rate of about 60 beats/min"
+            ],
+            "contradict_spans": [
+              "blood pressure of 100/73 mm Hg"
+            ],
+            "why": "The patient's bradycardia and junctional rhythm on ECG could be indicative of a myocardial infarction affecting the conduction system of the heart.",
+            "protected_reason": "This diagnosis may deserve protection because it could explain the patient's bradycardia and the need for transcutaneous pacing, even if the blood pressure is relatively stable."
+          },
+          {
+            "name": "Severe Pulmonary Infection with Sepsis",
+            "support_spans": [
+              "pulmonary consolidation",
+              "respiratory rate of 27 breaths/min"
+            ],
+            "contradict_spans": [
+              "oxygen saturation of 95% on a nonrebreather mask"
+            ],
+            "why": "The patient's symptoms and imaging findings could be indicative of a severe pulmonary infection leading to sepsis, which would explain the need for intubation and the patient's overall clinical presentation.",
+            "protected_reason": "This diagnosis may deserve protection because it could explain the patient's respiratory symptoms and the need for oxygen therapy, even if the oxygen saturation is currently adequate."
+          }
+        ],
+        "key_evidence_spans": [
+          "altered mental status, weakness, slurred speech, emesis, and headache",
+          "heart rate of 49 beats/min",
+          "pulmonary consolidation"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "blood pressure of 100/73 mm Hg",
+          "Computed tomography of the head: No acute pathology",
+          "oxygen saturation of 95% on a nonrebreather mask"
+        ],
+        "generator_jaccard": 0.0,
+        "top1_same_across_views": false,
+        "top_margin": 0.6499999999999999,
+        "leave_one_view_instability": true,
+        "contradiction_mass": 0
+      },
+      "a1": {
+        "candidates": [
+          {
+            "name": "Hypotension",
+            "support_spans": [
+              "blood pressure of 100/73 mm Hg"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's blood pressure is lower than normal, which could indicate hypotension.",
+            "protected_reason": "explains unexplained high-specificity evidence"
+          },
+          {
+            "name": "Hypoxemic Respiratory Failure",
+            "support_spans": [
+              "oxygen saturation of 95% on a nonrebreather mask"
+            ],
+            "contradict_spans": [],
+            "why": "The patient requires a nonrebreather mask to maintain oxygen saturation, indicating potential respiratory failure.",
+            "protected_reason": "explains unexplained high-specificity evidence"
+          },
+          {
+            "name": "Intracranial Hypertension",
+            "support_spans": [
+              "Computed tomography of the head: No acute pathology"
+            ],
+            "contradict_spans": [],
+            "why": "The lack of acute pathology on the CT head scan does not rule out increased intracranial pressure, which could explain the patient's altered mental status.",
+            "protected_reason": "explains unexplained high-specificity evidence"
+          }
+        ]
+      },
+      "state_after_a1": {
+        "unexplained_specific_evidence": [],
+        "generator_jaccard": 0.0,
+        "top1_same_across_views": false,
+        "top_margin": 0.6499999999999999,
+        "leave_one_view_instability": true,
+        "contradiction_mass": 0
+      },
+      "adaptive_action": "ORTHOGONAL_GENERATE",
+      "selector": {
+        "champion": "Severe Sepsis",
+        "runner_up": "Pulmonary Infection",
+        "rationale": "The patient's altered mental status, weakness, emesis, and low heart rate are best explained by severe sepsis, which is supported by multiple findings without strong contradictions.",
+        "rejected": [
+          {
+            "label": "Intracranial Hemorrhage",
+            "why": "No acute pathology on CT head"
+          },
+          {
+            "label": "Myocardial Infarction",
+            "why": "Relatively stable blood pressure"
+          },
+          {
+            "label": "Bradycardia",
+            "why": "Too specific, does not explain all symptoms"
+          },
+          {
+            "label": "Hypotension",
+            "why": "Blood pressure is not low enough to be the primary diagnosis"
+          }
+        ],
+        "margin": "medium"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "blood pressure of 100/73 mm Hg",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "heart rate of 49 beats/min",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "Chest radiography: Showed pulmonary consolidation",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "ECG showing intrinsic junctional rhythm at rate of about 60 beats/min",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E005",
+          "raw_span": "headache",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E006",
+          "raw_span": "Computed tomography of the head: No acute pathology",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E007",
+          "raw_span": "emesis",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E008",
+          "raw_span": "pulse rate in the 20s",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E009",
+          "raw_span": "altered mental status",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E010",
+          "raw_span": "weakness",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E011",
+          "raw_span": "respiratory rate of 27 breaths/min",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E012",
+          "raw_span": "altered mental status, weakness, slurred speech, emesis, and headache",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E013",
+          "raw_span": "pulmonary consolidation",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E014",
+          "raw_span": "oxygen saturation of 95% on a nonrebreather mask",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Myocardial Infarction",
+          "aliases": [
+            "Myocardial Infarction with High-Degree AV Block"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E004",
+            "G1E002"
+          ],
+          "contradicting_evidence": [
+            "G1E001"
+          ],
+          "protected_reason": "This diagnosis may deserve protection because it could explain the patient's bradycardia and the need for transcutaneous pacing, even if the blood pressure is relatively stable.",
+          "score_logit": 1.35,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Intracranial Hemorrhage",
+          "aliases": [
+            "Intracranial Hemorrhage with Brainstem Involvement"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E005",
+            "G2E012"
+          ],
+          "contradicting_evidence": [
+            "G1E006"
+          ],
+          "protected_reason": "This diagnosis may deserve protection because it could explain the patient's severe symptoms and the need for intubation, even if the initial imaging did not show obvious pathology.",
+          "score_logit": 1.35,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Pulmonary Infection",
+          "aliases": [
+            "Severe Pulmonary Infection with Sepsis"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E007",
+            "G2E013",
+            "G1E011"
+          ],
+          "contradicting_evidence": [
+            "G2E014"
+          ],
+          "protected_reason": "This diagnosis may deserve protection because it could explain the patient's respiratory symptoms and the need for oxygen therapy, even if the oxygen saturation is currently adequate.",
+          "score_logit": 3.35,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Bradycardia",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E002",
+            "G1E008"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 2.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C005",
+          "preferred_name": "Severe Sepsis",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E009",
+            "G1E010",
+            "G1E007",
+            "G1E011"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 4.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C006",
+          "preferred_name": "Hypotension",
+          "aliases": [],
+          "generator_views": [
+            "a1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "explains unexplained high-specificity evidence",
+          "score_logit": 1.25,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C007",
+          "preferred_name": "Hypoxemic Respiratory Failure",
+          "aliases": [],
+          "generator_views": [
+            "a1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G2E014"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "explains unexplained high-specificity evidence",
+          "score_logit": 1.25,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C008",
+          "preferred_name": "Intracranial Hypertension",
+          "aliases": [],
+          "generator_views": [
+            "a1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E006"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "explains unexplained high-specificity evidence",
+          "score_logit": 1.25,
+          "status": "live",
+          "agent_votes": 0
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Myocardial Infarction",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Intracranial Hemorrhage",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Pulmonary Infection",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C004",
+          "name": "Bradycardia",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C005",
+          "name": "Severe Sepsis",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Intracranial Hemorrhage with Brainstem Involvement",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Myocardial Infarction with High-Degree AV Block",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C003",
+          "name": "Severe Pulmonary Infection with Sepsis",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C006",
+          "name": "Hypotension",
+          "view": "a1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C007",
+          "name": "Hypoxemic Respiratory Failure",
+          "view": "a1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C008",
+          "name": "Intracranial Hypertension",
+          "view": "a1"
+        }
+      ],
+      "frontier_final": [
+        {
+          "concept_id": "C005",
+          "preferred_name": "Severe Sepsis",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E009",
+            "G1E010",
+            "G1E007",
+            "G1E011"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 4.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Pulmonary Infection",
+          "aliases": [
+            "Severe Pulmonary Infection with Sepsis"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E007",
+            "G2E013",
+            "G1E011"
+          ],
+          "contradicting_evidence": [
+            "G2E014"
+          ],
+          "protected_reason": "This diagnosis may deserve protection because it could explain the patient's respiratory symptoms and the need for oxygen therapy, even if the oxygen saturation is currently adequate.",
+          "score_logit": 3.35,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Bradycardia",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E002",
+            "G1E008"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 2.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Intracranial Hemorrhage",
+          "aliases": [
+            "Intracranial Hemorrhage with Brainstem Involvement"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E005",
+            "G2E012"
+          ],
+          "contradicting_evidence": [
+            "G1E006"
+          ],
+          "protected_reason": "This diagnosis may deserve protection because it could explain the patient's severe symptoms and the need for intubation, even if the initial imaging did not show obvious pathology.",
+          "score_logit": 1.35,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C001",
+          "preferred_name": "Myocardial Infarction",
+          "aliases": [
+            "Myocardial Infarction with High-Degree AV Block"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E004",
+            "G1E002"
+          ],
+          "contradicting_evidence": [
+            "G1E001"
+          ],
+          "protected_reason": "This diagnosis may deserve protection because it could explain the patient's bradycardia and the need for transcutaneous pacing, even if the blood pressure is relatively stable.",
+          "score_logit": 1.35,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C006",
+          "preferred_name": "Hypotension",
+          "aliases": [],
+          "generator_views": [
+            "a1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "explains unexplained high-specificity evidence",
+          "score_logit": 1.25,
+          "status": "live",
+          "agent_votes": 0
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 8,
+      "n_evidence": 14,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.0,
+      "frontier_n": 6,
+      "protected_n": 4,
+      "n_generators": 2,
+      "adaptive_action": "ORTHOGONAL_GENERATE",
+      "llm_calls": 4,
+      "history_leakage": 0,
+      "mode": "adaptive4v2"
+    },
+    "wall_s": 6.32
+  },
+  "created_at": "2026-08-08T02:13:07.511328+00:00"
+}

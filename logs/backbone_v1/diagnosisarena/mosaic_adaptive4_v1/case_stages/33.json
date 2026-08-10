@@ -1,0 +1,972 @@
+{
+  "case_id": "diagnosisarena__000033",
+  "source_id": "33",
+  "champion": "Cardiac Metastasis",
+  "ordered_diagnoses": [
+    "Cardiac Metastasis",
+    "Cardiac Amyloidosis",
+    "Myocardial Infarction",
+    "Cardiac Sarcoidosis",
+    "Cardiac Tamponade"
+  ],
+  "llm_calls": 4,
+  "stages": {
+    "mode": "adaptive4",
+    "vignette_chars": 1411,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Cardiac Metastasis",
+          "support_spans": [
+            "lung cancer with metastatic disease to the brain and myocardium",
+            "Well-circumscribed 2.8 × 2.6-cm mass located in the left ventricular mid-apical anteroseptum"
+          ],
+          "contradict_spans": [],
+          "why": "The patient has a history of lung cancer with metastasis to the myocardium and a mass is seen in the left ventricle on echocardiogram."
+        },
+        {
+          "name": "Myocardial Infarction",
+          "support_spans": [
+            "High-sensitivity cardiac troponin-T (hs-cTnT) level was 40 ng/L",
+            "1.0-mm ST elevation in lead V1",
+            "4.0-mm ST elevation in leads V2 and V3"
+          ],
+          "contradict_spans": [
+            "Nonobstructive epicardial coronary artery disease without evidence of acute thrombotic or embolic occlusion"
+          ],
+          "why": "The patient has elevated troponin levels and ST elevation on ECG, but coronary angiography shows no obstructive disease."
+        },
+        {
+          "name": "Cardiac Tamponade",
+          "support_spans": [
+            "Large pericardial effusion with signs of impending cardiac tamponade"
+          ],
+          "contradict_spans": [],
+          "why": "The patient has a large pericardial effusion with signs of impending tamponade on echocardiogram."
+        }
+      ],
+      "key_evidence_spans": [
+        "lung cancer with metastatic disease to the brain and myocardium",
+        "High-sensitivity cardiac troponin-T (hs-cTnT) level was 40 ng/L",
+        "Well-circumscribed 2.8 × 2.6-cm mass located in the left ventricular mid-apical anteroseptum",
+        "Large pericardial effusion with signs of impending cardiac tamponade"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Cardiac Metastasis",
+          "support_spans": [
+            "lung cancer with metastatic disease to the brain and myocardium",
+            "Well-circumscribed 2.8 × 2.6-cm mass located in the left ventricular mid-apical anteroseptum"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's history of lung cancer with metastasis to the myocardium and the presence of a mass in the left ventricle suggest cardiac metastasis.",
+          "protected_reason": "This diagnosis may be easily missed due to the rarity of cardiac metastasis and the presence of other cardiac conditions."
+        },
+        {
+          "name": "Myocardial Infarction with Non-Obstructive Coronary Artery Disease",
+          "support_spans": [
+            "High-sensitivity cardiac troponin-T (hs-cTnT) level was 40 ng/L",
+            "1.0-mm ST elevation in lead V1",
+            "4.0-mm ST elevation in leads V2 and V3"
+          ],
+          "contradict_spans": [
+            "Nonobstructive epicardial coronary artery disease without evidence of acute thrombotic or embolic occlusion"
+          ],
+          "why": "The elevated troponin level and ST elevation suggest myocardial infarction, but the absence of obstructive coronary artery disease is unusual.",
+          "protected_reason": "This diagnosis may be challenging to recognize due to the non-obstructive nature of the coronary artery disease."
+        },
+        {
+          "name": "Cardiac Amyloidosis",
+          "support_spans": [
+            "Diffusely low voltages in both limb leads and precordial leads",
+            "Large pericardial effusion with signs of impending cardiac tamponade"
+          ],
+          "contradict_spans": [],
+          "why": "The low voltages on ECG and large pericardial effusion suggest cardiac amyloidosis, which can cause restrictive cardiomyopathy and arrhythmias.",
+          "protected_reason": "This diagnosis may be easily missed due to its rarity and non-specific presentation."
+        }
+      ],
+      "key_evidence_spans": [
+        "High-sensitivity cardiac troponin-T (hs-cTnT) level was 40 ng/L",
+        "1.0-mm ST elevation in lead V1",
+        "4.0-mm ST elevation in leads V2 and V3",
+        "Well-circumscribed 2.8 × 2.6-cm mass located in the left ventricular mid-apical anteroseptum",
+        "Large pericardial effusion with signs of impending cardiac tamponade"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "Nonobstructive epicardial coronary artery disease without evidence of acute thrombotic or embolic occlusion"
+      ],
+      "generator_jaccard": 0.2,
+      "top1_same_across_views": true,
+      "top_margin": 0.25,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "frontier_after_g": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Cardiac Metastasis",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E003"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "This diagnosis may be easily missed due to the rarity of cardiac metastasis and the presence of other cardiac conditions.",
+        "score_logit": 2.6,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Myocardial Infarction",
+        "aliases": [
+          "Myocardial Infarction with Non-Obstructive Coronary Artery Disease"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E002",
+          "G1E005",
+          "G1E006"
+        ],
+        "contradicting_evidence": [
+          "G1E007"
+        ],
+        "protected_reason": "This diagnosis may be challenging to recognize due to the non-obstructive nature of the coronary artery disease.",
+        "score_logit": 2.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Cardiac Amyloidosis",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G2E008",
+          "G1E004"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "This diagnosis may be easily missed due to its rarity and non-specific presentation.",
+        "score_logit": 2.25,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Cardiac Tamponade",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E004"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 1.0,
+        "status": "live"
+      }
+    ],
+    "a1": {
+      "candidates": [
+        {
+          "name": "Cardiac Amyloidosis",
+          "support_spans": [
+            "Nonobstructive epicardial coronary artery disease without evidence of acute thrombotic or embolic occlusion",
+            "Diffusely low voltages in both limb leads and precordial leads"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's presentation with nonobstructive coronary artery disease and low voltages on ECG is consistent with cardiac amyloidosis.",
+          "protected_reason": "explains unexplained high-specificity evidence of nonobstructive epicardial coronary artery disease"
+        },
+        {
+          "name": "Cardiac Sarcoidosis",
+          "support_spans": [
+            "Nonobstructive epicardial coronary artery disease without evidence of acute thrombotic or embolic occlusion",
+            "T-wave inversions in leads I, aVL, V4, V5, and V6"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's ECG findings and nonobstructive coronary artery disease are consistent with cardiac sarcoidosis.",
+          "protected_reason": "explains unexplained high-specificity evidence of nonobstructive epicardial coronary artery disease"
+        },
+        {
+          "name": "Cardiac Metastasis",
+          "support_spans": [
+            "Nonobstructive epicardial coronary artery disease without evidence of acute thrombotic or embolic occlusion",
+            "lung cancer with metastatic disease to the brain and myocardium"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's history of lung cancer with metastasis to the myocardium could explain the nonobstructive coronary artery disease.",
+          "protected_reason": "explains unexplained high-specificity evidence of nonobstructive epicardial coronary artery disease"
+        }
+      ]
+    },
+    "adaptive_action": "ORTHOGONAL_GENERATE",
+    "selector": {
+      "champion": "Cardiac Metastasis",
+      "runner_up": "Cardiac Amyloidosis",
+      "rationale": "The patient's history of lung cancer with metastatic disease to the myocardium and the presence of a well-circumscribed mass in the left ventricle support Cardiac Metastasis as the most likely diagnosis.",
+      "rejected": [
+        {
+          "label": "Myocardial Infarction",
+          "why": "Nonobstructive epicardial coronary artery disease without evidence of acute thrombotic or embolic occlusion contradicts this diagnosis"
+        },
+        {
+          "label": "Cardiac Sarcoidosis",
+          "why": "Lack of specific evidence supporting this diagnosis"
+        },
+        {
+          "label": "Cardiac Tamponade",
+          "why": "While there is a large pericardial effusion, Cardiac Tamponade is not a primary diagnosis that explains the underlying cause of the patient's condition"
+        }
+      ],
+      "margin": "high"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "lung cancer with metastatic disease to the brain and myocardium",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "High-sensitivity cardiac troponin-T (hs-cTnT) level was 40 ng/L",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "Well-circumscribed 2.8 × 2.6-cm mass located in the left ventricular mid-apical anteroseptum",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "Large pericardial effusion with signs of impending cardiac tamponade",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E005",
+        "raw_span": "1.0-mm ST elevation in lead V1",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E006",
+        "raw_span": "4.0-mm ST elevation in leads V2 and V3",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E007",
+        "raw_span": "Nonobstructive epicardial coronary artery disease without evidence of acute thrombotic or embolic occlusion",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E008",
+        "raw_span": "Diffusely low voltages in both limb leads and precordial leads",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "A1E009",
+        "raw_span": "T-wave inversions in leads I, aVL, V4, V5, and V6",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "a1"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Cardiac Metastasis",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2",
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E003",
+          "G1E007"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "This diagnosis may be easily missed due to the rarity of cardiac metastasis and the presence of other cardiac conditions.",
+        "score_logit": 3.95,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Myocardial Infarction",
+        "aliases": [
+          "Myocardial Infarction with Non-Obstructive Coronary Artery Disease"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E002",
+          "G1E005",
+          "G1E006"
+        ],
+        "contradicting_evidence": [
+          "G1E007"
+        ],
+        "protected_reason": "This diagnosis may be challenging to recognize due to the non-obstructive nature of the coronary artery disease.",
+        "score_logit": 2.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Cardiac Tamponade",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E004"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 1.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Cardiac Amyloidosis",
+        "aliases": [],
+        "generator_views": [
+          "g2",
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G2E008",
+          "G1E004",
+          "G1E007"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "This diagnosis may be easily missed due to its rarity and non-specific presentation.",
+        "score_logit": 3.6,
+        "status": "live"
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Cardiac Sarcoidosis",
+        "aliases": [],
+        "generator_views": [
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G1E007",
+          "A1E009"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "explains unexplained high-specificity evidence of nonobstructive epicardial coronary artery disease",
+        "score_logit": 2.25,
+        "status": "live"
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Cardiac Metastasis",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Myocardial Infarction",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Cardiac Tamponade",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Cardiac Metastasis",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Myocardial Infarction with Non-Obstructive Coronary Artery Disease",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C004",
+        "name": "Cardiac Amyloidosis",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C004",
+        "name": "Cardiac Amyloidosis",
+        "view": "a1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C005",
+        "name": "Cardiac Sarcoidosis",
+        "view": "a1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Cardiac Metastasis",
+        "view": "a1"
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 5,
+    "n_evidence": 9,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.2,
+    "frontier_n": 5,
+    "protected_n": 4,
+    "g1_n": 3,
+    "g2_n": 3,
+    "adaptive_action": "ORTHOGONAL_GENERATE",
+    "llm_calls": 4,
+    "history_leakage": 0
+  },
+  "prediction": {
+    "arm": "mosaic_adaptive4_v1",
+    "case_id": "diagnosisarena__000033",
+    "source_id": "33",
+    "dataset": "diagnosisarena",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Cardiac Metastasis",
+      "Cardiac Amyloidosis",
+      "Myocardial Infarction",
+      "Cardiac Sarcoidosis",
+      "Cardiac Tamponade"
+    ],
+    "top2_diagnoses": [
+      "Cardiac Metastasis",
+      "Cardiac Amyloidosis"
+    ],
+    "cost": {
+      "llm_calls": 4
+    },
+    "stages": {
+      "mode": "adaptive4",
+      "vignette_chars": 1411,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Cardiac Metastasis",
+            "support_spans": [
+              "lung cancer with metastatic disease to the brain and myocardium",
+              "Well-circumscribed 2.8 × 2.6-cm mass located in the left ventricular mid-apical anteroseptum"
+            ],
+            "contradict_spans": [],
+            "why": "The patient has a history of lung cancer with metastasis to the myocardium and a mass is seen in the left ventricle on echocardiogram."
+          },
+          {
+            "name": "Myocardial Infarction",
+            "support_spans": [
+              "High-sensitivity cardiac troponin-T (hs-cTnT) level was 40 ng/L",
+              "1.0-mm ST elevation in lead V1",
+              "4.0-mm ST elevation in leads V2 and V3"
+            ],
+            "contradict_spans": [
+              "Nonobstructive epicardial coronary artery disease without evidence of acute thrombotic or embolic occlusion"
+            ],
+            "why": "The patient has elevated troponin levels and ST elevation on ECG, but coronary angiography shows no obstructive disease."
+          },
+          {
+            "name": "Cardiac Tamponade",
+            "support_spans": [
+              "Large pericardial effusion with signs of impending cardiac tamponade"
+            ],
+            "contradict_spans": [],
+            "why": "The patient has a large pericardial effusion with signs of impending tamponade on echocardiogram."
+          }
+        ],
+        "key_evidence_spans": [
+          "lung cancer with metastatic disease to the brain and myocardium",
+          "High-sensitivity cardiac troponin-T (hs-cTnT) level was 40 ng/L",
+          "Well-circumscribed 2.8 × 2.6-cm mass located in the left ventricular mid-apical anteroseptum",
+          "Large pericardial effusion with signs of impending cardiac tamponade"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Cardiac Metastasis",
+            "support_spans": [
+              "lung cancer with metastatic disease to the brain and myocardium",
+              "Well-circumscribed 2.8 × 2.6-cm mass located in the left ventricular mid-apical anteroseptum"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's history of lung cancer with metastasis to the myocardium and the presence of a mass in the left ventricle suggest cardiac metastasis.",
+            "protected_reason": "This diagnosis may be easily missed due to the rarity of cardiac metastasis and the presence of other cardiac conditions."
+          },
+          {
+            "name": "Myocardial Infarction with Non-Obstructive Coronary Artery Disease",
+            "support_spans": [
+              "High-sensitivity cardiac troponin-T (hs-cTnT) level was 40 ng/L",
+              "1.0-mm ST elevation in lead V1",
+              "4.0-mm ST elevation in leads V2 and V3"
+            ],
+            "contradict_spans": [
+              "Nonobstructive epicardial coronary artery disease without evidence of acute thrombotic or embolic occlusion"
+            ],
+            "why": "The elevated troponin level and ST elevation suggest myocardial infarction, but the absence of obstructive coronary artery disease is unusual.",
+            "protected_reason": "This diagnosis may be challenging to recognize due to the non-obstructive nature of the coronary artery disease."
+          },
+          {
+            "name": "Cardiac Amyloidosis",
+            "support_spans": [
+              "Diffusely low voltages in both limb leads and precordial leads",
+              "Large pericardial effusion with signs of impending cardiac tamponade"
+            ],
+            "contradict_spans": [],
+            "why": "The low voltages on ECG and large pericardial effusion suggest cardiac amyloidosis, which can cause restrictive cardiomyopathy and arrhythmias.",
+            "protected_reason": "This diagnosis may be easily missed due to its rarity and non-specific presentation."
+          }
+        ],
+        "key_evidence_spans": [
+          "High-sensitivity cardiac troponin-T (hs-cTnT) level was 40 ng/L",
+          "1.0-mm ST elevation in lead V1",
+          "4.0-mm ST elevation in leads V2 and V3",
+          "Well-circumscribed 2.8 × 2.6-cm mass located in the left ventricular mid-apical anteroseptum",
+          "Large pericardial effusion with signs of impending cardiac tamponade"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "Nonobstructive epicardial coronary artery disease without evidence of acute thrombotic or embolic occlusion"
+        ],
+        "generator_jaccard": 0.2,
+        "top1_same_across_views": true,
+        "top_margin": 0.25,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 0
+      },
+      "frontier_after_g": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Cardiac Metastasis",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E003"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "This diagnosis may be easily missed due to the rarity of cardiac metastasis and the presence of other cardiac conditions.",
+          "score_logit": 2.6,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Myocardial Infarction",
+          "aliases": [
+            "Myocardial Infarction with Non-Obstructive Coronary Artery Disease"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E002",
+            "G1E005",
+            "G1E006"
+          ],
+          "contradicting_evidence": [
+            "G1E007"
+          ],
+          "protected_reason": "This diagnosis may be challenging to recognize due to the non-obstructive nature of the coronary artery disease.",
+          "score_logit": 2.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Cardiac Amyloidosis",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G2E008",
+            "G1E004"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "This diagnosis may be easily missed due to its rarity and non-specific presentation.",
+          "score_logit": 2.25,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Cardiac Tamponade",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E004"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 1.0,
+          "status": "live"
+        }
+      ],
+      "a1": {
+        "candidates": [
+          {
+            "name": "Cardiac Amyloidosis",
+            "support_spans": [
+              "Nonobstructive epicardial coronary artery disease without evidence of acute thrombotic or embolic occlusion",
+              "Diffusely low voltages in both limb leads and precordial leads"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's presentation with nonobstructive coronary artery disease and low voltages on ECG is consistent with cardiac amyloidosis.",
+            "protected_reason": "explains unexplained high-specificity evidence of nonobstructive epicardial coronary artery disease"
+          },
+          {
+            "name": "Cardiac Sarcoidosis",
+            "support_spans": [
+              "Nonobstructive epicardial coronary artery disease without evidence of acute thrombotic or embolic occlusion",
+              "T-wave inversions in leads I, aVL, V4, V5, and V6"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's ECG findings and nonobstructive coronary artery disease are consistent with cardiac sarcoidosis.",
+            "protected_reason": "explains unexplained high-specificity evidence of nonobstructive epicardial coronary artery disease"
+          },
+          {
+            "name": "Cardiac Metastasis",
+            "support_spans": [
+              "Nonobstructive epicardial coronary artery disease without evidence of acute thrombotic or embolic occlusion",
+              "lung cancer with metastatic disease to the brain and myocardium"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's history of lung cancer with metastasis to the myocardium could explain the nonobstructive coronary artery disease.",
+            "protected_reason": "explains unexplained high-specificity evidence of nonobstructive epicardial coronary artery disease"
+          }
+        ]
+      },
+      "adaptive_action": "ORTHOGONAL_GENERATE",
+      "selector": {
+        "champion": "Cardiac Metastasis",
+        "runner_up": "Cardiac Amyloidosis",
+        "rationale": "The patient's history of lung cancer with metastatic disease to the myocardium and the presence of a well-circumscribed mass in the left ventricle support Cardiac Metastasis as the most likely diagnosis.",
+        "rejected": [
+          {
+            "label": "Myocardial Infarction",
+            "why": "Nonobstructive epicardial coronary artery disease without evidence of acute thrombotic or embolic occlusion contradicts this diagnosis"
+          },
+          {
+            "label": "Cardiac Sarcoidosis",
+            "why": "Lack of specific evidence supporting this diagnosis"
+          },
+          {
+            "label": "Cardiac Tamponade",
+            "why": "While there is a large pericardial effusion, Cardiac Tamponade is not a primary diagnosis that explains the underlying cause of the patient's condition"
+          }
+        ],
+        "margin": "high"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "lung cancer with metastatic disease to the brain and myocardium",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "High-sensitivity cardiac troponin-T (hs-cTnT) level was 40 ng/L",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "Well-circumscribed 2.8 × 2.6-cm mass located in the left ventricular mid-apical anteroseptum",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "Large pericardial effusion with signs of impending cardiac tamponade",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E005",
+          "raw_span": "1.0-mm ST elevation in lead V1",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E006",
+          "raw_span": "4.0-mm ST elevation in leads V2 and V3",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E007",
+          "raw_span": "Nonobstructive epicardial coronary artery disease without evidence of acute thrombotic or embolic occlusion",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E008",
+          "raw_span": "Diffusely low voltages in both limb leads and precordial leads",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "A1E009",
+          "raw_span": "T-wave inversions in leads I, aVL, V4, V5, and V6",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "a1"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Cardiac Metastasis",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2",
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E003",
+            "G1E007"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "This diagnosis may be easily missed due to the rarity of cardiac metastasis and the presence of other cardiac conditions.",
+          "score_logit": 3.95,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Myocardial Infarction",
+          "aliases": [
+            "Myocardial Infarction with Non-Obstructive Coronary Artery Disease"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E002",
+            "G1E005",
+            "G1E006"
+          ],
+          "contradicting_evidence": [
+            "G1E007"
+          ],
+          "protected_reason": "This diagnosis may be challenging to recognize due to the non-obstructive nature of the coronary artery disease.",
+          "score_logit": 2.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Cardiac Tamponade",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E004"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 1.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Cardiac Amyloidosis",
+          "aliases": [],
+          "generator_views": [
+            "g2",
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G2E008",
+            "G1E004",
+            "G1E007"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "This diagnosis may be easily missed due to its rarity and non-specific presentation.",
+          "score_logit": 3.6,
+          "status": "live"
+        },
+        {
+          "concept_id": "C005",
+          "preferred_name": "Cardiac Sarcoidosis",
+          "aliases": [],
+          "generator_views": [
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G1E007",
+            "A1E009"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "explains unexplained high-specificity evidence of nonobstructive epicardial coronary artery disease",
+          "score_logit": 2.25,
+          "status": "live"
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Cardiac Metastasis",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Myocardial Infarction",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Cardiac Tamponade",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Cardiac Metastasis",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Myocardial Infarction with Non-Obstructive Coronary Artery Disease",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C004",
+          "name": "Cardiac Amyloidosis",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C004",
+          "name": "Cardiac Amyloidosis",
+          "view": "a1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C005",
+          "name": "Cardiac Sarcoidosis",
+          "view": "a1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Cardiac Metastasis",
+          "view": "a1"
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 5,
+      "n_evidence": 9,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.2,
+      "frontier_n": 5,
+      "protected_n": 4,
+      "g1_n": 3,
+      "g2_n": 3,
+      "adaptive_action": "ORTHOGONAL_GENERATE",
+      "llm_calls": 4,
+      "history_leakage": 0
+    },
+    "wall_s": 7.709
+  },
+  "created_at": "2026-08-08T01:50:12.741523+00:00"
+}

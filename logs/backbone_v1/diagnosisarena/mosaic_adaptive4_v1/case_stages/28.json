@@ -1,0 +1,1038 @@
+{
+  "case_id": "diagnosisarena__000028",
+  "source_id": "28",
+  "champion": "Hypertensive Heart Disease",
+  "ordered_diagnoses": [
+    "Hypertensive Heart Disease",
+    "Cardiac Amyloidosis",
+    "Sick Sinus Syndrome",
+    "Hyperaldosteronism",
+    "Atrial Fibrillation"
+  ],
+  "llm_calls": 4,
+  "stages": {
+    "mode": "adaptive4",
+    "vignette_chars": 856,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Atrial Fibrillation",
+          "support_spans": [
+            "episodes of palpitations",
+            "atrial flutter",
+            "Left atrial enlargement (52 mm)"
+          ],
+          "contradict_spans": [
+            "Heart rate: 53 beats/min",
+            "sinus bradycardia"
+          ],
+          "why": "The patient's episodes of palpitations, atrial flutter on follow-up ECG, and left atrial enlargement suggest atrial fibrillation."
+        },
+        {
+          "name": "Hypertensive Heart Disease",
+          "support_spans": [
+            "Blood pressure: 221/85 mm Hg",
+            "Left atrial enlargement (52 mm)"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's high blood pressure and left atrial enlargement are consistent with hypertensive heart disease."
+        },
+        {
+          "name": "Cardiac Amyloidosis",
+          "support_spans": [
+            "Left atrial enlargement (52 mm)",
+            "Mild pulmonary hypertension"
+          ],
+          "contradict_spans": [
+            "Normal left ventricular wall thickness"
+          ],
+          "why": "The patient's left atrial enlargement and mild pulmonary hypertension could suggest cardiac amyloidosis, although normal left ventricular wall thickness is not typical."
+        }
+      ],
+      "key_evidence_spans": [
+        "episodes of palpitations",
+        "Blood pressure: 221/85 mm Hg",
+        "Left atrial enlargement (52 mm)",
+        "atrial flutter"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Sick Sinus Syndrome",
+          "support_spans": [
+            "sinus bradycardia with prolonged P-wave duration (180 milliseconds)"
+          ],
+          "contradict_spans": [
+            "atrial flutter"
+          ],
+          "why": "The patient's initial ECG shows sinus bradycardia with prolonged P-wave duration, which is a characteristic finding in sick sinus syndrome.",
+          "protected_reason": "This diagnosis may deserve minority protection because it is a less common cause of shortness of breath and palpitations in the elderly, and the presence of atrial flutter on follow-up ECG may distract from this underlying condition."
+        },
+        {
+          "name": "Hyperaldosteronism",
+          "support_spans": [
+            "Blood pressure: 221/85 mm Hg",
+            "hypertension"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's significantly elevated blood pressure and history of hypertension suggest hyperaldosteronism as a possible cause of their symptoms.",
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare cause of hypertension, and the patient's other symptoms such as shortness of breath and palpitations may be attributed to more common conditions."
+        },
+        {
+          "name": "Cardiac Amyloidosis",
+          "support_spans": [
+            "Left atrial enlargement (52 mm)",
+            "Mild pulmonary hypertension"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's left atrial enlargement and mild pulmonary hypertension are consistent with cardiac amyloidosis, a rare condition that can cause shortness of breath and palpitations.",
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare and often underdiagnosed condition, and the patient's other symptoms and laboratory results may not be specific enough to suggest amyloidosis."
+        }
+      ],
+      "key_evidence_spans": [
+        "sinus bradycardia with prolonged P-wave duration (180 milliseconds)",
+        "Blood pressure: 221/85 mm Hg",
+        "Left atrial enlargement (52 mm)"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "Heart rate: 53 beats/min",
+        "sinus bradycardia",
+        "Normal left ventricular wall thickness"
+      ],
+      "generator_jaccard": 0.2,
+      "top1_same_across_views": false,
+      "top_margin": 0.25,
+      "leave_one_view_instability": true,
+      "contradiction_mass": 0
+    },
+    "frontier_after_g": [
+      {
+        "concept_id": "C005",
+        "preferred_name": "Hyperaldosteronism",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E002",
+          "G2E010"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare cause of hypertension, and the patient's other symptoms such as shortness of breath and palpitations may be attributed to more common conditions.",
+        "score_logit": 2.25,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Hypertensive Heart Disease",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E002",
+          "G1E003"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 2.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Cardiac Amyloidosis",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E007"
+        ],
+        "contradicting_evidence": [
+          "G1E008"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare and often underdiagnosed condition, and the patient's other symptoms and laboratory results may not be specific enough to suggest amyloidosis.",
+        "score_logit": 1.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C001",
+        "preferred_name": "Atrial Fibrillation",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E004",
+          "G1E003"
+        ],
+        "contradicting_evidence": [
+          "G1E005",
+          "G1E006"
+        ],
+        "protected_reason": "",
+        "score_logit": 0.5,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Sick Sinus Syndrome",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G2E009"
+        ],
+        "contradicting_evidence": [
+          "G1E004"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a less common cause of shortness of breath and palpitations in the elderly, and the presence of atrial flutter on follow-up ECG may distract from this underlying condition.",
+        "score_logit": 0.0,
+        "status": "live"
+      }
+    ],
+    "a1": {
+      "candidates": [
+        {
+          "name": "Sick Sinus Syndrome",
+          "support_spans": [
+            "Heart rate: 53 beats/min",
+            "sinus bradycardia"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's heart rate is abnormally low, which is a characteristic of Sick Sinus Syndrome.",
+          "protected_reason": "explains unexplained high-specificity evidence of bradycardia"
+        },
+        {
+          "name": "Cardiac Amyloidosis",
+          "support_spans": [
+            "Normal left ventricular wall thickness",
+            "Left atrial enlargement (52 mm)"
+          ],
+          "contradict_spans": [],
+          "why": "The presence of left atrial enlargement with normal left ventricular wall thickness is suggestive of Cardiac Amyloidosis.",
+          "protected_reason": "explains unexplained high-specificity evidence of left atrial enlargement"
+        },
+        {
+          "name": "Hypertensive Heart Disease",
+          "support_spans": [
+            "Blood pressure: 221/85 mm Hg",
+            "Left atrial enlargement (52 mm)"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's high blood pressure and left atrial enlargement are consistent with Hypertensive Heart Disease.",
+          "protected_reason": "explains unexplained high-specificity evidence of hypertension and left atrial enlargement"
+        }
+      ]
+    },
+    "adaptive_action": "ORTHOGONAL_GENERATE",
+    "selector": {
+      "champion": "Hypertensive Heart Disease",
+      "runner_up": "Cardiac Amyloidosis",
+      "rationale": "Hypertensive Heart Disease best explains the high blood pressure and left atrial enlargement without contradiction.",
+      "rejected": [
+        {
+          "label": "Sick Sinus Syndrome",
+          "why": "contradicted by atrial flutter"
+        },
+        {
+          "label": "Hyperaldosteronism",
+          "why": "less specific evidence"
+        },
+        {
+          "label": "Atrial Fibrillation",
+          "why": "contradicted by sinus bradycardia and heart rate"
+        }
+      ],
+      "margin": "medium"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "episodes of palpitations",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "Blood pressure: 221/85 mm Hg",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "Left atrial enlargement (52 mm)",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "atrial flutter",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E005",
+        "raw_span": "Heart rate: 53 beats/min",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E006",
+        "raw_span": "sinus bradycardia",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E007",
+        "raw_span": "Mild pulmonary hypertension",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E008",
+        "raw_span": "Normal left ventricular wall thickness",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E009",
+        "raw_span": "sinus bradycardia with prolonged P-wave duration (180 milliseconds)",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E010",
+        "raw_span": "hypertension",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Atrial Fibrillation",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E004",
+          "G1E003"
+        ],
+        "contradicting_evidence": [
+          "G1E005",
+          "G1E006"
+        ],
+        "protected_reason": "",
+        "score_logit": 0.5,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Hypertensive Heart Disease",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G1E002",
+          "G1E003"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "explains unexplained high-specificity evidence of hypertension and left atrial enlargement",
+        "score_logit": 2.6,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Cardiac Amyloidosis",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2",
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E007",
+          "G1E008"
+        ],
+        "contradicting_evidence": [
+          "G1E008"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare and often underdiagnosed condition, and the patient's other symptoms and laboratory results may not be specific enough to suggest amyloidosis.",
+        "score_logit": 2.7,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Sick Sinus Syndrome",
+        "aliases": [],
+        "generator_views": [
+          "g2",
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G2E009",
+          "G1E005",
+          "G1E006"
+        ],
+        "contradicting_evidence": [
+          "G1E004"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a less common cause of shortness of breath and palpitations in the elderly, and the presence of atrial flutter on follow-up ECG may distract from this underlying condition.",
+        "score_logit": 2.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Hyperaldosteronism",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E002",
+          "G2E010"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare cause of hypertension, and the patient's other symptoms such as shortness of breath and palpitations may be attributed to more common conditions.",
+        "score_logit": 2.25,
+        "status": "live"
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Atrial Fibrillation",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Hypertensive Heart Disease",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Cardiac Amyloidosis",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C004",
+        "name": "Sick Sinus Syndrome",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C005",
+        "name": "Hyperaldosteronism",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C003",
+        "name": "Cardiac Amyloidosis",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C004",
+        "name": "Sick Sinus Syndrome",
+        "view": "a1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C003",
+        "name": "Cardiac Amyloidosis",
+        "view": "a1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Hypertensive Heart Disease",
+        "view": "a1"
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 5,
+    "n_evidence": 10,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.2,
+    "frontier_n": 5,
+    "protected_n": 4,
+    "g1_n": 3,
+    "g2_n": 3,
+    "adaptive_action": "ORTHOGONAL_GENERATE",
+    "llm_calls": 4,
+    "history_leakage": 0
+  },
+  "prediction": {
+    "arm": "mosaic_adaptive4_v1",
+    "case_id": "diagnosisarena__000028",
+    "source_id": "28",
+    "dataset": "diagnosisarena",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Hypertensive Heart Disease",
+      "Cardiac Amyloidosis",
+      "Sick Sinus Syndrome",
+      "Hyperaldosteronism",
+      "Atrial Fibrillation"
+    ],
+    "top2_diagnoses": [
+      "Hypertensive Heart Disease",
+      "Cardiac Amyloidosis"
+    ],
+    "cost": {
+      "llm_calls": 4
+    },
+    "stages": {
+      "mode": "adaptive4",
+      "vignette_chars": 856,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Atrial Fibrillation",
+            "support_spans": [
+              "episodes of palpitations",
+              "atrial flutter",
+              "Left atrial enlargement (52 mm)"
+            ],
+            "contradict_spans": [
+              "Heart rate: 53 beats/min",
+              "sinus bradycardia"
+            ],
+            "why": "The patient's episodes of palpitations, atrial flutter on follow-up ECG, and left atrial enlargement suggest atrial fibrillation."
+          },
+          {
+            "name": "Hypertensive Heart Disease",
+            "support_spans": [
+              "Blood pressure: 221/85 mm Hg",
+              "Left atrial enlargement (52 mm)"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's high blood pressure and left atrial enlargement are consistent with hypertensive heart disease."
+          },
+          {
+            "name": "Cardiac Amyloidosis",
+            "support_spans": [
+              "Left atrial enlargement (52 mm)",
+              "Mild pulmonary hypertension"
+            ],
+            "contradict_spans": [
+              "Normal left ventricular wall thickness"
+            ],
+            "why": "The patient's left atrial enlargement and mild pulmonary hypertension could suggest cardiac amyloidosis, although normal left ventricular wall thickness is not typical."
+          }
+        ],
+        "key_evidence_spans": [
+          "episodes of palpitations",
+          "Blood pressure: 221/85 mm Hg",
+          "Left atrial enlargement (52 mm)",
+          "atrial flutter"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Sick Sinus Syndrome",
+            "support_spans": [
+              "sinus bradycardia with prolonged P-wave duration (180 milliseconds)"
+            ],
+            "contradict_spans": [
+              "atrial flutter"
+            ],
+            "why": "The patient's initial ECG shows sinus bradycardia with prolonged P-wave duration, which is a characteristic finding in sick sinus syndrome.",
+            "protected_reason": "This diagnosis may deserve minority protection because it is a less common cause of shortness of breath and palpitations in the elderly, and the presence of atrial flutter on follow-up ECG may distract from this underlying condition."
+          },
+          {
+            "name": "Hyperaldosteronism",
+            "support_spans": [
+              "Blood pressure: 221/85 mm Hg",
+              "hypertension"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's significantly elevated blood pressure and history of hypertension suggest hyperaldosteronism as a possible cause of their symptoms.",
+            "protected_reason": "This diagnosis may deserve minority protection because it is a rare cause of hypertension, and the patient's other symptoms such as shortness of breath and palpitations may be attributed to more common conditions."
+          },
+          {
+            "name": "Cardiac Amyloidosis",
+            "support_spans": [
+              "Left atrial enlargement (52 mm)",
+              "Mild pulmonary hypertension"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's left atrial enlargement and mild pulmonary hypertension are consistent with cardiac amyloidosis, a rare condition that can cause shortness of breath and palpitations.",
+            "protected_reason": "This diagnosis may deserve minority protection because it is a rare and often underdiagnosed condition, and the patient's other symptoms and laboratory results may not be specific enough to suggest amyloidosis."
+          }
+        ],
+        "key_evidence_spans": [
+          "sinus bradycardia with prolonged P-wave duration (180 milliseconds)",
+          "Blood pressure: 221/85 mm Hg",
+          "Left atrial enlargement (52 mm)"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "Heart rate: 53 beats/min",
+          "sinus bradycardia",
+          "Normal left ventricular wall thickness"
+        ],
+        "generator_jaccard": 0.2,
+        "top1_same_across_views": false,
+        "top_margin": 0.25,
+        "leave_one_view_instability": true,
+        "contradiction_mass": 0
+      },
+      "frontier_after_g": [
+        {
+          "concept_id": "C005",
+          "preferred_name": "Hyperaldosteronism",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E002",
+            "G2E010"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare cause of hypertension, and the patient's other symptoms such as shortness of breath and palpitations may be attributed to more common conditions.",
+          "score_logit": 2.25,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Hypertensive Heart Disease",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E002",
+            "G1E003"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 2.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Cardiac Amyloidosis",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E007"
+          ],
+          "contradicting_evidence": [
+            "G1E008"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare and often underdiagnosed condition, and the patient's other symptoms and laboratory results may not be specific enough to suggest amyloidosis.",
+          "score_logit": 1.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C001",
+          "preferred_name": "Atrial Fibrillation",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E004",
+            "G1E003"
+          ],
+          "contradicting_evidence": [
+            "G1E005",
+            "G1E006"
+          ],
+          "protected_reason": "",
+          "score_logit": 0.5,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Sick Sinus Syndrome",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G2E009"
+          ],
+          "contradicting_evidence": [
+            "G1E004"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a less common cause of shortness of breath and palpitations in the elderly, and the presence of atrial flutter on follow-up ECG may distract from this underlying condition.",
+          "score_logit": 0.0,
+          "status": "live"
+        }
+      ],
+      "a1": {
+        "candidates": [
+          {
+            "name": "Sick Sinus Syndrome",
+            "support_spans": [
+              "Heart rate: 53 beats/min",
+              "sinus bradycardia"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's heart rate is abnormally low, which is a characteristic of Sick Sinus Syndrome.",
+            "protected_reason": "explains unexplained high-specificity evidence of bradycardia"
+          },
+          {
+            "name": "Cardiac Amyloidosis",
+            "support_spans": [
+              "Normal left ventricular wall thickness",
+              "Left atrial enlargement (52 mm)"
+            ],
+            "contradict_spans": [],
+            "why": "The presence of left atrial enlargement with normal left ventricular wall thickness is suggestive of Cardiac Amyloidosis.",
+            "protected_reason": "explains unexplained high-specificity evidence of left atrial enlargement"
+          },
+          {
+            "name": "Hypertensive Heart Disease",
+            "support_spans": [
+              "Blood pressure: 221/85 mm Hg",
+              "Left atrial enlargement (52 mm)"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's high blood pressure and left atrial enlargement are consistent with Hypertensive Heart Disease.",
+            "protected_reason": "explains unexplained high-specificity evidence of hypertension and left atrial enlargement"
+          }
+        ]
+      },
+      "adaptive_action": "ORTHOGONAL_GENERATE",
+      "selector": {
+        "champion": "Hypertensive Heart Disease",
+        "runner_up": "Cardiac Amyloidosis",
+        "rationale": "Hypertensive Heart Disease best explains the high blood pressure and left atrial enlargement without contradiction.",
+        "rejected": [
+          {
+            "label": "Sick Sinus Syndrome",
+            "why": "contradicted by atrial flutter"
+          },
+          {
+            "label": "Hyperaldosteronism",
+            "why": "less specific evidence"
+          },
+          {
+            "label": "Atrial Fibrillation",
+            "why": "contradicted by sinus bradycardia and heart rate"
+          }
+        ],
+        "margin": "medium"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "episodes of palpitations",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "Blood pressure: 221/85 mm Hg",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "Left atrial enlargement (52 mm)",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "atrial flutter",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E005",
+          "raw_span": "Heart rate: 53 beats/min",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E006",
+          "raw_span": "sinus bradycardia",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E007",
+          "raw_span": "Mild pulmonary hypertension",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E008",
+          "raw_span": "Normal left ventricular wall thickness",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E009",
+          "raw_span": "sinus bradycardia with prolonged P-wave duration (180 milliseconds)",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E010",
+          "raw_span": "hypertension",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Atrial Fibrillation",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E004",
+            "G1E003"
+          ],
+          "contradicting_evidence": [
+            "G1E005",
+            "G1E006"
+          ],
+          "protected_reason": "",
+          "score_logit": 0.5,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Hypertensive Heart Disease",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G1E002",
+            "G1E003"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "explains unexplained high-specificity evidence of hypertension and left atrial enlargement",
+          "score_logit": 2.6,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Cardiac Amyloidosis",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2",
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E007",
+            "G1E008"
+          ],
+          "contradicting_evidence": [
+            "G1E008"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare and often underdiagnosed condition, and the patient's other symptoms and laboratory results may not be specific enough to suggest amyloidosis.",
+          "score_logit": 2.7,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Sick Sinus Syndrome",
+          "aliases": [],
+          "generator_views": [
+            "g2",
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G2E009",
+            "G1E005",
+            "G1E006"
+          ],
+          "contradicting_evidence": [
+            "G1E004"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a less common cause of shortness of breath and palpitations in the elderly, and the presence of atrial flutter on follow-up ECG may distract from this underlying condition.",
+          "score_logit": 2.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C005",
+          "preferred_name": "Hyperaldosteronism",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E002",
+            "G2E010"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare cause of hypertension, and the patient's other symptoms such as shortness of breath and palpitations may be attributed to more common conditions.",
+          "score_logit": 2.25,
+          "status": "live"
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Atrial Fibrillation",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Hypertensive Heart Disease",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Cardiac Amyloidosis",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C004",
+          "name": "Sick Sinus Syndrome",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C005",
+          "name": "Hyperaldosteronism",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C003",
+          "name": "Cardiac Amyloidosis",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C004",
+          "name": "Sick Sinus Syndrome",
+          "view": "a1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C003",
+          "name": "Cardiac Amyloidosis",
+          "view": "a1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Hypertensive Heart Disease",
+          "view": "a1"
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 5,
+      "n_evidence": 10,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.2,
+      "frontier_n": 5,
+      "protected_n": 4,
+      "g1_n": 3,
+      "g2_n": 3,
+      "adaptive_action": "ORTHOGONAL_GENERATE",
+      "llm_calls": 4,
+      "history_leakage": 0
+    },
+    "wall_s": 8.524
+  },
+  "created_at": "2026-08-08T01:50:13.554394+00:00"
+}

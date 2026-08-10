@@ -1,0 +1,844 @@
+{
+  "case_id": "diagnosisarena__000140",
+  "source_id": "140",
+  "champion": "Takotsubo Cardiomyopathy",
+  "ordered_diagnoses": [
+    "Takotsubo Cardiomyopathy",
+    "Pheochromocytoma",
+    "Myocardial Infarction",
+    "Primary Adrenal Insufficiency (Addison's Disease)"
+  ],
+  "llm_calls": 3,
+  "stages": {
+    "mode": "lite",
+    "vignette_chars": 1182,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Myocardial Infarction",
+          "support_spans": [
+            "High-sensitivity troponin I: 1.15 ng/mL (normal range: <0.015 ng/mL)",
+            "ST-segment elevation in leads II, III, aVF, and V2 to V6"
+          ],
+          "contradict_spans": [
+            "Coronary angiography: revealed normal coronary arteries"
+          ],
+          "why": "Elevated troponin and ST-segment elevation suggest myocardial infarction, but normal coronary arteries contradict this diagnosis."
+        },
+        {
+          "name": "Takotsubo Cardiomyopathy",
+          "support_spans": [
+            "systolic apical ballooning",
+            "ST-segment elevation in leads II, III, aVF, and V2 to V6"
+          ],
+          "contradict_spans": [],
+          "why": "Apical ballooning and ST-segment elevation are characteristic of Takotsubo cardiomyopathy."
+        },
+        {
+          "name": "Pheochromocytoma",
+          "support_spans": [
+            "an enhanced left-adrenal heterogeneous mass measuring 4.1 × 3.4 cm",
+            "sudden-onset chest pain",
+            "tachycardic with a pulse of 120 beats/min"
+          ],
+          "contradict_spans": [],
+          "why": "The presence of an adrenal mass and symptoms such as tachycardia and chest pain suggest pheochromocytoma."
+        }
+      ],
+      "key_evidence_spans": [
+        "High-sensitivity troponin I: 1.15 ng/mL (normal range: <0.015 ng/mL)",
+        "systolic apical ballooning",
+        "an enhanced left-adrenal heterogeneous mass measuring 4.1 × 3.4 cm"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Pheochromocytoma",
+          "support_spans": [
+            "an enhanced left-adrenal heterogeneous mass measuring 4.1 × 3.4 cm"
+          ],
+          "contradict_spans": [
+            "Serum calcium: within normal limits"
+          ],
+          "why": "The presence of an adrenal mass and sudden-onset chest pain with hypertension could suggest pheochromocytoma, although the normal serum calcium level does not directly support this diagnosis.",
+          "protected_reason": "Pheochromocytoma is a rare cause of chest pain and hypertension, and its diagnosis may be missed if not considered in the differential diagnosis."
+        },
+        {
+          "name": "Acute Stress-Induced Cardiomyopathy (Takotsubo Cardiomyopathy)",
+          "support_spans": [
+            "systolic apical ballooning",
+            "ST-segment elevation in leads II, III, aVF, and V2 to V6"
+          ],
+          "contradict_spans": [
+            "Coronary angiography: revealed normal coronary arteries"
+          ],
+          "why": "The presence of apical ballooning and ST-segment elevation in the context of normal coronary arteries could suggest Takotsubo cardiomyopathy, which is often triggered by acute stress.",
+          "protected_reason": "This condition may be underdiagnosed due to its nonspecific presentation and the need for a high index of suspicion."
+        },
+        {
+          "name": "Primary Adrenal Insufficiency (Addison's Disease)",
+          "support_spans": [
+            "an enhanced left-adrenal heterogeneous mass measuring 4.1 × 3.4 cm"
+          ],
+          "contradict_spans": [
+            "no history of any acute febrile illness"
+          ],
+          "why": "The adrenal mass could suggest primary adrenal insufficiency, although the lack of a reported febrile illness or typical symptoms like hyperpigmentation makes this less likely.",
+          "protected_reason": "Addison's disease is rare and may present with nonspecific symptoms, making it a potential missed diagnosis if not considered."
+        }
+      ],
+      "key_evidence_spans": [
+        "an enhanced left-adrenal heterogeneous mass measuring 4.1 × 3.4 cm",
+        "systolic apical ballooning",
+        "ST-segment elevation in leads II, III, aVF, and V2 to V6"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "Coronary angiography: revealed normal coronary arteries",
+        "Serum calcium: within normal limits",
+        "no history of any acute febrile illness"
+      ],
+      "generator_jaccard": 0.2,
+      "top1_same_across_views": true,
+      "top_margin": 1.0,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 1
+    },
+    "frontier_after_g": [
+      {
+        "concept_id": "C003",
+        "preferred_name": "Pheochromocytoma",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E006",
+          "G1E007"
+        ],
+        "contradicting_evidence": [
+          "G2E008"
+        ],
+        "protected_reason": "Pheochromocytoma is a rare cause of chest pain and hypertension, and its diagnosis may be missed if not considered in the differential diagnosis.",
+        "score_logit": 2.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Takotsubo Cardiomyopathy",
+        "aliases": [
+          "Acute Stress-Induced Cardiomyopathy (Takotsubo Cardiomyopathy)"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E002",
+          "G1E004"
+        ],
+        "contradicting_evidence": [
+          "G1E005"
+        ],
+        "protected_reason": "This condition may be underdiagnosed due to its nonspecific presentation and the need for a high index of suspicion.",
+        "score_logit": 1.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C001",
+        "preferred_name": "Myocardial Infarction",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E004"
+        ],
+        "contradicting_evidence": [
+          "G1E005"
+        ],
+        "protected_reason": "",
+        "score_logit": 0.75,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Primary Adrenal Insufficiency (Addison's Disease)",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E003"
+        ],
+        "contradicting_evidence": [
+          "G2E009"
+        ],
+        "protected_reason": "Addison's disease is rare and may present with nonspecific symptoms, making it a potential missed diagnosis if not considered.",
+        "score_logit": 0.0,
+        "status": "live"
+      }
+    ],
+    "adaptive_action": null,
+    "selector": {
+      "champion": "Takotsubo Cardiomyopathy",
+      "runner_up": "Pheochromocytoma",
+      "rationale": "systolic apical ballooning and ST-segment elevation in leads II, III, aVF, and V2 to V6 support Takotsubo Cardiomyopathy, despite normal coronary arteries",
+      "rejected": [
+        {
+          "label": "Myocardial Infarction",
+          "why": "normal coronary arteries on angiography contradict myocardial infarction"
+        },
+        {
+          "label": "Primary Adrenal Insufficiency (Addison's Disease)",
+          "why": "lack of acute febrile illness history and limited support from the enhanced left-adrenal heterogeneous mass"
+        }
+      ],
+      "margin": "medium"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "High-sensitivity troponin I: 1.15 ng/mL (normal range: <0.015 ng/mL)",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "systolic apical ballooning",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "an enhanced left-adrenal heterogeneous mass measuring 4.1 × 3.4 cm",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "ST-segment elevation in leads II, III, aVF, and V2 to V6",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E005",
+        "raw_span": "Coronary angiography: revealed normal coronary arteries",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E006",
+        "raw_span": "sudden-onset chest pain",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E007",
+        "raw_span": "tachycardic with a pulse of 120 beats/min",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E008",
+        "raw_span": "Serum calcium: within normal limits",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E009",
+        "raw_span": "no history of any acute febrile illness",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Myocardial Infarction",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E004"
+        ],
+        "contradicting_evidence": [
+          "G1E005"
+        ],
+        "protected_reason": "",
+        "score_logit": 0.75,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Takotsubo Cardiomyopathy",
+        "aliases": [
+          "Acute Stress-Induced Cardiomyopathy (Takotsubo Cardiomyopathy)"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E002",
+          "G1E004"
+        ],
+        "contradicting_evidence": [
+          "G1E005"
+        ],
+        "protected_reason": "This condition may be underdiagnosed due to its nonspecific presentation and the need for a high index of suspicion.",
+        "score_logit": 1.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Pheochromocytoma",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E006",
+          "G1E007"
+        ],
+        "contradicting_evidence": [
+          "G2E008"
+        ],
+        "protected_reason": "Pheochromocytoma is a rare cause of chest pain and hypertension, and its diagnosis may be missed if not considered in the differential diagnosis.",
+        "score_logit": 2.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Primary Adrenal Insufficiency (Addison's Disease)",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E003"
+        ],
+        "contradicting_evidence": [
+          "G2E009"
+        ],
+        "protected_reason": "Addison's disease is rare and may present with nonspecific symptoms, making it a potential missed diagnosis if not considered.",
+        "score_logit": 0.0,
+        "status": "live"
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Myocardial Infarction",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Takotsubo Cardiomyopathy",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Pheochromocytoma",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C003",
+        "name": "Pheochromocytoma",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Acute Stress-Induced Cardiomyopathy (Takotsubo Cardiomyopathy)",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C004",
+        "name": "Primary Adrenal Insufficiency (Addison's Disease)",
+        "view": "g2"
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 4,
+    "n_evidence": 9,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.2,
+    "frontier_n": 4,
+    "protected_n": 3,
+    "g1_n": 3,
+    "g2_n": 3,
+    "adaptive_action": null,
+    "llm_calls": 3,
+    "history_leakage": 0
+  },
+  "prediction": {
+    "arm": "mosaic_lite_v1",
+    "case_id": "diagnosisarena__000140",
+    "source_id": "140",
+    "dataset": "diagnosisarena",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Takotsubo Cardiomyopathy",
+      "Pheochromocytoma",
+      "Myocardial Infarction",
+      "Primary Adrenal Insufficiency (Addison's Disease)"
+    ],
+    "top2_diagnoses": [
+      "Takotsubo Cardiomyopathy",
+      "Pheochromocytoma"
+    ],
+    "cost": {
+      "llm_calls": 3
+    },
+    "stages": {
+      "mode": "lite",
+      "vignette_chars": 1182,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Myocardial Infarction",
+            "support_spans": [
+              "High-sensitivity troponin I: 1.15 ng/mL (normal range: <0.015 ng/mL)",
+              "ST-segment elevation in leads II, III, aVF, and V2 to V6"
+            ],
+            "contradict_spans": [
+              "Coronary angiography: revealed normal coronary arteries"
+            ],
+            "why": "Elevated troponin and ST-segment elevation suggest myocardial infarction, but normal coronary arteries contradict this diagnosis."
+          },
+          {
+            "name": "Takotsubo Cardiomyopathy",
+            "support_spans": [
+              "systolic apical ballooning",
+              "ST-segment elevation in leads II, III, aVF, and V2 to V6"
+            ],
+            "contradict_spans": [],
+            "why": "Apical ballooning and ST-segment elevation are characteristic of Takotsubo cardiomyopathy."
+          },
+          {
+            "name": "Pheochromocytoma",
+            "support_spans": [
+              "an enhanced left-adrenal heterogeneous mass measuring 4.1 × 3.4 cm",
+              "sudden-onset chest pain",
+              "tachycardic with a pulse of 120 beats/min"
+            ],
+            "contradict_spans": [],
+            "why": "The presence of an adrenal mass and symptoms such as tachycardia and chest pain suggest pheochromocytoma."
+          }
+        ],
+        "key_evidence_spans": [
+          "High-sensitivity troponin I: 1.15 ng/mL (normal range: <0.015 ng/mL)",
+          "systolic apical ballooning",
+          "an enhanced left-adrenal heterogeneous mass measuring 4.1 × 3.4 cm"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Pheochromocytoma",
+            "support_spans": [
+              "an enhanced left-adrenal heterogeneous mass measuring 4.1 × 3.4 cm"
+            ],
+            "contradict_spans": [
+              "Serum calcium: within normal limits"
+            ],
+            "why": "The presence of an adrenal mass and sudden-onset chest pain with hypertension could suggest pheochromocytoma, although the normal serum calcium level does not directly support this diagnosis.",
+            "protected_reason": "Pheochromocytoma is a rare cause of chest pain and hypertension, and its diagnosis may be missed if not considered in the differential diagnosis."
+          },
+          {
+            "name": "Acute Stress-Induced Cardiomyopathy (Takotsubo Cardiomyopathy)",
+            "support_spans": [
+              "systolic apical ballooning",
+              "ST-segment elevation in leads II, III, aVF, and V2 to V6"
+            ],
+            "contradict_spans": [
+              "Coronary angiography: revealed normal coronary arteries"
+            ],
+            "why": "The presence of apical ballooning and ST-segment elevation in the context of normal coronary arteries could suggest Takotsubo cardiomyopathy, which is often triggered by acute stress.",
+            "protected_reason": "This condition may be underdiagnosed due to its nonspecific presentation and the need for a high index of suspicion."
+          },
+          {
+            "name": "Primary Adrenal Insufficiency (Addison's Disease)",
+            "support_spans": [
+              "an enhanced left-adrenal heterogeneous mass measuring 4.1 × 3.4 cm"
+            ],
+            "contradict_spans": [
+              "no history of any acute febrile illness"
+            ],
+            "why": "The adrenal mass could suggest primary adrenal insufficiency, although the lack of a reported febrile illness or typical symptoms like hyperpigmentation makes this less likely.",
+            "protected_reason": "Addison's disease is rare and may present with nonspecific symptoms, making it a potential missed diagnosis if not considered."
+          }
+        ],
+        "key_evidence_spans": [
+          "an enhanced left-adrenal heterogeneous mass measuring 4.1 × 3.4 cm",
+          "systolic apical ballooning",
+          "ST-segment elevation in leads II, III, aVF, and V2 to V6"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "Coronary angiography: revealed normal coronary arteries",
+          "Serum calcium: within normal limits",
+          "no history of any acute febrile illness"
+        ],
+        "generator_jaccard": 0.2,
+        "top1_same_across_views": true,
+        "top_margin": 1.0,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 1
+      },
+      "frontier_after_g": [
+        {
+          "concept_id": "C003",
+          "preferred_name": "Pheochromocytoma",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E006",
+            "G1E007"
+          ],
+          "contradicting_evidence": [
+            "G2E008"
+          ],
+          "protected_reason": "Pheochromocytoma is a rare cause of chest pain and hypertension, and its diagnosis may be missed if not considered in the differential diagnosis.",
+          "score_logit": 2.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Takotsubo Cardiomyopathy",
+          "aliases": [
+            "Acute Stress-Induced Cardiomyopathy (Takotsubo Cardiomyopathy)"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E002",
+            "G1E004"
+          ],
+          "contradicting_evidence": [
+            "G1E005"
+          ],
+          "protected_reason": "This condition may be underdiagnosed due to its nonspecific presentation and the need for a high index of suspicion.",
+          "score_logit": 1.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C001",
+          "preferred_name": "Myocardial Infarction",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E004"
+          ],
+          "contradicting_evidence": [
+            "G1E005"
+          ],
+          "protected_reason": "",
+          "score_logit": 0.75,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Primary Adrenal Insufficiency (Addison's Disease)",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E003"
+          ],
+          "contradicting_evidence": [
+            "G2E009"
+          ],
+          "protected_reason": "Addison's disease is rare and may present with nonspecific symptoms, making it a potential missed diagnosis if not considered.",
+          "score_logit": 0.0,
+          "status": "live"
+        }
+      ],
+      "adaptive_action": null,
+      "selector": {
+        "champion": "Takotsubo Cardiomyopathy",
+        "runner_up": "Pheochromocytoma",
+        "rationale": "systolic apical ballooning and ST-segment elevation in leads II, III, aVF, and V2 to V6 support Takotsubo Cardiomyopathy, despite normal coronary arteries",
+        "rejected": [
+          {
+            "label": "Myocardial Infarction",
+            "why": "normal coronary arteries on angiography contradict myocardial infarction"
+          },
+          {
+            "label": "Primary Adrenal Insufficiency (Addison's Disease)",
+            "why": "lack of acute febrile illness history and limited support from the enhanced left-adrenal heterogeneous mass"
+          }
+        ],
+        "margin": "medium"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "High-sensitivity troponin I: 1.15 ng/mL (normal range: <0.015 ng/mL)",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "systolic apical ballooning",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "an enhanced left-adrenal heterogeneous mass measuring 4.1 × 3.4 cm",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "ST-segment elevation in leads II, III, aVF, and V2 to V6",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E005",
+          "raw_span": "Coronary angiography: revealed normal coronary arteries",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E006",
+          "raw_span": "sudden-onset chest pain",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E007",
+          "raw_span": "tachycardic with a pulse of 120 beats/min",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E008",
+          "raw_span": "Serum calcium: within normal limits",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E009",
+          "raw_span": "no history of any acute febrile illness",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Myocardial Infarction",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E004"
+          ],
+          "contradicting_evidence": [
+            "G1E005"
+          ],
+          "protected_reason": "",
+          "score_logit": 0.75,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Takotsubo Cardiomyopathy",
+          "aliases": [
+            "Acute Stress-Induced Cardiomyopathy (Takotsubo Cardiomyopathy)"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E002",
+            "G1E004"
+          ],
+          "contradicting_evidence": [
+            "G1E005"
+          ],
+          "protected_reason": "This condition may be underdiagnosed due to its nonspecific presentation and the need for a high index of suspicion.",
+          "score_logit": 1.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Pheochromocytoma",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E006",
+            "G1E007"
+          ],
+          "contradicting_evidence": [
+            "G2E008"
+          ],
+          "protected_reason": "Pheochromocytoma is a rare cause of chest pain and hypertension, and its diagnosis may be missed if not considered in the differential diagnosis.",
+          "score_logit": 2.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Primary Adrenal Insufficiency (Addison's Disease)",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E003"
+          ],
+          "contradicting_evidence": [
+            "G2E009"
+          ],
+          "protected_reason": "Addison's disease is rare and may present with nonspecific symptoms, making it a potential missed diagnosis if not considered.",
+          "score_logit": 0.0,
+          "status": "live"
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Myocardial Infarction",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Takotsubo Cardiomyopathy",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Pheochromocytoma",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C003",
+          "name": "Pheochromocytoma",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Acute Stress-Induced Cardiomyopathy (Takotsubo Cardiomyopathy)",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C004",
+          "name": "Primary Adrenal Insufficiency (Addison's Disease)",
+          "view": "g2"
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 4,
+      "n_evidence": 9,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.2,
+      "frontier_n": 4,
+      "protected_n": 3,
+      "g1_n": 3,
+      "g2_n": 3,
+      "adaptive_action": null,
+      "llm_calls": 3,
+      "history_leakage": 0
+    },
+    "wall_s": 5.462
+  },
+  "created_at": "2026-08-08T01:50:16.592885+00:00"
+}

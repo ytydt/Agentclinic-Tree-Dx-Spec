@@ -1,0 +1,610 @@
+{
+  "case_id": "medcasereasoning__000187",
+  "source_id": "187",
+  "champion": "Ganglion cyst",
+  "ordered_diagnoses": [
+    "Ganglion cyst",
+    "Giant cell tumor of the tendon sheath",
+    "Lipoma"
+  ],
+  "llm_calls": 4,
+  "stages": {
+    "mode": "impc",
+    "vignette_chars": 453,
+    "D1": {
+      "doctor_id": "D1",
+      "candidates": [
+        {
+          "name": "Ganglion cyst",
+          "support_spans": [
+            "a well-defined, encapsulated mass",
+            "biphasic (central and peripheral) contrast enhancement (target sign)"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's symptoms and imaging findings are consistent with a ganglion cyst, which is a common cause of a gradually enlarging mass on the wrist."
+        }
+      ]
+    },
+    "D2": {
+      "doctor_id": "D2",
+      "candidates": [
+        {
+          "name": "Ganglion cyst",
+          "support_spans": [
+            "a well-defined, encapsulated mass",
+            "biphasic (central and peripheral) contrast enhancement (target sign)"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's symptoms and imaging results are consistent with a ganglion cyst, which is a common cause of a gradually enlarging mass on the wrist."
+        }
+      ]
+    },
+    "D3": {
+      "doctor_id": "D3",
+      "candidates": [
+        {
+          "name": "Ganglion cyst",
+          "support_spans": [
+            "a well-defined, encapsulated mass on the radial side of the wrist",
+            "biphasic (central and peripheral) contrast enhancement (target sign)"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's symptoms and imaging results are consistent with a ganglion cyst, which is a common cause of a gradually enlarging mass on the wrist."
+        },
+        {
+          "name": "Lipoma",
+          "support_spans": [
+            "a well-defined, encapsulated mass on the radial side of the wrist"
+          ],
+          "contradict_spans": [
+            "biphasic (central and peripheral) contrast enhancement (target sign)"
+          ],
+          "why": "The mass's well-defined and encapsulated nature could suggest a lipoma, but the target sign on imaging is less typical for this diagnosis."
+        },
+        {
+          "name": "Giant cell tumor of the tendon sheath",
+          "support_spans": [
+            "a gradually enlarging mass on the anterior aspect of his right wrist, along the radial edge",
+            "biphasic (central and peripheral) contrast enhancement (target sign)"
+          ],
+          "contradict_spans": [],
+          "why": "The location and imaging characteristics of the mass are also consistent with a giant cell tumor of the tendon sheath, which can cause median nerve compression."
+        }
+      ]
+    },
+    "state_after_doctors": {
+      "unexplained_specific_evidence": [],
+      "generator_jaccard": 0.5555555555555555,
+      "top1_same_across_views": true,
+      "top_margin": 1.7000000000000002,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "adaptive_action": null,
+    "selector": {
+      "champion": "Ganglion cyst",
+      "runner_up": "Giant cell tumor of the tendon sheath",
+      "rationale": "The presence of a well-defined, encapsulated mass and biphasic contrast enhancement (target sign) strongly supports Ganglion cyst, with no contradictions.",
+      "rejected": [
+        {
+          "label": "Lipoma",
+          "why": "Biphasic contrast enhancement contradicts typical Lipoma characteristics."
+        }
+      ],
+      "margin": "high"
+    },
+    "evidence": [
+      {
+        "evidence_id": "D1E001",
+        "raw_span": "a well-defined, encapsulated mass",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "D1"
+      },
+      {
+        "evidence_id": "D1E002",
+        "raw_span": "biphasic (central and peripheral) contrast enhancement (target sign)",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "D1"
+      },
+      {
+        "evidence_id": "D3E003",
+        "raw_span": "a well-defined, encapsulated mass on the radial side of the wrist",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "D3"
+      },
+      {
+        "evidence_id": "D3E004",
+        "raw_span": "a gradually enlarging mass on the anterior aspect of his right wrist, along the radial edge",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "D3"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Ganglion cyst",
+        "aliases": [],
+        "generator_views": [
+          "D1",
+          "D2",
+          "D3"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "D1E001",
+          "D1E002",
+          "D3E003"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 3.7,
+        "status": "live",
+        "agent_votes": 3
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Lipoma",
+        "aliases": [],
+        "generator_views": [
+          "D3"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "D3E003"
+        ],
+        "contradicting_evidence": [
+          "D1E002"
+        ],
+        "protected_reason": "",
+        "score_logit": -0.25,
+        "status": "live",
+        "agent_votes": 1
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Giant cell tumor of the tendon sheath",
+        "aliases": [],
+        "generator_views": [
+          "D3"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "D3E004",
+          "D1E002"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 2.0,
+        "status": "live",
+        "agent_votes": 1
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Ganglion cyst",
+        "view": "D1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Ganglion cyst",
+        "view": "D2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Ganglion cyst",
+        "view": "D3"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Lipoma",
+        "view": "D3"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Giant cell tumor of the tendon sheath",
+        "view": "D3"
+      }
+    ],
+    "frontier_final": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Ganglion cyst",
+        "aliases": [],
+        "generator_views": [
+          "D1",
+          "D2",
+          "D3"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "D1E001",
+          "D1E002",
+          "D3E003"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 3.7,
+        "status": "live",
+        "agent_votes": 3
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Giant cell tumor of the tendon sheath",
+        "aliases": [],
+        "generator_views": [
+          "D3"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "D3E004",
+          "D1E002"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 2.0,
+        "status": "live",
+        "agent_votes": 1
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Lipoma",
+        "aliases": [],
+        "generator_views": [
+          "D3"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "D3E003"
+        ],
+        "contradicting_evidence": [
+          "D1E002"
+        ],
+        "protected_reason": "",
+        "score_logit": -0.25,
+        "status": "live",
+        "agent_votes": 1
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 3,
+    "n_evidence": 4,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.5555555555555555,
+    "frontier_n": 3,
+    "protected_n": 0,
+    "n_generators": 3,
+    "adaptive_action": null,
+    "llm_calls": 4,
+    "history_leakage": 0,
+    "mode": "impc"
+  },
+  "prediction": {
+    "arm": "mosaic_impc_v1",
+    "case_id": "medcasereasoning__000187",
+    "source_id": "187",
+    "dataset": "medcasereasoning_v2",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Ganglion cyst",
+      "Giant cell tumor of the tendon sheath",
+      "Lipoma"
+    ],
+    "top2_diagnoses": [
+      "Ganglion cyst",
+      "Giant cell tumor of the tendon sheath"
+    ],
+    "cost": {
+      "llm_calls": 4
+    },
+    "stages": {
+      "mode": "impc",
+      "vignette_chars": 453,
+      "D1": {
+        "doctor_id": "D1",
+        "candidates": [
+          {
+            "name": "Ganglion cyst",
+            "support_spans": [
+              "a well-defined, encapsulated mass",
+              "biphasic (central and peripheral) contrast enhancement (target sign)"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's symptoms and imaging findings are consistent with a ganglion cyst, which is a common cause of a gradually enlarging mass on the wrist."
+          }
+        ]
+      },
+      "D2": {
+        "doctor_id": "D2",
+        "candidates": [
+          {
+            "name": "Ganglion cyst",
+            "support_spans": [
+              "a well-defined, encapsulated mass",
+              "biphasic (central and peripheral) contrast enhancement (target sign)"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's symptoms and imaging results are consistent with a ganglion cyst, which is a common cause of a gradually enlarging mass on the wrist."
+          }
+        ]
+      },
+      "D3": {
+        "doctor_id": "D3",
+        "candidates": [
+          {
+            "name": "Ganglion cyst",
+            "support_spans": [
+              "a well-defined, encapsulated mass on the radial side of the wrist",
+              "biphasic (central and peripheral) contrast enhancement (target sign)"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's symptoms and imaging results are consistent with a ganglion cyst, which is a common cause of a gradually enlarging mass on the wrist."
+          },
+          {
+            "name": "Lipoma",
+            "support_spans": [
+              "a well-defined, encapsulated mass on the radial side of the wrist"
+            ],
+            "contradict_spans": [
+              "biphasic (central and peripheral) contrast enhancement (target sign)"
+            ],
+            "why": "The mass's well-defined and encapsulated nature could suggest a lipoma, but the target sign on imaging is less typical for this diagnosis."
+          },
+          {
+            "name": "Giant cell tumor of the tendon sheath",
+            "support_spans": [
+              "a gradually enlarging mass on the anterior aspect of his right wrist, along the radial edge",
+              "biphasic (central and peripheral) contrast enhancement (target sign)"
+            ],
+            "contradict_spans": [],
+            "why": "The location and imaging characteristics of the mass are also consistent with a giant cell tumor of the tendon sheath, which can cause median nerve compression."
+          }
+        ]
+      },
+      "state_after_doctors": {
+        "unexplained_specific_evidence": [],
+        "generator_jaccard": 0.5555555555555555,
+        "top1_same_across_views": true,
+        "top_margin": 1.7000000000000002,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 0
+      },
+      "adaptive_action": null,
+      "selector": {
+        "champion": "Ganglion cyst",
+        "runner_up": "Giant cell tumor of the tendon sheath",
+        "rationale": "The presence of a well-defined, encapsulated mass and biphasic contrast enhancement (target sign) strongly supports Ganglion cyst, with no contradictions.",
+        "rejected": [
+          {
+            "label": "Lipoma",
+            "why": "Biphasic contrast enhancement contradicts typical Lipoma characteristics."
+          }
+        ],
+        "margin": "high"
+      },
+      "evidence": [
+        {
+          "evidence_id": "D1E001",
+          "raw_span": "a well-defined, encapsulated mass",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "D1"
+        },
+        {
+          "evidence_id": "D1E002",
+          "raw_span": "biphasic (central and peripheral) contrast enhancement (target sign)",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "D1"
+        },
+        {
+          "evidence_id": "D3E003",
+          "raw_span": "a well-defined, encapsulated mass on the radial side of the wrist",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "D3"
+        },
+        {
+          "evidence_id": "D3E004",
+          "raw_span": "a gradually enlarging mass on the anterior aspect of his right wrist, along the radial edge",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "D3"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Ganglion cyst",
+          "aliases": [],
+          "generator_views": [
+            "D1",
+            "D2",
+            "D3"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "D1E001",
+            "D1E002",
+            "D3E003"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 3.7,
+          "status": "live",
+          "agent_votes": 3
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Lipoma",
+          "aliases": [],
+          "generator_views": [
+            "D3"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "D3E003"
+          ],
+          "contradicting_evidence": [
+            "D1E002"
+          ],
+          "protected_reason": "",
+          "score_logit": -0.25,
+          "status": "live",
+          "agent_votes": 1
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Giant cell tumor of the tendon sheath",
+          "aliases": [],
+          "generator_views": [
+            "D3"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "D3E004",
+            "D1E002"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 2.0,
+          "status": "live",
+          "agent_votes": 1
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Ganglion cyst",
+          "view": "D1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Ganglion cyst",
+          "view": "D2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Ganglion cyst",
+          "view": "D3"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Lipoma",
+          "view": "D3"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Giant cell tumor of the tendon sheath",
+          "view": "D3"
+        }
+      ],
+      "frontier_final": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Ganglion cyst",
+          "aliases": [],
+          "generator_views": [
+            "D1",
+            "D2",
+            "D3"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "D1E001",
+            "D1E002",
+            "D3E003"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 3.7,
+          "status": "live",
+          "agent_votes": 3
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Giant cell tumor of the tendon sheath",
+          "aliases": [],
+          "generator_views": [
+            "D3"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "D3E004",
+            "D1E002"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 2.0,
+          "status": "live",
+          "agent_votes": 1
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Lipoma",
+          "aliases": [],
+          "generator_views": [
+            "D3"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "D3E003"
+          ],
+          "contradicting_evidence": [
+            "D1E002"
+          ],
+          "protected_reason": "",
+          "score_logit": -0.25,
+          "status": "live",
+          "agent_votes": 1
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 3,
+      "n_evidence": 4,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.5555555555555555,
+      "frontier_n": 3,
+      "protected_n": 0,
+      "n_generators": 3,
+      "adaptive_action": null,
+      "llm_calls": 4,
+      "history_leakage": 0,
+      "mode": "impc"
+    },
+    "wall_s": 3.843
+  },
+  "created_at": "2026-08-08T02:17:45.280904+00:00"
+}

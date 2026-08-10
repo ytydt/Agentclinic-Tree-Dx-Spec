@@ -1,0 +1,1102 @@
+{
+  "case_id": "medcasereasoning__000002",
+  "source_id": "2",
+  "champion": "Pyroglutamic Acidemia",
+  "ordered_diagnoses": [
+    "Pyroglutamic Acidemia",
+    "Diabetic Ketoacidosis",
+    "Methanol poisoning",
+    "Lactic Acidosis",
+    "Salicylate Toxicity"
+  ],
+  "llm_calls": 3,
+  "stages": {
+    "mode": "lite",
+    "vignette_chars": 1653,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Lactic Acidosis",
+          "support_spans": [
+            "bicarbonate 5 mmol/L",
+            "base excess –22.7 mmol/L",
+            "pH 7.18"
+          ],
+          "contradict_spans": [
+            "lactic acid 0.7 mmol/L"
+          ],
+          "why": "The patient's severe metabolic acidosis with a high anion gap and low bicarbonate level suggests lactic acidosis, but the lactic acid level is not elevated."
+        },
+        {
+          "name": "Diabetic Ketoacidosis",
+          "support_spans": [
+            "type 2 diabetes",
+            "bicarbonate 5 mmol/L"
+          ],
+          "contradict_spans": [
+            "blood ketones <0.2 mmol/L"
+          ],
+          "why": "The patient's history of type 2 diabetes and severe metabolic acidosis could suggest diabetic ketoacidosis, but the blood ketone level is not elevated."
+        },
+        {
+          "name": "Salicylate Toxicity",
+          "support_spans": [
+            "aspirin"
+          ],
+          "contradict_spans": [
+            "salicylate <0.4 mmol/L"
+          ],
+          "why": "The patient's use of aspirin could suggest salicylate toxicity, but the salicylate level is not elevated."
+        },
+        {
+          "name": "Pyroglutamic Acidemia",
+          "support_spans": [
+            "acetaminophen"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's use of acetaminophen could suggest pyroglutamic acidemia, a rare cause of high anion gap metabolic acidosis."
+        }
+      ],
+      "key_evidence_spans": [
+        "bicarbonate 5 mmol/L",
+        "base excess –22.7 mmol/L",
+        "pH 7.18",
+        "corrected anion gap was 25 mmol/L"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Pyroglutamic acidemia",
+          "support_spans": [
+            "bicarbonate 5 mmol/L",
+            "corrected anion gap was 25 mmol/L",
+            "osmolar gap was mildly elevated at 21 mOsm/kg"
+          ],
+          "contradict_spans": [
+            "lactic acid 0.7 mmol/L",
+            "blood ketones <0.2 mmol/L"
+          ],
+          "why": "The patient's high anion gap metabolic acidosis and elevated osmolar gap may be indicative of pyroglutamic acidemia, a rare condition caused by an accumulation of pyroglutamic acid.",
+          "protected_reason": "This diagnosis may be easily missed due to its rarity and the need for specific laboratory tests, such as organic acid analysis, to confirm the diagnosis."
+        },
+        {
+          "name": "Methanol poisoning",
+          "support_spans": [
+            "hyperventilation",
+            "corrected anion gap was 25 mmol/L",
+            "osmolar gap was mildly elevated at 21 mOsm/kg"
+          ],
+          "contradict_spans": [
+            "serum toxicology, including acetaminophen level, was unremarkable"
+          ],
+          "why": "The patient's symptoms, such as hyperventilation and high anion gap metabolic acidosis, may be indicative of methanol poisoning, a rare but serious condition.",
+          "protected_reason": "Methanol poisoning may be difficult to diagnose due to the lack of specific symptoms and the need for prompt treatment to prevent serious complications."
+        },
+        {
+          "name": "Diabetic ketoacidosis",
+          "support_spans": [
+            "type 2 diabetes",
+            "hyperventilation",
+            "bicarbonate 5 mmol/L"
+          ],
+          "contradict_spans": [
+            "blood ketones <0.2 mmol/L"
+          ],
+          "why": "The patient's history of type 2 diabetes and symptoms, such as hyperventilation and metabolic acidosis, may be indicative of diabetic ketoacidosis, a serious complication of diabetes.",
+          "protected_reason": "Diabetic ketoacidosis may be easily missed in patients with type 2 diabetes, especially if they are not typically prone to ketoacidosis."
+        }
+      ],
+      "key_evidence_spans": [
+        "bicarbonate 5 mmol/L",
+        "corrected anion gap was 25 mmol/L",
+        "osmolar gap was mildly elevated at 21 mOsm/kg",
+        "hyperventilation"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "lactic acid 0.7 mmol/L",
+        "blood ketones <0.2 mmol/L",
+        "salicylate <0.4 mmol/L",
+        "serum toxicology, including acetaminophen level, was unremarkable"
+      ],
+      "generator_jaccard": 0.4,
+      "top1_same_across_views": true,
+      "top_margin": 0.25,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 1
+    },
+    "adaptive_action": null,
+    "selector": {
+      "champion": "Pyroglutamic Acidemia",
+      "runner_up": "Diabetic Ketoacidosis",
+      "rationale": "High anion gap metabolic acidosis with elevated corrected anion gap and low bicarbonate levels, despite lack of typical ketoacidosis markers, suggests Pyroglutamic Acidemia, especially with acetaminophen use.",
+      "rejected": [
+        {
+          "label": "Methanol poisoning",
+          "why": "Unremarkable serum toxicology"
+        },
+        {
+          "label": "Lactic Acidosis",
+          "why": "Lactic acid level is not elevated"
+        },
+        {
+          "label": "Salicylate Toxicity",
+          "why": "Salicylate level is below toxic threshold"
+        }
+      ],
+      "margin": "medium"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "bicarbonate 5 mmol/L",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "base excess –22.7 mmol/L",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "pH 7.18",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "corrected anion gap was 25 mmol/L",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E005",
+        "raw_span": "lactic acid 0.7 mmol/L",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E006",
+        "raw_span": "type 2 diabetes",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E007",
+        "raw_span": "blood ketones <0.2 mmol/L",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E008",
+        "raw_span": "aspirin",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E009",
+        "raw_span": "salicylate <0.4 mmol/L",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E010",
+        "raw_span": "acetaminophen",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E011",
+        "raw_span": "osmolar gap was mildly elevated at 21 mOsm/kg",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E012",
+        "raw_span": "hyperventilation",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E013",
+        "raw_span": "serum toxicology, including acetaminophen level, was unremarkable",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Lactic Acidosis",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G1E003"
+        ],
+        "contradicting_evidence": [
+          "G1E005"
+        ],
+        "protected_reason": "",
+        "score_logit": 1.75,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Diabetic Ketoacidosis",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E006",
+          "G1E001",
+          "G2E012"
+        ],
+        "contradicting_evidence": [
+          "G1E007"
+        ],
+        "protected_reason": "Diabetic ketoacidosis may be easily missed in patients with type 2 diabetes, especially if they are not typically prone to ketoacidosis.",
+        "score_logit": 2.35,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Salicylate Toxicity",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E008"
+        ],
+        "contradicting_evidence": [
+          "G1E009"
+        ],
+        "protected_reason": "",
+        "score_logit": -0.25,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Pyroglutamic Acidemia",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E010",
+          "G1E001",
+          "G1E004",
+          "G2E011"
+        ],
+        "contradicting_evidence": [
+          "G1E005",
+          "G1E007"
+        ],
+        "protected_reason": "This diagnosis may be easily missed due to its rarity and the need for specific laboratory tests, such as organic acid analysis, to confirm the diagnosis.",
+        "score_logit": 2.1,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Methanol poisoning",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G2E012",
+          "G1E004",
+          "G2E011"
+        ],
+        "contradicting_evidence": [
+          "G2E013"
+        ],
+        "protected_reason": "Methanol poisoning may be difficult to diagnose due to the lack of specific symptoms and the need for prompt treatment to prevent serious complications.",
+        "score_logit": 2.0,
+        "status": "live",
+        "agent_votes": 0
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Lactic Acidosis",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Diabetic Ketoacidosis",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Salicylate Toxicity",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C004",
+        "name": "Pyroglutamic Acidemia",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C004",
+        "name": "Pyroglutamic acidemia",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C005",
+        "name": "Methanol poisoning",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Diabetic ketoacidosis",
+        "view": "g2"
+      }
+    ],
+    "frontier_final": [
+      {
+        "concept_id": "C002",
+        "preferred_name": "Diabetic Ketoacidosis",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E006",
+          "G1E001",
+          "G2E012"
+        ],
+        "contradicting_evidence": [
+          "G1E007"
+        ],
+        "protected_reason": "Diabetic ketoacidosis may be easily missed in patients with type 2 diabetes, especially if they are not typically prone to ketoacidosis.",
+        "score_logit": 2.35,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Pyroglutamic Acidemia",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E010",
+          "G1E001",
+          "G1E004",
+          "G2E011"
+        ],
+        "contradicting_evidence": [
+          "G1E005",
+          "G1E007"
+        ],
+        "protected_reason": "This diagnosis may be easily missed due to its rarity and the need for specific laboratory tests, such as organic acid analysis, to confirm the diagnosis.",
+        "score_logit": 2.1,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Methanol poisoning",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G2E012",
+          "G1E004",
+          "G2E011"
+        ],
+        "contradicting_evidence": [
+          "G2E013"
+        ],
+        "protected_reason": "Methanol poisoning may be difficult to diagnose due to the lack of specific symptoms and the need for prompt treatment to prevent serious complications.",
+        "score_logit": 2.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C001",
+        "preferred_name": "Lactic Acidosis",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G1E003"
+        ],
+        "contradicting_evidence": [
+          "G1E005"
+        ],
+        "protected_reason": "",
+        "score_logit": 1.75,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Salicylate Toxicity",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E008"
+        ],
+        "contradicting_evidence": [
+          "G1E009"
+        ],
+        "protected_reason": "",
+        "score_logit": -0.25,
+        "status": "live",
+        "agent_votes": 0
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 5,
+    "n_evidence": 13,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.4,
+    "frontier_n": 5,
+    "protected_n": 3,
+    "n_generators": 2,
+    "adaptive_action": null,
+    "llm_calls": 3,
+    "history_leakage": 0,
+    "mode": "lite"
+  },
+  "prediction": {
+    "arm": "mosaic_lite_r2",
+    "case_id": "medcasereasoning__000002",
+    "source_id": "2",
+    "dataset": "medcasereasoning",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Pyroglutamic Acidemia",
+      "Diabetic Ketoacidosis",
+      "Methanol poisoning",
+      "Lactic Acidosis",
+      "Salicylate Toxicity"
+    ],
+    "top2_diagnoses": [
+      "Pyroglutamic Acidemia",
+      "Diabetic Ketoacidosis"
+    ],
+    "cost": {
+      "llm_calls": 3
+    },
+    "stages": {
+      "mode": "lite",
+      "vignette_chars": 1653,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Lactic Acidosis",
+            "support_spans": [
+              "bicarbonate 5 mmol/L",
+              "base excess –22.7 mmol/L",
+              "pH 7.18"
+            ],
+            "contradict_spans": [
+              "lactic acid 0.7 mmol/L"
+            ],
+            "why": "The patient's severe metabolic acidosis with a high anion gap and low bicarbonate level suggests lactic acidosis, but the lactic acid level is not elevated."
+          },
+          {
+            "name": "Diabetic Ketoacidosis",
+            "support_spans": [
+              "type 2 diabetes",
+              "bicarbonate 5 mmol/L"
+            ],
+            "contradict_spans": [
+              "blood ketones <0.2 mmol/L"
+            ],
+            "why": "The patient's history of type 2 diabetes and severe metabolic acidosis could suggest diabetic ketoacidosis, but the blood ketone level is not elevated."
+          },
+          {
+            "name": "Salicylate Toxicity",
+            "support_spans": [
+              "aspirin"
+            ],
+            "contradict_spans": [
+              "salicylate <0.4 mmol/L"
+            ],
+            "why": "The patient's use of aspirin could suggest salicylate toxicity, but the salicylate level is not elevated."
+          },
+          {
+            "name": "Pyroglutamic Acidemia",
+            "support_spans": [
+              "acetaminophen"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's use of acetaminophen could suggest pyroglutamic acidemia, a rare cause of high anion gap metabolic acidosis."
+          }
+        ],
+        "key_evidence_spans": [
+          "bicarbonate 5 mmol/L",
+          "base excess –22.7 mmol/L",
+          "pH 7.18",
+          "corrected anion gap was 25 mmol/L"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Pyroglutamic acidemia",
+            "support_spans": [
+              "bicarbonate 5 mmol/L",
+              "corrected anion gap was 25 mmol/L",
+              "osmolar gap was mildly elevated at 21 mOsm/kg"
+            ],
+            "contradict_spans": [
+              "lactic acid 0.7 mmol/L",
+              "blood ketones <0.2 mmol/L"
+            ],
+            "why": "The patient's high anion gap metabolic acidosis and elevated osmolar gap may be indicative of pyroglutamic acidemia, a rare condition caused by an accumulation of pyroglutamic acid.",
+            "protected_reason": "This diagnosis may be easily missed due to its rarity and the need for specific laboratory tests, such as organic acid analysis, to confirm the diagnosis."
+          },
+          {
+            "name": "Methanol poisoning",
+            "support_spans": [
+              "hyperventilation",
+              "corrected anion gap was 25 mmol/L",
+              "osmolar gap was mildly elevated at 21 mOsm/kg"
+            ],
+            "contradict_spans": [
+              "serum toxicology, including acetaminophen level, was unremarkable"
+            ],
+            "why": "The patient's symptoms, such as hyperventilation and high anion gap metabolic acidosis, may be indicative of methanol poisoning, a rare but serious condition.",
+            "protected_reason": "Methanol poisoning may be difficult to diagnose due to the lack of specific symptoms and the need for prompt treatment to prevent serious complications."
+          },
+          {
+            "name": "Diabetic ketoacidosis",
+            "support_spans": [
+              "type 2 diabetes",
+              "hyperventilation",
+              "bicarbonate 5 mmol/L"
+            ],
+            "contradict_spans": [
+              "blood ketones <0.2 mmol/L"
+            ],
+            "why": "The patient's history of type 2 diabetes and symptoms, such as hyperventilation and metabolic acidosis, may be indicative of diabetic ketoacidosis, a serious complication of diabetes.",
+            "protected_reason": "Diabetic ketoacidosis may be easily missed in patients with type 2 diabetes, especially if they are not typically prone to ketoacidosis."
+          }
+        ],
+        "key_evidence_spans": [
+          "bicarbonate 5 mmol/L",
+          "corrected anion gap was 25 mmol/L",
+          "osmolar gap was mildly elevated at 21 mOsm/kg",
+          "hyperventilation"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "lactic acid 0.7 mmol/L",
+          "blood ketones <0.2 mmol/L",
+          "salicylate <0.4 mmol/L",
+          "serum toxicology, including acetaminophen level, was unremarkable"
+        ],
+        "generator_jaccard": 0.4,
+        "top1_same_across_views": true,
+        "top_margin": 0.25,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 1
+      },
+      "adaptive_action": null,
+      "selector": {
+        "champion": "Pyroglutamic Acidemia",
+        "runner_up": "Diabetic Ketoacidosis",
+        "rationale": "High anion gap metabolic acidosis with elevated corrected anion gap and low bicarbonate levels, despite lack of typical ketoacidosis markers, suggests Pyroglutamic Acidemia, especially with acetaminophen use.",
+        "rejected": [
+          {
+            "label": "Methanol poisoning",
+            "why": "Unremarkable serum toxicology"
+          },
+          {
+            "label": "Lactic Acidosis",
+            "why": "Lactic acid level is not elevated"
+          },
+          {
+            "label": "Salicylate Toxicity",
+            "why": "Salicylate level is below toxic threshold"
+          }
+        ],
+        "margin": "medium"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "bicarbonate 5 mmol/L",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "base excess –22.7 mmol/L",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "pH 7.18",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "corrected anion gap was 25 mmol/L",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E005",
+          "raw_span": "lactic acid 0.7 mmol/L",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E006",
+          "raw_span": "type 2 diabetes",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E007",
+          "raw_span": "blood ketones <0.2 mmol/L",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E008",
+          "raw_span": "aspirin",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E009",
+          "raw_span": "salicylate <0.4 mmol/L",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E010",
+          "raw_span": "acetaminophen",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E011",
+          "raw_span": "osmolar gap was mildly elevated at 21 mOsm/kg",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E012",
+          "raw_span": "hyperventilation",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E013",
+          "raw_span": "serum toxicology, including acetaminophen level, was unremarkable",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Lactic Acidosis",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G1E003"
+          ],
+          "contradicting_evidence": [
+            "G1E005"
+          ],
+          "protected_reason": "",
+          "score_logit": 1.75,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Diabetic Ketoacidosis",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E006",
+            "G1E001",
+            "G2E012"
+          ],
+          "contradicting_evidence": [
+            "G1E007"
+          ],
+          "protected_reason": "Diabetic ketoacidosis may be easily missed in patients with type 2 diabetes, especially if they are not typically prone to ketoacidosis.",
+          "score_logit": 2.35,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Salicylate Toxicity",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E008"
+          ],
+          "contradicting_evidence": [
+            "G1E009"
+          ],
+          "protected_reason": "",
+          "score_logit": -0.25,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Pyroglutamic Acidemia",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E010",
+            "G1E001",
+            "G1E004",
+            "G2E011"
+          ],
+          "contradicting_evidence": [
+            "G1E005",
+            "G1E007"
+          ],
+          "protected_reason": "This diagnosis may be easily missed due to its rarity and the need for specific laboratory tests, such as organic acid analysis, to confirm the diagnosis.",
+          "score_logit": 2.1,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C005",
+          "preferred_name": "Methanol poisoning",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G2E012",
+            "G1E004",
+            "G2E011"
+          ],
+          "contradicting_evidence": [
+            "G2E013"
+          ],
+          "protected_reason": "Methanol poisoning may be difficult to diagnose due to the lack of specific symptoms and the need for prompt treatment to prevent serious complications.",
+          "score_logit": 2.0,
+          "status": "live",
+          "agent_votes": 0
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Lactic Acidosis",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Diabetic Ketoacidosis",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Salicylate Toxicity",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C004",
+          "name": "Pyroglutamic Acidemia",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C004",
+          "name": "Pyroglutamic acidemia",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C005",
+          "name": "Methanol poisoning",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Diabetic ketoacidosis",
+          "view": "g2"
+        }
+      ],
+      "frontier_final": [
+        {
+          "concept_id": "C002",
+          "preferred_name": "Diabetic Ketoacidosis",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E006",
+            "G1E001",
+            "G2E012"
+          ],
+          "contradicting_evidence": [
+            "G1E007"
+          ],
+          "protected_reason": "Diabetic ketoacidosis may be easily missed in patients with type 2 diabetes, especially if they are not typically prone to ketoacidosis.",
+          "score_logit": 2.35,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Pyroglutamic Acidemia",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E010",
+            "G1E001",
+            "G1E004",
+            "G2E011"
+          ],
+          "contradicting_evidence": [
+            "G1E005",
+            "G1E007"
+          ],
+          "protected_reason": "This diagnosis may be easily missed due to its rarity and the need for specific laboratory tests, such as organic acid analysis, to confirm the diagnosis.",
+          "score_logit": 2.1,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C005",
+          "preferred_name": "Methanol poisoning",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G2E012",
+            "G1E004",
+            "G2E011"
+          ],
+          "contradicting_evidence": [
+            "G2E013"
+          ],
+          "protected_reason": "Methanol poisoning may be difficult to diagnose due to the lack of specific symptoms and the need for prompt treatment to prevent serious complications.",
+          "score_logit": 2.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C001",
+          "preferred_name": "Lactic Acidosis",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G1E003"
+          ],
+          "contradicting_evidence": [
+            "G1E005"
+          ],
+          "protected_reason": "",
+          "score_logit": 1.75,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Salicylate Toxicity",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E008"
+          ],
+          "contradicting_evidence": [
+            "G1E009"
+          ],
+          "protected_reason": "",
+          "score_logit": -0.25,
+          "status": "live",
+          "agent_votes": 0
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 5,
+      "n_evidence": 13,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.4,
+      "frontier_n": 5,
+      "protected_n": 3,
+      "n_generators": 2,
+      "adaptive_action": null,
+      "llm_calls": 3,
+      "history_leakage": 0,
+      "mode": "lite"
+    },
+    "wall_s": 81.215
+  },
+  "created_at": "2026-08-10T02:00:24.858894+00:00"
+}

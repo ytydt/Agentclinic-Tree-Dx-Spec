@@ -1,0 +1,852 @@
+{
+  "case_id": "medcasereasoning__000123",
+  "source_id": "123",
+  "champion": "Osteomyelitis",
+  "ordered_diagnoses": [
+    "Osteomyelitis",
+    "Ewing's Sarcoma",
+    "Langerhans Cell Histiocytosis"
+  ],
+  "llm_calls": 4,
+  "stages": {
+    "mode": "adaptive4",
+    "vignette_chars": 925,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Osteomyelitis",
+          "support_spans": [
+            "a tender 2 × 3 cm swelling over the left clavicle with a small clean overlying wound and erythema",
+            "an elevated erythrocyte sedimentation rate of 50 mm/h"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's presentation of a tender swelling with erythema and an elevated erythrocyte sedimentation rate supports this diagnosis."
+        },
+        {
+          "name": "Ewing's Sarcoma",
+          "support_spans": [
+            "a midclavicular lytic expansile lesion with a minimally displaced pathologic fracture"
+          ],
+          "contradict_spans": [],
+          "why": "The presence of a lytic expansile lesion with a pathologic fracture is concerning for a malignant bone tumor such as Ewing's Sarcoma."
+        },
+        {
+          "name": "Langerhans Cell Histiocytosis",
+          "support_spans": [
+            "a midclavicular lytic expansile lesion with a minimally displaced pathologic fracture"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's presentation of a lytic expansile lesion with a pathologic fracture could be consistent with Langerhans Cell Histiocytosis."
+        }
+      ],
+      "key_evidence_spans": [
+        "a tender 2 × 3 cm swelling over the left clavicle with a small clean overlying wound and erythema",
+        "an elevated erythrocyte sedimentation rate of 50 mm/h",
+        "a midclavicular lytic expansile lesion with a minimally displaced pathologic fracture"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Langerhans cell histiocytosis",
+          "support_spans": [
+            "a tender 2 × 3 cm swelling over the left clavicle",
+            "a midclavicular lytic expansile lesion with a minimally displaced pathologic fracture"
+          ],
+          "contradict_spans": [
+            "He denied fever, weight loss, or trauma"
+          ],
+          "why": "The presence of a lytic expansile lesion with a pathologic fracture and swelling over the clavicle could be indicative of Langerhans cell histiocytosis, which can cause bone lesions.",
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare condition that can be easily missed, and the patient's symptoms and laboratory results are not typical of more common conditions."
+        },
+        {
+          "name": "Ewing's sarcoma",
+          "support_spans": [
+            "a midclavicular lytic expansile lesion with a minimally displaced pathologic fracture",
+            "elevated erythrocyte sedimentation rate of 50 mm/h"
+          ],
+          "contradict_spans": [
+            "He denied fever, weight loss, or trauma"
+          ],
+          "why": "The presence of a lytic expansile lesion with a pathologic fracture and an elevated erythrocyte sedimentation rate could be indicative of Ewing's sarcoma, which is a rare and aggressive bone cancer.",
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare and aggressive condition that requires prompt diagnosis and treatment."
+        },
+        {
+          "name": "Osteomyelitis",
+          "support_spans": [
+            "a tender 2 × 3 cm swelling over the left clavicle",
+            "erythema, without discharge"
+          ],
+          "contradict_spans": [
+            "complete blood count, renal and liver function tests were normal"
+          ],
+          "why": "The presence of swelling, erythema, and a tender area over the clavicle could be indicative of osteomyelitis, which is an infection of the bone.",
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare condition in this context, and the patient's laboratory results do not show a clear sign of infection."
+        }
+      ],
+      "key_evidence_spans": [
+        "a midclavicular lytic expansile lesion with a minimally displaced pathologic fracture",
+        "elevated erythrocyte sedimentation rate of 50 mm/h",
+        "a tender 2 × 3 cm swelling over the left clavicle"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "He denied fever, weight loss, or trauma",
+        "complete blood count, renal and liver function tests were normal"
+      ],
+      "generator_jaccard": 1.0,
+      "top1_same_across_views": true,
+      "top_margin": 2.0,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 1
+    },
+    "frontier_after_g": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Osteomyelitis",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G2E005",
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G2E008"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare condition in this context, and the patient's laboratory results do not show a clear sign of infection.",
+        "score_logit": 3.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Ewing's Sarcoma",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G2E004"
+        ],
+        "contradicting_evidence": [
+          "G2E006"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare and aggressive condition that requires prompt diagnosis and treatment.",
+        "score_logit": 1.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Langerhans Cell Histiocytosis",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G2E005"
+        ],
+        "contradicting_evidence": [
+          "G2E006"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare condition that can be easily missed, and the patient's symptoms and laboratory results are not typical of more common conditions.",
+        "score_logit": 1.35,
+        "status": "live"
+      }
+    ],
+    "a1": {
+      "candidates": [
+        {
+          "name": "Ewing's sarcoma",
+          "support_spans": [
+            "a midclavicular lytic expansile lesion with a minimally displaced pathologic fracture"
+          ],
+          "contradict_spans": [],
+          "why": "The presence of a lytic expansile lesion with a pathologic fracture is consistent with Ewing's sarcoma.",
+          "protected_reason": "explains unexplained high-specificity evidence"
+        },
+        {
+          "name": "Osteomyelitis",
+          "support_spans": [
+            "a tender 2 × 3 cm swelling over the left clavicle with a small clean overlying wound and erythema"
+          ],
+          "contradict_spans": [],
+          "why": "The presence of swelling, erythema, and a small wound over the clavicle is consistent with osteomyelitis.",
+          "protected_reason": "explains unexplained high-specificity evidence"
+        },
+        {
+          "name": "Langerhans cell histiocytosis",
+          "support_spans": [
+            "a midclavicular lytic expansile lesion with a minimally displaced pathologic fracture"
+          ],
+          "contradict_spans": [],
+          "why": "The presence of a lytic expansile lesion with a pathologic fracture is consistent with Langerhans cell histiocytosis.",
+          "protected_reason": "explains unexplained high-specificity evidence"
+        }
+      ]
+    },
+    "adaptive_action": "ORTHOGONAL_GENERATE",
+    "selector": {
+      "champion": "Osteomyelitis",
+      "runner_up": "Ewing's Sarcoma",
+      "rationale": "The presence of a tender swelling over the left clavicle with erythema and an elevated erythrocyte sedimentation rate supports Osteomyelitis, despite normal complete blood count and lack of fever.",
+      "rejected": [
+        {
+          "label": "Langerhans Cell Histiocytosis",
+          "why": "Similar findings to Ewing's Sarcoma but less specific evidence and lower score_logit"
+        },
+        {
+          "label": "Ewing's Sarcoma",
+          "why": "Although it has a lytic expansile lesion, the absence of systemic symptoms like fever and weight loss makes it less likely than Osteomyelitis"
+        }
+      ],
+      "margin": "medium"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "a tender 2 × 3 cm swelling over the left clavicle with a small clean overlying wound and erythema",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "an elevated erythrocyte sedimentation rate of 50 mm/h",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "a midclavicular lytic expansile lesion with a minimally displaced pathologic fracture",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E004",
+        "raw_span": "elevated erythrocyte sedimentation rate of 50 mm/h",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E005",
+        "raw_span": "a tender 2 × 3 cm swelling over the left clavicle",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E006",
+        "raw_span": "He denied fever, weight loss, or trauma",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E007",
+        "raw_span": "erythema, without discharge",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E008",
+        "raw_span": "complete blood count, renal and liver function tests were normal",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Osteomyelitis",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2",
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G2E005",
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G2E008"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare condition in this context, and the patient's laboratory results do not show a clear sign of infection.",
+        "score_logit": 3.7,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Ewing's Sarcoma",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2",
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G2E004"
+        ],
+        "contradicting_evidence": [
+          "G2E006"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare and aggressive condition that requires prompt diagnosis and treatment.",
+        "score_logit": 1.7,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Langerhans Cell Histiocytosis",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2",
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G2E005"
+        ],
+        "contradicting_evidence": [
+          "G2E006"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare condition that can be easily missed, and the patient's symptoms and laboratory results are not typical of more common conditions.",
+        "score_logit": 1.7,
+        "status": "live"
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Osteomyelitis",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Ewing's Sarcoma",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Langerhans Cell Histiocytosis",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C003",
+        "name": "Langerhans cell histiocytosis",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Ewing's sarcoma",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Osteomyelitis",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Ewing's sarcoma",
+        "view": "a1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Osteomyelitis",
+        "view": "a1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C003",
+        "name": "Langerhans cell histiocytosis",
+        "view": "a1"
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 3,
+    "n_evidence": 8,
+    "exact_duplicates": 0,
+    "generator_jaccard": 1.0,
+    "frontier_n": 3,
+    "protected_n": 3,
+    "g1_n": 3,
+    "g2_n": 3,
+    "adaptive_action": "ORTHOGONAL_GENERATE",
+    "llm_calls": 4,
+    "history_leakage": 0
+  },
+  "prediction": {
+    "arm": "mosaic_adaptive4_v1",
+    "case_id": "medcasereasoning__000123",
+    "source_id": "123",
+    "dataset": "medcasereasoning",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Osteomyelitis",
+      "Ewing's Sarcoma",
+      "Langerhans Cell Histiocytosis"
+    ],
+    "top2_diagnoses": [
+      "Osteomyelitis",
+      "Ewing's Sarcoma"
+    ],
+    "cost": {
+      "llm_calls": 4
+    },
+    "stages": {
+      "mode": "adaptive4",
+      "vignette_chars": 925,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Osteomyelitis",
+            "support_spans": [
+              "a tender 2 × 3 cm swelling over the left clavicle with a small clean overlying wound and erythema",
+              "an elevated erythrocyte sedimentation rate of 50 mm/h"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's presentation of a tender swelling with erythema and an elevated erythrocyte sedimentation rate supports this diagnosis."
+          },
+          {
+            "name": "Ewing's Sarcoma",
+            "support_spans": [
+              "a midclavicular lytic expansile lesion with a minimally displaced pathologic fracture"
+            ],
+            "contradict_spans": [],
+            "why": "The presence of a lytic expansile lesion with a pathologic fracture is concerning for a malignant bone tumor such as Ewing's Sarcoma."
+          },
+          {
+            "name": "Langerhans Cell Histiocytosis",
+            "support_spans": [
+              "a midclavicular lytic expansile lesion with a minimally displaced pathologic fracture"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's presentation of a lytic expansile lesion with a pathologic fracture could be consistent with Langerhans Cell Histiocytosis."
+          }
+        ],
+        "key_evidence_spans": [
+          "a tender 2 × 3 cm swelling over the left clavicle with a small clean overlying wound and erythema",
+          "an elevated erythrocyte sedimentation rate of 50 mm/h",
+          "a midclavicular lytic expansile lesion with a minimally displaced pathologic fracture"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Langerhans cell histiocytosis",
+            "support_spans": [
+              "a tender 2 × 3 cm swelling over the left clavicle",
+              "a midclavicular lytic expansile lesion with a minimally displaced pathologic fracture"
+            ],
+            "contradict_spans": [
+              "He denied fever, weight loss, or trauma"
+            ],
+            "why": "The presence of a lytic expansile lesion with a pathologic fracture and swelling over the clavicle could be indicative of Langerhans cell histiocytosis, which can cause bone lesions.",
+            "protected_reason": "This diagnosis may deserve minority protection because it is a rare condition that can be easily missed, and the patient's symptoms and laboratory results are not typical of more common conditions."
+          },
+          {
+            "name": "Ewing's sarcoma",
+            "support_spans": [
+              "a midclavicular lytic expansile lesion with a minimally displaced pathologic fracture",
+              "elevated erythrocyte sedimentation rate of 50 mm/h"
+            ],
+            "contradict_spans": [
+              "He denied fever, weight loss, or trauma"
+            ],
+            "why": "The presence of a lytic expansile lesion with a pathologic fracture and an elevated erythrocyte sedimentation rate could be indicative of Ewing's sarcoma, which is a rare and aggressive bone cancer.",
+            "protected_reason": "This diagnosis may deserve minority protection because it is a rare and aggressive condition that requires prompt diagnosis and treatment."
+          },
+          {
+            "name": "Osteomyelitis",
+            "support_spans": [
+              "a tender 2 × 3 cm swelling over the left clavicle",
+              "erythema, without discharge"
+            ],
+            "contradict_spans": [
+              "complete blood count, renal and liver function tests were normal"
+            ],
+            "why": "The presence of swelling, erythema, and a tender area over the clavicle could be indicative of osteomyelitis, which is an infection of the bone.",
+            "protected_reason": "This diagnosis may deserve minority protection because it is a rare condition in this context, and the patient's laboratory results do not show a clear sign of infection."
+          }
+        ],
+        "key_evidence_spans": [
+          "a midclavicular lytic expansile lesion with a minimally displaced pathologic fracture",
+          "elevated erythrocyte sedimentation rate of 50 mm/h",
+          "a tender 2 × 3 cm swelling over the left clavicle"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "He denied fever, weight loss, or trauma",
+          "complete blood count, renal and liver function tests were normal"
+        ],
+        "generator_jaccard": 1.0,
+        "top1_same_across_views": true,
+        "top_margin": 2.0,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 1
+      },
+      "frontier_after_g": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Osteomyelitis",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G2E005",
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G2E008"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare condition in this context, and the patient's laboratory results do not show a clear sign of infection.",
+          "score_logit": 3.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Ewing's Sarcoma",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G2E004"
+          ],
+          "contradicting_evidence": [
+            "G2E006"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare and aggressive condition that requires prompt diagnosis and treatment.",
+          "score_logit": 1.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Langerhans Cell Histiocytosis",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G2E005"
+          ],
+          "contradicting_evidence": [
+            "G2E006"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare condition that can be easily missed, and the patient's symptoms and laboratory results are not typical of more common conditions.",
+          "score_logit": 1.35,
+          "status": "live"
+        }
+      ],
+      "a1": {
+        "candidates": [
+          {
+            "name": "Ewing's sarcoma",
+            "support_spans": [
+              "a midclavicular lytic expansile lesion with a minimally displaced pathologic fracture"
+            ],
+            "contradict_spans": [],
+            "why": "The presence of a lytic expansile lesion with a pathologic fracture is consistent with Ewing's sarcoma.",
+            "protected_reason": "explains unexplained high-specificity evidence"
+          },
+          {
+            "name": "Osteomyelitis",
+            "support_spans": [
+              "a tender 2 × 3 cm swelling over the left clavicle with a small clean overlying wound and erythema"
+            ],
+            "contradict_spans": [],
+            "why": "The presence of swelling, erythema, and a small wound over the clavicle is consistent with osteomyelitis.",
+            "protected_reason": "explains unexplained high-specificity evidence"
+          },
+          {
+            "name": "Langerhans cell histiocytosis",
+            "support_spans": [
+              "a midclavicular lytic expansile lesion with a minimally displaced pathologic fracture"
+            ],
+            "contradict_spans": [],
+            "why": "The presence of a lytic expansile lesion with a pathologic fracture is consistent with Langerhans cell histiocytosis.",
+            "protected_reason": "explains unexplained high-specificity evidence"
+          }
+        ]
+      },
+      "adaptive_action": "ORTHOGONAL_GENERATE",
+      "selector": {
+        "champion": "Osteomyelitis",
+        "runner_up": "Ewing's Sarcoma",
+        "rationale": "The presence of a tender swelling over the left clavicle with erythema and an elevated erythrocyte sedimentation rate supports Osteomyelitis, despite normal complete blood count and lack of fever.",
+        "rejected": [
+          {
+            "label": "Langerhans Cell Histiocytosis",
+            "why": "Similar findings to Ewing's Sarcoma but less specific evidence and lower score_logit"
+          },
+          {
+            "label": "Ewing's Sarcoma",
+            "why": "Although it has a lytic expansile lesion, the absence of systemic symptoms like fever and weight loss makes it less likely than Osteomyelitis"
+          }
+        ],
+        "margin": "medium"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "a tender 2 × 3 cm swelling over the left clavicle with a small clean overlying wound and erythema",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "an elevated erythrocyte sedimentation rate of 50 mm/h",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "a midclavicular lytic expansile lesion with a minimally displaced pathologic fracture",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E004",
+          "raw_span": "elevated erythrocyte sedimentation rate of 50 mm/h",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E005",
+          "raw_span": "a tender 2 × 3 cm swelling over the left clavicle",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E006",
+          "raw_span": "He denied fever, weight loss, or trauma",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E007",
+          "raw_span": "erythema, without discharge",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E008",
+          "raw_span": "complete blood count, renal and liver function tests were normal",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Osteomyelitis",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2",
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G2E005",
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G2E008"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare condition in this context, and the patient's laboratory results do not show a clear sign of infection.",
+          "score_logit": 3.7,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Ewing's Sarcoma",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2",
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G2E004"
+          ],
+          "contradicting_evidence": [
+            "G2E006"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare and aggressive condition that requires prompt diagnosis and treatment.",
+          "score_logit": 1.7,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Langerhans Cell Histiocytosis",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2",
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G2E005"
+          ],
+          "contradicting_evidence": [
+            "G2E006"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare condition that can be easily missed, and the patient's symptoms and laboratory results are not typical of more common conditions.",
+          "score_logit": 1.7,
+          "status": "live"
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Osteomyelitis",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Ewing's Sarcoma",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Langerhans Cell Histiocytosis",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C003",
+          "name": "Langerhans cell histiocytosis",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Ewing's sarcoma",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Osteomyelitis",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Ewing's sarcoma",
+          "view": "a1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Osteomyelitis",
+          "view": "a1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C003",
+          "name": "Langerhans cell histiocytosis",
+          "view": "a1"
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 3,
+      "n_evidence": 8,
+      "exact_duplicates": 0,
+      "generator_jaccard": 1.0,
+      "frontier_n": 3,
+      "protected_n": 3,
+      "g1_n": 3,
+      "g2_n": 3,
+      "adaptive_action": "ORTHOGONAL_GENERATE",
+      "llm_calls": 4,
+      "history_leakage": 0
+    },
+    "wall_s": 4.709
+  },
+  "created_at": "2026-08-08T01:50:26.699630+00:00"
+}

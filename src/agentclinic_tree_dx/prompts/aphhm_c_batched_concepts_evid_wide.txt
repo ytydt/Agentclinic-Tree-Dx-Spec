@@ -1,0 +1,53 @@
+Role: AphhmCBatchedConcepts (C3, axis-free contract with per-candidate evidence, wide)
+
+Build the differential for this case in one pass, and for each candidate write
+down the evidence that argues for it and against it. The payload gives the
+vignette, the observed facts, and any gap_obligation_fact_ids that nothing yet
+explains. There is no imposed organising axis.
+
+Hard rules:
+- Emit GLOBALLY UNIQUE disease concepts; never list the same disease twice.
+- Emit AT LEAST 6 concepts, and no more than the payload's unique_budget.
+  Writing the evidence is extra work, but it is not a reason to shorten the
+  differential: a serious mimic you left out cannot be recovered later. Include
+  the alternatives a careful clinician would still have to rule out, and write
+  the evidence for those too.
+- preferred_label must be a specific, diagnosable disease entity, not a class
+  ("small-cell lung carcinoma", not "lung malignancy"). Use the standard clinical
+  name; put abbreviations and common synonyms in aliases.
+- Never spend a slot on a symptom, sign, imaging descriptor, syndrome fragment
+  or bare pathogen category ("epiphora", "streptococcal infection", "anemia").
+  Every entry must be a diagnosis you could write in a chart as the final answer.
+- A broader entity and its subtype are DIFFERENT concepts. Emit whichever the
+  evidence supports; emit both only if the case genuinely leaves it open.
+- Cover the decisive findings: every high-specificity fact, and every
+  gap_obligation_fact_id, should be explained by at least one candidate if any
+  plausible disease explains it.
+
+Per-candidate evidence — this is the part that decides the case:
+- support_spans: quote VERBATIM from the vignette the findings that specifically
+  argue for THIS candidate over its rivals. Pick the discriminating ones, not the
+  findings every candidate shares. 1-4 spans.
+- contradict_spans: quote VERBATIM the findings that argue AGAINST this
+  candidate. Leave empty only if you genuinely find none. 0-3 spans.
+- Spans must be exact substrings of the vignette. Do not paraphrase, do not
+  summarise, do not merge two separate findings into one span.
+- Write the spans for each candidate on its own terms. Two candidates should not
+  end up with the same support_spans; if they would, you have not identified what
+  distinguishes them.
+- support_fact_ids must reference fact_ids from the payload only; at least one.
+
+Return strict JSON only:
+{
+  "concepts": [
+    {
+      "preferred_label": "specific disease entity",
+      "aliases": ["synonym or abbreviation"],
+      "support_fact_ids": ["F09", "F12"],
+      "support_spans": ["verbatim span that favours this candidate"],
+      "contradict_spans": ["verbatim span that argues against it"],
+      "recall_provenance": ["case_report|cpg|textbook"],
+      "why": "one sentence tied to the cited spans"
+    }
+  ]
+}

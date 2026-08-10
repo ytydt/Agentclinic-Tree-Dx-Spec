@@ -1,0 +1,710 @@
+{
+  "case_id": "medcasereasoning__000053",
+  "source_id": "53",
+  "champion": "Cardiac Myxoma",
+  "ordered_diagnoses": [
+    "Cardiac Myxoma",
+    "Papillary Fibroelastoma",
+    "Lambl’s Excrescences",
+    "Thrombus"
+  ],
+  "llm_calls": 3,
+  "stages": {
+    "mode": "lite",
+    "vignette_chars": 697,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Cardiac Myxoma",
+          "support_spans": [
+            "a mobile, smooth, oval, pedunculated mass originating from the left ventricular lateral wall"
+          ],
+          "contradict_spans": [],
+          "why": "The description of the mass as mobile, smooth, oval, and pedunculated is consistent with a cardiac myxoma."
+        },
+        {
+          "name": "Papillary Fibroelastoma",
+          "support_spans": [
+            "a mobile, smooth, oval, pedunculated mass"
+          ],
+          "contradict_spans": [],
+          "why": "The mobile and pedunculated nature of the mass could also suggest a papillary fibroelastoma."
+        },
+        {
+          "name": "Thrombus",
+          "support_spans": [],
+          "contradict_spans": [
+            "measuring 1.34 × 1.9 cm",
+            "focal contrast enhancement"
+          ],
+          "why": "The size and contrast enhancement of the mass make thrombus less likely."
+        }
+      ],
+      "key_evidence_spans": [
+        "a mobile, smooth, oval, pedunculated mass originating from the left ventricular lateral wall",
+        "measuring 1.34 × 1.9 cm",
+        "focal contrast enhancement"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Papillary Fibroelastoma",
+          "support_spans": [
+            "a mobile, smooth, oval, pedunculated mass"
+          ],
+          "contradict_spans": [],
+          "why": "The description of the mass as mobile, smooth, oval, and pedunculated is consistent with Papillary Fibroelastoma.",
+          "protected_reason": "This rare cardiac tumor may be overlooked in favor of more common diagnoses like thrombi or myxomas."
+        },
+        {
+          "name": "Cardiac Myxoma",
+          "support_spans": [
+            "a left ventricular mass"
+          ],
+          "contradict_spans": [],
+          "why": "The presence of a left ventricular mass is consistent with Cardiac Myxoma, although the description of the mass as smooth and pedunculated is less typical.",
+          "protected_reason": "Myxomas are the most common type of primary cardiac tumor, but this patient's mass has atypical features that warrant consideration of other diagnoses."
+        },
+        {
+          "name": "Lambl’s Excrescences",
+          "support_spans": [
+            "a mobile, smooth, oval, pedunculated mass"
+          ],
+          "contradict_spans": [
+            "measuring 1.34 × 1.9 cm"
+          ],
+          "why": "The description of the mass as mobile, smooth, oval, and pedunculated is consistent with Lambl’s Excrescences, although the size is larger than typical.",
+          "protected_reason": "Lambl’s Excrescences are rare, small, benign cardiac tumors that may be overlooked in favor of more common diagnoses."
+        }
+      ],
+      "key_evidence_spans": [
+        "a mobile, smooth, oval, pedunculated mass",
+        "measuring 1.34 × 1.9 cm",
+        "focal contrast enhancement"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "measuring 1.34 × 1.9 cm",
+        "focal contrast enhancement"
+      ],
+      "generator_jaccard": 0.5,
+      "top1_same_across_views": true,
+      "top_margin": 1.0,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "frontier_after_g": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Cardiac Myxoma",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G2E005"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "Myxomas are the most common type of primary cardiac tumor, but this patient's mass has atypical features that warrant consideration of other diagnoses.",
+        "score_logit": 2.6,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Papillary Fibroelastoma",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E004"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "This rare cardiac tumor may be overlooked in favor of more common diagnoses like thrombi or myxomas.",
+        "score_logit": 1.6,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Lambl’s Excrescences",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E004"
+        ],
+        "contradicting_evidence": [
+          "G1E002"
+        ],
+        "protected_reason": "Lambl’s Excrescences are rare, small, benign cardiac tumors that may be overlooked in favor of more common diagnoses.",
+        "score_logit": 0.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Thrombus",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          "G1E002",
+          "G1E003"
+        ],
+        "protected_reason": "",
+        "score_logit": -3.0,
+        "status": "live"
+      }
+    ],
+    "adaptive_action": null,
+    "selector": {
+      "champion": "Cardiac Myxoma",
+      "runner_up": "Papillary Fibroelastoma",
+      "rationale": "The patient's mass is described as a mobile, smooth, oval, pedunculated mass originating from the left ventricular lateral wall, which is most consistent with Cardiac Myxoma, despite some atypical features.",
+      "rejected": [
+        {
+          "label": "Lambl’s Excrescences",
+          "why": "The mass size is larger than typical for Lambl’s Excrescences"
+        },
+        {
+          "label": "Thrombus",
+          "why": "The mass has focal contrast enhancement and is not typical for a thrombus"
+        }
+      ],
+      "margin": "medium"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "a mobile, smooth, oval, pedunculated mass originating from the left ventricular lateral wall",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "measuring 1.34 × 1.9 cm",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "focal contrast enhancement",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "a mobile, smooth, oval, pedunculated mass",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E005",
+        "raw_span": "a left ventricular mass",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Cardiac Myxoma",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G2E005"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "Myxomas are the most common type of primary cardiac tumor, but this patient's mass has atypical features that warrant consideration of other diagnoses.",
+        "score_logit": 2.6,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Papillary Fibroelastoma",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E004"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "This rare cardiac tumor may be overlooked in favor of more common diagnoses like thrombi or myxomas.",
+        "score_logit": 1.6,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Thrombus",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          "G1E002",
+          "G1E003"
+        ],
+        "protected_reason": "",
+        "score_logit": -3.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Lambl’s Excrescences",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E004"
+        ],
+        "contradicting_evidence": [
+          "G1E002"
+        ],
+        "protected_reason": "Lambl’s Excrescences are rare, small, benign cardiac tumors that may be overlooked in favor of more common diagnoses.",
+        "score_logit": 0.0,
+        "status": "live"
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Cardiac Myxoma",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Papillary Fibroelastoma",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Thrombus",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Papillary Fibroelastoma",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Cardiac Myxoma",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C004",
+        "name": "Lambl’s Excrescences",
+        "view": "g2"
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 4,
+    "n_evidence": 5,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.5,
+    "frontier_n": 4,
+    "protected_n": 3,
+    "g1_n": 3,
+    "g2_n": 3,
+    "adaptive_action": null,
+    "llm_calls": 3,
+    "history_leakage": 0
+  },
+  "prediction": {
+    "arm": "mosaic_lite_v1",
+    "case_id": "medcasereasoning__000053",
+    "source_id": "53",
+    "dataset": "medcasereasoning",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Cardiac Myxoma",
+      "Papillary Fibroelastoma",
+      "Lambl’s Excrescences",
+      "Thrombus"
+    ],
+    "top2_diagnoses": [
+      "Cardiac Myxoma",
+      "Papillary Fibroelastoma"
+    ],
+    "cost": {
+      "llm_calls": 3
+    },
+    "stages": {
+      "mode": "lite",
+      "vignette_chars": 697,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Cardiac Myxoma",
+            "support_spans": [
+              "a mobile, smooth, oval, pedunculated mass originating from the left ventricular lateral wall"
+            ],
+            "contradict_spans": [],
+            "why": "The description of the mass as mobile, smooth, oval, and pedunculated is consistent with a cardiac myxoma."
+          },
+          {
+            "name": "Papillary Fibroelastoma",
+            "support_spans": [
+              "a mobile, smooth, oval, pedunculated mass"
+            ],
+            "contradict_spans": [],
+            "why": "The mobile and pedunculated nature of the mass could also suggest a papillary fibroelastoma."
+          },
+          {
+            "name": "Thrombus",
+            "support_spans": [],
+            "contradict_spans": [
+              "measuring 1.34 × 1.9 cm",
+              "focal contrast enhancement"
+            ],
+            "why": "The size and contrast enhancement of the mass make thrombus less likely."
+          }
+        ],
+        "key_evidence_spans": [
+          "a mobile, smooth, oval, pedunculated mass originating from the left ventricular lateral wall",
+          "measuring 1.34 × 1.9 cm",
+          "focal contrast enhancement"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Papillary Fibroelastoma",
+            "support_spans": [
+              "a mobile, smooth, oval, pedunculated mass"
+            ],
+            "contradict_spans": [],
+            "why": "The description of the mass as mobile, smooth, oval, and pedunculated is consistent with Papillary Fibroelastoma.",
+            "protected_reason": "This rare cardiac tumor may be overlooked in favor of more common diagnoses like thrombi or myxomas."
+          },
+          {
+            "name": "Cardiac Myxoma",
+            "support_spans": [
+              "a left ventricular mass"
+            ],
+            "contradict_spans": [],
+            "why": "The presence of a left ventricular mass is consistent with Cardiac Myxoma, although the description of the mass as smooth and pedunculated is less typical.",
+            "protected_reason": "Myxomas are the most common type of primary cardiac tumor, but this patient's mass has atypical features that warrant consideration of other diagnoses."
+          },
+          {
+            "name": "Lambl’s Excrescences",
+            "support_spans": [
+              "a mobile, smooth, oval, pedunculated mass"
+            ],
+            "contradict_spans": [
+              "measuring 1.34 × 1.9 cm"
+            ],
+            "why": "The description of the mass as mobile, smooth, oval, and pedunculated is consistent with Lambl’s Excrescences, although the size is larger than typical.",
+            "protected_reason": "Lambl’s Excrescences are rare, small, benign cardiac tumors that may be overlooked in favor of more common diagnoses."
+          }
+        ],
+        "key_evidence_spans": [
+          "a mobile, smooth, oval, pedunculated mass",
+          "measuring 1.34 × 1.9 cm",
+          "focal contrast enhancement"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "measuring 1.34 × 1.9 cm",
+          "focal contrast enhancement"
+        ],
+        "generator_jaccard": 0.5,
+        "top1_same_across_views": true,
+        "top_margin": 1.0,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 0
+      },
+      "frontier_after_g": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Cardiac Myxoma",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G2E005"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "Myxomas are the most common type of primary cardiac tumor, but this patient's mass has atypical features that warrant consideration of other diagnoses.",
+          "score_logit": 2.6,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Papillary Fibroelastoma",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E004"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "This rare cardiac tumor may be overlooked in favor of more common diagnoses like thrombi or myxomas.",
+          "score_logit": 1.6,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Lambl’s Excrescences",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E004"
+          ],
+          "contradicting_evidence": [
+            "G1E002"
+          ],
+          "protected_reason": "Lambl’s Excrescences are rare, small, benign cardiac tumors that may be overlooked in favor of more common diagnoses.",
+          "score_logit": 0.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Thrombus",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [],
+          "contradicting_evidence": [
+            "G1E002",
+            "G1E003"
+          ],
+          "protected_reason": "",
+          "score_logit": -3.0,
+          "status": "live"
+        }
+      ],
+      "adaptive_action": null,
+      "selector": {
+        "champion": "Cardiac Myxoma",
+        "runner_up": "Papillary Fibroelastoma",
+        "rationale": "The patient's mass is described as a mobile, smooth, oval, pedunculated mass originating from the left ventricular lateral wall, which is most consistent with Cardiac Myxoma, despite some atypical features.",
+        "rejected": [
+          {
+            "label": "Lambl’s Excrescences",
+            "why": "The mass size is larger than typical for Lambl’s Excrescences"
+          },
+          {
+            "label": "Thrombus",
+            "why": "The mass has focal contrast enhancement and is not typical for a thrombus"
+          }
+        ],
+        "margin": "medium"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "a mobile, smooth, oval, pedunculated mass originating from the left ventricular lateral wall",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "measuring 1.34 × 1.9 cm",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "focal contrast enhancement",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "a mobile, smooth, oval, pedunculated mass",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E005",
+          "raw_span": "a left ventricular mass",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Cardiac Myxoma",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G2E005"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "Myxomas are the most common type of primary cardiac tumor, but this patient's mass has atypical features that warrant consideration of other diagnoses.",
+          "score_logit": 2.6,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Papillary Fibroelastoma",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E004"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "This rare cardiac tumor may be overlooked in favor of more common diagnoses like thrombi or myxomas.",
+          "score_logit": 1.6,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Thrombus",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [],
+          "contradicting_evidence": [
+            "G1E002",
+            "G1E003"
+          ],
+          "protected_reason": "",
+          "score_logit": -3.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Lambl’s Excrescences",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E004"
+          ],
+          "contradicting_evidence": [
+            "G1E002"
+          ],
+          "protected_reason": "Lambl’s Excrescences are rare, small, benign cardiac tumors that may be overlooked in favor of more common diagnoses.",
+          "score_logit": 0.0,
+          "status": "live"
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Cardiac Myxoma",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Papillary Fibroelastoma",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Thrombus",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Papillary Fibroelastoma",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Cardiac Myxoma",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C004",
+          "name": "Lambl’s Excrescences",
+          "view": "g2"
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 4,
+      "n_evidence": 5,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.5,
+      "frontier_n": 4,
+      "protected_n": 3,
+      "g1_n": 3,
+      "g2_n": 3,
+      "adaptive_action": null,
+      "llm_calls": 3,
+      "history_leakage": 0
+    },
+    "wall_s": 3.773
+  },
+  "created_at": "2026-08-08T01:50:14.026612+00:00"
+}

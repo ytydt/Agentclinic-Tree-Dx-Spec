@@ -1,0 +1,868 @@
+{
+  "case_id": "medcasereasoning__000061",
+  "source_id": "61",
+  "champion": "Hepatocellular Adenoma",
+  "ordered_diagnoses": [
+    "Hepatocellular Adenoma",
+    "Focal Nodular Hyperplasia",
+    "Atypical Hepatocellular Carcinoma",
+    "Nodular Regenerative Hyperplasia"
+  ],
+  "llm_calls": 4,
+  "stages": {
+    "mode": "adaptive4",
+    "vignette_chars": 1222,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Hepatocellular Adenoma",
+          "support_spans": [
+            "biopsies at that time showed histologically proven adenoma without malignancy"
+          ],
+          "contradict_spans": [],
+          "why": "The patient had a history of hypervascular liver lesions with biopsies showing histologically proven adenoma without malignancy."
+        },
+        {
+          "name": "Atypical Hepatocellular Carcinoma",
+          "support_spans": [
+            "Because of suspicion for an atypical hepatocellular carcinoma, an elective surgical resection was planned"
+          ],
+          "contradict_spans": [
+            "biopsies at that time showed histologically proven adenoma without malignancy"
+          ],
+          "why": "The patient's lesions were suspicious for atypical hepatocellular carcinoma despite previous biopsies showing adenoma."
+        },
+        {
+          "name": "Focal Nodular Hyperplasia",
+          "support_spans": [
+            "hypervascular lesions"
+          ],
+          "contradict_spans": [],
+          "why": "The patient had hypervascular liver lesions which could be consistent with focal nodular hyperplasia."
+        }
+      ],
+      "key_evidence_spans": [
+        "biopsies at that time showed histologically proven adenoma without malignancy",
+        "Because of suspicion for an atypical hepatocellular carcinoma, an elective surgical resection was planned",
+        "hypervascular lesions"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Focal Nodular Hyperplasia",
+          "support_spans": [
+            "histologically proven adenoma without malignancy",
+            "hypervascular lesions with central necrosis"
+          ],
+          "contradict_spans": [
+            "suspicion for an atypical hepatocellular carcinoma"
+          ],
+          "why": "The patient's history of hypervascular liver lesions with histologically proven adenoma and the presence of central necrosis on MRI could suggest Focal Nodular Hyperplasia.",
+          "protected_reason": "This diagnosis may be overlooked due to the initial suspicion of hepatocellular carcinoma and the presence of atypical features."
+        },
+        {
+          "name": "Nodular Regenerative Hyperplasia",
+          "support_spans": [
+            "hypervascular lesions in segment IV",
+            "no weight loss, fever, or constitutional symptoms"
+          ],
+          "contradict_spans": [
+            "suspicion for an atypical hepatocellular carcinoma"
+          ],
+          "why": "The presence of hypervascular lesions and the lack of systemic symptoms could suggest Nodular Regenerative Hyperplasia, a rare condition that may be underdiagnosed.",
+          "protected_reason": "This diagnosis may be protected due to its rarity and the need for a high index of suspicion to consider it in the differential diagnosis."
+        },
+        {
+          "name": "Inflammatory Hepatocellular Adenoma",
+          "support_spans": [
+            "histologically proven adenoma without malignancy",
+            "hypervascular lesions with central necrosis"
+          ],
+          "contradict_spans": [
+            "no weight loss, fever, or constitutional symptoms"
+          ],
+          "why": "The patient's history of adenoma and the presence of central necrosis on MRI could suggest Inflammatory Hepatocellular Adenoma, a subtype of hepatocellular adenoma.",
+          "protected_reason": "This diagnosis may be overlooked due to the lack of typical inflammatory symptoms and the presence of atypical features on imaging."
+        }
+      ],
+      "key_evidence_spans": [
+        "histologically proven adenoma without malignancy",
+        "hypervascular lesions in segment IV",
+        "hypervascular lesions with central necrosis"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "suspicion for an atypical hepatocellular carcinoma"
+      ],
+      "generator_jaccard": 0.2,
+      "top1_same_across_views": true,
+      "top_margin": 0.0,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 1
+    },
+    "frontier_after_g": [
+      {
+        "concept_id": "C003",
+        "preferred_name": "Focal Nodular Hyperplasia",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G2E004",
+          "G2E006"
+        ],
+        "contradicting_evidence": [
+          "G2E007"
+        ],
+        "protected_reason": "This diagnosis may be overlooked due to the initial suspicion of hepatocellular carcinoma and the presence of atypical features.",
+        "score_logit": 2.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C001",
+        "preferred_name": "Hepatocellular Adenoma",
+        "aliases": [
+          "Inflammatory Hepatocellular Adenoma"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G2E004",
+          "G2E006"
+        ],
+        "contradicting_evidence": [
+          "G2E008"
+        ],
+        "protected_reason": "This diagnosis may be overlooked due to the lack of typical inflammatory symptoms and the presence of atypical features on imaging.",
+        "score_logit": 2.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Nodular Regenerative Hyperplasia",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G2E005",
+          "G2E008"
+        ],
+        "contradicting_evidence": [
+          "G2E007"
+        ],
+        "protected_reason": "This diagnosis may be protected due to its rarity and the need for a high index of suspicion to consider it in the differential diagnosis.",
+        "score_logit": 1.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Atypical Hepatocellular Carcinoma",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E002"
+        ],
+        "contradicting_evidence": [
+          "G1E001"
+        ],
+        "protected_reason": "",
+        "score_logit": -0.25,
+        "status": "live"
+      }
+    ],
+    "a1": {
+      "candidates": [
+        {
+          "name": "Hepatocellular carcinoma",
+          "support_spans": [
+            "suspicion for an atypical hepatocellular carcinoma"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's history and laboratory results suggest a possible diagnosis of hepatocellular carcinoma, particularly given the presence of hypervascular lesions in the liver.",
+          "protected_reason": "explains unexplained high-specificity evidence"
+        }
+      ]
+    },
+    "adaptive_action": "ORTHOGONAL_GENERATE",
+    "selector": {
+      "champion": "Hepatocellular Adenoma",
+      "runner_up": "Focal Nodular Hyperplasia",
+      "rationale": "Histologically proven adenoma without malignancy and hypervascular lesions with central necrosis support this diagnosis",
+      "rejected": [
+        {
+          "label": "Atypical Hepatocellular Carcinoma",
+          "why": "Biopsies showed histologically proven adenoma without malignancy, contradicting this diagnosis"
+        },
+        {
+          "label": "Nodular Regenerative Hyperplasia",
+          "why": "Lack of specific evidence and contradiction from suspicion of atypical hepatocellular carcinoma"
+        }
+      ],
+      "margin": "medium"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "biopsies at that time showed histologically proven adenoma without malignancy",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "Because of suspicion for an atypical hepatocellular carcinoma, an elective surgical resection was planned",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "hypervascular lesions",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E004",
+        "raw_span": "histologically proven adenoma without malignancy",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E005",
+        "raw_span": "hypervascular lesions in segment IV",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E006",
+        "raw_span": "hypervascular lesions with central necrosis",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E007",
+        "raw_span": "suspicion for an atypical hepatocellular carcinoma",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E008",
+        "raw_span": "no weight loss, fever, or constitutional symptoms",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Hepatocellular Adenoma",
+        "aliases": [
+          "Inflammatory Hepatocellular Adenoma"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G2E004",
+          "G2E006"
+        ],
+        "contradicting_evidence": [
+          "G2E008"
+        ],
+        "protected_reason": "This diagnosis may be overlooked due to the lack of typical inflammatory symptoms and the presence of atypical features on imaging.",
+        "score_logit": 2.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Atypical Hepatocellular Carcinoma",
+        "aliases": [
+          "Hepatocellular carcinoma"
+        ],
+        "generator_views": [
+          "g1",
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G1E002",
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G1E001"
+        ],
+        "protected_reason": "explains unexplained high-specificity evidence",
+        "score_logit": 1.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Focal Nodular Hyperplasia",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G2E004",
+          "G2E006"
+        ],
+        "contradicting_evidence": [
+          "G2E007"
+        ],
+        "protected_reason": "This diagnosis may be overlooked due to the initial suspicion of hepatocellular carcinoma and the presence of atypical features.",
+        "score_logit": 2.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Nodular Regenerative Hyperplasia",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G2E005",
+          "G2E008"
+        ],
+        "contradicting_evidence": [
+          "G2E007"
+        ],
+        "protected_reason": "This diagnosis may be protected due to its rarity and the need for a high index of suspicion to consider it in the differential diagnosis.",
+        "score_logit": 1.0,
+        "status": "live"
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Hepatocellular Adenoma",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Atypical Hepatocellular Carcinoma",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Focal Nodular Hyperplasia",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C003",
+        "name": "Focal Nodular Hyperplasia",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C004",
+        "name": "Nodular Regenerative Hyperplasia",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Inflammatory Hepatocellular Adenoma",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Hepatocellular carcinoma",
+        "view": "a1"
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 4,
+    "n_evidence": 8,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.2,
+    "frontier_n": 4,
+    "protected_n": 4,
+    "g1_n": 3,
+    "g2_n": 3,
+    "adaptive_action": "ORTHOGONAL_GENERATE",
+    "llm_calls": 4,
+    "history_leakage": 0
+  },
+  "prediction": {
+    "arm": "mosaic_adaptive4_v1",
+    "case_id": "medcasereasoning__000061",
+    "source_id": "61",
+    "dataset": "medcasereasoning",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Hepatocellular Adenoma",
+      "Focal Nodular Hyperplasia",
+      "Atypical Hepatocellular Carcinoma",
+      "Nodular Regenerative Hyperplasia"
+    ],
+    "top2_diagnoses": [
+      "Hepatocellular Adenoma",
+      "Focal Nodular Hyperplasia"
+    ],
+    "cost": {
+      "llm_calls": 4
+    },
+    "stages": {
+      "mode": "adaptive4",
+      "vignette_chars": 1222,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Hepatocellular Adenoma",
+            "support_spans": [
+              "biopsies at that time showed histologically proven adenoma without malignancy"
+            ],
+            "contradict_spans": [],
+            "why": "The patient had a history of hypervascular liver lesions with biopsies showing histologically proven adenoma without malignancy."
+          },
+          {
+            "name": "Atypical Hepatocellular Carcinoma",
+            "support_spans": [
+              "Because of suspicion for an atypical hepatocellular carcinoma, an elective surgical resection was planned"
+            ],
+            "contradict_spans": [
+              "biopsies at that time showed histologically proven adenoma without malignancy"
+            ],
+            "why": "The patient's lesions were suspicious for atypical hepatocellular carcinoma despite previous biopsies showing adenoma."
+          },
+          {
+            "name": "Focal Nodular Hyperplasia",
+            "support_spans": [
+              "hypervascular lesions"
+            ],
+            "contradict_spans": [],
+            "why": "The patient had hypervascular liver lesions which could be consistent with focal nodular hyperplasia."
+          }
+        ],
+        "key_evidence_spans": [
+          "biopsies at that time showed histologically proven adenoma without malignancy",
+          "Because of suspicion for an atypical hepatocellular carcinoma, an elective surgical resection was planned",
+          "hypervascular lesions"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Focal Nodular Hyperplasia",
+            "support_spans": [
+              "histologically proven adenoma without malignancy",
+              "hypervascular lesions with central necrosis"
+            ],
+            "contradict_spans": [
+              "suspicion for an atypical hepatocellular carcinoma"
+            ],
+            "why": "The patient's history of hypervascular liver lesions with histologically proven adenoma and the presence of central necrosis on MRI could suggest Focal Nodular Hyperplasia.",
+            "protected_reason": "This diagnosis may be overlooked due to the initial suspicion of hepatocellular carcinoma and the presence of atypical features."
+          },
+          {
+            "name": "Nodular Regenerative Hyperplasia",
+            "support_spans": [
+              "hypervascular lesions in segment IV",
+              "no weight loss, fever, or constitutional symptoms"
+            ],
+            "contradict_spans": [
+              "suspicion for an atypical hepatocellular carcinoma"
+            ],
+            "why": "The presence of hypervascular lesions and the lack of systemic symptoms could suggest Nodular Regenerative Hyperplasia, a rare condition that may be underdiagnosed.",
+            "protected_reason": "This diagnosis may be protected due to its rarity and the need for a high index of suspicion to consider it in the differential diagnosis."
+          },
+          {
+            "name": "Inflammatory Hepatocellular Adenoma",
+            "support_spans": [
+              "histologically proven adenoma without malignancy",
+              "hypervascular lesions with central necrosis"
+            ],
+            "contradict_spans": [
+              "no weight loss, fever, or constitutional symptoms"
+            ],
+            "why": "The patient's history of adenoma and the presence of central necrosis on MRI could suggest Inflammatory Hepatocellular Adenoma, a subtype of hepatocellular adenoma.",
+            "protected_reason": "This diagnosis may be overlooked due to the lack of typical inflammatory symptoms and the presence of atypical features on imaging."
+          }
+        ],
+        "key_evidence_spans": [
+          "histologically proven adenoma without malignancy",
+          "hypervascular lesions in segment IV",
+          "hypervascular lesions with central necrosis"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "suspicion for an atypical hepatocellular carcinoma"
+        ],
+        "generator_jaccard": 0.2,
+        "top1_same_across_views": true,
+        "top_margin": 0.0,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 1
+      },
+      "frontier_after_g": [
+        {
+          "concept_id": "C003",
+          "preferred_name": "Focal Nodular Hyperplasia",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G2E004",
+            "G2E006"
+          ],
+          "contradicting_evidence": [
+            "G2E007"
+          ],
+          "protected_reason": "This diagnosis may be overlooked due to the initial suspicion of hepatocellular carcinoma and the presence of atypical features.",
+          "score_logit": 2.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C001",
+          "preferred_name": "Hepatocellular Adenoma",
+          "aliases": [
+            "Inflammatory Hepatocellular Adenoma"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G2E004",
+            "G2E006"
+          ],
+          "contradicting_evidence": [
+            "G2E008"
+          ],
+          "protected_reason": "This diagnosis may be overlooked due to the lack of typical inflammatory symptoms and the presence of atypical features on imaging.",
+          "score_logit": 2.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Nodular Regenerative Hyperplasia",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G2E005",
+            "G2E008"
+          ],
+          "contradicting_evidence": [
+            "G2E007"
+          ],
+          "protected_reason": "This diagnosis may be protected due to its rarity and the need for a high index of suspicion to consider it in the differential diagnosis.",
+          "score_logit": 1.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Atypical Hepatocellular Carcinoma",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E002"
+          ],
+          "contradicting_evidence": [
+            "G1E001"
+          ],
+          "protected_reason": "",
+          "score_logit": -0.25,
+          "status": "live"
+        }
+      ],
+      "a1": {
+        "candidates": [
+          {
+            "name": "Hepatocellular carcinoma",
+            "support_spans": [
+              "suspicion for an atypical hepatocellular carcinoma"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's history and laboratory results suggest a possible diagnosis of hepatocellular carcinoma, particularly given the presence of hypervascular lesions in the liver.",
+            "protected_reason": "explains unexplained high-specificity evidence"
+          }
+        ]
+      },
+      "adaptive_action": "ORTHOGONAL_GENERATE",
+      "selector": {
+        "champion": "Hepatocellular Adenoma",
+        "runner_up": "Focal Nodular Hyperplasia",
+        "rationale": "Histologically proven adenoma without malignancy and hypervascular lesions with central necrosis support this diagnosis",
+        "rejected": [
+          {
+            "label": "Atypical Hepatocellular Carcinoma",
+            "why": "Biopsies showed histologically proven adenoma without malignancy, contradicting this diagnosis"
+          },
+          {
+            "label": "Nodular Regenerative Hyperplasia",
+            "why": "Lack of specific evidence and contradiction from suspicion of atypical hepatocellular carcinoma"
+          }
+        ],
+        "margin": "medium"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "biopsies at that time showed histologically proven adenoma without malignancy",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "Because of suspicion for an atypical hepatocellular carcinoma, an elective surgical resection was planned",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "hypervascular lesions",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E004",
+          "raw_span": "histologically proven adenoma without malignancy",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E005",
+          "raw_span": "hypervascular lesions in segment IV",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E006",
+          "raw_span": "hypervascular lesions with central necrosis",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E007",
+          "raw_span": "suspicion for an atypical hepatocellular carcinoma",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E008",
+          "raw_span": "no weight loss, fever, or constitutional symptoms",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Hepatocellular Adenoma",
+          "aliases": [
+            "Inflammatory Hepatocellular Adenoma"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G2E004",
+            "G2E006"
+          ],
+          "contradicting_evidence": [
+            "G2E008"
+          ],
+          "protected_reason": "This diagnosis may be overlooked due to the lack of typical inflammatory symptoms and the presence of atypical features on imaging.",
+          "score_logit": 2.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Atypical Hepatocellular Carcinoma",
+          "aliases": [
+            "Hepatocellular carcinoma"
+          ],
+          "generator_views": [
+            "g1",
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G1E002",
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G1E001"
+          ],
+          "protected_reason": "explains unexplained high-specificity evidence",
+          "score_logit": 1.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Focal Nodular Hyperplasia",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G2E004",
+            "G2E006"
+          ],
+          "contradicting_evidence": [
+            "G2E007"
+          ],
+          "protected_reason": "This diagnosis may be overlooked due to the initial suspicion of hepatocellular carcinoma and the presence of atypical features.",
+          "score_logit": 2.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Nodular Regenerative Hyperplasia",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G2E005",
+            "G2E008"
+          ],
+          "contradicting_evidence": [
+            "G2E007"
+          ],
+          "protected_reason": "This diagnosis may be protected due to its rarity and the need for a high index of suspicion to consider it in the differential diagnosis.",
+          "score_logit": 1.0,
+          "status": "live"
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Hepatocellular Adenoma",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Atypical Hepatocellular Carcinoma",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Focal Nodular Hyperplasia",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C003",
+          "name": "Focal Nodular Hyperplasia",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C004",
+          "name": "Nodular Regenerative Hyperplasia",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Inflammatory Hepatocellular Adenoma",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Hepatocellular carcinoma",
+          "view": "a1"
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 4,
+      "n_evidence": 8,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.2,
+      "frontier_n": 4,
+      "protected_n": 4,
+      "g1_n": 3,
+      "g2_n": 3,
+      "adaptive_action": "ORTHOGONAL_GENERATE",
+      "llm_calls": 4,
+      "history_leakage": 0
+    },
+    "wall_s": 7.296
+  },
+  "created_at": "2026-08-08T01:50:19.958014+00:00"
+}

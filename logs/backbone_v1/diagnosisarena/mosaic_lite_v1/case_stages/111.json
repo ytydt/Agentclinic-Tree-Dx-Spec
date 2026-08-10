@@ -1,0 +1,890 @@
+{
+  "case_id": "diagnosisarena__000111",
+  "source_id": "111",
+  "champion": "lichen planus",
+  "ordered_diagnoses": [
+    "lichen planus",
+    "eczematous dermatitis",
+    "granuloma annulare",
+    "Mycosis fungoides",
+    "Sarcoidosis"
+  ],
+  "llm_calls": 3,
+  "stages": {
+    "mode": "lite",
+    "vignette_chars": 1243,
+    "g1": {
+      "candidates": [
+        {
+          "name": "lichen planus",
+          "support_spans": [
+            "well-circumscribed, violaceous, annular patches",
+            "lymphocytes obscuring the dermal-epidermal junction"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's presentation of violaceous, annular patches and the biopsy findings of lymphocytes obscuring the dermal-epidermal junction are consistent with lichen planus."
+        },
+        {
+          "name": "eczematous dermatitis",
+          "support_spans": [
+            "severe pruritus",
+            "treatment with over-the-counter hydrocortisone cream, ketoconazole cream, and discontinuation of underarm deodorant yielded no improvement"
+          ],
+          "contradict_spans": [
+            "no improvement with hydrocortisone cream"
+          ],
+          "why": "The patient's symptoms of severe pruritus and the lack of response to topical corticosteroids could suggest eczematous dermatitis."
+        },
+        {
+          "name": "granuloma annulare",
+          "support_spans": [
+            "well-circumscribed, violaceous, annular patches"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's presentation of annular patches is consistent with granuloma annulare."
+        }
+      ],
+      "key_evidence_spans": [
+        "well-circumscribed, violaceous, annular patches",
+        "lymphocytes obscuring the dermal-epidermal junction",
+        "severe pruritus"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Granuloma annulare",
+          "support_spans": [
+            "well-circumscribed, violaceous, annular patches"
+          ],
+          "contradict_spans": [
+            "denied any recent trauma"
+          ],
+          "why": "The presence of annular patches and the lack of response to topical treatments suggest a diagnosis of granuloma annulare.",
+          "protected_reason": "This diagnosis may be overlooked due to its rarity and similarity in appearance to other skin conditions."
+        },
+        {
+          "name": "Mycosis fungoides",
+          "support_spans": [
+            "lymphocytes obscuring the dermal-epidermal junction"
+          ],
+          "contradict_spans": [
+            "no other lesions were noted on his skin or mucous membranes"
+          ],
+          "why": "The biopsy findings of lymphocytes obscuring the dermal-epidermal junction could be indicative of mycosis fungoides, a type of cutaneous T-cell lymphoma.",
+          "protected_reason": "Mycosis fungoides is a rare condition that can be difficult to diagnose, especially in its early stages."
+        },
+        {
+          "name": "Sarcoidosis",
+          "support_spans": [
+            "violaceous, annular patches"
+          ],
+          "contradict_spans": [
+            "no systemic symptoms"
+          ],
+          "why": "The presence of violaceous, annular patches could be consistent with sarcoidosis, an autoimmune disease that can affect the skin.",
+          "protected_reason": "Sarcoidosis is a multisystem disease that can be challenging to diagnose, and its skin manifestations may be overlooked."
+        }
+      ],
+      "key_evidence_spans": [
+        "well-circumscribed, violaceous, annular patches",
+        "lymphocytes obscuring the dermal-epidermal junction",
+        "no other lesions were noted on his skin or mucous membranes"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "no improvement with hydrocortisone cream",
+        "no other lesions were noted on his skin or mucous membranes",
+        "denied any recent trauma",
+        "no systemic symptoms"
+      ],
+      "generator_jaccard": 0.2,
+      "top1_same_across_views": false,
+      "top_margin": 1.25,
+      "leave_one_view_instability": true,
+      "contradiction_mass": 0
+    },
+    "frontier_after_g": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "lichen planus",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 2.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "eczematous dermatitis",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E004"
+        ],
+        "contradicting_evidence": [
+          "G1E005"
+        ],
+        "protected_reason": "",
+        "score_logit": 0.75,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "granuloma annulare",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E001"
+        ],
+        "contradicting_evidence": [
+          "G2E007"
+        ],
+        "protected_reason": "This diagnosis may be overlooked due to its rarity and similarity in appearance to other skin conditions.",
+        "score_logit": 0.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Mycosis fungoides",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E002"
+        ],
+        "contradicting_evidence": [
+          "G2E006"
+        ],
+        "protected_reason": "Mycosis fungoides is a rare condition that can be difficult to diagnose, especially in its early stages.",
+        "score_logit": 0.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Sarcoidosis",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G2E008"
+        ],
+        "contradicting_evidence": [
+          "G2E009"
+        ],
+        "protected_reason": "Sarcoidosis is a multisystem disease that can be challenging to diagnose, and its skin manifestations may be overlooked.",
+        "score_logit": 0.0,
+        "status": "live"
+      }
+    ],
+    "adaptive_action": null,
+    "selector": {
+      "champion": "lichen planus",
+      "runner_up": "eczematous dermatitis",
+      "rationale": "Lymphocytes obscuring the dermal-epidermal junction and well-circumscribed, violaceous, annular patches support lichen planus, with no strong contradictions.",
+      "rejected": [
+        {
+          "label": "granuloma annulare",
+          "why": "Denied recent trauma and lack of other characteristic features"
+        },
+        {
+          "label": "Mycosis fungoides",
+          "why": "No other lesions on skin or mucous membranes and low score"
+        },
+        {
+          "label": "Sarcoidosis",
+          "why": "No systemic symptoms and low score"
+        }
+      ],
+      "margin": "medium"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "well-circumscribed, violaceous, annular patches",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "lymphocytes obscuring the dermal-epidermal junction",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "severe pruritus",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "treatment with over-the-counter hydrocortisone cream, ketoconazole cream, and discontinuation of underarm deodorant yielded no improvement",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E005",
+        "raw_span": "no improvement with hydrocortisone cream",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E006",
+        "raw_span": "no other lesions were noted on his skin or mucous membranes",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E007",
+        "raw_span": "denied any recent trauma",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E008",
+        "raw_span": "violaceous, annular patches",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E009",
+        "raw_span": "no systemic symptoms",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "lichen planus",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 2.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "eczematous dermatitis",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E004"
+        ],
+        "contradicting_evidence": [
+          "G1E005"
+        ],
+        "protected_reason": "",
+        "score_logit": 0.75,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "granuloma annulare",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E001"
+        ],
+        "contradicting_evidence": [
+          "G2E007"
+        ],
+        "protected_reason": "This diagnosis may be overlooked due to its rarity and similarity in appearance to other skin conditions.",
+        "score_logit": 0.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Mycosis fungoides",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E002"
+        ],
+        "contradicting_evidence": [
+          "G2E006"
+        ],
+        "protected_reason": "Mycosis fungoides is a rare condition that can be difficult to diagnose, especially in its early stages.",
+        "score_logit": 0.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Sarcoidosis",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G2E008"
+        ],
+        "contradicting_evidence": [
+          "G2E009"
+        ],
+        "protected_reason": "Sarcoidosis is a multisystem disease that can be challenging to diagnose, and its skin manifestations may be overlooked.",
+        "score_logit": 0.0,
+        "status": "live"
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "lichen planus",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "eczematous dermatitis",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "granuloma annulare",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C003",
+        "name": "Granuloma annulare",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C004",
+        "name": "Mycosis fungoides",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C005",
+        "name": "Sarcoidosis",
+        "view": "g2"
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 5,
+    "n_evidence": 9,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.2,
+    "frontier_n": 5,
+    "protected_n": 3,
+    "g1_n": 3,
+    "g2_n": 3,
+    "adaptive_action": null,
+    "llm_calls": 3,
+    "history_leakage": 0
+  },
+  "prediction": {
+    "arm": "mosaic_lite_v1",
+    "case_id": "diagnosisarena__000111",
+    "source_id": "111",
+    "dataset": "diagnosisarena",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "lichen planus",
+      "eczematous dermatitis",
+      "granuloma annulare",
+      "Mycosis fungoides",
+      "Sarcoidosis"
+    ],
+    "top2_diagnoses": [
+      "lichen planus",
+      "eczematous dermatitis"
+    ],
+    "cost": {
+      "llm_calls": 3
+    },
+    "stages": {
+      "mode": "lite",
+      "vignette_chars": 1243,
+      "g1": {
+        "candidates": [
+          {
+            "name": "lichen planus",
+            "support_spans": [
+              "well-circumscribed, violaceous, annular patches",
+              "lymphocytes obscuring the dermal-epidermal junction"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's presentation of violaceous, annular patches and the biopsy findings of lymphocytes obscuring the dermal-epidermal junction are consistent with lichen planus."
+          },
+          {
+            "name": "eczematous dermatitis",
+            "support_spans": [
+              "severe pruritus",
+              "treatment with over-the-counter hydrocortisone cream, ketoconazole cream, and discontinuation of underarm deodorant yielded no improvement"
+            ],
+            "contradict_spans": [
+              "no improvement with hydrocortisone cream"
+            ],
+            "why": "The patient's symptoms of severe pruritus and the lack of response to topical corticosteroids could suggest eczematous dermatitis."
+          },
+          {
+            "name": "granuloma annulare",
+            "support_spans": [
+              "well-circumscribed, violaceous, annular patches"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's presentation of annular patches is consistent with granuloma annulare."
+          }
+        ],
+        "key_evidence_spans": [
+          "well-circumscribed, violaceous, annular patches",
+          "lymphocytes obscuring the dermal-epidermal junction",
+          "severe pruritus"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Granuloma annulare",
+            "support_spans": [
+              "well-circumscribed, violaceous, annular patches"
+            ],
+            "contradict_spans": [
+              "denied any recent trauma"
+            ],
+            "why": "The presence of annular patches and the lack of response to topical treatments suggest a diagnosis of granuloma annulare.",
+            "protected_reason": "This diagnosis may be overlooked due to its rarity and similarity in appearance to other skin conditions."
+          },
+          {
+            "name": "Mycosis fungoides",
+            "support_spans": [
+              "lymphocytes obscuring the dermal-epidermal junction"
+            ],
+            "contradict_spans": [
+              "no other lesions were noted on his skin or mucous membranes"
+            ],
+            "why": "The biopsy findings of lymphocytes obscuring the dermal-epidermal junction could be indicative of mycosis fungoides, a type of cutaneous T-cell lymphoma.",
+            "protected_reason": "Mycosis fungoides is a rare condition that can be difficult to diagnose, especially in its early stages."
+          },
+          {
+            "name": "Sarcoidosis",
+            "support_spans": [
+              "violaceous, annular patches"
+            ],
+            "contradict_spans": [
+              "no systemic symptoms"
+            ],
+            "why": "The presence of violaceous, annular patches could be consistent with sarcoidosis, an autoimmune disease that can affect the skin.",
+            "protected_reason": "Sarcoidosis is a multisystem disease that can be challenging to diagnose, and its skin manifestations may be overlooked."
+          }
+        ],
+        "key_evidence_spans": [
+          "well-circumscribed, violaceous, annular patches",
+          "lymphocytes obscuring the dermal-epidermal junction",
+          "no other lesions were noted on his skin or mucous membranes"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "no improvement with hydrocortisone cream",
+          "no other lesions were noted on his skin or mucous membranes",
+          "denied any recent trauma",
+          "no systemic symptoms"
+        ],
+        "generator_jaccard": 0.2,
+        "top1_same_across_views": false,
+        "top_margin": 1.25,
+        "leave_one_view_instability": true,
+        "contradiction_mass": 0
+      },
+      "frontier_after_g": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "lichen planus",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 2.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "eczematous dermatitis",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E004"
+          ],
+          "contradicting_evidence": [
+            "G1E005"
+          ],
+          "protected_reason": "",
+          "score_logit": 0.75,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "granuloma annulare",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E001"
+          ],
+          "contradicting_evidence": [
+            "G2E007"
+          ],
+          "protected_reason": "This diagnosis may be overlooked due to its rarity and similarity in appearance to other skin conditions.",
+          "score_logit": 0.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Mycosis fungoides",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E002"
+          ],
+          "contradicting_evidence": [
+            "G2E006"
+          ],
+          "protected_reason": "Mycosis fungoides is a rare condition that can be difficult to diagnose, especially in its early stages.",
+          "score_logit": 0.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C005",
+          "preferred_name": "Sarcoidosis",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G2E008"
+          ],
+          "contradicting_evidence": [
+            "G2E009"
+          ],
+          "protected_reason": "Sarcoidosis is a multisystem disease that can be challenging to diagnose, and its skin manifestations may be overlooked.",
+          "score_logit": 0.0,
+          "status": "live"
+        }
+      ],
+      "adaptive_action": null,
+      "selector": {
+        "champion": "lichen planus",
+        "runner_up": "eczematous dermatitis",
+        "rationale": "Lymphocytes obscuring the dermal-epidermal junction and well-circumscribed, violaceous, annular patches support lichen planus, with no strong contradictions.",
+        "rejected": [
+          {
+            "label": "granuloma annulare",
+            "why": "Denied recent trauma and lack of other characteristic features"
+          },
+          {
+            "label": "Mycosis fungoides",
+            "why": "No other lesions on skin or mucous membranes and low score"
+          },
+          {
+            "label": "Sarcoidosis",
+            "why": "No systemic symptoms and low score"
+          }
+        ],
+        "margin": "medium"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "well-circumscribed, violaceous, annular patches",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "lymphocytes obscuring the dermal-epidermal junction",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "severe pruritus",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "treatment with over-the-counter hydrocortisone cream, ketoconazole cream, and discontinuation of underarm deodorant yielded no improvement",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E005",
+          "raw_span": "no improvement with hydrocortisone cream",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E006",
+          "raw_span": "no other lesions were noted on his skin or mucous membranes",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E007",
+          "raw_span": "denied any recent trauma",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E008",
+          "raw_span": "violaceous, annular patches",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E009",
+          "raw_span": "no systemic symptoms",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "lichen planus",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 2.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "eczematous dermatitis",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E004"
+          ],
+          "contradicting_evidence": [
+            "G1E005"
+          ],
+          "protected_reason": "",
+          "score_logit": 0.75,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "granuloma annulare",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E001"
+          ],
+          "contradicting_evidence": [
+            "G2E007"
+          ],
+          "protected_reason": "This diagnosis may be overlooked due to its rarity and similarity in appearance to other skin conditions.",
+          "score_logit": 0.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Mycosis fungoides",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E002"
+          ],
+          "contradicting_evidence": [
+            "G2E006"
+          ],
+          "protected_reason": "Mycosis fungoides is a rare condition that can be difficult to diagnose, especially in its early stages.",
+          "score_logit": 0.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C005",
+          "preferred_name": "Sarcoidosis",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G2E008"
+          ],
+          "contradicting_evidence": [
+            "G2E009"
+          ],
+          "protected_reason": "Sarcoidosis is a multisystem disease that can be challenging to diagnose, and its skin manifestations may be overlooked.",
+          "score_logit": 0.0,
+          "status": "live"
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "lichen planus",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "eczematous dermatitis",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "granuloma annulare",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C003",
+          "name": "Granuloma annulare",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C004",
+          "name": "Mycosis fungoides",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C005",
+          "name": "Sarcoidosis",
+          "view": "g2"
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 5,
+      "n_evidence": 9,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.2,
+      "frontier_n": 5,
+      "protected_n": 3,
+      "g1_n": 3,
+      "g2_n": 3,
+      "adaptive_action": null,
+      "llm_calls": 3,
+      "history_leakage": 0
+    },
+    "wall_s": 4.818
+  },
+  "created_at": "2026-08-08T01:50:14.917005+00:00"
+}

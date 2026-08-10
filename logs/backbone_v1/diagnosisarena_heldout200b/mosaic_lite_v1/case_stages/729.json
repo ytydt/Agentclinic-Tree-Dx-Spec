@@ -1,0 +1,1132 @@
+{
+  "case_id": "diagnosisarena__000729",
+  "source_id": "729",
+  "champion": "Cardiac Tamponade",
+  "ordered_diagnoses": [
+    "Cardiac Tamponade",
+    "Myocardial Infarction",
+    "Acute Coronary Syndrome",
+    "Pulmonary Embolism",
+    "Aortic Dissection"
+  ],
+  "llm_calls": 3,
+  "stages": {
+    "mode": "lite",
+    "vignette_chars": 1732,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Acute Coronary Syndrome",
+          "support_spans": [
+            "severe chest pain lasting for 4 hours",
+            "cTnT: 0.309 ng/ml",
+            "CK-MB: 55 U/L",
+            "ST-segment elevation in inferior-posterior leads"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's presentation with severe chest pain, elevated cardiac biomarkers, and ST-segment elevation is consistent with acute coronary syndrome."
+        },
+        {
+          "name": "Myocardial Infarction",
+          "support_spans": [
+            "severe chest pain radiating to the back, with dyspnea and sweating",
+            "cTnT: 0.309 ng/ml",
+            "CK-MB: 55 U/L"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's symptoms and laboratory results, including elevated troponin and CK-MB, are indicative of myocardial infarction."
+        },
+        {
+          "name": "Cardiac Tamponade",
+          "support_spans": [
+            "pericardial effusion",
+            "fluid accumulation within pericardial cavity",
+            "low blood pressure of 60/40 mmHg"
+          ],
+          "contradict_spans": [],
+          "why": "The presence of pericardial effusion and hypotension suggests cardiac tamponade, which can be a complication of myocardial infarction or other cardiac conditions."
+        }
+      ],
+      "key_evidence_spans": [
+        "severe chest pain lasting for 4 hours",
+        "cTnT: 0.309 ng/ml",
+        "CK-MB: 55 U/L",
+        "ST-segment elevation in inferior-posterior leads",
+        "pericardial effusion",
+        "fluid accumulation within pericardial cavity"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Acute Coronary Syndrome with Cardiac Tamponade",
+          "support_spans": [
+            "severe chest pain radiating to the back, with dyspnea and sweating",
+            "pericardial effusion and contrast leakage from myocardium to pericardial cavity"
+          ],
+          "contradict_spans": [
+            "D-Dimer: within normal range"
+          ],
+          "why": "The patient's symptoms and imaging findings suggest a complication of acute coronary syndrome, specifically cardiac tamponade, which is a life-threatening condition.",
+          "protected_reason": "This diagnosis may be easily missed due to the patient's complex medical history and the fact that cardiac tamponade can present with non-specific symptoms."
+        },
+        {
+          "name": "Aortic Dissection",
+          "support_spans": [
+            "severe chest pain radiating to the back",
+            "hypertension (moderately managed)"
+          ],
+          "contradict_spans": [
+            "Coronary Angiography: Revealed occlusive thrombosis of the tiny distal left circumflex artery (LCx), with no notable lesions in remaining coronary vessels"
+          ],
+          "why": "The patient's severe chest pain radiating to the back and history of hypertension increase the suspicion for aortic dissection, although the coronary angiography findings do not support this diagnosis.",
+          "protected_reason": "Aortic dissection is a rare but life-threatening condition that can be easily missed, and the patient's symptoms and medical history warrant consideration of this diagnosis."
+        },
+        {
+          "name": "Pulmonary Embolism",
+          "support_spans": [
+            "severe chest pain",
+            "dyspnea",
+            "SpO2 84%"
+          ],
+          "contradict_spans": [
+            "D-Dimer: within normal range"
+          ],
+          "why": "Although the D-dimer is within normal range, the patient's symptoms and low oxygen saturation suggest the possibility of pulmonary embolism, which can be a cause of severe chest pain and dyspnea.",
+          "protected_reason": "Pulmonary embolism is a rare but potentially life-threatening condition that can be easily missed, and the patient's symptoms warrant consideration of this diagnosis despite the normal D-dimer."
+        }
+      ],
+      "key_evidence_spans": [
+        "severe chest pain radiating to the back, with dyspnea and sweating",
+        "pericardial effusion and contrast leakage from myocardium to pericardial cavity",
+        "occlusive thrombosis of the tiny distal left circumflex artery (LCx)"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "occlusive thrombosis of the tiny distal left circumflex artery (LCx)",
+        "D-Dimer: within normal range",
+        "Coronary Angiography: Revealed occlusive thrombosis of the tiny distal left circumflex artery (LCx), with no notable lesions in remaining coronary vessels"
+      ],
+      "generator_jaccard": 0.0,
+      "top1_same_across_views": true,
+      "top_margin": 2.3499999999999996,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 1
+    },
+    "adaptive_action": null,
+    "selector": {
+      "champion": "Cardiac Tamponade",
+      "runner_up": "Myocardial Infarction",
+      "rationale": "Pericardial effusion and fluid accumulation within pericardial cavity support Cardiac Tamponade, while myocardial infarction markers and symptoms are also present but not as decisive as tamponade findings",
+      "rejected": [
+        {
+          "label": "Acute Coronary Syndrome",
+          "why": "While markers of myocardial injury are present, the primary issue appears to be tamponade"
+        },
+        {
+          "label": "Pulmonary Embolism",
+          "why": "Normal D-Dimer and lack of other specific findings make this less likely"
+        },
+        {
+          "label": "Aortic Dissection",
+          "why": "Coronary Angiography did not show notable lesions in the aorta, contradicting this diagnosis"
+        }
+      ],
+      "margin": "medium"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "severe chest pain lasting for 4 hours",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "cTnT: 0.309 ng/ml",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "CK-MB: 55 U/L",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "ST-segment elevation in inferior-posterior leads",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E005",
+        "raw_span": "pericardial effusion",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E006",
+        "raw_span": "fluid accumulation within pericardial cavity",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E007",
+        "raw_span": "severe chest pain radiating to the back, with dyspnea and sweating",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E008",
+        "raw_span": "low blood pressure of 60/40 mmHg",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E009",
+        "raw_span": "pericardial effusion and contrast leakage from myocardium to pericardial cavity",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E010",
+        "raw_span": "occlusive thrombosis of the tiny distal left circumflex artery (LCx)",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E011",
+        "raw_span": "D-Dimer: within normal range",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E012",
+        "raw_span": "severe chest pain radiating to the back",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E013",
+        "raw_span": "hypertension (moderately managed)",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E014",
+        "raw_span": "Coronary Angiography: Revealed occlusive thrombosis of the tiny distal left circumflex artery (LCx), with no notable lesions in remaining coronary vessels",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E015",
+        "raw_span": "severe chest pain",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E016",
+        "raw_span": "dyspnea",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E017",
+        "raw_span": "SpO2 84%",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Acute Coronary Syndrome",
+        "aliases": [
+          "Acute Coronary Syndrome with Cardiac Tamponade"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G1E003",
+          "G1E004",
+          "G1E007",
+          "G2E009"
+        ],
+        "contradicting_evidence": [
+          "G2E011"
+        ],
+        "protected_reason": "This diagnosis may be easily missed due to the patient's complex medical history and the fact that cardiac tamponade can present with non-specific symptoms.",
+        "score_logit": 5.35,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Myocardial Infarction",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E007",
+          "G1E002",
+          "G1E003"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 3.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Cardiac Tamponade",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E005",
+          "G1E006",
+          "G1E008"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 3.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Aortic Dissection",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G2E012",
+          "G2E013"
+        ],
+        "contradicting_evidence": [
+          "G2E014"
+        ],
+        "protected_reason": "Aortic dissection is a rare but life-threatening condition that can be easily missed, and the patient's symptoms and medical history warrant consideration of this diagnosis.",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Pulmonary Embolism",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G2E015",
+          "G2E016",
+          "G2E017"
+        ],
+        "contradicting_evidence": [
+          "G2E011"
+        ],
+        "protected_reason": "Pulmonary embolism is a rare but potentially life-threatening condition that can be easily missed, and the patient's symptoms warrant consideration of this diagnosis despite the normal D-dimer.",
+        "score_logit": 2.0,
+        "status": "live",
+        "agent_votes": 0
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Acute Coronary Syndrome",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Myocardial Infarction",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Cardiac Tamponade",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Acute Coronary Syndrome with Cardiac Tamponade",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C004",
+        "name": "Aortic Dissection",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C005",
+        "name": "Pulmonary Embolism",
+        "view": "g2"
+      }
+    ],
+    "frontier_final": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Acute Coronary Syndrome",
+        "aliases": [
+          "Acute Coronary Syndrome with Cardiac Tamponade"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G1E003",
+          "G1E004",
+          "G1E007",
+          "G2E009"
+        ],
+        "contradicting_evidence": [
+          "G2E011"
+        ],
+        "protected_reason": "This diagnosis may be easily missed due to the patient's complex medical history and the fact that cardiac tamponade can present with non-specific symptoms.",
+        "score_logit": 5.35,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Cardiac Tamponade",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E005",
+          "G1E006",
+          "G1E008"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 3.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Myocardial Infarction",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E007",
+          "G1E002",
+          "G1E003"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 3.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Pulmonary Embolism",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G2E015",
+          "G2E016",
+          "G2E017"
+        ],
+        "contradicting_evidence": [
+          "G2E011"
+        ],
+        "protected_reason": "Pulmonary embolism is a rare but potentially life-threatening condition that can be easily missed, and the patient's symptoms warrant consideration of this diagnosis despite the normal D-dimer.",
+        "score_logit": 2.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Aortic Dissection",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G2E012",
+          "G2E013"
+        ],
+        "contradicting_evidence": [
+          "G2E014"
+        ],
+        "protected_reason": "Aortic dissection is a rare but life-threatening condition that can be easily missed, and the patient's symptoms and medical history warrant consideration of this diagnosis.",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 5,
+    "n_evidence": 17,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.0,
+    "frontier_n": 5,
+    "protected_n": 3,
+    "n_generators": 2,
+    "adaptive_action": null,
+    "llm_calls": 3,
+    "history_leakage": 0,
+    "mode": "lite"
+  },
+  "prediction": {
+    "arm": "mosaic_lite_v1",
+    "case_id": "diagnosisarena__000729",
+    "source_id": "729",
+    "dataset": "diagnosisarena_heldout200b",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Cardiac Tamponade",
+      "Myocardial Infarction",
+      "Acute Coronary Syndrome",
+      "Pulmonary Embolism",
+      "Aortic Dissection"
+    ],
+    "top2_diagnoses": [
+      "Cardiac Tamponade",
+      "Myocardial Infarction"
+    ],
+    "cost": {
+      "llm_calls": 3
+    },
+    "stages": {
+      "mode": "lite",
+      "vignette_chars": 1732,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Acute Coronary Syndrome",
+            "support_spans": [
+              "severe chest pain lasting for 4 hours",
+              "cTnT: 0.309 ng/ml",
+              "CK-MB: 55 U/L",
+              "ST-segment elevation in inferior-posterior leads"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's presentation with severe chest pain, elevated cardiac biomarkers, and ST-segment elevation is consistent with acute coronary syndrome."
+          },
+          {
+            "name": "Myocardial Infarction",
+            "support_spans": [
+              "severe chest pain radiating to the back, with dyspnea and sweating",
+              "cTnT: 0.309 ng/ml",
+              "CK-MB: 55 U/L"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's symptoms and laboratory results, including elevated troponin and CK-MB, are indicative of myocardial infarction."
+          },
+          {
+            "name": "Cardiac Tamponade",
+            "support_spans": [
+              "pericardial effusion",
+              "fluid accumulation within pericardial cavity",
+              "low blood pressure of 60/40 mmHg"
+            ],
+            "contradict_spans": [],
+            "why": "The presence of pericardial effusion and hypotension suggests cardiac tamponade, which can be a complication of myocardial infarction or other cardiac conditions."
+          }
+        ],
+        "key_evidence_spans": [
+          "severe chest pain lasting for 4 hours",
+          "cTnT: 0.309 ng/ml",
+          "CK-MB: 55 U/L",
+          "ST-segment elevation in inferior-posterior leads",
+          "pericardial effusion",
+          "fluid accumulation within pericardial cavity"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Acute Coronary Syndrome with Cardiac Tamponade",
+            "support_spans": [
+              "severe chest pain radiating to the back, with dyspnea and sweating",
+              "pericardial effusion and contrast leakage from myocardium to pericardial cavity"
+            ],
+            "contradict_spans": [
+              "D-Dimer: within normal range"
+            ],
+            "why": "The patient's symptoms and imaging findings suggest a complication of acute coronary syndrome, specifically cardiac tamponade, which is a life-threatening condition.",
+            "protected_reason": "This diagnosis may be easily missed due to the patient's complex medical history and the fact that cardiac tamponade can present with non-specific symptoms."
+          },
+          {
+            "name": "Aortic Dissection",
+            "support_spans": [
+              "severe chest pain radiating to the back",
+              "hypertension (moderately managed)"
+            ],
+            "contradict_spans": [
+              "Coronary Angiography: Revealed occlusive thrombosis of the tiny distal left circumflex artery (LCx), with no notable lesions in remaining coronary vessels"
+            ],
+            "why": "The patient's severe chest pain radiating to the back and history of hypertension increase the suspicion for aortic dissection, although the coronary angiography findings do not support this diagnosis.",
+            "protected_reason": "Aortic dissection is a rare but life-threatening condition that can be easily missed, and the patient's symptoms and medical history warrant consideration of this diagnosis."
+          },
+          {
+            "name": "Pulmonary Embolism",
+            "support_spans": [
+              "severe chest pain",
+              "dyspnea",
+              "SpO2 84%"
+            ],
+            "contradict_spans": [
+              "D-Dimer: within normal range"
+            ],
+            "why": "Although the D-dimer is within normal range, the patient's symptoms and low oxygen saturation suggest the possibility of pulmonary embolism, which can be a cause of severe chest pain and dyspnea.",
+            "protected_reason": "Pulmonary embolism is a rare but potentially life-threatening condition that can be easily missed, and the patient's symptoms warrant consideration of this diagnosis despite the normal D-dimer."
+          }
+        ],
+        "key_evidence_spans": [
+          "severe chest pain radiating to the back, with dyspnea and sweating",
+          "pericardial effusion and contrast leakage from myocardium to pericardial cavity",
+          "occlusive thrombosis of the tiny distal left circumflex artery (LCx)"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "occlusive thrombosis of the tiny distal left circumflex artery (LCx)",
+          "D-Dimer: within normal range",
+          "Coronary Angiography: Revealed occlusive thrombosis of the tiny distal left circumflex artery (LCx), with no notable lesions in remaining coronary vessels"
+        ],
+        "generator_jaccard": 0.0,
+        "top1_same_across_views": true,
+        "top_margin": 2.3499999999999996,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 1
+      },
+      "adaptive_action": null,
+      "selector": {
+        "champion": "Cardiac Tamponade",
+        "runner_up": "Myocardial Infarction",
+        "rationale": "Pericardial effusion and fluid accumulation within pericardial cavity support Cardiac Tamponade, while myocardial infarction markers and symptoms are also present but not as decisive as tamponade findings",
+        "rejected": [
+          {
+            "label": "Acute Coronary Syndrome",
+            "why": "While markers of myocardial injury are present, the primary issue appears to be tamponade"
+          },
+          {
+            "label": "Pulmonary Embolism",
+            "why": "Normal D-Dimer and lack of other specific findings make this less likely"
+          },
+          {
+            "label": "Aortic Dissection",
+            "why": "Coronary Angiography did not show notable lesions in the aorta, contradicting this diagnosis"
+          }
+        ],
+        "margin": "medium"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "severe chest pain lasting for 4 hours",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "cTnT: 0.309 ng/ml",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "CK-MB: 55 U/L",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "ST-segment elevation in inferior-posterior leads",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E005",
+          "raw_span": "pericardial effusion",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E006",
+          "raw_span": "fluid accumulation within pericardial cavity",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E007",
+          "raw_span": "severe chest pain radiating to the back, with dyspnea and sweating",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E008",
+          "raw_span": "low blood pressure of 60/40 mmHg",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E009",
+          "raw_span": "pericardial effusion and contrast leakage from myocardium to pericardial cavity",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E010",
+          "raw_span": "occlusive thrombosis of the tiny distal left circumflex artery (LCx)",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E011",
+          "raw_span": "D-Dimer: within normal range",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E012",
+          "raw_span": "severe chest pain radiating to the back",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E013",
+          "raw_span": "hypertension (moderately managed)",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E014",
+          "raw_span": "Coronary Angiography: Revealed occlusive thrombosis of the tiny distal left circumflex artery (LCx), with no notable lesions in remaining coronary vessels",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E015",
+          "raw_span": "severe chest pain",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E016",
+          "raw_span": "dyspnea",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E017",
+          "raw_span": "SpO2 84%",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Acute Coronary Syndrome",
+          "aliases": [
+            "Acute Coronary Syndrome with Cardiac Tamponade"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G1E003",
+            "G1E004",
+            "G1E007",
+            "G2E009"
+          ],
+          "contradicting_evidence": [
+            "G2E011"
+          ],
+          "protected_reason": "This diagnosis may be easily missed due to the patient's complex medical history and the fact that cardiac tamponade can present with non-specific symptoms.",
+          "score_logit": 5.35,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Myocardial Infarction",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E007",
+            "G1E002",
+            "G1E003"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 3.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Cardiac Tamponade",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E005",
+            "G1E006",
+            "G1E008"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 3.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Aortic Dissection",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G2E012",
+            "G2E013"
+          ],
+          "contradicting_evidence": [
+            "G2E014"
+          ],
+          "protected_reason": "Aortic dissection is a rare but life-threatening condition that can be easily missed, and the patient's symptoms and medical history warrant consideration of this diagnosis.",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C005",
+          "preferred_name": "Pulmonary Embolism",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G2E015",
+            "G2E016",
+            "G2E017"
+          ],
+          "contradicting_evidence": [
+            "G2E011"
+          ],
+          "protected_reason": "Pulmonary embolism is a rare but potentially life-threatening condition that can be easily missed, and the patient's symptoms warrant consideration of this diagnosis despite the normal D-dimer.",
+          "score_logit": 2.0,
+          "status": "live",
+          "agent_votes": 0
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Acute Coronary Syndrome",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Myocardial Infarction",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Cardiac Tamponade",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Acute Coronary Syndrome with Cardiac Tamponade",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C004",
+          "name": "Aortic Dissection",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C005",
+          "name": "Pulmonary Embolism",
+          "view": "g2"
+        }
+      ],
+      "frontier_final": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Acute Coronary Syndrome",
+          "aliases": [
+            "Acute Coronary Syndrome with Cardiac Tamponade"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G1E003",
+            "G1E004",
+            "G1E007",
+            "G2E009"
+          ],
+          "contradicting_evidence": [
+            "G2E011"
+          ],
+          "protected_reason": "This diagnosis may be easily missed due to the patient's complex medical history and the fact that cardiac tamponade can present with non-specific symptoms.",
+          "score_logit": 5.35,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Cardiac Tamponade",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E005",
+            "G1E006",
+            "G1E008"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 3.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Myocardial Infarction",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E007",
+            "G1E002",
+            "G1E003"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 3.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C005",
+          "preferred_name": "Pulmonary Embolism",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G2E015",
+            "G2E016",
+            "G2E017"
+          ],
+          "contradicting_evidence": [
+            "G2E011"
+          ],
+          "protected_reason": "Pulmonary embolism is a rare but potentially life-threatening condition that can be easily missed, and the patient's symptoms warrant consideration of this diagnosis despite the normal D-dimer.",
+          "score_logit": 2.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Aortic Dissection",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G2E012",
+            "G2E013"
+          ],
+          "contradicting_evidence": [
+            "G2E014"
+          ],
+          "protected_reason": "Aortic dissection is a rare but life-threatening condition that can be easily missed, and the patient's symptoms and medical history warrant consideration of this diagnosis.",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 5,
+      "n_evidence": 17,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.0,
+      "frontier_n": 5,
+      "protected_n": 3,
+      "n_generators": 2,
+      "adaptive_action": null,
+      "llm_calls": 3,
+      "history_leakage": 0,
+      "mode": "lite"
+    },
+    "wall_s": 4.613
+  },
+  "created_at": "2026-08-08T02:05:25.155609+00:00"
+}

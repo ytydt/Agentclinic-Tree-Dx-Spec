@@ -1,0 +1,984 @@
+{
+  "case_id": "medcasereasoning__000223",
+  "source_id": "223",
+  "champion": "Sepsis",
+  "ordered_diagnoses": [
+    "Sepsis",
+    "Acute Respiratory Distress Syndrome (ARDS)",
+    "Disseminated Intravascular Coagulation (DIC)"
+  ],
+  "llm_calls": 4,
+  "stages": {
+    "mode": "impc",
+    "vignette_chars": 1329,
+    "D1": {
+      "doctor_id": "D1",
+      "candidates": [
+        {
+          "name": "Sepsis",
+          "support_spans": [
+            "temperature 34 °C",
+            "WBC 13,900/µL",
+            "CRP 13.1 mg/dL",
+            "ventilator-associated pneumonia"
+          ],
+          "contradict_spans": [],
+          "why": "The patient has a fever, elevated white blood cell count, and elevated C-reactive protein, which are all indicative of sepsis."
+        },
+        {
+          "name": "Acute Respiratory Distress Syndrome (ARDS)",
+          "support_spans": [
+            "bilateral ground‐glass opacities with lower-lung predominance",
+            "PaO₂ 78.2 mmHg",
+            "on pressure‐control ventilation: PEEP 8 cmH₂O, PiP 25 cmH₂O, FiO₂ 0.5"
+          ],
+          "contradict_spans": [],
+          "why": "The patient has bilateral ground-glass opacities on chest CT and requires mechanical ventilation with positive end-expiratory pressure (PEEP) and fraction of inspired oxygen (FiO₂), which are consistent with ARDS."
+        },
+        {
+          "name": "Disseminated Intravascular Coagulation (DIC)",
+          "support_spans": [
+            "APTT 170 s",
+            "INR 1.35",
+            "D-dimer 7.25 µg/mL"
+          ],
+          "contradict_spans": [],
+          "why": "The patient has a prolonged activated partial thromboplastin time (APTT) and international normalized ratio (INR), as well as an elevated D-dimer, which are all indicative of DIC."
+        }
+      ]
+    },
+    "D2": {
+      "doctor_id": "D2",
+      "candidates": [
+        {
+          "name": "Disseminated Intravascular Coagulation (DIC)",
+          "support_spans": [
+            "APTT 170 s",
+            "D-dimer 7.25 µg/mL",
+            "INR 1.35"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's laboratory results, including a prolonged APTT, elevated D-dimer, and increased INR, are consistent with DIC."
+        },
+        {
+          "name": "Sepsis",
+          "support_spans": [
+            "temperature 34 °C",
+            "heart rate 102 beats/min",
+            "WBC 13,900/µL",
+            "CRP 13.1 mg/dL"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's clinical presentation, including fever, tachycardia, leukocytosis, and elevated CRP, is consistent with sepsis."
+        },
+        {
+          "name": "Acute Respiratory Distress Syndrome (ARDS)",
+          "support_spans": [
+            "bilateral ground‐glass opacities with lower-lung predominance",
+            "PaO₂ 78.2 mmHg"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's chest CT findings and hypoxemia are consistent with ARDS."
+        }
+      ]
+    },
+    "D3": {
+      "doctor_id": "D3",
+      "candidates": [
+        {
+          "name": "Sepsis",
+          "support_spans": [
+            "temperature 34 °C; blood pressure 110/65 mmHg; heart rate 102 beats/min",
+            "WBC 13,900/µL; CRP 13.1 mg/dL"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's fever, tachycardia, and elevated white blood cell count and C-reactive protein suggest sepsis."
+        },
+        {
+          "name": "Disseminated Intravascular Coagulation (DIC)",
+          "support_spans": [
+            "APTT 170 s; INR 1.35",
+            "D-dimer 7.25 µg/mL"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's prolonged activated partial thromboplastin time, elevated international normalized ratio, and elevated D-dimer suggest DIC."
+        },
+        {
+          "name": "Acute Respiratory Distress Syndrome (ARDS)",
+          "support_spans": [
+            "bilateral ground‐glass opacities with lower-lung predominance",
+            "Arterial blood gas (on pressure‐control ventilation: PEEP 8 cmH₂O, PiP 25 cmH₂O, FiO₂ 0.5) showed pH 7.309, PaCO₂ 41.5 mmHg, PaO₂ 78.2 mmHg"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's hypoxemia, bilateral infiltrates on chest CT, and need for mechanical ventilation suggest ARDS."
+        }
+      ]
+    },
+    "state_after_doctors": {
+      "unexplained_specific_evidence": [],
+      "generator_jaccard": 1.0,
+      "top1_same_across_views": true,
+      "top_margin": 3.0,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "adaptive_action": null,
+    "selector": {
+      "champion": "Sepsis",
+      "runner_up": "Acute Respiratory Distress Syndrome (ARDS)",
+      "rationale": "The patient's fever, elevated WBC, and CRP levels strongly support sepsis, which is further complicated by the presence of ventilator-associated pneumonia and the need for ICU admission.",
+      "rejected": [
+        {
+          "label": "Disseminated Intravascular Coagulation (DIC)",
+          "why": "Although the patient has coagulation abnormalities, the presence of sepsis and its complications, such as ARDS, better explains the overall clinical picture."
+        }
+      ],
+      "margin": "medium"
+    },
+    "evidence": [
+      {
+        "evidence_id": "D1E001",
+        "raw_span": "temperature 34 °C",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "D1"
+      },
+      {
+        "evidence_id": "D1E002",
+        "raw_span": "WBC 13,900/µL",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "D1"
+      },
+      {
+        "evidence_id": "D1E003",
+        "raw_span": "CRP 13.1 mg/dL",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "D1"
+      },
+      {
+        "evidence_id": "D1E004",
+        "raw_span": "ventilator-associated pneumonia",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "D1"
+      },
+      {
+        "evidence_id": "D1E005",
+        "raw_span": "bilateral ground‐glass opacities with lower-lung predominance",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "D1"
+      },
+      {
+        "evidence_id": "D1E006",
+        "raw_span": "PaO₂ 78.2 mmHg",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "D1"
+      },
+      {
+        "evidence_id": "D1E007",
+        "raw_span": "on pressure‐control ventilation: PEEP 8 cmH₂O, PiP 25 cmH₂O, FiO₂ 0.5",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "D1"
+      },
+      {
+        "evidence_id": "D1E008",
+        "raw_span": "APTT 170 s",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "D1"
+      },
+      {
+        "evidence_id": "D1E009",
+        "raw_span": "INR 1.35",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "D1"
+      },
+      {
+        "evidence_id": "D1E010",
+        "raw_span": "D-dimer 7.25 µg/mL",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "D1"
+      },
+      {
+        "evidence_id": "D2E011",
+        "raw_span": "heart rate 102 beats/min",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "D2"
+      },
+      {
+        "evidence_id": "D3E012",
+        "raw_span": "temperature 34 °C; blood pressure 110/65 mmHg; heart rate 102 beats/min",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "D3"
+      },
+      {
+        "evidence_id": "D3E013",
+        "raw_span": "WBC 13,900/µL; CRP 13.1 mg/dL",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "D3"
+      },
+      {
+        "evidence_id": "D3E014",
+        "raw_span": "APTT 170 s; INR 1.35",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "D3"
+      },
+      {
+        "evidence_id": "D3E015",
+        "raw_span": "Arterial blood gas (on pressure‐control ventilation: PEEP 8 cmH₂O, PiP 25 cmH₂O, FiO₂ 0.5) showed pH 7.309, PaCO₂ 41.5 mmHg, PaO₂ 78.2 mmHg",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "D3"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Sepsis",
+        "aliases": [],
+        "generator_views": [
+          "D1",
+          "D2",
+          "D3"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "D1E001",
+          "D1E002",
+          "D1E003",
+          "D1E004",
+          "D2E011",
+          "D3E012",
+          "D3E013"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 7.7,
+        "status": "live",
+        "agent_votes": 3
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Acute Respiratory Distress Syndrome (ARDS)",
+        "aliases": [],
+        "generator_views": [
+          "D1",
+          "D2",
+          "D3"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "D1E005",
+          "D1E006",
+          "D1E007",
+          "D3E015"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 4.7,
+        "status": "live",
+        "agent_votes": 3
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Disseminated Intravascular Coagulation (DIC)",
+        "aliases": [],
+        "generator_views": [
+          "D1",
+          "D2",
+          "D3"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "D1E008",
+          "D1E009",
+          "D1E010",
+          "D3E014"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 4.7,
+        "status": "live",
+        "agent_votes": 3
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Sepsis",
+        "view": "D1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Acute Respiratory Distress Syndrome (ARDS)",
+        "view": "D1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Disseminated Intravascular Coagulation (DIC)",
+        "view": "D1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C003",
+        "name": "Disseminated Intravascular Coagulation (DIC)",
+        "view": "D2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Sepsis",
+        "view": "D2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Acute Respiratory Distress Syndrome (ARDS)",
+        "view": "D2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Sepsis",
+        "view": "D3"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C003",
+        "name": "Disseminated Intravascular Coagulation (DIC)",
+        "view": "D3"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Acute Respiratory Distress Syndrome (ARDS)",
+        "view": "D3"
+      }
+    ],
+    "frontier_final": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Sepsis",
+        "aliases": [],
+        "generator_views": [
+          "D1",
+          "D2",
+          "D3"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "D1E001",
+          "D1E002",
+          "D1E003",
+          "D1E004",
+          "D2E011",
+          "D3E012",
+          "D3E013"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 7.7,
+        "status": "live",
+        "agent_votes": 3
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Acute Respiratory Distress Syndrome (ARDS)",
+        "aliases": [],
+        "generator_views": [
+          "D1",
+          "D2",
+          "D3"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "D1E005",
+          "D1E006",
+          "D1E007",
+          "D3E015"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 4.7,
+        "status": "live",
+        "agent_votes": 3
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Disseminated Intravascular Coagulation (DIC)",
+        "aliases": [],
+        "generator_views": [
+          "D1",
+          "D2",
+          "D3"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "D1E008",
+          "D1E009",
+          "D1E010",
+          "D3E014"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 4.7,
+        "status": "live",
+        "agent_votes": 3
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 3,
+    "n_evidence": 15,
+    "exact_duplicates": 0,
+    "generator_jaccard": 1.0,
+    "frontier_n": 3,
+    "protected_n": 0,
+    "n_generators": 3,
+    "adaptive_action": null,
+    "llm_calls": 4,
+    "history_leakage": 0,
+    "mode": "impc"
+  },
+  "prediction": {
+    "arm": "mosaic_impc_r2",
+    "case_id": "medcasereasoning__000223",
+    "source_id": "223",
+    "dataset": "medcasereasoning_v2",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Sepsis",
+      "Acute Respiratory Distress Syndrome (ARDS)",
+      "Disseminated Intravascular Coagulation (DIC)"
+    ],
+    "top2_diagnoses": [
+      "Sepsis",
+      "Acute Respiratory Distress Syndrome (ARDS)"
+    ],
+    "cost": {
+      "llm_calls": 4
+    },
+    "stages": {
+      "mode": "impc",
+      "vignette_chars": 1329,
+      "D1": {
+        "doctor_id": "D1",
+        "candidates": [
+          {
+            "name": "Sepsis",
+            "support_spans": [
+              "temperature 34 °C",
+              "WBC 13,900/µL",
+              "CRP 13.1 mg/dL",
+              "ventilator-associated pneumonia"
+            ],
+            "contradict_spans": [],
+            "why": "The patient has a fever, elevated white blood cell count, and elevated C-reactive protein, which are all indicative of sepsis."
+          },
+          {
+            "name": "Acute Respiratory Distress Syndrome (ARDS)",
+            "support_spans": [
+              "bilateral ground‐glass opacities with lower-lung predominance",
+              "PaO₂ 78.2 mmHg",
+              "on pressure‐control ventilation: PEEP 8 cmH₂O, PiP 25 cmH₂O, FiO₂ 0.5"
+            ],
+            "contradict_spans": [],
+            "why": "The patient has bilateral ground-glass opacities on chest CT and requires mechanical ventilation with positive end-expiratory pressure (PEEP) and fraction of inspired oxygen (FiO₂), which are consistent with ARDS."
+          },
+          {
+            "name": "Disseminated Intravascular Coagulation (DIC)",
+            "support_spans": [
+              "APTT 170 s",
+              "INR 1.35",
+              "D-dimer 7.25 µg/mL"
+            ],
+            "contradict_spans": [],
+            "why": "The patient has a prolonged activated partial thromboplastin time (APTT) and international normalized ratio (INR), as well as an elevated D-dimer, which are all indicative of DIC."
+          }
+        ]
+      },
+      "D2": {
+        "doctor_id": "D2",
+        "candidates": [
+          {
+            "name": "Disseminated Intravascular Coagulation (DIC)",
+            "support_spans": [
+              "APTT 170 s",
+              "D-dimer 7.25 µg/mL",
+              "INR 1.35"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's laboratory results, including a prolonged APTT, elevated D-dimer, and increased INR, are consistent with DIC."
+          },
+          {
+            "name": "Sepsis",
+            "support_spans": [
+              "temperature 34 °C",
+              "heart rate 102 beats/min",
+              "WBC 13,900/µL",
+              "CRP 13.1 mg/dL"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's clinical presentation, including fever, tachycardia, leukocytosis, and elevated CRP, is consistent with sepsis."
+          },
+          {
+            "name": "Acute Respiratory Distress Syndrome (ARDS)",
+            "support_spans": [
+              "bilateral ground‐glass opacities with lower-lung predominance",
+              "PaO₂ 78.2 mmHg"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's chest CT findings and hypoxemia are consistent with ARDS."
+          }
+        ]
+      },
+      "D3": {
+        "doctor_id": "D3",
+        "candidates": [
+          {
+            "name": "Sepsis",
+            "support_spans": [
+              "temperature 34 °C; blood pressure 110/65 mmHg; heart rate 102 beats/min",
+              "WBC 13,900/µL; CRP 13.1 mg/dL"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's fever, tachycardia, and elevated white blood cell count and C-reactive protein suggest sepsis."
+          },
+          {
+            "name": "Disseminated Intravascular Coagulation (DIC)",
+            "support_spans": [
+              "APTT 170 s; INR 1.35",
+              "D-dimer 7.25 µg/mL"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's prolonged activated partial thromboplastin time, elevated international normalized ratio, and elevated D-dimer suggest DIC."
+          },
+          {
+            "name": "Acute Respiratory Distress Syndrome (ARDS)",
+            "support_spans": [
+              "bilateral ground‐glass opacities with lower-lung predominance",
+              "Arterial blood gas (on pressure‐control ventilation: PEEP 8 cmH₂O, PiP 25 cmH₂O, FiO₂ 0.5) showed pH 7.309, PaCO₂ 41.5 mmHg, PaO₂ 78.2 mmHg"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's hypoxemia, bilateral infiltrates on chest CT, and need for mechanical ventilation suggest ARDS."
+          }
+        ]
+      },
+      "state_after_doctors": {
+        "unexplained_specific_evidence": [],
+        "generator_jaccard": 1.0,
+        "top1_same_across_views": true,
+        "top_margin": 3.0,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 0
+      },
+      "adaptive_action": null,
+      "selector": {
+        "champion": "Sepsis",
+        "runner_up": "Acute Respiratory Distress Syndrome (ARDS)",
+        "rationale": "The patient's fever, elevated WBC, and CRP levels strongly support sepsis, which is further complicated by the presence of ventilator-associated pneumonia and the need for ICU admission.",
+        "rejected": [
+          {
+            "label": "Disseminated Intravascular Coagulation (DIC)",
+            "why": "Although the patient has coagulation abnormalities, the presence of sepsis and its complications, such as ARDS, better explains the overall clinical picture."
+          }
+        ],
+        "margin": "medium"
+      },
+      "evidence": [
+        {
+          "evidence_id": "D1E001",
+          "raw_span": "temperature 34 °C",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "D1"
+        },
+        {
+          "evidence_id": "D1E002",
+          "raw_span": "WBC 13,900/µL",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "D1"
+        },
+        {
+          "evidence_id": "D1E003",
+          "raw_span": "CRP 13.1 mg/dL",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "D1"
+        },
+        {
+          "evidence_id": "D1E004",
+          "raw_span": "ventilator-associated pneumonia",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "D1"
+        },
+        {
+          "evidence_id": "D1E005",
+          "raw_span": "bilateral ground‐glass opacities with lower-lung predominance",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "D1"
+        },
+        {
+          "evidence_id": "D1E006",
+          "raw_span": "PaO₂ 78.2 mmHg",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "D1"
+        },
+        {
+          "evidence_id": "D1E007",
+          "raw_span": "on pressure‐control ventilation: PEEP 8 cmH₂O, PiP 25 cmH₂O, FiO₂ 0.5",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "D1"
+        },
+        {
+          "evidence_id": "D1E008",
+          "raw_span": "APTT 170 s",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "D1"
+        },
+        {
+          "evidence_id": "D1E009",
+          "raw_span": "INR 1.35",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "D1"
+        },
+        {
+          "evidence_id": "D1E010",
+          "raw_span": "D-dimer 7.25 µg/mL",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "D1"
+        },
+        {
+          "evidence_id": "D2E011",
+          "raw_span": "heart rate 102 beats/min",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "D2"
+        },
+        {
+          "evidence_id": "D3E012",
+          "raw_span": "temperature 34 °C; blood pressure 110/65 mmHg; heart rate 102 beats/min",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "D3"
+        },
+        {
+          "evidence_id": "D3E013",
+          "raw_span": "WBC 13,900/µL; CRP 13.1 mg/dL",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "D3"
+        },
+        {
+          "evidence_id": "D3E014",
+          "raw_span": "APTT 170 s; INR 1.35",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "D3"
+        },
+        {
+          "evidence_id": "D3E015",
+          "raw_span": "Arterial blood gas (on pressure‐control ventilation: PEEP 8 cmH₂O, PiP 25 cmH₂O, FiO₂ 0.5) showed pH 7.309, PaCO₂ 41.5 mmHg, PaO₂ 78.2 mmHg",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "D3"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Sepsis",
+          "aliases": [],
+          "generator_views": [
+            "D1",
+            "D2",
+            "D3"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "D1E001",
+            "D1E002",
+            "D1E003",
+            "D1E004",
+            "D2E011",
+            "D3E012",
+            "D3E013"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 7.7,
+          "status": "live",
+          "agent_votes": 3
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Acute Respiratory Distress Syndrome (ARDS)",
+          "aliases": [],
+          "generator_views": [
+            "D1",
+            "D2",
+            "D3"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "D1E005",
+            "D1E006",
+            "D1E007",
+            "D3E015"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 4.7,
+          "status": "live",
+          "agent_votes": 3
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Disseminated Intravascular Coagulation (DIC)",
+          "aliases": [],
+          "generator_views": [
+            "D1",
+            "D2",
+            "D3"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "D1E008",
+            "D1E009",
+            "D1E010",
+            "D3E014"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 4.7,
+          "status": "live",
+          "agent_votes": 3
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Sepsis",
+          "view": "D1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Acute Respiratory Distress Syndrome (ARDS)",
+          "view": "D1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Disseminated Intravascular Coagulation (DIC)",
+          "view": "D1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C003",
+          "name": "Disseminated Intravascular Coagulation (DIC)",
+          "view": "D2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Sepsis",
+          "view": "D2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Acute Respiratory Distress Syndrome (ARDS)",
+          "view": "D2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Sepsis",
+          "view": "D3"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C003",
+          "name": "Disseminated Intravascular Coagulation (DIC)",
+          "view": "D3"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Acute Respiratory Distress Syndrome (ARDS)",
+          "view": "D3"
+        }
+      ],
+      "frontier_final": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Sepsis",
+          "aliases": [],
+          "generator_views": [
+            "D1",
+            "D2",
+            "D3"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "D1E001",
+            "D1E002",
+            "D1E003",
+            "D1E004",
+            "D2E011",
+            "D3E012",
+            "D3E013"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 7.7,
+          "status": "live",
+          "agent_votes": 3
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Acute Respiratory Distress Syndrome (ARDS)",
+          "aliases": [],
+          "generator_views": [
+            "D1",
+            "D2",
+            "D3"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "D1E005",
+            "D1E006",
+            "D1E007",
+            "D3E015"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 4.7,
+          "status": "live",
+          "agent_votes": 3
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Disseminated Intravascular Coagulation (DIC)",
+          "aliases": [],
+          "generator_views": [
+            "D1",
+            "D2",
+            "D3"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "D1E008",
+            "D1E009",
+            "D1E010",
+            "D3E014"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 4.7,
+          "status": "live",
+          "agent_votes": 3
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 3,
+      "n_evidence": 15,
+      "exact_duplicates": 0,
+      "generator_jaccard": 1.0,
+      "frontier_n": 3,
+      "protected_n": 0,
+      "n_generators": 3,
+      "adaptive_action": null,
+      "llm_calls": 4,
+      "history_leakage": 0,
+      "mode": "impc"
+    },
+    "wall_s": 14.563
+  },
+  "created_at": "2026-08-10T01:59:59.228579+00:00"
+}

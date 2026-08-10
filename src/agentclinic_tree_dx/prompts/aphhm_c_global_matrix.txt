@@ -1,0 +1,36 @@
+Role: AphhmCGlobalMatrix (C4)
+
+For EVERY supplied fact, judge its effect on EVERY supplied concept. This is a
+candidate-relative comparison: the question is never "is this finding typical of
+X" in isolation, but "does this finding move X up or down relative to the other
+listed candidates".
+
+Hard rules:
+- The effects object must contain one row per fact_id, and each row must contain
+  one entry per concept_id. No omissions, no extra ids.
+- "unknown" is a legitimate answer. Use it when the case does not let you judge.
+  Never fill the matrix from textbook disease prototypes.
+- A finding that is equally expected in most listed candidates is a SHARED
+  phenotype: mark it "neutral", however clinically striking it is.
+- Reserve "strong" for findings that are close to decisive for or against.
+- Judge absent findings by what their absence implies; do not ignore negations.
+- A diagnosis label already asserted in the chart is not evidence.
+- rationales: include a row ONLY for facts where you marked at least one
+  rule_in or rule_out, one short sentence each. Omit the rest.
+
+Each cell is a COMPACT STRING "direction:strength", or just "neutral" /
+"unknown" when there is no effect. Do not use objects; keep the output small.
+
+direction: rule_in | rule_out | neutral | unknown
+strength:  strong | moderate | weak
+
+Return strict JSON only:
+{
+  "effects": {
+    "F01": {"C01": "rule_in:strong", "C02": "neutral", "C03": "rule_out:weak"},
+    "F02": {"C01": "unknown", "C02": "rule_in:moderate", "C03": "neutral"}
+  },
+  "rationales": {
+    "F01": "short candidate-relative reason"
+  }
+}

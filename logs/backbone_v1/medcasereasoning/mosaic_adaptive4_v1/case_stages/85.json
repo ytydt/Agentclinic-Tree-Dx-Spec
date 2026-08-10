@@ -1,0 +1,994 @@
+{
+  "case_id": "medcasereasoning__000085",
+  "source_id": "85",
+  "champion": "Appendicitis",
+  "ordered_diagnoses": [
+    "Appendicitis",
+    "Cecal diverticulitis",
+    "Intussusception",
+    "Cecal volvulus",
+    "Gastrointestinal lymphoma"
+  ],
+  "llm_calls": 4,
+  "stages": {
+    "mode": "adaptive4",
+    "vignette_chars": 1002,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Appendicitis",
+          "support_spans": [
+            "abdominal pain that began around the umbilicus 2 days earlier and migrated to the right lower quadrant",
+            "voluntary guarding in the right lower quadrant",
+            "Ultrasound assessment was interpreted as compatible with plastron appendicitis"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's symptoms and imaging results are consistent with appendicitis."
+        },
+        {
+          "name": "Intussusception",
+          "support_spans": [
+            "a linear lesion within the intestinal lumen in the right lower quadrant, causing partial luminal obliteration"
+          ],
+          "contradict_spans": [],
+          "why": "The computed tomography findings suggest a possible intussusception."
+        },
+        {
+          "name": "Cecal diverticulitis",
+          "support_spans": [
+            "edema on the anterolateral aspect of the cecum"
+          ],
+          "contradict_spans": [],
+          "why": "The edema on the cecum could be indicative of diverticulitis."
+        }
+      ],
+      "key_evidence_spans": [
+        "abdominal pain that began around the umbilicus 2 days earlier and migrated to the right lower quadrant",
+        "Ultrasound assessment was interpreted as compatible with plastron appendicitis",
+        "a linear lesion within the intestinal lumen in the right lower quadrant, causing partial luminal obliteration"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Intussusception",
+          "support_spans": [
+            "a linear lesion within the intestinal lumen in the right lower quadrant, causing partial luminal obliteration"
+          ],
+          "contradict_spans": [
+            "compatible with plastron appendicitis"
+          ],
+          "why": "The presence of a linear lesion within the intestinal lumen and partial luminal obliteration suggests intussusception, a condition where a part of the intestine telescopes into another part.",
+          "protected_reason": "Intussusception is a rare cause of abdominal pain in adults and may be overlooked in favor of more common diagnoses like appendicitis."
+        },
+        {
+          "name": "Gastrointestinal lymphoma",
+          "support_spans": [
+            "a white-cell count of 15,600/mL",
+            "edema on the anterolateral aspect of the cecum"
+          ],
+          "contradict_spans": [
+            "no prior abdominal surgeries or systemic disease"
+          ],
+          "why": "The elevated white-cell count and edema on the cecum could indicate a lymphoproliferative disorder like gastrointestinal lymphoma.",
+          "protected_reason": "Gastrointestinal lymphoma is a rare and easily missed diagnosis that requires a high index of suspicion."
+        },
+        {
+          "name": "Cecal diverticulitis",
+          "support_spans": [
+            "abdominal pain that began around the umbilicus and migrated to the right lower quadrant",
+            "voluntary guarding in the right lower quadrant"
+          ],
+          "contradict_spans": [
+            "compatible with plastron appendicitis"
+          ],
+          "why": "The clinical presentation of abdominal pain migrating to the right lower quadrant and voluntary guarding is consistent with cecal diverticulitis, a rare condition that can mimic appendicitis.",
+          "protected_reason": "Cecal diverticulitis is a rare and underdiagnosed condition that may be overlooked in favor of more common causes of right lower quadrant pain."
+        }
+      ],
+      "key_evidence_spans": [
+        "a linear lesion within the intestinal lumen in the right lower quadrant",
+        "edema on the anterolateral aspect of the cecum",
+        "abdominal pain that began around the umbilicus and migrated to the right lower quadrant"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "a linear lesion within the intestinal lumen in the right lower quadrant",
+        "compatible with plastron appendicitis",
+        "no prior abdominal surgeries or systemic disease"
+      ],
+      "generator_jaccard": 0.5,
+      "top1_same_across_views": false,
+      "top_margin": 0.6499999999999999,
+      "leave_one_view_instability": true,
+      "contradiction_mass": 0
+    },
+    "frontier_after_g": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Appendicitis",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E004",
+          "G1E002"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 3.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Cecal diverticulitis",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E005",
+          "G2E007",
+          "G1E004"
+        ],
+        "contradicting_evidence": [
+          "G2E008"
+        ],
+        "protected_reason": "Cecal diverticulitis is a rare and underdiagnosed condition that may be overlooked in favor of more common causes of right lower quadrant pain.",
+        "score_logit": 2.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Gastrointestinal lymphoma",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G2E009",
+          "G1E005"
+        ],
+        "contradicting_evidence": [
+          "G2E010"
+        ],
+        "protected_reason": "Gastrointestinal lymphoma is a rare and easily missed diagnosis that requires a high index of suspicion.",
+        "score_logit": 1.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Intussusception",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E003"
+        ],
+        "contradicting_evidence": [
+          "G2E008"
+        ],
+        "protected_reason": "Intussusception is a rare cause of abdominal pain in adults and may be overlooked in favor of more common diagnoses like appendicitis.",
+        "score_logit": 0.35,
+        "status": "live"
+      }
+    ],
+    "a1": {
+      "candidates": [
+        {
+          "name": "Appendicitis",
+          "support_spans": [
+            "a linear lesion within the intestinal lumen in the right lower quadrant",
+            "compatible with plastron appendicitis"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's symptoms and imaging results are consistent with appendicitis.",
+          "protected_reason": "explains unexplained high-specificity evidence"
+        },
+        {
+          "name": "Intussusception",
+          "support_spans": [
+            "a linear lesion within the intestinal lumen in the right lower quadrant"
+          ],
+          "contradict_spans": [],
+          "why": "The linear lesion within the intestinal lumen could be indicative of intussusception.",
+          "protected_reason": "explains unexplained high-specificity evidence"
+        },
+        {
+          "name": "Cecal volvulus",
+          "support_spans": [
+            "edema on the anterolateral aspect of the cecum"
+          ],
+          "contradict_spans": [],
+          "why": "The edema on the anterolateral aspect of the cecum could be a sign of cecal volvulus.",
+          "protected_reason": "explains unexplained high-specificity evidence"
+        }
+      ]
+    },
+    "adaptive_action": "ORTHOGONAL_GENERATE",
+    "selector": {
+      "champion": "Appendicitis",
+      "runner_up": "Cecal diverticulitis",
+      "rationale": "Appendicitis is supported by abdominal pain migration, voluntary guarding, and ultrasound assessment compatible with plastron appendicitis, with no contradictions.",
+      "rejected": [
+        {
+          "label": "Intussusception",
+          "why": "contradicted by ultrasound assessment compatible with plastron appendicitis"
+        },
+        {
+          "label": "Cecal volvulus",
+          "why": "limited support and no specific evidence"
+        },
+        {
+          "label": "Gastrointestinal lymphoma",
+          "why": "contradicted by lack of prior systemic disease and low specificity of white-cell count elevation"
+        }
+      ],
+      "margin": "high"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "abdominal pain that began around the umbilicus 2 days earlier and migrated to the right lower quadrant",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "Ultrasound assessment was interpreted as compatible with plastron appendicitis",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "a linear lesion within the intestinal lumen in the right lower quadrant, causing partial luminal obliteration",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "voluntary guarding in the right lower quadrant",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E005",
+        "raw_span": "edema on the anterolateral aspect of the cecum",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E006",
+        "raw_span": "a linear lesion within the intestinal lumen in the right lower quadrant",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E007",
+        "raw_span": "abdominal pain that began around the umbilicus and migrated to the right lower quadrant",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E008",
+        "raw_span": "compatible with plastron appendicitis",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E009",
+        "raw_span": "a white-cell count of 15,600/mL",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E010",
+        "raw_span": "no prior abdominal surgeries or systemic disease",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Appendicitis",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E004",
+          "G1E002",
+          "G2E006",
+          "G2E008"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "explains unexplained high-specificity evidence",
+        "score_logit": 5.6,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Intussusception",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2",
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G2E006"
+        ],
+        "contradicting_evidence": [
+          "G2E008"
+        ],
+        "protected_reason": "Intussusception is a rare cause of abdominal pain in adults and may be overlooked in favor of more common diagnoses like appendicitis.",
+        "score_logit": 1.7,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Cecal diverticulitis",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E005",
+          "G2E007",
+          "G1E004"
+        ],
+        "contradicting_evidence": [
+          "G2E008"
+        ],
+        "protected_reason": "Cecal diverticulitis is a rare and underdiagnosed condition that may be overlooked in favor of more common causes of right lower quadrant pain.",
+        "score_logit": 2.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Gastrointestinal lymphoma",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G2E009",
+          "G1E005"
+        ],
+        "contradicting_evidence": [
+          "G2E010"
+        ],
+        "protected_reason": "Gastrointestinal lymphoma is a rare and easily missed diagnosis that requires a high index of suspicion.",
+        "score_logit": 1.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Cecal volvulus",
+        "aliases": [],
+        "generator_views": [
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G1E005"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "explains unexplained high-specificity evidence",
+        "score_logit": 1.25,
+        "status": "live"
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Appendicitis",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Intussusception",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Cecal diverticulitis",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Intussusception",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C004",
+        "name": "Gastrointestinal lymphoma",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C003",
+        "name": "Cecal diverticulitis",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Appendicitis",
+        "view": "a1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Intussusception",
+        "view": "a1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C005",
+        "name": "Cecal volvulus",
+        "view": "a1"
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 5,
+    "n_evidence": 10,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.5,
+    "frontier_n": 5,
+    "protected_n": 5,
+    "g1_n": 3,
+    "g2_n": 3,
+    "adaptive_action": "ORTHOGONAL_GENERATE",
+    "llm_calls": 4,
+    "history_leakage": 0
+  },
+  "prediction": {
+    "arm": "mosaic_adaptive4_v1",
+    "case_id": "medcasereasoning__000085",
+    "source_id": "85",
+    "dataset": "medcasereasoning",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Appendicitis",
+      "Cecal diverticulitis",
+      "Intussusception",
+      "Cecal volvulus",
+      "Gastrointestinal lymphoma"
+    ],
+    "top2_diagnoses": [
+      "Appendicitis",
+      "Cecal diverticulitis"
+    ],
+    "cost": {
+      "llm_calls": 4
+    },
+    "stages": {
+      "mode": "adaptive4",
+      "vignette_chars": 1002,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Appendicitis",
+            "support_spans": [
+              "abdominal pain that began around the umbilicus 2 days earlier and migrated to the right lower quadrant",
+              "voluntary guarding in the right lower quadrant",
+              "Ultrasound assessment was interpreted as compatible with plastron appendicitis"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's symptoms and imaging results are consistent with appendicitis."
+          },
+          {
+            "name": "Intussusception",
+            "support_spans": [
+              "a linear lesion within the intestinal lumen in the right lower quadrant, causing partial luminal obliteration"
+            ],
+            "contradict_spans": [],
+            "why": "The computed tomography findings suggest a possible intussusception."
+          },
+          {
+            "name": "Cecal diverticulitis",
+            "support_spans": [
+              "edema on the anterolateral aspect of the cecum"
+            ],
+            "contradict_spans": [],
+            "why": "The edema on the cecum could be indicative of diverticulitis."
+          }
+        ],
+        "key_evidence_spans": [
+          "abdominal pain that began around the umbilicus 2 days earlier and migrated to the right lower quadrant",
+          "Ultrasound assessment was interpreted as compatible with plastron appendicitis",
+          "a linear lesion within the intestinal lumen in the right lower quadrant, causing partial luminal obliteration"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Intussusception",
+            "support_spans": [
+              "a linear lesion within the intestinal lumen in the right lower quadrant, causing partial luminal obliteration"
+            ],
+            "contradict_spans": [
+              "compatible with plastron appendicitis"
+            ],
+            "why": "The presence of a linear lesion within the intestinal lumen and partial luminal obliteration suggests intussusception, a condition where a part of the intestine telescopes into another part.",
+            "protected_reason": "Intussusception is a rare cause of abdominal pain in adults and may be overlooked in favor of more common diagnoses like appendicitis."
+          },
+          {
+            "name": "Gastrointestinal lymphoma",
+            "support_spans": [
+              "a white-cell count of 15,600/mL",
+              "edema on the anterolateral aspect of the cecum"
+            ],
+            "contradict_spans": [
+              "no prior abdominal surgeries or systemic disease"
+            ],
+            "why": "The elevated white-cell count and edema on the cecum could indicate a lymphoproliferative disorder like gastrointestinal lymphoma.",
+            "protected_reason": "Gastrointestinal lymphoma is a rare and easily missed diagnosis that requires a high index of suspicion."
+          },
+          {
+            "name": "Cecal diverticulitis",
+            "support_spans": [
+              "abdominal pain that began around the umbilicus and migrated to the right lower quadrant",
+              "voluntary guarding in the right lower quadrant"
+            ],
+            "contradict_spans": [
+              "compatible with plastron appendicitis"
+            ],
+            "why": "The clinical presentation of abdominal pain migrating to the right lower quadrant and voluntary guarding is consistent with cecal diverticulitis, a rare condition that can mimic appendicitis.",
+            "protected_reason": "Cecal diverticulitis is a rare and underdiagnosed condition that may be overlooked in favor of more common causes of right lower quadrant pain."
+          }
+        ],
+        "key_evidence_spans": [
+          "a linear lesion within the intestinal lumen in the right lower quadrant",
+          "edema on the anterolateral aspect of the cecum",
+          "abdominal pain that began around the umbilicus and migrated to the right lower quadrant"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "a linear lesion within the intestinal lumen in the right lower quadrant",
+          "compatible with plastron appendicitis",
+          "no prior abdominal surgeries or systemic disease"
+        ],
+        "generator_jaccard": 0.5,
+        "top1_same_across_views": false,
+        "top_margin": 0.6499999999999999,
+        "leave_one_view_instability": true,
+        "contradiction_mass": 0
+      },
+      "frontier_after_g": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Appendicitis",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E004",
+            "G1E002"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 3.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Cecal diverticulitis",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E005",
+            "G2E007",
+            "G1E004"
+          ],
+          "contradicting_evidence": [
+            "G2E008"
+          ],
+          "protected_reason": "Cecal diverticulitis is a rare and underdiagnosed condition that may be overlooked in favor of more common causes of right lower quadrant pain.",
+          "score_logit": 2.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Gastrointestinal lymphoma",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G2E009",
+            "G1E005"
+          ],
+          "contradicting_evidence": [
+            "G2E010"
+          ],
+          "protected_reason": "Gastrointestinal lymphoma is a rare and easily missed diagnosis that requires a high index of suspicion.",
+          "score_logit": 1.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Intussusception",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E003"
+          ],
+          "contradicting_evidence": [
+            "G2E008"
+          ],
+          "protected_reason": "Intussusception is a rare cause of abdominal pain in adults and may be overlooked in favor of more common diagnoses like appendicitis.",
+          "score_logit": 0.35,
+          "status": "live"
+        }
+      ],
+      "a1": {
+        "candidates": [
+          {
+            "name": "Appendicitis",
+            "support_spans": [
+              "a linear lesion within the intestinal lumen in the right lower quadrant",
+              "compatible with plastron appendicitis"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's symptoms and imaging results are consistent with appendicitis.",
+            "protected_reason": "explains unexplained high-specificity evidence"
+          },
+          {
+            "name": "Intussusception",
+            "support_spans": [
+              "a linear lesion within the intestinal lumen in the right lower quadrant"
+            ],
+            "contradict_spans": [],
+            "why": "The linear lesion within the intestinal lumen could be indicative of intussusception.",
+            "protected_reason": "explains unexplained high-specificity evidence"
+          },
+          {
+            "name": "Cecal volvulus",
+            "support_spans": [
+              "edema on the anterolateral aspect of the cecum"
+            ],
+            "contradict_spans": [],
+            "why": "The edema on the anterolateral aspect of the cecum could be a sign of cecal volvulus.",
+            "protected_reason": "explains unexplained high-specificity evidence"
+          }
+        ]
+      },
+      "adaptive_action": "ORTHOGONAL_GENERATE",
+      "selector": {
+        "champion": "Appendicitis",
+        "runner_up": "Cecal diverticulitis",
+        "rationale": "Appendicitis is supported by abdominal pain migration, voluntary guarding, and ultrasound assessment compatible with plastron appendicitis, with no contradictions.",
+        "rejected": [
+          {
+            "label": "Intussusception",
+            "why": "contradicted by ultrasound assessment compatible with plastron appendicitis"
+          },
+          {
+            "label": "Cecal volvulus",
+            "why": "limited support and no specific evidence"
+          },
+          {
+            "label": "Gastrointestinal lymphoma",
+            "why": "contradicted by lack of prior systemic disease and low specificity of white-cell count elevation"
+          }
+        ],
+        "margin": "high"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "abdominal pain that began around the umbilicus 2 days earlier and migrated to the right lower quadrant",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "Ultrasound assessment was interpreted as compatible with plastron appendicitis",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "a linear lesion within the intestinal lumen in the right lower quadrant, causing partial luminal obliteration",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "voluntary guarding in the right lower quadrant",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E005",
+          "raw_span": "edema on the anterolateral aspect of the cecum",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E006",
+          "raw_span": "a linear lesion within the intestinal lumen in the right lower quadrant",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E007",
+          "raw_span": "abdominal pain that began around the umbilicus and migrated to the right lower quadrant",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E008",
+          "raw_span": "compatible with plastron appendicitis",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E009",
+          "raw_span": "a white-cell count of 15,600/mL",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E010",
+          "raw_span": "no prior abdominal surgeries or systemic disease",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Appendicitis",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E004",
+            "G1E002",
+            "G2E006",
+            "G2E008"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "explains unexplained high-specificity evidence",
+          "score_logit": 5.6,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Intussusception",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2",
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G2E006"
+          ],
+          "contradicting_evidence": [
+            "G2E008"
+          ],
+          "protected_reason": "Intussusception is a rare cause of abdominal pain in adults and may be overlooked in favor of more common diagnoses like appendicitis.",
+          "score_logit": 1.7,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Cecal diverticulitis",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E005",
+            "G2E007",
+            "G1E004"
+          ],
+          "contradicting_evidence": [
+            "G2E008"
+          ],
+          "protected_reason": "Cecal diverticulitis is a rare and underdiagnosed condition that may be overlooked in favor of more common causes of right lower quadrant pain.",
+          "score_logit": 2.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Gastrointestinal lymphoma",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G2E009",
+            "G1E005"
+          ],
+          "contradicting_evidence": [
+            "G2E010"
+          ],
+          "protected_reason": "Gastrointestinal lymphoma is a rare and easily missed diagnosis that requires a high index of suspicion.",
+          "score_logit": 1.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C005",
+          "preferred_name": "Cecal volvulus",
+          "aliases": [],
+          "generator_views": [
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G1E005"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "explains unexplained high-specificity evidence",
+          "score_logit": 1.25,
+          "status": "live"
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Appendicitis",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Intussusception",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Cecal diverticulitis",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Intussusception",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C004",
+          "name": "Gastrointestinal lymphoma",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C003",
+          "name": "Cecal diverticulitis",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Appendicitis",
+          "view": "a1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Intussusception",
+          "view": "a1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C005",
+          "name": "Cecal volvulus",
+          "view": "a1"
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 5,
+      "n_evidence": 10,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.5,
+      "frontier_n": 5,
+      "protected_n": 5,
+      "g1_n": 3,
+      "g2_n": 3,
+      "adaptive_action": "ORTHOGONAL_GENERATE",
+      "llm_calls": 4,
+      "history_leakage": 0
+    },
+    "wall_s": 5.336
+  },
+  "created_at": "2026-08-08T01:50:22.547096+00:00"
+}

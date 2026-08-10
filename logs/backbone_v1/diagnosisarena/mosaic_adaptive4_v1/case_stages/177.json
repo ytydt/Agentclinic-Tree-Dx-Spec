@@ -1,0 +1,940 @@
+{
+  "case_id": "diagnosisarena__000177",
+  "source_id": "177",
+  "champion": "Acute Myocardial Infarction",
+  "ordered_diagnoses": [
+    "Acute Myocardial Infarction",
+    "Inferior Wall Myocardial Infarction",
+    "Cardiogenic Shock",
+    "Takotsubo Cardiomyopathy",
+    "Aortic Dissection"
+  ],
+  "llm_calls": 4,
+  "stages": {
+    "mode": "adaptive4",
+    "vignette_chars": 1063,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Acute Myocardial Infarction",
+          "support_spans": [
+            "ST-segment elevation in leads II, III, and aVF",
+            "high-sensitive troponin T level: 0.309 ng/mL",
+            "thrombotic occlusion of the distal left circumflex artery"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's symptoms and ECG findings are consistent with an acute myocardial infarction."
+        },
+        {
+          "name": "Cardiogenic Shock",
+          "support_spans": [
+            "blood pressure fell to 60/40 mm Hg",
+            "thrombotic occlusion of the distal left circumflex artery"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's hypotension and evidence of myocardial infarction suggest cardiogenic shock."
+        },
+        {
+          "name": "Inferior Wall Myocardial Infarction",
+          "support_spans": [
+            "ST-segment elevation in leads II, III, and aVF",
+            "thrombotic occlusion of the distal left circumflex artery"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's ECG findings and angiography results are consistent with an inferior wall myocardial infarction."
+        }
+      ],
+      "key_evidence_spans": [
+        "ST-segment elevation in leads II, III, and aVF",
+        "high-sensitive troponin T level: 0.309 ng/mL",
+        "thrombotic occlusion of the distal left circumflex artery",
+        "blood pressure fell to 60/40 mm Hg"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Acute Coronary Syndrome with Cardiogenic Shock",
+          "support_spans": [
+            "sudden-onset chest pain",
+            "blood pressure fell to 60/40 mm Hg",
+            "ST-segment elevation in leads II, III, and aVF"
+          ],
+          "contradict_spans": [
+            "normal heart rate and blood pressure initially"
+          ],
+          "why": "The patient's presentation with sudden-onset chest pain, subsequent hypotension, and ECG findings of ST-segment elevation is consistent with acute coronary syndrome complicated by cardiogenic shock.",
+          "protected_reason": "This diagnosis may be overlooked if the initial vital signs are misleadingly normal, and the subsequent hypotension is attributed to other causes."
+        },
+        {
+          "name": "Takotsubo Cardiomyopathy",
+          "support_spans": [
+            "sudden-onset chest pain",
+            "ST-segment elevation in leads II, III, and aVF",
+            "subtle ST-segment elevation in leads V7-V9"
+          ],
+          "contradict_spans": [
+            "thrombotic occlusion of the distal left circumflex artery"
+          ],
+          "why": "The patient's presentation with sudden-onset chest pain, ECG findings of ST-segment elevation, and the absence of pathologic Q waves could be consistent with Takotsubo cardiomyopathy, although the emergency angiography findings argue against this diagnosis.",
+          "protected_reason": "This diagnosis may be overlooked if the focus is solely on the coronary artery occlusion, and the unique ECG and clinical features of Takotsubo cardiomyopathy are not considered."
+        },
+        {
+          "name": "Aortic Dissection",
+          "support_spans": [
+            "sudden-onset chest pain",
+            "blood pressure fell to 60/40 mm Hg"
+          ],
+          "contradict_spans": [
+            "thrombotic occlusion of the distal left circumflex artery",
+            "ST-segment elevation in leads II, III, and aVF"
+          ],
+          "why": "The patient's presentation with sudden-onset chest pain and subsequent hypotension could be consistent with aortic dissection, although the ECG and angiography findings argue against this diagnosis.",
+          "protected_reason": "This diagnosis may be overlooked if the focus is solely on the coronary artery occlusion and the ECG findings, and the possibility of aortic dissection is not considered due to the absence of typical features such as a widened mediastinum on imaging."
+        }
+      ],
+      "key_evidence_spans": [
+        "sudden-onset chest pain",
+        "blood pressure fell to 60/40 mm Hg",
+        "ST-segment elevation in leads II, III, and aVF",
+        "thrombotic occlusion of the distal left circumflex artery"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "normal heart rate and blood pressure initially"
+      ],
+      "generator_jaccard": 0.0,
+      "top1_same_across_views": true,
+      "top_margin": 0.3500000000000001,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 1
+    },
+    "frontier_after_g": [
+      {
+        "concept_id": "C002",
+        "preferred_name": "Cardiogenic Shock",
+        "aliases": [
+          "Acute Coronary Syndrome with Cardiogenic Shock"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E004",
+          "G1E003",
+          "G2E005",
+          "G1E001"
+        ],
+        "contradicting_evidence": [
+          "G2E006"
+        ],
+        "protected_reason": "This diagnosis may be overlooked if the initial vital signs are misleadingly normal, and the subsequent hypotension is attributed to other causes.",
+        "score_logit": 3.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C001",
+        "preferred_name": "Acute Myocardial Infarction",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G1E003"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 3.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Inferior Wall Myocardial Infarction",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E003"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 2.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Takotsubo Cardiomyopathy",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G2E005",
+          "G1E001",
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G1E003"
+        ],
+        "protected_reason": "This diagnosis may be overlooked if the focus is solely on the coronary artery occlusion, and the unique ECG and clinical features of Takotsubo cardiomyopathy are not considered.",
+        "score_logit": 2.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Aortic Dissection",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G2E005",
+          "G1E004"
+        ],
+        "contradicting_evidence": [
+          "G1E003",
+          "G1E001"
+        ],
+        "protected_reason": "This diagnosis may be overlooked if the focus is solely on the coronary artery occlusion and the ECG findings, and the possibility of aortic dissection is not considered due to the absence of typical features such as a widened mediastinum on imaging.",
+        "score_logit": -0.25,
+        "status": "live"
+      }
+    ],
+    "a1": {
+      "candidates": [
+        {
+          "name": "Cardiogenic Shock",
+          "support_spans": [
+            "blood pressure fell to 60/40 mm Hg",
+            "normal heart rate and blood pressure initially"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's initial normal heart rate and blood pressure followed by a significant drop in blood pressure is consistent with cardiogenic shock.",
+          "protected_reason": "explains unexplained high-specificity evidence of initial normal vital signs followed by hypotension"
+        }
+      ]
+    },
+    "adaptive_action": "ORTHOGONAL_GENERATE",
+    "selector": {
+      "champion": "Acute Myocardial Infarction",
+      "runner_up": "Inferior Wall Myocardial Infarction",
+      "rationale": "ST-segment elevation and high-sensitive troponin T level support Acute Myocardial Infarction, with Inferior Wall Myocardial Infarction being a subtype",
+      "rejected": [
+        {
+          "label": "Cardiogenic Shock",
+          "why": "while hypotension is present, it is more likely a consequence of the myocardial infarction"
+        },
+        {
+          "label": "Takotsubo Cardiomyopathy",
+          "why": "thrombotic occlusion of the distal left circumflex artery contradicts this diagnosis"
+        },
+        {
+          "label": "Aortic Dissection",
+          "why": "thrombotic occlusion of the distal left circumflex artery and ST-segment elevation contradict this diagnosis"
+        }
+      ],
+      "margin": "high"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "ST-segment elevation in leads II, III, and aVF",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "high-sensitive troponin T level: 0.309 ng/mL",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "thrombotic occlusion of the distal left circumflex artery",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "blood pressure fell to 60/40 mm Hg",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E005",
+        "raw_span": "sudden-onset chest pain",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E006",
+        "raw_span": "normal heart rate and blood pressure initially",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E007",
+        "raw_span": "subtle ST-segment elevation in leads V7-V9",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Acute Myocardial Infarction",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G1E003"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 3.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Cardiogenic Shock",
+        "aliases": [
+          "Acute Coronary Syndrome with Cardiogenic Shock"
+        ],
+        "generator_views": [
+          "g1",
+          "g2",
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G1E004",
+          "G1E003",
+          "G2E005",
+          "G1E001",
+          "G2E006"
+        ],
+        "contradicting_evidence": [
+          "G2E006"
+        ],
+        "protected_reason": "This diagnosis may be overlooked if the initial vital signs are misleadingly normal, and the subsequent hypotension is attributed to other causes.",
+        "score_logit": 4.7,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Inferior Wall Myocardial Infarction",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E003"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 2.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Takotsubo Cardiomyopathy",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G2E005",
+          "G1E001",
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G1E003"
+        ],
+        "protected_reason": "This diagnosis may be overlooked if the focus is solely on the coronary artery occlusion, and the unique ECG and clinical features of Takotsubo cardiomyopathy are not considered.",
+        "score_logit": 2.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Aortic Dissection",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G2E005",
+          "G1E004"
+        ],
+        "contradicting_evidence": [
+          "G1E003",
+          "G1E001"
+        ],
+        "protected_reason": "This diagnosis may be overlooked if the focus is solely on the coronary artery occlusion and the ECG findings, and the possibility of aortic dissection is not considered due to the absence of typical features such as a widened mediastinum on imaging.",
+        "score_logit": -0.25,
+        "status": "live"
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Acute Myocardial Infarction",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Cardiogenic Shock",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Inferior Wall Myocardial Infarction",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Acute Coronary Syndrome with Cardiogenic Shock",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C004",
+        "name": "Takotsubo Cardiomyopathy",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C005",
+        "name": "Aortic Dissection",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Cardiogenic Shock",
+        "view": "a1"
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 5,
+    "n_evidence": 7,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.0,
+    "frontier_n": 5,
+    "protected_n": 3,
+    "g1_n": 3,
+    "g2_n": 3,
+    "adaptive_action": "ORTHOGONAL_GENERATE",
+    "llm_calls": 4,
+    "history_leakage": 0
+  },
+  "prediction": {
+    "arm": "mosaic_adaptive4_v1",
+    "case_id": "diagnosisarena__000177",
+    "source_id": "177",
+    "dataset": "diagnosisarena",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Acute Myocardial Infarction",
+      "Inferior Wall Myocardial Infarction",
+      "Cardiogenic Shock",
+      "Takotsubo Cardiomyopathy",
+      "Aortic Dissection"
+    ],
+    "top2_diagnoses": [
+      "Acute Myocardial Infarction",
+      "Inferior Wall Myocardial Infarction"
+    ],
+    "cost": {
+      "llm_calls": 4
+    },
+    "stages": {
+      "mode": "adaptive4",
+      "vignette_chars": 1063,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Acute Myocardial Infarction",
+            "support_spans": [
+              "ST-segment elevation in leads II, III, and aVF",
+              "high-sensitive troponin T level: 0.309 ng/mL",
+              "thrombotic occlusion of the distal left circumflex artery"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's symptoms and ECG findings are consistent with an acute myocardial infarction."
+          },
+          {
+            "name": "Cardiogenic Shock",
+            "support_spans": [
+              "blood pressure fell to 60/40 mm Hg",
+              "thrombotic occlusion of the distal left circumflex artery"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's hypotension and evidence of myocardial infarction suggest cardiogenic shock."
+          },
+          {
+            "name": "Inferior Wall Myocardial Infarction",
+            "support_spans": [
+              "ST-segment elevation in leads II, III, and aVF",
+              "thrombotic occlusion of the distal left circumflex artery"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's ECG findings and angiography results are consistent with an inferior wall myocardial infarction."
+          }
+        ],
+        "key_evidence_spans": [
+          "ST-segment elevation in leads II, III, and aVF",
+          "high-sensitive troponin T level: 0.309 ng/mL",
+          "thrombotic occlusion of the distal left circumflex artery",
+          "blood pressure fell to 60/40 mm Hg"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Acute Coronary Syndrome with Cardiogenic Shock",
+            "support_spans": [
+              "sudden-onset chest pain",
+              "blood pressure fell to 60/40 mm Hg",
+              "ST-segment elevation in leads II, III, and aVF"
+            ],
+            "contradict_spans": [
+              "normal heart rate and blood pressure initially"
+            ],
+            "why": "The patient's presentation with sudden-onset chest pain, subsequent hypotension, and ECG findings of ST-segment elevation is consistent with acute coronary syndrome complicated by cardiogenic shock.",
+            "protected_reason": "This diagnosis may be overlooked if the initial vital signs are misleadingly normal, and the subsequent hypotension is attributed to other causes."
+          },
+          {
+            "name": "Takotsubo Cardiomyopathy",
+            "support_spans": [
+              "sudden-onset chest pain",
+              "ST-segment elevation in leads II, III, and aVF",
+              "subtle ST-segment elevation in leads V7-V9"
+            ],
+            "contradict_spans": [
+              "thrombotic occlusion of the distal left circumflex artery"
+            ],
+            "why": "The patient's presentation with sudden-onset chest pain, ECG findings of ST-segment elevation, and the absence of pathologic Q waves could be consistent with Takotsubo cardiomyopathy, although the emergency angiography findings argue against this diagnosis.",
+            "protected_reason": "This diagnosis may be overlooked if the focus is solely on the coronary artery occlusion, and the unique ECG and clinical features of Takotsubo cardiomyopathy are not considered."
+          },
+          {
+            "name": "Aortic Dissection",
+            "support_spans": [
+              "sudden-onset chest pain",
+              "blood pressure fell to 60/40 mm Hg"
+            ],
+            "contradict_spans": [
+              "thrombotic occlusion of the distal left circumflex artery",
+              "ST-segment elevation in leads II, III, and aVF"
+            ],
+            "why": "The patient's presentation with sudden-onset chest pain and subsequent hypotension could be consistent with aortic dissection, although the ECG and angiography findings argue against this diagnosis.",
+            "protected_reason": "This diagnosis may be overlooked if the focus is solely on the coronary artery occlusion and the ECG findings, and the possibility of aortic dissection is not considered due to the absence of typical features such as a widened mediastinum on imaging."
+          }
+        ],
+        "key_evidence_spans": [
+          "sudden-onset chest pain",
+          "blood pressure fell to 60/40 mm Hg",
+          "ST-segment elevation in leads II, III, and aVF",
+          "thrombotic occlusion of the distal left circumflex artery"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "normal heart rate and blood pressure initially"
+        ],
+        "generator_jaccard": 0.0,
+        "top1_same_across_views": true,
+        "top_margin": 0.3500000000000001,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 1
+      },
+      "frontier_after_g": [
+        {
+          "concept_id": "C002",
+          "preferred_name": "Cardiogenic Shock",
+          "aliases": [
+            "Acute Coronary Syndrome with Cardiogenic Shock"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E004",
+            "G1E003",
+            "G2E005",
+            "G1E001"
+          ],
+          "contradicting_evidence": [
+            "G2E006"
+          ],
+          "protected_reason": "This diagnosis may be overlooked if the initial vital signs are misleadingly normal, and the subsequent hypotension is attributed to other causes.",
+          "score_logit": 3.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C001",
+          "preferred_name": "Acute Myocardial Infarction",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G1E003"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 3.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Inferior Wall Myocardial Infarction",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E003"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 2.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Takotsubo Cardiomyopathy",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G2E005",
+            "G1E001",
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G1E003"
+          ],
+          "protected_reason": "This diagnosis may be overlooked if the focus is solely on the coronary artery occlusion, and the unique ECG and clinical features of Takotsubo cardiomyopathy are not considered.",
+          "score_logit": 2.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C005",
+          "preferred_name": "Aortic Dissection",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G2E005",
+            "G1E004"
+          ],
+          "contradicting_evidence": [
+            "G1E003",
+            "G1E001"
+          ],
+          "protected_reason": "This diagnosis may be overlooked if the focus is solely on the coronary artery occlusion and the ECG findings, and the possibility of aortic dissection is not considered due to the absence of typical features such as a widened mediastinum on imaging.",
+          "score_logit": -0.25,
+          "status": "live"
+        }
+      ],
+      "a1": {
+        "candidates": [
+          {
+            "name": "Cardiogenic Shock",
+            "support_spans": [
+              "blood pressure fell to 60/40 mm Hg",
+              "normal heart rate and blood pressure initially"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's initial normal heart rate and blood pressure followed by a significant drop in blood pressure is consistent with cardiogenic shock.",
+            "protected_reason": "explains unexplained high-specificity evidence of initial normal vital signs followed by hypotension"
+          }
+        ]
+      },
+      "adaptive_action": "ORTHOGONAL_GENERATE",
+      "selector": {
+        "champion": "Acute Myocardial Infarction",
+        "runner_up": "Inferior Wall Myocardial Infarction",
+        "rationale": "ST-segment elevation and high-sensitive troponin T level support Acute Myocardial Infarction, with Inferior Wall Myocardial Infarction being a subtype",
+        "rejected": [
+          {
+            "label": "Cardiogenic Shock",
+            "why": "while hypotension is present, it is more likely a consequence of the myocardial infarction"
+          },
+          {
+            "label": "Takotsubo Cardiomyopathy",
+            "why": "thrombotic occlusion of the distal left circumflex artery contradicts this diagnosis"
+          },
+          {
+            "label": "Aortic Dissection",
+            "why": "thrombotic occlusion of the distal left circumflex artery and ST-segment elevation contradict this diagnosis"
+          }
+        ],
+        "margin": "high"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "ST-segment elevation in leads II, III, and aVF",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "high-sensitive troponin T level: 0.309 ng/mL",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "thrombotic occlusion of the distal left circumflex artery",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "blood pressure fell to 60/40 mm Hg",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E005",
+          "raw_span": "sudden-onset chest pain",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E006",
+          "raw_span": "normal heart rate and blood pressure initially",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E007",
+          "raw_span": "subtle ST-segment elevation in leads V7-V9",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Acute Myocardial Infarction",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G1E003"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 3.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Cardiogenic Shock",
+          "aliases": [
+            "Acute Coronary Syndrome with Cardiogenic Shock"
+          ],
+          "generator_views": [
+            "g1",
+            "g2",
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G1E004",
+            "G1E003",
+            "G2E005",
+            "G1E001",
+            "G2E006"
+          ],
+          "contradicting_evidence": [
+            "G2E006"
+          ],
+          "protected_reason": "This diagnosis may be overlooked if the initial vital signs are misleadingly normal, and the subsequent hypotension is attributed to other causes.",
+          "score_logit": 4.7,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Inferior Wall Myocardial Infarction",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E003"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 2.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Takotsubo Cardiomyopathy",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G2E005",
+            "G1E001",
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G1E003"
+          ],
+          "protected_reason": "This diagnosis may be overlooked if the focus is solely on the coronary artery occlusion, and the unique ECG and clinical features of Takotsubo cardiomyopathy are not considered.",
+          "score_logit": 2.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C005",
+          "preferred_name": "Aortic Dissection",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G2E005",
+            "G1E004"
+          ],
+          "contradicting_evidence": [
+            "G1E003",
+            "G1E001"
+          ],
+          "protected_reason": "This diagnosis may be overlooked if the focus is solely on the coronary artery occlusion and the ECG findings, and the possibility of aortic dissection is not considered due to the absence of typical features such as a widened mediastinum on imaging.",
+          "score_logit": -0.25,
+          "status": "live"
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Acute Myocardial Infarction",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Cardiogenic Shock",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Inferior Wall Myocardial Infarction",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Acute Coronary Syndrome with Cardiogenic Shock",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C004",
+          "name": "Takotsubo Cardiomyopathy",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C005",
+          "name": "Aortic Dissection",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Cardiogenic Shock",
+          "view": "a1"
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 5,
+      "n_evidence": 7,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.0,
+      "frontier_n": 5,
+      "protected_n": 3,
+      "g1_n": 3,
+      "g2_n": 3,
+      "adaptive_action": "ORTHOGONAL_GENERATE",
+      "llm_calls": 4,
+      "history_leakage": 0
+    },
+    "wall_s": 5.39
+  },
+  "created_at": "2026-08-08T01:50:23.008740+00:00"
+}

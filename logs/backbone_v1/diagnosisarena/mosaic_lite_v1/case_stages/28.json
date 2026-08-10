@@ -1,0 +1,1004 @@
+{
+  "case_id": "diagnosisarena__000028",
+  "source_id": "28",
+  "champion": "Heart Failure with Preserved Ejection Fraction",
+  "ordered_diagnoses": [
+    "Heart Failure with Preserved Ejection Fraction",
+    "Atrial Fibrillation",
+    "Hypertensive Heart Disease",
+    "Cardiac Amyloidosis",
+    "Hyperaldosteronism"
+  ],
+  "llm_calls": 3,
+  "stages": {
+    "mode": "lite",
+    "vignette_chars": 856,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Atrial Fibrillation",
+          "support_spans": [
+            "episodes of palpitations",
+            "biphasic P wave morphology in leads II, III, and aVF",
+            "atrial flutter"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's episodes of palpitations and abnormal P wave morphology on ECG suggest atrial fibrillation."
+        },
+        {
+          "name": "Heart Failure with Preserved Ejection Fraction",
+          "support_spans": [
+            "worsening shortness of breath",
+            "B-type natriuretic peptide: 838.6 pg/mL",
+            "Left atrial enlargement (52 mm)"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's symptoms and elevated BNP levels are consistent with heart failure."
+        },
+        {
+          "name": "Hypertensive Heart Disease",
+          "support_spans": [
+            "Blood pressure: 221/85 mm Hg",
+            "Left atrial enlargement (52 mm)"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's high blood pressure and left atrial enlargement suggest hypertensive heart disease."
+        }
+      ],
+      "key_evidence_spans": [
+        "B-type natriuretic peptide: 838.6 pg/mL",
+        "Left atrial enlargement (52 mm)",
+        "Blood pressure: 221/85 mm Hg"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Sick Sinus Syndrome",
+          "support_spans": [
+            "sinus bradycardia with prolonged P-wave duration (180 milliseconds)"
+          ],
+          "contradict_spans": [
+            "atrial flutter"
+          ],
+          "why": "The patient's initial ECG shows sinus bradycardia with prolonged P-wave duration, which is a characteristic finding in sick sinus syndrome.",
+          "protected_reason": "This diagnosis may be easily missed due to the subsequent development of atrial flutter, which could distract from the underlying sinus node dysfunction."
+        },
+        {
+          "name": "Cardiac Amyloidosis",
+          "support_spans": [
+            "Left atrial enlargement (52 mm)",
+            "B-type natriuretic peptide: 838.6 pg/mL"
+          ],
+          "contradict_spans": [
+            "Normal left ventricular wall thickness"
+          ],
+          "why": "The patient's elevated B-type natriuretic peptide and left atrial enlargement suggest cardiac amyloidosis, although the normal left ventricular wall thickness is not typical for this condition.",
+          "protected_reason": "Cardiac amyloidosis is a rare and often underdiagnosed condition that can present with nonspecific symptoms, making it a plausible explanation for the patient's findings."
+        },
+        {
+          "name": "Hyperaldosteronism",
+          "support_spans": [
+            "Blood pressure: 221/85 mm Hg",
+            "Hypertension"
+          ],
+          "contradict_spans": [
+            "Kidney insufficiency"
+          ],
+          "why": "The patient's severe hypertension and history of hypertension suggest hyperaldosteronism, although the presence of kidney insufficiency could be a confounding factor.",
+          "protected_reason": "Hyperaldosteronism is a rare cause of hypertension that can be easily missed, and the patient's kidney insufficiency may be a consequence of long-standing hypertension rather than a primary cause."
+        }
+      ],
+      "key_evidence_spans": [
+        "sinus bradycardia with prolonged P-wave duration (180 milliseconds)",
+        "B-type natriuretic peptide: 838.6 pg/mL",
+        "Left atrial enlargement (52 mm)"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "Normal left ventricular wall thickness",
+        "Kidney insufficiency"
+      ],
+      "generator_jaccard": 0.0,
+      "top1_same_across_views": false,
+      "top_margin": 0.0,
+      "leave_one_view_instability": true,
+      "contradiction_mass": 0
+    },
+    "frontier_after_g": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Atrial Fibrillation",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E004",
+          "G1E005",
+          "G1E006"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 3.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Heart Failure with Preserved Ejection Fraction",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E007",
+          "G1E001",
+          "G1E002"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 3.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Hypertensive Heart Disease",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E002"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 2.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Cardiac Amyloidosis",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E002",
+          "G1E001"
+        ],
+        "contradicting_evidence": [
+          "G2E009"
+        ],
+        "protected_reason": "Cardiac amyloidosis is a rare and often underdiagnosed condition that can present with nonspecific symptoms, making it a plausible explanation for the patient's findings.",
+        "score_logit": 1.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C006",
+        "preferred_name": "Hyperaldosteronism",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G2E010"
+        ],
+        "contradicting_evidence": [
+          "G2E011"
+        ],
+        "protected_reason": "Hyperaldosteronism is a rare cause of hypertension that can be easily missed, and the patient's kidney insufficiency may be a consequence of long-standing hypertension rather than a primary cause.",
+        "score_logit": 1.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Sick Sinus Syndrome",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G2E008"
+        ],
+        "contradicting_evidence": [
+          "G1E006"
+        ],
+        "protected_reason": "This diagnosis may be easily missed due to the subsequent development of atrial flutter, which could distract from the underlying sinus node dysfunction.",
+        "score_logit": 0.0,
+        "status": "live"
+      }
+    ],
+    "adaptive_action": null,
+    "selector": {
+      "champion": "Heart Failure with Preserved Ejection Fraction",
+      "runner_up": "Atrial Fibrillation",
+      "rationale": "The patient's worsening shortness of breath, elevated B-type natriuretic peptide, and left atrial enlargement are strongly supportive of Heart Failure with Preserved Ejection Fraction, with Atrial Fibrillation being a possible contributing factor due to episodes of palpitations and atrial flutter",
+      "rejected": [
+        {
+          "label": "Cardiac Amyloidosis",
+          "why": "Normal left ventricular wall thickness contradicts this diagnosis"
+        },
+        {
+          "label": "Hyperaldosteronism",
+          "why": "Kidney insufficiency contradicts this diagnosis"
+        },
+        {
+          "label": "Hypertensive Heart Disease",
+          "why": "While hypertension is present, it does not fully explain the patient's symptoms and findings"
+        },
+        {
+          "label": "Sick Sinus Syndrome",
+          "why": "Atrial flutter contradicts this diagnosis, suggesting a more complex arrhythmia"
+        }
+      ],
+      "margin": "medium"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "B-type natriuretic peptide: 838.6 pg/mL",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "Left atrial enlargement (52 mm)",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "Blood pressure: 221/85 mm Hg",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "episodes of palpitations",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E005",
+        "raw_span": "biphasic P wave morphology in leads II, III, and aVF",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E006",
+        "raw_span": "atrial flutter",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E007",
+        "raw_span": "worsening shortness of breath",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E008",
+        "raw_span": "sinus bradycardia with prolonged P-wave duration (180 milliseconds)",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E009",
+        "raw_span": "Normal left ventricular wall thickness",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E010",
+        "raw_span": "Hypertension",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E011",
+        "raw_span": "Kidney insufficiency",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Atrial Fibrillation",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E004",
+          "G1E005",
+          "G1E006"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 3.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Heart Failure with Preserved Ejection Fraction",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E007",
+          "G1E001",
+          "G1E002"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 3.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Hypertensive Heart Disease",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E002"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 2.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Sick Sinus Syndrome",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G2E008"
+        ],
+        "contradicting_evidence": [
+          "G1E006"
+        ],
+        "protected_reason": "This diagnosis may be easily missed due to the subsequent development of atrial flutter, which could distract from the underlying sinus node dysfunction.",
+        "score_logit": 0.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Cardiac Amyloidosis",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E002",
+          "G1E001"
+        ],
+        "contradicting_evidence": [
+          "G2E009"
+        ],
+        "protected_reason": "Cardiac amyloidosis is a rare and often underdiagnosed condition that can present with nonspecific symptoms, making it a plausible explanation for the patient's findings.",
+        "score_logit": 1.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C006",
+        "preferred_name": "Hyperaldosteronism",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G2E010"
+        ],
+        "contradicting_evidence": [
+          "G2E011"
+        ],
+        "protected_reason": "Hyperaldosteronism is a rare cause of hypertension that can be easily missed, and the patient's kidney insufficiency may be a consequence of long-standing hypertension rather than a primary cause.",
+        "score_logit": 1.0,
+        "status": "live"
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Atrial Fibrillation",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Heart Failure with Preserved Ejection Fraction",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Hypertensive Heart Disease",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C004",
+        "name": "Sick Sinus Syndrome",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C005",
+        "name": "Cardiac Amyloidosis",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C006",
+        "name": "Hyperaldosteronism",
+        "view": "g2"
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 6,
+    "n_evidence": 11,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.0,
+    "frontier_n": 6,
+    "protected_n": 3,
+    "g1_n": 3,
+    "g2_n": 3,
+    "adaptive_action": null,
+    "llm_calls": 3,
+    "history_leakage": 0
+  },
+  "prediction": {
+    "arm": "mosaic_lite_v1",
+    "case_id": "diagnosisarena__000028",
+    "source_id": "28",
+    "dataset": "diagnosisarena",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Heart Failure with Preserved Ejection Fraction",
+      "Atrial Fibrillation",
+      "Hypertensive Heart Disease",
+      "Cardiac Amyloidosis",
+      "Hyperaldosteronism"
+    ],
+    "top2_diagnoses": [
+      "Heart Failure with Preserved Ejection Fraction",
+      "Atrial Fibrillation"
+    ],
+    "cost": {
+      "llm_calls": 3
+    },
+    "stages": {
+      "mode": "lite",
+      "vignette_chars": 856,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Atrial Fibrillation",
+            "support_spans": [
+              "episodes of palpitations",
+              "biphasic P wave morphology in leads II, III, and aVF",
+              "atrial flutter"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's episodes of palpitations and abnormal P wave morphology on ECG suggest atrial fibrillation."
+          },
+          {
+            "name": "Heart Failure with Preserved Ejection Fraction",
+            "support_spans": [
+              "worsening shortness of breath",
+              "B-type natriuretic peptide: 838.6 pg/mL",
+              "Left atrial enlargement (52 mm)"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's symptoms and elevated BNP levels are consistent with heart failure."
+          },
+          {
+            "name": "Hypertensive Heart Disease",
+            "support_spans": [
+              "Blood pressure: 221/85 mm Hg",
+              "Left atrial enlargement (52 mm)"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's high blood pressure and left atrial enlargement suggest hypertensive heart disease."
+          }
+        ],
+        "key_evidence_spans": [
+          "B-type natriuretic peptide: 838.6 pg/mL",
+          "Left atrial enlargement (52 mm)",
+          "Blood pressure: 221/85 mm Hg"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Sick Sinus Syndrome",
+            "support_spans": [
+              "sinus bradycardia with prolonged P-wave duration (180 milliseconds)"
+            ],
+            "contradict_spans": [
+              "atrial flutter"
+            ],
+            "why": "The patient's initial ECG shows sinus bradycardia with prolonged P-wave duration, which is a characteristic finding in sick sinus syndrome.",
+            "protected_reason": "This diagnosis may be easily missed due to the subsequent development of atrial flutter, which could distract from the underlying sinus node dysfunction."
+          },
+          {
+            "name": "Cardiac Amyloidosis",
+            "support_spans": [
+              "Left atrial enlargement (52 mm)",
+              "B-type natriuretic peptide: 838.6 pg/mL"
+            ],
+            "contradict_spans": [
+              "Normal left ventricular wall thickness"
+            ],
+            "why": "The patient's elevated B-type natriuretic peptide and left atrial enlargement suggest cardiac amyloidosis, although the normal left ventricular wall thickness is not typical for this condition.",
+            "protected_reason": "Cardiac amyloidosis is a rare and often underdiagnosed condition that can present with nonspecific symptoms, making it a plausible explanation for the patient's findings."
+          },
+          {
+            "name": "Hyperaldosteronism",
+            "support_spans": [
+              "Blood pressure: 221/85 mm Hg",
+              "Hypertension"
+            ],
+            "contradict_spans": [
+              "Kidney insufficiency"
+            ],
+            "why": "The patient's severe hypertension and history of hypertension suggest hyperaldosteronism, although the presence of kidney insufficiency could be a confounding factor.",
+            "protected_reason": "Hyperaldosteronism is a rare cause of hypertension that can be easily missed, and the patient's kidney insufficiency may be a consequence of long-standing hypertension rather than a primary cause."
+          }
+        ],
+        "key_evidence_spans": [
+          "sinus bradycardia with prolonged P-wave duration (180 milliseconds)",
+          "B-type natriuretic peptide: 838.6 pg/mL",
+          "Left atrial enlargement (52 mm)"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "Normal left ventricular wall thickness",
+          "Kidney insufficiency"
+        ],
+        "generator_jaccard": 0.0,
+        "top1_same_across_views": false,
+        "top_margin": 0.0,
+        "leave_one_view_instability": true,
+        "contradiction_mass": 0
+      },
+      "frontier_after_g": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Atrial Fibrillation",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E004",
+            "G1E005",
+            "G1E006"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 3.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Heart Failure with Preserved Ejection Fraction",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E007",
+            "G1E001",
+            "G1E002"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 3.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Hypertensive Heart Disease",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E002"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 2.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C005",
+          "preferred_name": "Cardiac Amyloidosis",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E002",
+            "G1E001"
+          ],
+          "contradicting_evidence": [
+            "G2E009"
+          ],
+          "protected_reason": "Cardiac amyloidosis is a rare and often underdiagnosed condition that can present with nonspecific symptoms, making it a plausible explanation for the patient's findings.",
+          "score_logit": 1.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C006",
+          "preferred_name": "Hyperaldosteronism",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G2E010"
+          ],
+          "contradicting_evidence": [
+            "G2E011"
+          ],
+          "protected_reason": "Hyperaldosteronism is a rare cause of hypertension that can be easily missed, and the patient's kidney insufficiency may be a consequence of long-standing hypertension rather than a primary cause.",
+          "score_logit": 1.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Sick Sinus Syndrome",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G2E008"
+          ],
+          "contradicting_evidence": [
+            "G1E006"
+          ],
+          "protected_reason": "This diagnosis may be easily missed due to the subsequent development of atrial flutter, which could distract from the underlying sinus node dysfunction.",
+          "score_logit": 0.0,
+          "status": "live"
+        }
+      ],
+      "adaptive_action": null,
+      "selector": {
+        "champion": "Heart Failure with Preserved Ejection Fraction",
+        "runner_up": "Atrial Fibrillation",
+        "rationale": "The patient's worsening shortness of breath, elevated B-type natriuretic peptide, and left atrial enlargement are strongly supportive of Heart Failure with Preserved Ejection Fraction, with Atrial Fibrillation being a possible contributing factor due to episodes of palpitations and atrial flutter",
+        "rejected": [
+          {
+            "label": "Cardiac Amyloidosis",
+            "why": "Normal left ventricular wall thickness contradicts this diagnosis"
+          },
+          {
+            "label": "Hyperaldosteronism",
+            "why": "Kidney insufficiency contradicts this diagnosis"
+          },
+          {
+            "label": "Hypertensive Heart Disease",
+            "why": "While hypertension is present, it does not fully explain the patient's symptoms and findings"
+          },
+          {
+            "label": "Sick Sinus Syndrome",
+            "why": "Atrial flutter contradicts this diagnosis, suggesting a more complex arrhythmia"
+          }
+        ],
+        "margin": "medium"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "B-type natriuretic peptide: 838.6 pg/mL",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "Left atrial enlargement (52 mm)",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "Blood pressure: 221/85 mm Hg",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "episodes of palpitations",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E005",
+          "raw_span": "biphasic P wave morphology in leads II, III, and aVF",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E006",
+          "raw_span": "atrial flutter",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E007",
+          "raw_span": "worsening shortness of breath",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E008",
+          "raw_span": "sinus bradycardia with prolonged P-wave duration (180 milliseconds)",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E009",
+          "raw_span": "Normal left ventricular wall thickness",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E010",
+          "raw_span": "Hypertension",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E011",
+          "raw_span": "Kidney insufficiency",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Atrial Fibrillation",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E004",
+            "G1E005",
+            "G1E006"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 3.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Heart Failure with Preserved Ejection Fraction",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E007",
+            "G1E001",
+            "G1E002"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 3.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Hypertensive Heart Disease",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E002"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 2.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Sick Sinus Syndrome",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G2E008"
+          ],
+          "contradicting_evidence": [
+            "G1E006"
+          ],
+          "protected_reason": "This diagnosis may be easily missed due to the subsequent development of atrial flutter, which could distract from the underlying sinus node dysfunction.",
+          "score_logit": 0.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C005",
+          "preferred_name": "Cardiac Amyloidosis",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E002",
+            "G1E001"
+          ],
+          "contradicting_evidence": [
+            "G2E009"
+          ],
+          "protected_reason": "Cardiac amyloidosis is a rare and often underdiagnosed condition that can present with nonspecific symptoms, making it a plausible explanation for the patient's findings.",
+          "score_logit": 1.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C006",
+          "preferred_name": "Hyperaldosteronism",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G2E010"
+          ],
+          "contradicting_evidence": [
+            "G2E011"
+          ],
+          "protected_reason": "Hyperaldosteronism is a rare cause of hypertension that can be easily missed, and the patient's kidney insufficiency may be a consequence of long-standing hypertension rather than a primary cause.",
+          "score_logit": 1.0,
+          "status": "live"
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Atrial Fibrillation",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Heart Failure with Preserved Ejection Fraction",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Hypertensive Heart Disease",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C004",
+          "name": "Sick Sinus Syndrome",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C005",
+          "name": "Cardiac Amyloidosis",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C006",
+          "name": "Hyperaldosteronism",
+          "view": "g2"
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 6,
+      "n_evidence": 11,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.0,
+      "frontier_n": 6,
+      "protected_n": 3,
+      "g1_n": 3,
+      "g2_n": 3,
+      "adaptive_action": null,
+      "llm_calls": 3,
+      "history_leakage": 0
+    },
+    "wall_s": 4.564
+  },
+  "created_at": "2026-08-08T01:50:09.549190+00:00"
+}

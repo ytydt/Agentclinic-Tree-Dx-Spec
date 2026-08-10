@@ -1,0 +1,838 @@
+{
+  "case_id": "diagnosisarena__000090",
+  "source_id": "90",
+  "champion": "Malignant Melanoma",
+  "ordered_diagnoses": [
+    "Malignant Melanoma",
+    "Mucosal Melanoma",
+    "Squamous Cell Carcinoma",
+    "Adenocarcinoma of the Caruncle"
+  ],
+  "llm_calls": 3,
+  "stages": {
+    "mode": "adaptive4",
+    "vignette_chars": 1502,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Malignant Melanoma",
+          "support_spans": [
+            "Revealed a solid tumor with an inflamed crust on its surface, composed of large anaplastic cells with mitotic activity.",
+            "Showed positive reactivity to melanocytic markers HMB45, MITF2, and Melan-A."
+          ],
+          "contradict_spans": [],
+          "why": "The presence of a rapidly growing, ulcerated mass with anaplastic cells and positive melanocytic markers supports this diagnosis."
+        },
+        {
+          "name": "Squamous Cell Carcinoma",
+          "support_spans": [
+            "The specimen measured 8 × 6 × 5 mm and had a 4-mm ulceration with necrotic tissue on its surface."
+          ],
+          "contradict_spans": [
+            "Showed positive reactivity to melanocytic markers HMB45, MITF2, and Melan-A."
+          ],
+          "why": "The ulcerated surface and rapid growth could suggest squamous cell carcinoma, but the immunohistochemistry results contradict this."
+        },
+        {
+          "name": "Mucosal Melanoma",
+          "support_spans": [
+            "an amelanotic, pedunculated mass with an ulcerated surface, arising from the caruncle",
+            "Showed positive reactivity to melanocytic markers HMB45, MITF2, and Melan-A."
+          ],
+          "contradict_spans": [],
+          "why": "The location and appearance of the mass, combined with the positive melanocytic markers, support this diagnosis."
+        }
+      ],
+      "key_evidence_spans": [
+        "Revealed a solid tumor with an inflamed crust on its surface, composed of large anaplastic cells with mitotic activity.",
+        "Showed positive reactivity to melanocytic markers HMB45, MITF2, and Melan-A.",
+        "an amelanotic, pedunculated mass with an ulcerated surface, arising from the caruncle"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Malignant Melanoma of the Caruncle",
+          "support_spans": [
+            "an amelanotic, pedunculated mass with an ulcerated surface, arising from the caruncle",
+            "Revealed a solid tumor with an inflamed crust on its surface, composed of large anaplastic cells with mitotic activity",
+            "Showed positive reactivity to melanocytic markers HMB45, MITF2, and Melan-A"
+          ],
+          "contradict_spans": [
+            "There was no evidence of PAM (primary acquired melanosis)"
+          ],
+          "why": "The presence of a rapidly growing, ulcerated mass with positive reactivity to melanocytic markers suggests malignant melanoma",
+          "protected_reason": "This diagnosis may be easily missed due to the rare location of the tumor and the lack of pigmentation"
+        },
+        {
+          "name": "Squamous Cell Carcinoma of the Caruncle",
+          "support_spans": [
+            "an amelanotic, pedunculated mass with an ulcerated surface, arising from the caruncle",
+            "Revealed a solid tumor with an inflamed crust on its surface"
+          ],
+          "contradict_spans": [
+            "Showed positive reactivity to melanocytic markers HMB45, MITF2, and Melan-A"
+          ],
+          "why": "The presence of an ulcerated mass with a solid tumor and inflamed crust could suggest squamous cell carcinoma",
+          "protected_reason": "This diagnosis may be considered due to the location and appearance of the tumor, despite the positive reactivity to melanocytic markers"
+        },
+        {
+          "name": "Adenocarcinoma of the Caruncle",
+          "support_spans": [
+            "an amelanotic, pedunculated mass with an ulcerated surface, arising from the caruncle"
+          ],
+          "contradict_spans": [
+            "Revealed a solid tumor with an inflamed crust on its surface, composed of large anaplastic cells with mitotic activity"
+          ],
+          "why": "The presence of a pedunculated mass with an ulcerated surface could suggest adenocarcinoma",
+          "protected_reason": "This diagnosis may be considered due to the location and appearance of the tumor, despite the presence of anaplastic cells and mitotic activity"
+        }
+      ],
+      "key_evidence_spans": [
+        "an amelanotic, pedunculated mass with an ulcerated surface, arising from the caruncle",
+        "Revealed a solid tumor with an inflamed crust on its surface, composed of large anaplastic cells with mitotic activity",
+        "Showed positive reactivity to melanocytic markers HMB45, MITF2, and Melan-A"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "There was no evidence of PAM (primary acquired melanosis)"
+      ],
+      "generator_jaccard": 0.0,
+      "top1_same_across_views": true,
+      "top_margin": 2.3499999999999996,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 1
+    },
+    "frontier_after_g": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Malignant Melanoma",
+        "aliases": [
+          "Malignant Melanoma of the Caruncle"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G1E003",
+          "G2E005",
+          "G2E006"
+        ],
+        "contradicting_evidence": [
+          "G2E007"
+        ],
+        "protected_reason": "This diagnosis may be easily missed due to the rare location of the tumor and the lack of pigmentation",
+        "score_logit": 4.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Mucosal Melanoma",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E002"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 2.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Squamous Cell Carcinoma",
+        "aliases": [
+          "Squamous Cell Carcinoma of the Caruncle"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E004",
+          "G1E003",
+          "G2E008"
+        ],
+        "contradicting_evidence": [
+          "G1E002",
+          "G2E006"
+        ],
+        "protected_reason": "This diagnosis may be considered due to the location and appearance of the tumor, despite the positive reactivity to melanocytic markers",
+        "score_logit": 1.1,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Adenocarcinoma of the Caruncle",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E003"
+        ],
+        "contradicting_evidence": [
+          "G2E005"
+        ],
+        "protected_reason": "This diagnosis may be considered due to the location and appearance of the tumor, despite the presence of anaplastic cells and mitotic activity",
+        "score_logit": 0.0,
+        "status": "live"
+      }
+    ],
+    "adaptive_action": null,
+    "selector": {
+      "champion": "Malignant Melanoma",
+      "runner_up": "Mucosal Melanoma",
+      "rationale": "Positive reactivity to melanocytic markers and anaplastic cells with mitotic activity support Malignant Melanoma",
+      "rejected": [
+        {
+          "label": "Squamous Cell Carcinoma",
+          "why": "Positive reactivity to melanocytic markers contradicts this diagnosis"
+        },
+        {
+          "label": "Adenocarcinoma of the Caruncle",
+          "why": "Presence of anaplastic cells and mitotic activity contradicts this diagnosis"
+        }
+      ],
+      "margin": "high"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "Revealed a solid tumor with an inflamed crust on its surface, composed of large anaplastic cells with mitotic activity.",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "Showed positive reactivity to melanocytic markers HMB45, MITF2, and Melan-A.",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "an amelanotic, pedunculated mass with an ulcerated surface, arising from the caruncle",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "The specimen measured 8 × 6 × 5 mm and had a 4-mm ulceration with necrotic tissue on its surface.",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E005",
+        "raw_span": "Revealed a solid tumor with an inflamed crust on its surface, composed of large anaplastic cells with mitotic activity",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E006",
+        "raw_span": "Showed positive reactivity to melanocytic markers HMB45, MITF2, and Melan-A",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E007",
+        "raw_span": "There was no evidence of PAM (primary acquired melanosis)",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E008",
+        "raw_span": "Revealed a solid tumor with an inflamed crust on its surface",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Malignant Melanoma",
+        "aliases": [
+          "Malignant Melanoma of the Caruncle"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G1E003",
+          "G2E005",
+          "G2E006"
+        ],
+        "contradicting_evidence": [
+          "G2E007"
+        ],
+        "protected_reason": "This diagnosis may be easily missed due to the rare location of the tumor and the lack of pigmentation",
+        "score_logit": 4.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Squamous Cell Carcinoma",
+        "aliases": [
+          "Squamous Cell Carcinoma of the Caruncle"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E004",
+          "G1E003",
+          "G2E008"
+        ],
+        "contradicting_evidence": [
+          "G1E002",
+          "G2E006"
+        ],
+        "protected_reason": "This diagnosis may be considered due to the location and appearance of the tumor, despite the positive reactivity to melanocytic markers",
+        "score_logit": 1.1,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Mucosal Melanoma",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E002"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 2.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Adenocarcinoma of the Caruncle",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E003"
+        ],
+        "contradicting_evidence": [
+          "G2E005"
+        ],
+        "protected_reason": "This diagnosis may be considered due to the location and appearance of the tumor, despite the presence of anaplastic cells and mitotic activity",
+        "score_logit": 0.0,
+        "status": "live"
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Malignant Melanoma",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Squamous Cell Carcinoma",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Mucosal Melanoma",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Malignant Melanoma of the Caruncle",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Squamous Cell Carcinoma of the Caruncle",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C004",
+        "name": "Adenocarcinoma of the Caruncle",
+        "view": "g2"
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 4,
+    "n_evidence": 8,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.0,
+    "frontier_n": 4,
+    "protected_n": 3,
+    "g1_n": 3,
+    "g2_n": 3,
+    "adaptive_action": null,
+    "llm_calls": 3,
+    "history_leakage": 0
+  },
+  "prediction": {
+    "arm": "mosaic_adaptive4_v1",
+    "case_id": "diagnosisarena__000090",
+    "source_id": "90",
+    "dataset": "diagnosisarena",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Malignant Melanoma",
+      "Mucosal Melanoma",
+      "Squamous Cell Carcinoma",
+      "Adenocarcinoma of the Caruncle"
+    ],
+    "top2_diagnoses": [
+      "Malignant Melanoma",
+      "Mucosal Melanoma"
+    ],
+    "cost": {
+      "llm_calls": 3
+    },
+    "stages": {
+      "mode": "adaptive4",
+      "vignette_chars": 1502,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Malignant Melanoma",
+            "support_spans": [
+              "Revealed a solid tumor with an inflamed crust on its surface, composed of large anaplastic cells with mitotic activity.",
+              "Showed positive reactivity to melanocytic markers HMB45, MITF2, and Melan-A."
+            ],
+            "contradict_spans": [],
+            "why": "The presence of a rapidly growing, ulcerated mass with anaplastic cells and positive melanocytic markers supports this diagnosis."
+          },
+          {
+            "name": "Squamous Cell Carcinoma",
+            "support_spans": [
+              "The specimen measured 8 × 6 × 5 mm and had a 4-mm ulceration with necrotic tissue on its surface."
+            ],
+            "contradict_spans": [
+              "Showed positive reactivity to melanocytic markers HMB45, MITF2, and Melan-A."
+            ],
+            "why": "The ulcerated surface and rapid growth could suggest squamous cell carcinoma, but the immunohistochemistry results contradict this."
+          },
+          {
+            "name": "Mucosal Melanoma",
+            "support_spans": [
+              "an amelanotic, pedunculated mass with an ulcerated surface, arising from the caruncle",
+              "Showed positive reactivity to melanocytic markers HMB45, MITF2, and Melan-A."
+            ],
+            "contradict_spans": [],
+            "why": "The location and appearance of the mass, combined with the positive melanocytic markers, support this diagnosis."
+          }
+        ],
+        "key_evidence_spans": [
+          "Revealed a solid tumor with an inflamed crust on its surface, composed of large anaplastic cells with mitotic activity.",
+          "Showed positive reactivity to melanocytic markers HMB45, MITF2, and Melan-A.",
+          "an amelanotic, pedunculated mass with an ulcerated surface, arising from the caruncle"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Malignant Melanoma of the Caruncle",
+            "support_spans": [
+              "an amelanotic, pedunculated mass with an ulcerated surface, arising from the caruncle",
+              "Revealed a solid tumor with an inflamed crust on its surface, composed of large anaplastic cells with mitotic activity",
+              "Showed positive reactivity to melanocytic markers HMB45, MITF2, and Melan-A"
+            ],
+            "contradict_spans": [
+              "There was no evidence of PAM (primary acquired melanosis)"
+            ],
+            "why": "The presence of a rapidly growing, ulcerated mass with positive reactivity to melanocytic markers suggests malignant melanoma",
+            "protected_reason": "This diagnosis may be easily missed due to the rare location of the tumor and the lack of pigmentation"
+          },
+          {
+            "name": "Squamous Cell Carcinoma of the Caruncle",
+            "support_spans": [
+              "an amelanotic, pedunculated mass with an ulcerated surface, arising from the caruncle",
+              "Revealed a solid tumor with an inflamed crust on its surface"
+            ],
+            "contradict_spans": [
+              "Showed positive reactivity to melanocytic markers HMB45, MITF2, and Melan-A"
+            ],
+            "why": "The presence of an ulcerated mass with a solid tumor and inflamed crust could suggest squamous cell carcinoma",
+            "protected_reason": "This diagnosis may be considered due to the location and appearance of the tumor, despite the positive reactivity to melanocytic markers"
+          },
+          {
+            "name": "Adenocarcinoma of the Caruncle",
+            "support_spans": [
+              "an amelanotic, pedunculated mass with an ulcerated surface, arising from the caruncle"
+            ],
+            "contradict_spans": [
+              "Revealed a solid tumor with an inflamed crust on its surface, composed of large anaplastic cells with mitotic activity"
+            ],
+            "why": "The presence of a pedunculated mass with an ulcerated surface could suggest adenocarcinoma",
+            "protected_reason": "This diagnosis may be considered due to the location and appearance of the tumor, despite the presence of anaplastic cells and mitotic activity"
+          }
+        ],
+        "key_evidence_spans": [
+          "an amelanotic, pedunculated mass with an ulcerated surface, arising from the caruncle",
+          "Revealed a solid tumor with an inflamed crust on its surface, composed of large anaplastic cells with mitotic activity",
+          "Showed positive reactivity to melanocytic markers HMB45, MITF2, and Melan-A"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "There was no evidence of PAM (primary acquired melanosis)"
+        ],
+        "generator_jaccard": 0.0,
+        "top1_same_across_views": true,
+        "top_margin": 2.3499999999999996,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 1
+      },
+      "frontier_after_g": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Malignant Melanoma",
+          "aliases": [
+            "Malignant Melanoma of the Caruncle"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G1E003",
+            "G2E005",
+            "G2E006"
+          ],
+          "contradicting_evidence": [
+            "G2E007"
+          ],
+          "protected_reason": "This diagnosis may be easily missed due to the rare location of the tumor and the lack of pigmentation",
+          "score_logit": 4.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Mucosal Melanoma",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E002"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 2.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Squamous Cell Carcinoma",
+          "aliases": [
+            "Squamous Cell Carcinoma of the Caruncle"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E004",
+            "G1E003",
+            "G2E008"
+          ],
+          "contradicting_evidence": [
+            "G1E002",
+            "G2E006"
+          ],
+          "protected_reason": "This diagnosis may be considered due to the location and appearance of the tumor, despite the positive reactivity to melanocytic markers",
+          "score_logit": 1.1,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Adenocarcinoma of the Caruncle",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E003"
+          ],
+          "contradicting_evidence": [
+            "G2E005"
+          ],
+          "protected_reason": "This diagnosis may be considered due to the location and appearance of the tumor, despite the presence of anaplastic cells and mitotic activity",
+          "score_logit": 0.0,
+          "status": "live"
+        }
+      ],
+      "adaptive_action": null,
+      "selector": {
+        "champion": "Malignant Melanoma",
+        "runner_up": "Mucosal Melanoma",
+        "rationale": "Positive reactivity to melanocytic markers and anaplastic cells with mitotic activity support Malignant Melanoma",
+        "rejected": [
+          {
+            "label": "Squamous Cell Carcinoma",
+            "why": "Positive reactivity to melanocytic markers contradicts this diagnosis"
+          },
+          {
+            "label": "Adenocarcinoma of the Caruncle",
+            "why": "Presence of anaplastic cells and mitotic activity contradicts this diagnosis"
+          }
+        ],
+        "margin": "high"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "Revealed a solid tumor with an inflamed crust on its surface, composed of large anaplastic cells with mitotic activity.",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "Showed positive reactivity to melanocytic markers HMB45, MITF2, and Melan-A.",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "an amelanotic, pedunculated mass with an ulcerated surface, arising from the caruncle",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "The specimen measured 8 × 6 × 5 mm and had a 4-mm ulceration with necrotic tissue on its surface.",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E005",
+          "raw_span": "Revealed a solid tumor with an inflamed crust on its surface, composed of large anaplastic cells with mitotic activity",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E006",
+          "raw_span": "Showed positive reactivity to melanocytic markers HMB45, MITF2, and Melan-A",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E007",
+          "raw_span": "There was no evidence of PAM (primary acquired melanosis)",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E008",
+          "raw_span": "Revealed a solid tumor with an inflamed crust on its surface",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Malignant Melanoma",
+          "aliases": [
+            "Malignant Melanoma of the Caruncle"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G1E003",
+            "G2E005",
+            "G2E006"
+          ],
+          "contradicting_evidence": [
+            "G2E007"
+          ],
+          "protected_reason": "This diagnosis may be easily missed due to the rare location of the tumor and the lack of pigmentation",
+          "score_logit": 4.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Squamous Cell Carcinoma",
+          "aliases": [
+            "Squamous Cell Carcinoma of the Caruncle"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E004",
+            "G1E003",
+            "G2E008"
+          ],
+          "contradicting_evidence": [
+            "G1E002",
+            "G2E006"
+          ],
+          "protected_reason": "This diagnosis may be considered due to the location and appearance of the tumor, despite the positive reactivity to melanocytic markers",
+          "score_logit": 1.1,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Mucosal Melanoma",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E002"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 2.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Adenocarcinoma of the Caruncle",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E003"
+          ],
+          "contradicting_evidence": [
+            "G2E005"
+          ],
+          "protected_reason": "This diagnosis may be considered due to the location and appearance of the tumor, despite the presence of anaplastic cells and mitotic activity",
+          "score_logit": 0.0,
+          "status": "live"
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Malignant Melanoma",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Squamous Cell Carcinoma",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Mucosal Melanoma",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Malignant Melanoma of the Caruncle",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Squamous Cell Carcinoma of the Caruncle",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C004",
+          "name": "Adenocarcinoma of the Caruncle",
+          "view": "g2"
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 4,
+      "n_evidence": 8,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.0,
+      "frontier_n": 4,
+      "protected_n": 3,
+      "g1_n": 3,
+      "g2_n": 3,
+      "adaptive_action": null,
+      "llm_calls": 3,
+      "history_leakage": 0
+    },
+    "wall_s": 6.059
+  },
+  "created_at": "2026-08-08T01:50:11.173728+00:00"
+}

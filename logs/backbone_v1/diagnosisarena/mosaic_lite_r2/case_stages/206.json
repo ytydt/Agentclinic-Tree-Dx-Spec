@@ -1,0 +1,1046 @@
+{
+  "case_id": "diagnosisarena__000206",
+  "source_id": "206",
+  "champion": "Graft Occlusion",
+  "ordered_diagnoses": [
+    "Graft Occlusion",
+    "Acute Coronary Syndrome",
+    "Pace-Induced Cardiomyopathy",
+    "Myocardial Infarction",
+    "Cardiac Sarcoidosis"
+  ],
+  "llm_calls": 3,
+  "stages": {
+    "mode": "lite",
+    "vignette_chars": 1440,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Acute Coronary Syndrome",
+          "support_spans": [
+            "dull chest pain of 2 hours' duration",
+            "ST segment depression >1mm in V2 and V3",
+            "new discordant ST elevation of 1mm in leads II, III, and aVF"
+          ],
+          "contradict_spans": [
+            "Initial troponin (2 hours after symptom onset): Negative"
+          ],
+          "why": "The patient's symptoms and ECG findings are consistent with acute coronary syndrome."
+        },
+        {
+          "name": "Graft Occlusion",
+          "support_spans": [
+            "thrombotic occlusion of saphenous vein graft proximal to circumflex anastomosis"
+          ],
+          "contradict_spans": [],
+          "why": "The cardiac catheterization revealed a thrombotic occlusion of the saphenous vein graft."
+        },
+        {
+          "name": "Myocardial Infarction",
+          "support_spans": [
+            "new discordant ST elevation of 1mm in leads II, III, and aVF",
+            "occlusive lesions in proximal obtuse marginal artery"
+          ],
+          "contradict_spans": [
+            "Initial troponin (2 hours after symptom onset): Negative"
+          ],
+          "why": "The patient's ECG findings and cardiac catheterization results are consistent with myocardial infarction."
+        }
+      ],
+      "key_evidence_spans": [
+        "dull chest pain of 2 hours' duration",
+        "ST segment depression >1mm in V2 and V3",
+        "thrombotic occlusion of saphenous vein graft proximal to circumflex anastomosis",
+        "new discordant ST elevation of 1mm in leads II, III, and aVF"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Cardiac Sarcoidosis",
+          "support_spans": [
+            "ejection fraction of 25%"
+          ],
+          "contradict_spans": [
+            "Negative initial troponin"
+          ],
+          "why": "The patient's significantly reduced ejection fraction and history of coronary artery bypass surgery could suggest an underlying condition such as cardiac sarcoidosis, which may lead to heart failure and arrhythmias.",
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare cause of heart failure and may be overlooked in favor of more common diagnoses like coronary artery disease."
+        },
+        {
+          "name": "Pace-Induced Cardiomyopathy",
+          "support_spans": [
+            "biventricular pacemaker placement",
+            "ejection fraction of 25%"
+          ],
+          "contradict_spans": [
+            "No detailed physical examination findings were provided"
+          ],
+          "why": "The patient's reduced ejection fraction and history of biventricular pacemaker placement could suggest pace-induced cardiomyopathy, a condition where the pacemaker leads to adverse cardiac remodeling.",
+          "protected_reason": "This diagnosis may deserve minority protection because it is a less common complication of pacemaker placement and may not be immediately considered in the differential diagnosis."
+        },
+        {
+          "name": "Graft Vasculopathy",
+          "support_spans": [
+            "thrombotic occlusion of saphenous vein graft proximal to circumflex anastomosis"
+          ],
+          "contradict_spans": [
+            "Negative initial troponin"
+          ],
+          "why": "The patient's presentation with thrombotic occlusion of a saphenous vein graft suggests graft vasculopathy, a condition that can occur after coronary artery bypass grafting.",
+          "protected_reason": "This diagnosis may deserve minority protection because it is a specific and less common cause of chest pain in patients with a history of coronary artery bypass surgery."
+        }
+      ],
+      "key_evidence_spans": [
+        "ejection fraction of 25%",
+        "biventricular pacemaker placement",
+        "thrombotic occlusion of saphenous vein graft proximal to circumflex anastomosis",
+        "ST segment depression >1mm in V2 and V3"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "Initial troponin (2 hours after symptom onset): Negative",
+        "Negative initial troponin",
+        "No detailed physical examination findings were provided"
+      ],
+      "generator_jaccard": 0.0,
+      "top1_same_across_views": false,
+      "top_margin": 0.75,
+      "leave_one_view_instability": true,
+      "contradiction_mass": 1
+    },
+    "adaptive_action": null,
+    "selector": {
+      "champion": "Graft Occlusion",
+      "runner_up": "Acute Coronary Syndrome",
+      "rationale": "Thrombotic occlusion of saphenous vein graft proximal to circumflex anastomosis directly supports Graft Occlusion, with Acute Coronary Syndrome being a close second due to symptoms like dull chest pain and ST segment changes, but the negative initial troponin slightly reduces its likelihood.",
+      "rejected": [
+        {
+          "label": "Pace-Induced Cardiomyopathy",
+          "why": "Lack of detailed physical examination findings and no direct evidence of pacemaker-induced cardiomyopathy causing the current symptoms"
+        },
+        {
+          "label": "Myocardial Infarction",
+          "why": "Negative initial troponin contradicts the typical expectation for myocardial infarction"
+        },
+        {
+          "label": "Cardiac Sarcoidosis",
+          "why": "Insufficient evidence to support this rare condition, and the presentation does not strongly suggest sarcoidosis"
+        },
+        {
+          "label": "Graft Vasculopathy",
+          "why": "While there is thrombotic occlusion, the term Graft Vasculopathy is broader and less specific to the acute presentation than Graft Occlusion"
+        }
+      ],
+      "margin": "medium"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "dull chest pain of 2 hours' duration",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "ST segment depression >1mm in V2 and V3",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "thrombotic occlusion of saphenous vein graft proximal to circumflex anastomosis",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "new discordant ST elevation of 1mm in leads II, III, and aVF",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E005",
+        "raw_span": "Initial troponin (2 hours after symptom onset): Negative",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E006",
+        "raw_span": "occlusive lesions in proximal obtuse marginal artery",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E007",
+        "raw_span": "ejection fraction of 25%",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E008",
+        "raw_span": "biventricular pacemaker placement",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E009",
+        "raw_span": "Negative initial troponin",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E010",
+        "raw_span": "No detailed physical examination findings were provided",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Acute Coronary Syndrome",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G1E004"
+        ],
+        "contradicting_evidence": [
+          "G1E005"
+        ],
+        "protected_reason": "",
+        "score_logit": 1.75,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Graft Occlusion",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E003"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Myocardial Infarction",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E004",
+          "G1E006"
+        ],
+        "contradicting_evidence": [
+          "G1E005"
+        ],
+        "protected_reason": "",
+        "score_logit": 0.75,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Cardiac Sarcoidosis",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G2E009"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare cause of heart failure and may be overlooked in favor of more common diagnoses like coronary artery disease.",
+        "score_logit": 0.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Pace-Induced Cardiomyopathy",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G2E008",
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G2E010"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a less common complication of pacemaker placement and may not be immediately considered in the differential diagnosis.",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C006",
+        "preferred_name": "Graft Vasculopathy",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E003"
+        ],
+        "contradicting_evidence": [
+          "G2E009"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a specific and less common cause of chest pain in patients with a history of coronary artery bypass surgery.",
+        "score_logit": 0.0,
+        "status": "live",
+        "agent_votes": 0
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Acute Coronary Syndrome",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Graft Occlusion",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Myocardial Infarction",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C004",
+        "name": "Cardiac Sarcoidosis",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C005",
+        "name": "Pace-Induced Cardiomyopathy",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C006",
+        "name": "Graft Vasculopathy",
+        "view": "g2"
+      }
+    ],
+    "frontier_final": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Acute Coronary Syndrome",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G1E004"
+        ],
+        "contradicting_evidence": [
+          "G1E005"
+        ],
+        "protected_reason": "",
+        "score_logit": 1.75,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Graft Occlusion",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E003"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Pace-Induced Cardiomyopathy",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G2E008",
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G2E010"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a less common complication of pacemaker placement and may not be immediately considered in the differential diagnosis.",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Myocardial Infarction",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E004",
+          "G1E006"
+        ],
+        "contradicting_evidence": [
+          "G1E005"
+        ],
+        "protected_reason": "",
+        "score_logit": 0.75,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Cardiac Sarcoidosis",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G2E009"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare cause of heart failure and may be overlooked in favor of more common diagnoses like coronary artery disease.",
+        "score_logit": 0.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C006",
+        "preferred_name": "Graft Vasculopathy",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E003"
+        ],
+        "contradicting_evidence": [
+          "G2E009"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a specific and less common cause of chest pain in patients with a history of coronary artery bypass surgery.",
+        "score_logit": 0.0,
+        "status": "live",
+        "agent_votes": 0
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 6,
+    "n_evidence": 10,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.0,
+    "frontier_n": 6,
+    "protected_n": 3,
+    "n_generators": 2,
+    "adaptive_action": null,
+    "llm_calls": 3,
+    "history_leakage": 0,
+    "mode": "lite"
+  },
+  "prediction": {
+    "arm": "mosaic_lite_r2",
+    "case_id": "diagnosisarena__000206",
+    "source_id": "206",
+    "dataset": "diagnosisarena",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Graft Occlusion",
+      "Acute Coronary Syndrome",
+      "Pace-Induced Cardiomyopathy",
+      "Myocardial Infarction",
+      "Cardiac Sarcoidosis"
+    ],
+    "top2_diagnoses": [
+      "Graft Occlusion",
+      "Acute Coronary Syndrome"
+    ],
+    "cost": {
+      "llm_calls": 3
+    },
+    "stages": {
+      "mode": "lite",
+      "vignette_chars": 1440,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Acute Coronary Syndrome",
+            "support_spans": [
+              "dull chest pain of 2 hours' duration",
+              "ST segment depression >1mm in V2 and V3",
+              "new discordant ST elevation of 1mm in leads II, III, and aVF"
+            ],
+            "contradict_spans": [
+              "Initial troponin (2 hours after symptom onset): Negative"
+            ],
+            "why": "The patient's symptoms and ECG findings are consistent with acute coronary syndrome."
+          },
+          {
+            "name": "Graft Occlusion",
+            "support_spans": [
+              "thrombotic occlusion of saphenous vein graft proximal to circumflex anastomosis"
+            ],
+            "contradict_spans": [],
+            "why": "The cardiac catheterization revealed a thrombotic occlusion of the saphenous vein graft."
+          },
+          {
+            "name": "Myocardial Infarction",
+            "support_spans": [
+              "new discordant ST elevation of 1mm in leads II, III, and aVF",
+              "occlusive lesions in proximal obtuse marginal artery"
+            ],
+            "contradict_spans": [
+              "Initial troponin (2 hours after symptom onset): Negative"
+            ],
+            "why": "The patient's ECG findings and cardiac catheterization results are consistent with myocardial infarction."
+          }
+        ],
+        "key_evidence_spans": [
+          "dull chest pain of 2 hours' duration",
+          "ST segment depression >1mm in V2 and V3",
+          "thrombotic occlusion of saphenous vein graft proximal to circumflex anastomosis",
+          "new discordant ST elevation of 1mm in leads II, III, and aVF"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Cardiac Sarcoidosis",
+            "support_spans": [
+              "ejection fraction of 25%"
+            ],
+            "contradict_spans": [
+              "Negative initial troponin"
+            ],
+            "why": "The patient's significantly reduced ejection fraction and history of coronary artery bypass surgery could suggest an underlying condition such as cardiac sarcoidosis, which may lead to heart failure and arrhythmias.",
+            "protected_reason": "This diagnosis may deserve minority protection because it is a rare cause of heart failure and may be overlooked in favor of more common diagnoses like coronary artery disease."
+          },
+          {
+            "name": "Pace-Induced Cardiomyopathy",
+            "support_spans": [
+              "biventricular pacemaker placement",
+              "ejection fraction of 25%"
+            ],
+            "contradict_spans": [
+              "No detailed physical examination findings were provided"
+            ],
+            "why": "The patient's reduced ejection fraction and history of biventricular pacemaker placement could suggest pace-induced cardiomyopathy, a condition where the pacemaker leads to adverse cardiac remodeling.",
+            "protected_reason": "This diagnosis may deserve minority protection because it is a less common complication of pacemaker placement and may not be immediately considered in the differential diagnosis."
+          },
+          {
+            "name": "Graft Vasculopathy",
+            "support_spans": [
+              "thrombotic occlusion of saphenous vein graft proximal to circumflex anastomosis"
+            ],
+            "contradict_spans": [
+              "Negative initial troponin"
+            ],
+            "why": "The patient's presentation with thrombotic occlusion of a saphenous vein graft suggests graft vasculopathy, a condition that can occur after coronary artery bypass grafting.",
+            "protected_reason": "This diagnosis may deserve minority protection because it is a specific and less common cause of chest pain in patients with a history of coronary artery bypass surgery."
+          }
+        ],
+        "key_evidence_spans": [
+          "ejection fraction of 25%",
+          "biventricular pacemaker placement",
+          "thrombotic occlusion of saphenous vein graft proximal to circumflex anastomosis",
+          "ST segment depression >1mm in V2 and V3"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "Initial troponin (2 hours after symptom onset): Negative",
+          "Negative initial troponin",
+          "No detailed physical examination findings were provided"
+        ],
+        "generator_jaccard": 0.0,
+        "top1_same_across_views": false,
+        "top_margin": 0.75,
+        "leave_one_view_instability": true,
+        "contradiction_mass": 1
+      },
+      "adaptive_action": null,
+      "selector": {
+        "champion": "Graft Occlusion",
+        "runner_up": "Acute Coronary Syndrome",
+        "rationale": "Thrombotic occlusion of saphenous vein graft proximal to circumflex anastomosis directly supports Graft Occlusion, with Acute Coronary Syndrome being a close second due to symptoms like dull chest pain and ST segment changes, but the negative initial troponin slightly reduces its likelihood.",
+        "rejected": [
+          {
+            "label": "Pace-Induced Cardiomyopathy",
+            "why": "Lack of detailed physical examination findings and no direct evidence of pacemaker-induced cardiomyopathy causing the current symptoms"
+          },
+          {
+            "label": "Myocardial Infarction",
+            "why": "Negative initial troponin contradicts the typical expectation for myocardial infarction"
+          },
+          {
+            "label": "Cardiac Sarcoidosis",
+            "why": "Insufficient evidence to support this rare condition, and the presentation does not strongly suggest sarcoidosis"
+          },
+          {
+            "label": "Graft Vasculopathy",
+            "why": "While there is thrombotic occlusion, the term Graft Vasculopathy is broader and less specific to the acute presentation than Graft Occlusion"
+          }
+        ],
+        "margin": "medium"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "dull chest pain of 2 hours' duration",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "ST segment depression >1mm in V2 and V3",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "thrombotic occlusion of saphenous vein graft proximal to circumflex anastomosis",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "new discordant ST elevation of 1mm in leads II, III, and aVF",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E005",
+          "raw_span": "Initial troponin (2 hours after symptom onset): Negative",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E006",
+          "raw_span": "occlusive lesions in proximal obtuse marginal artery",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E007",
+          "raw_span": "ejection fraction of 25%",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E008",
+          "raw_span": "biventricular pacemaker placement",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E009",
+          "raw_span": "Negative initial troponin",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E010",
+          "raw_span": "No detailed physical examination findings were provided",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Acute Coronary Syndrome",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G1E004"
+          ],
+          "contradicting_evidence": [
+            "G1E005"
+          ],
+          "protected_reason": "",
+          "score_logit": 1.75,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Graft Occlusion",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E003"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Myocardial Infarction",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E004",
+            "G1E006"
+          ],
+          "contradicting_evidence": [
+            "G1E005"
+          ],
+          "protected_reason": "",
+          "score_logit": 0.75,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Cardiac Sarcoidosis",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G2E009"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare cause of heart failure and may be overlooked in favor of more common diagnoses like coronary artery disease.",
+          "score_logit": 0.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C005",
+          "preferred_name": "Pace-Induced Cardiomyopathy",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G2E008",
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G2E010"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a less common complication of pacemaker placement and may not be immediately considered in the differential diagnosis.",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C006",
+          "preferred_name": "Graft Vasculopathy",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E003"
+          ],
+          "contradicting_evidence": [
+            "G2E009"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a specific and less common cause of chest pain in patients with a history of coronary artery bypass surgery.",
+          "score_logit": 0.0,
+          "status": "live",
+          "agent_votes": 0
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Acute Coronary Syndrome",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Graft Occlusion",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Myocardial Infarction",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C004",
+          "name": "Cardiac Sarcoidosis",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C005",
+          "name": "Pace-Induced Cardiomyopathy",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C006",
+          "name": "Graft Vasculopathy",
+          "view": "g2"
+        }
+      ],
+      "frontier_final": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Acute Coronary Syndrome",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G1E004"
+          ],
+          "contradicting_evidence": [
+            "G1E005"
+          ],
+          "protected_reason": "",
+          "score_logit": 1.75,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Graft Occlusion",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E003"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C005",
+          "preferred_name": "Pace-Induced Cardiomyopathy",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G2E008",
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G2E010"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a less common complication of pacemaker placement and may not be immediately considered in the differential diagnosis.",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Myocardial Infarction",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E004",
+            "G1E006"
+          ],
+          "contradicting_evidence": [
+            "G1E005"
+          ],
+          "protected_reason": "",
+          "score_logit": 0.75,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Cardiac Sarcoidosis",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G2E009"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare cause of heart failure and may be overlooked in favor of more common diagnoses like coronary artery disease.",
+          "score_logit": 0.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C006",
+          "preferred_name": "Graft Vasculopathy",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E003"
+          ],
+          "contradicting_evidence": [
+            "G2E009"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a specific and less common cause of chest pain in patients with a history of coronary artery bypass surgery.",
+          "score_logit": 0.0,
+          "status": "live",
+          "agent_votes": 0
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 6,
+      "n_evidence": 10,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.0,
+      "frontier_n": 6,
+      "protected_n": 3,
+      "n_generators": 2,
+      "adaptive_action": null,
+      "llm_calls": 3,
+      "history_leakage": 0,
+      "mode": "lite"
+    },
+    "wall_s": 11.241
+  },
+  "created_at": "2026-08-10T02:00:02.799689+00:00"
+}

@@ -1,0 +1,984 @@
+{
+  "case_id": "diagnosisarena__000140",
+  "source_id": "140",
+  "champion": "Takotsubo cardiomyopathy",
+  "ordered_diagnoses": [
+    "Takotsubo cardiomyopathy",
+    "Pheochromocytoma",
+    "Primary aldosteronism",
+    "Myocardial infarction",
+    "Adrenal cortical carcinoma"
+  ],
+  "llm_calls": 4,
+  "stages": {
+    "mode": "adaptive4",
+    "vignette_chars": 1182,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Takotsubo cardiomyopathy",
+          "support_spans": [
+            "systolic apical ballooning",
+            "ST-segment elevation in leads II, III, aVF, and V2 to V6"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's ECG findings and left ventriculography results are consistent with Takotsubo cardiomyopathy."
+        },
+        {
+          "name": "Pheochromocytoma",
+          "support_spans": [
+            "left-adrenal heterogeneous mass measuring 4.1 × 3.4 cm",
+            "hypertension"
+          ],
+          "contradict_spans": [],
+          "why": "The presence of an adrenal mass and history of hypertension suggest the possibility of pheochromocytoma."
+        },
+        {
+          "name": "Myocardial infarction",
+          "support_spans": [
+            "High-sensitivity troponin I: 1.15 ng/mL",
+            "ST-segment elevation in leads II, III, aVF, and V2 to V6"
+          ],
+          "contradict_spans": [
+            "Coronary angiography: revealed normal coronary arteries"
+          ],
+          "why": "The patient's elevated troponin and ST-segment elevation are consistent with myocardial infarction, but the normal coronary angiography results make this diagnosis less likely."
+        }
+      ],
+      "key_evidence_spans": [
+        "systolic apical ballooning",
+        "left-adrenal heterogeneous mass measuring 4.1 × 3.4 cm",
+        "High-sensitivity troponin I: 1.15 ng/mL",
+        "ST-segment elevation in leads II, III, aVF, and V2 to V6"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Pheochromocytoma",
+          "support_spans": [
+            "an enhanced left-adrenal heterogeneous mass measuring 4.1 × 3.4 cm"
+          ],
+          "contradict_spans": [
+            "Serum calcium: within normal limits"
+          ],
+          "why": "The presence of an adrenal mass and sudden-onset chest pain with hypertension could suggest pheochromocytoma.",
+          "protected_reason": "This diagnosis may be easily missed due to its rarity and non-specific presentation."
+        },
+        {
+          "name": "Takotsubo cardiomyopathy",
+          "support_spans": [
+            "systolic apical ballooning",
+            "ST-segment elevation in leads II, III, aVF, and V2 to V6"
+          ],
+          "contradict_spans": [
+            "Coronary angiography: revealed normal coronary arteries"
+          ],
+          "why": "The patient's presentation with apical ballooning and ST-segment elevation is consistent with Takotsubo cardiomyopathy.",
+          "protected_reason": "This condition is often underdiagnosed and may be mistaken for acute coronary syndrome."
+        },
+        {
+          "name": "Adrenal cortical carcinoma",
+          "support_spans": [
+            "an enhanced left-adrenal heterogeneous mass measuring 4.1 × 3.4 cm"
+          ],
+          "contradict_spans": [
+            "no history of any acute febrile illness"
+          ],
+          "why": "The presence of an adrenal mass could suggest adrenal cortical carcinoma, which can cause hypertension and cardiac symptoms.",
+          "protected_reason": "This diagnosis is rare and may be overlooked in favor of more common causes of hypertension and chest pain."
+        }
+      ],
+      "key_evidence_spans": [
+        "an enhanced left-adrenal heterogeneous mass measuring 4.1 × 3.4 cm",
+        "systolic apical ballooning",
+        "ST-segment elevation in leads II, III, aVF, and V2 to V6"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "Coronary angiography: revealed normal coronary arteries",
+        "Serum calcium: within normal limits",
+        "no history of any acute febrile illness"
+      ],
+      "generator_jaccard": 0.5,
+      "top1_same_across_views": true,
+      "top_margin": 1.0,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 1
+    },
+    "frontier_after_g": [
+      {
+        "concept_id": "C002",
+        "preferred_name": "Pheochromocytoma",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E002",
+          "G1E005",
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G2E008"
+        ],
+        "protected_reason": "This diagnosis may be easily missed due to its rarity and non-specific presentation.",
+        "score_logit": 2.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C001",
+        "preferred_name": "Takotsubo cardiomyopathy",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E004"
+        ],
+        "contradicting_evidence": [
+          "G1E006"
+        ],
+        "protected_reason": "This condition is often underdiagnosed and may be mistaken for acute coronary syndrome.",
+        "score_logit": 1.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Myocardial infarction",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E004"
+        ],
+        "contradicting_evidence": [
+          "G1E006"
+        ],
+        "protected_reason": "",
+        "score_logit": 0.75,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Adrenal cortical carcinoma",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G2E009"
+        ],
+        "protected_reason": "This diagnosis is rare and may be overlooked in favor of more common causes of hypertension and chest pain.",
+        "score_logit": 0.0,
+        "status": "live"
+      }
+    ],
+    "a1": {
+      "candidates": [
+        {
+          "name": "Pheochromocytoma",
+          "support_spans": [
+            "an enhanced left-adrenal heterogeneous mass measuring 4.1 × 3.4 cm"
+          ],
+          "contradict_spans": [],
+          "why": "The presence of an adrenal mass could explain the patient's symptoms and laboratory findings.",
+          "protected_reason": "explains unexplained high-specificity evidence"
+        },
+        {
+          "name": "Takotsubo cardiomyopathy",
+          "support_spans": [
+            "systolic apical ballooning",
+            "ST-segment elevation in leads II, III, aVF, and V2 to V6"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's ECG findings and left ventriculography results are consistent with this condition.",
+          "protected_reason": "explains unexplained high-specificity evidence"
+        },
+        {
+          "name": "Primary aldosteronism",
+          "support_spans": [
+            "hypertension",
+            "Serum calcium: within normal limits"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's history of hypertension and normal serum calcium level could be related to this condition.",
+          "protected_reason": "explains unexplained high-specificity evidence"
+        }
+      ]
+    },
+    "adaptive_action": "ORTHOGONAL_GENERATE",
+    "selector": {
+      "champion": "Takotsubo cardiomyopathy",
+      "runner_up": "Pheochromocytoma",
+      "rationale": "systolic apical ballooning and ST-segment elevation in leads II, III, aVF, and V2 to V6 support Takotsubo cardiomyopathy, despite normal coronary arteries",
+      "rejected": [
+        {
+          "label": "Myocardial infarction",
+          "why": "normal coronary arteries on angiography"
+        },
+        {
+          "label": "Primary aldosteronism",
+          "why": "lack of specific findings beyond hypertension"
+        },
+        {
+          "label": "Adrenal cortical carcinoma",
+          "why": "no clear link to acute presentation"
+        }
+      ],
+      "margin": "medium"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "systolic apical ballooning",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "left-adrenal heterogeneous mass measuring 4.1 × 3.4 cm",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "High-sensitivity troponin I: 1.15 ng/mL",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "ST-segment elevation in leads II, III, aVF, and V2 to V6",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E005",
+        "raw_span": "hypertension",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E006",
+        "raw_span": "Coronary angiography: revealed normal coronary arteries",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E007",
+        "raw_span": "an enhanced left-adrenal heterogeneous mass measuring 4.1 × 3.4 cm",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E008",
+        "raw_span": "Serum calcium: within normal limits",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E009",
+        "raw_span": "no history of any acute febrile illness",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Takotsubo cardiomyopathy",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2",
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E004"
+        ],
+        "contradicting_evidence": [
+          "G1E006"
+        ],
+        "protected_reason": "This condition is often underdiagnosed and may be mistaken for acute coronary syndrome.",
+        "score_logit": 1.7,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Pheochromocytoma",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2",
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G1E002",
+          "G1E005",
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G2E008"
+        ],
+        "protected_reason": "This diagnosis may be easily missed due to its rarity and non-specific presentation.",
+        "score_logit": 2.7,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Myocardial infarction",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E004"
+        ],
+        "contradicting_evidence": [
+          "G1E006"
+        ],
+        "protected_reason": "",
+        "score_logit": 0.75,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Adrenal cortical carcinoma",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G2E009"
+        ],
+        "protected_reason": "This diagnosis is rare and may be overlooked in favor of more common causes of hypertension and chest pain.",
+        "score_logit": 0.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Primary aldosteronism",
+        "aliases": [],
+        "generator_views": [
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G1E005",
+          "G2E008"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "explains unexplained high-specificity evidence",
+        "score_logit": 2.25,
+        "status": "live"
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Takotsubo cardiomyopathy",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Pheochromocytoma",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Myocardial infarction",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Pheochromocytoma",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Takotsubo cardiomyopathy",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C004",
+        "name": "Adrenal cortical carcinoma",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Pheochromocytoma",
+        "view": "a1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Takotsubo cardiomyopathy",
+        "view": "a1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C005",
+        "name": "Primary aldosteronism",
+        "view": "a1"
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 5,
+    "n_evidence": 9,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.5,
+    "frontier_n": 5,
+    "protected_n": 4,
+    "g1_n": 3,
+    "g2_n": 3,
+    "adaptive_action": "ORTHOGONAL_GENERATE",
+    "llm_calls": 4,
+    "history_leakage": 0
+  },
+  "prediction": {
+    "arm": "mosaic_adaptive4_v1",
+    "case_id": "diagnosisarena__000140",
+    "source_id": "140",
+    "dataset": "diagnosisarena",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Takotsubo cardiomyopathy",
+      "Pheochromocytoma",
+      "Primary aldosteronism",
+      "Myocardial infarction",
+      "Adrenal cortical carcinoma"
+    ],
+    "top2_diagnoses": [
+      "Takotsubo cardiomyopathy",
+      "Pheochromocytoma"
+    ],
+    "cost": {
+      "llm_calls": 4
+    },
+    "stages": {
+      "mode": "adaptive4",
+      "vignette_chars": 1182,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Takotsubo cardiomyopathy",
+            "support_spans": [
+              "systolic apical ballooning",
+              "ST-segment elevation in leads II, III, aVF, and V2 to V6"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's ECG findings and left ventriculography results are consistent with Takotsubo cardiomyopathy."
+          },
+          {
+            "name": "Pheochromocytoma",
+            "support_spans": [
+              "left-adrenal heterogeneous mass measuring 4.1 × 3.4 cm",
+              "hypertension"
+            ],
+            "contradict_spans": [],
+            "why": "The presence of an adrenal mass and history of hypertension suggest the possibility of pheochromocytoma."
+          },
+          {
+            "name": "Myocardial infarction",
+            "support_spans": [
+              "High-sensitivity troponin I: 1.15 ng/mL",
+              "ST-segment elevation in leads II, III, aVF, and V2 to V6"
+            ],
+            "contradict_spans": [
+              "Coronary angiography: revealed normal coronary arteries"
+            ],
+            "why": "The patient's elevated troponin and ST-segment elevation are consistent with myocardial infarction, but the normal coronary angiography results make this diagnosis less likely."
+          }
+        ],
+        "key_evidence_spans": [
+          "systolic apical ballooning",
+          "left-adrenal heterogeneous mass measuring 4.1 × 3.4 cm",
+          "High-sensitivity troponin I: 1.15 ng/mL",
+          "ST-segment elevation in leads II, III, aVF, and V2 to V6"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Pheochromocytoma",
+            "support_spans": [
+              "an enhanced left-adrenal heterogeneous mass measuring 4.1 × 3.4 cm"
+            ],
+            "contradict_spans": [
+              "Serum calcium: within normal limits"
+            ],
+            "why": "The presence of an adrenal mass and sudden-onset chest pain with hypertension could suggest pheochromocytoma.",
+            "protected_reason": "This diagnosis may be easily missed due to its rarity and non-specific presentation."
+          },
+          {
+            "name": "Takotsubo cardiomyopathy",
+            "support_spans": [
+              "systolic apical ballooning",
+              "ST-segment elevation in leads II, III, aVF, and V2 to V6"
+            ],
+            "contradict_spans": [
+              "Coronary angiography: revealed normal coronary arteries"
+            ],
+            "why": "The patient's presentation with apical ballooning and ST-segment elevation is consistent with Takotsubo cardiomyopathy.",
+            "protected_reason": "This condition is often underdiagnosed and may be mistaken for acute coronary syndrome."
+          },
+          {
+            "name": "Adrenal cortical carcinoma",
+            "support_spans": [
+              "an enhanced left-adrenal heterogeneous mass measuring 4.1 × 3.4 cm"
+            ],
+            "contradict_spans": [
+              "no history of any acute febrile illness"
+            ],
+            "why": "The presence of an adrenal mass could suggest adrenal cortical carcinoma, which can cause hypertension and cardiac symptoms.",
+            "protected_reason": "This diagnosis is rare and may be overlooked in favor of more common causes of hypertension and chest pain."
+          }
+        ],
+        "key_evidence_spans": [
+          "an enhanced left-adrenal heterogeneous mass measuring 4.1 × 3.4 cm",
+          "systolic apical ballooning",
+          "ST-segment elevation in leads II, III, aVF, and V2 to V6"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "Coronary angiography: revealed normal coronary arteries",
+          "Serum calcium: within normal limits",
+          "no history of any acute febrile illness"
+        ],
+        "generator_jaccard": 0.5,
+        "top1_same_across_views": true,
+        "top_margin": 1.0,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 1
+      },
+      "frontier_after_g": [
+        {
+          "concept_id": "C002",
+          "preferred_name": "Pheochromocytoma",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E002",
+            "G1E005",
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G2E008"
+          ],
+          "protected_reason": "This diagnosis may be easily missed due to its rarity and non-specific presentation.",
+          "score_logit": 2.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C001",
+          "preferred_name": "Takotsubo cardiomyopathy",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E004"
+          ],
+          "contradicting_evidence": [
+            "G1E006"
+          ],
+          "protected_reason": "This condition is often underdiagnosed and may be mistaken for acute coronary syndrome.",
+          "score_logit": 1.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Myocardial infarction",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E004"
+          ],
+          "contradicting_evidence": [
+            "G1E006"
+          ],
+          "protected_reason": "",
+          "score_logit": 0.75,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Adrenal cortical carcinoma",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G2E009"
+          ],
+          "protected_reason": "This diagnosis is rare and may be overlooked in favor of more common causes of hypertension and chest pain.",
+          "score_logit": 0.0,
+          "status": "live"
+        }
+      ],
+      "a1": {
+        "candidates": [
+          {
+            "name": "Pheochromocytoma",
+            "support_spans": [
+              "an enhanced left-adrenal heterogeneous mass measuring 4.1 × 3.4 cm"
+            ],
+            "contradict_spans": [],
+            "why": "The presence of an adrenal mass could explain the patient's symptoms and laboratory findings.",
+            "protected_reason": "explains unexplained high-specificity evidence"
+          },
+          {
+            "name": "Takotsubo cardiomyopathy",
+            "support_spans": [
+              "systolic apical ballooning",
+              "ST-segment elevation in leads II, III, aVF, and V2 to V6"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's ECG findings and left ventriculography results are consistent with this condition.",
+            "protected_reason": "explains unexplained high-specificity evidence"
+          },
+          {
+            "name": "Primary aldosteronism",
+            "support_spans": [
+              "hypertension",
+              "Serum calcium: within normal limits"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's history of hypertension and normal serum calcium level could be related to this condition.",
+            "protected_reason": "explains unexplained high-specificity evidence"
+          }
+        ]
+      },
+      "adaptive_action": "ORTHOGONAL_GENERATE",
+      "selector": {
+        "champion": "Takotsubo cardiomyopathy",
+        "runner_up": "Pheochromocytoma",
+        "rationale": "systolic apical ballooning and ST-segment elevation in leads II, III, aVF, and V2 to V6 support Takotsubo cardiomyopathy, despite normal coronary arteries",
+        "rejected": [
+          {
+            "label": "Myocardial infarction",
+            "why": "normal coronary arteries on angiography"
+          },
+          {
+            "label": "Primary aldosteronism",
+            "why": "lack of specific findings beyond hypertension"
+          },
+          {
+            "label": "Adrenal cortical carcinoma",
+            "why": "no clear link to acute presentation"
+          }
+        ],
+        "margin": "medium"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "systolic apical ballooning",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "left-adrenal heterogeneous mass measuring 4.1 × 3.4 cm",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "High-sensitivity troponin I: 1.15 ng/mL",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "ST-segment elevation in leads II, III, aVF, and V2 to V6",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E005",
+          "raw_span": "hypertension",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E006",
+          "raw_span": "Coronary angiography: revealed normal coronary arteries",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E007",
+          "raw_span": "an enhanced left-adrenal heterogeneous mass measuring 4.1 × 3.4 cm",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E008",
+          "raw_span": "Serum calcium: within normal limits",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E009",
+          "raw_span": "no history of any acute febrile illness",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Takotsubo cardiomyopathy",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2",
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E004"
+          ],
+          "contradicting_evidence": [
+            "G1E006"
+          ],
+          "protected_reason": "This condition is often underdiagnosed and may be mistaken for acute coronary syndrome.",
+          "score_logit": 1.7,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Pheochromocytoma",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2",
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G1E002",
+            "G1E005",
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G2E008"
+          ],
+          "protected_reason": "This diagnosis may be easily missed due to its rarity and non-specific presentation.",
+          "score_logit": 2.7,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Myocardial infarction",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E004"
+          ],
+          "contradicting_evidence": [
+            "G1E006"
+          ],
+          "protected_reason": "",
+          "score_logit": 0.75,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Adrenal cortical carcinoma",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G2E009"
+          ],
+          "protected_reason": "This diagnosis is rare and may be overlooked in favor of more common causes of hypertension and chest pain.",
+          "score_logit": 0.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C005",
+          "preferred_name": "Primary aldosteronism",
+          "aliases": [],
+          "generator_views": [
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G1E005",
+            "G2E008"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "explains unexplained high-specificity evidence",
+          "score_logit": 2.25,
+          "status": "live"
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Takotsubo cardiomyopathy",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Pheochromocytoma",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Myocardial infarction",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Pheochromocytoma",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Takotsubo cardiomyopathy",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C004",
+          "name": "Adrenal cortical carcinoma",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Pheochromocytoma",
+          "view": "a1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Takotsubo cardiomyopathy",
+          "view": "a1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C005",
+          "name": "Primary aldosteronism",
+          "view": "a1"
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 5,
+      "n_evidence": 9,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.5,
+      "frontier_n": 5,
+      "protected_n": 4,
+      "g1_n": 3,
+      "g2_n": 3,
+      "adaptive_action": "ORTHOGONAL_GENERATE",
+      "llm_calls": 4,
+      "history_leakage": 0
+    },
+    "wall_s": 5.394
+  },
+  "created_at": "2026-08-08T01:50:18.185073+00:00"
+}

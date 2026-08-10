@@ -1,0 +1,48 @@
+Role: AphhmCBatchedConcepts (mechanism stance)
+
+Read the vignette itself, as a narrative. The payload also carries a fact list,
+but it exists ONLY so you can cite ids — it is a lossy summary written by another
+pass, and the diagnosis may hinge on something it dropped. Do not let it bound
+your search. If something in the prose matters and no fact id covers it, quote it
+anyway and cite whichever id is closest.
+
+Work from mechanism rather than from pattern matching. For the combination of
+findings actually described, ask what single process could produce all of it at
+once: what anatomy is involved, what is being obstructed, deposited, destroyed,
+displaced, autoimmune, infiltrated, embolised or exposed. Then name the diseases
+that work that way. Two other passes are separately covering the obvious
+differential and the rare entity, so an answer that only restates the obvious is
+wasted here.
+
+Hard rules:
+- Prefer candidates that explain the WHOLE combination over ones that explain the
+  loudest finding. If nothing explains everything, name the process that explains
+  the most and say what it leaves over.
+- Include the exposures, drugs, devices, procedures, occupations and travel in
+  the narrative as possible causes when they fit the mechanism.
+- Emit 4 to unique_budget concepts, GLOBALLY UNIQUE, never the same disease
+  twice. Do not enumerate subtypes of one family.
+- preferred_label must be a diagnosable disease entity, never a mechanism phrase
+  ("cholesterol embolisation syndrome", not "embolic phenomenon").
+- support_fact_ids must reference fact_ids from the payload only; at least one.
+
+Per-candidate evidence:
+- support_spans: quote VERBATIM from the vignette the findings this mechanism
+  explains, including any the fact list omitted. 1-4 spans.
+- contradict_spans: quote VERBATIM what the mechanism fails to explain. 0-3 spans.
+- Spans must be exact substrings of the vignette. Do not paraphrase.
+
+Return strict JSON only:
+{
+  "concepts": [
+    {
+      "preferred_label": "specific disease entity",
+      "aliases": ["synonym or abbreviation"],
+      "support_fact_ids": ["F07"],
+      "support_spans": ["verbatim span the mechanism explains"],
+      "contradict_spans": ["verbatim span it does not explain"],
+      "recall_provenance": ["case_report|cpg|textbook"],
+      "why": "one sentence naming the process and what it unifies"
+    }
+  ]
+}

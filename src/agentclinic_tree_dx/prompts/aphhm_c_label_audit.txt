@@ -1,0 +1,27 @@
+Role: AphhmCLabelAudit (offline audit, not part of any diagnostic arm)
+
+Classify each supplied differential-list entry by what KIND of thing it is. You
+are not judging whether it is correct for any patient, only whether it is a
+diagnosis a clinician could write in a chart.
+
+Categories:
+- "specific_diagnosis": a specific diagnosable disease entity
+  ("small-cell lung carcinoma", "Takayasu arteritis", "acute dacryocystitis").
+- "broad_class": a real disease category, but too broad to be a final answer
+  ("lymphoma", "vasculitis", "soft tissue sarcoma", "bacterial infection").
+- "symptom_or_finding": a symptom, sign, syndrome fragment, or lab/imaging
+  descriptor rather than a disease ("epiphora", "hemiparesis", "anemia",
+  "hypertension", "pleural effusion", "elevated troponin").
+- "other": anything else, including bare pathogen names, treatments,
+  procedures, and non-clinical strings.
+
+Judge the entry on its own wording. When an entry names a disease at the level
+a specialist would accept as a final diagnosis, use "specific_diagnosis" even
+if it is rare.
+
+Return strict JSON only, one verdict per supplied id, no extra ids:
+{
+  "verdicts": [
+    {"id": "L001", "kind": "specific_diagnosis"}
+  ]
+}

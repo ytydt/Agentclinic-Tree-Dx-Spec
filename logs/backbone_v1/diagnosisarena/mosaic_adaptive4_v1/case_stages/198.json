@@ -1,0 +1,742 @@
+{
+  "case_id": "diagnosisarena__000198",
+  "source_id": "198",
+  "champion": "Lynch Syndrome",
+  "ordered_diagnoses": [
+    "Lynch Syndrome",
+    "Endometrial Cancer",
+    "Muir-Torre Syndrome"
+  ],
+  "llm_calls": 3,
+  "stages": {
+    "mode": "adaptive4",
+    "vignette_chars": 527,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Lynch Syndrome",
+          "support_spans": [
+            "Family history was significant for prostate cancer in her father and paternal grandfather",
+            "Germline mutation R1331X was detected in the MSH6 gene"
+          ],
+          "contradict_spans": [
+            "MSI testing was negative"
+          ],
+          "why": "The patient has a family history of prostate cancer and a germline mutation in the MSH6 gene, which is associated with Lynch Syndrome."
+        },
+        {
+          "name": "Endometrial Cancer",
+          "support_spans": [
+            "A 43-year-old woman presented with abnormal vaginal bleeding",
+            "Dilation and curettage was performed"
+          ],
+          "contradict_spans": [],
+          "why": "The patient presented with abnormal vaginal bleeding and underwent dilation and curettage, which is a common procedure for diagnosing endometrial cancer."
+        },
+        {
+          "name": "MSH6-related Endometrial Cancer",
+          "support_spans": [
+            "Tumor stained negative for MSH6 protein",
+            "Germline mutation R1331X was detected in the MSH6 gene"
+          ],
+          "contradict_spans": [],
+          "why": "The tumor's negative staining for MSH6 protein and the patient's germline mutation in the MSH6 gene suggest a possible link to MSH6-related endometrial cancer."
+        }
+      ],
+      "key_evidence_spans": [
+        "A 43-year-old woman presented with abnormal vaginal bleeding",
+        "Family history was significant for prostate cancer in her father and paternal grandfather",
+        "Germline mutation R1331X was detected in the MSH6 gene",
+        "Tumor stained negative for MSH6 protein"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Lynch Syndrome",
+          "support_spans": [
+            "Family history was significant for prostate cancer in her father and paternal grandfather",
+            "Germline mutation R1331X was detected in the MSH6 gene"
+          ],
+          "contradict_spans": [
+            "MSI testing was negative"
+          ],
+          "why": "The patient's family history of prostate cancer and the detected germline mutation in the MSH6 gene support this diagnosis",
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare genetic disorder that can be easily missed"
+        },
+        {
+          "name": "Muir-Torre Syndrome",
+          "support_spans": [
+            "Family history was significant for prostate cancer in her father and paternal grandfather",
+            "Tumor stained negative for MSH6 protein"
+          ],
+          "contradict_spans": [
+            "MSI testing was negative"
+          ],
+          "why": "The combination of abnormal vaginal bleeding and a family history of prostate cancer could suggest this rare syndrome",
+          "protected_reason": "This diagnosis may deserve minority protection due to its rarity and the potential for it to be overlooked"
+        },
+        {
+          "name": "MSH6-Associated Endometrial Cancer",
+          "support_spans": [
+            "Germline mutation R1331X was detected in the MSH6 gene",
+            "abnormal vaginal bleeding"
+          ],
+          "contradict_spans": [
+            "MSI testing was negative"
+          ],
+          "why": "The detected germline mutation in the MSH6 gene and the patient's symptoms support this specific disease entity",
+          "protected_reason": "This diagnosis may deserve minority protection because it is a specific and rare condition that can be easily missed"
+        }
+      ],
+      "key_evidence_spans": [
+        "Family history was significant for prostate cancer in her father and paternal grandfather",
+        "Germline mutation R1331X was detected in the MSH6 gene",
+        "Tumor stained negative for MSH6 protein"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "MSI testing was negative"
+      ],
+      "generator_jaccard": 0.2,
+      "top1_same_across_views": true,
+      "top_margin": 2.9999999999999996,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 1
+    },
+    "frontier_after_g": [
+      {
+        "concept_id": "C002",
+        "preferred_name": "Endometrial Cancer",
+        "aliases": [
+          "MSH6-related Endometrial Cancer",
+          "MSH6-Associated Endometrial Cancer"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E006",
+          "G1E004",
+          "G1E003",
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G1E005"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a specific and rare condition that can be easily missed",
+        "score_logit": 4.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C001",
+        "preferred_name": "Lynch Syndrome",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E002",
+          "G1E003"
+        ],
+        "contradicting_evidence": [
+          "G1E005"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare genetic disorder that can be easily missed",
+        "score_logit": 1.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Muir-Torre Syndrome",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E002",
+          "G1E004"
+        ],
+        "contradicting_evidence": [
+          "G1E005"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection due to its rarity and the potential for it to be overlooked",
+        "score_logit": 1.0,
+        "status": "live"
+      }
+    ],
+    "adaptive_action": null,
+    "selector": {
+      "champion": "Lynch Syndrome",
+      "runner_up": "Endometrial Cancer",
+      "rationale": "Germline mutation R1331X was detected in the MSH6 gene, which is a strong indicator of Lynch Syndrome, despite MSI testing being negative",
+      "rejected": [
+        {
+          "label": "Muir-Torre Syndrome",
+          "why": "Less specific evidence and lower score_logit compared to Lynch Syndrome"
+        }
+      ],
+      "margin": "medium"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "A 43-year-old woman presented with abnormal vaginal bleeding",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "Family history was significant for prostate cancer in her father and paternal grandfather",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "Germline mutation R1331X was detected in the MSH6 gene",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "Tumor stained negative for MSH6 protein",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E005",
+        "raw_span": "MSI testing was negative",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E006",
+        "raw_span": "Dilation and curettage was performed",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E007",
+        "raw_span": "abnormal vaginal bleeding",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Lynch Syndrome",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E002",
+          "G1E003"
+        ],
+        "contradicting_evidence": [
+          "G1E005"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare genetic disorder that can be easily missed",
+        "score_logit": 1.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Endometrial Cancer",
+        "aliases": [
+          "MSH6-related Endometrial Cancer",
+          "MSH6-Associated Endometrial Cancer"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E006",
+          "G1E004",
+          "G1E003",
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G1E005"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a specific and rare condition that can be easily missed",
+        "score_logit": 4.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Muir-Torre Syndrome",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E002",
+          "G1E004"
+        ],
+        "contradicting_evidence": [
+          "G1E005"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection due to its rarity and the potential for it to be overlooked",
+        "score_logit": 1.0,
+        "status": "live"
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Lynch Syndrome",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Endometrial Cancer",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "MSH6-related Endometrial Cancer",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Lynch Syndrome",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Muir-Torre Syndrome",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "MSH6-Associated Endometrial Cancer",
+        "view": "g2"
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 3,
+    "n_evidence": 7,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.2,
+    "frontier_n": 3,
+    "protected_n": 3,
+    "g1_n": 3,
+    "g2_n": 3,
+    "adaptive_action": null,
+    "llm_calls": 3,
+    "history_leakage": 0
+  },
+  "prediction": {
+    "arm": "mosaic_adaptive4_v1",
+    "case_id": "diagnosisarena__000198",
+    "source_id": "198",
+    "dataset": "diagnosisarena",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Lynch Syndrome",
+      "Endometrial Cancer",
+      "Muir-Torre Syndrome"
+    ],
+    "top2_diagnoses": [
+      "Lynch Syndrome",
+      "Endometrial Cancer"
+    ],
+    "cost": {
+      "llm_calls": 3
+    },
+    "stages": {
+      "mode": "adaptive4",
+      "vignette_chars": 527,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Lynch Syndrome",
+            "support_spans": [
+              "Family history was significant for prostate cancer in her father and paternal grandfather",
+              "Germline mutation R1331X was detected in the MSH6 gene"
+            ],
+            "contradict_spans": [
+              "MSI testing was negative"
+            ],
+            "why": "The patient has a family history of prostate cancer and a germline mutation in the MSH6 gene, which is associated with Lynch Syndrome."
+          },
+          {
+            "name": "Endometrial Cancer",
+            "support_spans": [
+              "A 43-year-old woman presented with abnormal vaginal bleeding",
+              "Dilation and curettage was performed"
+            ],
+            "contradict_spans": [],
+            "why": "The patient presented with abnormal vaginal bleeding and underwent dilation and curettage, which is a common procedure for diagnosing endometrial cancer."
+          },
+          {
+            "name": "MSH6-related Endometrial Cancer",
+            "support_spans": [
+              "Tumor stained negative for MSH6 protein",
+              "Germline mutation R1331X was detected in the MSH6 gene"
+            ],
+            "contradict_spans": [],
+            "why": "The tumor's negative staining for MSH6 protein and the patient's germline mutation in the MSH6 gene suggest a possible link to MSH6-related endometrial cancer."
+          }
+        ],
+        "key_evidence_spans": [
+          "A 43-year-old woman presented with abnormal vaginal bleeding",
+          "Family history was significant for prostate cancer in her father and paternal grandfather",
+          "Germline mutation R1331X was detected in the MSH6 gene",
+          "Tumor stained negative for MSH6 protein"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Lynch Syndrome",
+            "support_spans": [
+              "Family history was significant for prostate cancer in her father and paternal grandfather",
+              "Germline mutation R1331X was detected in the MSH6 gene"
+            ],
+            "contradict_spans": [
+              "MSI testing was negative"
+            ],
+            "why": "The patient's family history of prostate cancer and the detected germline mutation in the MSH6 gene support this diagnosis",
+            "protected_reason": "This diagnosis may deserve minority protection because it is a rare genetic disorder that can be easily missed"
+          },
+          {
+            "name": "Muir-Torre Syndrome",
+            "support_spans": [
+              "Family history was significant for prostate cancer in her father and paternal grandfather",
+              "Tumor stained negative for MSH6 protein"
+            ],
+            "contradict_spans": [
+              "MSI testing was negative"
+            ],
+            "why": "The combination of abnormal vaginal bleeding and a family history of prostate cancer could suggest this rare syndrome",
+            "protected_reason": "This diagnosis may deserve minority protection due to its rarity and the potential for it to be overlooked"
+          },
+          {
+            "name": "MSH6-Associated Endometrial Cancer",
+            "support_spans": [
+              "Germline mutation R1331X was detected in the MSH6 gene",
+              "abnormal vaginal bleeding"
+            ],
+            "contradict_spans": [
+              "MSI testing was negative"
+            ],
+            "why": "The detected germline mutation in the MSH6 gene and the patient's symptoms support this specific disease entity",
+            "protected_reason": "This diagnosis may deserve minority protection because it is a specific and rare condition that can be easily missed"
+          }
+        ],
+        "key_evidence_spans": [
+          "Family history was significant for prostate cancer in her father and paternal grandfather",
+          "Germline mutation R1331X was detected in the MSH6 gene",
+          "Tumor stained negative for MSH6 protein"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "MSI testing was negative"
+        ],
+        "generator_jaccard": 0.2,
+        "top1_same_across_views": true,
+        "top_margin": 2.9999999999999996,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 1
+      },
+      "frontier_after_g": [
+        {
+          "concept_id": "C002",
+          "preferred_name": "Endometrial Cancer",
+          "aliases": [
+            "MSH6-related Endometrial Cancer",
+            "MSH6-Associated Endometrial Cancer"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E006",
+            "G1E004",
+            "G1E003",
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G1E005"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a specific and rare condition that can be easily missed",
+          "score_logit": 4.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C001",
+          "preferred_name": "Lynch Syndrome",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E002",
+            "G1E003"
+          ],
+          "contradicting_evidence": [
+            "G1E005"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare genetic disorder that can be easily missed",
+          "score_logit": 1.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Muir-Torre Syndrome",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E002",
+            "G1E004"
+          ],
+          "contradicting_evidence": [
+            "G1E005"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection due to its rarity and the potential for it to be overlooked",
+          "score_logit": 1.0,
+          "status": "live"
+        }
+      ],
+      "adaptive_action": null,
+      "selector": {
+        "champion": "Lynch Syndrome",
+        "runner_up": "Endometrial Cancer",
+        "rationale": "Germline mutation R1331X was detected in the MSH6 gene, which is a strong indicator of Lynch Syndrome, despite MSI testing being negative",
+        "rejected": [
+          {
+            "label": "Muir-Torre Syndrome",
+            "why": "Less specific evidence and lower score_logit compared to Lynch Syndrome"
+          }
+        ],
+        "margin": "medium"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "A 43-year-old woman presented with abnormal vaginal bleeding",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "Family history was significant for prostate cancer in her father and paternal grandfather",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "Germline mutation R1331X was detected in the MSH6 gene",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "Tumor stained negative for MSH6 protein",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E005",
+          "raw_span": "MSI testing was negative",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E006",
+          "raw_span": "Dilation and curettage was performed",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E007",
+          "raw_span": "abnormal vaginal bleeding",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Lynch Syndrome",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E002",
+            "G1E003"
+          ],
+          "contradicting_evidence": [
+            "G1E005"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare genetic disorder that can be easily missed",
+          "score_logit": 1.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Endometrial Cancer",
+          "aliases": [
+            "MSH6-related Endometrial Cancer",
+            "MSH6-Associated Endometrial Cancer"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E006",
+            "G1E004",
+            "G1E003",
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G1E005"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a specific and rare condition that can be easily missed",
+          "score_logit": 4.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Muir-Torre Syndrome",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E002",
+            "G1E004"
+          ],
+          "contradicting_evidence": [
+            "G1E005"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection due to its rarity and the potential for it to be overlooked",
+          "score_logit": 1.0,
+          "status": "live"
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Lynch Syndrome",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Endometrial Cancer",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "MSH6-related Endometrial Cancer",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Lynch Syndrome",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Muir-Torre Syndrome",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "MSH6-Associated Endometrial Cancer",
+          "view": "g2"
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 3,
+      "n_evidence": 7,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.2,
+      "frontier_n": 3,
+      "protected_n": 3,
+      "g1_n": 3,
+      "g2_n": 3,
+      "adaptive_action": null,
+      "llm_calls": 3,
+      "history_leakage": 0
+    },
+    "wall_s": 4.208
+  },
+  "created_at": "2026-08-08T01:50:23.079798+00:00"
+}

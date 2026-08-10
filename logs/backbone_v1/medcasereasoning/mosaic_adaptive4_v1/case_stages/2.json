@@ -1,0 +1,1050 @@
+{
+  "case_id": "medcasereasoning__000002",
+  "source_id": "2",
+  "champion": "Pyroglutamic Acidemia",
+  "ordered_diagnoses": [
+    "Pyroglutamic Acidemia",
+    "Diabetic Ketoacidosis",
+    "Lactic Acidosis",
+    "Methanol poisoning"
+  ],
+  "llm_calls": 4,
+  "stages": {
+    "mode": "adaptive4",
+    "vignette_chars": 1653,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Lactic Acidosis",
+          "support_spans": [
+            "lactic acid 0.7 mmol/L"
+          ],
+          "contradict_spans": [],
+          "why": "The patient has a high anion gap metabolic acidosis with a corrected anion gap of 25 mmol/L, but the lactic acid level is not significantly elevated."
+        },
+        {
+          "name": "Diabetic Ketoacidosis",
+          "support_spans": [
+            "type 2 diabetes"
+          ],
+          "contradict_spans": [
+            "blood ketones <0.2 mmol/L"
+          ],
+          "why": "The patient has a history of type 2 diabetes, but the blood ketone level is not significantly elevated."
+        },
+        {
+          "name": "Pyroglutamic Acidemia",
+          "support_spans": [
+            "high anion gap metabolic acidosis",
+            "unchanged renal function insufficient to explain the degree of acidosis"
+          ],
+          "contradict_spans": [],
+          "why": "The patient has a high anion gap metabolic acidosis with unchanged renal function, which could be consistent with pyroglutamic acidemia, especially given the use of acetaminophen."
+        }
+      ],
+      "key_evidence_spans": [
+        "pH 7.18, pCO2 1.7 kPa, pO2 16.7 kPa, bicarbonate 8.3 mmol/L, base excess –22.7 mmol/L",
+        "corrected anion gap was 25 mmol/L",
+        "lactic acid 0.7 mmol/L",
+        "blood ketones <0.2 mmol/L"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Pyroglutamic acidemia",
+          "support_spans": [
+            "bicarbonate 5 mmol/L",
+            "corrected anion gap was 25 mmol/L",
+            "osmolar gap was mildly elevated at 21 mOsm/kg"
+          ],
+          "contradict_spans": [
+            "lactic acid 0.7 mmol/L",
+            "blood ketones <0.2 mmol/L"
+          ],
+          "why": "The patient's high anion gap metabolic acidosis and elevated osmolar gap are consistent with pyroglutamic acidemia, a rare condition caused by an accumulation of pyroglutamic acid.",
+          "protected_reason": "This diagnosis may be easily missed due to its rarity and the need for specific laboratory tests, such as organic acid analysis, to confirm the diagnosis."
+        },
+        {
+          "name": "Methanol poisoning",
+          "support_spans": [
+            "hyperventilation",
+            "corrected anion gap was 25 mmol/L",
+            "osmolar gap was mildly elevated at 21 mOsm/kg"
+          ],
+          "contradict_spans": [
+            "methanol level not mentioned",
+            "serum toxicology, including acetaminophen level, was unremarkable"
+          ],
+          "why": "The patient's symptoms, such as hyperventilation, and laboratory results, including a high anion gap and elevated osmolar gap, could be consistent with methanol poisoning, although the lack of specific testing for methanol makes this diagnosis less likely.",
+          "protected_reason": "Methanol poisoning is a rare but serious condition that can be easily missed if not specifically tested for, and its diagnosis requires a high index of suspicion."
+        },
+        {
+          "name": "Diabetic ketoacidosis",
+          "support_spans": [
+            "type 2 diabetes",
+            "hyperventilation",
+            "bicarbonate 5 mmol/L"
+          ],
+          "contradict_spans": [
+            "blood ketones <0.2 mmol/L",
+            "unchanged renal function insufficient to explain the degree of acidosis"
+          ],
+          "why": "Although the patient has type 2 diabetes and is presenting with hyperventilation and metabolic acidosis, the low blood ketone level and lack of significant renal dysfunction make diabetic ketoacidosis a less likely diagnosis.",
+          "protected_reason": "Diabetic ketoacidosis is a common condition in diabetic patients, but its diagnosis requires specific laboratory tests, such as blood ketone levels, and clinical evaluation."
+        }
+      ],
+      "key_evidence_spans": [
+        "bicarbonate 5 mmol/L",
+        "corrected anion gap was 25 mmol/L",
+        "osmolar gap was mildly elevated at 21 mOsm/kg",
+        "hyperventilation"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "pH 7.18, pCO2 1.7 kPa, pO2 16.7 kPa, bicarbonate 8.3 mmol/L, base excess –22.7 mmol/L",
+        "blood ketones <0.2 mmol/L",
+        "methanol level not mentioned",
+        "serum toxicology, including acetaminophen level, was unremarkable"
+      ],
+      "generator_jaccard": 0.5,
+      "top1_same_across_views": true,
+      "top_margin": 2.0,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 2
+    },
+    "frontier_after_g": [
+      {
+        "concept_id": "C003",
+        "preferred_name": "Pyroglutamic Acidemia",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E006",
+          "G1E007",
+          "G2E008",
+          "G1E002",
+          "G2E009"
+        ],
+        "contradicting_evidence": [
+          "G1E003",
+          "G1E004"
+        ],
+        "protected_reason": "This diagnosis may be easily missed due to its rarity and the need for specific laboratory tests, such as organic acid analysis, to confirm the diagnosis.",
+        "score_logit": 3.1,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Diabetic Ketoacidosis",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E005",
+          "G2E010",
+          "G2E008"
+        ],
+        "contradicting_evidence": [
+          "G1E004",
+          "G1E007"
+        ],
+        "protected_reason": "Diabetic ketoacidosis is a common condition in diabetic patients, but its diagnosis requires specific laboratory tests, such as blood ketone levels, and clinical evaluation.",
+        "score_logit": 1.1,
+        "status": "live"
+      },
+      {
+        "concept_id": "C001",
+        "preferred_name": "Lactic Acidosis",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E003"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 1.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Methanol poisoning",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G2E010",
+          "G1E002",
+          "G2E009"
+        ],
+        "contradicting_evidence": [
+          "G2E011",
+          "G2E012"
+        ],
+        "protected_reason": "Methanol poisoning is a rare but serious condition that can be easily missed if not specifically tested for, and its diagnosis requires a high index of suspicion.",
+        "score_logit": 0.75,
+        "status": "live"
+      }
+    ],
+    "a1": {
+      "candidates": [
+        {
+          "name": "Lactic acidosis",
+          "support_spans": [
+            "pH 7.18, pCO2 1.7 kPa, pO2 16.7 kPa, bicarbonate 8.3 mmol/L, base excess –22.7 mmol/L"
+          ],
+          "contradict_spans": [
+            "lactic acid 0.7 mmol/L"
+          ],
+          "why": "The patient's arterial blood gas results show a severe metabolic acidosis, which could be consistent with lactic acidosis.",
+          "protected_reason": "explains unexplained high-specificity evidence of severe metabolic acidosis"
+        },
+        {
+          "name": "Ketoacidosis",
+          "support_spans": [
+            "blood ketones <0.2 mmol/L"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's blood ketone level is low, but the presence of metabolic acidosis and the patient's history of diabetes could suggest ketoacidosis.",
+          "protected_reason": "explains unexplained high-specificity evidence of metabolic acidosis"
+        },
+        {
+          "name": "Methanol poisoning",
+          "support_spans": [
+            "osmolar gap was mildly elevated at 21 mOsm/kg"
+          ],
+          "contradict_spans": [
+            "methanol level not mentioned"
+          ],
+          "why": "The patient's mildly elevated osmolar gap could suggest methanol poisoning, which can cause metabolic acidosis.",
+          "protected_reason": "explains unexplained high-specificity evidence of metabolic acidosis and elevated osmolar gap"
+        }
+      ]
+    },
+    "adaptive_action": "ORTHOGONAL_GENERATE",
+    "selector": {
+      "champion": "Pyroglutamic Acidemia",
+      "runner_up": "Diabetic Ketoacidosis",
+      "rationale": "High anion gap metabolic acidosis and unchanged renal function insufficient to explain the degree of acidosis support Pyroglutamic Acidemia, despite some contradictory evidence regarding lactic acid and blood ketones.",
+      "rejected": [
+        {
+          "label": "Lactic Acidosis",
+          "why": "Lactic acid level is not significantly elevated to explain the degree of acidosis"
+        },
+        {
+          "label": "Methanol poisoning",
+          "why": "Methanol level is not mentioned and serum toxicology is unremarkable"
+        }
+      ],
+      "margin": "medium"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "pH 7.18, pCO2 1.7 kPa, pO2 16.7 kPa, bicarbonate 8.3 mmol/L, base excess –22.7 mmol/L",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "corrected anion gap was 25 mmol/L",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "lactic acid 0.7 mmol/L",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "blood ketones <0.2 mmol/L",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E005",
+        "raw_span": "type 2 diabetes",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E006",
+        "raw_span": "high anion gap metabolic acidosis",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E007",
+        "raw_span": "unchanged renal function insufficient to explain the degree of acidosis",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E008",
+        "raw_span": "bicarbonate 5 mmol/L",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E009",
+        "raw_span": "osmolar gap was mildly elevated at 21 mOsm/kg",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E010",
+        "raw_span": "hyperventilation",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E011",
+        "raw_span": "methanol level not mentioned",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E012",
+        "raw_span": "serum toxicology, including acetaminophen level, was unremarkable",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Lactic Acidosis",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E001"
+        ],
+        "contradicting_evidence": [
+          "G1E003"
+        ],
+        "protected_reason": "explains unexplained high-specificity evidence of severe metabolic acidosis",
+        "score_logit": 1.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Diabetic Ketoacidosis",
+        "aliases": [
+          "Ketoacidosis"
+        ],
+        "generator_views": [
+          "g1",
+          "g2",
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G1E005",
+          "G2E010",
+          "G2E008",
+          "G1E004"
+        ],
+        "contradicting_evidence": [
+          "G1E004",
+          "G1E007"
+        ],
+        "protected_reason": "Diabetic ketoacidosis is a common condition in diabetic patients, but its diagnosis requires specific laboratory tests, such as blood ketone levels, and clinical evaluation.",
+        "score_logit": 2.45,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Pyroglutamic Acidemia",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E006",
+          "G1E007",
+          "G2E008",
+          "G1E002",
+          "G2E009"
+        ],
+        "contradicting_evidence": [
+          "G1E003",
+          "G1E004"
+        ],
+        "protected_reason": "This diagnosis may be easily missed due to its rarity and the need for specific laboratory tests, such as organic acid analysis, to confirm the diagnosis.",
+        "score_logit": 3.1,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Methanol poisoning",
+        "aliases": [],
+        "generator_views": [
+          "g2",
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G2E010",
+          "G1E002",
+          "G2E009"
+        ],
+        "contradicting_evidence": [
+          "G2E011",
+          "G2E012"
+        ],
+        "protected_reason": "Methanol poisoning is a rare but serious condition that can be easily missed if not specifically tested for, and its diagnosis requires a high index of suspicion.",
+        "score_logit": 1.1,
+        "status": "live"
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Lactic Acidosis",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Diabetic Ketoacidosis",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Pyroglutamic Acidemia",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C003",
+        "name": "Pyroglutamic acidemia",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C004",
+        "name": "Methanol poisoning",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Diabetic ketoacidosis",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Lactic acidosis",
+        "view": "a1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Ketoacidosis",
+        "view": "a1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C004",
+        "name": "Methanol poisoning",
+        "view": "a1"
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 4,
+    "n_evidence": 12,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.5,
+    "frontier_n": 4,
+    "protected_n": 4,
+    "g1_n": 3,
+    "g2_n": 3,
+    "adaptive_action": "ORTHOGONAL_GENERATE",
+    "llm_calls": 4,
+    "history_leakage": 0
+  },
+  "prediction": {
+    "arm": "mosaic_adaptive4_v1",
+    "case_id": "medcasereasoning__000002",
+    "source_id": "2",
+    "dataset": "medcasereasoning",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Pyroglutamic Acidemia",
+      "Diabetic Ketoacidosis",
+      "Lactic Acidosis",
+      "Methanol poisoning"
+    ],
+    "top2_diagnoses": [
+      "Pyroglutamic Acidemia",
+      "Diabetic Ketoacidosis"
+    ],
+    "cost": {
+      "llm_calls": 4
+    },
+    "stages": {
+      "mode": "adaptive4",
+      "vignette_chars": 1653,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Lactic Acidosis",
+            "support_spans": [
+              "lactic acid 0.7 mmol/L"
+            ],
+            "contradict_spans": [],
+            "why": "The patient has a high anion gap metabolic acidosis with a corrected anion gap of 25 mmol/L, but the lactic acid level is not significantly elevated."
+          },
+          {
+            "name": "Diabetic Ketoacidosis",
+            "support_spans": [
+              "type 2 diabetes"
+            ],
+            "contradict_spans": [
+              "blood ketones <0.2 mmol/L"
+            ],
+            "why": "The patient has a history of type 2 diabetes, but the blood ketone level is not significantly elevated."
+          },
+          {
+            "name": "Pyroglutamic Acidemia",
+            "support_spans": [
+              "high anion gap metabolic acidosis",
+              "unchanged renal function insufficient to explain the degree of acidosis"
+            ],
+            "contradict_spans": [],
+            "why": "The patient has a high anion gap metabolic acidosis with unchanged renal function, which could be consistent with pyroglutamic acidemia, especially given the use of acetaminophen."
+          }
+        ],
+        "key_evidence_spans": [
+          "pH 7.18, pCO2 1.7 kPa, pO2 16.7 kPa, bicarbonate 8.3 mmol/L, base excess –22.7 mmol/L",
+          "corrected anion gap was 25 mmol/L",
+          "lactic acid 0.7 mmol/L",
+          "blood ketones <0.2 mmol/L"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Pyroglutamic acidemia",
+            "support_spans": [
+              "bicarbonate 5 mmol/L",
+              "corrected anion gap was 25 mmol/L",
+              "osmolar gap was mildly elevated at 21 mOsm/kg"
+            ],
+            "contradict_spans": [
+              "lactic acid 0.7 mmol/L",
+              "blood ketones <0.2 mmol/L"
+            ],
+            "why": "The patient's high anion gap metabolic acidosis and elevated osmolar gap are consistent with pyroglutamic acidemia, a rare condition caused by an accumulation of pyroglutamic acid.",
+            "protected_reason": "This diagnosis may be easily missed due to its rarity and the need for specific laboratory tests, such as organic acid analysis, to confirm the diagnosis."
+          },
+          {
+            "name": "Methanol poisoning",
+            "support_spans": [
+              "hyperventilation",
+              "corrected anion gap was 25 mmol/L",
+              "osmolar gap was mildly elevated at 21 mOsm/kg"
+            ],
+            "contradict_spans": [
+              "methanol level not mentioned",
+              "serum toxicology, including acetaminophen level, was unremarkable"
+            ],
+            "why": "The patient's symptoms, such as hyperventilation, and laboratory results, including a high anion gap and elevated osmolar gap, could be consistent with methanol poisoning, although the lack of specific testing for methanol makes this diagnosis less likely.",
+            "protected_reason": "Methanol poisoning is a rare but serious condition that can be easily missed if not specifically tested for, and its diagnosis requires a high index of suspicion."
+          },
+          {
+            "name": "Diabetic ketoacidosis",
+            "support_spans": [
+              "type 2 diabetes",
+              "hyperventilation",
+              "bicarbonate 5 mmol/L"
+            ],
+            "contradict_spans": [
+              "blood ketones <0.2 mmol/L",
+              "unchanged renal function insufficient to explain the degree of acidosis"
+            ],
+            "why": "Although the patient has type 2 diabetes and is presenting with hyperventilation and metabolic acidosis, the low blood ketone level and lack of significant renal dysfunction make diabetic ketoacidosis a less likely diagnosis.",
+            "protected_reason": "Diabetic ketoacidosis is a common condition in diabetic patients, but its diagnosis requires specific laboratory tests, such as blood ketone levels, and clinical evaluation."
+          }
+        ],
+        "key_evidence_spans": [
+          "bicarbonate 5 mmol/L",
+          "corrected anion gap was 25 mmol/L",
+          "osmolar gap was mildly elevated at 21 mOsm/kg",
+          "hyperventilation"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "pH 7.18, pCO2 1.7 kPa, pO2 16.7 kPa, bicarbonate 8.3 mmol/L, base excess –22.7 mmol/L",
+          "blood ketones <0.2 mmol/L",
+          "methanol level not mentioned",
+          "serum toxicology, including acetaminophen level, was unremarkable"
+        ],
+        "generator_jaccard": 0.5,
+        "top1_same_across_views": true,
+        "top_margin": 2.0,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 2
+      },
+      "frontier_after_g": [
+        {
+          "concept_id": "C003",
+          "preferred_name": "Pyroglutamic Acidemia",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E006",
+            "G1E007",
+            "G2E008",
+            "G1E002",
+            "G2E009"
+          ],
+          "contradicting_evidence": [
+            "G1E003",
+            "G1E004"
+          ],
+          "protected_reason": "This diagnosis may be easily missed due to its rarity and the need for specific laboratory tests, such as organic acid analysis, to confirm the diagnosis.",
+          "score_logit": 3.1,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Diabetic Ketoacidosis",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E005",
+            "G2E010",
+            "G2E008"
+          ],
+          "contradicting_evidence": [
+            "G1E004",
+            "G1E007"
+          ],
+          "protected_reason": "Diabetic ketoacidosis is a common condition in diabetic patients, but its diagnosis requires specific laboratory tests, such as blood ketone levels, and clinical evaluation.",
+          "score_logit": 1.1,
+          "status": "live"
+        },
+        {
+          "concept_id": "C001",
+          "preferred_name": "Lactic Acidosis",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E003"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 1.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Methanol poisoning",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G2E010",
+            "G1E002",
+            "G2E009"
+          ],
+          "contradicting_evidence": [
+            "G2E011",
+            "G2E012"
+          ],
+          "protected_reason": "Methanol poisoning is a rare but serious condition that can be easily missed if not specifically tested for, and its diagnosis requires a high index of suspicion.",
+          "score_logit": 0.75,
+          "status": "live"
+        }
+      ],
+      "a1": {
+        "candidates": [
+          {
+            "name": "Lactic acidosis",
+            "support_spans": [
+              "pH 7.18, pCO2 1.7 kPa, pO2 16.7 kPa, bicarbonate 8.3 mmol/L, base excess –22.7 mmol/L"
+            ],
+            "contradict_spans": [
+              "lactic acid 0.7 mmol/L"
+            ],
+            "why": "The patient's arterial blood gas results show a severe metabolic acidosis, which could be consistent with lactic acidosis.",
+            "protected_reason": "explains unexplained high-specificity evidence of severe metabolic acidosis"
+          },
+          {
+            "name": "Ketoacidosis",
+            "support_spans": [
+              "blood ketones <0.2 mmol/L"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's blood ketone level is low, but the presence of metabolic acidosis and the patient's history of diabetes could suggest ketoacidosis.",
+            "protected_reason": "explains unexplained high-specificity evidence of metabolic acidosis"
+          },
+          {
+            "name": "Methanol poisoning",
+            "support_spans": [
+              "osmolar gap was mildly elevated at 21 mOsm/kg"
+            ],
+            "contradict_spans": [
+              "methanol level not mentioned"
+            ],
+            "why": "The patient's mildly elevated osmolar gap could suggest methanol poisoning, which can cause metabolic acidosis.",
+            "protected_reason": "explains unexplained high-specificity evidence of metabolic acidosis and elevated osmolar gap"
+          }
+        ]
+      },
+      "adaptive_action": "ORTHOGONAL_GENERATE",
+      "selector": {
+        "champion": "Pyroglutamic Acidemia",
+        "runner_up": "Diabetic Ketoacidosis",
+        "rationale": "High anion gap metabolic acidosis and unchanged renal function insufficient to explain the degree of acidosis support Pyroglutamic Acidemia, despite some contradictory evidence regarding lactic acid and blood ketones.",
+        "rejected": [
+          {
+            "label": "Lactic Acidosis",
+            "why": "Lactic acid level is not significantly elevated to explain the degree of acidosis"
+          },
+          {
+            "label": "Methanol poisoning",
+            "why": "Methanol level is not mentioned and serum toxicology is unremarkable"
+          }
+        ],
+        "margin": "medium"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "pH 7.18, pCO2 1.7 kPa, pO2 16.7 kPa, bicarbonate 8.3 mmol/L, base excess –22.7 mmol/L",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "corrected anion gap was 25 mmol/L",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "lactic acid 0.7 mmol/L",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "blood ketones <0.2 mmol/L",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E005",
+          "raw_span": "type 2 diabetes",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E006",
+          "raw_span": "high anion gap metabolic acidosis",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E007",
+          "raw_span": "unchanged renal function insufficient to explain the degree of acidosis",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E008",
+          "raw_span": "bicarbonate 5 mmol/L",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E009",
+          "raw_span": "osmolar gap was mildly elevated at 21 mOsm/kg",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E010",
+          "raw_span": "hyperventilation",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E011",
+          "raw_span": "methanol level not mentioned",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E012",
+          "raw_span": "serum toxicology, including acetaminophen level, was unremarkable",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Lactic Acidosis",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E001"
+          ],
+          "contradicting_evidence": [
+            "G1E003"
+          ],
+          "protected_reason": "explains unexplained high-specificity evidence of severe metabolic acidosis",
+          "score_logit": 1.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Diabetic Ketoacidosis",
+          "aliases": [
+            "Ketoacidosis"
+          ],
+          "generator_views": [
+            "g1",
+            "g2",
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G1E005",
+            "G2E010",
+            "G2E008",
+            "G1E004"
+          ],
+          "contradicting_evidence": [
+            "G1E004",
+            "G1E007"
+          ],
+          "protected_reason": "Diabetic ketoacidosis is a common condition in diabetic patients, but its diagnosis requires specific laboratory tests, such as blood ketone levels, and clinical evaluation.",
+          "score_logit": 2.45,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Pyroglutamic Acidemia",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E006",
+            "G1E007",
+            "G2E008",
+            "G1E002",
+            "G2E009"
+          ],
+          "contradicting_evidence": [
+            "G1E003",
+            "G1E004"
+          ],
+          "protected_reason": "This diagnosis may be easily missed due to its rarity and the need for specific laboratory tests, such as organic acid analysis, to confirm the diagnosis.",
+          "score_logit": 3.1,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Methanol poisoning",
+          "aliases": [],
+          "generator_views": [
+            "g2",
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G2E010",
+            "G1E002",
+            "G2E009"
+          ],
+          "contradicting_evidence": [
+            "G2E011",
+            "G2E012"
+          ],
+          "protected_reason": "Methanol poisoning is a rare but serious condition that can be easily missed if not specifically tested for, and its diagnosis requires a high index of suspicion.",
+          "score_logit": 1.1,
+          "status": "live"
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Lactic Acidosis",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Diabetic Ketoacidosis",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Pyroglutamic Acidemia",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C003",
+          "name": "Pyroglutamic acidemia",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C004",
+          "name": "Methanol poisoning",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Diabetic ketoacidosis",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Lactic acidosis",
+          "view": "a1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Ketoacidosis",
+          "view": "a1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C004",
+          "name": "Methanol poisoning",
+          "view": "a1"
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 4,
+      "n_evidence": 12,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.5,
+      "frontier_n": 4,
+      "protected_n": 4,
+      "g1_n": 3,
+      "g2_n": 3,
+      "adaptive_action": "ORTHOGONAL_GENERATE",
+      "llm_calls": 4,
+      "history_leakage": 0
+    },
+    "wall_s": 12.363
+  },
+  "created_at": "2026-08-08T01:50:17.384036+00:00"
+}

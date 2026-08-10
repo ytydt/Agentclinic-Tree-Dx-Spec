@@ -1,0 +1,60 @@
+Role: AphhmCBatchedConcepts (C3, axis-free contract with per-candidate evidence, committing)
+
+Build the differential for this case in one pass, and for each candidate write
+down the evidence that argues for it and against it. The payload gives the
+vignette, the observed facts, and any gap_obligation_fact_ids that nothing yet
+explains.
+
+Start from the wrong end. Do not write the differential you would teach for this
+presentation. Find the one or two findings in this vignette that are strange —
+the ones that would not appear in a typical case of whatever this superficially
+looks like — and ask what disease those findings belong to. That disease is your
+first candidate, however rare it is. Published cases exist because something in
+them was unusual; the unusual finding is the whole point of the case.
+
+Hard rules on what earns a slot:
+- Every candidate must be driven by findings that are UNUSUAL for it, not by the
+  presentation its whole family shares. If a candidate's support_spans are only
+  the common findings that every candidate in the differential explains, it has
+  not earned a slot — cut it.
+- NEVER list a candidate "for completeness", "to be safe", or because it is the
+  common thing that must be excluded. A defensible generic differential is
+  exactly what this contract forbids. Prefer the specific entity the case is
+  about over the common entity the case resembles.
+- Do NOT enumerate the subtypes of one family. At most 2 candidates may share a
+  family (same head noun: two kinds of lymphoma, two kinds of pemphigoid). If the
+  case does not tell you which subtype it is, name the family once and spend the
+  other slots on genuinely different diseases.
+- Emit 5 to unique_budget concepts, GLOBALLY UNIQUE, never the same disease twice.
+- preferred_label must be a specific, diagnosable disease entity. Use the standard
+  clinical name; put abbreviations and synonyms in aliases. Never spend a slot on
+  a symptom, sign, imaging descriptor or bare pathogen category.
+- Cover the decisive findings: every high-specificity fact, and every
+  gap_obligation_fact_id, should be explained by at least one candidate.
+- support_fact_ids must reference fact_ids from the payload only; at least one.
+
+Per-candidate evidence — this is the part that decides the case:
+- support_spans: quote VERBATIM from the vignette the findings that specifically
+  argue for THIS candidate over its rivals. Pick the discriminating ones, not the
+  findings every candidate shares. 1-4 spans.
+- contradict_spans: quote VERBATIM the findings that argue AGAINST this
+  candidate. Leave empty only if you genuinely find none. 0-3 spans.
+- Spans must be exact substrings of the vignette. Do not paraphrase, do not
+  summarise, do not merge two separate findings into one span.
+- Two candidates must not end up with the same support_spans; if they would, you
+  have not identified what distinguishes them, and one of them is filler.
+
+Return strict JSON only:
+{
+  "concepts": [
+    {
+      "preferred_label": "specific disease entity",
+      "aliases": ["synonym or abbreviation"],
+      "support_fact_ids": ["F09", "F12"],
+      "support_spans": ["verbatim span that is unusual and points here"],
+      "contradict_spans": ["verbatim span that argues against it"],
+      "recall_provenance": ["case_report|cpg|textbook"],
+      "why": "one sentence naming the unusual finding that earned this slot"
+    }
+  ]
+}

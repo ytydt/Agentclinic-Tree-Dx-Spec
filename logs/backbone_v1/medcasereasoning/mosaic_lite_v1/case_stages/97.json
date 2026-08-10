@@ -1,0 +1,644 @@
+{
+  "case_id": "medcasereasoning__000097",
+  "source_id": "97",
+  "champion": "fibroadenoma",
+  "ordered_diagnoses": [
+    "fibroadenoma",
+    "Neurofibroma",
+    "Phyllodes tumor"
+  ],
+  "llm_calls": 3,
+  "stages": {
+    "mode": "lite",
+    "vignette_chars": 863,
+    "g1": {
+      "candidates": [
+        {
+          "name": "fibroadenoma",
+          "support_spans": [
+            "Ultrasonography of the left breast revealed a heterogeneous parenchymal pattern suggestive of fibroadenoma",
+            "Fine-needle aspiration cytology of the lump showed pathology suggesting fibroadenoma"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's presentation and diagnostic results are consistent with a benign breast tumor."
+        }
+      ],
+      "key_evidence_spans": [
+        "Ultrasonography of the left breast revealed a heterogeneous parenchymal pattern suggestive of fibroadenoma",
+        "Fine-needle aspiration cytology of the lump showed pathology suggesting fibroadenoma",
+        "The mass was not fixed to skin or underlying muscle"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Juvenile fibroadenoma",
+          "support_spans": [
+            "a 1-year history of a rapidly enlarging left breast mass",
+            "Ultrasonography of the left breast revealed a heterogeneous parenchymal pattern suggestive of fibroadenoma"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's age and the rapid enlargement of the breast mass are consistent with juvenile fibroadenoma.",
+          "protected_reason": "This diagnosis may be easily missed due to the patient's young age and the rarity of breast masses in premenarcheal girls."
+        },
+        {
+          "name": "Phyllodes tumor",
+          "support_spans": [
+            "a 20 cm × 20 cm well-circumscribed, firm, non-tender, mobile lump"
+          ],
+          "contradict_spans": [
+            "Fine-needle aspiration cytology of the lump showed pathology suggesting fibroadenoma"
+          ],
+          "why": "The large size and rapid growth of the mass could be indicative of a Phyllodes tumor, although the cytology results suggest fibroadenoma.",
+          "protected_reason": "Phyllodes tumors are rare and may be underdiagnosed, especially in young patients."
+        },
+        {
+          "name": "Neurofibroma",
+          "support_spans": [
+            "a well-circumscribed, firm, non-tender, mobile lump"
+          ],
+          "contradict_spans": [
+            "no significant family history"
+          ],
+          "why": "The description of the lump is consistent with a neurofibroma, although the lack of family history and other findings make this diagnosis less likely.",
+          "protected_reason": "Neurofibromas can be easily missed due to their rarity and variable presentation."
+        }
+      ],
+      "key_evidence_spans": [
+        "a 20 cm × 20 cm well-circumscribed, firm, non-tender, mobile lump",
+        "Ultrasonography of the left breast revealed a heterogeneous parenchymal pattern suggestive of fibroadenoma"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "The mass was not fixed to skin or underlying muscle",
+        "no significant family history"
+      ],
+      "generator_jaccard": 0.0,
+      "top1_same_across_views": true,
+      "top_margin": 3.6,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "frontier_after_g": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "fibroadenoma",
+        "aliases": [
+          "Juvenile fibroadenoma"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G2E005"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "This diagnosis may be easily missed due to the patient's young age and the rarity of breast masses in premenarcheal girls.",
+        "score_logit": 3.6,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Neurofibroma",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G2E006"
+        ],
+        "contradicting_evidence": [
+          "G2E007"
+        ],
+        "protected_reason": "Neurofibromas can be easily missed due to their rarity and variable presentation.",
+        "score_logit": 0.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Phyllodes tumor",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G2E004"
+        ],
+        "contradicting_evidence": [
+          "G1E002"
+        ],
+        "protected_reason": "Phyllodes tumors are rare and may be underdiagnosed, especially in young patients.",
+        "score_logit": 0.0,
+        "status": "live"
+      }
+    ],
+    "adaptive_action": null,
+    "selector": {
+      "champion": "fibroadenoma",
+      "runner_up": "",
+      "rationale": "Ultrasonography and fine-needle aspiration cytology both suggest fibroadenoma, with no strong contradictions",
+      "rejected": [
+        {
+          "label": "Neurofibroma",
+          "why": "Lack of significant family history and no other supporting evidence"
+        },
+        {
+          "label": "Phyllodes tumor",
+          "why": "Fine-needle aspiration cytology showed pathology suggesting fibroadenoma, contradicting Phyllodes tumor"
+        }
+      ],
+      "margin": "high"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "Ultrasonography of the left breast revealed a heterogeneous parenchymal pattern suggestive of fibroadenoma",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "Fine-needle aspiration cytology of the lump showed pathology suggesting fibroadenoma",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "The mass was not fixed to skin or underlying muscle",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E004",
+        "raw_span": "a 20 cm × 20 cm well-circumscribed, firm, non-tender, mobile lump",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E005",
+        "raw_span": "a 1-year history of a rapidly enlarging left breast mass",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E006",
+        "raw_span": "a well-circumscribed, firm, non-tender, mobile lump",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E007",
+        "raw_span": "no significant family history",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "fibroadenoma",
+        "aliases": [
+          "Juvenile fibroadenoma"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G2E005"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "This diagnosis may be easily missed due to the patient's young age and the rarity of breast masses in premenarcheal girls.",
+        "score_logit": 3.6,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Phyllodes tumor",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G2E004"
+        ],
+        "contradicting_evidence": [
+          "G1E002"
+        ],
+        "protected_reason": "Phyllodes tumors are rare and may be underdiagnosed, especially in young patients.",
+        "score_logit": 0.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Neurofibroma",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G2E006"
+        ],
+        "contradicting_evidence": [
+          "G2E007"
+        ],
+        "protected_reason": "Neurofibromas can be easily missed due to their rarity and variable presentation.",
+        "score_logit": 0.0,
+        "status": "live"
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "fibroadenoma",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Juvenile fibroadenoma",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Phyllodes tumor",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Neurofibroma",
+        "view": "g2"
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 3,
+    "n_evidence": 7,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.0,
+    "frontier_n": 3,
+    "protected_n": 3,
+    "g1_n": 1,
+    "g2_n": 3,
+    "adaptive_action": null,
+    "llm_calls": 3,
+    "history_leakage": 0
+  },
+  "prediction": {
+    "arm": "mosaic_lite_v1",
+    "case_id": "medcasereasoning__000097",
+    "source_id": "97",
+    "dataset": "medcasereasoning",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "fibroadenoma",
+      "Neurofibroma",
+      "Phyllodes tumor"
+    ],
+    "top2_diagnoses": [
+      "fibroadenoma",
+      "Neurofibroma"
+    ],
+    "cost": {
+      "llm_calls": 3
+    },
+    "stages": {
+      "mode": "lite",
+      "vignette_chars": 863,
+      "g1": {
+        "candidates": [
+          {
+            "name": "fibroadenoma",
+            "support_spans": [
+              "Ultrasonography of the left breast revealed a heterogeneous parenchymal pattern suggestive of fibroadenoma",
+              "Fine-needle aspiration cytology of the lump showed pathology suggesting fibroadenoma"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's presentation and diagnostic results are consistent with a benign breast tumor."
+          }
+        ],
+        "key_evidence_spans": [
+          "Ultrasonography of the left breast revealed a heterogeneous parenchymal pattern suggestive of fibroadenoma",
+          "Fine-needle aspiration cytology of the lump showed pathology suggesting fibroadenoma",
+          "The mass was not fixed to skin or underlying muscle"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Juvenile fibroadenoma",
+            "support_spans": [
+              "a 1-year history of a rapidly enlarging left breast mass",
+              "Ultrasonography of the left breast revealed a heterogeneous parenchymal pattern suggestive of fibroadenoma"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's age and the rapid enlargement of the breast mass are consistent with juvenile fibroadenoma.",
+            "protected_reason": "This diagnosis may be easily missed due to the patient's young age and the rarity of breast masses in premenarcheal girls."
+          },
+          {
+            "name": "Phyllodes tumor",
+            "support_spans": [
+              "a 20 cm × 20 cm well-circumscribed, firm, non-tender, mobile lump"
+            ],
+            "contradict_spans": [
+              "Fine-needle aspiration cytology of the lump showed pathology suggesting fibroadenoma"
+            ],
+            "why": "The large size and rapid growth of the mass could be indicative of a Phyllodes tumor, although the cytology results suggest fibroadenoma.",
+            "protected_reason": "Phyllodes tumors are rare and may be underdiagnosed, especially in young patients."
+          },
+          {
+            "name": "Neurofibroma",
+            "support_spans": [
+              "a well-circumscribed, firm, non-tender, mobile lump"
+            ],
+            "contradict_spans": [
+              "no significant family history"
+            ],
+            "why": "The description of the lump is consistent with a neurofibroma, although the lack of family history and other findings make this diagnosis less likely.",
+            "protected_reason": "Neurofibromas can be easily missed due to their rarity and variable presentation."
+          }
+        ],
+        "key_evidence_spans": [
+          "a 20 cm × 20 cm well-circumscribed, firm, non-tender, mobile lump",
+          "Ultrasonography of the left breast revealed a heterogeneous parenchymal pattern suggestive of fibroadenoma"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "The mass was not fixed to skin or underlying muscle",
+          "no significant family history"
+        ],
+        "generator_jaccard": 0.0,
+        "top1_same_across_views": true,
+        "top_margin": 3.6,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 0
+      },
+      "frontier_after_g": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "fibroadenoma",
+          "aliases": [
+            "Juvenile fibroadenoma"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G2E005"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "This diagnosis may be easily missed due to the patient's young age and the rarity of breast masses in premenarcheal girls.",
+          "score_logit": 3.6,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Neurofibroma",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G2E006"
+          ],
+          "contradicting_evidence": [
+            "G2E007"
+          ],
+          "protected_reason": "Neurofibromas can be easily missed due to their rarity and variable presentation.",
+          "score_logit": 0.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Phyllodes tumor",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G2E004"
+          ],
+          "contradicting_evidence": [
+            "G1E002"
+          ],
+          "protected_reason": "Phyllodes tumors are rare and may be underdiagnosed, especially in young patients.",
+          "score_logit": 0.0,
+          "status": "live"
+        }
+      ],
+      "adaptive_action": null,
+      "selector": {
+        "champion": "fibroadenoma",
+        "runner_up": "",
+        "rationale": "Ultrasonography and fine-needle aspiration cytology both suggest fibroadenoma, with no strong contradictions",
+        "rejected": [
+          {
+            "label": "Neurofibroma",
+            "why": "Lack of significant family history and no other supporting evidence"
+          },
+          {
+            "label": "Phyllodes tumor",
+            "why": "Fine-needle aspiration cytology showed pathology suggesting fibroadenoma, contradicting Phyllodes tumor"
+          }
+        ],
+        "margin": "high"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "Ultrasonography of the left breast revealed a heterogeneous parenchymal pattern suggestive of fibroadenoma",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "Fine-needle aspiration cytology of the lump showed pathology suggesting fibroadenoma",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "The mass was not fixed to skin or underlying muscle",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E004",
+          "raw_span": "a 20 cm × 20 cm well-circumscribed, firm, non-tender, mobile lump",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E005",
+          "raw_span": "a 1-year history of a rapidly enlarging left breast mass",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E006",
+          "raw_span": "a well-circumscribed, firm, non-tender, mobile lump",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E007",
+          "raw_span": "no significant family history",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "fibroadenoma",
+          "aliases": [
+            "Juvenile fibroadenoma"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G2E005"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "This diagnosis may be easily missed due to the patient's young age and the rarity of breast masses in premenarcheal girls.",
+          "score_logit": 3.6,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Phyllodes tumor",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G2E004"
+          ],
+          "contradicting_evidence": [
+            "G1E002"
+          ],
+          "protected_reason": "Phyllodes tumors are rare and may be underdiagnosed, especially in young patients.",
+          "score_logit": 0.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Neurofibroma",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G2E006"
+          ],
+          "contradicting_evidence": [
+            "G2E007"
+          ],
+          "protected_reason": "Neurofibromas can be easily missed due to their rarity and variable presentation.",
+          "score_logit": 0.0,
+          "status": "live"
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "fibroadenoma",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Juvenile fibroadenoma",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Phyllodes tumor",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Neurofibroma",
+          "view": "g2"
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 3,
+      "n_evidence": 7,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.0,
+      "frontier_n": 3,
+      "protected_n": 3,
+      "g1_n": 1,
+      "g2_n": 3,
+      "adaptive_action": null,
+      "llm_calls": 3,
+      "history_leakage": 0
+    },
+    "wall_s": 3.737
+  },
+  "created_at": "2026-08-08T01:50:18.807421+00:00"
+}

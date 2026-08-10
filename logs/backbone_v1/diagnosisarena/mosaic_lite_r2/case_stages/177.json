@@ -1,0 +1,954 @@
+{
+  "case_id": "diagnosisarena__000177",
+  "source_id": "177",
+  "champion": "Myocardial Infarction",
+  "ordered_diagnoses": [
+    "Myocardial Infarction",
+    "Acute Coronary Syndrome",
+    "Cardiogenic Shock",
+    "Takotsubo Cardiomyopathy",
+    "Aortic Dissection"
+  ],
+  "llm_calls": 3,
+  "stages": {
+    "mode": "lite",
+    "vignette_chars": 1063,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Acute Coronary Syndrome",
+          "support_spans": [
+            "sudden-onset chest pain",
+            "ST-segment elevation in leads II, III, and aVF",
+            "high-sensitive troponin T level: 0.309 ng/mL"
+          ],
+          "contradict_spans": [],
+          "why": "The patient presented with sudden-onset chest pain and had elevated troponin levels, which are indicative of acute coronary syndrome."
+        },
+        {
+          "name": "Myocardial Infarction",
+          "support_spans": [
+            "ST-segment elevation in leads II, III, and aVF",
+            "thrombotic occlusion of the distal left circumflex artery",
+            "high-sensitive troponin T level: 0.309 ng/mL"
+          ],
+          "contradict_spans": [],
+          "why": "The patient had ST-segment elevation and thrombotic occlusion of a coronary artery, which are diagnostic of myocardial infarction."
+        },
+        {
+          "name": "Cardiogenic Shock",
+          "support_spans": [
+            "blood pressure fell to 60/40 mm Hg",
+            "thrombotic occlusion of the distal left circumflex artery"
+          ],
+          "contradict_spans": [],
+          "why": "The patient developed hypotension without arrhythmia or bleeding, which is consistent with cardiogenic shock due to myocardial infarction."
+        }
+      ],
+      "key_evidence_spans": [
+        "sudden-onset chest pain",
+        "ST-segment elevation in leads II, III, and aVF",
+        "high-sensitive troponin T level: 0.309 ng/mL",
+        "thrombotic occlusion of the distal left circumflex artery",
+        "blood pressure fell to 60/40 mm Hg"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Acute Coronary Syndrome with Cardiogenic Shock",
+          "support_spans": [
+            "sudden-onset chest pain",
+            "blood pressure fell to 60/40 mm Hg",
+            "ST-segment elevation in leads II, III, and aVF"
+          ],
+          "contradict_spans": [
+            "normal heart rate and blood pressure initially"
+          ],
+          "why": "The patient's presentation with sudden-onset chest pain and subsequent hypotension, along with ECG findings of ST-segment elevation, supports this diagnosis.",
+          "protected_reason": "This diagnosis may be overlooked in favor of other causes of chest pain, but the combination of ECG and hemodynamic findings makes it a strong candidate."
+        },
+        {
+          "name": "Takotsubo Cardiomyopathy",
+          "support_spans": [
+            "sudden-onset chest pain",
+            "ST-segment elevation in leads II, III, and aVF",
+            "subtle ST-segment elevation in leads V7-V9"
+          ],
+          "contradict_spans": [
+            "thrombotic occlusion of the distal left circumflex artery"
+          ],
+          "why": "The patient's presentation with sudden-onset chest pain and ECG findings of ST-segment elevation, along with the absence of pathologic Q waves, could suggest Takotsubo cardiomyopathy.",
+          "protected_reason": "This diagnosis may be underconsidered in the presence of ECG findings suggestive of acute coronary syndrome, but the lack of Q waves and the presence of ST-segment elevation in multiple leads makes it a plausible alternative."
+        },
+        {
+          "name": "Aortic Dissection",
+          "support_spans": [
+            "sudden-onset chest pain",
+            "blood pressure fell to 60/40 mm Hg"
+          ],
+          "contradict_spans": [
+            "ECG findings of ST-segment elevation in leads II, III, and aVF"
+          ],
+          "why": "The patient's presentation with sudden-onset chest pain and subsequent hypotension could suggest aortic dissection, although the ECG findings are not typical for this diagnosis.",
+          "protected_reason": "This diagnosis may be overlooked in favor of other causes of chest pain, but the severity of the patient's presentation and the presence of hypotension make it a consideration that should not be dismissed without further evaluation."
+        }
+      ],
+      "key_evidence_spans": [
+        "sudden-onset chest pain",
+        "ST-segment elevation in leads II, III, and aVF",
+        "blood pressure fell to 60/40 mm Hg",
+        "thrombotic occlusion of the distal left circumflex artery"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "normal heart rate and blood pressure initially",
+        "ECG findings of ST-segment elevation in leads II, III, and aVF"
+      ],
+      "generator_jaccard": 0.0,
+      "top1_same_across_views": true,
+      "top_margin": 0.3500000000000001,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 1
+    },
+    "adaptive_action": null,
+    "selector": {
+      "champion": "Myocardial Infarction",
+      "runner_up": "Acute Coronary Syndrome",
+      "rationale": "The combination of ST-segment elevation in multiple leads, thrombotic occlusion of the distal left circumflex artery, and elevated high-sensitive troponin T level provides strong evidence for myocardial infarction.",
+      "rejected": [
+        {
+          "label": "Takotsubo Cardiomyopathy",
+          "why": "Thrombotic occlusion of the distal left circumflex artery contradicts this diagnosis."
+        },
+        {
+          "label": "Aortic Dissection",
+          "why": "ECG findings of ST-segment elevation in leads II, III, and aVF contradict this diagnosis."
+        },
+        {
+          "label": "Cardiogenic Shock",
+          "why": "While the patient's blood pressure fell, the primary diagnosis of myocardial infarction explains this finding."
+        }
+      ],
+      "margin": "high"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "sudden-onset chest pain",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "ST-segment elevation in leads II, III, and aVF",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "high-sensitive troponin T level: 0.309 ng/mL",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "thrombotic occlusion of the distal left circumflex artery",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E005",
+        "raw_span": "blood pressure fell to 60/40 mm Hg",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E006",
+        "raw_span": "normal heart rate and blood pressure initially",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E007",
+        "raw_span": "subtle ST-segment elevation in leads V7-V9",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E008",
+        "raw_span": "ECG findings of ST-segment elevation in leads II, III, and aVF",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Acute Coronary Syndrome",
+        "aliases": [
+          "Acute Coronary Syndrome with Cardiogenic Shock"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G1E003",
+          "G1E005"
+        ],
+        "contradicting_evidence": [
+          "G2E006"
+        ],
+        "protected_reason": "This diagnosis may be overlooked in favor of other causes of chest pain, but the combination of ECG and hemodynamic findings makes it a strong candidate.",
+        "score_logit": 3.35,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Myocardial Infarction",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E002",
+          "G1E004",
+          "G1E003"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 3.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Cardiogenic Shock",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E005",
+          "G1E004"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 2.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Takotsubo Cardiomyopathy",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G1E004"
+        ],
+        "protected_reason": "This diagnosis may be underconsidered in the presence of ECG findings suggestive of acute coronary syndrome, but the lack of Q waves and the presence of ST-segment elevation in multiple leads makes it a plausible alternative.",
+        "score_logit": 2.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Aortic Dissection",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E005"
+        ],
+        "contradicting_evidence": [
+          "G2E008"
+        ],
+        "protected_reason": "This diagnosis may be overlooked in favor of other causes of chest pain, but the severity of the patient's presentation and the presence of hypotension make it a consideration that should not be dismissed without further evaluation.",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Acute Coronary Syndrome",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Myocardial Infarction",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Cardiogenic Shock",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Acute Coronary Syndrome with Cardiogenic Shock",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C004",
+        "name": "Takotsubo Cardiomyopathy",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C005",
+        "name": "Aortic Dissection",
+        "view": "g2"
+      }
+    ],
+    "frontier_final": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Acute Coronary Syndrome",
+        "aliases": [
+          "Acute Coronary Syndrome with Cardiogenic Shock"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G1E003",
+          "G1E005"
+        ],
+        "contradicting_evidence": [
+          "G2E006"
+        ],
+        "protected_reason": "This diagnosis may be overlooked in favor of other causes of chest pain, but the combination of ECG and hemodynamic findings makes it a strong candidate.",
+        "score_logit": 3.35,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Myocardial Infarction",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E002",
+          "G1E004",
+          "G1E003"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 3.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Cardiogenic Shock",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E005",
+          "G1E004"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 2.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Takotsubo Cardiomyopathy",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G1E004"
+        ],
+        "protected_reason": "This diagnosis may be underconsidered in the presence of ECG findings suggestive of acute coronary syndrome, but the lack of Q waves and the presence of ST-segment elevation in multiple leads makes it a plausible alternative.",
+        "score_logit": 2.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Aortic Dissection",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E005"
+        ],
+        "contradicting_evidence": [
+          "G2E008"
+        ],
+        "protected_reason": "This diagnosis may be overlooked in favor of other causes of chest pain, but the severity of the patient's presentation and the presence of hypotension make it a consideration that should not be dismissed without further evaluation.",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 5,
+    "n_evidence": 8,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.0,
+    "frontier_n": 5,
+    "protected_n": 3,
+    "n_generators": 2,
+    "adaptive_action": null,
+    "llm_calls": 3,
+    "history_leakage": 0,
+    "mode": "lite"
+  },
+  "prediction": {
+    "arm": "mosaic_lite_r2",
+    "case_id": "diagnosisarena__000177",
+    "source_id": "177",
+    "dataset": "diagnosisarena",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Myocardial Infarction",
+      "Acute Coronary Syndrome",
+      "Cardiogenic Shock",
+      "Takotsubo Cardiomyopathy",
+      "Aortic Dissection"
+    ],
+    "top2_diagnoses": [
+      "Myocardial Infarction",
+      "Acute Coronary Syndrome"
+    ],
+    "cost": {
+      "llm_calls": 3
+    },
+    "stages": {
+      "mode": "lite",
+      "vignette_chars": 1063,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Acute Coronary Syndrome",
+            "support_spans": [
+              "sudden-onset chest pain",
+              "ST-segment elevation in leads II, III, and aVF",
+              "high-sensitive troponin T level: 0.309 ng/mL"
+            ],
+            "contradict_spans": [],
+            "why": "The patient presented with sudden-onset chest pain and had elevated troponin levels, which are indicative of acute coronary syndrome."
+          },
+          {
+            "name": "Myocardial Infarction",
+            "support_spans": [
+              "ST-segment elevation in leads II, III, and aVF",
+              "thrombotic occlusion of the distal left circumflex artery",
+              "high-sensitive troponin T level: 0.309 ng/mL"
+            ],
+            "contradict_spans": [],
+            "why": "The patient had ST-segment elevation and thrombotic occlusion of a coronary artery, which are diagnostic of myocardial infarction."
+          },
+          {
+            "name": "Cardiogenic Shock",
+            "support_spans": [
+              "blood pressure fell to 60/40 mm Hg",
+              "thrombotic occlusion of the distal left circumflex artery"
+            ],
+            "contradict_spans": [],
+            "why": "The patient developed hypotension without arrhythmia or bleeding, which is consistent with cardiogenic shock due to myocardial infarction."
+          }
+        ],
+        "key_evidence_spans": [
+          "sudden-onset chest pain",
+          "ST-segment elevation in leads II, III, and aVF",
+          "high-sensitive troponin T level: 0.309 ng/mL",
+          "thrombotic occlusion of the distal left circumflex artery",
+          "blood pressure fell to 60/40 mm Hg"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Acute Coronary Syndrome with Cardiogenic Shock",
+            "support_spans": [
+              "sudden-onset chest pain",
+              "blood pressure fell to 60/40 mm Hg",
+              "ST-segment elevation in leads II, III, and aVF"
+            ],
+            "contradict_spans": [
+              "normal heart rate and blood pressure initially"
+            ],
+            "why": "The patient's presentation with sudden-onset chest pain and subsequent hypotension, along with ECG findings of ST-segment elevation, supports this diagnosis.",
+            "protected_reason": "This diagnosis may be overlooked in favor of other causes of chest pain, but the combination of ECG and hemodynamic findings makes it a strong candidate."
+          },
+          {
+            "name": "Takotsubo Cardiomyopathy",
+            "support_spans": [
+              "sudden-onset chest pain",
+              "ST-segment elevation in leads II, III, and aVF",
+              "subtle ST-segment elevation in leads V7-V9"
+            ],
+            "contradict_spans": [
+              "thrombotic occlusion of the distal left circumflex artery"
+            ],
+            "why": "The patient's presentation with sudden-onset chest pain and ECG findings of ST-segment elevation, along with the absence of pathologic Q waves, could suggest Takotsubo cardiomyopathy.",
+            "protected_reason": "This diagnosis may be underconsidered in the presence of ECG findings suggestive of acute coronary syndrome, but the lack of Q waves and the presence of ST-segment elevation in multiple leads makes it a plausible alternative."
+          },
+          {
+            "name": "Aortic Dissection",
+            "support_spans": [
+              "sudden-onset chest pain",
+              "blood pressure fell to 60/40 mm Hg"
+            ],
+            "contradict_spans": [
+              "ECG findings of ST-segment elevation in leads II, III, and aVF"
+            ],
+            "why": "The patient's presentation with sudden-onset chest pain and subsequent hypotension could suggest aortic dissection, although the ECG findings are not typical for this diagnosis.",
+            "protected_reason": "This diagnosis may be overlooked in favor of other causes of chest pain, but the severity of the patient's presentation and the presence of hypotension make it a consideration that should not be dismissed without further evaluation."
+          }
+        ],
+        "key_evidence_spans": [
+          "sudden-onset chest pain",
+          "ST-segment elevation in leads II, III, and aVF",
+          "blood pressure fell to 60/40 mm Hg",
+          "thrombotic occlusion of the distal left circumflex artery"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "normal heart rate and blood pressure initially",
+          "ECG findings of ST-segment elevation in leads II, III, and aVF"
+        ],
+        "generator_jaccard": 0.0,
+        "top1_same_across_views": true,
+        "top_margin": 0.3500000000000001,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 1
+      },
+      "adaptive_action": null,
+      "selector": {
+        "champion": "Myocardial Infarction",
+        "runner_up": "Acute Coronary Syndrome",
+        "rationale": "The combination of ST-segment elevation in multiple leads, thrombotic occlusion of the distal left circumflex artery, and elevated high-sensitive troponin T level provides strong evidence for myocardial infarction.",
+        "rejected": [
+          {
+            "label": "Takotsubo Cardiomyopathy",
+            "why": "Thrombotic occlusion of the distal left circumflex artery contradicts this diagnosis."
+          },
+          {
+            "label": "Aortic Dissection",
+            "why": "ECG findings of ST-segment elevation in leads II, III, and aVF contradict this diagnosis."
+          },
+          {
+            "label": "Cardiogenic Shock",
+            "why": "While the patient's blood pressure fell, the primary diagnosis of myocardial infarction explains this finding."
+          }
+        ],
+        "margin": "high"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "sudden-onset chest pain",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "ST-segment elevation in leads II, III, and aVF",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "high-sensitive troponin T level: 0.309 ng/mL",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "thrombotic occlusion of the distal left circumflex artery",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E005",
+          "raw_span": "blood pressure fell to 60/40 mm Hg",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E006",
+          "raw_span": "normal heart rate and blood pressure initially",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E007",
+          "raw_span": "subtle ST-segment elevation in leads V7-V9",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E008",
+          "raw_span": "ECG findings of ST-segment elevation in leads II, III, and aVF",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Acute Coronary Syndrome",
+          "aliases": [
+            "Acute Coronary Syndrome with Cardiogenic Shock"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G1E003",
+            "G1E005"
+          ],
+          "contradicting_evidence": [
+            "G2E006"
+          ],
+          "protected_reason": "This diagnosis may be overlooked in favor of other causes of chest pain, but the combination of ECG and hemodynamic findings makes it a strong candidate.",
+          "score_logit": 3.35,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Myocardial Infarction",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E002",
+            "G1E004",
+            "G1E003"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 3.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Cardiogenic Shock",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E005",
+            "G1E004"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 2.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Takotsubo Cardiomyopathy",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G1E004"
+          ],
+          "protected_reason": "This diagnosis may be underconsidered in the presence of ECG findings suggestive of acute coronary syndrome, but the lack of Q waves and the presence of ST-segment elevation in multiple leads makes it a plausible alternative.",
+          "score_logit": 2.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C005",
+          "preferred_name": "Aortic Dissection",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E005"
+          ],
+          "contradicting_evidence": [
+            "G2E008"
+          ],
+          "protected_reason": "This diagnosis may be overlooked in favor of other causes of chest pain, but the severity of the patient's presentation and the presence of hypotension make it a consideration that should not be dismissed without further evaluation.",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Acute Coronary Syndrome",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Myocardial Infarction",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Cardiogenic Shock",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Acute Coronary Syndrome with Cardiogenic Shock",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C004",
+          "name": "Takotsubo Cardiomyopathy",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C005",
+          "name": "Aortic Dissection",
+          "view": "g2"
+        }
+      ],
+      "frontier_final": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Acute Coronary Syndrome",
+          "aliases": [
+            "Acute Coronary Syndrome with Cardiogenic Shock"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G1E003",
+            "G1E005"
+          ],
+          "contradicting_evidence": [
+            "G2E006"
+          ],
+          "protected_reason": "This diagnosis may be overlooked in favor of other causes of chest pain, but the combination of ECG and hemodynamic findings makes it a strong candidate.",
+          "score_logit": 3.35,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Myocardial Infarction",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E002",
+            "G1E004",
+            "G1E003"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 3.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Cardiogenic Shock",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E005",
+            "G1E004"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 2.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Takotsubo Cardiomyopathy",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G1E004"
+          ],
+          "protected_reason": "This diagnosis may be underconsidered in the presence of ECG findings suggestive of acute coronary syndrome, but the lack of Q waves and the presence of ST-segment elevation in multiple leads makes it a plausible alternative.",
+          "score_logit": 2.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C005",
+          "preferred_name": "Aortic Dissection",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E005"
+          ],
+          "contradicting_evidence": [
+            "G2E008"
+          ],
+          "protected_reason": "This diagnosis may be overlooked in favor of other causes of chest pain, but the severity of the patient's presentation and the presence of hypotension make it a consideration that should not be dismissed without further evaluation.",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 5,
+      "n_evidence": 8,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.0,
+      "frontier_n": 5,
+      "protected_n": 3,
+      "n_generators": 2,
+      "adaptive_action": null,
+      "llm_calls": 3,
+      "history_leakage": 0,
+      "mode": "lite"
+    },
+    "wall_s": 9.499
+  },
+  "created_at": "2026-08-10T01:59:54.096150+00:00"
+}

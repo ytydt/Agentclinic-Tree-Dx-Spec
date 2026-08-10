@@ -1,0 +1,1036 @@
+{
+  "case_id": "diagnosisarena__000087",
+  "source_id": "87",
+  "champion": "Acute Pericarditis",
+  "ordered_diagnoses": [
+    "Acute Pericarditis",
+    "Myocarditis",
+    "Acute Coronary Syndrome"
+  ],
+  "llm_calls": 4,
+  "stages": {
+    "mode": "adaptive4",
+    "vignette_chars": 1394,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Acute Pericarditis",
+          "support_spans": [
+            "chest pressure radiating to the right jaw",
+            "ST-segment elevations with PR-segment depression in leads II, III, and aVF",
+            "PR-segment elevation in lead aVR"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's symptoms and ECG findings are consistent with acute pericarditis."
+        },
+        {
+          "name": "Myocarditis",
+          "support_spans": [
+            "subjective fevers, rhinorrhea, a dry cough, and sinus congestion",
+            "elevated erythrocyte sedimentation rate and C-reactive protein"
+          ],
+          "contradict_spans": [
+            "Normal results on transthoracic echocardiogram"
+          ],
+          "why": "The patient's recent viral symptoms and elevated inflammatory markers suggest a possible myocarditis."
+        },
+        {
+          "name": "Acute Coronary Syndrome",
+          "support_spans": [
+            "chest pressure",
+            "Initial serum troponin I level: 6.18 ng/mL"
+          ],
+          "contradict_spans": [
+            "Normal coronary arteries on coronary angiography"
+          ],
+          "why": "The patient's chest pressure and elevated troponin level suggest a possible acute coronary syndrome, but the normal coronary angiography results make this less likely."
+        }
+      ],
+      "key_evidence_spans": [
+        "chest pressure radiating to the right jaw",
+        "ST-segment elevations with PR-segment depression in leads II, III, and aVF",
+        "Initial serum troponin I level: 6.18 ng/mL",
+        "Normal coronary arteries on coronary angiography"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Myocarditis",
+          "support_spans": [
+            "subjective fevers, rhinorrhea, a dry cough, and sinus congestion",
+            "elevated erythrocyte sedimentation rate and C-reactive protein"
+          ],
+          "contradict_spans": [
+            "Normal cardiac examination",
+            "Normal results on transthoracic echocardiogram"
+          ],
+          "why": "The patient's symptoms and elevated inflammatory markers suggest myocarditis, despite normal cardiac examination and echocardiogram results.",
+          "protected_reason": "Myocarditis can be easily missed due to its non-specific presentation and normal cardiac examination, making it a potential minority diagnosis."
+        },
+        {
+          "name": "Pericarditis",
+          "support_spans": [
+            "chest pressure radiating to the right jaw",
+            "ST-segment elevations with PR-segment depression in leads II, III, and aVF",
+            "PR-segment elevation in lead aVR"
+          ],
+          "contradict_spans": [
+            "Normal cardiac examination",
+            "Normal coronary angiography"
+          ],
+          "why": "The patient's chest pain and ECG findings are consistent with pericarditis, despite normal cardiac examination and coronary angiography results.",
+          "protected_reason": "Pericarditis can be a rare cause of chest pain, and its diagnosis may be challenging due to its non-specific presentation and normal cardiac examination."
+        },
+        {
+          "name": "Acute Coronary Syndrome with Normal Coronary Arteries",
+          "support_spans": [
+            "chest pressure radiating to the right jaw",
+            "elevated serum troponin I level"
+          ],
+          "contradict_spans": [
+            "Normal coronary angiography"
+          ],
+          "why": "The patient's symptoms and elevated troponin level suggest acute coronary syndrome, despite normal coronary angiography results.",
+          "protected_reason": "Acute coronary syndrome with normal coronary arteries can be a rare and easily missed diagnosis, requiring careful consideration of the patient's symptoms and laboratory results."
+        }
+      ],
+      "key_evidence_spans": [
+        "ST-segment elevations with PR-segment depression in leads II, III, and aVF",
+        "elevated erythrocyte sedimentation rate and C-reactive protein",
+        "chest pressure radiating to the right jaw"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "Normal coronary arteries on coronary angiography",
+        "Normal results on transthoracic echocardiogram",
+        "Normal cardiac examination",
+        "Normal coronary angiography"
+      ],
+      "generator_jaccard": 0.2,
+      "top1_same_across_views": true,
+      "top_margin": 1.0,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 2
+    },
+    "frontier_after_g": [
+      {
+        "concept_id": "C003",
+        "preferred_name": "Acute Coronary Syndrome",
+        "aliases": [
+          "Acute Coronary Syndrome with Normal Coronary Arteries"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E009",
+          "G1E003",
+          "G1E001",
+          "G2E012"
+        ],
+        "contradicting_evidence": [
+          "G1E004",
+          "G2E011"
+        ],
+        "protected_reason": "Acute coronary syndrome with normal coronary arteries can be a rare and easily missed diagnosis, requiring careful consideration of the patient's symptoms and laboratory results.",
+        "score_logit": 2.1,
+        "status": "live"
+      },
+      {
+        "concept_id": "C001",
+        "preferred_name": "Acute Pericarditis",
+        "aliases": [
+          "Pericarditis"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G1E005"
+        ],
+        "contradicting_evidence": [
+          "G2E010",
+          "G2E011"
+        ],
+        "protected_reason": "Pericarditis can be a rare cause of chest pain, and its diagnosis may be challenging due to its non-specific presentation and normal cardiac examination.",
+        "score_logit": 1.1,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Myocarditis",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E006",
+          "G1E007"
+        ],
+        "contradicting_evidence": [
+          "G1E008",
+          "G2E010"
+        ],
+        "protected_reason": "Myocarditis can be easily missed due to its non-specific presentation and normal cardiac examination, making it a potential minority diagnosis.",
+        "score_logit": 0.09999999999999998,
+        "status": "live"
+      }
+    ],
+    "a1": {
+      "candidates": [
+        {
+          "name": "Myocarditis",
+          "support_spans": [
+            "subjective fevers",
+            "chest pressure radiating to the right jaw",
+            "elevated erythrocyte sedimentation rate and C-reactive protein",
+            "ST-segment elevations with PR-segment depression in leads II, III, and aVF"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's symptoms and laboratory results are consistent with myocarditis, which can cause chest pain and elevated troponin levels without coronary artery disease.",
+          "protected_reason": "explains unexplained high-specificity evidence of normal coronary arteries and normal cardiac examination"
+        },
+        {
+          "name": "Pericarditis",
+          "support_spans": [
+            "chest pressure radiating to the right jaw",
+            "ST-segment elevations with PR-segment depression in leads II, III, and aVF",
+            "PR-segment elevation in lead aVR"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's symptoms and ECG findings are consistent with pericarditis, which can cause chest pain and ST-segment elevations without coronary artery disease.",
+          "protected_reason": "explains unexplained high-specificity evidence of normal coronary arteries and normal cardiac examination"
+        },
+        {
+          "name": "Acute Coronary Syndrome with spontaneous resolution",
+          "support_spans": [
+            "chest pressure radiating to the right jaw",
+            "elevated troponin I level"
+          ],
+          "contradict_spans": [
+            "Normal coronary arteries on coronary angiography"
+          ],
+          "why": "The patient's symptoms and laboratory results are consistent with acute coronary syndrome, which can cause chest pain and elevated troponin levels, but the normal coronary angiography results suggest spontaneous resolution.",
+          "protected_reason": "explains unexplained high-specificity evidence of normal coronary arteries"
+        }
+      ]
+    },
+    "adaptive_action": "ORTHOGONAL_GENERATE",
+    "selector": {
+      "champion": "Acute Pericarditis",
+      "runner_up": "Myocarditis",
+      "rationale": "The patient's presentation of chest pressure radiating to the jaw, ST-segment elevations with PR-segment depression, and PR-segment elevation in lead aVR are classic signs of acute pericarditis, despite the normal cardiac examination.",
+      "rejected": [
+        {
+          "label": "Acute Coronary Syndrome",
+          "why": "Normal coronary arteries on coronary angiography contradict the diagnosis of acute coronary syndrome."
+        }
+      ],
+      "margin": "medium"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "chest pressure radiating to the right jaw",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "ST-segment elevations with PR-segment depression in leads II, III, and aVF",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "Initial serum troponin I level: 6.18 ng/mL",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "Normal coronary arteries on coronary angiography",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E005",
+        "raw_span": "PR-segment elevation in lead aVR",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E006",
+        "raw_span": "subjective fevers, rhinorrhea, a dry cough, and sinus congestion",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E007",
+        "raw_span": "elevated erythrocyte sedimentation rate and C-reactive protein",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E008",
+        "raw_span": "Normal results on transthoracic echocardiogram",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E009",
+        "raw_span": "chest pressure",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E010",
+        "raw_span": "Normal cardiac examination",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E011",
+        "raw_span": "Normal coronary angiography",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E012",
+        "raw_span": "elevated serum troponin I level",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "A1E013",
+        "raw_span": "subjective fevers",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "a1"
+      },
+      {
+        "evidence_id": "A1E014",
+        "raw_span": "elevated troponin I level",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "a1"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Acute Pericarditis",
+        "aliases": [
+          "Pericarditis"
+        ],
+        "generator_views": [
+          "g1",
+          "g2",
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G1E005"
+        ],
+        "contradicting_evidence": [
+          "G2E010",
+          "G2E011"
+        ],
+        "protected_reason": "Pericarditis can be a rare cause of chest pain, and its diagnosis may be challenging due to its non-specific presentation and normal cardiac examination.",
+        "score_logit": 1.45,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Myocarditis",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2",
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G1E006",
+          "G1E007",
+          "A1E013",
+          "G1E001",
+          "G1E002"
+        ],
+        "contradicting_evidence": [
+          "G1E008",
+          "G2E010"
+        ],
+        "protected_reason": "Myocarditis can be easily missed due to its non-specific presentation and normal cardiac examination, making it a potential minority diagnosis.",
+        "score_logit": 3.45,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Acute Coronary Syndrome",
+        "aliases": [
+          "Acute Coronary Syndrome with Normal Coronary Arteries",
+          "Acute Coronary Syndrome with spontaneous resolution"
+        ],
+        "generator_views": [
+          "g1",
+          "g2",
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G1E009",
+          "G1E003",
+          "G1E001",
+          "G2E012",
+          "A1E014"
+        ],
+        "contradicting_evidence": [
+          "G1E004",
+          "G2E011"
+        ],
+        "protected_reason": "Acute coronary syndrome with normal coronary arteries can be a rare and easily missed diagnosis, requiring careful consideration of the patient's symptoms and laboratory results.",
+        "score_logit": 3.45,
+        "status": "live"
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Acute Pericarditis",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Myocarditis",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Acute Coronary Syndrome",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Myocarditis",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Pericarditis",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C003",
+        "name": "Acute Coronary Syndrome with Normal Coronary Arteries",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Myocarditis",
+        "view": "a1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Pericarditis",
+        "view": "a1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C003",
+        "name": "Acute Coronary Syndrome with spontaneous resolution",
+        "view": "a1"
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 3,
+    "n_evidence": 14,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.2,
+    "frontier_n": 3,
+    "protected_n": 3,
+    "g1_n": 3,
+    "g2_n": 3,
+    "adaptive_action": "ORTHOGONAL_GENERATE",
+    "llm_calls": 4,
+    "history_leakage": 0
+  },
+  "prediction": {
+    "arm": "mosaic_adaptive4_v1",
+    "case_id": "diagnosisarena__000087",
+    "source_id": "87",
+    "dataset": "diagnosisarena",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Acute Pericarditis",
+      "Myocarditis",
+      "Acute Coronary Syndrome"
+    ],
+    "top2_diagnoses": [
+      "Acute Pericarditis",
+      "Myocarditis"
+    ],
+    "cost": {
+      "llm_calls": 4
+    },
+    "stages": {
+      "mode": "adaptive4",
+      "vignette_chars": 1394,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Acute Pericarditis",
+            "support_spans": [
+              "chest pressure radiating to the right jaw",
+              "ST-segment elevations with PR-segment depression in leads II, III, and aVF",
+              "PR-segment elevation in lead aVR"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's symptoms and ECG findings are consistent with acute pericarditis."
+          },
+          {
+            "name": "Myocarditis",
+            "support_spans": [
+              "subjective fevers, rhinorrhea, a dry cough, and sinus congestion",
+              "elevated erythrocyte sedimentation rate and C-reactive protein"
+            ],
+            "contradict_spans": [
+              "Normal results on transthoracic echocardiogram"
+            ],
+            "why": "The patient's recent viral symptoms and elevated inflammatory markers suggest a possible myocarditis."
+          },
+          {
+            "name": "Acute Coronary Syndrome",
+            "support_spans": [
+              "chest pressure",
+              "Initial serum troponin I level: 6.18 ng/mL"
+            ],
+            "contradict_spans": [
+              "Normal coronary arteries on coronary angiography"
+            ],
+            "why": "The patient's chest pressure and elevated troponin level suggest a possible acute coronary syndrome, but the normal coronary angiography results make this less likely."
+          }
+        ],
+        "key_evidence_spans": [
+          "chest pressure radiating to the right jaw",
+          "ST-segment elevations with PR-segment depression in leads II, III, and aVF",
+          "Initial serum troponin I level: 6.18 ng/mL",
+          "Normal coronary arteries on coronary angiography"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Myocarditis",
+            "support_spans": [
+              "subjective fevers, rhinorrhea, a dry cough, and sinus congestion",
+              "elevated erythrocyte sedimentation rate and C-reactive protein"
+            ],
+            "contradict_spans": [
+              "Normal cardiac examination",
+              "Normal results on transthoracic echocardiogram"
+            ],
+            "why": "The patient's symptoms and elevated inflammatory markers suggest myocarditis, despite normal cardiac examination and echocardiogram results.",
+            "protected_reason": "Myocarditis can be easily missed due to its non-specific presentation and normal cardiac examination, making it a potential minority diagnosis."
+          },
+          {
+            "name": "Pericarditis",
+            "support_spans": [
+              "chest pressure radiating to the right jaw",
+              "ST-segment elevations with PR-segment depression in leads II, III, and aVF",
+              "PR-segment elevation in lead aVR"
+            ],
+            "contradict_spans": [
+              "Normal cardiac examination",
+              "Normal coronary angiography"
+            ],
+            "why": "The patient's chest pain and ECG findings are consistent with pericarditis, despite normal cardiac examination and coronary angiography results.",
+            "protected_reason": "Pericarditis can be a rare cause of chest pain, and its diagnosis may be challenging due to its non-specific presentation and normal cardiac examination."
+          },
+          {
+            "name": "Acute Coronary Syndrome with Normal Coronary Arteries",
+            "support_spans": [
+              "chest pressure radiating to the right jaw",
+              "elevated serum troponin I level"
+            ],
+            "contradict_spans": [
+              "Normal coronary angiography"
+            ],
+            "why": "The patient's symptoms and elevated troponin level suggest acute coronary syndrome, despite normal coronary angiography results.",
+            "protected_reason": "Acute coronary syndrome with normal coronary arteries can be a rare and easily missed diagnosis, requiring careful consideration of the patient's symptoms and laboratory results."
+          }
+        ],
+        "key_evidence_spans": [
+          "ST-segment elevations with PR-segment depression in leads II, III, and aVF",
+          "elevated erythrocyte sedimentation rate and C-reactive protein",
+          "chest pressure radiating to the right jaw"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "Normal coronary arteries on coronary angiography",
+          "Normal results on transthoracic echocardiogram",
+          "Normal cardiac examination",
+          "Normal coronary angiography"
+        ],
+        "generator_jaccard": 0.2,
+        "top1_same_across_views": true,
+        "top_margin": 1.0,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 2
+      },
+      "frontier_after_g": [
+        {
+          "concept_id": "C003",
+          "preferred_name": "Acute Coronary Syndrome",
+          "aliases": [
+            "Acute Coronary Syndrome with Normal Coronary Arteries"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E009",
+            "G1E003",
+            "G1E001",
+            "G2E012"
+          ],
+          "contradicting_evidence": [
+            "G1E004",
+            "G2E011"
+          ],
+          "protected_reason": "Acute coronary syndrome with normal coronary arteries can be a rare and easily missed diagnosis, requiring careful consideration of the patient's symptoms and laboratory results.",
+          "score_logit": 2.1,
+          "status": "live"
+        },
+        {
+          "concept_id": "C001",
+          "preferred_name": "Acute Pericarditis",
+          "aliases": [
+            "Pericarditis"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G1E005"
+          ],
+          "contradicting_evidence": [
+            "G2E010",
+            "G2E011"
+          ],
+          "protected_reason": "Pericarditis can be a rare cause of chest pain, and its diagnosis may be challenging due to its non-specific presentation and normal cardiac examination.",
+          "score_logit": 1.1,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Myocarditis",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E006",
+            "G1E007"
+          ],
+          "contradicting_evidence": [
+            "G1E008",
+            "G2E010"
+          ],
+          "protected_reason": "Myocarditis can be easily missed due to its non-specific presentation and normal cardiac examination, making it a potential minority diagnosis.",
+          "score_logit": 0.09999999999999998,
+          "status": "live"
+        }
+      ],
+      "a1": {
+        "candidates": [
+          {
+            "name": "Myocarditis",
+            "support_spans": [
+              "subjective fevers",
+              "chest pressure radiating to the right jaw",
+              "elevated erythrocyte sedimentation rate and C-reactive protein",
+              "ST-segment elevations with PR-segment depression in leads II, III, and aVF"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's symptoms and laboratory results are consistent with myocarditis, which can cause chest pain and elevated troponin levels without coronary artery disease.",
+            "protected_reason": "explains unexplained high-specificity evidence of normal coronary arteries and normal cardiac examination"
+          },
+          {
+            "name": "Pericarditis",
+            "support_spans": [
+              "chest pressure radiating to the right jaw",
+              "ST-segment elevations with PR-segment depression in leads II, III, and aVF",
+              "PR-segment elevation in lead aVR"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's symptoms and ECG findings are consistent with pericarditis, which can cause chest pain and ST-segment elevations without coronary artery disease.",
+            "protected_reason": "explains unexplained high-specificity evidence of normal coronary arteries and normal cardiac examination"
+          },
+          {
+            "name": "Acute Coronary Syndrome with spontaneous resolution",
+            "support_spans": [
+              "chest pressure radiating to the right jaw",
+              "elevated troponin I level"
+            ],
+            "contradict_spans": [
+              "Normal coronary arteries on coronary angiography"
+            ],
+            "why": "The patient's symptoms and laboratory results are consistent with acute coronary syndrome, which can cause chest pain and elevated troponin levels, but the normal coronary angiography results suggest spontaneous resolution.",
+            "protected_reason": "explains unexplained high-specificity evidence of normal coronary arteries"
+          }
+        ]
+      },
+      "adaptive_action": "ORTHOGONAL_GENERATE",
+      "selector": {
+        "champion": "Acute Pericarditis",
+        "runner_up": "Myocarditis",
+        "rationale": "The patient's presentation of chest pressure radiating to the jaw, ST-segment elevations with PR-segment depression, and PR-segment elevation in lead aVR are classic signs of acute pericarditis, despite the normal cardiac examination.",
+        "rejected": [
+          {
+            "label": "Acute Coronary Syndrome",
+            "why": "Normal coronary arteries on coronary angiography contradict the diagnosis of acute coronary syndrome."
+          }
+        ],
+        "margin": "medium"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "chest pressure radiating to the right jaw",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "ST-segment elevations with PR-segment depression in leads II, III, and aVF",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "Initial serum troponin I level: 6.18 ng/mL",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "Normal coronary arteries on coronary angiography",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E005",
+          "raw_span": "PR-segment elevation in lead aVR",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E006",
+          "raw_span": "subjective fevers, rhinorrhea, a dry cough, and sinus congestion",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E007",
+          "raw_span": "elevated erythrocyte sedimentation rate and C-reactive protein",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E008",
+          "raw_span": "Normal results on transthoracic echocardiogram",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E009",
+          "raw_span": "chest pressure",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E010",
+          "raw_span": "Normal cardiac examination",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E011",
+          "raw_span": "Normal coronary angiography",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E012",
+          "raw_span": "elevated serum troponin I level",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "A1E013",
+          "raw_span": "subjective fevers",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "a1"
+        },
+        {
+          "evidence_id": "A1E014",
+          "raw_span": "elevated troponin I level",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "a1"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Acute Pericarditis",
+          "aliases": [
+            "Pericarditis"
+          ],
+          "generator_views": [
+            "g1",
+            "g2",
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G1E005"
+          ],
+          "contradicting_evidence": [
+            "G2E010",
+            "G2E011"
+          ],
+          "protected_reason": "Pericarditis can be a rare cause of chest pain, and its diagnosis may be challenging due to its non-specific presentation and normal cardiac examination.",
+          "score_logit": 1.45,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Myocarditis",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2",
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G1E006",
+            "G1E007",
+            "A1E013",
+            "G1E001",
+            "G1E002"
+          ],
+          "contradicting_evidence": [
+            "G1E008",
+            "G2E010"
+          ],
+          "protected_reason": "Myocarditis can be easily missed due to its non-specific presentation and normal cardiac examination, making it a potential minority diagnosis.",
+          "score_logit": 3.45,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Acute Coronary Syndrome",
+          "aliases": [
+            "Acute Coronary Syndrome with Normal Coronary Arteries",
+            "Acute Coronary Syndrome with spontaneous resolution"
+          ],
+          "generator_views": [
+            "g1",
+            "g2",
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G1E009",
+            "G1E003",
+            "G1E001",
+            "G2E012",
+            "A1E014"
+          ],
+          "contradicting_evidence": [
+            "G1E004",
+            "G2E011"
+          ],
+          "protected_reason": "Acute coronary syndrome with normal coronary arteries can be a rare and easily missed diagnosis, requiring careful consideration of the patient's symptoms and laboratory results.",
+          "score_logit": 3.45,
+          "status": "live"
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Acute Pericarditis",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Myocarditis",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Acute Coronary Syndrome",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Myocarditis",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Pericarditis",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C003",
+          "name": "Acute Coronary Syndrome with Normal Coronary Arteries",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Myocarditis",
+          "view": "a1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Pericarditis",
+          "view": "a1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C003",
+          "name": "Acute Coronary Syndrome with spontaneous resolution",
+          "view": "a1"
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 3,
+      "n_evidence": 14,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.2,
+      "frontier_n": 3,
+      "protected_n": 3,
+      "g1_n": 3,
+      "g2_n": 3,
+      "adaptive_action": "ORTHOGONAL_GENERATE",
+      "llm_calls": 4,
+      "history_leakage": 0
+    },
+    "wall_s": 6.553
+  },
+  "created_at": "2026-08-08T01:50:11.649281+00:00"
+}

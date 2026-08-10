@@ -1,0 +1,952 @@
+{
+  "case_id": "medcasereasoning__000163",
+  "source_id": "163",
+  "champion": "Ectopic Pregnancy",
+  "ordered_diagnoses": [
+    "Ectopic Pregnancy",
+    "Ovarian Cyst",
+    "Ovarian Torsion",
+    "Corpus Luteum Cyst",
+    "Appendicitis"
+  ],
+  "llm_calls": 3,
+  "stages": {
+    "mode": "adaptive4v2",
+    "vignette_chars": 1001,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Ectopic Pregnancy",
+          "support_spans": [
+            "a 1-day history of epigastric pain radiating to the lower abdomen",
+            "a 1.2 cm left adnexal structure with minimal vascularity posterior to the left ovary",
+            "a small amount of free fluid in the pouch of Douglas",
+            "β-hCG level of 523 IU/L"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's symptoms and ultrasound findings are consistent with an ectopic pregnancy."
+        },
+        {
+          "name": "Ovarian Cyst",
+          "support_spans": [
+            "a 1.2 cm left adnexal structure with minimal vascularity posterior to the left ovary"
+          ],
+          "contradict_spans": [],
+          "why": "The adnexal structure seen on ultrasound could represent an ovarian cyst."
+        },
+        {
+          "name": "Appendicitis",
+          "support_spans": [
+            "epigastric pain radiating to the lower abdomen"
+          ],
+          "contradict_spans": [
+            "Murphy’s and McBurney’s signs were negative"
+          ],
+          "why": "The patient's abdominal pain could be consistent with appendicitis, although the negative Murphy's and McBurney's signs make it less likely."
+        }
+      ],
+      "key_evidence_spans": [
+        "a 1-day history of epigastric pain radiating to the lower abdomen",
+        "a 1.2 cm left adnexal structure with minimal vascularity posterior to the left ovary",
+        "β-hCG level of 523 IU/L",
+        "an empty uterus with normal endometrial thickness"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Ectopic Pregnancy",
+          "support_spans": [
+            "a 1-day history of epigastric pain radiating to the lower abdomen",
+            "a 1.2 cm left adnexal structure with minimal vascularity posterior to the left ovary",
+            "a small amount of free fluid in the pouch of Douglas"
+          ],
+          "contradict_spans": [
+            "Murphy’s and McBurney’s signs were negative"
+          ],
+          "why": "The patient's symptoms and ultrasound findings are consistent with an ectopic pregnancy, despite the β-hCG level being below the discriminatory zone.",
+          "protected_reason": "Ectopic pregnancy can be easily missed due to non-specific symptoms and requires prompt diagnosis to prevent severe complications."
+        },
+        {
+          "name": "Corpus Luteum Cyst",
+          "support_spans": [
+            "a 1.2 cm left adnexal structure with minimal vascularity posterior to the left ovary"
+          ],
+          "contradict_spans": [
+            "epigastric pain radiating to the lower abdomen"
+          ],
+          "why": "The adnexal structure on ultrasound could represent a corpus luteum cyst, which can cause similar symptoms and ultrasound findings.",
+          "protected_reason": "Corpus luteum cysts can be difficult to distinguish from ectopic pregnancies and require careful evaluation to avoid misdiagnosis."
+        },
+        {
+          "name": "Ovarian Torsion",
+          "support_spans": [
+            "a 1-day history of epigastric pain radiating to the lower abdomen",
+            "a small amount of free fluid in the pouch of Douglas"
+          ],
+          "contradict_spans": [
+            "the patient was afebrile, hemodynamically stable"
+          ],
+          "why": "The acute onset of pain and ultrasound findings could suggest ovarian torsion, which is a surgical emergency.",
+          "protected_reason": "Ovarian torsion is a rare but serious condition that requires prompt diagnosis and treatment to preserve ovarian function."
+        }
+      ],
+      "key_evidence_spans": [
+        "a 1-day history of epigastric pain radiating to the lower abdomen",
+        "a 1.2 cm left adnexal structure with minimal vascularity posterior to the left ovary",
+        "a small amount of free fluid in the pouch of Douglas"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "an empty uterus with normal endometrial thickness",
+        "Murphy’s and McBurney’s signs were negative",
+        "the patient was afebrile, hemodynamically stable"
+      ],
+      "generator_jaccard": 0.2,
+      "top1_same_across_views": true,
+      "top_margin": 2.35,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 1
+    },
+    "state_after_a1": {
+      "unexplained_specific_evidence": [
+        "an empty uterus with normal endometrial thickness",
+        "Murphy’s and McBurney’s signs were negative",
+        "the patient was afebrile, hemodynamically stable"
+      ],
+      "generator_jaccard": 0.2,
+      "top1_same_across_views": true,
+      "top_margin": 2.35,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 1
+    },
+    "adaptive_action": null,
+    "selector": {
+      "champion": "Ectopic Pregnancy",
+      "runner_up": "Ovarian Cyst",
+      "rationale": "The patient's presentation with epigastric pain radiating to the lower abdomen, a 1.2 cm left adnexal structure with minimal vascularity posterior to the left ovary, and a small amount of free fluid in the pouch of Douglas, along with a β-hCG level below the discriminatory zone and an empty uterine cavity on ultrasound, supports the diagnosis of ectopic pregnancy.",
+      "rejected": [
+        {
+          "label": "Ovarian Torsion",
+          "why": "The patient was afebrile and hemodynamically stable, which contradicts the typical presentation of ovarian torsion."
+        },
+        {
+          "label": "Corpus Luteum Cyst",
+          "why": "The presence of epigastric pain radiating to the lower abdomen contradicts the typical presentation of corpus luteum cyst."
+        },
+        {
+          "label": "Appendicitis",
+          "why": "Murphy’s and McBurney’s signs were negative, which contradicts the typical presentation of appendicitis."
+        }
+      ],
+      "margin": "medium"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "a 1-day history of epigastric pain radiating to the lower abdomen",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "a 1.2 cm left adnexal structure with minimal vascularity posterior to the left ovary",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "β-hCG level of 523 IU/L",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "an empty uterus with normal endometrial thickness",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E005",
+        "raw_span": "a small amount of free fluid in the pouch of Douglas",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E006",
+        "raw_span": "epigastric pain radiating to the lower abdomen",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E007",
+        "raw_span": "Murphy’s and McBurney’s signs were negative",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E008",
+        "raw_span": "the patient was afebrile, hemodynamically stable",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Ectopic Pregnancy",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G1E005",
+          "G1E003"
+        ],
+        "contradicting_evidence": [
+          "G1E007"
+        ],
+        "protected_reason": "Ectopic pregnancy can be easily missed due to non-specific symptoms and requires prompt diagnosis to prevent severe complications.",
+        "score_logit": 3.35,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Ovarian Cyst",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E002"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Appendicitis",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E006"
+        ],
+        "contradicting_evidence": [
+          "G1E007"
+        ],
+        "protected_reason": "",
+        "score_logit": -0.25,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Corpus Luteum Cyst",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E002"
+        ],
+        "contradicting_evidence": [
+          "G1E006"
+        ],
+        "protected_reason": "Corpus luteum cysts can be difficult to distinguish from ectopic pregnancies and require careful evaluation to avoid misdiagnosis.",
+        "score_logit": 0.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Ovarian Torsion",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E005"
+        ],
+        "contradicting_evidence": [
+          "G2E008"
+        ],
+        "protected_reason": "Ovarian torsion is a rare but serious condition that requires prompt diagnosis and treatment to preserve ovarian function.",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Ectopic Pregnancy",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Ovarian Cyst",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Appendicitis",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Ectopic Pregnancy",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C004",
+        "name": "Corpus Luteum Cyst",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C005",
+        "name": "Ovarian Torsion",
+        "view": "g2"
+      }
+    ],
+    "frontier_final": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Ectopic Pregnancy",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G1E005",
+          "G1E003"
+        ],
+        "contradicting_evidence": [
+          "G1E007"
+        ],
+        "protected_reason": "Ectopic pregnancy can be easily missed due to non-specific symptoms and requires prompt diagnosis to prevent severe complications.",
+        "score_logit": 3.35,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Ovarian Cyst",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E002"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Ovarian Torsion",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E005"
+        ],
+        "contradicting_evidence": [
+          "G2E008"
+        ],
+        "protected_reason": "Ovarian torsion is a rare but serious condition that requires prompt diagnosis and treatment to preserve ovarian function.",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Corpus Luteum Cyst",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E002"
+        ],
+        "contradicting_evidence": [
+          "G1E006"
+        ],
+        "protected_reason": "Corpus luteum cysts can be difficult to distinguish from ectopic pregnancies and require careful evaluation to avoid misdiagnosis.",
+        "score_logit": 0.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Appendicitis",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E006"
+        ],
+        "contradicting_evidence": [
+          "G1E007"
+        ],
+        "protected_reason": "",
+        "score_logit": -0.25,
+        "status": "live",
+        "agent_votes": 0
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 5,
+    "n_evidence": 8,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.2,
+    "frontier_n": 5,
+    "protected_n": 3,
+    "n_generators": 2,
+    "adaptive_action": null,
+    "llm_calls": 3,
+    "history_leakage": 0,
+    "mode": "adaptive4v2"
+  },
+  "prediction": {
+    "arm": "mosaic_adaptive4v2_v1",
+    "case_id": "medcasereasoning__000163",
+    "source_id": "163",
+    "dataset": "medcasereasoning_v2",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Ectopic Pregnancy",
+      "Ovarian Cyst",
+      "Ovarian Torsion",
+      "Corpus Luteum Cyst",
+      "Appendicitis"
+    ],
+    "top2_diagnoses": [
+      "Ectopic Pregnancy",
+      "Ovarian Cyst"
+    ],
+    "cost": {
+      "llm_calls": 3
+    },
+    "stages": {
+      "mode": "adaptive4v2",
+      "vignette_chars": 1001,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Ectopic Pregnancy",
+            "support_spans": [
+              "a 1-day history of epigastric pain radiating to the lower abdomen",
+              "a 1.2 cm left adnexal structure with minimal vascularity posterior to the left ovary",
+              "a small amount of free fluid in the pouch of Douglas",
+              "β-hCG level of 523 IU/L"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's symptoms and ultrasound findings are consistent with an ectopic pregnancy."
+          },
+          {
+            "name": "Ovarian Cyst",
+            "support_spans": [
+              "a 1.2 cm left adnexal structure with minimal vascularity posterior to the left ovary"
+            ],
+            "contradict_spans": [],
+            "why": "The adnexal structure seen on ultrasound could represent an ovarian cyst."
+          },
+          {
+            "name": "Appendicitis",
+            "support_spans": [
+              "epigastric pain radiating to the lower abdomen"
+            ],
+            "contradict_spans": [
+              "Murphy’s and McBurney’s signs were negative"
+            ],
+            "why": "The patient's abdominal pain could be consistent with appendicitis, although the negative Murphy's and McBurney's signs make it less likely."
+          }
+        ],
+        "key_evidence_spans": [
+          "a 1-day history of epigastric pain radiating to the lower abdomen",
+          "a 1.2 cm left adnexal structure with minimal vascularity posterior to the left ovary",
+          "β-hCG level of 523 IU/L",
+          "an empty uterus with normal endometrial thickness"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Ectopic Pregnancy",
+            "support_spans": [
+              "a 1-day history of epigastric pain radiating to the lower abdomen",
+              "a 1.2 cm left adnexal structure with minimal vascularity posterior to the left ovary",
+              "a small amount of free fluid in the pouch of Douglas"
+            ],
+            "contradict_spans": [
+              "Murphy’s and McBurney’s signs were negative"
+            ],
+            "why": "The patient's symptoms and ultrasound findings are consistent with an ectopic pregnancy, despite the β-hCG level being below the discriminatory zone.",
+            "protected_reason": "Ectopic pregnancy can be easily missed due to non-specific symptoms and requires prompt diagnosis to prevent severe complications."
+          },
+          {
+            "name": "Corpus Luteum Cyst",
+            "support_spans": [
+              "a 1.2 cm left adnexal structure with minimal vascularity posterior to the left ovary"
+            ],
+            "contradict_spans": [
+              "epigastric pain radiating to the lower abdomen"
+            ],
+            "why": "The adnexal structure on ultrasound could represent a corpus luteum cyst, which can cause similar symptoms and ultrasound findings.",
+            "protected_reason": "Corpus luteum cysts can be difficult to distinguish from ectopic pregnancies and require careful evaluation to avoid misdiagnosis."
+          },
+          {
+            "name": "Ovarian Torsion",
+            "support_spans": [
+              "a 1-day history of epigastric pain radiating to the lower abdomen",
+              "a small amount of free fluid in the pouch of Douglas"
+            ],
+            "contradict_spans": [
+              "the patient was afebrile, hemodynamically stable"
+            ],
+            "why": "The acute onset of pain and ultrasound findings could suggest ovarian torsion, which is a surgical emergency.",
+            "protected_reason": "Ovarian torsion is a rare but serious condition that requires prompt diagnosis and treatment to preserve ovarian function."
+          }
+        ],
+        "key_evidence_spans": [
+          "a 1-day history of epigastric pain radiating to the lower abdomen",
+          "a 1.2 cm left adnexal structure with minimal vascularity posterior to the left ovary",
+          "a small amount of free fluid in the pouch of Douglas"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "an empty uterus with normal endometrial thickness",
+          "Murphy’s and McBurney’s signs were negative",
+          "the patient was afebrile, hemodynamically stable"
+        ],
+        "generator_jaccard": 0.2,
+        "top1_same_across_views": true,
+        "top_margin": 2.35,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 1
+      },
+      "state_after_a1": {
+        "unexplained_specific_evidence": [
+          "an empty uterus with normal endometrial thickness",
+          "Murphy’s and McBurney’s signs were negative",
+          "the patient was afebrile, hemodynamically stable"
+        ],
+        "generator_jaccard": 0.2,
+        "top1_same_across_views": true,
+        "top_margin": 2.35,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 1
+      },
+      "adaptive_action": null,
+      "selector": {
+        "champion": "Ectopic Pregnancy",
+        "runner_up": "Ovarian Cyst",
+        "rationale": "The patient's presentation with epigastric pain radiating to the lower abdomen, a 1.2 cm left adnexal structure with minimal vascularity posterior to the left ovary, and a small amount of free fluid in the pouch of Douglas, along with a β-hCG level below the discriminatory zone and an empty uterine cavity on ultrasound, supports the diagnosis of ectopic pregnancy.",
+        "rejected": [
+          {
+            "label": "Ovarian Torsion",
+            "why": "The patient was afebrile and hemodynamically stable, which contradicts the typical presentation of ovarian torsion."
+          },
+          {
+            "label": "Corpus Luteum Cyst",
+            "why": "The presence of epigastric pain radiating to the lower abdomen contradicts the typical presentation of corpus luteum cyst."
+          },
+          {
+            "label": "Appendicitis",
+            "why": "Murphy’s and McBurney’s signs were negative, which contradicts the typical presentation of appendicitis."
+          }
+        ],
+        "margin": "medium"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "a 1-day history of epigastric pain radiating to the lower abdomen",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "a 1.2 cm left adnexal structure with minimal vascularity posterior to the left ovary",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "β-hCG level of 523 IU/L",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "an empty uterus with normal endometrial thickness",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E005",
+          "raw_span": "a small amount of free fluid in the pouch of Douglas",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E006",
+          "raw_span": "epigastric pain radiating to the lower abdomen",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E007",
+          "raw_span": "Murphy’s and McBurney’s signs were negative",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E008",
+          "raw_span": "the patient was afebrile, hemodynamically stable",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Ectopic Pregnancy",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G1E005",
+            "G1E003"
+          ],
+          "contradicting_evidence": [
+            "G1E007"
+          ],
+          "protected_reason": "Ectopic pregnancy can be easily missed due to non-specific symptoms and requires prompt diagnosis to prevent severe complications.",
+          "score_logit": 3.35,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Ovarian Cyst",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E002"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Appendicitis",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E006"
+          ],
+          "contradicting_evidence": [
+            "G1E007"
+          ],
+          "protected_reason": "",
+          "score_logit": -0.25,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Corpus Luteum Cyst",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E002"
+          ],
+          "contradicting_evidence": [
+            "G1E006"
+          ],
+          "protected_reason": "Corpus luteum cysts can be difficult to distinguish from ectopic pregnancies and require careful evaluation to avoid misdiagnosis.",
+          "score_logit": 0.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C005",
+          "preferred_name": "Ovarian Torsion",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E005"
+          ],
+          "contradicting_evidence": [
+            "G2E008"
+          ],
+          "protected_reason": "Ovarian torsion is a rare but serious condition that requires prompt diagnosis and treatment to preserve ovarian function.",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Ectopic Pregnancy",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Ovarian Cyst",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Appendicitis",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Ectopic Pregnancy",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C004",
+          "name": "Corpus Luteum Cyst",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C005",
+          "name": "Ovarian Torsion",
+          "view": "g2"
+        }
+      ],
+      "frontier_final": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Ectopic Pregnancy",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G1E005",
+            "G1E003"
+          ],
+          "contradicting_evidence": [
+            "G1E007"
+          ],
+          "protected_reason": "Ectopic pregnancy can be easily missed due to non-specific symptoms and requires prompt diagnosis to prevent severe complications.",
+          "score_logit": 3.35,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Ovarian Cyst",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E002"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C005",
+          "preferred_name": "Ovarian Torsion",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E005"
+          ],
+          "contradicting_evidence": [
+            "G2E008"
+          ],
+          "protected_reason": "Ovarian torsion is a rare but serious condition that requires prompt diagnosis and treatment to preserve ovarian function.",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Corpus Luteum Cyst",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E002"
+          ],
+          "contradicting_evidence": [
+            "G1E006"
+          ],
+          "protected_reason": "Corpus luteum cysts can be difficult to distinguish from ectopic pregnancies and require careful evaluation to avoid misdiagnosis.",
+          "score_logit": 0.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Appendicitis",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E006"
+          ],
+          "contradicting_evidence": [
+            "G1E007"
+          ],
+          "protected_reason": "",
+          "score_logit": -0.25,
+          "status": "live",
+          "agent_votes": 0
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 5,
+      "n_evidence": 8,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.2,
+      "frontier_n": 5,
+      "protected_n": 3,
+      "n_generators": 2,
+      "adaptive_action": null,
+      "llm_calls": 3,
+      "history_leakage": 0,
+      "mode": "adaptive4v2"
+    },
+    "wall_s": 4.745
+  },
+  "created_at": "2026-08-08T02:17:39.966218+00:00"
+}

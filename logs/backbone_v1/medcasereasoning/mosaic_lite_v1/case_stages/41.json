@@ -1,0 +1,798 @@
+{
+  "case_id": "medcasereasoning__000041",
+  "source_id": "41",
+  "champion": "Gastrointestinal Stromal Tumor (GIST)",
+  "ordered_diagnoses": [
+    "Gastrointestinal Stromal Tumor (GIST)",
+    "Leiomyoma",
+    "Lipoma"
+  ],
+  "llm_calls": 3,
+  "stages": {
+    "mode": "lite",
+    "vignette_chars": 1252,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Gastrointestinal Stromal Tumor (GIST)",
+          "support_spans": [
+            "a large submucosal bulging mass in the posterior gastric wall",
+            "a well-defined, homogeneous, oval mass arising from the posterior gastric wall"
+          ],
+          "contradict_spans": [],
+          "why": "The presence of a submucosal mass in the stomach with ulcerated areas and the imaging characteristics are consistent with GIST."
+        },
+        {
+          "name": "Lipoma",
+          "support_spans": [
+            "the lesion had fat-tissue attenuation"
+          ],
+          "contradict_spans": [
+            "ulcer biopsies showed only necrotic mucosa",
+            "three Forrest III–type ulcerated areas"
+          ],
+          "why": "The fat-tissue attenuation on CT suggests a lipoma, but the presence of ulcerated areas and necrotic mucosa on biopsy are not typical for lipoma."
+        },
+        {
+          "name": "Leiomyoma",
+          "support_spans": [
+            "a large echogenic mass in the gastric antrum compatible with an expansive lesion"
+          ],
+          "contradict_spans": [],
+          "why": "The imaging findings and the presence of a large mass in the stomach could be consistent with a leiomyoma, although the lack of specific histological diagnosis makes it less certain."
+        }
+      ],
+      "key_evidence_spans": [
+        "a large submucosal bulging mass in the posterior gastric wall",
+        "a well-defined, homogeneous, oval mass arising from the posterior gastric wall",
+        "the lesion had fat-tissue attenuation with central contrast enhancement and trabecular architecture"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Gastric lipoma",
+          "support_spans": [
+            "a large echogenic mass in the gastric antrum compatible with an expansive lesion",
+            "the lesion had fat-tissue attenuation"
+          ],
+          "contradict_spans": [
+            "three Forrest III–type ulcerated areas"
+          ],
+          "why": "The presence of a large echogenic mass in the gastric antrum with fat-tissue attenuation on CT suggests a gastric lipoma.",
+          "protected_reason": "Gastric lipoma is a rare and easily missed diagnosis that may not be considered in the initial differential diagnosis."
+        },
+        {
+          "name": "Gastrointestinal stromal tumor (GIST)",
+          "support_spans": [
+            "a large submucosal bulging mass in the posterior gastric wall",
+            "the lesion had trabecular architecture"
+          ],
+          "contradict_spans": [
+            "biopsy attempts failed to sample the submucosal mass"
+          ],
+          "why": "The presence of a large submucosal bulging mass with trabecular architecture on CT suggests a GIST.",
+          "protected_reason": "GIST is a rare and high-specificity diagnosis that may be missed if not considered in the differential diagnosis."
+        },
+        {
+          "name": "Leiomyoma",
+          "support_spans": [
+            "a large submucosal bulging mass in the posterior gastric wall",
+            "the lesion had central contrast enhancement"
+          ],
+          "contradict_spans": [
+            "three Forrest III–type ulcerated areas"
+          ],
+          "why": "The presence of a large submucosal bulging mass with central contrast enhancement on CT suggests a leiomyoma.",
+          "protected_reason": "Leiomyoma is a rare and easily missed diagnosis that may not be considered in the initial differential diagnosis."
+        }
+      ],
+      "key_evidence_spans": [
+        "a large echogenic mass in the gastric antrum compatible with an expansive lesion",
+        "the lesion had fat-tissue attenuation",
+        "a large submucosal bulging mass in the posterior gastric wall"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "the lesion had fat-tissue attenuation with central contrast enhancement and trabecular architecture",
+        "ulcer biopsies showed only necrotic mucosa",
+        "three Forrest III–type ulcerated areas",
+        "biopsy attempts failed to sample the submucosal mass"
+      ],
+      "generator_jaccard": 0.5,
+      "top1_same_across_views": true,
+      "top_margin": 0.0,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 1
+    },
+    "frontier_after_g": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Gastrointestinal Stromal Tumor (GIST)",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G2E008"
+        ],
+        "contradicting_evidence": [
+          "G2E009"
+        ],
+        "protected_reason": "GIST is a rare and high-specificity diagnosis that may be missed if not considered in the differential diagnosis.",
+        "score_logit": 2.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Leiomyoma",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E007",
+          "G1E001",
+          "G2E010"
+        ],
+        "contradicting_evidence": [
+          "G1E006"
+        ],
+        "protected_reason": "Leiomyoma is a rare and easily missed diagnosis that may not be considered in the initial differential diagnosis.",
+        "score_logit": 2.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Lipoma",
+        "aliases": [
+          "Gastric lipoma"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E004",
+          "G1E007"
+        ],
+        "contradicting_evidence": [
+          "G1E005",
+          "G1E006"
+        ],
+        "protected_reason": "Gastric lipoma is a rare and easily missed diagnosis that may not be considered in the initial differential diagnosis.",
+        "score_logit": 0.09999999999999998,
+        "status": "live"
+      }
+    ],
+    "adaptive_action": null,
+    "selector": {
+      "champion": "Gastrointestinal Stromal Tumor (GIST)",
+      "runner_up": "Leiomyoma",
+      "rationale": "The presence of a large submucosal bulging mass in the posterior gastric wall and a well-defined, homogeneous, oval mass with trabecular architecture supports GIST, despite the lack of definitive biopsy results.",
+      "rejected": [
+        {
+          "label": "Lipoma",
+          "why": "The presence of ulcerated areas and necrotic mucosa is not typical for lipoma."
+        }
+      ],
+      "margin": "medium"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "a large submucosal bulging mass in the posterior gastric wall",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "a well-defined, homogeneous, oval mass arising from the posterior gastric wall",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "the lesion had fat-tissue attenuation with central contrast enhancement and trabecular architecture",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "the lesion had fat-tissue attenuation",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E005",
+        "raw_span": "ulcer biopsies showed only necrotic mucosa",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E006",
+        "raw_span": "three Forrest III–type ulcerated areas",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E007",
+        "raw_span": "a large echogenic mass in the gastric antrum compatible with an expansive lesion",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E008",
+        "raw_span": "the lesion had trabecular architecture",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E009",
+        "raw_span": "biopsy attempts failed to sample the submucosal mass",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E010",
+        "raw_span": "the lesion had central contrast enhancement",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Gastrointestinal Stromal Tumor (GIST)",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G2E008"
+        ],
+        "contradicting_evidence": [
+          "G2E009"
+        ],
+        "protected_reason": "GIST is a rare and high-specificity diagnosis that may be missed if not considered in the differential diagnosis.",
+        "score_logit": 2.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Lipoma",
+        "aliases": [
+          "Gastric lipoma"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E004",
+          "G1E007"
+        ],
+        "contradicting_evidence": [
+          "G1E005",
+          "G1E006"
+        ],
+        "protected_reason": "Gastric lipoma is a rare and easily missed diagnosis that may not be considered in the initial differential diagnosis.",
+        "score_logit": 0.09999999999999998,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Leiomyoma",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E007",
+          "G1E001",
+          "G2E010"
+        ],
+        "contradicting_evidence": [
+          "G1E006"
+        ],
+        "protected_reason": "Leiomyoma is a rare and easily missed diagnosis that may not be considered in the initial differential diagnosis.",
+        "score_logit": 2.35,
+        "status": "live"
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Gastrointestinal Stromal Tumor (GIST)",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Lipoma",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Leiomyoma",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Gastric lipoma",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Gastrointestinal stromal tumor (GIST)",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C003",
+        "name": "Leiomyoma",
+        "view": "g2"
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 3,
+    "n_evidence": 10,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.5,
+    "frontier_n": 3,
+    "protected_n": 3,
+    "g1_n": 3,
+    "g2_n": 3,
+    "adaptive_action": null,
+    "llm_calls": 3,
+    "history_leakage": 0
+  },
+  "prediction": {
+    "arm": "mosaic_lite_v1",
+    "case_id": "medcasereasoning__000041",
+    "source_id": "41",
+    "dataset": "medcasereasoning",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Gastrointestinal Stromal Tumor (GIST)",
+      "Leiomyoma",
+      "Lipoma"
+    ],
+    "top2_diagnoses": [
+      "Gastrointestinal Stromal Tumor (GIST)",
+      "Leiomyoma"
+    ],
+    "cost": {
+      "llm_calls": 3
+    },
+    "stages": {
+      "mode": "lite",
+      "vignette_chars": 1252,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Gastrointestinal Stromal Tumor (GIST)",
+            "support_spans": [
+              "a large submucosal bulging mass in the posterior gastric wall",
+              "a well-defined, homogeneous, oval mass arising from the posterior gastric wall"
+            ],
+            "contradict_spans": [],
+            "why": "The presence of a submucosal mass in the stomach with ulcerated areas and the imaging characteristics are consistent with GIST."
+          },
+          {
+            "name": "Lipoma",
+            "support_spans": [
+              "the lesion had fat-tissue attenuation"
+            ],
+            "contradict_spans": [
+              "ulcer biopsies showed only necrotic mucosa",
+              "three Forrest III–type ulcerated areas"
+            ],
+            "why": "The fat-tissue attenuation on CT suggests a lipoma, but the presence of ulcerated areas and necrotic mucosa on biopsy are not typical for lipoma."
+          },
+          {
+            "name": "Leiomyoma",
+            "support_spans": [
+              "a large echogenic mass in the gastric antrum compatible with an expansive lesion"
+            ],
+            "contradict_spans": [],
+            "why": "The imaging findings and the presence of a large mass in the stomach could be consistent with a leiomyoma, although the lack of specific histological diagnosis makes it less certain."
+          }
+        ],
+        "key_evidence_spans": [
+          "a large submucosal bulging mass in the posterior gastric wall",
+          "a well-defined, homogeneous, oval mass arising from the posterior gastric wall",
+          "the lesion had fat-tissue attenuation with central contrast enhancement and trabecular architecture"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Gastric lipoma",
+            "support_spans": [
+              "a large echogenic mass in the gastric antrum compatible with an expansive lesion",
+              "the lesion had fat-tissue attenuation"
+            ],
+            "contradict_spans": [
+              "three Forrest III–type ulcerated areas"
+            ],
+            "why": "The presence of a large echogenic mass in the gastric antrum with fat-tissue attenuation on CT suggests a gastric lipoma.",
+            "protected_reason": "Gastric lipoma is a rare and easily missed diagnosis that may not be considered in the initial differential diagnosis."
+          },
+          {
+            "name": "Gastrointestinal stromal tumor (GIST)",
+            "support_spans": [
+              "a large submucosal bulging mass in the posterior gastric wall",
+              "the lesion had trabecular architecture"
+            ],
+            "contradict_spans": [
+              "biopsy attempts failed to sample the submucosal mass"
+            ],
+            "why": "The presence of a large submucosal bulging mass with trabecular architecture on CT suggests a GIST.",
+            "protected_reason": "GIST is a rare and high-specificity diagnosis that may be missed if not considered in the differential diagnosis."
+          },
+          {
+            "name": "Leiomyoma",
+            "support_spans": [
+              "a large submucosal bulging mass in the posterior gastric wall",
+              "the lesion had central contrast enhancement"
+            ],
+            "contradict_spans": [
+              "three Forrest III–type ulcerated areas"
+            ],
+            "why": "The presence of a large submucosal bulging mass with central contrast enhancement on CT suggests a leiomyoma.",
+            "protected_reason": "Leiomyoma is a rare and easily missed diagnosis that may not be considered in the initial differential diagnosis."
+          }
+        ],
+        "key_evidence_spans": [
+          "a large echogenic mass in the gastric antrum compatible with an expansive lesion",
+          "the lesion had fat-tissue attenuation",
+          "a large submucosal bulging mass in the posterior gastric wall"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "the lesion had fat-tissue attenuation with central contrast enhancement and trabecular architecture",
+          "ulcer biopsies showed only necrotic mucosa",
+          "three Forrest III–type ulcerated areas",
+          "biopsy attempts failed to sample the submucosal mass"
+        ],
+        "generator_jaccard": 0.5,
+        "top1_same_across_views": true,
+        "top_margin": 0.0,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 1
+      },
+      "frontier_after_g": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Gastrointestinal Stromal Tumor (GIST)",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G2E008"
+          ],
+          "contradicting_evidence": [
+            "G2E009"
+          ],
+          "protected_reason": "GIST is a rare and high-specificity diagnosis that may be missed if not considered in the differential diagnosis.",
+          "score_logit": 2.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Leiomyoma",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E007",
+            "G1E001",
+            "G2E010"
+          ],
+          "contradicting_evidence": [
+            "G1E006"
+          ],
+          "protected_reason": "Leiomyoma is a rare and easily missed diagnosis that may not be considered in the initial differential diagnosis.",
+          "score_logit": 2.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Lipoma",
+          "aliases": [
+            "Gastric lipoma"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E004",
+            "G1E007"
+          ],
+          "contradicting_evidence": [
+            "G1E005",
+            "G1E006"
+          ],
+          "protected_reason": "Gastric lipoma is a rare and easily missed diagnosis that may not be considered in the initial differential diagnosis.",
+          "score_logit": 0.09999999999999998,
+          "status": "live"
+        }
+      ],
+      "adaptive_action": null,
+      "selector": {
+        "champion": "Gastrointestinal Stromal Tumor (GIST)",
+        "runner_up": "Leiomyoma",
+        "rationale": "The presence of a large submucosal bulging mass in the posterior gastric wall and a well-defined, homogeneous, oval mass with trabecular architecture supports GIST, despite the lack of definitive biopsy results.",
+        "rejected": [
+          {
+            "label": "Lipoma",
+            "why": "The presence of ulcerated areas and necrotic mucosa is not typical for lipoma."
+          }
+        ],
+        "margin": "medium"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "a large submucosal bulging mass in the posterior gastric wall",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "a well-defined, homogeneous, oval mass arising from the posterior gastric wall",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "the lesion had fat-tissue attenuation with central contrast enhancement and trabecular architecture",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "the lesion had fat-tissue attenuation",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E005",
+          "raw_span": "ulcer biopsies showed only necrotic mucosa",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E006",
+          "raw_span": "three Forrest III–type ulcerated areas",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E007",
+          "raw_span": "a large echogenic mass in the gastric antrum compatible with an expansive lesion",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E008",
+          "raw_span": "the lesion had trabecular architecture",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E009",
+          "raw_span": "biopsy attempts failed to sample the submucosal mass",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E010",
+          "raw_span": "the lesion had central contrast enhancement",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Gastrointestinal Stromal Tumor (GIST)",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G2E008"
+          ],
+          "contradicting_evidence": [
+            "G2E009"
+          ],
+          "protected_reason": "GIST is a rare and high-specificity diagnosis that may be missed if not considered in the differential diagnosis.",
+          "score_logit": 2.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Lipoma",
+          "aliases": [
+            "Gastric lipoma"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E004",
+            "G1E007"
+          ],
+          "contradicting_evidence": [
+            "G1E005",
+            "G1E006"
+          ],
+          "protected_reason": "Gastric lipoma is a rare and easily missed diagnosis that may not be considered in the initial differential diagnosis.",
+          "score_logit": 0.09999999999999998,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Leiomyoma",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E007",
+            "G1E001",
+            "G2E010"
+          ],
+          "contradicting_evidence": [
+            "G1E006"
+          ],
+          "protected_reason": "Leiomyoma is a rare and easily missed diagnosis that may not be considered in the initial differential diagnosis.",
+          "score_logit": 2.35,
+          "status": "live"
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Gastrointestinal Stromal Tumor (GIST)",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Lipoma",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Leiomyoma",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Gastric lipoma",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Gastrointestinal stromal tumor (GIST)",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C003",
+          "name": "Leiomyoma",
+          "view": "g2"
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 3,
+      "n_evidence": 10,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.5,
+      "frontier_n": 3,
+      "protected_n": 3,
+      "g1_n": 3,
+      "g2_n": 3,
+      "adaptive_action": null,
+      "llm_calls": 3,
+      "history_leakage": 0
+    },
+    "wall_s": 5.282
+  },
+  "created_at": "2026-08-08T01:50:14.438760+00:00"
+}

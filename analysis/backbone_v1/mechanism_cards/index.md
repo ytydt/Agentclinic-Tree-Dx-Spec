@@ -1,0 +1,183 @@
+# Mechanism cards (R3)
+
+n_cards=165
+
+## aphhm_lose (n=45)
+- [da/d2_seq100/5](da_d2_seq100_5.md) e7=`s2_gold_low_rank` gold=Left maxillary giant cell reparative granuloma (GCRG)
+- [da/d2_seq100/12](da_d2_seq100_12.md) e7=`s2_gold_low_rank` gold=Kaposiform hemangioendothelioma (KHE) of the internal audito
+- [da/d2_seq100/27](da_d2_seq100_27.md) e7=`ok` gold=Histiocytoid Sweet syndrome
+- [da/d2_seq100/39](da_d2_seq100_39.md) e7=`s2_miss` gold=Metastatic Crohn disease
+- [da/d2_seq100/67](da_d2_seq100_67.md) e7=`s2_miss` gold=Septic shock with anuric kidney failure
+- [da/d2_seq100/72](da_d2_seq100_72.md) e7=`s2_miss` gold=Three-vessel obstructive coronary artery disease
+- [da/d2_seq100/76](da_d2_seq100_76.md) e7=`parent_vs_subtype` gold=Low-grade chondrosarcoma of the mastoid with facial nerve in
+- [da/d2_seq100/81](da_d2_seq100_81.md) e7=`s2_miss` gold=Disseminated Strongyloides stercoralis infection with ocular
+- [da/d2_seq100/89](da_d2_seq100_89.md) e7=`s2_miss` gold=Accelerated atrioventricular junctional tachycardia with iso
+- [da/d2_seq100/134](da_d2_seq100_134.md) e7=`s2_miss` gold=Lymphomatosis cerebri variant of diffuse large B-cell lympho
+- [da/d2_seq100/139](da_d2_seq100_139.md) e7=`s2_miss` gold=Radioiodine-refractory vesicular thyroid carcinoma (VTC) wit
+- [da/d2_seq100/140](da_d2_seq100_140.md) e7=`near_synonym_prefer` gold=Pheochromocytoma-induced cardiomyopathy
+- [da/d2_seq100/161](da_d2_seq100_161.md) e7=`s2_miss` gold=Hemosiderotic fibrolipomatous tumor (HFLT)
+- [da/d2_seq100/183](da_d2_seq100_183.md) e7=`s2_miss` gold=Glioblastoma (World Health Organization grade IV) with optic
+- [da/d2_seq100/207](da_d2_seq100_207.md) e7=`parent_vs_subtype` gold=Mucous membrane pemphigoid (MMP)
+- [da/d2_seq100/225](da_d2_seq100_225.md) e7=`s2_miss` gold=Richter's transformation presenting as penile ulcer (transfo
+- [da/d2_seq100/226](da_d2_seq100_226.md) e7=`s2_miss` gold=Actinic prurigo with associated cheilitis
+- [da/d2_seq100/237](da_d2_seq100_237.md) e7=`s2_near_crowd_out` gold=Intergluteal and sacral hyperhidrosis
+- [da/d2_seq100/249](da_d2_seq100_249.md) e7=`ok` gold=CD8-positive granulomatous cutaneous T-cell lymphoma
+- [da/d2_heldout100/261](da_d2_heldout100_261.md) e7=`ok` gold=Cutaneous malakoplakia
+- [da/d2_heldout100/281](da_d2_heldout100_281.md) e7=`parent_vs_subtype` gold=Stage IIA Malignant Melanoma with subsequent development of 
+- [da/d2_heldout100/290](da_d2_heldout100_290.md) e7=`s2_miss` gold=Wellens syndrome with critical left anterior descending coro
+- [da/d2_heldout100/306](da_d2_heldout100_306.md) e7=`s2_miss` gold=Candida tropicalis meningoencephalitis
+- [da/d2_heldout100/308](da_d2_heldout100_308.md) e7=`ok` gold=Periorbital Discoid Lupus Erythematosus (DLE)
+- [da/d2_heldout100/312](da_d2_heldout100_312.md) e7=`s2_miss` gold=Pseudo-α-galactosidase deficiency (PAGD) syndrome with mild 
+- [da/d2_heldout100/313](da_d2_heldout100_313.md) e7=`s2_miss` gold=Community-acquired methicillin-resistant Staphylococcus aure
+- [da/d2_heldout100/318](da_d2_heldout100_318.md) e7=`s2_miss` gold=Dual tachycardia: Atrial flutter with accelerated idioventri
+- [da/d2_heldout100/328](da_d2_heldout100_328.md) e7=`s2_miss` gold=Chronic idiopathic urticaria (CIU) due to methylisothiazolin
+- [da/d2_heldout100/330](da_d2_heldout100_330.md) e7=`s2_miss` gold=Trifascicular block (Right bundle-branch block with alternat
+- [da/d2_heldout100/333](da_d2_heldout100_333.md) e7=`s2_miss` gold=Rhombencephalitis caused by Listeria monocytogenes
+- [da/d2_heldout100/361](da_d2_heldout100_361.md) e7=`s2_miss` gold=Slow-fast atrioventricular nodal reentry tachycardia (AVNRT)
+- [da/d2_heldout100/365](da_d2_heldout100_365.md) e7=`s2_miss` gold=Fibrosis and ulceration caused by meperidine
+- [da/d2_heldout100/372](da_d2_heldout100_372.md) e7=`s2_miss` gold=Elevated Lipoprotein(a) causing discordance between direct a
+- [da/d2_heldout100/379](da_d2_heldout100_379.md) e7=`s2_miss` gold=Neurotropic melanoma with orbital spread
+- [da/d2_heldout100/382](da_d2_heldout100_382.md) e7=`ok` gold=Genital porokeratosis (GP)
+- [da/d2_heldout100/399](da_d2_heldout100_399.md) e7=`s2_miss` gold=Atrioventricular nodal reentrant tachycardia (AVNRT)
+- [da/d2_heldout100/404](da_d2_heldout100_404.md) e7=`s2_miss` gold=Pemetrexed-induced inflammatory and sclerotic edema
+- [da/d2_heldout100/409](da_d2_heldout100_409.md) e7=`s2_gold_low_rank` gold=Bilateral syphilitic panuveitis with neurosyphilis
+- [da/d2_heldout100/424](da_d2_heldout100_424.md) e7=`s2_miss` gold=Hyperkeratosis lenticularis perstans (HLP), unilateral prese
+- [da/d2_heldout100/428](da_d2_heldout100_428.md) e7=`parent_vs_subtype` gold=Alcohol-induced Prinzmetal variant angina
+- [mcr/mcr_v1/2](mcr_mcr_v1_2.md) e7=`s2_gold_low_rank` gold=5-oxoprolinemia
+- [mcr/mcr_v1/73](mcr_mcr_v1_73.md) e7=`s2_miss` gold=metastatic prostate carcinoma
+- [mcr/mcr_v1/105](mcr_mcr_v1_105.md) e7=`ok` gold=heat stroke
+- [mcr/mcr_v1/112](mcr_mcr_v1_112.md) e7=`s2_miss` gold=Bath salt intoxication
+- [mcr/mcr_v1/117](mcr_mcr_v1_117.md) e7=`s2_miss` gold=Antiphospholipid syndrome
+
+## base_win_rank (n=39)
+- [da/d2_seq100/4](da_d2_seq100_4.md) e7=`s2_near_crowd_out` gold=Microvenular hemangioma (MVH)
+- [da/d2_seq100/74](da_d2_seq100_74.md) e7=`option_echo_da` gold=Nonkeratinizing squamous cell carcinoma of the nasal mucosa 
+- [da/d2_seq100/137](da_d2_seq100_137.md) e7=`s2_near_crowd_out` gold=Papillary hemangioma
+- [da/d2_seq100/149](da_d2_seq100_149.md) e7=`parent_vs_subtype` gold=Giant cell tumor of soft tissue (GCT-ST)
+- [da/d2_seq100/206](da_d2_seq100_206.md) e7=`s4_hit_judge_miss` gold=Acute posterior and inferior myocardial infarction (STEMI eq
+- [da/d2_seq100/241](da_d2_seq100_241.md) e7=`s4_hit_judge_miss` gold=Endogenous endophthalmitis with iris abscess
+- [da/d2_heldout100/299](da_d2_heldout100_299.md) e7=`near_synonym_prefer` gold=Exophytic Schneiderian papilloma
+- [da/d2_heldout100/314](da_d2_heldout100_314.md) e7=`s2_gold_low_rank` gold=Peeling skin disease (PSD)
+- [da/d2_heldout100/432](da_d2_heldout100_432.md) e7=`near_synonym_prefer` gold=Bullous lichen planus of the nails
+- [da/d2_heldout200b/486](da_d2_heldout200b_486.md) e7=`near_synonym_prefer` gold=Histoid leprosy
+- [da/d2_heldout200b/510](da_d2_heldout200b_510.md) e7=`s4_hit_judge_miss` gold=Overlap syndrome involving diffuse systemic sclerosis and sy
+- [da/d2_heldout200b/549](da_d2_heldout200b_549.md) e7=`parent_vs_subtype` gold=Systemic Lupus Erythematosus with IgA Nephropathy and Acute 
+- [da/d2_heldout200b/574](da_d2_heldout200b_574.md) e7=`s2_gold_low_rank` gold=Mixed Langerhans cell histiocytosis (LCH) and Erdheim-Cheste
+- [da/d2_heldout200b/579](da_d2_heldout200b_579.md) e7=`near_synonym_prefer` gold=Gas-containing brain abscess
+- [da/d2_heldout200b/604](da_d2_heldout200b_604.md) e7=`parent_vs_subtype` gold=Lymphomatoid Granulomatosis (LYG) Grade 3 (EBV+ B-cell lymph
+- [da/d2_heldout200b/605](da_d2_heldout200b_605.md) e7=`s2_gold_low_rank` gold=Congenital Thrombotic Thrombocytopenic Purpura (cTTP)
+- [da/d2_heldout200b/649](da_d2_heldout200b_649.md) e7=`s2_near_crowd_out` gold=Severe COVID-19 pneumonia with ARDS in pregnancy requiring V
+- [da/d2_heldout200b/723](da_d2_heldout200b_723.md) e7=`s2_gold_low_rank` gold=Acute pancreatitis with renal failure
+- [da/d2_heldout200b/740](da_d2_heldout200b_740.md) e7=`parent_vs_subtype` gold=Secondary cutaneous endometriosis (SCE)
+- [da/d2_heldout200b/770](da_d2_heldout200b_770.md) e7=`s2_gold_low_rank` gold=Leptospirosis with severe pneumonia, acute kidney injury, an
+- [mcr/mcr_v1/62](mcr_mcr_v1_62.md) e7=`s2_gold_low_rank` gold=Lipoblastoma
+- [mcr/mcr_v1/69](mcr_mcr_v1_69.md) e7=`rationale_overfit` gold=Gastric lipoma
+- [mcr/mcr_v1/78](mcr_mcr_v1_78.md) e7=`rationale_overfit` gold=schwannoma
+- [mcr/mcr_v1/82](mcr_mcr_v1_82.md) e7=`rationale_overfit` gold=Euglycemic diabetic ketoacidosis
+- [mcr/mcr_v1/116](mcr_mcr_v1_116.md) e7=`parent_vs_subtype` gold=systemic sclerosis sine scleroderma
+- [mcr/mcr_v1/126](mcr_mcr_v1_126.md) e7=`s2_gold_low_rank` gold=Extranodal natural killer/T-cell lymphoma nasal type
+- [mcr/mcr_v2/139](mcr_mcr_v2_139.md) e7=`parent_vs_subtype` gold=type 2 autoimmune pancreatitis
+- [mcr/mcr_v2/152](mcr_mcr_v2_152.md) e7=`near_synonym_prefer` gold=Squamous cell carcinoma
+- [mcr/mcr_v2/174](mcr_mcr_v2_174.md) e7=`rationale_overfit` gold=autoimmune gastritis
+- [mcr/mcr_v2/197](mcr_mcr_v2_197.md) e7=`rationale_overfit` gold=Pseudoseptic arthritis
+- [mcr/mcr_v2/211](mcr_mcr_v2_211.md) e7=`near_synonym_prefer` gold=Ewing sarcoma
+- [mcr/mcr_v2/227](mcr_mcr_v2_227.md) e7=`rationale_overfit` gold=pulmonary embolism
+- [mcr/mcr_200b/329](mcr_mcr_200b_329.md) e7=`near_synonym_prefer` gold=urachal cyst
+- [mcr/mcr_200b/344](mcr_mcr_200b_344.md) e7=`rationale_overfit` gold=sarcoidosis
+- [mcr/mcr_200b/364](mcr_mcr_200b_364.md) e7=`rationale_overfit` gold=acute interstitial nephritis
+- [mcr/mcr_200b/381](mcr_mcr_200b_381.md) e7=`rationale_overfit` gold=lipoma
+- [mcr/mcr_200b/395](mcr_mcr_200b_395.md) e7=`rationale_overfit` gold=Kummell disease
+- [mcr/mcr_200b/458](mcr_mcr_200b_458.md) e7=`rationale_overfit` gold=Lymphangioleiomyomatosis
+- [mcr/mcr_200b/464](mcr_mcr_200b_464.md) e7=`s4_hit_judge_miss` gold=ruptured popliteal artery aneurysm
+
+## all_miss_but_recalled (n=39)
+- [da/d2_seq100/119](da_d2_seq100_119.md) e7=`s2_gold_low_rank` gold=Eruptive pruritic papular porokeratosis (EPPP)
+- [da/d2_heldout100/272](da_d2_heldout100_272.md) e7=`near_synonym_prefer` gold=Window-Period Acute Myocardial Infarction
+- [da/d2_heldout100/334](da_d2_heldout100_334.md) e7=`s2_miss` gold=Phaeohyphomycosis
+- [da/d2_heldout100/349](da_d2_heldout100_349.md) e7=`option_echo_da` gold=Cutaneous histoplasmosis
+- [mcr/mcr_v1/19](mcr_mcr_v1_19.md) e7=`rationale_overfit` gold=Leiomyosarcoma
+- [mcr/mcr_200b/268](mcr_mcr_200b_268.md) e7=`s3_why_ignored_gold` gold=pustular psoriasis
+- [da/d2_seq100/11](da_d2_seq100_11.md) e7=`s3_why_ignored_gold` gold=Acute dacryocystitis with secondary optic nerve injury
+- [mcr/mcr_200b/353](mcr_mcr_200b_353.md) e7=`s3_why_ignored_gold` gold=squamous cell carcinoma
+- [mcr/mcr_200b/303](mcr_mcr_200b_303.md) e7=`s3_why_ignored_gold` gold=GastricSchwannoma
+- [da/d2_seq100/194](da_d2_seq100_194.md) e7=`option_echo_da` gold=Hyperoleon within a lamellar macular hole
+- [da/d2_seq100/198](da_d2_seq100_198.md) e7=`option_echo_da` gold=Stage IA endometrial cancer
+- [da/d2_seq100/22](da_d2_seq100_22.md) e7=`option_echo_da` gold=Antimelanoma differentiation associated gene 5 clinically am
+- [da/d2_heldout100/411](da_d2_heldout100_411.md) e7=`s2_gold_low_rank` gold=Left posterior fascicular ventricular tachycardia (FVT)
+- [mcr/mcr_v2/187](mcr_mcr_v2_187.md) e7=`s2_gold_low_rank` gold=Schwannoma
+- [da/d2_heldout200b/731](da_d2_heldout200b_731.md) e7=`s2_gold_low_rank` gold=Mature cystic teratoma in the posterior fossa
+- [da/d2_seq100/114](da_d2_seq100_114.md) e7=`s2_gold_low_rank` gold=Reversible cerebral vasoconstriction syndrome (RCVS)
+- [mcr/mcr_200b/287](mcr_mcr_200b_287.md) e7=`parent_vs_subtype` gold=Autoimmune hepatitis
+- [mcr/mcr_v2/190](mcr_mcr_v2_190.md) e7=`parent_vs_subtype` gold=Primary signet-ring cell carcinoma of the bladder
+- [da/d2_seq100/129](da_d2_seq100_129.md) e7=`parent_vs_subtype` gold=Short-coupled polymorphic ventricular tachycardia/ventricula
+- [da/d2_heldout200b/701](da_d2_heldout200b_701.md) e7=`parent_vs_subtype` gold=Arteriocolonic fistula of Inferior Mesenteric Artery Aneurys
+- [da/d2_heldout200b/737](da_d2_heldout200b_737.md) e7=`s2_miss` gold=Leiomyomatosis peritonealis disseminata (LPD) with endometri
+- [mcr/mcr_200b/424](mcr_mcr_200b_424.md) e7=`s2_miss` gold=Nonbacterial thrombotic endocarditis
+- [da/d2_heldout200b/637](da_d2_heldout200b_637.md) e7=`s2_miss` gold=Chronic Spontaneous Urticaria (CSU)
+- [mcr/mcr_200b/362](mcr_mcr_200b_362.md) e7=`s2_miss` gold=Cryptococcal osteomyelitis
+- [da/d2_heldout200b/650](da_d2_heldout200b_650.md) e7=`near_synonym_prefer` gold=PVC-induced Idiopathic Ventricular Fibrillation
+- [mcr/mcr_200b/361](mcr_mcr_200b_361.md) e7=`near_synonym_prefer` gold=Anaplastic thyroid carcinoma
+- [da/d2_heldout200b/555](da_d2_heldout200b_555.md) e7=`near_synonym_prefer` gold=Euglycemic Diabetic Ketoacidosis
+- [da/d2_heldout200b/548](da_d2_heldout200b_548.md) e7=`s4_hit_judge_miss` gold=Rhabdomyolysis associated with Relugolix
+- [mcr/mcr_v1/50](mcr_mcr_v1_50.md) e7=`s4_hit_judge_miss` gold=Gastrointestinal clear cell sarcoma
+- [da/d2_heldout200b/589](da_d2_heldout200b_589.md) e7=`s4_hit_judge_miss` gold=Edwardsiella tarda infection with empyema
+- [mcr/mcr_v1/95](mcr_mcr_v1_95.md) e7=`s4_hit_judge_miss` gold=Tuberculosis
+- [da/d2_heldout200b/694](da_d2_heldout200b_694.md) e7=`s2_near_crowd_out` gold=Parkinson's Disease
+- [mcr/mcr_v2/141](mcr_mcr_v2_141.md) e7=`s2_near_crowd_out` gold=Rhegmatogenous retinal detachment with choroidal detachment
+- [mcr/mcr_200b/298](mcr_mcr_200b_298.md) e7=`s2_near_crowd_out` gold=Warthin tumor
+- [mcr/mcr_v2/237](mcr_mcr_v2_237.md) e7=`rationale_overfit` gold=Peripheral odontoma
+- [mcr/mcr_v2/142](mcr_mcr_v2_142.md) e7=`rationale_overfit` gold=angiosarcoma
+- [mcr/mcr_200b/294](mcr_mcr_200b_294.md) e7=`rationale_overfit` gold=Undifferentiated embryonal sarcoma of the liver
+- [mcr/mcr_200b/272](mcr_mcr_200b_272.md) e7=`rationale_overfit` gold=sclerosing hemangioma
+- [mcr/mcr_v2/156](mcr_mcr_v2_156.md) e7=`label_drift` gold=Angiomyolipoma
+
+## base_win_recall (n=17)
+- [da/d2_seq100/63](da_d2_seq100_63.md) e7=`s2_miss` gold=Synchysis scintillans with morning glory disc anomaly and ch
+- [da/d2_seq100/150](da_d2_seq100_150.md) e7=`s2_miss` gold=Transient left abducens (cranial nerve VI) nerve palsy
+- [da/d2_seq100/163](da_d2_seq100_163.md) e7=`s2_miss` gold=FIP1L1-PDGFRA–positive chronic eosinophilic leukemia (CEL) w
+- [da/d2_heldout100/317](da_d2_heldout100_317.md) e7=`s2_miss` gold=Pyoderma vegetans
+- [da/d2_heldout200b/477](da_d2_heldout200b_477.md) e7=`s2_miss` gold=Multisystem Inflammatory Syndrome in Children (MIS-C) with C
+- [da/d2_heldout200b/488](da_d2_heldout200b_488.md) e7=`s2_miss` gold=Myelodysplastic syndrome (MDS) with refractory anaemia with 
+- [da/d2_heldout200b/631](da_d2_heldout200b_631.md) e7=`s2_miss` gold=Primary Cardiac Angiosarcoma
+- [mcr/mcr_v1/11](mcr_mcr_v1_11.md) e7=`s2_miss` gold=Multisystem inflammatory syndrome in children
+- [mcr/mcr_v2/166](mcr_mcr_v2_166.md) e7=`s2_miss` gold=Contrast-induced encephalopathy
+- [mcr/mcr_v2/205](mcr_mcr_v2_205.md) e7=`s2_miss` gold=Cysticercosis
+- [mcr/mcr_v2/212](mcr_mcr_v2_212.md) e7=`s2_miss` gold=Neurofibromatosis type 2
+- [mcr/mcr_200b/249](mcr_mcr_200b_249.md) e7=`s2_miss` gold=Organizing pneumonia
+- [mcr/mcr_200b/250](mcr_mcr_200b_250.md) e7=`s2_miss` gold=Toxocariasis
+- [mcr/mcr_200b/265](mcr_mcr_200b_265.md) e7=`s2_miss` gold=Intestinal T-cell lymphoma not otherwise specified
+- [mcr/mcr_200b/322](mcr_mcr_200b_322.md) e7=`s2_miss` gold=Factitious disorder
+- [mcr/mcr_200b/367](mcr_mcr_200b_367.md) e7=`s2_miss` gold=Cicatricial conjunctivitis
+- [mcr/mcr_200b/456](mcr_mcr_200b_456.md) e7=`s2_miss` gold=Ureteroarterial fistula
+
+## e7_win_recall (n=13)
+- [da/d2_seq100/173](da_d2_seq100_173.md) e7=`s2_gold_low_rank` gold=Netherton syndrome
+- [da/d2_seq100/202](da_d2_seq100_202.md) e7=`ok` gold=Type B lactic acidosis secondary to diffuse large B-cell lym
+- [da/d2_heldout100/262](da_d2_heldout100_262.md) e7=`option_echo_da` gold=IBD-associated neutrophilic dermatosis with ulcerative colit
+- [da/d2_heldout100/414](da_d2_heldout100_414.md) e7=`s2_gold_low_rank` gold=Juvenile-onset glaucoma with compound heterozygous LTBP2 mut
+- [da/d2_heldout200b/530](da_d2_heldout200b_530.md) e7=`near_synonym_prefer` gold=Calcinosis cutis in Sjögren syndrome
+- [da/d2_heldout200b/698](da_d2_heldout200b_698.md) e7=`s2_gold_low_rank` gold=Concurrent pulmonary and cerebral mucormycosis
+- [mcr/mcr_v1/33](mcr_mcr_v1_33.md) e7=`ok` gold=Dyke-Davidoff-Masson syndrome
+- [mcr/mcr_v1/111](mcr_mcr_v1_111.md) e7=`ok` gold=Giant cell tumor of bone
+- [mcr/mcr_200b/260](mcr_mcr_200b_260.md) e7=`ok` gold=syphilitic aortitis
+- [mcr/mcr_200b/346](mcr_mcr_200b_346.md) e7=`ok` gold=myxoinflammatory fibroblastic sarcoma
+- [mcr/mcr_200b/365](mcr_mcr_200b_365.md) e7=`ok` gold=thyroglossal duct cyst
+- [mcr/mcr_200b/374](mcr_mcr_200b_374.md) e7=`ok` gold=cryptogenic organizing pneumonia
+- [mcr/mcr_200b/397](mcr_mcr_200b_397.md) e7=`near_synonym_prefer` gold=Cancer associated microangiopathic hemolytic anemia
+
+## e7_win_rank (n=8)
+- [da/d2_seq100/228](da_d2_seq100_228.md) e7=`ok` gold=Primary systemic (AL) amyloidosis
+- [da/d2_heldout100/273](da_d2_heldout100_273.md) e7=`ok` gold=Very severe chronic atopic hand eczema with moderate to seve
+- [da/d2_heldout200b/592](da_d2_heldout200b_592.md) e7=`ok` gold=Pulmonary Reperfusion Injury after catheter-directed thrombe
+- [mcr/mcr_v1/38](mcr_mcr_v1_38.md) e7=`ok` gold=trigeminal schwannoma
+- [mcr/mcr_v1/40](mcr_mcr_v1_40.md) e7=`ok` gold=hepatocellular carcinoma
+- [mcr/mcr_v2/170](mcr_mcr_v2_170.md) e7=`ok` gold=T-cell lymphoblastic lymphoma
+- [mcr/mcr_v2/173](mcr_mcr_v2_173.md) e7=`ok` gold=Chronic subdural hematoma
+- [mcr/mcr_200b/412](mcr_mcr_200b_412.md) e7=`ok` gold=External cervical resorption
+
+## aphhm_win (n=4)
+- [da/d2_seq100/174](da_d2_seq100_174.md) e7=`s2_miss` gold=Intravascular NK/T-cell lymphoma, nasal type
+- [da/d2_heldout100/252](da_d2_heldout100_252.md) e7=`s2_miss` gold=Folliculocentric lichen sclerosus et atrophicus
+- [da/d2_heldout100/381](da_d2_heldout100_381.md) e7=`s2_miss` gold=Good syndrome
+- [mcr/mcr_v1/35](mcr_mcr_v1_35.md) e7=`s2_miss` gold=Petersen’s hernia
+

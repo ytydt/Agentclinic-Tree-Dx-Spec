@@ -1,0 +1,912 @@
+{
+  "case_id": "diagnosisarena__000420",
+  "source_id": "420",
+  "champion": "Myocarditis",
+  "ordered_diagnoses": [
+    "Myocarditis",
+    "Stress Cardiomyopathy",
+    "Acute Coronary Syndrome"
+  ],
+  "llm_calls": 3,
+  "stages": {
+    "mode": "lite",
+    "vignette_chars": 1238,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Myocarditis",
+          "support_spans": [
+            "Troponin T: 4.74 μg/L (normal: 0-0.03 μg/L)",
+            "Severe left ventricular dysfunction (ejection fraction 38%), wall motion abnormalities in multiple vascular territories"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's elevated troponin levels and severe left ventricular dysfunction suggest myocardial injury, which is consistent with myocarditis."
+        },
+        {
+          "name": "Acute Coronary Syndrome",
+          "support_spans": [
+            "Troponin T: 4.74 μg/L (normal: 0-0.03 μg/L)",
+            "ST-segment elevation in leads II, III, aVF, and V1-V6"
+          ],
+          "contradict_spans": [
+            "Coronary angiography: Normal coronary arteries"
+          ],
+          "why": "The patient's elevated troponin levels and ST-segment elevation are consistent with acute coronary syndrome, but the normal coronary angiography results contradict this diagnosis."
+        },
+        {
+          "name": "Stress Cardiomyopathy",
+          "support_spans": [
+            "Severe left ventricular dysfunction (ejection fraction 38%), wall motion abnormalities in multiple vascular territories",
+            "Patient lost consciousness 20 minutes after arrival, with blood pressure decreasing to 67/43 mm Hg"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's severe left ventricular dysfunction and hypotension are consistent with stress cardiomyopathy, which can be triggered by physical or emotional stress."
+        }
+      ],
+      "key_evidence_spans": [
+        "Troponin T: 4.74 μg/L (normal: 0-0.03 μg/L)",
+        "Severe left ventricular dysfunction (ejection fraction 38%), wall motion abnormalities in multiple vascular territories",
+        "Coronary angiography: Normal coronary arteries",
+        "ST-segment elevation in leads II, III, aVF, and V1-V6"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Myocarditis",
+          "support_spans": [
+            "chest pain and dyspnea",
+            "palpitations and symptoms of upper respiratory tract infection 3 days prior",
+            "Troponin T: 4.74 μg/L",
+            "Severe left ventricular dysfunction (ejection fraction 38%)"
+          ],
+          "contradict_spans": [
+            "Normal coronary arteries"
+          ],
+          "why": "The patient's presentation with chest pain, dyspnea, and palpitations, along with elevated troponin and severe left ventricular dysfunction, suggests myocarditis, especially given the recent upper respiratory tract infection.",
+          "protected_reason": "Myocarditis can be easily missed if not considered in the differential diagnosis, especially in young patients with no prior medical history."
+        },
+        {
+          "name": "Stress Cardiomyopathy",
+          "support_spans": [
+            "patient lost consciousness 20 minutes after arrival",
+            "blood pressure decreasing to 67/43 mm Hg",
+            "Severe left ventricular dysfunction (ejection fraction 38%)"
+          ],
+          "contradict_spans": [
+            "Normal coronary arteries"
+          ],
+          "why": "The patient's sudden loss of consciousness and severe hypotension, along with severe left ventricular dysfunction, could suggest stress cardiomyopathy, also known as takotsubo cardiomyopathy.",
+          "protected_reason": "Stress cardiomyopathy is a rare and easily missed diagnosis that can present with severe cardiac dysfunction, making it a crucial consideration in this case."
+        },
+        {
+          "name": "Acute Coronary Syndrome with Spontaneous Coronary Artery Dissection",
+          "support_spans": [
+            "chest pain",
+            "Troponin T: 4.74 μg/L",
+            "ST-segment elevation in leads II, III, aVF, and V1-V6"
+          ],
+          "contradict_spans": [
+            "Normal coronary arteries"
+          ],
+          "why": "Although the coronary angiography shows normal coronary arteries, the patient's presentation with chest pain, elevated troponin, and ST-segment elevation could suggest acute coronary syndrome, potentially due to spontaneous coronary artery dissection.",
+          "protected_reason": "Spontaneous coronary artery dissection is a rare cause of acute coronary syndrome that can be easily missed, especially if not specifically looked for during coronary angiography."
+        }
+      ],
+      "key_evidence_spans": [
+        "Troponin T: 4.74 μg/L",
+        "Severe left ventricular dysfunction (ejection fraction 38%)",
+        "ST-segment elevation in leads II, III, aVF, and V1-V6"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "Coronary angiography: Normal coronary arteries",
+        "Normal coronary arteries"
+      ],
+      "generator_jaccard": 0.5,
+      "top1_same_across_views": true,
+      "top_margin": 1.0,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 1
+    },
+    "adaptive_action": null,
+    "selector": {
+      "champion": "Myocarditis",
+      "runner_up": "Stress Cardiomyopathy",
+      "rationale": "Myocarditis best explains the severe left ventricular dysfunction, elevated troponin, and wall motion abnormalities, despite normal coronary arteries.",
+      "rejected": [
+        {
+          "label": "Acute Coronary Syndrome",
+          "why": "Normal coronary arteries contradict the diagnosis of acute coronary syndrome."
+        }
+      ],
+      "margin": "medium"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "Troponin T: 4.74 μg/L (normal: 0-0.03 μg/L)",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "Severe left ventricular dysfunction (ejection fraction 38%), wall motion abnormalities in multiple vascular territories",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "Coronary angiography: Normal coronary arteries",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "ST-segment elevation in leads II, III, aVF, and V1-V6",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E005",
+        "raw_span": "Patient lost consciousness 20 minutes after arrival, with blood pressure decreasing to 67/43 mm Hg",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E006",
+        "raw_span": "Troponin T: 4.74 μg/L",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E007",
+        "raw_span": "Severe left ventricular dysfunction (ejection fraction 38%)",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E008",
+        "raw_span": "chest pain and dyspnea",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E009",
+        "raw_span": "palpitations and symptoms of upper respiratory tract infection 3 days prior",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E010",
+        "raw_span": "Normal coronary arteries",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E011",
+        "raw_span": "patient lost consciousness 20 minutes after arrival",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E012",
+        "raw_span": "blood pressure decreasing to 67/43 mm Hg",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E013",
+        "raw_span": "chest pain",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Myocarditis",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G2E008",
+          "G2E009",
+          "G2E006",
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G2E010"
+        ],
+        "protected_reason": "Myocarditis can be easily missed if not considered in the differential diagnosis, especially in young patients with no prior medical history.",
+        "score_logit": 5.35,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Acute Coronary Syndrome",
+        "aliases": [
+          "Acute Coronary Syndrome with Spontaneous Coronary Artery Dissection"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E004",
+          "G2E013",
+          "G2E006"
+        ],
+        "contradicting_evidence": [
+          "G1E003",
+          "G2E010"
+        ],
+        "protected_reason": "Spontaneous coronary artery dissection is a rare cause of acute coronary syndrome that can be easily missed, especially if not specifically looked for during coronary angiography.",
+        "score_logit": 2.1,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Stress Cardiomyopathy",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E002",
+          "G1E005",
+          "G2E011",
+          "G2E012",
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G2E010"
+        ],
+        "protected_reason": "Stress cardiomyopathy is a rare and easily missed diagnosis that can present with severe cardiac dysfunction, making it a crucial consideration in this case.",
+        "score_logit": 4.35,
+        "status": "live",
+        "agent_votes": 0
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Myocarditis",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Acute Coronary Syndrome",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Stress Cardiomyopathy",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Myocarditis",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C003",
+        "name": "Stress Cardiomyopathy",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Acute Coronary Syndrome with Spontaneous Coronary Artery Dissection",
+        "view": "g2"
+      }
+    ],
+    "frontier_final": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Myocarditis",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G2E008",
+          "G2E009",
+          "G2E006",
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G2E010"
+        ],
+        "protected_reason": "Myocarditis can be easily missed if not considered in the differential diagnosis, especially in young patients with no prior medical history.",
+        "score_logit": 5.35,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Stress Cardiomyopathy",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E002",
+          "G1E005",
+          "G2E011",
+          "G2E012",
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G2E010"
+        ],
+        "protected_reason": "Stress cardiomyopathy is a rare and easily missed diagnosis that can present with severe cardiac dysfunction, making it a crucial consideration in this case.",
+        "score_logit": 4.35,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Acute Coronary Syndrome",
+        "aliases": [
+          "Acute Coronary Syndrome with Spontaneous Coronary Artery Dissection"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E004",
+          "G2E013",
+          "G2E006"
+        ],
+        "contradicting_evidence": [
+          "G1E003",
+          "G2E010"
+        ],
+        "protected_reason": "Spontaneous coronary artery dissection is a rare cause of acute coronary syndrome that can be easily missed, especially if not specifically looked for during coronary angiography.",
+        "score_logit": 2.1,
+        "status": "live",
+        "agent_votes": 0
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 3,
+    "n_evidence": 13,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.5,
+    "frontier_n": 3,
+    "protected_n": 3,
+    "n_generators": 2,
+    "adaptive_action": null,
+    "llm_calls": 3,
+    "history_leakage": 0,
+    "mode": "lite"
+  },
+  "prediction": {
+    "arm": "mosaic_lite_r2",
+    "case_id": "diagnosisarena__000420",
+    "source_id": "420",
+    "dataset": "diagnosisarena_heldout",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Myocarditis",
+      "Stress Cardiomyopathy",
+      "Acute Coronary Syndrome"
+    ],
+    "top2_diagnoses": [
+      "Myocarditis",
+      "Stress Cardiomyopathy"
+    ],
+    "cost": {
+      "llm_calls": 3
+    },
+    "stages": {
+      "mode": "lite",
+      "vignette_chars": 1238,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Myocarditis",
+            "support_spans": [
+              "Troponin T: 4.74 μg/L (normal: 0-0.03 μg/L)",
+              "Severe left ventricular dysfunction (ejection fraction 38%), wall motion abnormalities in multiple vascular territories"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's elevated troponin levels and severe left ventricular dysfunction suggest myocardial injury, which is consistent with myocarditis."
+          },
+          {
+            "name": "Acute Coronary Syndrome",
+            "support_spans": [
+              "Troponin T: 4.74 μg/L (normal: 0-0.03 μg/L)",
+              "ST-segment elevation in leads II, III, aVF, and V1-V6"
+            ],
+            "contradict_spans": [
+              "Coronary angiography: Normal coronary arteries"
+            ],
+            "why": "The patient's elevated troponin levels and ST-segment elevation are consistent with acute coronary syndrome, but the normal coronary angiography results contradict this diagnosis."
+          },
+          {
+            "name": "Stress Cardiomyopathy",
+            "support_spans": [
+              "Severe left ventricular dysfunction (ejection fraction 38%), wall motion abnormalities in multiple vascular territories",
+              "Patient lost consciousness 20 minutes after arrival, with blood pressure decreasing to 67/43 mm Hg"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's severe left ventricular dysfunction and hypotension are consistent with stress cardiomyopathy, which can be triggered by physical or emotional stress."
+          }
+        ],
+        "key_evidence_spans": [
+          "Troponin T: 4.74 μg/L (normal: 0-0.03 μg/L)",
+          "Severe left ventricular dysfunction (ejection fraction 38%), wall motion abnormalities in multiple vascular territories",
+          "Coronary angiography: Normal coronary arteries",
+          "ST-segment elevation in leads II, III, aVF, and V1-V6"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Myocarditis",
+            "support_spans": [
+              "chest pain and dyspnea",
+              "palpitations and symptoms of upper respiratory tract infection 3 days prior",
+              "Troponin T: 4.74 μg/L",
+              "Severe left ventricular dysfunction (ejection fraction 38%)"
+            ],
+            "contradict_spans": [
+              "Normal coronary arteries"
+            ],
+            "why": "The patient's presentation with chest pain, dyspnea, and palpitations, along with elevated troponin and severe left ventricular dysfunction, suggests myocarditis, especially given the recent upper respiratory tract infection.",
+            "protected_reason": "Myocarditis can be easily missed if not considered in the differential diagnosis, especially in young patients with no prior medical history."
+          },
+          {
+            "name": "Stress Cardiomyopathy",
+            "support_spans": [
+              "patient lost consciousness 20 minutes after arrival",
+              "blood pressure decreasing to 67/43 mm Hg",
+              "Severe left ventricular dysfunction (ejection fraction 38%)"
+            ],
+            "contradict_spans": [
+              "Normal coronary arteries"
+            ],
+            "why": "The patient's sudden loss of consciousness and severe hypotension, along with severe left ventricular dysfunction, could suggest stress cardiomyopathy, also known as takotsubo cardiomyopathy.",
+            "protected_reason": "Stress cardiomyopathy is a rare and easily missed diagnosis that can present with severe cardiac dysfunction, making it a crucial consideration in this case."
+          },
+          {
+            "name": "Acute Coronary Syndrome with Spontaneous Coronary Artery Dissection",
+            "support_spans": [
+              "chest pain",
+              "Troponin T: 4.74 μg/L",
+              "ST-segment elevation in leads II, III, aVF, and V1-V6"
+            ],
+            "contradict_spans": [
+              "Normal coronary arteries"
+            ],
+            "why": "Although the coronary angiography shows normal coronary arteries, the patient's presentation with chest pain, elevated troponin, and ST-segment elevation could suggest acute coronary syndrome, potentially due to spontaneous coronary artery dissection.",
+            "protected_reason": "Spontaneous coronary artery dissection is a rare cause of acute coronary syndrome that can be easily missed, especially if not specifically looked for during coronary angiography."
+          }
+        ],
+        "key_evidence_spans": [
+          "Troponin T: 4.74 μg/L",
+          "Severe left ventricular dysfunction (ejection fraction 38%)",
+          "ST-segment elevation in leads II, III, aVF, and V1-V6"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "Coronary angiography: Normal coronary arteries",
+          "Normal coronary arteries"
+        ],
+        "generator_jaccard": 0.5,
+        "top1_same_across_views": true,
+        "top_margin": 1.0,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 1
+      },
+      "adaptive_action": null,
+      "selector": {
+        "champion": "Myocarditis",
+        "runner_up": "Stress Cardiomyopathy",
+        "rationale": "Myocarditis best explains the severe left ventricular dysfunction, elevated troponin, and wall motion abnormalities, despite normal coronary arteries.",
+        "rejected": [
+          {
+            "label": "Acute Coronary Syndrome",
+            "why": "Normal coronary arteries contradict the diagnosis of acute coronary syndrome."
+          }
+        ],
+        "margin": "medium"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "Troponin T: 4.74 μg/L (normal: 0-0.03 μg/L)",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "Severe left ventricular dysfunction (ejection fraction 38%), wall motion abnormalities in multiple vascular territories",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "Coronary angiography: Normal coronary arteries",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "ST-segment elevation in leads II, III, aVF, and V1-V6",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E005",
+          "raw_span": "Patient lost consciousness 20 minutes after arrival, with blood pressure decreasing to 67/43 mm Hg",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E006",
+          "raw_span": "Troponin T: 4.74 μg/L",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E007",
+          "raw_span": "Severe left ventricular dysfunction (ejection fraction 38%)",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E008",
+          "raw_span": "chest pain and dyspnea",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E009",
+          "raw_span": "palpitations and symptoms of upper respiratory tract infection 3 days prior",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E010",
+          "raw_span": "Normal coronary arteries",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E011",
+          "raw_span": "patient lost consciousness 20 minutes after arrival",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E012",
+          "raw_span": "blood pressure decreasing to 67/43 mm Hg",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E013",
+          "raw_span": "chest pain",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Myocarditis",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G2E008",
+            "G2E009",
+            "G2E006",
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G2E010"
+          ],
+          "protected_reason": "Myocarditis can be easily missed if not considered in the differential diagnosis, especially in young patients with no prior medical history.",
+          "score_logit": 5.35,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Acute Coronary Syndrome",
+          "aliases": [
+            "Acute Coronary Syndrome with Spontaneous Coronary Artery Dissection"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E004",
+            "G2E013",
+            "G2E006"
+          ],
+          "contradicting_evidence": [
+            "G1E003",
+            "G2E010"
+          ],
+          "protected_reason": "Spontaneous coronary artery dissection is a rare cause of acute coronary syndrome that can be easily missed, especially if not specifically looked for during coronary angiography.",
+          "score_logit": 2.1,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Stress Cardiomyopathy",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E002",
+            "G1E005",
+            "G2E011",
+            "G2E012",
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G2E010"
+          ],
+          "protected_reason": "Stress cardiomyopathy is a rare and easily missed diagnosis that can present with severe cardiac dysfunction, making it a crucial consideration in this case.",
+          "score_logit": 4.35,
+          "status": "live",
+          "agent_votes": 0
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Myocarditis",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Acute Coronary Syndrome",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Stress Cardiomyopathy",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Myocarditis",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C003",
+          "name": "Stress Cardiomyopathy",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Acute Coronary Syndrome with Spontaneous Coronary Artery Dissection",
+          "view": "g2"
+        }
+      ],
+      "frontier_final": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Myocarditis",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G2E008",
+            "G2E009",
+            "G2E006",
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G2E010"
+          ],
+          "protected_reason": "Myocarditis can be easily missed if not considered in the differential diagnosis, especially in young patients with no prior medical history.",
+          "score_logit": 5.35,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Stress Cardiomyopathy",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E002",
+            "G1E005",
+            "G2E011",
+            "G2E012",
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G2E010"
+          ],
+          "protected_reason": "Stress cardiomyopathy is a rare and easily missed diagnosis that can present with severe cardiac dysfunction, making it a crucial consideration in this case.",
+          "score_logit": 4.35,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Acute Coronary Syndrome",
+          "aliases": [
+            "Acute Coronary Syndrome with Spontaneous Coronary Artery Dissection"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E004",
+            "G2E013",
+            "G2E006"
+          ],
+          "contradicting_evidence": [
+            "G1E003",
+            "G2E010"
+          ],
+          "protected_reason": "Spontaneous coronary artery dissection is a rare cause of acute coronary syndrome that can be easily missed, especially if not specifically looked for during coronary angiography.",
+          "score_logit": 2.1,
+          "status": "live",
+          "agent_votes": 0
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 3,
+      "n_evidence": 13,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.5,
+      "frontier_n": 3,
+      "protected_n": 3,
+      "n_generators": 2,
+      "adaptive_action": null,
+      "llm_calls": 3,
+      "history_leakage": 0,
+      "mode": "lite"
+    },
+    "wall_s": 5.289
+  },
+  "created_at": "2026-08-10T01:59:39.199832+00:00"
+}

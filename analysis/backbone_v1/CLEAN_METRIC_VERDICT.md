@@ -681,13 +681,19 @@ B06 MAC / B07 MEDDx / B01 CoT-RAG，同模型、Prompt-7 LLM 裁判。
 ### 12.2 非劣 ≠ 答对集合同构（→ 案例轨迹审计）
 
 将 DA 400 + MCR 400 合并为约 800 题后，e7 对 B06/B07 仍大体非劣，
-但 **基线独占正确 119 例 vs e7 独占 34 例**。轨迹分层显示主承重是
-`s3_s4_ranking`（骨干常在 S2 召回后于短表/终裁丢掉），其次是基线入口覆盖盲区；
-DA 上部分 e7“入口优势”实为 `mapper_rescue`。APHHM 在已作答 300 题上
-`aphhm_lose:aphhm_win ≈ 60:9`，主因 `aphhm_prune_loss`。
+但 **基线独占正确 119 例 vs e7 独占 34 例**。R1 粗标签把主承重记为
+`s3_s4_ranking`；R2 全量位点将其拆开；**R3 把位点编成失败码并对齐候选簇**：
 
-完整普查、71 张案例卡与机制排序见
-[`CASE_TRAJECTORY_AUDIT.md`](CASE_TRAJECTORY_AUDIT.md)。
+- `base_win_rank`（39）上 e7 以 **`s3_hit_s4_miss` 为主**；对齐后 **74% 是同金标簇终裁分歧**（基线救回的是已召回后的终裁，不是入口）。
+- 基线净救回合计（`base_win_*` n=56）：**~52% 同簇终裁、~30% 真入口**。
+- S4 miss（n=147）全部可编码：`rationale_overfit` / `parent_vs_subtype` / `near_synonym_prefer` / `option_echo_da` / `label_drift`（无 `other`）。
+- DA `e7_win_recall` 6 例中 **5 例 mapper_rescue**，真入口优势近乎消失。
+- B06 / B07 / B01 必须分拆：B06 net +23、B07 +19、B01 **−12**（相对 e7）。
+- APHHM 已作答 300：prune_loss 77，其中仅 10 例被 e7 救回；独错 ≫ 独对。
+
+R1 快照：[`CASE_TRAJECTORY_AUDIT.md`](CASE_TRAJECTORY_AUDIT.md)  
+R2 位点表：[`CASE_TRAJECTORY_AUDIT_R2.md`](CASE_TRAJECTORY_AUDIT_R2.md)  
+**R3 机理解剖（对齐 + 失败码 + 165 机理卡）：[`CASE_TRAJECTORY_AUDIT_R3.md`](CASE_TRAJECTORY_AUDIT_R3.md)**
 
 ---
 
@@ -708,10 +714,22 @@ python3 analysis/backbone_v1/recall_vs_rescue.py      # DA
 python3 analysis/backbone_v1/recall_vs_rescue_mcr.py  # MCR
 # §11 神谕并集 vs 最强单臂
 python3 analysis/backbone_v1/union_vs_best_arm.py
-# §12.2 答对集合普查 + 分层案例卡
+# §12.2 答对集合普查 + 深度轨迹解剖
 PYTHONPATH=src:scripts:scripts/paper python3 analysis/backbone_v1/disagreement_census.py
 PYTHONPATH=src:scripts:scripts/paper:analysis/backbone_v1 \
   python3 analysis/backbone_v1/case_trajectory_cards.py
+PYTHONPATH=src:scripts:scripts/paper:analysis/backbone_v1 \
+  python3 analysis/backbone_v1/trajectory_covariates.py && \
+  python3 analysis/backbone_v1/trajectory_locus.py && \
+  python3 analysis/backbone_v1/baseline_dissection.py && \
+  python3 analysis/backbone_v1/aphhm_funnel.py && \
+  python3 analysis/backbone_v1/deep_trajectory_cards.py
+# §13 轨迹机理解剖 R3（对齐 + 失败码 + 共变 + 机理卡）
+PYTHONPATH=src:scripts:scripts/paper:analysis/backbone_v1 \
+  python3 analysis/backbone_v1/candidate_alignment.py && \
+  python3 analysis/backbone_v1/failure_taxonomy.py && \
+  python3 analysis/backbone_v1/deep_covariates.py && \
+  python3 analysis/backbone_v1/mechanism_cards.py
 # MCR 扩集 200b（骨干 + 强基线）
 bash /tmp/mcr200b_bb.sh
 bash /tmp/mcr200b_base.sh
@@ -721,7 +739,8 @@ bash /tmp/mcr200b_base.sh
 - `data/benchmarks/medcasereasoning/subsets/mcr_val_seq200b_v1/`
 - 骨干产物：`logs/backbone_v1/medcasereasoning_200b/{e7_k3_comp_k5,v0_s4b_k5}/`
 - 基线产物：`runs/paper_v1/medcasereasoning_mcr_val_seq200b_v1/{B06,B07,B01}-*/`
-- 审计产物：`analysis/backbone_v1/disagreement_census/`、`case_cards/`、[`CASE_TRAJECTORY_AUDIT.md`](CASE_TRAJECTORY_AUDIT.md)
+- 审计产物：`disagreement_census/`、`trajectory_features/`、`trajectory_loci/`、`baseline_dissection/`、`aphhm_funnel/`、`case_cards_deep/`、[`CASE_TRAJECTORY_AUDIT_R2.md`](CASE_TRAJECTORY_AUDIT_R2.md)
+- R3 产物：`candidate_alignment/`、`failure_taxonomy/`、`deep_covariates/`、`mechanism_cards/`、[`CASE_TRAJECTORY_AUDIT_R3.md`](CASE_TRAJECTORY_AUDIT_R3.md)
 
 探针投影目录：
 - `logs/medcasereasoning_mcr_val_seq100_v1/aphhm_clean_v1/annotate/eval_projection_echo`

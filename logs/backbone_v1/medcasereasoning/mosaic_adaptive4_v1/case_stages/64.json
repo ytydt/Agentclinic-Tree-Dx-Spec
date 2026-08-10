@@ -1,0 +1,1074 @@
+{
+  "case_id": "medcasereasoning__000064",
+  "source_id": "64",
+  "champion": "Colorectal Cancer",
+  "ordered_diagnoses": [
+    "Colorectal Cancer",
+    "Metastatic Prostate Cancer",
+    "Lymphoma",
+    "Appendicitis",
+    "Appendiceal cancer"
+  ],
+  "llm_calls": 4,
+  "stages": {
+    "mode": "adaptive4",
+    "vignette_chars": 1274,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Appendicitis",
+          "support_spans": [
+            "a perforated appendix",
+            "peritonism in the right lower quadrant"
+          ],
+          "contradict_spans": [],
+          "why": "The patient presented with acute right lower-quadrant abdominal pain and had a perforated appendix on CT scan."
+        },
+        {
+          "name": "Colorectal Cancer",
+          "support_spans": [
+            "mural thickening of the cecum and sigmoid colon",
+            "a thickened, woody sigmoid colon"
+          ],
+          "contradict_spans": [],
+          "why": "The patient had mural thickening of the cecum and sigmoid colon on CT scan and a thickened sigmoid colon on laparotomy."
+        },
+        {
+          "name": "Lymphoma",
+          "support_spans": [
+            "marked mesenteric, para-aortic, and portocaval lymphadenopathy",
+            "bulky multi-station mediastinal lymphadenopathy"
+          ],
+          "contradict_spans": [],
+          "why": "The patient had significant lymphadenopathy on CT scans, which could be indicative of lymphoma."
+        }
+      ],
+      "key_evidence_spans": [
+        "a perforated appendix",
+        "mural thickening of the cecum and sigmoid colon",
+        "marked mesenteric, para-aortic, and portocaval lymphadenopathy",
+        "bulky multi-station mediastinal lymphadenopathy"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Lymphoma",
+          "support_spans": [
+            "innumerable hepatic nodules",
+            "marked mesenteric, para-aortic, and portocaval lymphadenopathy",
+            "bulky multi-station mediastinal lymphadenopathy"
+          ],
+          "contradict_spans": [
+            "prostate cancer in remission"
+          ],
+          "why": "The patient's imaging findings of lymphadenopathy and hepatic nodules suggest a possible lymphoma, which could explain the patient's rapid deterioration and failure to recover from surgery.",
+          "protected_reason": "Lymphoma may be overlooked in favor of more common causes of abdominal pain and sepsis, such as perforated appendicitis, and deserves consideration due to its potential impact on treatment and prognosis."
+        },
+        {
+          "name": "Gastrointestinal Stromal Tumor (GIST)",
+          "support_spans": [
+            "mural thickening of the cecum and sigmoid colon",
+            "thickened, woody sigmoid colon"
+          ],
+          "contradict_spans": [
+            "perforated appendix"
+          ],
+          "why": "The patient's colon findings are suggestive of a possible GIST, which could have contributed to the patient's abdominal pain and sepsis.",
+          "protected_reason": "GIST is a rare tumor that may be missed in favor of more common causes of abdominal pain, and its diagnosis could have significant implications for treatment and management."
+        },
+        {
+          "name": "Metastatic Prostate Cancer",
+          "support_spans": [
+            "innumerable hepatic nodules",
+            "marked mesenteric, para-aortic, and portocaval lymphadenopathy"
+          ],
+          "contradict_spans": [
+            "prostate cancer in remission"
+          ],
+          "why": "The patient's imaging findings are consistent with possible metastatic disease, which could have contributed to the patient's rapid deterioration and failure to recover from surgery.",
+          "protected_reason": "Metastatic prostate cancer may be overlooked in favor of other causes of abdominal pain and sepsis, and its diagnosis could have significant implications for treatment and management."
+        }
+      ],
+      "key_evidence_spans": [
+        "innumerable hepatic nodules",
+        "marked mesenteric, para-aortic, and portocaval lymphadenopathy",
+        "mural thickening of the cecum and sigmoid colon",
+        "bulky multi-station mediastinal lymphadenopathy"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "prostate cancer in remission",
+        "perforated appendix"
+      ],
+      "generator_jaccard": 0.2,
+      "top1_same_across_views": true,
+      "top_margin": 0.3500000000000001,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 1
+    },
+    "frontier_after_g": [
+      {
+        "concept_id": "C003",
+        "preferred_name": "Lymphoma",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E004",
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G2E008"
+        ],
+        "protected_reason": "Lymphoma may be overlooked in favor of more common causes of abdominal pain and sepsis, such as perforated appendicitis, and deserves consideration due to its potential impact on treatment and prognosis.",
+        "score_logit": 2.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C001",
+        "preferred_name": "Appendicitis",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E005"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 2.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Colorectal Cancer",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E002",
+          "G1E006"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 2.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Gastrointestinal Stromal Tumor (GIST)",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E002",
+          "G2E009"
+        ],
+        "contradicting_evidence": [
+          "G2E010"
+        ],
+        "protected_reason": "GIST is a rare tumor that may be missed in favor of more common causes of abdominal pain, and its diagnosis could have significant implications for treatment and management.",
+        "score_logit": 1.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Metastatic Prostate Cancer",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G2E007",
+          "G1E003"
+        ],
+        "contradicting_evidence": [
+          "G2E008"
+        ],
+        "protected_reason": "Metastatic prostate cancer may be overlooked in favor of other causes of abdominal pain and sepsis, and its diagnosis could have significant implications for treatment and management.",
+        "score_logit": 1.0,
+        "status": "live"
+      }
+    ],
+    "a1": {
+      "candidates": [
+        {
+          "name": "Colorectal cancer",
+          "support_spans": [
+            "mural thickening of the cecum and sigmoid colon",
+            "thickened, woody sigmoid colon"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's history and imaging findings suggest a possible diagnosis of colorectal cancer.",
+          "protected_reason": "explains unexplained high-specificity evidence"
+        },
+        {
+          "name": "Metastatic prostate cancer",
+          "support_spans": [
+            "prostate cancer in remission",
+            "innumerable hepatic nodules",
+            "bulky multi-station mediastinal lymphadenopathy"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's history of prostate cancer and the presence of hepatic nodules and lymphadenopathy suggest a possible diagnosis of metastatic prostate cancer.",
+          "protected_reason": "explains unexplained high-specificity evidence"
+        },
+        {
+          "name": "Appendiceal cancer",
+          "support_spans": [
+            "perforated appendix"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's presentation with a perforated appendix and surrounding fat stranding suggests a possible diagnosis of appendiceal cancer.",
+          "protected_reason": "explains unexplained high-specificity evidence"
+        }
+      ]
+    },
+    "adaptive_action": "ORTHOGONAL_GENERATE",
+    "selector": {
+      "champion": "Colorectal Cancer",
+      "runner_up": "Metastatic Prostate Cancer",
+      "rationale": "Colorectal cancer best explains the mural thickening of the cecum and sigmoid colon, and the thickened, woody sigmoid colon, without contradiction",
+      "rejected": [
+        {
+          "label": "Lymphoma",
+          "why": "less specific evidence and contradiction with prostate cancer in remission"
+        },
+        {
+          "label": "Appendicitis",
+          "why": "while present, does not explain the full range of findings"
+        },
+        {
+          "label": "Appendiceal cancer",
+          "why": "less specific evidence and does not explain the full range of findings"
+        },
+        {
+          "label": "Gastrointestinal Stromal Tumor (GIST)",
+          "why": "contradicted by the presence of a perforated appendix"
+        }
+      ],
+      "margin": "medium"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "a perforated appendix",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "mural thickening of the cecum and sigmoid colon",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "marked mesenteric, para-aortic, and portocaval lymphadenopathy",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "bulky multi-station mediastinal lymphadenopathy",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E005",
+        "raw_span": "peritonism in the right lower quadrant",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E006",
+        "raw_span": "a thickened, woody sigmoid colon",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E007",
+        "raw_span": "innumerable hepatic nodules",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E008",
+        "raw_span": "prostate cancer in remission",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E009",
+        "raw_span": "thickened, woody sigmoid colon",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E010",
+        "raw_span": "perforated appendix",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Appendicitis",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E005"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 2.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Colorectal Cancer",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G1E002",
+          "G1E006",
+          "G2E009"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "explains unexplained high-specificity evidence",
+        "score_logit": 3.6,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Lymphoma",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E004",
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G2E008"
+        ],
+        "protected_reason": "Lymphoma may be overlooked in favor of more common causes of abdominal pain and sepsis, such as perforated appendicitis, and deserves consideration due to its potential impact on treatment and prognosis.",
+        "score_logit": 2.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Gastrointestinal Stromal Tumor (GIST)",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E002",
+          "G2E009"
+        ],
+        "contradicting_evidence": [
+          "G2E010"
+        ],
+        "protected_reason": "GIST is a rare tumor that may be missed in favor of more common causes of abdominal pain, and its diagnosis could have significant implications for treatment and management.",
+        "score_logit": 1.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Metastatic Prostate Cancer",
+        "aliases": [],
+        "generator_views": [
+          "g2",
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G2E007",
+          "G1E003",
+          "G2E008",
+          "G1E004"
+        ],
+        "contradicting_evidence": [
+          "G2E008"
+        ],
+        "protected_reason": "Metastatic prostate cancer may be overlooked in favor of other causes of abdominal pain and sepsis, and its diagnosis could have significant implications for treatment and management.",
+        "score_logit": 3.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C006",
+        "preferred_name": "Appendiceal cancer",
+        "aliases": [],
+        "generator_views": [
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G2E010"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "explains unexplained high-specificity evidence",
+        "score_logit": 1.25,
+        "status": "live"
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Appendicitis",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Colorectal Cancer",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Lymphoma",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C003",
+        "name": "Lymphoma",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C004",
+        "name": "Gastrointestinal Stromal Tumor (GIST)",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C005",
+        "name": "Metastatic Prostate Cancer",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Colorectal cancer",
+        "view": "a1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C005",
+        "name": "Metastatic prostate cancer",
+        "view": "a1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C006",
+        "name": "Appendiceal cancer",
+        "view": "a1"
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 6,
+    "n_evidence": 10,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.2,
+    "frontier_n": 6,
+    "protected_n": 5,
+    "g1_n": 3,
+    "g2_n": 3,
+    "adaptive_action": "ORTHOGONAL_GENERATE",
+    "llm_calls": 4,
+    "history_leakage": 0
+  },
+  "prediction": {
+    "arm": "mosaic_adaptive4_v1",
+    "case_id": "medcasereasoning__000064",
+    "source_id": "64",
+    "dataset": "medcasereasoning",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Colorectal Cancer",
+      "Metastatic Prostate Cancer",
+      "Lymphoma",
+      "Appendicitis",
+      "Appendiceal cancer"
+    ],
+    "top2_diagnoses": [
+      "Colorectal Cancer",
+      "Metastatic Prostate Cancer"
+    ],
+    "cost": {
+      "llm_calls": 4
+    },
+    "stages": {
+      "mode": "adaptive4",
+      "vignette_chars": 1274,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Appendicitis",
+            "support_spans": [
+              "a perforated appendix",
+              "peritonism in the right lower quadrant"
+            ],
+            "contradict_spans": [],
+            "why": "The patient presented with acute right lower-quadrant abdominal pain and had a perforated appendix on CT scan."
+          },
+          {
+            "name": "Colorectal Cancer",
+            "support_spans": [
+              "mural thickening of the cecum and sigmoid colon",
+              "a thickened, woody sigmoid colon"
+            ],
+            "contradict_spans": [],
+            "why": "The patient had mural thickening of the cecum and sigmoid colon on CT scan and a thickened sigmoid colon on laparotomy."
+          },
+          {
+            "name": "Lymphoma",
+            "support_spans": [
+              "marked mesenteric, para-aortic, and portocaval lymphadenopathy",
+              "bulky multi-station mediastinal lymphadenopathy"
+            ],
+            "contradict_spans": [],
+            "why": "The patient had significant lymphadenopathy on CT scans, which could be indicative of lymphoma."
+          }
+        ],
+        "key_evidence_spans": [
+          "a perforated appendix",
+          "mural thickening of the cecum and sigmoid colon",
+          "marked mesenteric, para-aortic, and portocaval lymphadenopathy",
+          "bulky multi-station mediastinal lymphadenopathy"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Lymphoma",
+            "support_spans": [
+              "innumerable hepatic nodules",
+              "marked mesenteric, para-aortic, and portocaval lymphadenopathy",
+              "bulky multi-station mediastinal lymphadenopathy"
+            ],
+            "contradict_spans": [
+              "prostate cancer in remission"
+            ],
+            "why": "The patient's imaging findings of lymphadenopathy and hepatic nodules suggest a possible lymphoma, which could explain the patient's rapid deterioration and failure to recover from surgery.",
+            "protected_reason": "Lymphoma may be overlooked in favor of more common causes of abdominal pain and sepsis, such as perforated appendicitis, and deserves consideration due to its potential impact on treatment and prognosis."
+          },
+          {
+            "name": "Gastrointestinal Stromal Tumor (GIST)",
+            "support_spans": [
+              "mural thickening of the cecum and sigmoid colon",
+              "thickened, woody sigmoid colon"
+            ],
+            "contradict_spans": [
+              "perforated appendix"
+            ],
+            "why": "The patient's colon findings are suggestive of a possible GIST, which could have contributed to the patient's abdominal pain and sepsis.",
+            "protected_reason": "GIST is a rare tumor that may be missed in favor of more common causes of abdominal pain, and its diagnosis could have significant implications for treatment and management."
+          },
+          {
+            "name": "Metastatic Prostate Cancer",
+            "support_spans": [
+              "innumerable hepatic nodules",
+              "marked mesenteric, para-aortic, and portocaval lymphadenopathy"
+            ],
+            "contradict_spans": [
+              "prostate cancer in remission"
+            ],
+            "why": "The patient's imaging findings are consistent with possible metastatic disease, which could have contributed to the patient's rapid deterioration and failure to recover from surgery.",
+            "protected_reason": "Metastatic prostate cancer may be overlooked in favor of other causes of abdominal pain and sepsis, and its diagnosis could have significant implications for treatment and management."
+          }
+        ],
+        "key_evidence_spans": [
+          "innumerable hepatic nodules",
+          "marked mesenteric, para-aortic, and portocaval lymphadenopathy",
+          "mural thickening of the cecum and sigmoid colon",
+          "bulky multi-station mediastinal lymphadenopathy"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "prostate cancer in remission",
+          "perforated appendix"
+        ],
+        "generator_jaccard": 0.2,
+        "top1_same_across_views": true,
+        "top_margin": 0.3500000000000001,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 1
+      },
+      "frontier_after_g": [
+        {
+          "concept_id": "C003",
+          "preferred_name": "Lymphoma",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E004",
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G2E008"
+          ],
+          "protected_reason": "Lymphoma may be overlooked in favor of more common causes of abdominal pain and sepsis, such as perforated appendicitis, and deserves consideration due to its potential impact on treatment and prognosis.",
+          "score_logit": 2.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C001",
+          "preferred_name": "Appendicitis",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E005"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 2.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Colorectal Cancer",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E002",
+            "G1E006"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 2.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Gastrointestinal Stromal Tumor (GIST)",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E002",
+            "G2E009"
+          ],
+          "contradicting_evidence": [
+            "G2E010"
+          ],
+          "protected_reason": "GIST is a rare tumor that may be missed in favor of more common causes of abdominal pain, and its diagnosis could have significant implications for treatment and management.",
+          "score_logit": 1.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C005",
+          "preferred_name": "Metastatic Prostate Cancer",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G2E007",
+            "G1E003"
+          ],
+          "contradicting_evidence": [
+            "G2E008"
+          ],
+          "protected_reason": "Metastatic prostate cancer may be overlooked in favor of other causes of abdominal pain and sepsis, and its diagnosis could have significant implications for treatment and management.",
+          "score_logit": 1.0,
+          "status": "live"
+        }
+      ],
+      "a1": {
+        "candidates": [
+          {
+            "name": "Colorectal cancer",
+            "support_spans": [
+              "mural thickening of the cecum and sigmoid colon",
+              "thickened, woody sigmoid colon"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's history and imaging findings suggest a possible diagnosis of colorectal cancer.",
+            "protected_reason": "explains unexplained high-specificity evidence"
+          },
+          {
+            "name": "Metastatic prostate cancer",
+            "support_spans": [
+              "prostate cancer in remission",
+              "innumerable hepatic nodules",
+              "bulky multi-station mediastinal lymphadenopathy"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's history of prostate cancer and the presence of hepatic nodules and lymphadenopathy suggest a possible diagnosis of metastatic prostate cancer.",
+            "protected_reason": "explains unexplained high-specificity evidence"
+          },
+          {
+            "name": "Appendiceal cancer",
+            "support_spans": [
+              "perforated appendix"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's presentation with a perforated appendix and surrounding fat stranding suggests a possible diagnosis of appendiceal cancer.",
+            "protected_reason": "explains unexplained high-specificity evidence"
+          }
+        ]
+      },
+      "adaptive_action": "ORTHOGONAL_GENERATE",
+      "selector": {
+        "champion": "Colorectal Cancer",
+        "runner_up": "Metastatic Prostate Cancer",
+        "rationale": "Colorectal cancer best explains the mural thickening of the cecum and sigmoid colon, and the thickened, woody sigmoid colon, without contradiction",
+        "rejected": [
+          {
+            "label": "Lymphoma",
+            "why": "less specific evidence and contradiction with prostate cancer in remission"
+          },
+          {
+            "label": "Appendicitis",
+            "why": "while present, does not explain the full range of findings"
+          },
+          {
+            "label": "Appendiceal cancer",
+            "why": "less specific evidence and does not explain the full range of findings"
+          },
+          {
+            "label": "Gastrointestinal Stromal Tumor (GIST)",
+            "why": "contradicted by the presence of a perforated appendix"
+          }
+        ],
+        "margin": "medium"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "a perforated appendix",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "mural thickening of the cecum and sigmoid colon",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "marked mesenteric, para-aortic, and portocaval lymphadenopathy",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "bulky multi-station mediastinal lymphadenopathy",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E005",
+          "raw_span": "peritonism in the right lower quadrant",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E006",
+          "raw_span": "a thickened, woody sigmoid colon",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E007",
+          "raw_span": "innumerable hepatic nodules",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E008",
+          "raw_span": "prostate cancer in remission",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E009",
+          "raw_span": "thickened, woody sigmoid colon",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E010",
+          "raw_span": "perforated appendix",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Appendicitis",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E005"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 2.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Colorectal Cancer",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G1E002",
+            "G1E006",
+            "G2E009"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "explains unexplained high-specificity evidence",
+          "score_logit": 3.6,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Lymphoma",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E004",
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G2E008"
+          ],
+          "protected_reason": "Lymphoma may be overlooked in favor of more common causes of abdominal pain and sepsis, such as perforated appendicitis, and deserves consideration due to its potential impact on treatment and prognosis.",
+          "score_logit": 2.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Gastrointestinal Stromal Tumor (GIST)",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E002",
+            "G2E009"
+          ],
+          "contradicting_evidence": [
+            "G2E010"
+          ],
+          "protected_reason": "GIST is a rare tumor that may be missed in favor of more common causes of abdominal pain, and its diagnosis could have significant implications for treatment and management.",
+          "score_logit": 1.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C005",
+          "preferred_name": "Metastatic Prostate Cancer",
+          "aliases": [],
+          "generator_views": [
+            "g2",
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G2E007",
+            "G1E003",
+            "G2E008",
+            "G1E004"
+          ],
+          "contradicting_evidence": [
+            "G2E008"
+          ],
+          "protected_reason": "Metastatic prostate cancer may be overlooked in favor of other causes of abdominal pain and sepsis, and its diagnosis could have significant implications for treatment and management.",
+          "score_logit": 3.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C006",
+          "preferred_name": "Appendiceal cancer",
+          "aliases": [],
+          "generator_views": [
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G2E010"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "explains unexplained high-specificity evidence",
+          "score_logit": 1.25,
+          "status": "live"
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Appendicitis",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Colorectal Cancer",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Lymphoma",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C003",
+          "name": "Lymphoma",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C004",
+          "name": "Gastrointestinal Stromal Tumor (GIST)",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C005",
+          "name": "Metastatic Prostate Cancer",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Colorectal cancer",
+          "view": "a1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C005",
+          "name": "Metastatic prostate cancer",
+          "view": "a1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C006",
+          "name": "Appendiceal cancer",
+          "view": "a1"
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 6,
+      "n_evidence": 10,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.2,
+      "frontier_n": 6,
+      "protected_n": 5,
+      "g1_n": 3,
+      "g2_n": 3,
+      "adaptive_action": "ORTHOGONAL_GENERATE",
+      "llm_calls": 4,
+      "history_leakage": 0
+    },
+    "wall_s": 5.958
+  },
+  "created_at": "2026-08-08T01:50:18.738925+00:00"
+}

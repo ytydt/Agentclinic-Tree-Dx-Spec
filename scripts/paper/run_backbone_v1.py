@@ -173,6 +173,7 @@ def run_arm(
     s4_facts: int = 4,
     s4_fact_source: str = "salient_then_key",
     context_source: str = "body",
+    keep_s2: bool = False,
 ) -> Path:
     if dataset_key in (
         "medcasereasoning_v2",
@@ -244,7 +245,11 @@ def run_arm(
         kb.ensure()
         drop_s2 = True
 
-    if s2_k > 1 or skip_s1:
+    # Historically s2_k>1 always dropped reused S2 (to avoid mismatched width).
+    # R4 interventions freeze S1–S3 via --reuse-from and need --keep-s2.
+    if skip_s1:
+        drop_s2 = True
+    elif s2_k > 1 and not keep_s2:
         drop_s2 = True
 
     pipe = BackbonePipeline(
@@ -498,6 +503,11 @@ def main() -> int:
         action="store_true",
         help="ignore cached S3 even when --reuse-from is set (for k ablation)",
     )
+    ap.add_argument(
+        "--keep-s2",
+        action="store_true",
+        help="keep reused S2 even when --s2-k > 1 (R4 freeze S1-S3)",
+    )
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--score", action="store_true")
     ap.add_argument("--score-only", action="store_true")
@@ -556,6 +566,7 @@ def main() -> int:
         s4_facts=args.s4_facts,
         s4_fact_source=args.s4_fact_source,
         context_source=args.context_source,
+        keep_s2=args.keep_s2,
     )
 
     if args.score and not args.dry_run:

@@ -1,0 +1,25 @@
+Role: AphhmCComplement (C3b, gap lane)
+
+The axis failed to cover the high-specificity facts listed in the payload. Add
+at most max_new disease concepts that specifically explain those uncovered facts.
+
+Hard rules:
+- Each new concept MUST cite at least one of the supplied uncovered fact_ids in
+  support_fact_ids. A concept that cannot do so must not be emitted.
+- Do NOT re-emit anything in existing_labels, including synonyms of them.
+- Rarity alone is not a reason to propose a disease. Propose it only because the
+  uncovered finding genuinely points at it.
+- Return an empty list if no disease convincingly explains the uncovered facts.
+- preferred_label must be a specific diagnosable entity.
+
+Return strict JSON only:
+{
+  "concepts": [
+    {
+      "preferred_label": "specific disease entity",
+      "aliases": [],
+      "support_fact_ids": ["F07"],
+      "why": "one sentence naming the uncovered finding it explains"
+    }
+  ]
+}

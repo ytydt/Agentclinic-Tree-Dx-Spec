@@ -1,0 +1,818 @@
+{
+  "case_id": "diagnosisarena__000216",
+  "source_id": "216",
+  "champion": "COVID-19",
+  "ordered_diagnoses": [
+    "COVID-19",
+    "Community-acquired pneumonia",
+    "Acute respiratory distress syndrome (ARDS)",
+    "Obesity Hypoventilation Syndrome (OHS) with superimposed pneumonia"
+  ],
+  "llm_calls": 3,
+  "stages": {
+    "mode": "adaptive4",
+    "vignette_chars": 782,
+    "g1": {
+      "candidates": [
+        {
+          "name": "COVID-19",
+          "support_spans": [
+            "Nasopharyngeal swab positive by reverse transcriptase–polymerase chain reaction",
+            "anosmia"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's symptoms and laboratory results are consistent with COVID-19."
+        },
+        {
+          "name": "Community-acquired pneumonia",
+          "support_spans": [
+            "bilateral multifocal pneumonia",
+            "coarse rales at the lung bases bilaterally",
+            "fever with a temperature up to 39°C"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's symptoms and imaging results are consistent with community-acquired pneumonia."
+        },
+        {
+          "name": "Acute respiratory distress syndrome (ARDS)",
+          "support_spans": [
+            "Oxygen saturation of 85% on room air",
+            "shortness of breath"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's low oxygen saturation and respiratory symptoms are consistent with ARDS."
+        }
+      ],
+      "key_evidence_spans": [
+        "Nasopharyngeal swab positive by reverse transcriptase–polymerase chain reaction",
+        "bilateral multifocal pneumonia",
+        "Oxygen saturation of 85% on room air"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Acute Respiratory Distress Syndrome (ARDS)",
+          "support_spans": [
+            "Oxygen saturation of 85% on room air",
+            "coarse rales at the lung bases bilaterally",
+            "bilateral multifocal pneumonia"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's low oxygen saturation, coarse rales, and bilateral multifocal pneumonia suggest a severe respiratory condition such as ARDS.",
+          "protected_reason": "This diagnosis may be easily missed if the focus is solely on the patient's obstructive sleep apnea and morbid obesity."
+        },
+        {
+          "name": "COVID-19 pneumonia",
+          "support_spans": [
+            "Nasopharyngeal swab positive by reverse transcriptase–polymerase chain reaction",
+            "anosmia",
+            "bilateral multifocal pneumonia"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's positive nasopharyngeal swab, anosmia, and bilateral multifocal pneumonia are consistent with COVID-19 pneumonia.",
+          "protected_reason": "This diagnosis may be overlooked if the patient's symptoms are attributed to other conditions such as obstructive sleep apnea."
+        },
+        {
+          "name": "Obesity Hypoventilation Syndrome (OHS) with superimposed pneumonia",
+          "support_spans": [
+            "morbid obesity",
+            "obstructive sleep apnea",
+            "bilateral multifocal pneumonia"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's morbid obesity and obstructive sleep apnea increase the risk of OHS, which can be complicated by pneumonia.",
+          "protected_reason": "This diagnosis may be underconsidered if the focus is on the patient's acute respiratory symptoms rather than their underlying chronic conditions."
+        }
+      ],
+      "key_evidence_spans": [
+        "Oxygen saturation of 85% on room air",
+        "Nasopharyngeal swab positive by reverse transcriptase–polymerase chain reaction",
+        "bilateral multifocal pneumonia"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [],
+      "generator_jaccard": 0.2,
+      "top1_same_across_views": true,
+      "top_margin": 0.9999999999999996,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "frontier_after_g": [
+      {
+        "concept_id": "C003",
+        "preferred_name": "Acute respiratory distress syndrome (ARDS)",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E007",
+          "G1E005",
+          "G1E002"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "This diagnosis may be easily missed if the focus is solely on the patient's obstructive sleep apnea and morbid obesity.",
+        "score_logit": 4.6,
+        "status": "live"
+      },
+      {
+        "concept_id": "C001",
+        "preferred_name": "COVID-19",
+        "aliases": [
+          "COVID-19 pneumonia"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E004",
+          "G1E002"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "This diagnosis may be overlooked if the patient's symptoms are attributed to other conditions such as obstructive sleep apnea.",
+        "score_logit": 3.6,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Obesity Hypoventilation Syndrome (OHS) with superimposed pneumonia",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G2E008",
+          "G2E009",
+          "G1E002"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "This diagnosis may be underconsidered if the focus is on the patient's acute respiratory symptoms rather than their underlying chronic conditions.",
+        "score_logit": 3.25,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Community-acquired pneumonia",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E002",
+          "G1E005",
+          "G1E006"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 3.0,
+        "status": "live"
+      }
+    ],
+    "adaptive_action": null,
+    "selector": {
+      "champion": "COVID-19",
+      "runner_up": "Community-acquired pneumonia",
+      "rationale": "Nasopharyngeal swab positive by reverse transcriptase–polymerase chain reaction and presence of anosmia and bilateral multifocal pneumonia provide strong evidence for COVID-19",
+      "rejected": [
+        {
+          "label": "Acute respiratory distress syndrome (ARDS)",
+          "why": "While patient has low oxygen saturation and shortness of breath, ARDS is not directly confirmed and COVID-19 explains the pneumonia findings better"
+        },
+        {
+          "label": "Obesity Hypoventilation Syndrome (OHS) with superimposed pneumonia",
+          "why": "OHS is a chronic condition and does not directly explain the acute onset of fever, anosmia, and bilateral multifocal pneumonia"
+        }
+      ],
+      "margin": "high"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "Nasopharyngeal swab positive by reverse transcriptase–polymerase chain reaction",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "bilateral multifocal pneumonia",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "Oxygen saturation of 85% on room air",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "anosmia",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E005",
+        "raw_span": "coarse rales at the lung bases bilaterally",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E006",
+        "raw_span": "fever with a temperature up to 39°C",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E007",
+        "raw_span": "shortness of breath",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E008",
+        "raw_span": "morbid obesity",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E009",
+        "raw_span": "obstructive sleep apnea",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "COVID-19",
+        "aliases": [
+          "COVID-19 pneumonia"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E004",
+          "G1E002"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "This diagnosis may be overlooked if the patient's symptoms are attributed to other conditions such as obstructive sleep apnea.",
+        "score_logit": 3.6,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Community-acquired pneumonia",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E002",
+          "G1E005",
+          "G1E006"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 3.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Acute respiratory distress syndrome (ARDS)",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E007",
+          "G1E005",
+          "G1E002"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "This diagnosis may be easily missed if the focus is solely on the patient's obstructive sleep apnea and morbid obesity.",
+        "score_logit": 4.6,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Obesity Hypoventilation Syndrome (OHS) with superimposed pneumonia",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G2E008",
+          "G2E009",
+          "G1E002"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "This diagnosis may be underconsidered if the focus is on the patient's acute respiratory symptoms rather than their underlying chronic conditions.",
+        "score_logit": 3.25,
+        "status": "live"
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "COVID-19",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Community-acquired pneumonia",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Acute respiratory distress syndrome (ARDS)",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C003",
+        "name": "Acute Respiratory Distress Syndrome (ARDS)",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "COVID-19 pneumonia",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C004",
+        "name": "Obesity Hypoventilation Syndrome (OHS) with superimposed pneumonia",
+        "view": "g2"
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 4,
+    "n_evidence": 9,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.2,
+    "frontier_n": 4,
+    "protected_n": 3,
+    "g1_n": 3,
+    "g2_n": 3,
+    "adaptive_action": null,
+    "llm_calls": 3,
+    "history_leakage": 0
+  },
+  "prediction": {
+    "arm": "mosaic_adaptive4_v1",
+    "case_id": "diagnosisarena__000216",
+    "source_id": "216",
+    "dataset": "diagnosisarena",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "COVID-19",
+      "Community-acquired pneumonia",
+      "Acute respiratory distress syndrome (ARDS)",
+      "Obesity Hypoventilation Syndrome (OHS) with superimposed pneumonia"
+    ],
+    "top2_diagnoses": [
+      "COVID-19",
+      "Community-acquired pneumonia"
+    ],
+    "cost": {
+      "llm_calls": 3
+    },
+    "stages": {
+      "mode": "adaptive4",
+      "vignette_chars": 782,
+      "g1": {
+        "candidates": [
+          {
+            "name": "COVID-19",
+            "support_spans": [
+              "Nasopharyngeal swab positive by reverse transcriptase–polymerase chain reaction",
+              "anosmia"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's symptoms and laboratory results are consistent with COVID-19."
+          },
+          {
+            "name": "Community-acquired pneumonia",
+            "support_spans": [
+              "bilateral multifocal pneumonia",
+              "coarse rales at the lung bases bilaterally",
+              "fever with a temperature up to 39°C"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's symptoms and imaging results are consistent with community-acquired pneumonia."
+          },
+          {
+            "name": "Acute respiratory distress syndrome (ARDS)",
+            "support_spans": [
+              "Oxygen saturation of 85% on room air",
+              "shortness of breath"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's low oxygen saturation and respiratory symptoms are consistent with ARDS."
+          }
+        ],
+        "key_evidence_spans": [
+          "Nasopharyngeal swab positive by reverse transcriptase–polymerase chain reaction",
+          "bilateral multifocal pneumonia",
+          "Oxygen saturation of 85% on room air"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Acute Respiratory Distress Syndrome (ARDS)",
+            "support_spans": [
+              "Oxygen saturation of 85% on room air",
+              "coarse rales at the lung bases bilaterally",
+              "bilateral multifocal pneumonia"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's low oxygen saturation, coarse rales, and bilateral multifocal pneumonia suggest a severe respiratory condition such as ARDS.",
+            "protected_reason": "This diagnosis may be easily missed if the focus is solely on the patient's obstructive sleep apnea and morbid obesity."
+          },
+          {
+            "name": "COVID-19 pneumonia",
+            "support_spans": [
+              "Nasopharyngeal swab positive by reverse transcriptase–polymerase chain reaction",
+              "anosmia",
+              "bilateral multifocal pneumonia"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's positive nasopharyngeal swab, anosmia, and bilateral multifocal pneumonia are consistent with COVID-19 pneumonia.",
+            "protected_reason": "This diagnosis may be overlooked if the patient's symptoms are attributed to other conditions such as obstructive sleep apnea."
+          },
+          {
+            "name": "Obesity Hypoventilation Syndrome (OHS) with superimposed pneumonia",
+            "support_spans": [
+              "morbid obesity",
+              "obstructive sleep apnea",
+              "bilateral multifocal pneumonia"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's morbid obesity and obstructive sleep apnea increase the risk of OHS, which can be complicated by pneumonia.",
+            "protected_reason": "This diagnosis may be underconsidered if the focus is on the patient's acute respiratory symptoms rather than their underlying chronic conditions."
+          }
+        ],
+        "key_evidence_spans": [
+          "Oxygen saturation of 85% on room air",
+          "Nasopharyngeal swab positive by reverse transcriptase–polymerase chain reaction",
+          "bilateral multifocal pneumonia"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [],
+        "generator_jaccard": 0.2,
+        "top1_same_across_views": true,
+        "top_margin": 0.9999999999999996,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 0
+      },
+      "frontier_after_g": [
+        {
+          "concept_id": "C003",
+          "preferred_name": "Acute respiratory distress syndrome (ARDS)",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E007",
+            "G1E005",
+            "G1E002"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "This diagnosis may be easily missed if the focus is solely on the patient's obstructive sleep apnea and morbid obesity.",
+          "score_logit": 4.6,
+          "status": "live"
+        },
+        {
+          "concept_id": "C001",
+          "preferred_name": "COVID-19",
+          "aliases": [
+            "COVID-19 pneumonia"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E004",
+            "G1E002"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "This diagnosis may be overlooked if the patient's symptoms are attributed to other conditions such as obstructive sleep apnea.",
+          "score_logit": 3.6,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Obesity Hypoventilation Syndrome (OHS) with superimposed pneumonia",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G2E008",
+            "G2E009",
+            "G1E002"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "This diagnosis may be underconsidered if the focus is on the patient's acute respiratory symptoms rather than their underlying chronic conditions.",
+          "score_logit": 3.25,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Community-acquired pneumonia",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E002",
+            "G1E005",
+            "G1E006"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 3.0,
+          "status": "live"
+        }
+      ],
+      "adaptive_action": null,
+      "selector": {
+        "champion": "COVID-19",
+        "runner_up": "Community-acquired pneumonia",
+        "rationale": "Nasopharyngeal swab positive by reverse transcriptase–polymerase chain reaction and presence of anosmia and bilateral multifocal pneumonia provide strong evidence for COVID-19",
+        "rejected": [
+          {
+            "label": "Acute respiratory distress syndrome (ARDS)",
+            "why": "While patient has low oxygen saturation and shortness of breath, ARDS is not directly confirmed and COVID-19 explains the pneumonia findings better"
+          },
+          {
+            "label": "Obesity Hypoventilation Syndrome (OHS) with superimposed pneumonia",
+            "why": "OHS is a chronic condition and does not directly explain the acute onset of fever, anosmia, and bilateral multifocal pneumonia"
+          }
+        ],
+        "margin": "high"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "Nasopharyngeal swab positive by reverse transcriptase–polymerase chain reaction",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "bilateral multifocal pneumonia",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "Oxygen saturation of 85% on room air",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "anosmia",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E005",
+          "raw_span": "coarse rales at the lung bases bilaterally",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E006",
+          "raw_span": "fever with a temperature up to 39°C",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E007",
+          "raw_span": "shortness of breath",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E008",
+          "raw_span": "morbid obesity",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E009",
+          "raw_span": "obstructive sleep apnea",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "COVID-19",
+          "aliases": [
+            "COVID-19 pneumonia"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E004",
+            "G1E002"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "This diagnosis may be overlooked if the patient's symptoms are attributed to other conditions such as obstructive sleep apnea.",
+          "score_logit": 3.6,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Community-acquired pneumonia",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E002",
+            "G1E005",
+            "G1E006"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 3.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Acute respiratory distress syndrome (ARDS)",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E007",
+            "G1E005",
+            "G1E002"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "This diagnosis may be easily missed if the focus is solely on the patient's obstructive sleep apnea and morbid obesity.",
+          "score_logit": 4.6,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Obesity Hypoventilation Syndrome (OHS) with superimposed pneumonia",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G2E008",
+            "G2E009",
+            "G1E002"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "This diagnosis may be underconsidered if the focus is on the patient's acute respiratory symptoms rather than their underlying chronic conditions.",
+          "score_logit": 3.25,
+          "status": "live"
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "COVID-19",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Community-acquired pneumonia",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Acute respiratory distress syndrome (ARDS)",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C003",
+          "name": "Acute Respiratory Distress Syndrome (ARDS)",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "COVID-19 pneumonia",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C004",
+          "name": "Obesity Hypoventilation Syndrome (OHS) with superimposed pneumonia",
+          "view": "g2"
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 4,
+      "n_evidence": 9,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.2,
+      "frontier_n": 4,
+      "protected_n": 3,
+      "g1_n": 3,
+      "g2_n": 3,
+      "adaptive_action": null,
+      "llm_calls": 3,
+      "history_leakage": 0
+    },
+    "wall_s": 3.766
+  },
+  "created_at": "2026-08-08T01:50:23.525443+00:00"
+}

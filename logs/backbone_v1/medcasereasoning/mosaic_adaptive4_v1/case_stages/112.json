@@ -1,0 +1,1146 @@
+{
+  "case_id": "medcasereasoning__000112",
+  "source_id": "112",
+  "champion": "Sympathomimetic Toxicity",
+  "ordered_diagnoses": [
+    "Sympathomimetic Toxicity",
+    "Neuroleptic Malignant Syndrome",
+    "Rhabdomyolysis",
+    "Malignant Hyperthermia"
+  ],
+  "llm_calls": 4,
+  "stages": {
+    "mode": "adaptive4",
+    "vignette_chars": 2112,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Rhabdomyolysis",
+          "support_spans": [
+            "Laboratory studies on admission showed features of severe rhabdomyolysis."
+          ],
+          "contradict_spans": [],
+          "why": "The patient's laboratory results indicate severe rhabdomyolysis, which is a serious syndrome due to direct or indirect muscle injury."
+        },
+        {
+          "name": "Neuroleptic Malignant Syndrome",
+          "support_spans": [
+            "temperature was 107°F",
+            "He was confused and intermittently agitated"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's high fever, agitation, and confusion are consistent with Neuroleptic Malignant Syndrome, although the absence of neuroleptic medication use is notable."
+        },
+        {
+          "name": "Sympathomimetic Toxicity",
+          "support_spans": [
+            "He reported ingestion and insufflation of “bath salts,”",
+            "temperature was 107°F",
+            "blood pressure 91/52 mm Hg"
+          ],
+          "contradict_spans": [
+            "Serum toxicology tests were negative for ethanol, acetaminophen, and salicylates.",
+            "Urine toxicology detected only lorazepam and cotinine but was negative for over 80 other substances"
+          ],
+          "why": "The patient's symptoms, such as high fever, agitation, and erratic behavior, are consistent with sympathomimetic toxicity, which can be caused by substances like bath salts."
+        }
+      ],
+      "key_evidence_spans": [
+        "Laboratory studies on admission showed features of severe rhabdomyolysis.",
+        "He reported ingestion and insufflation of “bath salts,”",
+        "temperature was 107°F"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Neuroleptic Malignant Syndrome",
+          "support_spans": [
+            "temperature was 107°F",
+            "confused and intermittently agitated",
+            "severe rhabdomyolysis"
+          ],
+          "contradict_spans": [
+            "urine toxicology detected only lorazepam and cotinine"
+          ],
+          "why": "The patient's symptoms of hyperthermia, agitation, and rhabdomyolysis are consistent with Neuroleptic Malignant Syndrome, although the absence of typical neuroleptic medications in the urine toxicology results is puzzling.",
+          "protected_reason": "This diagnosis may be easily missed due to the patient's history of polysubstance abuse and the presence of other potential causes of hyperthermia and rhabdomyolysis."
+        },
+        {
+          "name": "Sympathomimetic Toxicity",
+          "support_spans": [
+            "ingestion and insufflation of “bath salts”",
+            "temperature was 107°F",
+            "blood pressure 91/52 mm Hg",
+            "pulse 93/min"
+          ],
+          "contradict_spans": [
+            "serum toxicology tests were negative for ethanol, acetaminophen, and salicylates",
+            "urine toxicology detected only lorazepam and cotinine"
+          ],
+          "why": "The patient's symptoms of hyperthermia, tachycardia, and hypertension are consistent with sympathomimetic toxicity, which can be caused by substances like bath salts.",
+          "protected_reason": "This diagnosis may be challenging to establish due to the lack of specific toxicology results and the presence of other potential causes of hyperthermia and cardiovascular instability."
+        },
+        {
+          "name": "Malignant Hyperthermia",
+          "support_spans": [
+            "temperature was 107°F",
+            "severe rhabdomyolysis",
+            "given dantrolene"
+          ],
+          "contradict_spans": [
+            "no known drug allergies",
+            "no known history of malignant hyperthermia"
+          ],
+          "why": "The patient's symptoms of hyperthermia and rhabdomyolysis, as well as the administration of dantrolene, are consistent with malignant hyperthermia.",
+          "protected_reason": "This diagnosis may be easily missed due to the lack of specific risk factors and the presence of other potential causes of hyperthermia and rhabdomyolysis."
+        }
+      ],
+      "key_evidence_spans": [
+        "temperature was 107°F",
+        "severe rhabdomyolysis",
+        "ingestion and insufflation of “bath salts”"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "Serum toxicology tests were negative for ethanol, acetaminophen, and salicylates.",
+        "Urine toxicology detected only lorazepam and cotinine but was negative for over 80 other substances",
+        "urine toxicology detected only lorazepam and cotinine",
+        "serum toxicology tests were negative for ethanol, acetaminophen, and salicylates",
+        "no known drug allergies",
+        "no known history of malignant hyperthermia"
+      ],
+      "generator_jaccard": 0.5,
+      "top1_same_across_views": true,
+      "top_margin": 2.35,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 1
+    },
+    "frontier_after_g": [
+      {
+        "concept_id": "C002",
+        "preferred_name": "Neuroleptic Malignant Syndrome",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E004",
+          "G2E010",
+          "G2E008"
+        ],
+        "contradicting_evidence": [
+          "G2E011"
+        ],
+        "protected_reason": "This diagnosis may be easily missed due to the patient's history of polysubstance abuse and the presence of other potential causes of hyperthermia and rhabdomyolysis.",
+        "score_logit": 3.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C001",
+        "preferred_name": "Rhabdomyolysis",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E001"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 1.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Malignant Hyperthermia",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G2E008",
+          "G2E014"
+        ],
+        "contradicting_evidence": [
+          "G2E015",
+          "G2E016"
+        ],
+        "protected_reason": "This diagnosis may be easily missed due to the lack of specific risk factors and the presence of other potential causes of hyperthermia and rhabdomyolysis.",
+        "score_logit": 0.75,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Sympathomimetic Toxicity",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E002",
+          "G1E003",
+          "G1E005",
+          "G2E009",
+          "G2E012"
+        ],
+        "contradicting_evidence": [
+          "G1E006",
+          "G1E007",
+          "G2E013",
+          "G2E011"
+        ],
+        "protected_reason": "This diagnosis may be challenging to establish due to the lack of specific toxicology results and the presence of other potential causes of hyperthermia and cardiovascular instability.",
+        "score_logit": 0.6,
+        "status": "live"
+      }
+    ],
+    "a1": {
+      "candidates": [
+        {
+          "name": "Sympathomimetic Toxicity",
+          "support_spans": [
+            "Serum toxicology tests were negative for ethanol, acetaminophen, and salicylates.",
+            "Urine toxicology detected only lorazepam and cotinine but was negative for over 80 other substances"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's symptoms, such as agitation, confusion, and hyperthermia, are consistent with sympathomimetic toxicity, which can be caused by substances like bath salts.",
+          "protected_reason": "explains unexplained high-specificity evidence of negative toxicology screens and presence of symptoms consistent with sympathomimetic toxicity"
+        },
+        {
+          "name": "Rhabdomyolysis",
+          "support_spans": [
+            "Laboratory studies on admission showed features of severe rhabdomyolysis"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's laboratory results show features of severe rhabdomyolysis, which is a serious syndrome due to direct or indirect muscle injury.",
+          "protected_reason": "explains unexplained high-specificity evidence of rhabdomyolysis"
+        },
+        {
+          "name": "Malignant Hyperthermia",
+          "support_spans": [
+            "temperature was 107°F",
+            "no known history of malignant hyperthermia"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's extremely high temperature and treatment with dantrolene suggest a possible diagnosis of malignant hyperthermia, which is a life-threatening medical emergency.",
+          "protected_reason": "explains unexplained high-specificity evidence of hyperthermia and treatment with dantrolene"
+        }
+      ]
+    },
+    "adaptive_action": "ORTHOGONAL_GENERATE",
+    "selector": {
+      "champion": "Sympathomimetic Toxicity",
+      "runner_up": "Neuroleptic Malignant Syndrome",
+      "rationale": "The patient's reported ingestion and insufflation of 'bath salts' and presentation with hyperthermia, agitation, and cardiovascular instability are most consistent with sympathomimetic toxicity, despite negative toxicology results.",
+      "rejected": [
+        {
+          "label": "Rhabdomyolysis",
+          "why": "While the patient has severe rhabdomyolysis, this is more of a symptom than a primary diagnosis."
+        },
+        {
+          "label": "Malignant Hyperthermia",
+          "why": "The patient was given dantrolene, but there is no known history of malignant hyperthermia or drug allergies that would suggest this diagnosis."
+        }
+      ],
+      "margin": "medium"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "Laboratory studies on admission showed features of severe rhabdomyolysis.",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "He reported ingestion and insufflation of “bath salts,”",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "temperature was 107°F",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "He was confused and intermittently agitated",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E005",
+        "raw_span": "blood pressure 91/52 mm Hg",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E006",
+        "raw_span": "Serum toxicology tests were negative for ethanol, acetaminophen, and salicylates.",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E007",
+        "raw_span": "Urine toxicology detected only lorazepam and cotinine but was negative for over 80 other substances",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E008",
+        "raw_span": "severe rhabdomyolysis",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E009",
+        "raw_span": "ingestion and insufflation of “bath salts”",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E010",
+        "raw_span": "confused and intermittently agitated",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E011",
+        "raw_span": "urine toxicology detected only lorazepam and cotinine",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E012",
+        "raw_span": "pulse 93/min",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E013",
+        "raw_span": "serum toxicology tests were negative for ethanol, acetaminophen, and salicylates",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E014",
+        "raw_span": "given dantrolene",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E015",
+        "raw_span": "no known drug allergies",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E016",
+        "raw_span": "no known history of malignant hyperthermia",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "A1E017",
+        "raw_span": "Laboratory studies on admission showed features of severe rhabdomyolysis",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "a1"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Rhabdomyolysis",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "A1E017"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "explains unexplained high-specificity evidence of rhabdomyolysis",
+        "score_logit": 2.6,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Neuroleptic Malignant Syndrome",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E004",
+          "G2E010",
+          "G2E008"
+        ],
+        "contradicting_evidence": [
+          "G2E011"
+        ],
+        "protected_reason": "This diagnosis may be easily missed due to the patient's history of polysubstance abuse and the presence of other potential causes of hyperthermia and rhabdomyolysis.",
+        "score_logit": 3.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Sympathomimetic Toxicity",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2",
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G1E002",
+          "G1E003",
+          "G1E005",
+          "G2E009",
+          "G2E012",
+          "G1E006",
+          "G1E007"
+        ],
+        "contradicting_evidence": [
+          "G1E006",
+          "G1E007",
+          "G2E013",
+          "G2E011"
+        ],
+        "protected_reason": "This diagnosis may be challenging to establish due to the lack of specific toxicology results and the presence of other potential causes of hyperthermia and cardiovascular instability.",
+        "score_logit": 2.95,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Malignant Hyperthermia",
+        "aliases": [],
+        "generator_views": [
+          "g2",
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G2E008",
+          "G2E014",
+          "G2E016"
+        ],
+        "contradicting_evidence": [
+          "G2E015",
+          "G2E016"
+        ],
+        "protected_reason": "This diagnosis may be easily missed due to the lack of specific risk factors and the presence of other potential causes of hyperthermia and rhabdomyolysis.",
+        "score_logit": 2.1,
+        "status": "live"
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Rhabdomyolysis",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Neuroleptic Malignant Syndrome",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Sympathomimetic Toxicity",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Neuroleptic Malignant Syndrome",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C003",
+        "name": "Sympathomimetic Toxicity",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C004",
+        "name": "Malignant Hyperthermia",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C003",
+        "name": "Sympathomimetic Toxicity",
+        "view": "a1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Rhabdomyolysis",
+        "view": "a1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C004",
+        "name": "Malignant Hyperthermia",
+        "view": "a1"
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 4,
+    "n_evidence": 17,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.5,
+    "frontier_n": 4,
+    "protected_n": 4,
+    "g1_n": 3,
+    "g2_n": 3,
+    "adaptive_action": "ORTHOGONAL_GENERATE",
+    "llm_calls": 4,
+    "history_leakage": 0
+  },
+  "prediction": {
+    "arm": "mosaic_adaptive4_v1",
+    "case_id": "medcasereasoning__000112",
+    "source_id": "112",
+    "dataset": "medcasereasoning",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Sympathomimetic Toxicity",
+      "Neuroleptic Malignant Syndrome",
+      "Rhabdomyolysis",
+      "Malignant Hyperthermia"
+    ],
+    "top2_diagnoses": [
+      "Sympathomimetic Toxicity",
+      "Neuroleptic Malignant Syndrome"
+    ],
+    "cost": {
+      "llm_calls": 4
+    },
+    "stages": {
+      "mode": "adaptive4",
+      "vignette_chars": 2112,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Rhabdomyolysis",
+            "support_spans": [
+              "Laboratory studies on admission showed features of severe rhabdomyolysis."
+            ],
+            "contradict_spans": [],
+            "why": "The patient's laboratory results indicate severe rhabdomyolysis, which is a serious syndrome due to direct or indirect muscle injury."
+          },
+          {
+            "name": "Neuroleptic Malignant Syndrome",
+            "support_spans": [
+              "temperature was 107°F",
+              "He was confused and intermittently agitated"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's high fever, agitation, and confusion are consistent with Neuroleptic Malignant Syndrome, although the absence of neuroleptic medication use is notable."
+          },
+          {
+            "name": "Sympathomimetic Toxicity",
+            "support_spans": [
+              "He reported ingestion and insufflation of “bath salts,”",
+              "temperature was 107°F",
+              "blood pressure 91/52 mm Hg"
+            ],
+            "contradict_spans": [
+              "Serum toxicology tests were negative for ethanol, acetaminophen, and salicylates.",
+              "Urine toxicology detected only lorazepam and cotinine but was negative for over 80 other substances"
+            ],
+            "why": "The patient's symptoms, such as high fever, agitation, and erratic behavior, are consistent with sympathomimetic toxicity, which can be caused by substances like bath salts."
+          }
+        ],
+        "key_evidence_spans": [
+          "Laboratory studies on admission showed features of severe rhabdomyolysis.",
+          "He reported ingestion and insufflation of “bath salts,”",
+          "temperature was 107°F"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Neuroleptic Malignant Syndrome",
+            "support_spans": [
+              "temperature was 107°F",
+              "confused and intermittently agitated",
+              "severe rhabdomyolysis"
+            ],
+            "contradict_spans": [
+              "urine toxicology detected only lorazepam and cotinine"
+            ],
+            "why": "The patient's symptoms of hyperthermia, agitation, and rhabdomyolysis are consistent with Neuroleptic Malignant Syndrome, although the absence of typical neuroleptic medications in the urine toxicology results is puzzling.",
+            "protected_reason": "This diagnosis may be easily missed due to the patient's history of polysubstance abuse and the presence of other potential causes of hyperthermia and rhabdomyolysis."
+          },
+          {
+            "name": "Sympathomimetic Toxicity",
+            "support_spans": [
+              "ingestion and insufflation of “bath salts”",
+              "temperature was 107°F",
+              "blood pressure 91/52 mm Hg",
+              "pulse 93/min"
+            ],
+            "contradict_spans": [
+              "serum toxicology tests were negative for ethanol, acetaminophen, and salicylates",
+              "urine toxicology detected only lorazepam and cotinine"
+            ],
+            "why": "The patient's symptoms of hyperthermia, tachycardia, and hypertension are consistent with sympathomimetic toxicity, which can be caused by substances like bath salts.",
+            "protected_reason": "This diagnosis may be challenging to establish due to the lack of specific toxicology results and the presence of other potential causes of hyperthermia and cardiovascular instability."
+          },
+          {
+            "name": "Malignant Hyperthermia",
+            "support_spans": [
+              "temperature was 107°F",
+              "severe rhabdomyolysis",
+              "given dantrolene"
+            ],
+            "contradict_spans": [
+              "no known drug allergies",
+              "no known history of malignant hyperthermia"
+            ],
+            "why": "The patient's symptoms of hyperthermia and rhabdomyolysis, as well as the administration of dantrolene, are consistent with malignant hyperthermia.",
+            "protected_reason": "This diagnosis may be easily missed due to the lack of specific risk factors and the presence of other potential causes of hyperthermia and rhabdomyolysis."
+          }
+        ],
+        "key_evidence_spans": [
+          "temperature was 107°F",
+          "severe rhabdomyolysis",
+          "ingestion and insufflation of “bath salts”"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "Serum toxicology tests were negative for ethanol, acetaminophen, and salicylates.",
+          "Urine toxicology detected only lorazepam and cotinine but was negative for over 80 other substances",
+          "urine toxicology detected only lorazepam and cotinine",
+          "serum toxicology tests were negative for ethanol, acetaminophen, and salicylates",
+          "no known drug allergies",
+          "no known history of malignant hyperthermia"
+        ],
+        "generator_jaccard": 0.5,
+        "top1_same_across_views": true,
+        "top_margin": 2.35,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 1
+      },
+      "frontier_after_g": [
+        {
+          "concept_id": "C002",
+          "preferred_name": "Neuroleptic Malignant Syndrome",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E004",
+            "G2E010",
+            "G2E008"
+          ],
+          "contradicting_evidence": [
+            "G2E011"
+          ],
+          "protected_reason": "This diagnosis may be easily missed due to the patient's history of polysubstance abuse and the presence of other potential causes of hyperthermia and rhabdomyolysis.",
+          "score_logit": 3.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C001",
+          "preferred_name": "Rhabdomyolysis",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E001"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 1.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Malignant Hyperthermia",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G2E008",
+            "G2E014"
+          ],
+          "contradicting_evidence": [
+            "G2E015",
+            "G2E016"
+          ],
+          "protected_reason": "This diagnosis may be easily missed due to the lack of specific risk factors and the presence of other potential causes of hyperthermia and rhabdomyolysis.",
+          "score_logit": 0.75,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Sympathomimetic Toxicity",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E002",
+            "G1E003",
+            "G1E005",
+            "G2E009",
+            "G2E012"
+          ],
+          "contradicting_evidence": [
+            "G1E006",
+            "G1E007",
+            "G2E013",
+            "G2E011"
+          ],
+          "protected_reason": "This diagnosis may be challenging to establish due to the lack of specific toxicology results and the presence of other potential causes of hyperthermia and cardiovascular instability.",
+          "score_logit": 0.6,
+          "status": "live"
+        }
+      ],
+      "a1": {
+        "candidates": [
+          {
+            "name": "Sympathomimetic Toxicity",
+            "support_spans": [
+              "Serum toxicology tests were negative for ethanol, acetaminophen, and salicylates.",
+              "Urine toxicology detected only lorazepam and cotinine but was negative for over 80 other substances"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's symptoms, such as agitation, confusion, and hyperthermia, are consistent with sympathomimetic toxicity, which can be caused by substances like bath salts.",
+            "protected_reason": "explains unexplained high-specificity evidence of negative toxicology screens and presence of symptoms consistent with sympathomimetic toxicity"
+          },
+          {
+            "name": "Rhabdomyolysis",
+            "support_spans": [
+              "Laboratory studies on admission showed features of severe rhabdomyolysis"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's laboratory results show features of severe rhabdomyolysis, which is a serious syndrome due to direct or indirect muscle injury.",
+            "protected_reason": "explains unexplained high-specificity evidence of rhabdomyolysis"
+          },
+          {
+            "name": "Malignant Hyperthermia",
+            "support_spans": [
+              "temperature was 107°F",
+              "no known history of malignant hyperthermia"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's extremely high temperature and treatment with dantrolene suggest a possible diagnosis of malignant hyperthermia, which is a life-threatening medical emergency.",
+            "protected_reason": "explains unexplained high-specificity evidence of hyperthermia and treatment with dantrolene"
+          }
+        ]
+      },
+      "adaptive_action": "ORTHOGONAL_GENERATE",
+      "selector": {
+        "champion": "Sympathomimetic Toxicity",
+        "runner_up": "Neuroleptic Malignant Syndrome",
+        "rationale": "The patient's reported ingestion and insufflation of 'bath salts' and presentation with hyperthermia, agitation, and cardiovascular instability are most consistent with sympathomimetic toxicity, despite negative toxicology results.",
+        "rejected": [
+          {
+            "label": "Rhabdomyolysis",
+            "why": "While the patient has severe rhabdomyolysis, this is more of a symptom than a primary diagnosis."
+          },
+          {
+            "label": "Malignant Hyperthermia",
+            "why": "The patient was given dantrolene, but there is no known history of malignant hyperthermia or drug allergies that would suggest this diagnosis."
+          }
+        ],
+        "margin": "medium"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "Laboratory studies on admission showed features of severe rhabdomyolysis.",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "He reported ingestion and insufflation of “bath salts,”",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "temperature was 107°F",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "He was confused and intermittently agitated",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E005",
+          "raw_span": "blood pressure 91/52 mm Hg",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E006",
+          "raw_span": "Serum toxicology tests were negative for ethanol, acetaminophen, and salicylates.",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E007",
+          "raw_span": "Urine toxicology detected only lorazepam and cotinine but was negative for over 80 other substances",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E008",
+          "raw_span": "severe rhabdomyolysis",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E009",
+          "raw_span": "ingestion and insufflation of “bath salts”",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E010",
+          "raw_span": "confused and intermittently agitated",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E011",
+          "raw_span": "urine toxicology detected only lorazepam and cotinine",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E012",
+          "raw_span": "pulse 93/min",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E013",
+          "raw_span": "serum toxicology tests were negative for ethanol, acetaminophen, and salicylates",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E014",
+          "raw_span": "given dantrolene",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E015",
+          "raw_span": "no known drug allergies",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E016",
+          "raw_span": "no known history of malignant hyperthermia",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "A1E017",
+          "raw_span": "Laboratory studies on admission showed features of severe rhabdomyolysis",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "a1"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Rhabdomyolysis",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "A1E017"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "explains unexplained high-specificity evidence of rhabdomyolysis",
+          "score_logit": 2.6,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Neuroleptic Malignant Syndrome",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E004",
+            "G2E010",
+            "G2E008"
+          ],
+          "contradicting_evidence": [
+            "G2E011"
+          ],
+          "protected_reason": "This diagnosis may be easily missed due to the patient's history of polysubstance abuse and the presence of other potential causes of hyperthermia and rhabdomyolysis.",
+          "score_logit": 3.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Sympathomimetic Toxicity",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2",
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G1E002",
+            "G1E003",
+            "G1E005",
+            "G2E009",
+            "G2E012",
+            "G1E006",
+            "G1E007"
+          ],
+          "contradicting_evidence": [
+            "G1E006",
+            "G1E007",
+            "G2E013",
+            "G2E011"
+          ],
+          "protected_reason": "This diagnosis may be challenging to establish due to the lack of specific toxicology results and the presence of other potential causes of hyperthermia and cardiovascular instability.",
+          "score_logit": 2.95,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Malignant Hyperthermia",
+          "aliases": [],
+          "generator_views": [
+            "g2",
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G2E008",
+            "G2E014",
+            "G2E016"
+          ],
+          "contradicting_evidence": [
+            "G2E015",
+            "G2E016"
+          ],
+          "protected_reason": "This diagnosis may be easily missed due to the lack of specific risk factors and the presence of other potential causes of hyperthermia and rhabdomyolysis.",
+          "score_logit": 2.1,
+          "status": "live"
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Rhabdomyolysis",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Neuroleptic Malignant Syndrome",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Sympathomimetic Toxicity",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Neuroleptic Malignant Syndrome",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C003",
+          "name": "Sympathomimetic Toxicity",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C004",
+          "name": "Malignant Hyperthermia",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C003",
+          "name": "Sympathomimetic Toxicity",
+          "view": "a1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Rhabdomyolysis",
+          "view": "a1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C004",
+          "name": "Malignant Hyperthermia",
+          "view": "a1"
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 4,
+      "n_evidence": 17,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.5,
+      "frontier_n": 4,
+      "protected_n": 4,
+      "g1_n": 3,
+      "g2_n": 3,
+      "adaptive_action": "ORTHOGONAL_GENERATE",
+      "llm_calls": 4,
+      "history_leakage": 0
+    },
+    "wall_s": 5.57
+  },
+  "created_at": "2026-08-08T01:50:25.458915+00:00"
+}

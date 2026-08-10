@@ -1,0 +1,874 @@
+{
+  "case_id": "medcasereasoning__000082",
+  "source_id": "82",
+  "champion": "Empagliflozin-associated euglycemic diabetic ketoacidosis (euDKA)",
+  "ordered_diagnoses": [
+    "Empagliflozin-associated euglycemic diabetic ketoacidosis (euDKA)",
+    "Diabetic Ketoacidosis (DKA)",
+    "Acute Kidney Injury (AKI)",
+    "Lactic Acidosis"
+  ],
+  "llm_calls": 4,
+  "stages": {
+    "mode": "adaptive4",
+    "vignette_chars": 1538,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Diabetic Ketoacidosis (DKA)",
+          "support_spans": [
+            "severe metabolic acidosis",
+            "elevated at 31.5 mmol/L",
+            "trace ketones on repeat urinalysis"
+          ],
+          "contradict_spans": [],
+          "why": "The patient has type 2 diabetes mellitus, severe metabolic acidosis, elevated β-hydroxybutyrate level, and trace ketones in the urine, which are all consistent with DKA."
+        },
+        {
+          "name": "Lactic Acidosis",
+          "support_spans": [
+            "lactate 4.4 mmol/L",
+            "severe metabolic acidosis"
+          ],
+          "contradict_spans": [],
+          "why": "The patient has an elevated lactate level and severe metabolic acidosis, which could be indicative of lactic acidosis, possibly related to his empagliflozin use or other factors."
+        },
+        {
+          "name": "Acute Kidney Injury (AKI)",
+          "support_spans": [
+            "acute renal failure",
+            "creatinine 10.2 mg/dL (baseline 1.1 mg/dL)"
+          ],
+          "contradict_spans": [],
+          "why": "The patient has a significant increase in creatinine level from baseline, indicating acute kidney injury, which could be due to various factors including dehydration and medications."
+        }
+      ],
+      "key_evidence_spans": [
+        "severe metabolic acidosis",
+        "elevated at 31.5 mmol/L",
+        "trace ketones on repeat urinalysis",
+        "lactate 4.4 mmol/L",
+        "creatinine 10.2 mg/dL (baseline 1.1 mg/dL)"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Diabetic ketoacidosis (DKA)",
+          "support_spans": [
+            "severe metabolic acidosis",
+            "elevated at 31.5 mmol/L",
+            "trace ketones on repeat urinalysis"
+          ],
+          "contradict_spans": [
+            "glucose 185 mg/dL"
+          ],
+          "why": "The patient's severe metabolic acidosis, elevated β-hydroxybutyrate level, and presence of ketones in the urine suggest DKA, despite the relatively moderate glucose level.",
+          "protected_reason": "DKA can be easily missed in patients with type 2 diabetes, especially if they are not typically prone to ketosis, and the presence of empagliflozin may increase the risk of DKA."
+        },
+        {
+          "name": "Lactic acidosis",
+          "support_spans": [
+            "lactate 4.4 mmol/L",
+            "severe metabolic acidosis"
+          ],
+          "contradict_spans": [
+            "elevated at 31.5 mmol/L"
+          ],
+          "why": "The patient's elevated lactate level and severe metabolic acidosis suggest lactic acidosis, which can be caused by various factors including sepsis, shock, or medication side effects.",
+          "protected_reason": "Lactic acidosis can be a rare but life-threatening condition that requires prompt recognition and treatment."
+        },
+        {
+          "name": "Empagliflozin-associated euglycemic diabetic ketoacidosis (euDKA)",
+          "support_spans": [
+            "empagliflozin started one month earlier",
+            "severe metabolic acidosis",
+            "elevated at 31.5 mmol/L"
+          ],
+          "contradict_spans": [
+            "glucose 185 mg/dL"
+          ],
+          "why": "The patient's recent initiation of empagliflozin, a sodium-glucose cotransporter 2 (SGLT2) inhibitor, may increase the risk of euglycemic DKA, which can occur even at moderate glucose levels.",
+          "protected_reason": "euDKA is a rare but potentially life-threatening condition that can be easily missed, especially in patients with type 2 diabetes who are not typically prone to ketosis."
+        }
+      ],
+      "key_evidence_spans": [
+        "severe metabolic acidosis",
+        "elevated at 31.5 mmol/L",
+        "lactate 4.4 mmol/L",
+        "empagliflozin started one month earlier"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "glucose 185 mg/dL"
+      ],
+      "generator_jaccard": 0.5,
+      "top1_same_across_views": true,
+      "top_margin": 0.3500000000000001,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 1
+    },
+    "frontier_after_g": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Diabetic Ketoacidosis (DKA)",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G1E003"
+        ],
+        "contradicting_evidence": [
+          "G2E008"
+        ],
+        "protected_reason": "DKA can be easily missed in patients with type 2 diabetes, especially if they are not typically prone to ketosis, and the presence of empagliflozin may increase the risk of DKA.",
+        "score_logit": 2.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Acute Kidney Injury (AKI)",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E006",
+          "G1E005"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 2.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Empagliflozin-associated euglycemic diabetic ketoacidosis (euDKA)",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G2E007",
+          "G1E001",
+          "G1E002"
+        ],
+        "contradicting_evidence": [
+          "G2E008"
+        ],
+        "protected_reason": "euDKA is a rare but potentially life-threatening condition that can be easily missed, especially in patients with type 2 diabetes who are not typically prone to ketosis.",
+        "score_logit": 2.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Lactic Acidosis",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E004",
+          "G1E001"
+        ],
+        "contradicting_evidence": [
+          "G1E002"
+        ],
+        "protected_reason": "Lactic acidosis can be a rare but life-threatening condition that requires prompt recognition and treatment.",
+        "score_logit": 1.35,
+        "status": "live"
+      }
+    ],
+    "a1": {
+      "candidates": [
+        {
+          "name": "Diabetic Ketoacidosis",
+          "support_spans": [
+            "glucose 185 mg/dL",
+            "trace ketones on repeat urinalysis",
+            "elevated at 31.5 mmol/L"
+          ],
+          "contradict_spans": [],
+          "why": "The patient has high blood glucose and ketone levels, which are characteristic of diabetic ketoacidosis.",
+          "protected_reason": "explains unexplained high-specificity evidence"
+        }
+      ]
+    },
+    "adaptive_action": "ORTHOGONAL_GENERATE",
+    "selector": {
+      "champion": "Empagliflozin-associated euglycemic diabetic ketoacidosis (euDKA)",
+      "runner_up": "Diabetic Ketoacidosis (DKA)",
+      "rationale": "The patient's recent initiation of empagliflozin and presence of severe metabolic acidosis, elevated β-hydroxybutyrate, and trace ketones support euDKA, despite the glucose level being 185 mg/dL, which is not extremely high but still consistent with euDKA.",
+      "rejected": [
+        {
+          "label": "Acute Kidney Injury (AKI)",
+          "why": "While the patient has acute renal failure, AKI does not fully explain the severe metabolic acidosis and ketosis."
+        },
+        {
+          "label": "Lactic Acidosis",
+          "why": "The elevated lactate level is concerning, but the presence of ketones and β-hydroxybutyrate points more towards a diabetic ketoacidosis diagnosis."
+        }
+      ],
+      "margin": "medium"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "severe metabolic acidosis",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "elevated at 31.5 mmol/L",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "trace ketones on repeat urinalysis",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "lactate 4.4 mmol/L",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E005",
+        "raw_span": "creatinine 10.2 mg/dL (baseline 1.1 mg/dL)",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E006",
+        "raw_span": "acute renal failure",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E007",
+        "raw_span": "empagliflozin started one month earlier",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E008",
+        "raw_span": "glucose 185 mg/dL",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Diabetic Ketoacidosis (DKA)",
+        "aliases": [
+          "Diabetic Ketoacidosis"
+        ],
+        "generator_views": [
+          "g1",
+          "g2",
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G1E003",
+          "G2E008"
+        ],
+        "contradicting_evidence": [
+          "G2E008"
+        ],
+        "protected_reason": "DKA can be easily missed in patients with type 2 diabetes, especially if they are not typically prone to ketosis, and the presence of empagliflozin may increase the risk of DKA.",
+        "score_logit": 3.7,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Lactic Acidosis",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E004",
+          "G1E001"
+        ],
+        "contradicting_evidence": [
+          "G1E002"
+        ],
+        "protected_reason": "Lactic acidosis can be a rare but life-threatening condition that requires prompt recognition and treatment.",
+        "score_logit": 1.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Acute Kidney Injury (AKI)",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E006",
+          "G1E005"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 2.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Empagliflozin-associated euglycemic diabetic ketoacidosis (euDKA)",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G2E007",
+          "G1E001",
+          "G1E002"
+        ],
+        "contradicting_evidence": [
+          "G2E008"
+        ],
+        "protected_reason": "euDKA is a rare but potentially life-threatening condition that can be easily missed, especially in patients with type 2 diabetes who are not typically prone to ketosis.",
+        "score_logit": 2.0,
+        "status": "live"
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Diabetic Ketoacidosis (DKA)",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Lactic Acidosis",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Acute Kidney Injury (AKI)",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Diabetic ketoacidosis (DKA)",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Lactic acidosis",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C004",
+        "name": "Empagliflozin-associated euglycemic diabetic ketoacidosis (euDKA)",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Diabetic Ketoacidosis",
+        "view": "a1"
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 4,
+    "n_evidence": 8,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.5,
+    "frontier_n": 4,
+    "protected_n": 3,
+    "g1_n": 3,
+    "g2_n": 3,
+    "adaptive_action": "ORTHOGONAL_GENERATE",
+    "llm_calls": 4,
+    "history_leakage": 0
+  },
+  "prediction": {
+    "arm": "mosaic_adaptive4_v1",
+    "case_id": "medcasereasoning__000082",
+    "source_id": "82",
+    "dataset": "medcasereasoning",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Empagliflozin-associated euglycemic diabetic ketoacidosis (euDKA)",
+      "Diabetic Ketoacidosis (DKA)",
+      "Acute Kidney Injury (AKI)",
+      "Lactic Acidosis"
+    ],
+    "top2_diagnoses": [
+      "Empagliflozin-associated euglycemic diabetic ketoacidosis (euDKA)",
+      "Diabetic Ketoacidosis (DKA)"
+    ],
+    "cost": {
+      "llm_calls": 4
+    },
+    "stages": {
+      "mode": "adaptive4",
+      "vignette_chars": 1538,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Diabetic Ketoacidosis (DKA)",
+            "support_spans": [
+              "severe metabolic acidosis",
+              "elevated at 31.5 mmol/L",
+              "trace ketones on repeat urinalysis"
+            ],
+            "contradict_spans": [],
+            "why": "The patient has type 2 diabetes mellitus, severe metabolic acidosis, elevated β-hydroxybutyrate level, and trace ketones in the urine, which are all consistent with DKA."
+          },
+          {
+            "name": "Lactic Acidosis",
+            "support_spans": [
+              "lactate 4.4 mmol/L",
+              "severe metabolic acidosis"
+            ],
+            "contradict_spans": [],
+            "why": "The patient has an elevated lactate level and severe metabolic acidosis, which could be indicative of lactic acidosis, possibly related to his empagliflozin use or other factors."
+          },
+          {
+            "name": "Acute Kidney Injury (AKI)",
+            "support_spans": [
+              "acute renal failure",
+              "creatinine 10.2 mg/dL (baseline 1.1 mg/dL)"
+            ],
+            "contradict_spans": [],
+            "why": "The patient has a significant increase in creatinine level from baseline, indicating acute kidney injury, which could be due to various factors including dehydration and medications."
+          }
+        ],
+        "key_evidence_spans": [
+          "severe metabolic acidosis",
+          "elevated at 31.5 mmol/L",
+          "trace ketones on repeat urinalysis",
+          "lactate 4.4 mmol/L",
+          "creatinine 10.2 mg/dL (baseline 1.1 mg/dL)"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Diabetic ketoacidosis (DKA)",
+            "support_spans": [
+              "severe metabolic acidosis",
+              "elevated at 31.5 mmol/L",
+              "trace ketones on repeat urinalysis"
+            ],
+            "contradict_spans": [
+              "glucose 185 mg/dL"
+            ],
+            "why": "The patient's severe metabolic acidosis, elevated β-hydroxybutyrate level, and presence of ketones in the urine suggest DKA, despite the relatively moderate glucose level.",
+            "protected_reason": "DKA can be easily missed in patients with type 2 diabetes, especially if they are not typically prone to ketosis, and the presence of empagliflozin may increase the risk of DKA."
+          },
+          {
+            "name": "Lactic acidosis",
+            "support_spans": [
+              "lactate 4.4 mmol/L",
+              "severe metabolic acidosis"
+            ],
+            "contradict_spans": [
+              "elevated at 31.5 mmol/L"
+            ],
+            "why": "The patient's elevated lactate level and severe metabolic acidosis suggest lactic acidosis, which can be caused by various factors including sepsis, shock, or medication side effects.",
+            "protected_reason": "Lactic acidosis can be a rare but life-threatening condition that requires prompt recognition and treatment."
+          },
+          {
+            "name": "Empagliflozin-associated euglycemic diabetic ketoacidosis (euDKA)",
+            "support_spans": [
+              "empagliflozin started one month earlier",
+              "severe metabolic acidosis",
+              "elevated at 31.5 mmol/L"
+            ],
+            "contradict_spans": [
+              "glucose 185 mg/dL"
+            ],
+            "why": "The patient's recent initiation of empagliflozin, a sodium-glucose cotransporter 2 (SGLT2) inhibitor, may increase the risk of euglycemic DKA, which can occur even at moderate glucose levels.",
+            "protected_reason": "euDKA is a rare but potentially life-threatening condition that can be easily missed, especially in patients with type 2 diabetes who are not typically prone to ketosis."
+          }
+        ],
+        "key_evidence_spans": [
+          "severe metabolic acidosis",
+          "elevated at 31.5 mmol/L",
+          "lactate 4.4 mmol/L",
+          "empagliflozin started one month earlier"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "glucose 185 mg/dL"
+        ],
+        "generator_jaccard": 0.5,
+        "top1_same_across_views": true,
+        "top_margin": 0.3500000000000001,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 1
+      },
+      "frontier_after_g": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Diabetic Ketoacidosis (DKA)",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G1E003"
+          ],
+          "contradicting_evidence": [
+            "G2E008"
+          ],
+          "protected_reason": "DKA can be easily missed in patients with type 2 diabetes, especially if they are not typically prone to ketosis, and the presence of empagliflozin may increase the risk of DKA.",
+          "score_logit": 2.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Acute Kidney Injury (AKI)",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E006",
+            "G1E005"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 2.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Empagliflozin-associated euglycemic diabetic ketoacidosis (euDKA)",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G2E007",
+            "G1E001",
+            "G1E002"
+          ],
+          "contradicting_evidence": [
+            "G2E008"
+          ],
+          "protected_reason": "euDKA is a rare but potentially life-threatening condition that can be easily missed, especially in patients with type 2 diabetes who are not typically prone to ketosis.",
+          "score_logit": 2.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Lactic Acidosis",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E004",
+            "G1E001"
+          ],
+          "contradicting_evidence": [
+            "G1E002"
+          ],
+          "protected_reason": "Lactic acidosis can be a rare but life-threatening condition that requires prompt recognition and treatment.",
+          "score_logit": 1.35,
+          "status": "live"
+        }
+      ],
+      "a1": {
+        "candidates": [
+          {
+            "name": "Diabetic Ketoacidosis",
+            "support_spans": [
+              "glucose 185 mg/dL",
+              "trace ketones on repeat urinalysis",
+              "elevated at 31.5 mmol/L"
+            ],
+            "contradict_spans": [],
+            "why": "The patient has high blood glucose and ketone levels, which are characteristic of diabetic ketoacidosis.",
+            "protected_reason": "explains unexplained high-specificity evidence"
+          }
+        ]
+      },
+      "adaptive_action": "ORTHOGONAL_GENERATE",
+      "selector": {
+        "champion": "Empagliflozin-associated euglycemic diabetic ketoacidosis (euDKA)",
+        "runner_up": "Diabetic Ketoacidosis (DKA)",
+        "rationale": "The patient's recent initiation of empagliflozin and presence of severe metabolic acidosis, elevated β-hydroxybutyrate, and trace ketones support euDKA, despite the glucose level being 185 mg/dL, which is not extremely high but still consistent with euDKA.",
+        "rejected": [
+          {
+            "label": "Acute Kidney Injury (AKI)",
+            "why": "While the patient has acute renal failure, AKI does not fully explain the severe metabolic acidosis and ketosis."
+          },
+          {
+            "label": "Lactic Acidosis",
+            "why": "The elevated lactate level is concerning, but the presence of ketones and β-hydroxybutyrate points more towards a diabetic ketoacidosis diagnosis."
+          }
+        ],
+        "margin": "medium"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "severe metabolic acidosis",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "elevated at 31.5 mmol/L",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "trace ketones on repeat urinalysis",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "lactate 4.4 mmol/L",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E005",
+          "raw_span": "creatinine 10.2 mg/dL (baseline 1.1 mg/dL)",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E006",
+          "raw_span": "acute renal failure",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E007",
+          "raw_span": "empagliflozin started one month earlier",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E008",
+          "raw_span": "glucose 185 mg/dL",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Diabetic Ketoacidosis (DKA)",
+          "aliases": [
+            "Diabetic Ketoacidosis"
+          ],
+          "generator_views": [
+            "g1",
+            "g2",
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G1E003",
+            "G2E008"
+          ],
+          "contradicting_evidence": [
+            "G2E008"
+          ],
+          "protected_reason": "DKA can be easily missed in patients with type 2 diabetes, especially if they are not typically prone to ketosis, and the presence of empagliflozin may increase the risk of DKA.",
+          "score_logit": 3.7,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Lactic Acidosis",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E004",
+            "G1E001"
+          ],
+          "contradicting_evidence": [
+            "G1E002"
+          ],
+          "protected_reason": "Lactic acidosis can be a rare but life-threatening condition that requires prompt recognition and treatment.",
+          "score_logit": 1.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Acute Kidney Injury (AKI)",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E006",
+            "G1E005"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 2.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Empagliflozin-associated euglycemic diabetic ketoacidosis (euDKA)",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G2E007",
+            "G1E001",
+            "G1E002"
+          ],
+          "contradicting_evidence": [
+            "G2E008"
+          ],
+          "protected_reason": "euDKA is a rare but potentially life-threatening condition that can be easily missed, especially in patients with type 2 diabetes who are not typically prone to ketosis.",
+          "score_logit": 2.0,
+          "status": "live"
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Diabetic Ketoacidosis (DKA)",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Lactic Acidosis",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Acute Kidney Injury (AKI)",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Diabetic ketoacidosis (DKA)",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Lactic acidosis",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C004",
+          "name": "Empagliflozin-associated euglycemic diabetic ketoacidosis (euDKA)",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Diabetic Ketoacidosis",
+          "view": "a1"
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 4,
+      "n_evidence": 8,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.5,
+      "frontier_n": 4,
+      "protected_n": 3,
+      "g1_n": 3,
+      "g2_n": 3,
+      "adaptive_action": "ORTHOGONAL_GENERATE",
+      "llm_calls": 4,
+      "history_leakage": 0
+    },
+    "wall_s": 5.471
+  },
+  "created_at": "2026-08-08T01:50:22.284868+00:00"
+}

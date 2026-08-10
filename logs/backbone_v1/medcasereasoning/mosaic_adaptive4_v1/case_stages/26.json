@@ -1,0 +1,944 @@
+{
+  "case_id": "medcasereasoning__000026",
+  "source_id": "26",
+  "champion": "Migraine",
+  "ordered_diagnoses": [
+    "Migraine",
+    "Cyclic Vomiting Syndrome",
+    "Mitochondrial Disorder"
+  ],
+  "llm_calls": 4,
+  "stages": {
+    "mode": "adaptive4",
+    "vignette_chars": 1510,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Migraine",
+          "support_spans": [
+            "diagnosed as migraine",
+            "frontal headache (5/10) and persistent nausea"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's symptoms such as headache, nausea, and vomiting are consistent with migraine."
+        },
+        {
+          "name": "Acute Abdominal Migraine",
+          "support_spans": [
+            "generalized abdominal pain",
+            "diagnosed as migraine"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's abdominal pain and subsequent migraine-like symptoms could be indicative of acute abdominal migraine."
+        },
+        {
+          "name": "Cyclic Vomiting Syndrome",
+          "support_spans": [
+            "self‐limited vomiting episodes",
+            "ongoing headache"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's recurrent episodes of vomiting and headache could be consistent with cyclic vomiting syndrome."
+        }
+      ],
+      "key_evidence_spans": [
+        "generalized abdominal pain",
+        "frontal headache (5/10) and persistent nausea",
+        "self‐limited vomiting episodes"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Cyclic Vomiting Syndrome",
+          "support_spans": [
+            "a single episode of vomiting",
+            "three additional self‐limited vomiting episodes"
+          ],
+          "contradict_spans": [
+            "diagnosed as migraine"
+          ],
+          "why": "The patient's recurrent episodes of vomiting and abdominal pain are consistent with cyclic vomiting syndrome.",
+          "protected_reason": "This diagnosis may be overlooked in favor of more common conditions like migraine, and its cyclic nature may lead to delayed diagnosis."
+        },
+        {
+          "name": "Abdominal Migraine",
+          "support_spans": [
+            "generalized abdominal pain",
+            "frontal headache (5/10)"
+          ],
+          "contradict_spans": [
+            "no personal or family history of epilepsy or neurological disorders"
+          ],
+          "why": "The patient's abdominal pain and headache are consistent with abdominal migraine, a condition that can present with significant abdominal pain and headache.",
+          "protected_reason": "Abdominal migraine is a rare and easily missed diagnosis, especially in the absence of a clear family history of migraine."
+        },
+        {
+          "name": "Mitochondrial Disorder",
+          "support_spans": [
+            "diaphoresis, mucocutaneous paleness, dizziness, dysarthria, incoherent speech, and lack of eye contact"
+          ],
+          "contradict_spans": [
+            "normal complete blood count, serum chemistries, and electrolytes"
+          ],
+          "why": "The patient's episode of multisystem symptoms, including autonomic dysfunction and altered mental status, could be consistent with a mitochondrial disorder.",
+          "protected_reason": "Mitochondrial disorders are rare and can present with a wide range of symptoms, making them easily missed, and their diagnosis often requires specialized testing."
+        }
+      ],
+      "key_evidence_spans": [
+        "generalized abdominal pain followed by a single episode of vomiting",
+        "diaphoresis, mucocutaneous paleness, dizziness, dysarthria, incoherent speech, and lack of eye contact",
+        "three additional self‐limited vomiting episodes"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "generalized abdominal pain followed by a single episode of vomiting",
+        "no personal or family history of epilepsy or neurological disorders",
+        "normal complete blood count, serum chemistries, and electrolytes"
+      ],
+      "generator_jaccard": 0.2,
+      "top1_same_across_views": true,
+      "top_margin": 0.0,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 1
+    },
+    "frontier_after_g": [
+      {
+        "concept_id": "C002",
+        "preferred_name": "Cyclic Vomiting Syndrome",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E005",
+          "G2E009",
+          "G2E008"
+        ],
+        "contradicting_evidence": [
+          "G1E004"
+        ],
+        "protected_reason": "This diagnosis may be overlooked in favor of more common conditions like migraine, and its cyclic nature may lead to delayed diagnosis.",
+        "score_logit": 3.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C001",
+        "preferred_name": "Migraine",
+        "aliases": [
+          "Acute Abdominal Migraine",
+          "Abdominal Migraine"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E004",
+          "G1E002",
+          "G1E001",
+          "G2E010"
+        ],
+        "contradicting_evidence": [
+          "G2E011"
+        ],
+        "protected_reason": "Abdominal migraine is a rare and easily missed diagnosis, especially in the absence of a clear family history of migraine.",
+        "score_logit": 3.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Mitochondrial Disorder",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G2E012"
+        ],
+        "protected_reason": "Mitochondrial disorders are rare and can present with a wide range of symptoms, making them easily missed, and their diagnosis often requires specialized testing.",
+        "score_logit": 0.0,
+        "status": "live"
+      }
+    ],
+    "a1": {
+      "candidates": [
+        {
+          "name": "Cyclic Vomiting Syndrome",
+          "support_spans": [
+            "generalized abdominal pain followed by a single episode of vomiting",
+            "three additional self‐limited vomiting episodes"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's symptoms of recurrent vomiting episodes and abdominal pain are consistent with Cyclic Vomiting Syndrome.",
+          "protected_reason": "explains unexplained high-specificity evidence of recurrent vomiting episodes"
+        },
+        {
+          "name": "Abdominal Migraine",
+          "support_spans": [
+            "generalized abdominal pain followed by a single episode of vomiting"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's symptoms of abdominal pain and vomiting, along with a previous diagnosis of migraine, are consistent with Abdominal Migraine.",
+          "protected_reason": "explains unexplained high-specificity evidence of abdominal pain and vomiting"
+        },
+        {
+          "name": "Mitochondrial Disorder",
+          "support_spans": [
+            "no personal or family history of epilepsy or neurological disorders",
+            "normal complete blood count, serum chemistries, and electrolytes"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's lack of family history of neurological disorders and normal laboratory results could suggest a mitochondrial disorder, which may not have been detected by routine tests.",
+          "protected_reason": "explains unexplained high-specificity evidence of normal laboratory results and lack of family history"
+        }
+      ]
+    },
+    "adaptive_action": "ORTHOGONAL_GENERATE",
+    "selector": {
+      "champion": "Migraine",
+      "runner_up": "Cyclic Vomiting Syndrome",
+      "rationale": "The patient's symptoms of frontal headache, persistent nausea, and generalized abdominal pain are consistent with migraine, and the patient was previously diagnosed with migraine.",
+      "rejected": [
+        {
+          "label": "Mitochondrial Disorder",
+          "why": "Normal complete blood count, serum chemistries, and electrolytes, and lack of other supporting evidence"
+        }
+      ],
+      "margin": "medium"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "generalized abdominal pain",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "frontal headache (5/10) and persistent nausea",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "self‐limited vomiting episodes",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "diagnosed as migraine",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E005",
+        "raw_span": "ongoing headache",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E006",
+        "raw_span": "generalized abdominal pain followed by a single episode of vomiting",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E007",
+        "raw_span": "diaphoresis, mucocutaneous paleness, dizziness, dysarthria, incoherent speech, and lack of eye contact",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E008",
+        "raw_span": "three additional self‐limited vomiting episodes",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E009",
+        "raw_span": "a single episode of vomiting",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E010",
+        "raw_span": "frontal headache (5/10)",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E011",
+        "raw_span": "no personal or family history of epilepsy or neurological disorders",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E012",
+        "raw_span": "normal complete blood count, serum chemistries, and electrolytes",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Migraine",
+        "aliases": [
+          "Acute Abdominal Migraine",
+          "Abdominal Migraine"
+        ],
+        "generator_views": [
+          "g1",
+          "g2",
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G1E004",
+          "G1E002",
+          "G1E001",
+          "G2E010",
+          "G2E006"
+        ],
+        "contradicting_evidence": [
+          "G2E011"
+        ],
+        "protected_reason": "Abdominal migraine is a rare and easily missed diagnosis, especially in the absence of a clear family history of migraine.",
+        "score_logit": 4.7,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Cyclic Vomiting Syndrome",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2",
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E005",
+          "G2E009",
+          "G2E008",
+          "G2E006"
+        ],
+        "contradicting_evidence": [
+          "G1E004"
+        ],
+        "protected_reason": "This diagnosis may be overlooked in favor of more common conditions like migraine, and its cyclic nature may lead to delayed diagnosis.",
+        "score_logit": 4.7,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Mitochondrial Disorder",
+        "aliases": [],
+        "generator_views": [
+          "g2",
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G2E007",
+          "G2E011",
+          "G2E012"
+        ],
+        "contradicting_evidence": [
+          "G2E012"
+        ],
+        "protected_reason": "Mitochondrial disorders are rare and can present with a wide range of symptoms, making them easily missed, and their diagnosis often requires specialized testing.",
+        "score_logit": 2.35,
+        "status": "live"
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Migraine",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Acute Abdominal Migraine",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Cyclic Vomiting Syndrome",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Cyclic Vomiting Syndrome",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Abdominal Migraine",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Mitochondrial Disorder",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Cyclic Vomiting Syndrome",
+        "view": "a1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Abdominal Migraine",
+        "view": "a1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C003",
+        "name": "Mitochondrial Disorder",
+        "view": "a1"
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 3,
+    "n_evidence": 12,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.2,
+    "frontier_n": 3,
+    "protected_n": 3,
+    "g1_n": 3,
+    "g2_n": 3,
+    "adaptive_action": "ORTHOGONAL_GENERATE",
+    "llm_calls": 4,
+    "history_leakage": 0
+  },
+  "prediction": {
+    "arm": "mosaic_adaptive4_v1",
+    "case_id": "medcasereasoning__000026",
+    "source_id": "26",
+    "dataset": "medcasereasoning",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Migraine",
+      "Cyclic Vomiting Syndrome",
+      "Mitochondrial Disorder"
+    ],
+    "top2_diagnoses": [
+      "Migraine",
+      "Cyclic Vomiting Syndrome"
+    ],
+    "cost": {
+      "llm_calls": 4
+    },
+    "stages": {
+      "mode": "adaptive4",
+      "vignette_chars": 1510,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Migraine",
+            "support_spans": [
+              "diagnosed as migraine",
+              "frontal headache (5/10) and persistent nausea"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's symptoms such as headache, nausea, and vomiting are consistent with migraine."
+          },
+          {
+            "name": "Acute Abdominal Migraine",
+            "support_spans": [
+              "generalized abdominal pain",
+              "diagnosed as migraine"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's abdominal pain and subsequent migraine-like symptoms could be indicative of acute abdominal migraine."
+          },
+          {
+            "name": "Cyclic Vomiting Syndrome",
+            "support_spans": [
+              "self‐limited vomiting episodes",
+              "ongoing headache"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's recurrent episodes of vomiting and headache could be consistent with cyclic vomiting syndrome."
+          }
+        ],
+        "key_evidence_spans": [
+          "generalized abdominal pain",
+          "frontal headache (5/10) and persistent nausea",
+          "self‐limited vomiting episodes"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Cyclic Vomiting Syndrome",
+            "support_spans": [
+              "a single episode of vomiting",
+              "three additional self‐limited vomiting episodes"
+            ],
+            "contradict_spans": [
+              "diagnosed as migraine"
+            ],
+            "why": "The patient's recurrent episodes of vomiting and abdominal pain are consistent with cyclic vomiting syndrome.",
+            "protected_reason": "This diagnosis may be overlooked in favor of more common conditions like migraine, and its cyclic nature may lead to delayed diagnosis."
+          },
+          {
+            "name": "Abdominal Migraine",
+            "support_spans": [
+              "generalized abdominal pain",
+              "frontal headache (5/10)"
+            ],
+            "contradict_spans": [
+              "no personal or family history of epilepsy or neurological disorders"
+            ],
+            "why": "The patient's abdominal pain and headache are consistent with abdominal migraine, a condition that can present with significant abdominal pain and headache.",
+            "protected_reason": "Abdominal migraine is a rare and easily missed diagnosis, especially in the absence of a clear family history of migraine."
+          },
+          {
+            "name": "Mitochondrial Disorder",
+            "support_spans": [
+              "diaphoresis, mucocutaneous paleness, dizziness, dysarthria, incoherent speech, and lack of eye contact"
+            ],
+            "contradict_spans": [
+              "normal complete blood count, serum chemistries, and electrolytes"
+            ],
+            "why": "The patient's episode of multisystem symptoms, including autonomic dysfunction and altered mental status, could be consistent with a mitochondrial disorder.",
+            "protected_reason": "Mitochondrial disorders are rare and can present with a wide range of symptoms, making them easily missed, and their diagnosis often requires specialized testing."
+          }
+        ],
+        "key_evidence_spans": [
+          "generalized abdominal pain followed by a single episode of vomiting",
+          "diaphoresis, mucocutaneous paleness, dizziness, dysarthria, incoherent speech, and lack of eye contact",
+          "three additional self‐limited vomiting episodes"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "generalized abdominal pain followed by a single episode of vomiting",
+          "no personal or family history of epilepsy or neurological disorders",
+          "normal complete blood count, serum chemistries, and electrolytes"
+        ],
+        "generator_jaccard": 0.2,
+        "top1_same_across_views": true,
+        "top_margin": 0.0,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 1
+      },
+      "frontier_after_g": [
+        {
+          "concept_id": "C002",
+          "preferred_name": "Cyclic Vomiting Syndrome",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E005",
+            "G2E009",
+            "G2E008"
+          ],
+          "contradicting_evidence": [
+            "G1E004"
+          ],
+          "protected_reason": "This diagnosis may be overlooked in favor of more common conditions like migraine, and its cyclic nature may lead to delayed diagnosis.",
+          "score_logit": 3.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C001",
+          "preferred_name": "Migraine",
+          "aliases": [
+            "Acute Abdominal Migraine",
+            "Abdominal Migraine"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E004",
+            "G1E002",
+            "G1E001",
+            "G2E010"
+          ],
+          "contradicting_evidence": [
+            "G2E011"
+          ],
+          "protected_reason": "Abdominal migraine is a rare and easily missed diagnosis, especially in the absence of a clear family history of migraine.",
+          "score_logit": 3.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Mitochondrial Disorder",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G2E012"
+          ],
+          "protected_reason": "Mitochondrial disorders are rare and can present with a wide range of symptoms, making them easily missed, and their diagnosis often requires specialized testing.",
+          "score_logit": 0.0,
+          "status": "live"
+        }
+      ],
+      "a1": {
+        "candidates": [
+          {
+            "name": "Cyclic Vomiting Syndrome",
+            "support_spans": [
+              "generalized abdominal pain followed by a single episode of vomiting",
+              "three additional self‐limited vomiting episodes"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's symptoms of recurrent vomiting episodes and abdominal pain are consistent with Cyclic Vomiting Syndrome.",
+            "protected_reason": "explains unexplained high-specificity evidence of recurrent vomiting episodes"
+          },
+          {
+            "name": "Abdominal Migraine",
+            "support_spans": [
+              "generalized abdominal pain followed by a single episode of vomiting"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's symptoms of abdominal pain and vomiting, along with a previous diagnosis of migraine, are consistent with Abdominal Migraine.",
+            "protected_reason": "explains unexplained high-specificity evidence of abdominal pain and vomiting"
+          },
+          {
+            "name": "Mitochondrial Disorder",
+            "support_spans": [
+              "no personal or family history of epilepsy or neurological disorders",
+              "normal complete blood count, serum chemistries, and electrolytes"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's lack of family history of neurological disorders and normal laboratory results could suggest a mitochondrial disorder, which may not have been detected by routine tests.",
+            "protected_reason": "explains unexplained high-specificity evidence of normal laboratory results and lack of family history"
+          }
+        ]
+      },
+      "adaptive_action": "ORTHOGONAL_GENERATE",
+      "selector": {
+        "champion": "Migraine",
+        "runner_up": "Cyclic Vomiting Syndrome",
+        "rationale": "The patient's symptoms of frontal headache, persistent nausea, and generalized abdominal pain are consistent with migraine, and the patient was previously diagnosed with migraine.",
+        "rejected": [
+          {
+            "label": "Mitochondrial Disorder",
+            "why": "Normal complete blood count, serum chemistries, and electrolytes, and lack of other supporting evidence"
+          }
+        ],
+        "margin": "medium"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "generalized abdominal pain",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "frontal headache (5/10) and persistent nausea",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "self‐limited vomiting episodes",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "diagnosed as migraine",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E005",
+          "raw_span": "ongoing headache",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E006",
+          "raw_span": "generalized abdominal pain followed by a single episode of vomiting",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E007",
+          "raw_span": "diaphoresis, mucocutaneous paleness, dizziness, dysarthria, incoherent speech, and lack of eye contact",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E008",
+          "raw_span": "three additional self‐limited vomiting episodes",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E009",
+          "raw_span": "a single episode of vomiting",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E010",
+          "raw_span": "frontal headache (5/10)",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E011",
+          "raw_span": "no personal or family history of epilepsy or neurological disorders",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E012",
+          "raw_span": "normal complete blood count, serum chemistries, and electrolytes",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Migraine",
+          "aliases": [
+            "Acute Abdominal Migraine",
+            "Abdominal Migraine"
+          ],
+          "generator_views": [
+            "g1",
+            "g2",
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G1E004",
+            "G1E002",
+            "G1E001",
+            "G2E010",
+            "G2E006"
+          ],
+          "contradicting_evidence": [
+            "G2E011"
+          ],
+          "protected_reason": "Abdominal migraine is a rare and easily missed diagnosis, especially in the absence of a clear family history of migraine.",
+          "score_logit": 4.7,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Cyclic Vomiting Syndrome",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2",
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E005",
+            "G2E009",
+            "G2E008",
+            "G2E006"
+          ],
+          "contradicting_evidence": [
+            "G1E004"
+          ],
+          "protected_reason": "This diagnosis may be overlooked in favor of more common conditions like migraine, and its cyclic nature may lead to delayed diagnosis.",
+          "score_logit": 4.7,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Mitochondrial Disorder",
+          "aliases": [],
+          "generator_views": [
+            "g2",
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G2E007",
+            "G2E011",
+            "G2E012"
+          ],
+          "contradicting_evidence": [
+            "G2E012"
+          ],
+          "protected_reason": "Mitochondrial disorders are rare and can present with a wide range of symptoms, making them easily missed, and their diagnosis often requires specialized testing.",
+          "score_logit": 2.35,
+          "status": "live"
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Migraine",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Acute Abdominal Migraine",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Cyclic Vomiting Syndrome",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Cyclic Vomiting Syndrome",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Abdominal Migraine",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Mitochondrial Disorder",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Cyclic Vomiting Syndrome",
+          "view": "a1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Abdominal Migraine",
+          "view": "a1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C003",
+          "name": "Mitochondrial Disorder",
+          "view": "a1"
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 3,
+      "n_evidence": 12,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.2,
+      "frontier_n": 3,
+      "protected_n": 3,
+      "g1_n": 3,
+      "g2_n": 3,
+      "adaptive_action": "ORTHOGONAL_GENERATE",
+      "llm_calls": 4,
+      "history_leakage": 0
+    },
+    "wall_s": 9.893
+  },
+  "created_at": "2026-08-08T01:50:14.930346+00:00"
+}

@@ -1,0 +1,772 @@
+{
+  "case_id": "diagnosisarena__000040",
+  "source_id": "40",
+  "champion": "Squamous cell carcinoma",
+  "ordered_diagnoses": [
+    "Squamous cell carcinoma",
+    "Keratoacanthoma",
+    "Sebaceous carcinoma",
+    "Basal cell carcinoma"
+  ],
+  "llm_calls": 3,
+  "stages": {
+    "mode": "adaptive4",
+    "vignette_chars": 1336,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Squamous cell carcinoma",
+          "support_spans": [
+            "Proliferation of neoplastic squamous cells originated from one lateral end, pushing down into the dermis and involving many hairs",
+            "Malignant squamous cells contained eosinophilic cytoplasm and prominent nucleoli; mitotic figures were present"
+          ],
+          "contradict_spans": [],
+          "why": "The presence of neoplastic squamous cells and malignant features supports this diagnosis."
+        },
+        {
+          "name": "Sebaceous carcinoma",
+          "support_spans": [
+            "Negative immunohistochemical stains for adipophilin and androgen receptor"
+          ],
+          "contradict_spans": [
+            "Negative immunohistochemical stains for adipophilin and androgen receptor"
+          ],
+          "why": "The absence of specific sebaceous markers makes this diagnosis less likely."
+        },
+        {
+          "name": "Basal cell carcinoma",
+          "support_spans": [],
+          "contradict_spans": [
+            "Proliferation of neoplastic squamous cells originated from one lateral end, pushing down into the dermis and involving many hairs"
+          ],
+          "why": "The presence of squamous cells and the specific growth pattern contradict this diagnosis."
+        }
+      ],
+      "key_evidence_spans": [
+        "Proliferation of neoplastic squamous cells originated from one lateral end, pushing down into the dermis and involving many hairs",
+        "Malignant squamous cells contained eosinophilic cytoplasm and prominent nucleoli; mitotic figures were present",
+        "Negative immunohistochemical stains for adipophilin and androgen receptor"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Squamous cell carcinoma",
+          "support_spans": [
+            "malignant squamous cells contained eosinophilic cytoplasm and prominent nucleoli; mitotic figures were present"
+          ],
+          "contradict_spans": [],
+          "why": "The presence of malignant squamous cells with eosinophilic cytoplasm and prominent nucleoli, along with mitotic figures, supports this diagnosis.",
+          "protected_reason": "This diagnosis may be overlooked due to the lesion's well-circumscribed nature and the patient's age."
+        },
+        {
+          "name": "Keratoacanthoma",
+          "support_spans": [
+            "Classic-appearing hyperkeratotic lesion with many pseudohorn cysts"
+          ],
+          "contradict_spans": [
+            "mitotic figures were present"
+          ],
+          "why": "The classic-appearing hyperkeratotic lesion with pseudohorn cysts is consistent with keratoacanthoma, but the presence of mitotic figures suggests a more aggressive process.",
+          "protected_reason": "Keratoacanthoma is a rare and often underdiagnosed condition that can be mistaken for squamous cell carcinoma."
+        },
+        {
+          "name": "Clear cell squamous cell carcinoma",
+          "support_spans": [
+            "Central areas of clear cell change were periodic acid–Schiff positive and diastase sensitive"
+          ],
+          "contradict_spans": [],
+          "why": "The presence of clear cell change with positive periodic acid-Schiff staining and diastase sensitivity supports this rare variant of squamous cell carcinoma.",
+          "protected_reason": "Clear cell squamous cell carcinoma is a rare and easily missed diagnosis that requires specific histopathological features for identification."
+        }
+      ],
+      "key_evidence_spans": [
+        "malignant squamous cells contained eosinophilic cytoplasm and prominent nucleoli; mitotic figures were present",
+        "Classic-appearing hyperkeratotic lesion with many pseudohorn cysts",
+        "Central areas of clear cell change were periodic acid–Schiff positive and diastase sensitive"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "mitotic figures were present"
+      ],
+      "generator_jaccard": 0.2,
+      "top1_same_across_views": true,
+      "top_margin": 4.6,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "frontier_after_g": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Squamous cell carcinoma",
+        "aliases": [
+          "Clear cell squamous cell carcinoma"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G2E004",
+          "G2E006"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "This diagnosis may be overlooked due to the lesion's well-circumscribed nature and the patient's age.",
+        "score_logit": 4.6,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Keratoacanthoma",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G2E005"
+        ],
+        "contradicting_evidence": [
+          "G2E007"
+        ],
+        "protected_reason": "Keratoacanthoma is a rare and often underdiagnosed condition that can be mistaken for squamous cell carcinoma.",
+        "score_logit": 0.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Sebaceous carcinoma",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E003"
+        ],
+        "contradicting_evidence": [
+          "G1E003"
+        ],
+        "protected_reason": "",
+        "score_logit": -0.25,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Basal cell carcinoma",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          "G1E001"
+        ],
+        "protected_reason": "",
+        "score_logit": -1.75,
+        "status": "live"
+      }
+    ],
+    "adaptive_action": null,
+    "selector": {
+      "champion": "Squamous cell carcinoma",
+      "runner_up": "",
+      "rationale": "Proliferation of neoplastic squamous cells and presence of mitotic figures support this diagnosis",
+      "rejected": [
+        {
+          "label": "Keratoacanthoma",
+          "why": "Presence of mitotic figures contradicts this diagnosis"
+        },
+        {
+          "label": "Sebaceous carcinoma",
+          "why": "Negative immunohistochemical stains for adipophilin and androgen receptor do not support this diagnosis"
+        },
+        {
+          "label": "Basal cell carcinoma",
+          "why": "Proliferation of neoplastic squamous cells contradicts this diagnosis"
+        }
+      ],
+      "margin": "high"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "Proliferation of neoplastic squamous cells originated from one lateral end, pushing down into the dermis and involving many hairs",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "Malignant squamous cells contained eosinophilic cytoplasm and prominent nucleoli; mitotic figures were present",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "Negative immunohistochemical stains for adipophilin and androgen receptor",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E004",
+        "raw_span": "malignant squamous cells contained eosinophilic cytoplasm and prominent nucleoli; mitotic figures were present",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E005",
+        "raw_span": "Classic-appearing hyperkeratotic lesion with many pseudohorn cysts",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E006",
+        "raw_span": "Central areas of clear cell change were periodic acid–Schiff positive and diastase sensitive",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E007",
+        "raw_span": "mitotic figures were present",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Squamous cell carcinoma",
+        "aliases": [
+          "Clear cell squamous cell carcinoma"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G2E004",
+          "G2E006"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "This diagnosis may be overlooked due to the lesion's well-circumscribed nature and the patient's age.",
+        "score_logit": 4.6,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Sebaceous carcinoma",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E003"
+        ],
+        "contradicting_evidence": [
+          "G1E003"
+        ],
+        "protected_reason": "",
+        "score_logit": -0.25,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Basal cell carcinoma",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          "G1E001"
+        ],
+        "protected_reason": "",
+        "score_logit": -1.75,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Keratoacanthoma",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G2E005"
+        ],
+        "contradicting_evidence": [
+          "G2E007"
+        ],
+        "protected_reason": "Keratoacanthoma is a rare and often underdiagnosed condition that can be mistaken for squamous cell carcinoma.",
+        "score_logit": 0.0,
+        "status": "live"
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Squamous cell carcinoma",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Sebaceous carcinoma",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Basal cell carcinoma",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Squamous cell carcinoma",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C004",
+        "name": "Keratoacanthoma",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Clear cell squamous cell carcinoma",
+        "view": "g2"
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 4,
+    "n_evidence": 7,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.2,
+    "frontier_n": 4,
+    "protected_n": 2,
+    "g1_n": 3,
+    "g2_n": 3,
+    "adaptive_action": null,
+    "llm_calls": 3,
+    "history_leakage": 0
+  },
+  "prediction": {
+    "arm": "mosaic_adaptive4_v1",
+    "case_id": "diagnosisarena__000040",
+    "source_id": "40",
+    "dataset": "diagnosisarena",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Squamous cell carcinoma",
+      "Keratoacanthoma",
+      "Sebaceous carcinoma",
+      "Basal cell carcinoma"
+    ],
+    "top2_diagnoses": [
+      "Squamous cell carcinoma",
+      "Keratoacanthoma"
+    ],
+    "cost": {
+      "llm_calls": 3
+    },
+    "stages": {
+      "mode": "adaptive4",
+      "vignette_chars": 1336,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Squamous cell carcinoma",
+            "support_spans": [
+              "Proliferation of neoplastic squamous cells originated from one lateral end, pushing down into the dermis and involving many hairs",
+              "Malignant squamous cells contained eosinophilic cytoplasm and prominent nucleoli; mitotic figures were present"
+            ],
+            "contradict_spans": [],
+            "why": "The presence of neoplastic squamous cells and malignant features supports this diagnosis."
+          },
+          {
+            "name": "Sebaceous carcinoma",
+            "support_spans": [
+              "Negative immunohistochemical stains for adipophilin and androgen receptor"
+            ],
+            "contradict_spans": [
+              "Negative immunohistochemical stains for adipophilin and androgen receptor"
+            ],
+            "why": "The absence of specific sebaceous markers makes this diagnosis less likely."
+          },
+          {
+            "name": "Basal cell carcinoma",
+            "support_spans": [],
+            "contradict_spans": [
+              "Proliferation of neoplastic squamous cells originated from one lateral end, pushing down into the dermis and involving many hairs"
+            ],
+            "why": "The presence of squamous cells and the specific growth pattern contradict this diagnosis."
+          }
+        ],
+        "key_evidence_spans": [
+          "Proliferation of neoplastic squamous cells originated from one lateral end, pushing down into the dermis and involving many hairs",
+          "Malignant squamous cells contained eosinophilic cytoplasm and prominent nucleoli; mitotic figures were present",
+          "Negative immunohistochemical stains for adipophilin and androgen receptor"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Squamous cell carcinoma",
+            "support_spans": [
+              "malignant squamous cells contained eosinophilic cytoplasm and prominent nucleoli; mitotic figures were present"
+            ],
+            "contradict_spans": [],
+            "why": "The presence of malignant squamous cells with eosinophilic cytoplasm and prominent nucleoli, along with mitotic figures, supports this diagnosis.",
+            "protected_reason": "This diagnosis may be overlooked due to the lesion's well-circumscribed nature and the patient's age."
+          },
+          {
+            "name": "Keratoacanthoma",
+            "support_spans": [
+              "Classic-appearing hyperkeratotic lesion with many pseudohorn cysts"
+            ],
+            "contradict_spans": [
+              "mitotic figures were present"
+            ],
+            "why": "The classic-appearing hyperkeratotic lesion with pseudohorn cysts is consistent with keratoacanthoma, but the presence of mitotic figures suggests a more aggressive process.",
+            "protected_reason": "Keratoacanthoma is a rare and often underdiagnosed condition that can be mistaken for squamous cell carcinoma."
+          },
+          {
+            "name": "Clear cell squamous cell carcinoma",
+            "support_spans": [
+              "Central areas of clear cell change were periodic acid–Schiff positive and diastase sensitive"
+            ],
+            "contradict_spans": [],
+            "why": "The presence of clear cell change with positive periodic acid-Schiff staining and diastase sensitivity supports this rare variant of squamous cell carcinoma.",
+            "protected_reason": "Clear cell squamous cell carcinoma is a rare and easily missed diagnosis that requires specific histopathological features for identification."
+          }
+        ],
+        "key_evidence_spans": [
+          "malignant squamous cells contained eosinophilic cytoplasm and prominent nucleoli; mitotic figures were present",
+          "Classic-appearing hyperkeratotic lesion with many pseudohorn cysts",
+          "Central areas of clear cell change were periodic acid–Schiff positive and diastase sensitive"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "mitotic figures were present"
+        ],
+        "generator_jaccard": 0.2,
+        "top1_same_across_views": true,
+        "top_margin": 4.6,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 0
+      },
+      "frontier_after_g": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Squamous cell carcinoma",
+          "aliases": [
+            "Clear cell squamous cell carcinoma"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G2E004",
+            "G2E006"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "This diagnosis may be overlooked due to the lesion's well-circumscribed nature and the patient's age.",
+          "score_logit": 4.6,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Keratoacanthoma",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G2E005"
+          ],
+          "contradicting_evidence": [
+            "G2E007"
+          ],
+          "protected_reason": "Keratoacanthoma is a rare and often underdiagnosed condition that can be mistaken for squamous cell carcinoma.",
+          "score_logit": 0.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Sebaceous carcinoma",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E003"
+          ],
+          "contradicting_evidence": [
+            "G1E003"
+          ],
+          "protected_reason": "",
+          "score_logit": -0.25,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Basal cell carcinoma",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [],
+          "contradicting_evidence": [
+            "G1E001"
+          ],
+          "protected_reason": "",
+          "score_logit": -1.75,
+          "status": "live"
+        }
+      ],
+      "adaptive_action": null,
+      "selector": {
+        "champion": "Squamous cell carcinoma",
+        "runner_up": "",
+        "rationale": "Proliferation of neoplastic squamous cells and presence of mitotic figures support this diagnosis",
+        "rejected": [
+          {
+            "label": "Keratoacanthoma",
+            "why": "Presence of mitotic figures contradicts this diagnosis"
+          },
+          {
+            "label": "Sebaceous carcinoma",
+            "why": "Negative immunohistochemical stains for adipophilin and androgen receptor do not support this diagnosis"
+          },
+          {
+            "label": "Basal cell carcinoma",
+            "why": "Proliferation of neoplastic squamous cells contradicts this diagnosis"
+          }
+        ],
+        "margin": "high"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "Proliferation of neoplastic squamous cells originated from one lateral end, pushing down into the dermis and involving many hairs",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "Malignant squamous cells contained eosinophilic cytoplasm and prominent nucleoli; mitotic figures were present",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "Negative immunohistochemical stains for adipophilin and androgen receptor",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E004",
+          "raw_span": "malignant squamous cells contained eosinophilic cytoplasm and prominent nucleoli; mitotic figures were present",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E005",
+          "raw_span": "Classic-appearing hyperkeratotic lesion with many pseudohorn cysts",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E006",
+          "raw_span": "Central areas of clear cell change were periodic acid–Schiff positive and diastase sensitive",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E007",
+          "raw_span": "mitotic figures were present",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Squamous cell carcinoma",
+          "aliases": [
+            "Clear cell squamous cell carcinoma"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G2E004",
+            "G2E006"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "This diagnosis may be overlooked due to the lesion's well-circumscribed nature and the patient's age.",
+          "score_logit": 4.6,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Sebaceous carcinoma",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E003"
+          ],
+          "contradicting_evidence": [
+            "G1E003"
+          ],
+          "protected_reason": "",
+          "score_logit": -0.25,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Basal cell carcinoma",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [],
+          "contradicting_evidence": [
+            "G1E001"
+          ],
+          "protected_reason": "",
+          "score_logit": -1.75,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Keratoacanthoma",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G2E005"
+          ],
+          "contradicting_evidence": [
+            "G2E007"
+          ],
+          "protected_reason": "Keratoacanthoma is a rare and often underdiagnosed condition that can be mistaken for squamous cell carcinoma.",
+          "score_logit": 0.0,
+          "status": "live"
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Squamous cell carcinoma",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Sebaceous carcinoma",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Basal cell carcinoma",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Squamous cell carcinoma",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C004",
+          "name": "Keratoacanthoma",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Clear cell squamous cell carcinoma",
+          "view": "g2"
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 4,
+      "n_evidence": 7,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.2,
+      "frontier_n": 4,
+      "protected_n": 2,
+      "g1_n": 3,
+      "g2_n": 3,
+      "adaptive_action": null,
+      "llm_calls": 3,
+      "history_leakage": 0
+    },
+    "wall_s": 4.741
+  },
+  "created_at": "2026-08-08T01:50:09.775533+00:00"
+}

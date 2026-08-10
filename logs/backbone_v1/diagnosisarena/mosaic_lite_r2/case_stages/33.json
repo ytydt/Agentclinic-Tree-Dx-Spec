@@ -1,0 +1,978 @@
+{
+  "case_id": "diagnosisarena__000033",
+  "source_id": "33",
+  "champion": "Cardiac Metastasis",
+  "ordered_diagnoses": [
+    "Cardiac Metastasis",
+    "Cardiac Tamponade",
+    "Myocardial Infarction",
+    "Cardiac Amyloidosis",
+    "Primary Cardiac Tumor"
+  ],
+  "llm_calls": 3,
+  "stages": {
+    "mode": "lite",
+    "vignette_chars": 1411,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Cardiac Metastasis",
+          "support_spans": [
+            "lung cancer with metastatic disease to the brain and myocardium",
+            "Well-circumscribed 2.8 × 2.6-cm mass located in the left ventricular mid-apical anteroseptum"
+          ],
+          "contradict_spans": [],
+          "why": "The patient has a history of lung cancer with metastasis to the myocardium and a mass is found in the left ventricle on echocardiogram."
+        },
+        {
+          "name": "Myocardial Infarction",
+          "support_spans": [
+            "High-sensitivity cardiac troponin-T (hs-cTnT) level was 40 ng/L",
+            "ST elevation in lead V1",
+            "ST elevation in leads V2 and V3"
+          ],
+          "contradict_spans": [
+            "Nonobstructive epicardial coronary artery disease without evidence of acute thrombotic or embolic occlusion"
+          ],
+          "why": "The patient has elevated troponin levels and ST elevation on ECG, but nonobstructive coronary artery disease makes this diagnosis less likely."
+        },
+        {
+          "name": "Cardiac Tamponade",
+          "support_spans": [
+            "Large pericardial effusion with signs of impending cardiac tamponade"
+          ],
+          "contradict_spans": [],
+          "why": "The patient has a large pericardial effusion with signs of impending tamponade on echocardiogram."
+        }
+      ],
+      "key_evidence_spans": [
+        "lung cancer with metastatic disease to the brain and myocardium",
+        "High-sensitivity cardiac troponin-T (hs-cTnT) level was 40 ng/L",
+        "Well-circumscribed 2.8 × 2.6-cm mass located in the left ventricular mid-apical anteroseptum",
+        "Large pericardial effusion with signs of impending cardiac tamponade"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Cardiac Metastasis",
+          "support_spans": [
+            "lung cancer with metastatic disease to the brain and myocardium"
+          ],
+          "contradict_spans": [
+            "No regional wall motion abnormalities"
+          ],
+          "why": "The patient's history of lung cancer with metastasis to the myocardium could explain the cardiac mass and pericardial effusion.",
+          "protected_reason": "This diagnosis may be overlooked due to the patient's multiple prior cardiac events and the presence of drug-eluting stents."
+        },
+        {
+          "name": "Cardiac Amyloidosis",
+          "support_spans": [
+            "Diffusely low voltages in both limb leads and precordial leads",
+            "Pericardial effusion with signs of impending cardiac tamponade"
+          ],
+          "contradict_spans": [
+            "Preserved left ventricular systolic function"
+          ],
+          "why": "The combination of low voltages on ECG and pericardial effusion could suggest cardiac amyloidosis, which can cause restrictive cardiomyopathy.",
+          "protected_reason": "This diagnosis may be underconsidered due to its rarity and the presence of more common cardiac conditions."
+        },
+        {
+          "name": "Primary Cardiac Tumor",
+          "support_spans": [
+            "Well-circumscribed 2.8 × 2.6-cm mass located in the left ventricular mid-apical anteroseptum"
+          ],
+          "contradict_spans": [
+            "lung cancer with metastatic disease to the brain and myocardium"
+          ],
+          "why": "The presence of a well-circumscribed mass in the left ventricle could suggest a primary cardiac tumor, such as a myxoma or fibroma.",
+          "protected_reason": "This diagnosis may be overlooked due to the patient's history of metastatic cancer, which could lead to an assumption that the cardiac mass is a metastasis."
+        }
+      ],
+      "key_evidence_spans": [
+        "Well-circumscribed 2.8 × 2.6-cm mass located in the left ventricular mid-apical anteroseptum",
+        "Diffusely low voltages in both limb leads and precordial leads",
+        "Pericardial effusion with signs of impending cardiac tamponade"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "Nonobstructive epicardial coronary artery disease without evidence of acute thrombotic or embolic occlusion",
+        "No regional wall motion abnormalities",
+        "Preserved left ventricular systolic function"
+      ],
+      "generator_jaccard": 0.2,
+      "top1_same_across_views": false,
+      "top_margin": 0.3999999999999999,
+      "leave_one_view_instability": true,
+      "contradiction_mass": 1
+    },
+    "adaptive_action": null,
+    "selector": {
+      "champion": "Cardiac Metastasis",
+      "runner_up": "Cardiac Tamponade",
+      "rationale": "The patient's history of lung cancer with metastatic disease to the brain and myocardium, combined with the presence of a well-circumscribed mass in the left ventricular mid-apical anteroseptum, supports Cardiac Metastasis as the most likely diagnosis.",
+      "rejected": [
+        {
+          "label": "Myocardial Infarction",
+          "why": "Nonobstructive epicardial coronary artery disease without evidence of acute thrombotic or embolic occlusion"
+        },
+        {
+          "label": "Cardiac Amyloidosis",
+          "why": "Preserved left ventricular systolic function contradicts this diagnosis"
+        },
+        {
+          "label": "Primary Cardiac Tumor",
+          "why": "The patient's history of metastatic cancer makes Cardiac Metastasis a more likely explanation for the cardiac mass"
+        }
+      ],
+      "margin": "medium"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "lung cancer with metastatic disease to the brain and myocardium",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "High-sensitivity cardiac troponin-T (hs-cTnT) level was 40 ng/L",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "Well-circumscribed 2.8 × 2.6-cm mass located in the left ventricular mid-apical anteroseptum",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "Large pericardial effusion with signs of impending cardiac tamponade",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E005",
+        "raw_span": "ST elevation in lead V1",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E006",
+        "raw_span": "ST elevation in leads V2 and V3",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E007",
+        "raw_span": "Nonobstructive epicardial coronary artery disease without evidence of acute thrombotic or embolic occlusion",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E008",
+        "raw_span": "Diffusely low voltages in both limb leads and precordial leads",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E009",
+        "raw_span": "Pericardial effusion with signs of impending cardiac tamponade",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E010",
+        "raw_span": "No regional wall motion abnormalities",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E011",
+        "raw_span": "Preserved left ventricular systolic function",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Cardiac Metastasis",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E003"
+        ],
+        "contradicting_evidence": [
+          "G2E010"
+        ],
+        "protected_reason": "This diagnosis may be overlooked due to the patient's multiple prior cardiac events and the presence of drug-eluting stents.",
+        "score_logit": 1.35,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Myocardial Infarction",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E002",
+          "G1E005",
+          "G1E006"
+        ],
+        "contradicting_evidence": [
+          "G1E007"
+        ],
+        "protected_reason": "",
+        "score_logit": 1.75,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Cardiac Tamponade",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E004"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Cardiac Amyloidosis",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G2E008",
+          "G2E009"
+        ],
+        "contradicting_evidence": [
+          "G2E011"
+        ],
+        "protected_reason": "This diagnosis may be underconsidered due to its rarity and the presence of more common cardiac conditions.",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Primary Cardiac Tumor",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E003"
+        ],
+        "contradicting_evidence": [
+          "G1E001"
+        ],
+        "protected_reason": "This diagnosis may be overlooked due to the patient's history of metastatic cancer, which could lead to an assumption that the cardiac mass is a metastasis.",
+        "score_logit": 0.0,
+        "status": "live",
+        "agent_votes": 0
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Cardiac Metastasis",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Myocardial Infarction",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Cardiac Tamponade",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Cardiac Metastasis",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C004",
+        "name": "Cardiac Amyloidosis",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C005",
+        "name": "Primary Cardiac Tumor",
+        "view": "g2"
+      }
+    ],
+    "frontier_final": [
+      {
+        "concept_id": "C002",
+        "preferred_name": "Myocardial Infarction",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E002",
+          "G1E005",
+          "G1E006"
+        ],
+        "contradicting_evidence": [
+          "G1E007"
+        ],
+        "protected_reason": "",
+        "score_logit": 1.75,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C001",
+        "preferred_name": "Cardiac Metastasis",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E003"
+        ],
+        "contradicting_evidence": [
+          "G2E010"
+        ],
+        "protected_reason": "This diagnosis may be overlooked due to the patient's multiple prior cardiac events and the presence of drug-eluting stents.",
+        "score_logit": 1.35,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Cardiac Amyloidosis",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G2E008",
+          "G2E009"
+        ],
+        "contradicting_evidence": [
+          "G2E011"
+        ],
+        "protected_reason": "This diagnosis may be underconsidered due to its rarity and the presence of more common cardiac conditions.",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Cardiac Tamponade",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E004"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Primary Cardiac Tumor",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E003"
+        ],
+        "contradicting_evidence": [
+          "G1E001"
+        ],
+        "protected_reason": "This diagnosis may be overlooked due to the patient's history of metastatic cancer, which could lead to an assumption that the cardiac mass is a metastasis.",
+        "score_logit": 0.0,
+        "status": "live",
+        "agent_votes": 0
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 5,
+    "n_evidence": 11,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.2,
+    "frontier_n": 5,
+    "protected_n": 3,
+    "n_generators": 2,
+    "adaptive_action": null,
+    "llm_calls": 3,
+    "history_leakage": 0,
+    "mode": "lite"
+  },
+  "prediction": {
+    "arm": "mosaic_lite_r2",
+    "case_id": "diagnosisarena__000033",
+    "source_id": "33",
+    "dataset": "diagnosisarena",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Cardiac Metastasis",
+      "Cardiac Tamponade",
+      "Myocardial Infarction",
+      "Cardiac Amyloidosis",
+      "Primary Cardiac Tumor"
+    ],
+    "top2_diagnoses": [
+      "Cardiac Metastasis",
+      "Cardiac Tamponade"
+    ],
+    "cost": {
+      "llm_calls": 3
+    },
+    "stages": {
+      "mode": "lite",
+      "vignette_chars": 1411,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Cardiac Metastasis",
+            "support_spans": [
+              "lung cancer with metastatic disease to the brain and myocardium",
+              "Well-circumscribed 2.8 × 2.6-cm mass located in the left ventricular mid-apical anteroseptum"
+            ],
+            "contradict_spans": [],
+            "why": "The patient has a history of lung cancer with metastasis to the myocardium and a mass is found in the left ventricle on echocardiogram."
+          },
+          {
+            "name": "Myocardial Infarction",
+            "support_spans": [
+              "High-sensitivity cardiac troponin-T (hs-cTnT) level was 40 ng/L",
+              "ST elevation in lead V1",
+              "ST elevation in leads V2 and V3"
+            ],
+            "contradict_spans": [
+              "Nonobstructive epicardial coronary artery disease without evidence of acute thrombotic or embolic occlusion"
+            ],
+            "why": "The patient has elevated troponin levels and ST elevation on ECG, but nonobstructive coronary artery disease makes this diagnosis less likely."
+          },
+          {
+            "name": "Cardiac Tamponade",
+            "support_spans": [
+              "Large pericardial effusion with signs of impending cardiac tamponade"
+            ],
+            "contradict_spans": [],
+            "why": "The patient has a large pericardial effusion with signs of impending tamponade on echocardiogram."
+          }
+        ],
+        "key_evidence_spans": [
+          "lung cancer with metastatic disease to the brain and myocardium",
+          "High-sensitivity cardiac troponin-T (hs-cTnT) level was 40 ng/L",
+          "Well-circumscribed 2.8 × 2.6-cm mass located in the left ventricular mid-apical anteroseptum",
+          "Large pericardial effusion with signs of impending cardiac tamponade"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Cardiac Metastasis",
+            "support_spans": [
+              "lung cancer with metastatic disease to the brain and myocardium"
+            ],
+            "contradict_spans": [
+              "No regional wall motion abnormalities"
+            ],
+            "why": "The patient's history of lung cancer with metastasis to the myocardium could explain the cardiac mass and pericardial effusion.",
+            "protected_reason": "This diagnosis may be overlooked due to the patient's multiple prior cardiac events and the presence of drug-eluting stents."
+          },
+          {
+            "name": "Cardiac Amyloidosis",
+            "support_spans": [
+              "Diffusely low voltages in both limb leads and precordial leads",
+              "Pericardial effusion with signs of impending cardiac tamponade"
+            ],
+            "contradict_spans": [
+              "Preserved left ventricular systolic function"
+            ],
+            "why": "The combination of low voltages on ECG and pericardial effusion could suggest cardiac amyloidosis, which can cause restrictive cardiomyopathy.",
+            "protected_reason": "This diagnosis may be underconsidered due to its rarity and the presence of more common cardiac conditions."
+          },
+          {
+            "name": "Primary Cardiac Tumor",
+            "support_spans": [
+              "Well-circumscribed 2.8 × 2.6-cm mass located in the left ventricular mid-apical anteroseptum"
+            ],
+            "contradict_spans": [
+              "lung cancer with metastatic disease to the brain and myocardium"
+            ],
+            "why": "The presence of a well-circumscribed mass in the left ventricle could suggest a primary cardiac tumor, such as a myxoma or fibroma.",
+            "protected_reason": "This diagnosis may be overlooked due to the patient's history of metastatic cancer, which could lead to an assumption that the cardiac mass is a metastasis."
+          }
+        ],
+        "key_evidence_spans": [
+          "Well-circumscribed 2.8 × 2.6-cm mass located in the left ventricular mid-apical anteroseptum",
+          "Diffusely low voltages in both limb leads and precordial leads",
+          "Pericardial effusion with signs of impending cardiac tamponade"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "Nonobstructive epicardial coronary artery disease without evidence of acute thrombotic or embolic occlusion",
+          "No regional wall motion abnormalities",
+          "Preserved left ventricular systolic function"
+        ],
+        "generator_jaccard": 0.2,
+        "top1_same_across_views": false,
+        "top_margin": 0.3999999999999999,
+        "leave_one_view_instability": true,
+        "contradiction_mass": 1
+      },
+      "adaptive_action": null,
+      "selector": {
+        "champion": "Cardiac Metastasis",
+        "runner_up": "Cardiac Tamponade",
+        "rationale": "The patient's history of lung cancer with metastatic disease to the brain and myocardium, combined with the presence of a well-circumscribed mass in the left ventricular mid-apical anteroseptum, supports Cardiac Metastasis as the most likely diagnosis.",
+        "rejected": [
+          {
+            "label": "Myocardial Infarction",
+            "why": "Nonobstructive epicardial coronary artery disease without evidence of acute thrombotic or embolic occlusion"
+          },
+          {
+            "label": "Cardiac Amyloidosis",
+            "why": "Preserved left ventricular systolic function contradicts this diagnosis"
+          },
+          {
+            "label": "Primary Cardiac Tumor",
+            "why": "The patient's history of metastatic cancer makes Cardiac Metastasis a more likely explanation for the cardiac mass"
+          }
+        ],
+        "margin": "medium"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "lung cancer with metastatic disease to the brain and myocardium",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "High-sensitivity cardiac troponin-T (hs-cTnT) level was 40 ng/L",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "Well-circumscribed 2.8 × 2.6-cm mass located in the left ventricular mid-apical anteroseptum",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "Large pericardial effusion with signs of impending cardiac tamponade",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E005",
+          "raw_span": "ST elevation in lead V1",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E006",
+          "raw_span": "ST elevation in leads V2 and V3",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E007",
+          "raw_span": "Nonobstructive epicardial coronary artery disease without evidence of acute thrombotic or embolic occlusion",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E008",
+          "raw_span": "Diffusely low voltages in both limb leads and precordial leads",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E009",
+          "raw_span": "Pericardial effusion with signs of impending cardiac tamponade",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E010",
+          "raw_span": "No regional wall motion abnormalities",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E011",
+          "raw_span": "Preserved left ventricular systolic function",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Cardiac Metastasis",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E003"
+          ],
+          "contradicting_evidence": [
+            "G2E010"
+          ],
+          "protected_reason": "This diagnosis may be overlooked due to the patient's multiple prior cardiac events and the presence of drug-eluting stents.",
+          "score_logit": 1.35,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Myocardial Infarction",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E002",
+            "G1E005",
+            "G1E006"
+          ],
+          "contradicting_evidence": [
+            "G1E007"
+          ],
+          "protected_reason": "",
+          "score_logit": 1.75,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Cardiac Tamponade",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E004"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Cardiac Amyloidosis",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G2E008",
+            "G2E009"
+          ],
+          "contradicting_evidence": [
+            "G2E011"
+          ],
+          "protected_reason": "This diagnosis may be underconsidered due to its rarity and the presence of more common cardiac conditions.",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C005",
+          "preferred_name": "Primary Cardiac Tumor",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E003"
+          ],
+          "contradicting_evidence": [
+            "G1E001"
+          ],
+          "protected_reason": "This diagnosis may be overlooked due to the patient's history of metastatic cancer, which could lead to an assumption that the cardiac mass is a metastasis.",
+          "score_logit": 0.0,
+          "status": "live",
+          "agent_votes": 0
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Cardiac Metastasis",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Myocardial Infarction",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Cardiac Tamponade",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Cardiac Metastasis",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C004",
+          "name": "Cardiac Amyloidosis",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C005",
+          "name": "Primary Cardiac Tumor",
+          "view": "g2"
+        }
+      ],
+      "frontier_final": [
+        {
+          "concept_id": "C002",
+          "preferred_name": "Myocardial Infarction",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E002",
+            "G1E005",
+            "G1E006"
+          ],
+          "contradicting_evidence": [
+            "G1E007"
+          ],
+          "protected_reason": "",
+          "score_logit": 1.75,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C001",
+          "preferred_name": "Cardiac Metastasis",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E003"
+          ],
+          "contradicting_evidence": [
+            "G2E010"
+          ],
+          "protected_reason": "This diagnosis may be overlooked due to the patient's multiple prior cardiac events and the presence of drug-eluting stents.",
+          "score_logit": 1.35,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Cardiac Amyloidosis",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G2E008",
+            "G2E009"
+          ],
+          "contradicting_evidence": [
+            "G2E011"
+          ],
+          "protected_reason": "This diagnosis may be underconsidered due to its rarity and the presence of more common cardiac conditions.",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Cardiac Tamponade",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E004"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C005",
+          "preferred_name": "Primary Cardiac Tumor",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E003"
+          ],
+          "contradicting_evidence": [
+            "G1E001"
+          ],
+          "protected_reason": "This diagnosis may be overlooked due to the patient's history of metastatic cancer, which could lead to an assumption that the cardiac mass is a metastasis.",
+          "score_logit": 0.0,
+          "status": "live",
+          "agent_votes": 0
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 5,
+      "n_evidence": 11,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.2,
+      "frontier_n": 5,
+      "protected_n": 3,
+      "n_generators": 2,
+      "adaptive_action": null,
+      "llm_calls": 3,
+      "history_leakage": 0,
+      "mode": "lite"
+    },
+    "wall_s": 7.328
+  },
+  "created_at": "2026-08-10T01:59:10.964899+00:00"
+}

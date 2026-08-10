@@ -1,0 +1,738 @@
+{
+  "case_id": "diagnosisarena__000060",
+  "source_id": "60",
+  "champion": "Atrial Septal Defect",
+  "ordered_diagnoses": [
+    "Atrial Septal Defect",
+    "Ebstein's Anomaly",
+    "Scimitar Syndrome",
+    "Ventricular Septal Defect"
+  ],
+  "llm_calls": 3,
+  "stages": {
+    "mode": "adaptive4",
+    "vignette_chars": 1231,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Atrial Septal Defect",
+          "support_spans": [
+            "Large 21-mm defect with left-to-right shunt",
+            "Step-up in oxygenation from superior vena cava (71%) and inferior vena cava (77%) to right atrium (84%)"
+          ],
+          "contradict_spans": [],
+          "why": "The presence of a large defect with left-to-right shunt and step-up in oxygenation supports this diagnosis."
+        },
+        {
+          "name": "Ventricular Septal Defect",
+          "support_spans": [
+            "Dilated right atrium and right ventricle"
+          ],
+          "contradict_spans": [
+            "Large 21-mm defect with left-to-right shunt"
+          ],
+          "why": "The dilated right atrium and ventricle could be due to a ventricular septal defect, but the described defect is more indicative of an atrial septal defect."
+        },
+        {
+          "name": "Ebstein's Anomaly",
+          "support_spans": [
+            "Dilated right atrium and right ventricle",
+            "Complete right bundle-branch block with normal PR interval"
+          ],
+          "contradict_spans": [
+            "Large 21-mm defect with left-to-right shunt"
+          ],
+          "why": "The combination of right atrial and ventricular dilation along with complete right bundle-branch block could suggest Ebstein's anomaly, but the presence of a large atrial septal defect is not typical for this condition."
+        }
+      ],
+      "key_evidence_spans": [
+        "Large 21-mm defect with left-to-right shunt",
+        "Step-up in oxygenation from superior vena cava (71%) and inferior vena cava (77%) to right atrium (84%)",
+        "Dilated right atrium and right ventricle"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Atrial Septal Defect",
+          "support_spans": [
+            "Large 21-mm defect with left-to-right shunt",
+            "Step-up in oxygenation from superior vena cava (71%) and inferior vena cava (77%) to right atrium (84%)"
+          ],
+          "contradict_spans": [],
+          "why": "The presence of a large defect with left-to-right shunt and step-up in oxygenation supports this diagnosis.",
+          "protected_reason": "This diagnosis may be overlooked due to the absence of symptoms such as dyspnea or chest pain."
+        },
+        {
+          "name": "Ebstein's Anomaly",
+          "support_spans": [
+            "Dilated right atrium and right ventricle",
+            "Complete right bundle-branch block with normal PR interval"
+          ],
+          "contradict_spans": [],
+          "why": "The combination of dilated right atrium and ventricle, along with complete right bundle-branch block, suggests this rare congenital heart defect.",
+          "protected_reason": "Ebstein's Anomaly is a rare condition that may be missed due to its low prevalence and nonspecific symptoms."
+        },
+        {
+          "name": "Scimitar Syndrome",
+          "support_spans": [
+            "Dilated right atrium and right ventricle"
+          ],
+          "contradict_spans": [
+            "Normal cardiac output"
+          ],
+          "why": "The presence of a dilated right atrium and ventricle could be indicative of Scimitar Syndrome, although normal cardiac output might argue against it.",
+          "protected_reason": "Scimitar Syndrome is a rare condition that may be overlooked due to its nonspecific symptoms and rarity."
+        }
+      ],
+      "key_evidence_spans": [
+        "Large 21-mm defect with left-to-right shunt",
+        "Complete right bundle-branch block with normal PR interval",
+        "Dilated right atrium and right ventricle"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "Normal cardiac output"
+      ],
+      "generator_jaccard": 0.5,
+      "top1_same_across_views": true,
+      "top_margin": 1.25,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "frontier_after_g": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Atrial Septal Defect",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "This diagnosis may be overlooked due to the absence of symptoms such as dyspnea or chest pain.",
+        "score_logit": 2.6,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Ebstein's Anomaly",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E004"
+        ],
+        "contradicting_evidence": [
+          "G1E001"
+        ],
+        "protected_reason": "Ebstein's Anomaly is a rare condition that may be missed due to its low prevalence and nonspecific symptoms.",
+        "score_logit": 1.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Scimitar Syndrome",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E003"
+        ],
+        "contradicting_evidence": [
+          "G2E005"
+        ],
+        "protected_reason": "Scimitar Syndrome is a rare condition that may be overlooked due to its nonspecific symptoms and rarity.",
+        "score_logit": 0.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Ventricular Septal Defect",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E003"
+        ],
+        "contradicting_evidence": [
+          "G1E001"
+        ],
+        "protected_reason": "",
+        "score_logit": -0.25,
+        "status": "live"
+      }
+    ],
+    "adaptive_action": null,
+    "selector": {
+      "champion": "Atrial Septal Defect",
+      "runner_up": "Ebstein's Anomaly",
+      "rationale": "Large 21-mm defect with left-to-right shunt and step-up in oxygenation from superior vena cava to right atrium support Atrial Septal Defect",
+      "rejected": [
+        {
+          "label": "Scimitar Syndrome",
+          "why": "Normal cardiac output contradicts Scimitar Syndrome"
+        },
+        {
+          "label": "Ventricular Septal Defect",
+          "why": "Large 21-mm defect with left-to-right shunt is more consistent with Atrial Septal Defect"
+        }
+      ],
+      "margin": "high"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "Large 21-mm defect with left-to-right shunt",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "Step-up in oxygenation from superior vena cava (71%) and inferior vena cava (77%) to right atrium (84%)",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "Dilated right atrium and right ventricle",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "Complete right bundle-branch block with normal PR interval",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E005",
+        "raw_span": "Normal cardiac output",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Atrial Septal Defect",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "This diagnosis may be overlooked due to the absence of symptoms such as dyspnea or chest pain.",
+        "score_logit": 2.6,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Ventricular Septal Defect",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E003"
+        ],
+        "contradicting_evidence": [
+          "G1E001"
+        ],
+        "protected_reason": "",
+        "score_logit": -0.25,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Ebstein's Anomaly",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E004"
+        ],
+        "contradicting_evidence": [
+          "G1E001"
+        ],
+        "protected_reason": "Ebstein's Anomaly is a rare condition that may be missed due to its low prevalence and nonspecific symptoms.",
+        "score_logit": 1.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Scimitar Syndrome",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E003"
+        ],
+        "contradicting_evidence": [
+          "G2E005"
+        ],
+        "protected_reason": "Scimitar Syndrome is a rare condition that may be overlooked due to its nonspecific symptoms and rarity.",
+        "score_logit": 0.0,
+        "status": "live"
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Atrial Septal Defect",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Ventricular Septal Defect",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Ebstein's Anomaly",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Atrial Septal Defect",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C003",
+        "name": "Ebstein's Anomaly",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C004",
+        "name": "Scimitar Syndrome",
+        "view": "g2"
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 4,
+    "n_evidence": 5,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.5,
+    "frontier_n": 4,
+    "protected_n": 3,
+    "g1_n": 3,
+    "g2_n": 3,
+    "adaptive_action": null,
+    "llm_calls": 3,
+    "history_leakage": 0
+  },
+  "prediction": {
+    "arm": "mosaic_adaptive4_v1",
+    "case_id": "diagnosisarena__000060",
+    "source_id": "60",
+    "dataset": "diagnosisarena",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Atrial Septal Defect",
+      "Ebstein's Anomaly",
+      "Scimitar Syndrome",
+      "Ventricular Septal Defect"
+    ],
+    "top2_diagnoses": [
+      "Atrial Septal Defect",
+      "Ebstein's Anomaly"
+    ],
+    "cost": {
+      "llm_calls": 3
+    },
+    "stages": {
+      "mode": "adaptive4",
+      "vignette_chars": 1231,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Atrial Septal Defect",
+            "support_spans": [
+              "Large 21-mm defect with left-to-right shunt",
+              "Step-up in oxygenation from superior vena cava (71%) and inferior vena cava (77%) to right atrium (84%)"
+            ],
+            "contradict_spans": [],
+            "why": "The presence of a large defect with left-to-right shunt and step-up in oxygenation supports this diagnosis."
+          },
+          {
+            "name": "Ventricular Septal Defect",
+            "support_spans": [
+              "Dilated right atrium and right ventricle"
+            ],
+            "contradict_spans": [
+              "Large 21-mm defect with left-to-right shunt"
+            ],
+            "why": "The dilated right atrium and ventricle could be due to a ventricular septal defect, but the described defect is more indicative of an atrial septal defect."
+          },
+          {
+            "name": "Ebstein's Anomaly",
+            "support_spans": [
+              "Dilated right atrium and right ventricle",
+              "Complete right bundle-branch block with normal PR interval"
+            ],
+            "contradict_spans": [
+              "Large 21-mm defect with left-to-right shunt"
+            ],
+            "why": "The combination of right atrial and ventricular dilation along with complete right bundle-branch block could suggest Ebstein's anomaly, but the presence of a large atrial septal defect is not typical for this condition."
+          }
+        ],
+        "key_evidence_spans": [
+          "Large 21-mm defect with left-to-right shunt",
+          "Step-up in oxygenation from superior vena cava (71%) and inferior vena cava (77%) to right atrium (84%)",
+          "Dilated right atrium and right ventricle"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Atrial Septal Defect",
+            "support_spans": [
+              "Large 21-mm defect with left-to-right shunt",
+              "Step-up in oxygenation from superior vena cava (71%) and inferior vena cava (77%) to right atrium (84%)"
+            ],
+            "contradict_spans": [],
+            "why": "The presence of a large defect with left-to-right shunt and step-up in oxygenation supports this diagnosis.",
+            "protected_reason": "This diagnosis may be overlooked due to the absence of symptoms such as dyspnea or chest pain."
+          },
+          {
+            "name": "Ebstein's Anomaly",
+            "support_spans": [
+              "Dilated right atrium and right ventricle",
+              "Complete right bundle-branch block with normal PR interval"
+            ],
+            "contradict_spans": [],
+            "why": "The combination of dilated right atrium and ventricle, along with complete right bundle-branch block, suggests this rare congenital heart defect.",
+            "protected_reason": "Ebstein's Anomaly is a rare condition that may be missed due to its low prevalence and nonspecific symptoms."
+          },
+          {
+            "name": "Scimitar Syndrome",
+            "support_spans": [
+              "Dilated right atrium and right ventricle"
+            ],
+            "contradict_spans": [
+              "Normal cardiac output"
+            ],
+            "why": "The presence of a dilated right atrium and ventricle could be indicative of Scimitar Syndrome, although normal cardiac output might argue against it.",
+            "protected_reason": "Scimitar Syndrome is a rare condition that may be overlooked due to its nonspecific symptoms and rarity."
+          }
+        ],
+        "key_evidence_spans": [
+          "Large 21-mm defect with left-to-right shunt",
+          "Complete right bundle-branch block with normal PR interval",
+          "Dilated right atrium and right ventricle"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "Normal cardiac output"
+        ],
+        "generator_jaccard": 0.5,
+        "top1_same_across_views": true,
+        "top_margin": 1.25,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 0
+      },
+      "frontier_after_g": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Atrial Septal Defect",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "This diagnosis may be overlooked due to the absence of symptoms such as dyspnea or chest pain.",
+          "score_logit": 2.6,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Ebstein's Anomaly",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E004"
+          ],
+          "contradicting_evidence": [
+            "G1E001"
+          ],
+          "protected_reason": "Ebstein's Anomaly is a rare condition that may be missed due to its low prevalence and nonspecific symptoms.",
+          "score_logit": 1.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Scimitar Syndrome",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E003"
+          ],
+          "contradicting_evidence": [
+            "G2E005"
+          ],
+          "protected_reason": "Scimitar Syndrome is a rare condition that may be overlooked due to its nonspecific symptoms and rarity.",
+          "score_logit": 0.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Ventricular Septal Defect",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E003"
+          ],
+          "contradicting_evidence": [
+            "G1E001"
+          ],
+          "protected_reason": "",
+          "score_logit": -0.25,
+          "status": "live"
+        }
+      ],
+      "adaptive_action": null,
+      "selector": {
+        "champion": "Atrial Septal Defect",
+        "runner_up": "Ebstein's Anomaly",
+        "rationale": "Large 21-mm defect with left-to-right shunt and step-up in oxygenation from superior vena cava to right atrium support Atrial Septal Defect",
+        "rejected": [
+          {
+            "label": "Scimitar Syndrome",
+            "why": "Normal cardiac output contradicts Scimitar Syndrome"
+          },
+          {
+            "label": "Ventricular Septal Defect",
+            "why": "Large 21-mm defect with left-to-right shunt is more consistent with Atrial Septal Defect"
+          }
+        ],
+        "margin": "high"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "Large 21-mm defect with left-to-right shunt",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "Step-up in oxygenation from superior vena cava (71%) and inferior vena cava (77%) to right atrium (84%)",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "Dilated right atrium and right ventricle",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "Complete right bundle-branch block with normal PR interval",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E005",
+          "raw_span": "Normal cardiac output",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Atrial Septal Defect",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "This diagnosis may be overlooked due to the absence of symptoms such as dyspnea or chest pain.",
+          "score_logit": 2.6,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Ventricular Septal Defect",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E003"
+          ],
+          "contradicting_evidence": [
+            "G1E001"
+          ],
+          "protected_reason": "",
+          "score_logit": -0.25,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Ebstein's Anomaly",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E004"
+          ],
+          "contradicting_evidence": [
+            "G1E001"
+          ],
+          "protected_reason": "Ebstein's Anomaly is a rare condition that may be missed due to its low prevalence and nonspecific symptoms.",
+          "score_logit": 1.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Scimitar Syndrome",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E003"
+          ],
+          "contradicting_evidence": [
+            "G2E005"
+          ],
+          "protected_reason": "Scimitar Syndrome is a rare condition that may be overlooked due to its nonspecific symptoms and rarity.",
+          "score_logit": 0.0,
+          "status": "live"
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Atrial Septal Defect",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Ventricular Septal Defect",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Ebstein's Anomaly",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Atrial Septal Defect",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C003",
+          "name": "Ebstein's Anomaly",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C004",
+          "name": "Scimitar Syndrome",
+          "view": "g2"
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 4,
+      "n_evidence": 5,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.5,
+      "frontier_n": 4,
+      "protected_n": 3,
+      "g1_n": 3,
+      "g2_n": 3,
+      "adaptive_action": null,
+      "llm_calls": 3,
+      "history_leakage": 0
+    },
+    "wall_s": 5.802
+  },
+  "created_at": "2026-08-08T01:50:10.839911+00:00"
+}

@@ -1,0 +1,986 @@
+{
+  "case_id": "diagnosisarena__000067",
+  "source_id": "67",
+  "champion": "Bradycardia",
+  "ordered_diagnoses": [
+    "Bradycardia",
+    "Respiratory Failure",
+    "Pulmonary Infection",
+    "Myocardial Infarction with High-Degree AV Block",
+    "Intracranial Hemorrhage with Brainstem Involvement"
+  ],
+  "llm_calls": 3,
+  "stages": {
+    "mode": "lite",
+    "vignette_chars": 914,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Bradycardia",
+          "support_spans": [
+            "Emergency medical services found her pulse rate in the 20s",
+            "heart rate of 49 beats/min"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's low pulse rate and heart rate indicate bradycardia."
+        },
+        {
+          "name": "Respiratory Failure",
+          "support_spans": [
+            "required intubation for airway protection",
+            "respiratory rate of 27 breaths/min"
+          ],
+          "contradict_spans": [],
+          "why": "The patient required intubation and had an elevated respiratory rate, indicating respiratory failure."
+        },
+        {
+          "name": "Pulmonary Infection",
+          "support_spans": [
+            "Chest radiography: Showed pulmonary consolidation"
+          ],
+          "contradict_spans": [],
+          "why": "The presence of pulmonary consolidation on chest radiography suggests a pulmonary infection."
+        }
+      ],
+      "key_evidence_spans": [
+        "Emergency medical services found her pulse rate in the 20s",
+        "required intubation for airway protection",
+        "Chest radiography: Showed pulmonary consolidation"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Intracranial Hemorrhage with Brainstem Involvement",
+          "support_spans": [
+            "altered mental status, weakness, slurred speech, emesis, and headache"
+          ],
+          "contradict_spans": [
+            "Computed tomography of the head: No acute pathology"
+          ],
+          "why": "The patient's presentation with altered mental status, weakness, slurred speech, emesis, and headache could suggest intracranial hemorrhage, but the CT head shows no acute pathology, making this diagnosis less likely.",
+          "protected_reason": "This diagnosis may deserve minority protection because it is a life-threatening condition that requires prompt recognition and treatment, despite the lack of evidence on the CT head."
+        },
+        {
+          "name": "Myocardial Infarction with High-Degree AV Block",
+          "support_spans": [
+            "heart rate of 49 beats/min",
+            "ECG showing intrinsic junctional rhythm at rate of about 60 beats/min"
+          ],
+          "contradict_spans": [
+            "blood pressure of 100/73 mm Hg"
+          ],
+          "why": "The patient's bradycardia and junctional rhythm on ECG could suggest myocardial infarction with high-degree AV block, but the blood pressure is relatively stable.",
+          "protected_reason": "This diagnosis may deserve minority protection because it is a serious cardiac condition that requires prompt recognition and treatment, despite the lack of typical symptoms such as chest pain."
+        },
+        {
+          "name": "Severe Pulmonary Infection with Sepsis",
+          "support_spans": [
+            "pulmonary consolidation",
+            "respiratory rate of 27 breaths/min",
+            "required intubation for airway protection"
+          ],
+          "contradict_spans": [
+            "oxygen saturation of 95% on a nonrebreather mask"
+          ],
+          "why": "The patient's pulmonary consolidation, tachypnea, and need for intubation could suggest severe pulmonary infection with sepsis, but the oxygen saturation is relatively high.",
+          "protected_reason": "This diagnosis may deserve minority protection because it is a life-threatening condition that requires prompt recognition and treatment, despite the lack of typical symptoms such as fever or hypotension."
+        }
+      ],
+      "key_evidence_spans": [
+        "altered mental status, weakness, slurred speech, emesis, and headache",
+        "heart rate of 49 beats/min",
+        "ECG showing intrinsic junctional rhythm at rate of about 60 beats/min",
+        "pulmonary consolidation",
+        "required intubation for airway protection"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "Computed tomography of the head: No acute pathology",
+        "blood pressure of 100/73 mm Hg",
+        "oxygen saturation of 95% on a nonrebreather mask"
+      ],
+      "generator_jaccard": 0.0,
+      "top1_same_across_views": true,
+      "top_margin": 1.35,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 1
+    },
+    "adaptive_action": null,
+    "selector": {
+      "champion": "Bradycardia",
+      "runner_up": "Respiratory Failure",
+      "rationale": "The patient's pulse rate in the 20s and heart rate of 49 beats/min strongly support the diagnosis of Bradycardia, which is further confirmed by the ECG results.",
+      "rejected": [
+        {
+          "label": "Pulmonary Infection",
+          "why": "While chest radiography showed pulmonary consolidation, the patient's oxygen saturation was 95% on a nonrebreather mask, which reduces the likelihood of this diagnosis being the primary cause of the patient's symptoms."
+        },
+        {
+          "label": "Myocardial Infarction with High-Degree AV Block",
+          "why": "The patient's blood pressure was 100/73 mm Hg, which contradicts the expected hypotension associated with this diagnosis."
+        },
+        {
+          "label": "Intracranial Hemorrhage with Brainstem Involvement",
+          "why": "The computed tomography of the head showed no acute pathology, which strongly contradicts this diagnosis."
+        }
+      ],
+      "margin": "high"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "Emergency medical services found her pulse rate in the 20s",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "required intubation for airway protection",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "Chest radiography: Showed pulmonary consolidation",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "heart rate of 49 beats/min",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E005",
+        "raw_span": "respiratory rate of 27 breaths/min",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E006",
+        "raw_span": "altered mental status, weakness, slurred speech, emesis, and headache",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E007",
+        "raw_span": "ECG showing intrinsic junctional rhythm at rate of about 60 beats/min",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E008",
+        "raw_span": "pulmonary consolidation",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E009",
+        "raw_span": "Computed tomography of the head: No acute pathology",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E010",
+        "raw_span": "blood pressure of 100/73 mm Hg",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E011",
+        "raw_span": "oxygen saturation of 95% on a nonrebreather mask",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Bradycardia",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E004"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 2.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Respiratory Failure",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E002",
+          "G1E005"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 2.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Pulmonary Infection",
+        "aliases": [
+          "Severe Pulmonary Infection with Sepsis"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E003",
+          "G2E008",
+          "G1E005",
+          "G1E002"
+        ],
+        "contradicting_evidence": [
+          "G2E011"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a life-threatening condition that requires prompt recognition and treatment, despite the lack of typical symptoms such as fever or hypotension.",
+        "score_logit": 3.35,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Intracranial Hemorrhage with Brainstem Involvement",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G2E006"
+        ],
+        "contradicting_evidence": [
+          "G2E009"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a life-threatening condition that requires prompt recognition and treatment, despite the lack of evidence on the CT head.",
+        "score_logit": 0.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Myocardial Infarction with High-Degree AV Block",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E004",
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G2E010"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a serious cardiac condition that requires prompt recognition and treatment, despite the lack of typical symptoms such as chest pain.",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Bradycardia",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Respiratory Failure",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Pulmonary Infection",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C004",
+        "name": "Intracranial Hemorrhage with Brainstem Involvement",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C005",
+        "name": "Myocardial Infarction with High-Degree AV Block",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C003",
+        "name": "Severe Pulmonary Infection with Sepsis",
+        "view": "g2"
+      }
+    ],
+    "frontier_final": [
+      {
+        "concept_id": "C003",
+        "preferred_name": "Pulmonary Infection",
+        "aliases": [
+          "Severe Pulmonary Infection with Sepsis"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E003",
+          "G2E008",
+          "G1E005",
+          "G1E002"
+        ],
+        "contradicting_evidence": [
+          "G2E011"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a life-threatening condition that requires prompt recognition and treatment, despite the lack of typical symptoms such as fever or hypotension.",
+        "score_logit": 3.35,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C001",
+        "preferred_name": "Bradycardia",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E004"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 2.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Respiratory Failure",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E002",
+          "G1E005"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 2.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Myocardial Infarction with High-Degree AV Block",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E004",
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G2E010"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a serious cardiac condition that requires prompt recognition and treatment, despite the lack of typical symptoms such as chest pain.",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Intracranial Hemorrhage with Brainstem Involvement",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G2E006"
+        ],
+        "contradicting_evidence": [
+          "G2E009"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a life-threatening condition that requires prompt recognition and treatment, despite the lack of evidence on the CT head.",
+        "score_logit": 0.0,
+        "status": "live",
+        "agent_votes": 0
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 5,
+    "n_evidence": 11,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.0,
+    "frontier_n": 5,
+    "protected_n": 3,
+    "n_generators": 2,
+    "adaptive_action": null,
+    "llm_calls": 3,
+    "history_leakage": 0,
+    "mode": "lite"
+  },
+  "prediction": {
+    "arm": "mosaic_lite_r2",
+    "case_id": "diagnosisarena__000067",
+    "source_id": "67",
+    "dataset": "diagnosisarena",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Bradycardia",
+      "Respiratory Failure",
+      "Pulmonary Infection",
+      "Myocardial Infarction with High-Degree AV Block",
+      "Intracranial Hemorrhage with Brainstem Involvement"
+    ],
+    "top2_diagnoses": [
+      "Bradycardia",
+      "Respiratory Failure"
+    ],
+    "cost": {
+      "llm_calls": 3
+    },
+    "stages": {
+      "mode": "lite",
+      "vignette_chars": 914,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Bradycardia",
+            "support_spans": [
+              "Emergency medical services found her pulse rate in the 20s",
+              "heart rate of 49 beats/min"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's low pulse rate and heart rate indicate bradycardia."
+          },
+          {
+            "name": "Respiratory Failure",
+            "support_spans": [
+              "required intubation for airway protection",
+              "respiratory rate of 27 breaths/min"
+            ],
+            "contradict_spans": [],
+            "why": "The patient required intubation and had an elevated respiratory rate, indicating respiratory failure."
+          },
+          {
+            "name": "Pulmonary Infection",
+            "support_spans": [
+              "Chest radiography: Showed pulmonary consolidation"
+            ],
+            "contradict_spans": [],
+            "why": "The presence of pulmonary consolidation on chest radiography suggests a pulmonary infection."
+          }
+        ],
+        "key_evidence_spans": [
+          "Emergency medical services found her pulse rate in the 20s",
+          "required intubation for airway protection",
+          "Chest radiography: Showed pulmonary consolidation"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Intracranial Hemorrhage with Brainstem Involvement",
+            "support_spans": [
+              "altered mental status, weakness, slurred speech, emesis, and headache"
+            ],
+            "contradict_spans": [
+              "Computed tomography of the head: No acute pathology"
+            ],
+            "why": "The patient's presentation with altered mental status, weakness, slurred speech, emesis, and headache could suggest intracranial hemorrhage, but the CT head shows no acute pathology, making this diagnosis less likely.",
+            "protected_reason": "This diagnosis may deserve minority protection because it is a life-threatening condition that requires prompt recognition and treatment, despite the lack of evidence on the CT head."
+          },
+          {
+            "name": "Myocardial Infarction with High-Degree AV Block",
+            "support_spans": [
+              "heart rate of 49 beats/min",
+              "ECG showing intrinsic junctional rhythm at rate of about 60 beats/min"
+            ],
+            "contradict_spans": [
+              "blood pressure of 100/73 mm Hg"
+            ],
+            "why": "The patient's bradycardia and junctional rhythm on ECG could suggest myocardial infarction with high-degree AV block, but the blood pressure is relatively stable.",
+            "protected_reason": "This diagnosis may deserve minority protection because it is a serious cardiac condition that requires prompt recognition and treatment, despite the lack of typical symptoms such as chest pain."
+          },
+          {
+            "name": "Severe Pulmonary Infection with Sepsis",
+            "support_spans": [
+              "pulmonary consolidation",
+              "respiratory rate of 27 breaths/min",
+              "required intubation for airway protection"
+            ],
+            "contradict_spans": [
+              "oxygen saturation of 95% on a nonrebreather mask"
+            ],
+            "why": "The patient's pulmonary consolidation, tachypnea, and need for intubation could suggest severe pulmonary infection with sepsis, but the oxygen saturation is relatively high.",
+            "protected_reason": "This diagnosis may deserve minority protection because it is a life-threatening condition that requires prompt recognition and treatment, despite the lack of typical symptoms such as fever or hypotension."
+          }
+        ],
+        "key_evidence_spans": [
+          "altered mental status, weakness, slurred speech, emesis, and headache",
+          "heart rate of 49 beats/min",
+          "ECG showing intrinsic junctional rhythm at rate of about 60 beats/min",
+          "pulmonary consolidation",
+          "required intubation for airway protection"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "Computed tomography of the head: No acute pathology",
+          "blood pressure of 100/73 mm Hg",
+          "oxygen saturation of 95% on a nonrebreather mask"
+        ],
+        "generator_jaccard": 0.0,
+        "top1_same_across_views": true,
+        "top_margin": 1.35,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 1
+      },
+      "adaptive_action": null,
+      "selector": {
+        "champion": "Bradycardia",
+        "runner_up": "Respiratory Failure",
+        "rationale": "The patient's pulse rate in the 20s and heart rate of 49 beats/min strongly support the diagnosis of Bradycardia, which is further confirmed by the ECG results.",
+        "rejected": [
+          {
+            "label": "Pulmonary Infection",
+            "why": "While chest radiography showed pulmonary consolidation, the patient's oxygen saturation was 95% on a nonrebreather mask, which reduces the likelihood of this diagnosis being the primary cause of the patient's symptoms."
+          },
+          {
+            "label": "Myocardial Infarction with High-Degree AV Block",
+            "why": "The patient's blood pressure was 100/73 mm Hg, which contradicts the expected hypotension associated with this diagnosis."
+          },
+          {
+            "label": "Intracranial Hemorrhage with Brainstem Involvement",
+            "why": "The computed tomography of the head showed no acute pathology, which strongly contradicts this diagnosis."
+          }
+        ],
+        "margin": "high"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "Emergency medical services found her pulse rate in the 20s",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "required intubation for airway protection",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "Chest radiography: Showed pulmonary consolidation",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "heart rate of 49 beats/min",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E005",
+          "raw_span": "respiratory rate of 27 breaths/min",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E006",
+          "raw_span": "altered mental status, weakness, slurred speech, emesis, and headache",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E007",
+          "raw_span": "ECG showing intrinsic junctional rhythm at rate of about 60 beats/min",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E008",
+          "raw_span": "pulmonary consolidation",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E009",
+          "raw_span": "Computed tomography of the head: No acute pathology",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E010",
+          "raw_span": "blood pressure of 100/73 mm Hg",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E011",
+          "raw_span": "oxygen saturation of 95% on a nonrebreather mask",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Bradycardia",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E004"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 2.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Respiratory Failure",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E002",
+            "G1E005"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 2.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Pulmonary Infection",
+          "aliases": [
+            "Severe Pulmonary Infection with Sepsis"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E003",
+            "G2E008",
+            "G1E005",
+            "G1E002"
+          ],
+          "contradicting_evidence": [
+            "G2E011"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a life-threatening condition that requires prompt recognition and treatment, despite the lack of typical symptoms such as fever or hypotension.",
+          "score_logit": 3.35,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Intracranial Hemorrhage with Brainstem Involvement",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G2E006"
+          ],
+          "contradicting_evidence": [
+            "G2E009"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a life-threatening condition that requires prompt recognition and treatment, despite the lack of evidence on the CT head.",
+          "score_logit": 0.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C005",
+          "preferred_name": "Myocardial Infarction with High-Degree AV Block",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E004",
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G2E010"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a serious cardiac condition that requires prompt recognition and treatment, despite the lack of typical symptoms such as chest pain.",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Bradycardia",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Respiratory Failure",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Pulmonary Infection",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C004",
+          "name": "Intracranial Hemorrhage with Brainstem Involvement",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C005",
+          "name": "Myocardial Infarction with High-Degree AV Block",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C003",
+          "name": "Severe Pulmonary Infection with Sepsis",
+          "view": "g2"
+        }
+      ],
+      "frontier_final": [
+        {
+          "concept_id": "C003",
+          "preferred_name": "Pulmonary Infection",
+          "aliases": [
+            "Severe Pulmonary Infection with Sepsis"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E003",
+            "G2E008",
+            "G1E005",
+            "G1E002"
+          ],
+          "contradicting_evidence": [
+            "G2E011"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a life-threatening condition that requires prompt recognition and treatment, despite the lack of typical symptoms such as fever or hypotension.",
+          "score_logit": 3.35,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C001",
+          "preferred_name": "Bradycardia",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E004"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 2.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Respiratory Failure",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E002",
+            "G1E005"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 2.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C005",
+          "preferred_name": "Myocardial Infarction with High-Degree AV Block",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E004",
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G2E010"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a serious cardiac condition that requires prompt recognition and treatment, despite the lack of typical symptoms such as chest pain.",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Intracranial Hemorrhage with Brainstem Involvement",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G2E006"
+          ],
+          "contradicting_evidence": [
+            "G2E009"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a life-threatening condition that requires prompt recognition and treatment, despite the lack of evidence on the CT head.",
+          "score_logit": 0.0,
+          "status": "live",
+          "agent_votes": 0
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 5,
+      "n_evidence": 11,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.0,
+      "frontier_n": 5,
+      "protected_n": 3,
+      "n_generators": 2,
+      "adaptive_action": null,
+      "llm_calls": 3,
+      "history_leakage": 0,
+      "mode": "lite"
+    },
+    "wall_s": 7.262
+  },
+  "created_at": "2026-08-10T01:59:10.906269+00:00"
+}

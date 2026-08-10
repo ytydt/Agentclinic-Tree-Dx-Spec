@@ -1,0 +1,968 @@
+{
+  "case_id": "medcasereasoning__000041",
+  "source_id": "41",
+  "champion": "Gastrointestinal Stromal Tumor (GIST)",
+  "ordered_diagnoses": [
+    "Gastrointestinal Stromal Tumor (GIST)",
+    "Lipoma",
+    "Leiomyoma",
+    "Gastric schwannoma"
+  ],
+  "llm_calls": 4,
+  "stages": {
+    "mode": "adaptive4",
+    "vignette_chars": 1252,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Gastrointestinal Stromal Tumor (GIST)",
+          "support_spans": [
+            "a large submucosal bulging mass in the posterior gastric wall",
+            "a well-defined, homogeneous, oval mass arising from the posterior gastric wall"
+          ],
+          "contradict_spans": [],
+          "why": "The presence of a submucosal bulging mass in the stomach with ulcerated areas and the imaging characteristics of the mass are consistent with GIST."
+        },
+        {
+          "name": "Lipoma",
+          "support_spans": [
+            "the lesion had fat-tissue attenuation"
+          ],
+          "contradict_spans": [
+            "three Forrest III–type ulcerated areas"
+          ],
+          "why": "The fat-tissue attenuation on CT suggests a lipoma, but the presence of ulcerated areas is less typical for this diagnosis."
+        },
+        {
+          "name": "Leiomyoma",
+          "support_spans": [
+            "a large echogenic mass in the gastric antrum compatible with an expansive lesion"
+          ],
+          "contradict_spans": [],
+          "why": "The imaging findings and the presence of a large mass in the stomach could be consistent with a leiomyoma, although the fat-tissue attenuation is not typical."
+        }
+      ],
+      "key_evidence_spans": [
+        "a large submucosal bulging mass in the posterior gastric wall",
+        "the lesion had fat-tissue attenuation with central contrast enhancement and trabecular architecture"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Gastric lipoma",
+          "support_spans": [
+            "a large echogenic mass in the gastric antrum compatible with an expansive lesion",
+            "the lesion had fat-tissue attenuation"
+          ],
+          "contradict_spans": [
+            "three Forrest III–type ulcerated areas"
+          ],
+          "why": "The presence of a large echogenic mass with fat-tissue attenuation and the patient's symptoms suggest a gastric lipoma.",
+          "protected_reason": "Gastric lipoma is a rare cause of abdominal pain and may be overlooked in favor of more common diagnoses."
+        },
+        {
+          "name": "Gastrointestinal stromal tumor (GIST)",
+          "support_spans": [
+            "a large submucosal bulging mass in the posterior gastric wall",
+            "the lesion had trabecular architecture"
+          ],
+          "contradict_spans": [
+            "biopsy attempts failed to sample the submucosal mass"
+          ],
+          "why": "The presence of a large submucosal bulging mass and the lesion's trabecular architecture suggest a GIST.",
+          "protected_reason": "GIST is a rare tumor that may be difficult to diagnose due to its nonspecific symptoms and imaging findings."
+        },
+        {
+          "name": "Gastric schwannoma",
+          "support_spans": [
+            "a well-defined, homogeneous, oval mass arising from the posterior gastric wall",
+            "the lesion had central contrast enhancement"
+          ],
+          "contradict_spans": [
+            "no family history of cancer"
+          ],
+          "why": "The presence of a well-defined, homogeneous mass with central contrast enhancement suggests a gastric schwannoma.",
+          "protected_reason": "Gastric schwannoma is a rare benign tumor that may be overlooked in favor of more common diagnoses."
+        }
+      ],
+      "key_evidence_spans": [
+        "a large echogenic mass in the gastric antrum compatible with an expansive lesion",
+        "the lesion had fat-tissue attenuation",
+        "a large submucosal bulging mass in the posterior gastric wall"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "the lesion had fat-tissue attenuation with central contrast enhancement and trabecular architecture",
+        "three Forrest III–type ulcerated areas",
+        "biopsy attempts failed to sample the submucosal mass",
+        "no family history of cancer"
+      ],
+      "generator_jaccard": 0.2,
+      "top1_same_across_views": true,
+      "top_margin": 1.0,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 1
+    },
+    "frontier_after_g": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Gastrointestinal Stromal Tumor (GIST)",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E003",
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G2E008"
+        ],
+        "protected_reason": "GIST is a rare tumor that may be difficult to diagnose due to its nonspecific symptoms and imaging findings.",
+        "score_logit": 2.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Lipoma",
+        "aliases": [
+          "Gastric lipoma"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E004",
+          "G1E006"
+        ],
+        "contradicting_evidence": [
+          "G1E005"
+        ],
+        "protected_reason": "Gastric lipoma is a rare cause of abdominal pain and may be overlooked in favor of more common diagnoses.",
+        "score_logit": 1.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Gastric schwannoma",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G2E009"
+        ],
+        "contradicting_evidence": [
+          "G2E010"
+        ],
+        "protected_reason": "Gastric schwannoma is a rare benign tumor that may be overlooked in favor of more common diagnoses.",
+        "score_logit": 1.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Leiomyoma",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E006"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 1.0,
+        "status": "live"
+      }
+    ],
+    "a1": {
+      "candidates": [
+        {
+          "name": "Gastrointestinal Stromal Tumor (GIST)",
+          "support_spans": [
+            "the lesion had fat-tissue attenuation with central contrast enhancement and trabecular architecture",
+            "a large submucosal bulging mass in the posterior gastric wall"
+          ],
+          "contradict_spans": [],
+          "why": "The presence of a submucosal mass with fat-tissue attenuation and trabecular architecture is consistent with GIST.",
+          "protected_reason": "explains unexplained high-specificity evidence"
+        },
+        {
+          "name": "Lipoma",
+          "support_spans": [
+            "the lesion had fat-tissue attenuation with central contrast enhancement and trabecular architecture"
+          ],
+          "contradict_spans": [
+            "three Forrest III–type ulcerated areas"
+          ],
+          "why": "The fat-tissue attenuation is consistent with lipoma, but the presence of ulcerated areas is less typical.",
+          "protected_reason": "explains unexplained high-specificity evidence"
+        },
+        {
+          "name": "Leiomyoma",
+          "support_spans": [
+            "a large submucosal bulging mass in the posterior gastric wall"
+          ],
+          "contradict_spans": [],
+          "why": "The submucosal location and bulging nature of the mass are consistent with leiomyoma.",
+          "protected_reason": "explains unexplained high-specificity evidence"
+        }
+      ]
+    },
+    "adaptive_action": "ORTHOGONAL_GENERATE",
+    "selector": {
+      "champion": "Gastrointestinal Stromal Tumor (GIST)",
+      "runner_up": "Lipoma",
+      "rationale": "The lesion's trabecular architecture and the presence of a large submucosal bulging mass in the posterior gastric wall support GIST, despite the biopsy attempts failing to sample the submucosal mass.",
+      "rejected": [
+        {
+          "label": "Leiomyoma",
+          "why": "less specific evidence support compared to GIST"
+        },
+        {
+          "label": "Gastric schwannoma",
+          "why": "lower score_logit and less comprehensive evidence support"
+        }
+      ],
+      "margin": "medium"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "a large submucosal bulging mass in the posterior gastric wall",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "the lesion had fat-tissue attenuation with central contrast enhancement and trabecular architecture",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "a well-defined, homogeneous, oval mass arising from the posterior gastric wall",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "the lesion had fat-tissue attenuation",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E005",
+        "raw_span": "three Forrest III–type ulcerated areas",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E006",
+        "raw_span": "a large echogenic mass in the gastric antrum compatible with an expansive lesion",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E007",
+        "raw_span": "the lesion had trabecular architecture",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E008",
+        "raw_span": "biopsy attempts failed to sample the submucosal mass",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E009",
+        "raw_span": "the lesion had central contrast enhancement",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E010",
+        "raw_span": "no family history of cancer",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Gastrointestinal Stromal Tumor (GIST)",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2",
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E003",
+          "G2E007",
+          "G1E002"
+        ],
+        "contradicting_evidence": [
+          "G2E008"
+        ],
+        "protected_reason": "GIST is a rare tumor that may be difficult to diagnose due to its nonspecific symptoms and imaging findings.",
+        "score_logit": 3.7,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Lipoma",
+        "aliases": [
+          "Gastric lipoma"
+        ],
+        "generator_views": [
+          "g1",
+          "g2",
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G1E004",
+          "G1E006",
+          "G1E002"
+        ],
+        "contradicting_evidence": [
+          "G1E005"
+        ],
+        "protected_reason": "Gastric lipoma is a rare cause of abdominal pain and may be overlooked in favor of more common diagnoses.",
+        "score_logit": 2.7,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Leiomyoma",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "a1"
+        ],
+        "supporting_evidence": [
+          "G1E006",
+          "G1E001"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "explains unexplained high-specificity evidence",
+        "score_logit": 2.6,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Gastric schwannoma",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G2E009"
+        ],
+        "contradicting_evidence": [
+          "G2E010"
+        ],
+        "protected_reason": "Gastric schwannoma is a rare benign tumor that may be overlooked in favor of more common diagnoses.",
+        "score_logit": 1.0,
+        "status": "live"
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Gastrointestinal Stromal Tumor (GIST)",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Lipoma",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Leiomyoma",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Gastric lipoma",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Gastrointestinal stromal tumor (GIST)",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C004",
+        "name": "Gastric schwannoma",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Gastrointestinal Stromal Tumor (GIST)",
+        "view": "a1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Lipoma",
+        "view": "a1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C003",
+        "name": "Leiomyoma",
+        "view": "a1"
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 4,
+    "n_evidence": 10,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.2,
+    "frontier_n": 4,
+    "protected_n": 4,
+    "g1_n": 3,
+    "g2_n": 3,
+    "adaptive_action": "ORTHOGONAL_GENERATE",
+    "llm_calls": 4,
+    "history_leakage": 0
+  },
+  "prediction": {
+    "arm": "mosaic_adaptive4_v1",
+    "case_id": "medcasereasoning__000041",
+    "source_id": "41",
+    "dataset": "medcasereasoning",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Gastrointestinal Stromal Tumor (GIST)",
+      "Lipoma",
+      "Leiomyoma",
+      "Gastric schwannoma"
+    ],
+    "top2_diagnoses": [
+      "Gastrointestinal Stromal Tumor (GIST)",
+      "Lipoma"
+    ],
+    "cost": {
+      "llm_calls": 4
+    },
+    "stages": {
+      "mode": "adaptive4",
+      "vignette_chars": 1252,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Gastrointestinal Stromal Tumor (GIST)",
+            "support_spans": [
+              "a large submucosal bulging mass in the posterior gastric wall",
+              "a well-defined, homogeneous, oval mass arising from the posterior gastric wall"
+            ],
+            "contradict_spans": [],
+            "why": "The presence of a submucosal bulging mass in the stomach with ulcerated areas and the imaging characteristics of the mass are consistent with GIST."
+          },
+          {
+            "name": "Lipoma",
+            "support_spans": [
+              "the lesion had fat-tissue attenuation"
+            ],
+            "contradict_spans": [
+              "three Forrest III–type ulcerated areas"
+            ],
+            "why": "The fat-tissue attenuation on CT suggests a lipoma, but the presence of ulcerated areas is less typical for this diagnosis."
+          },
+          {
+            "name": "Leiomyoma",
+            "support_spans": [
+              "a large echogenic mass in the gastric antrum compatible with an expansive lesion"
+            ],
+            "contradict_spans": [],
+            "why": "The imaging findings and the presence of a large mass in the stomach could be consistent with a leiomyoma, although the fat-tissue attenuation is not typical."
+          }
+        ],
+        "key_evidence_spans": [
+          "a large submucosal bulging mass in the posterior gastric wall",
+          "the lesion had fat-tissue attenuation with central contrast enhancement and trabecular architecture"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Gastric lipoma",
+            "support_spans": [
+              "a large echogenic mass in the gastric antrum compatible with an expansive lesion",
+              "the lesion had fat-tissue attenuation"
+            ],
+            "contradict_spans": [
+              "three Forrest III–type ulcerated areas"
+            ],
+            "why": "The presence of a large echogenic mass with fat-tissue attenuation and the patient's symptoms suggest a gastric lipoma.",
+            "protected_reason": "Gastric lipoma is a rare cause of abdominal pain and may be overlooked in favor of more common diagnoses."
+          },
+          {
+            "name": "Gastrointestinal stromal tumor (GIST)",
+            "support_spans": [
+              "a large submucosal bulging mass in the posterior gastric wall",
+              "the lesion had trabecular architecture"
+            ],
+            "contradict_spans": [
+              "biopsy attempts failed to sample the submucosal mass"
+            ],
+            "why": "The presence of a large submucosal bulging mass and the lesion's trabecular architecture suggest a GIST.",
+            "protected_reason": "GIST is a rare tumor that may be difficult to diagnose due to its nonspecific symptoms and imaging findings."
+          },
+          {
+            "name": "Gastric schwannoma",
+            "support_spans": [
+              "a well-defined, homogeneous, oval mass arising from the posterior gastric wall",
+              "the lesion had central contrast enhancement"
+            ],
+            "contradict_spans": [
+              "no family history of cancer"
+            ],
+            "why": "The presence of a well-defined, homogeneous mass with central contrast enhancement suggests a gastric schwannoma.",
+            "protected_reason": "Gastric schwannoma is a rare benign tumor that may be overlooked in favor of more common diagnoses."
+          }
+        ],
+        "key_evidence_spans": [
+          "a large echogenic mass in the gastric antrum compatible with an expansive lesion",
+          "the lesion had fat-tissue attenuation",
+          "a large submucosal bulging mass in the posterior gastric wall"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "the lesion had fat-tissue attenuation with central contrast enhancement and trabecular architecture",
+          "three Forrest III–type ulcerated areas",
+          "biopsy attempts failed to sample the submucosal mass",
+          "no family history of cancer"
+        ],
+        "generator_jaccard": 0.2,
+        "top1_same_across_views": true,
+        "top_margin": 1.0,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 1
+      },
+      "frontier_after_g": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Gastrointestinal Stromal Tumor (GIST)",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E003",
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G2E008"
+          ],
+          "protected_reason": "GIST is a rare tumor that may be difficult to diagnose due to its nonspecific symptoms and imaging findings.",
+          "score_logit": 2.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Lipoma",
+          "aliases": [
+            "Gastric lipoma"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E004",
+            "G1E006"
+          ],
+          "contradicting_evidence": [
+            "G1E005"
+          ],
+          "protected_reason": "Gastric lipoma is a rare cause of abdominal pain and may be overlooked in favor of more common diagnoses.",
+          "score_logit": 1.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Gastric schwannoma",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G2E009"
+          ],
+          "contradicting_evidence": [
+            "G2E010"
+          ],
+          "protected_reason": "Gastric schwannoma is a rare benign tumor that may be overlooked in favor of more common diagnoses.",
+          "score_logit": 1.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Leiomyoma",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E006"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 1.0,
+          "status": "live"
+        }
+      ],
+      "a1": {
+        "candidates": [
+          {
+            "name": "Gastrointestinal Stromal Tumor (GIST)",
+            "support_spans": [
+              "the lesion had fat-tissue attenuation with central contrast enhancement and trabecular architecture",
+              "a large submucosal bulging mass in the posterior gastric wall"
+            ],
+            "contradict_spans": [],
+            "why": "The presence of a submucosal mass with fat-tissue attenuation and trabecular architecture is consistent with GIST.",
+            "protected_reason": "explains unexplained high-specificity evidence"
+          },
+          {
+            "name": "Lipoma",
+            "support_spans": [
+              "the lesion had fat-tissue attenuation with central contrast enhancement and trabecular architecture"
+            ],
+            "contradict_spans": [
+              "three Forrest III–type ulcerated areas"
+            ],
+            "why": "The fat-tissue attenuation is consistent with lipoma, but the presence of ulcerated areas is less typical.",
+            "protected_reason": "explains unexplained high-specificity evidence"
+          },
+          {
+            "name": "Leiomyoma",
+            "support_spans": [
+              "a large submucosal bulging mass in the posterior gastric wall"
+            ],
+            "contradict_spans": [],
+            "why": "The submucosal location and bulging nature of the mass are consistent with leiomyoma.",
+            "protected_reason": "explains unexplained high-specificity evidence"
+          }
+        ]
+      },
+      "adaptive_action": "ORTHOGONAL_GENERATE",
+      "selector": {
+        "champion": "Gastrointestinal Stromal Tumor (GIST)",
+        "runner_up": "Lipoma",
+        "rationale": "The lesion's trabecular architecture and the presence of a large submucosal bulging mass in the posterior gastric wall support GIST, despite the biopsy attempts failing to sample the submucosal mass.",
+        "rejected": [
+          {
+            "label": "Leiomyoma",
+            "why": "less specific evidence support compared to GIST"
+          },
+          {
+            "label": "Gastric schwannoma",
+            "why": "lower score_logit and less comprehensive evidence support"
+          }
+        ],
+        "margin": "medium"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "a large submucosal bulging mass in the posterior gastric wall",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "the lesion had fat-tissue attenuation with central contrast enhancement and trabecular architecture",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "a well-defined, homogeneous, oval mass arising from the posterior gastric wall",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "the lesion had fat-tissue attenuation",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E005",
+          "raw_span": "three Forrest III–type ulcerated areas",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E006",
+          "raw_span": "a large echogenic mass in the gastric antrum compatible with an expansive lesion",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E007",
+          "raw_span": "the lesion had trabecular architecture",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E008",
+          "raw_span": "biopsy attempts failed to sample the submucosal mass",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E009",
+          "raw_span": "the lesion had central contrast enhancement",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E010",
+          "raw_span": "no family history of cancer",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Gastrointestinal Stromal Tumor (GIST)",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2",
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E003",
+            "G2E007",
+            "G1E002"
+          ],
+          "contradicting_evidence": [
+            "G2E008"
+          ],
+          "protected_reason": "GIST is a rare tumor that may be difficult to diagnose due to its nonspecific symptoms and imaging findings.",
+          "score_logit": 3.7,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Lipoma",
+          "aliases": [
+            "Gastric lipoma"
+          ],
+          "generator_views": [
+            "g1",
+            "g2",
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G1E004",
+            "G1E006",
+            "G1E002"
+          ],
+          "contradicting_evidence": [
+            "G1E005"
+          ],
+          "protected_reason": "Gastric lipoma is a rare cause of abdominal pain and may be overlooked in favor of more common diagnoses.",
+          "score_logit": 2.7,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Leiomyoma",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "a1"
+          ],
+          "supporting_evidence": [
+            "G1E006",
+            "G1E001"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "explains unexplained high-specificity evidence",
+          "score_logit": 2.6,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Gastric schwannoma",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G2E009"
+          ],
+          "contradicting_evidence": [
+            "G2E010"
+          ],
+          "protected_reason": "Gastric schwannoma is a rare benign tumor that may be overlooked in favor of more common diagnoses.",
+          "score_logit": 1.0,
+          "status": "live"
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Gastrointestinal Stromal Tumor (GIST)",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Lipoma",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Leiomyoma",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Gastric lipoma",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Gastrointestinal stromal tumor (GIST)",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C004",
+          "name": "Gastric schwannoma",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Gastrointestinal Stromal Tumor (GIST)",
+          "view": "a1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Lipoma",
+          "view": "a1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C003",
+          "name": "Leiomyoma",
+          "view": "a1"
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 4,
+      "n_evidence": 10,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.2,
+      "frontier_n": 4,
+      "protected_n": 4,
+      "g1_n": 3,
+      "g2_n": 3,
+      "adaptive_action": "ORTHOGONAL_GENERATE",
+      "llm_calls": 4,
+      "history_leakage": 0
+    },
+    "wall_s": 5.828
+  },
+  "created_at": "2026-08-08T01:50:15.072628+00:00"
+}

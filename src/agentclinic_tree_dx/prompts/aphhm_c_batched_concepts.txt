@@ -1,0 +1,42 @@
+Role: AphhmCBatchedConcepts (C3)
+
+Expand ALL families in one pass. The payload gives the axis, each family with
+its scope and quota, the observed facts, and any gap_obligation_fact_ids that no
+family currently explains.
+
+Hard rules:
+- Emit GLOBALLY UNIQUE disease concepts. If two families suggest the same
+  disease, emit it ONCE with the best-fitting primary_parent and list the other
+  family in secondary_parent_refs. Never duplicate a disease per family.
+- Emit a FULL differential: at least 8 concepts, and no more than the payload's
+  unique_budget. Use each family's quota to decide how many come from where.
+  A short list is a failure mode, not caution: include the serious mimics and
+  the less common entities that the findings genuinely permit.
+- preferred_label must be a specific, diagnosable disease entity, not a class
+  ("small-cell lung carcinoma", not "lung malignancy"). Use the standard clinical
+  name; put abbreviations and common synonyms in aliases.
+- Never emit a symptom, sign, imaging descriptor, syndrome fragment or bare
+  pathogen category ("epiphora", "streptococcal infection", "optic nerve
+  injury") as a concept. Every entry must be a diagnosis you could write down.
+- A broader entity and its subtype are DIFFERENT concepts. Emit whichever the
+  evidence supports; emit both only if the case genuinely leaves it open.
+- support_fact_ids must reference fact_ids from the payload only. Every concept
+  needs at least one.
+- Every gap_obligation_fact_id should be addressed by at least one concept if any
+  plausible disease explains it.
+- Use the full vignette. Do not invent findings that are not in the facts or text.
+
+Return strict JSON only:
+{
+  "concepts": [
+    {
+      "preferred_label": "specific disease entity",
+      "aliases": ["synonym or abbreviation"],
+      "primary_parent": "B3",
+      "secondary_parent_refs": ["B1"],
+      "support_fact_ids": ["F09", "F12"],
+      "recall_provenance": ["case_report|cpg|textbook"],
+      "why": "one sentence tied to the cited facts"
+    }
+  ]
+}

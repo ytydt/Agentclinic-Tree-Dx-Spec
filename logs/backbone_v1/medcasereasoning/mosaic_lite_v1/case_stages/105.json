@@ -1,0 +1,768 @@
+{
+  "case_id": "medcasereasoning__000105",
+  "source_id": "105",
+  "champion": "Heat Stroke",
+  "ordered_diagnoses": [
+    "Heat Stroke",
+    "Disseminated Intravascular Coagulation (DIC)",
+    "Cerebellar Infarction",
+    "Posterior reversible encephalopathy syndrome (PRES)"
+  ],
+  "llm_calls": 3,
+  "stages": {
+    "mode": "lite",
+    "vignette_chars": 1081,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Heat Stroke",
+          "support_spans": [
+            "body temperature 42.4 °C",
+            "severe heat stroke (APACHE II score 42, SOFA score 15)"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's high body temperature and diagnosis of severe heat stroke support this diagnosis."
+        },
+        {
+          "name": "Disseminated Intravascular Coagulation (DIC)",
+          "support_spans": [
+            "disseminated intravascular coagulation",
+            "DIC therapy"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's laboratory studies revealed DIC, which is a serious disorder that supports this diagnosis."
+        },
+        {
+          "name": "Cerebellar Infarction",
+          "support_spans": [
+            "bilateral cerebellar hemisphere high-signal intensity on diffusion-weighted and FLAIR images",
+            "decreased perfusion in the right cerebellar hemisphere"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's brain MRI and SPECT scans showed abnormalities consistent with cerebellar infarction."
+        }
+      ],
+      "key_evidence_spans": [
+        "body temperature 42.4 °C",
+        "severe heat stroke (APACHE II score 42, SOFA score 15)",
+        "disseminated intravascular coagulation",
+        "bilateral cerebellar hemisphere high-signal intensity on diffusion-weighted and FLAIR images"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Cerebellar heat stroke",
+          "support_spans": [
+            "bilateral cerebellar hemisphere high-signal intensity on diffusion-weighted and FLAIR images"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's brain MRI on day 6 showed specific cerebellar abnormalities after severe heat stroke",
+          "protected_reason": "This diagnosis may be easily missed as heat stroke typically affects the whole brain, but cerebellar involvement can have distinct clinical and radiological features"
+        },
+        {
+          "name": "Disseminated intravascular coagulation (DIC) with cerebellar microthrombi",
+          "support_spans": [
+            "disseminated intravascular coagulation",
+            "bilateral cerebellar hemisphere high-signal intensity on diffusion-weighted and FLAIR images"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's laboratory studies revealed DIC, which could lead to microthrombi formation in the cerebellum, explaining the MRI findings",
+          "protected_reason": "DIC is a known complication of heat stroke, but its effects on the cerebellum might not be immediately apparent"
+        },
+        {
+          "name": "Posterior reversible encephalopathy syndrome (PRES)",
+          "support_spans": [
+            "bilateral cerebellar hemisphere high-signal intensity on diffusion-weighted and FLAIR images"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's MRI findings are consistent with PRES, which can occur in the setting of severe heat stroke and hypertension",
+          "protected_reason": "PRES is a rare but recognized complication of heat stroke, and its diagnosis requires careful consideration of the patient's clinical and radiological presentation"
+        }
+      ],
+      "key_evidence_spans": [
+        "bilateral cerebellar hemisphere high-signal intensity on diffusion-weighted and FLAIR images",
+        "disseminated intravascular coagulation",
+        "Glasgow Coma Scale score was 6 (E1V1M4)"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "Glasgow Coma Scale score was 6 (E1V1M4)"
+      ],
+      "generator_jaccard": 0.0,
+      "top1_same_across_views": true,
+      "top_margin": 0.0,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "frontier_after_g": [
+      {
+        "concept_id": "C002",
+        "preferred_name": "Disseminated Intravascular Coagulation (DIC)",
+        "aliases": [
+          "Disseminated intravascular coagulation (DIC) with cerebellar microthrombi"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E005",
+          "G1E004"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "DIC is a known complication of heat stroke, but its effects on the cerebellum might not be immediately apparent",
+        "score_logit": 3.6,
+        "status": "live"
+      },
+      {
+        "concept_id": "C001",
+        "preferred_name": "Heat Stroke",
+        "aliases": [
+          "Cerebellar heat stroke"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G1E004"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "This diagnosis may be easily missed as heat stroke typically affects the whole brain, but cerebellar involvement can have distinct clinical and radiological features",
+        "score_logit": 3.6,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Cerebellar Infarction",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E004",
+          "G1E006"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 2.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Posterior reversible encephalopathy syndrome (PRES)",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E004"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "PRES is a rare but recognized complication of heat stroke, and its diagnosis requires careful consideration of the patient's clinical and radiological presentation",
+        "score_logit": 1.25,
+        "status": "live"
+      }
+    ],
+    "adaptive_action": null,
+    "selector": {
+      "champion": "Heat Stroke",
+      "runner_up": "Disseminated Intravascular Coagulation (DIC)",
+      "rationale": "The patient's high body temperature and severe heat stroke diagnosis, along with the presence of bilateral cerebellar hemisphere high-signal intensity on diffusion-weighted and FLAIR images, support this diagnosis without contradiction.",
+      "rejected": [
+        {
+          "label": "Cerebellar Infarction",
+          "why": "While the patient has imaging findings consistent with cerebellar infarction, the overall clinical presentation and diagnosis of severe heat stroke better explain the findings."
+        },
+        {
+          "label": "Posterior reversible encephalopathy syndrome (PRES)",
+          "why": "PRES is a possible complication, but the patient's presentation and imaging findings are more consistent with heat stroke and its complications, such as DIC."
+        }
+      ],
+      "margin": "high"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "body temperature 42.4 °C",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "severe heat stroke (APACHE II score 42, SOFA score 15)",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "disseminated intravascular coagulation",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "bilateral cerebellar hemisphere high-signal intensity on diffusion-weighted and FLAIR images",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E005",
+        "raw_span": "DIC therapy",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E006",
+        "raw_span": "decreased perfusion in the right cerebellar hemisphere",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E007",
+        "raw_span": "Glasgow Coma Scale score was 6 (E1V1M4)",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Heat Stroke",
+        "aliases": [
+          "Cerebellar heat stroke"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G1E004"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "This diagnosis may be easily missed as heat stroke typically affects the whole brain, but cerebellar involvement can have distinct clinical and radiological features",
+        "score_logit": 3.6,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Disseminated Intravascular Coagulation (DIC)",
+        "aliases": [
+          "Disseminated intravascular coagulation (DIC) with cerebellar microthrombi"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E005",
+          "G1E004"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "DIC is a known complication of heat stroke, but its effects on the cerebellum might not be immediately apparent",
+        "score_logit": 3.6,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Cerebellar Infarction",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E004",
+          "G1E006"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 2.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Posterior reversible encephalopathy syndrome (PRES)",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E004"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "PRES is a rare but recognized complication of heat stroke, and its diagnosis requires careful consideration of the patient's clinical and radiological presentation",
+        "score_logit": 1.25,
+        "status": "live"
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Heat Stroke",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Disseminated Intravascular Coagulation (DIC)",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Cerebellar Infarction",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Cerebellar heat stroke",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Disseminated intravascular coagulation (DIC) with cerebellar microthrombi",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C004",
+        "name": "Posterior reversible encephalopathy syndrome (PRES)",
+        "view": "g2"
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 4,
+    "n_evidence": 7,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.0,
+    "frontier_n": 4,
+    "protected_n": 3,
+    "g1_n": 3,
+    "g2_n": 3,
+    "adaptive_action": null,
+    "llm_calls": 3,
+    "history_leakage": 0
+  },
+  "prediction": {
+    "arm": "mosaic_lite_v1",
+    "case_id": "medcasereasoning__000105",
+    "source_id": "105",
+    "dataset": "medcasereasoning",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Heat Stroke",
+      "Disseminated Intravascular Coagulation (DIC)",
+      "Cerebellar Infarction",
+      "Posterior reversible encephalopathy syndrome (PRES)"
+    ],
+    "top2_diagnoses": [
+      "Heat Stroke",
+      "Disseminated Intravascular Coagulation (DIC)"
+    ],
+    "cost": {
+      "llm_calls": 3
+    },
+    "stages": {
+      "mode": "lite",
+      "vignette_chars": 1081,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Heat Stroke",
+            "support_spans": [
+              "body temperature 42.4 °C",
+              "severe heat stroke (APACHE II score 42, SOFA score 15)"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's high body temperature and diagnosis of severe heat stroke support this diagnosis."
+          },
+          {
+            "name": "Disseminated Intravascular Coagulation (DIC)",
+            "support_spans": [
+              "disseminated intravascular coagulation",
+              "DIC therapy"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's laboratory studies revealed DIC, which is a serious disorder that supports this diagnosis."
+          },
+          {
+            "name": "Cerebellar Infarction",
+            "support_spans": [
+              "bilateral cerebellar hemisphere high-signal intensity on diffusion-weighted and FLAIR images",
+              "decreased perfusion in the right cerebellar hemisphere"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's brain MRI and SPECT scans showed abnormalities consistent with cerebellar infarction."
+          }
+        ],
+        "key_evidence_spans": [
+          "body temperature 42.4 °C",
+          "severe heat stroke (APACHE II score 42, SOFA score 15)",
+          "disseminated intravascular coagulation",
+          "bilateral cerebellar hemisphere high-signal intensity on diffusion-weighted and FLAIR images"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Cerebellar heat stroke",
+            "support_spans": [
+              "bilateral cerebellar hemisphere high-signal intensity on diffusion-weighted and FLAIR images"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's brain MRI on day 6 showed specific cerebellar abnormalities after severe heat stroke",
+            "protected_reason": "This diagnosis may be easily missed as heat stroke typically affects the whole brain, but cerebellar involvement can have distinct clinical and radiological features"
+          },
+          {
+            "name": "Disseminated intravascular coagulation (DIC) with cerebellar microthrombi",
+            "support_spans": [
+              "disseminated intravascular coagulation",
+              "bilateral cerebellar hemisphere high-signal intensity on diffusion-weighted and FLAIR images"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's laboratory studies revealed DIC, which could lead to microthrombi formation in the cerebellum, explaining the MRI findings",
+            "protected_reason": "DIC is a known complication of heat stroke, but its effects on the cerebellum might not be immediately apparent"
+          },
+          {
+            "name": "Posterior reversible encephalopathy syndrome (PRES)",
+            "support_spans": [
+              "bilateral cerebellar hemisphere high-signal intensity on diffusion-weighted and FLAIR images"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's MRI findings are consistent with PRES, which can occur in the setting of severe heat stroke and hypertension",
+            "protected_reason": "PRES is a rare but recognized complication of heat stroke, and its diagnosis requires careful consideration of the patient's clinical and radiological presentation"
+          }
+        ],
+        "key_evidence_spans": [
+          "bilateral cerebellar hemisphere high-signal intensity on diffusion-weighted and FLAIR images",
+          "disseminated intravascular coagulation",
+          "Glasgow Coma Scale score was 6 (E1V1M4)"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "Glasgow Coma Scale score was 6 (E1V1M4)"
+        ],
+        "generator_jaccard": 0.0,
+        "top1_same_across_views": true,
+        "top_margin": 0.0,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 0
+      },
+      "frontier_after_g": [
+        {
+          "concept_id": "C002",
+          "preferred_name": "Disseminated Intravascular Coagulation (DIC)",
+          "aliases": [
+            "Disseminated intravascular coagulation (DIC) with cerebellar microthrombi"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E005",
+            "G1E004"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "DIC is a known complication of heat stroke, but its effects on the cerebellum might not be immediately apparent",
+          "score_logit": 3.6,
+          "status": "live"
+        },
+        {
+          "concept_id": "C001",
+          "preferred_name": "Heat Stroke",
+          "aliases": [
+            "Cerebellar heat stroke"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G1E004"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "This diagnosis may be easily missed as heat stroke typically affects the whole brain, but cerebellar involvement can have distinct clinical and radiological features",
+          "score_logit": 3.6,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Cerebellar Infarction",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E004",
+            "G1E006"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 2.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Posterior reversible encephalopathy syndrome (PRES)",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E004"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "PRES is a rare but recognized complication of heat stroke, and its diagnosis requires careful consideration of the patient's clinical and radiological presentation",
+          "score_logit": 1.25,
+          "status": "live"
+        }
+      ],
+      "adaptive_action": null,
+      "selector": {
+        "champion": "Heat Stroke",
+        "runner_up": "Disseminated Intravascular Coagulation (DIC)",
+        "rationale": "The patient's high body temperature and severe heat stroke diagnosis, along with the presence of bilateral cerebellar hemisphere high-signal intensity on diffusion-weighted and FLAIR images, support this diagnosis without contradiction.",
+        "rejected": [
+          {
+            "label": "Cerebellar Infarction",
+            "why": "While the patient has imaging findings consistent with cerebellar infarction, the overall clinical presentation and diagnosis of severe heat stroke better explain the findings."
+          },
+          {
+            "label": "Posterior reversible encephalopathy syndrome (PRES)",
+            "why": "PRES is a possible complication, but the patient's presentation and imaging findings are more consistent with heat stroke and its complications, such as DIC."
+          }
+        ],
+        "margin": "high"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "body temperature 42.4 °C",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "severe heat stroke (APACHE II score 42, SOFA score 15)",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "disseminated intravascular coagulation",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "bilateral cerebellar hemisphere high-signal intensity on diffusion-weighted and FLAIR images",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E005",
+          "raw_span": "DIC therapy",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E006",
+          "raw_span": "decreased perfusion in the right cerebellar hemisphere",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E007",
+          "raw_span": "Glasgow Coma Scale score was 6 (E1V1M4)",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Heat Stroke",
+          "aliases": [
+            "Cerebellar heat stroke"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G1E004"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "This diagnosis may be easily missed as heat stroke typically affects the whole brain, but cerebellar involvement can have distinct clinical and radiological features",
+          "score_logit": 3.6,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Disseminated Intravascular Coagulation (DIC)",
+          "aliases": [
+            "Disseminated intravascular coagulation (DIC) with cerebellar microthrombi"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E005",
+            "G1E004"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "DIC is a known complication of heat stroke, but its effects on the cerebellum might not be immediately apparent",
+          "score_logit": 3.6,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Cerebellar Infarction",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E004",
+            "G1E006"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 2.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Posterior reversible encephalopathy syndrome (PRES)",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E004"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "PRES is a rare but recognized complication of heat stroke, and its diagnosis requires careful consideration of the patient's clinical and radiological presentation",
+          "score_logit": 1.25,
+          "status": "live"
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Heat Stroke",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Disseminated Intravascular Coagulation (DIC)",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Cerebellar Infarction",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Cerebellar heat stroke",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Disseminated intravascular coagulation (DIC) with cerebellar microthrombi",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C004",
+          "name": "Posterior reversible encephalopathy syndrome (PRES)",
+          "view": "g2"
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 4,
+      "n_evidence": 7,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.0,
+      "frontier_n": 4,
+      "protected_n": 3,
+      "g1_n": 3,
+      "g2_n": 3,
+      "adaptive_action": null,
+      "llm_calls": 3,
+      "history_leakage": 0
+    },
+    "wall_s": 4.075
+  },
+  "created_at": "2026-08-08T01:50:19.574045+00:00"
+}

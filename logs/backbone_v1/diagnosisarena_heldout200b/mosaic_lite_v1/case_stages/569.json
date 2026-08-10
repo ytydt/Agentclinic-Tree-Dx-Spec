@@ -1,0 +1,1062 @@
+{
+  "case_id": "diagnosisarena__000569",
+  "source_id": "569",
+  "champion": "Myocarditis",
+  "ordered_diagnoses": [
+    "Myocarditis",
+    "Acute Coronary Syndrome",
+    "Catecholaminergic Polymorphic Ventricular Tachycardia (CPVT)",
+    "Hypokalemic Cardiac Arrest",
+    "Myocardial Infarction with Normal Coronary Arteries (MINCA)"
+  ],
+  "llm_calls": 3,
+  "stages": {
+    "mode": "lite",
+    "vignette_chars": 1735,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Myocarditis",
+          "support_spans": [
+            "SARS-CoV-2 nasopharyngeal swab PCR: Ct of 29 (positive: Ct < 34)",
+            "SARS-CoV-2 spike protein antibodies: 1.83 × 10⁶ units/L (<800 units/L)"
+          ],
+          "contradict_spans": [
+            "Cardiac MRI: EF 50%, no signs of infiltrative process, myocarditis, or ischemic changes"
+          ],
+          "why": "The patient has a positive SARS-CoV-2 PCR and high spike protein antibodies, which could indicate a recent infection, but cardiac MRI did not show signs of myocarditis."
+        },
+        {
+          "name": "Acute Coronary Syndrome",
+          "support_spans": [
+            "High-sensitivity troponin: 34 ng/L (0–19 ng/L)",
+            "Coronary angiography: mild coronary artery disease with LVEF 40%"
+          ],
+          "contradict_spans": [],
+          "why": "The patient has elevated troponin levels and mild coronary artery disease, which could indicate acute coronary syndrome."
+        },
+        {
+          "name": "Hypokalemic Cardiac Arrest",
+          "support_spans": [
+            "Potassium: 2.9 mmol/L (3.5–5.5 mmol/L)"
+          ],
+          "contradict_spans": [],
+          "why": "The patient has a low potassium level, which could contribute to cardiac arrest."
+        }
+      ],
+      "key_evidence_spans": [
+        "QTc of 489",
+        "SARS-CoV-2 nasopharyngeal swab PCR: Ct of 29 (positive: Ct < 34)",
+        "High-sensitivity troponin: 34 ng/L (0–19 ng/L)",
+        "Potassium: 2.9 mmol/L (3.5–5.5 mmol/L)"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Myocardial Infarction with Normal Coronary Arteries (MINCA)",
+          "support_spans": [
+            "High-sensitivity troponin: 34 ng/L (0–19 ng/L)",
+            "Echocardiogram: Initial LVEF 18%, improved to 30% several hours later"
+          ],
+          "contradict_spans": [
+            "Coronary angiography: mild coronary artery disease with LVEF 40%"
+          ],
+          "why": "The patient's elevated troponin levels and reduced left ventricular ejection fraction (LVEF) suggest myocardial injury, which could be due to MINCA, a condition where myocardial infarction occurs without significant coronary artery disease.",
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare and easily missed condition that can be overlooked in favor of more common diagnoses like coronary artery disease."
+        },
+        {
+          "name": "Stress-Induced Cardiomyopathy (Takotsubo Cardiomyopathy)",
+          "support_spans": [
+            "The patient was in cardiac arrest upon EMS arrival",
+            "Echocardiogram: Initial LVEF 18%, improved to 30% several hours later"
+          ],
+          "contradict_spans": [
+            "Cardiac MRI: EF 50%, no signs of infiltrative process, myocarditis, or ischemic changes"
+          ],
+          "why": "The patient's sudden cardiac arrest and subsequent improvement in LVEF suggest a stress-induced cardiomyopathy, which is a rare and reversible condition.",
+          "protected_reason": "This diagnosis may deserve minority protection because it is often underdiagnosed and can be mistaken for other conditions like myocardial infarction or heart failure."
+        },
+        {
+          "name": "Catecholaminergic Polymorphic Ventricular Tachycardia (CPVT)",
+          "support_spans": [
+            "QTc of 489",
+            "Genetic screening: negative for mutations predisposing to arrhythmias"
+          ],
+          "contradict_spans": [
+            "No history of toxic ingestion was suspected"
+          ],
+          "why": "The patient's prolonged QTc interval and cardiac arrest suggest a possible arrhythmic disorder like CPVT, which is a rare genetic condition that can cause life-threatening arrhythmias.",
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare and genetic condition that can be overlooked in favor of more common diagnoses like myocardial infarction or heart failure."
+        }
+      ],
+      "key_evidence_spans": [
+        "QTc of 489",
+        "High-sensitivity troponin: 34 ng/L (0–19 ng/L)",
+        "Echocardiogram: Initial LVEF 18%, improved to 30% several hours later"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "Cardiac MRI: EF 50%, no signs of infiltrative process, myocarditis, or ischemic changes",
+        "No history of toxic ingestion was suspected"
+      ],
+      "generator_jaccard": 0.0,
+      "top1_same_across_views": false,
+      "top_margin": 1.0,
+      "leave_one_view_instability": true,
+      "contradiction_mass": 0
+    },
+    "adaptive_action": null,
+    "selector": {
+      "champion": "Myocarditis",
+      "runner_up": "Acute Coronary Syndrome",
+      "rationale": "The patient's recent SARS-CoV-2 infection and high spike protein antibodies support myocarditis, despite the cardiac MRI not showing signs of myocarditis, the clinical context and lab results are more aligned with this diagnosis.",
+      "rejected": [
+        {
+          "label": "Catecholaminergic Polymorphic Ventricular Tachycardia (CPVT)",
+          "why": "Genetic screening was negative for mutations predisposing to arrhythmias and no history of toxic ingestion was suspected"
+        },
+        {
+          "label": "Hypokalemic Cardiac Arrest",
+          "why": "While hypokalemia is present, it does not fully explain the cardiac arrest and other findings"
+        },
+        {
+          "label": "Myocardial Infarction with Normal Coronary Arteries (MINCA)",
+          "why": "Coronary angiography showed mild coronary artery disease, which contradicts the 'normal coronary arteries' criterion"
+        },
+        {
+          "label": "Stress-Induced Cardiomyopathy (Takotsubo Cardiomyopathy)",
+          "why": "Cardiac MRI did not show signs of infiltrative process, myocarditis, or ischemic changes, and the diagnosis does not fully explain the patient's presentation"
+        },
+        {
+          "label": "Acute Coronary Syndrome",
+          "why": "While there is some support for this diagnosis, the patient's presentation and lab results are more consistent with myocarditis"
+        }
+      ],
+      "margin": "medium"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "QTc of 489",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "SARS-CoV-2 nasopharyngeal swab PCR: Ct of 29 (positive: Ct < 34)",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "High-sensitivity troponin: 34 ng/L (0–19 ng/L)",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "Potassium: 2.9 mmol/L (3.5–5.5 mmol/L)",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E005",
+        "raw_span": "SARS-CoV-2 spike protein antibodies: 1.83 × 10⁶ units/L (<800 units/L)",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E006",
+        "raw_span": "Cardiac MRI: EF 50%, no signs of infiltrative process, myocarditis, or ischemic changes",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E007",
+        "raw_span": "Coronary angiography: mild coronary artery disease with LVEF 40%",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E008",
+        "raw_span": "Echocardiogram: Initial LVEF 18%, improved to 30% several hours later",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E009",
+        "raw_span": "The patient was in cardiac arrest upon EMS arrival",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E010",
+        "raw_span": "Genetic screening: negative for mutations predisposing to arrhythmias",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E011",
+        "raw_span": "No history of toxic ingestion was suspected",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Myocarditis",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E002",
+          "G1E005"
+        ],
+        "contradicting_evidence": [
+          "G1E006"
+        ],
+        "protected_reason": "",
+        "score_logit": 0.75,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Acute Coronary Syndrome",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E007"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 2.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Hypokalemic Cardiac Arrest",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E004"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Myocardial Infarction with Normal Coronary Arteries (MINCA)",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E003",
+          "G2E008"
+        ],
+        "contradicting_evidence": [
+          "G1E007"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare and easily missed condition that can be overlooked in favor of more common diagnoses like coronary artery disease.",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Stress-Induced Cardiomyopathy (Takotsubo Cardiomyopathy)",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G2E009",
+          "G2E008"
+        ],
+        "contradicting_evidence": [
+          "G1E006"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is often underdiagnosed and can be mistaken for other conditions like myocardial infarction or heart failure.",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C006",
+        "preferred_name": "Catecholaminergic Polymorphic Ventricular Tachycardia (CPVT)",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G2E010"
+        ],
+        "contradicting_evidence": [
+          "G2E011"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare and genetic condition that can be overlooked in favor of more common diagnoses like myocardial infarction or heart failure.",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Myocarditis",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Acute Coronary Syndrome",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Hypokalemic Cardiac Arrest",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C004",
+        "name": "Myocardial Infarction with Normal Coronary Arteries (MINCA)",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C005",
+        "name": "Stress-Induced Cardiomyopathy (Takotsubo Cardiomyopathy)",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C006",
+        "name": "Catecholaminergic Polymorphic Ventricular Tachycardia (CPVT)",
+        "view": "g2"
+      }
+    ],
+    "frontier_final": [
+      {
+        "concept_id": "C002",
+        "preferred_name": "Acute Coronary Syndrome",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E007"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 2.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C006",
+        "preferred_name": "Catecholaminergic Polymorphic Ventricular Tachycardia (CPVT)",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G2E010"
+        ],
+        "contradicting_evidence": [
+          "G2E011"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare and genetic condition that can be overlooked in favor of more common diagnoses like myocardial infarction or heart failure.",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Hypokalemic Cardiac Arrest",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E004"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Myocardial Infarction with Normal Coronary Arteries (MINCA)",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E003",
+          "G2E008"
+        ],
+        "contradicting_evidence": [
+          "G1E007"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare and easily missed condition that can be overlooked in favor of more common diagnoses like coronary artery disease.",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Stress-Induced Cardiomyopathy (Takotsubo Cardiomyopathy)",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G2E009",
+          "G2E008"
+        ],
+        "contradicting_evidence": [
+          "G1E006"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is often underdiagnosed and can be mistaken for other conditions like myocardial infarction or heart failure.",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C001",
+        "preferred_name": "Myocarditis",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E002",
+          "G1E005"
+        ],
+        "contradicting_evidence": [
+          "G1E006"
+        ],
+        "protected_reason": "",
+        "score_logit": 0.75,
+        "status": "live",
+        "agent_votes": 0
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 6,
+    "n_evidence": 11,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.0,
+    "frontier_n": 6,
+    "protected_n": 3,
+    "n_generators": 2,
+    "adaptive_action": null,
+    "llm_calls": 3,
+    "history_leakage": 0,
+    "mode": "lite"
+  },
+  "prediction": {
+    "arm": "mosaic_lite_v1",
+    "case_id": "diagnosisarena__000569",
+    "source_id": "569",
+    "dataset": "diagnosisarena_heldout200b",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Myocarditis",
+      "Acute Coronary Syndrome",
+      "Catecholaminergic Polymorphic Ventricular Tachycardia (CPVT)",
+      "Hypokalemic Cardiac Arrest",
+      "Myocardial Infarction with Normal Coronary Arteries (MINCA)"
+    ],
+    "top2_diagnoses": [
+      "Myocarditis",
+      "Acute Coronary Syndrome"
+    ],
+    "cost": {
+      "llm_calls": 3
+    },
+    "stages": {
+      "mode": "lite",
+      "vignette_chars": 1735,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Myocarditis",
+            "support_spans": [
+              "SARS-CoV-2 nasopharyngeal swab PCR: Ct of 29 (positive: Ct < 34)",
+              "SARS-CoV-2 spike protein antibodies: 1.83 × 10⁶ units/L (<800 units/L)"
+            ],
+            "contradict_spans": [
+              "Cardiac MRI: EF 50%, no signs of infiltrative process, myocarditis, or ischemic changes"
+            ],
+            "why": "The patient has a positive SARS-CoV-2 PCR and high spike protein antibodies, which could indicate a recent infection, but cardiac MRI did not show signs of myocarditis."
+          },
+          {
+            "name": "Acute Coronary Syndrome",
+            "support_spans": [
+              "High-sensitivity troponin: 34 ng/L (0–19 ng/L)",
+              "Coronary angiography: mild coronary artery disease with LVEF 40%"
+            ],
+            "contradict_spans": [],
+            "why": "The patient has elevated troponin levels and mild coronary artery disease, which could indicate acute coronary syndrome."
+          },
+          {
+            "name": "Hypokalemic Cardiac Arrest",
+            "support_spans": [
+              "Potassium: 2.9 mmol/L (3.5–5.5 mmol/L)"
+            ],
+            "contradict_spans": [],
+            "why": "The patient has a low potassium level, which could contribute to cardiac arrest."
+          }
+        ],
+        "key_evidence_spans": [
+          "QTc of 489",
+          "SARS-CoV-2 nasopharyngeal swab PCR: Ct of 29 (positive: Ct < 34)",
+          "High-sensitivity troponin: 34 ng/L (0–19 ng/L)",
+          "Potassium: 2.9 mmol/L (3.5–5.5 mmol/L)"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Myocardial Infarction with Normal Coronary Arteries (MINCA)",
+            "support_spans": [
+              "High-sensitivity troponin: 34 ng/L (0–19 ng/L)",
+              "Echocardiogram: Initial LVEF 18%, improved to 30% several hours later"
+            ],
+            "contradict_spans": [
+              "Coronary angiography: mild coronary artery disease with LVEF 40%"
+            ],
+            "why": "The patient's elevated troponin levels and reduced left ventricular ejection fraction (LVEF) suggest myocardial injury, which could be due to MINCA, a condition where myocardial infarction occurs without significant coronary artery disease.",
+            "protected_reason": "This diagnosis may deserve minority protection because it is a rare and easily missed condition that can be overlooked in favor of more common diagnoses like coronary artery disease."
+          },
+          {
+            "name": "Stress-Induced Cardiomyopathy (Takotsubo Cardiomyopathy)",
+            "support_spans": [
+              "The patient was in cardiac arrest upon EMS arrival",
+              "Echocardiogram: Initial LVEF 18%, improved to 30% several hours later"
+            ],
+            "contradict_spans": [
+              "Cardiac MRI: EF 50%, no signs of infiltrative process, myocarditis, or ischemic changes"
+            ],
+            "why": "The patient's sudden cardiac arrest and subsequent improvement in LVEF suggest a stress-induced cardiomyopathy, which is a rare and reversible condition.",
+            "protected_reason": "This diagnosis may deserve minority protection because it is often underdiagnosed and can be mistaken for other conditions like myocardial infarction or heart failure."
+          },
+          {
+            "name": "Catecholaminergic Polymorphic Ventricular Tachycardia (CPVT)",
+            "support_spans": [
+              "QTc of 489",
+              "Genetic screening: negative for mutations predisposing to arrhythmias"
+            ],
+            "contradict_spans": [
+              "No history of toxic ingestion was suspected"
+            ],
+            "why": "The patient's prolonged QTc interval and cardiac arrest suggest a possible arrhythmic disorder like CPVT, which is a rare genetic condition that can cause life-threatening arrhythmias.",
+            "protected_reason": "This diagnosis may deserve minority protection because it is a rare and genetic condition that can be overlooked in favor of more common diagnoses like myocardial infarction or heart failure."
+          }
+        ],
+        "key_evidence_spans": [
+          "QTc of 489",
+          "High-sensitivity troponin: 34 ng/L (0–19 ng/L)",
+          "Echocardiogram: Initial LVEF 18%, improved to 30% several hours later"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "Cardiac MRI: EF 50%, no signs of infiltrative process, myocarditis, or ischemic changes",
+          "No history of toxic ingestion was suspected"
+        ],
+        "generator_jaccard": 0.0,
+        "top1_same_across_views": false,
+        "top_margin": 1.0,
+        "leave_one_view_instability": true,
+        "contradiction_mass": 0
+      },
+      "adaptive_action": null,
+      "selector": {
+        "champion": "Myocarditis",
+        "runner_up": "Acute Coronary Syndrome",
+        "rationale": "The patient's recent SARS-CoV-2 infection and high spike protein antibodies support myocarditis, despite the cardiac MRI not showing signs of myocarditis, the clinical context and lab results are more aligned with this diagnosis.",
+        "rejected": [
+          {
+            "label": "Catecholaminergic Polymorphic Ventricular Tachycardia (CPVT)",
+            "why": "Genetic screening was negative for mutations predisposing to arrhythmias and no history of toxic ingestion was suspected"
+          },
+          {
+            "label": "Hypokalemic Cardiac Arrest",
+            "why": "While hypokalemia is present, it does not fully explain the cardiac arrest and other findings"
+          },
+          {
+            "label": "Myocardial Infarction with Normal Coronary Arteries (MINCA)",
+            "why": "Coronary angiography showed mild coronary artery disease, which contradicts the 'normal coronary arteries' criterion"
+          },
+          {
+            "label": "Stress-Induced Cardiomyopathy (Takotsubo Cardiomyopathy)",
+            "why": "Cardiac MRI did not show signs of infiltrative process, myocarditis, or ischemic changes, and the diagnosis does not fully explain the patient's presentation"
+          },
+          {
+            "label": "Acute Coronary Syndrome",
+            "why": "While there is some support for this diagnosis, the patient's presentation and lab results are more consistent with myocarditis"
+          }
+        ],
+        "margin": "medium"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "QTc of 489",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "SARS-CoV-2 nasopharyngeal swab PCR: Ct of 29 (positive: Ct < 34)",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "High-sensitivity troponin: 34 ng/L (0–19 ng/L)",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "Potassium: 2.9 mmol/L (3.5–5.5 mmol/L)",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E005",
+          "raw_span": "SARS-CoV-2 spike protein antibodies: 1.83 × 10⁶ units/L (<800 units/L)",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E006",
+          "raw_span": "Cardiac MRI: EF 50%, no signs of infiltrative process, myocarditis, or ischemic changes",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E007",
+          "raw_span": "Coronary angiography: mild coronary artery disease with LVEF 40%",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E008",
+          "raw_span": "Echocardiogram: Initial LVEF 18%, improved to 30% several hours later",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E009",
+          "raw_span": "The patient was in cardiac arrest upon EMS arrival",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E010",
+          "raw_span": "Genetic screening: negative for mutations predisposing to arrhythmias",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E011",
+          "raw_span": "No history of toxic ingestion was suspected",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Myocarditis",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E002",
+            "G1E005"
+          ],
+          "contradicting_evidence": [
+            "G1E006"
+          ],
+          "protected_reason": "",
+          "score_logit": 0.75,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Acute Coronary Syndrome",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E007"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 2.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Hypokalemic Cardiac Arrest",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E004"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Myocardial Infarction with Normal Coronary Arteries (MINCA)",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E003",
+            "G2E008"
+          ],
+          "contradicting_evidence": [
+            "G1E007"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare and easily missed condition that can be overlooked in favor of more common diagnoses like coronary artery disease.",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C005",
+          "preferred_name": "Stress-Induced Cardiomyopathy (Takotsubo Cardiomyopathy)",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G2E009",
+            "G2E008"
+          ],
+          "contradicting_evidence": [
+            "G1E006"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is often underdiagnosed and can be mistaken for other conditions like myocardial infarction or heart failure.",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C006",
+          "preferred_name": "Catecholaminergic Polymorphic Ventricular Tachycardia (CPVT)",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G2E010"
+          ],
+          "contradicting_evidence": [
+            "G2E011"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare and genetic condition that can be overlooked in favor of more common diagnoses like myocardial infarction or heart failure.",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Myocarditis",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Acute Coronary Syndrome",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Hypokalemic Cardiac Arrest",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C004",
+          "name": "Myocardial Infarction with Normal Coronary Arteries (MINCA)",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C005",
+          "name": "Stress-Induced Cardiomyopathy (Takotsubo Cardiomyopathy)",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C006",
+          "name": "Catecholaminergic Polymorphic Ventricular Tachycardia (CPVT)",
+          "view": "g2"
+        }
+      ],
+      "frontier_final": [
+        {
+          "concept_id": "C002",
+          "preferred_name": "Acute Coronary Syndrome",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E007"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 2.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C006",
+          "preferred_name": "Catecholaminergic Polymorphic Ventricular Tachycardia (CPVT)",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G2E010"
+          ],
+          "contradicting_evidence": [
+            "G2E011"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare and genetic condition that can be overlooked in favor of more common diagnoses like myocardial infarction or heart failure.",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Hypokalemic Cardiac Arrest",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E004"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Myocardial Infarction with Normal Coronary Arteries (MINCA)",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E003",
+            "G2E008"
+          ],
+          "contradicting_evidence": [
+            "G1E007"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare and easily missed condition that can be overlooked in favor of more common diagnoses like coronary artery disease.",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C005",
+          "preferred_name": "Stress-Induced Cardiomyopathy (Takotsubo Cardiomyopathy)",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G2E009",
+            "G2E008"
+          ],
+          "contradicting_evidence": [
+            "G1E006"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is often underdiagnosed and can be mistaken for other conditions like myocardial infarction or heart failure.",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C001",
+          "preferred_name": "Myocarditis",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E002",
+            "G1E005"
+          ],
+          "contradicting_evidence": [
+            "G1E006"
+          ],
+          "protected_reason": "",
+          "score_logit": 0.75,
+          "status": "live",
+          "agent_votes": 0
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 6,
+      "n_evidence": 11,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.0,
+      "frontier_n": 6,
+      "protected_n": 3,
+      "n_generators": 2,
+      "adaptive_action": null,
+      "llm_calls": 3,
+      "history_leakage": 0,
+      "mode": "lite"
+    },
+    "wall_s": 5.923
+  },
+  "created_at": "2026-08-08T02:05:11.555404+00:00"
+}

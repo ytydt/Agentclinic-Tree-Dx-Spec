@@ -1,0 +1,992 @@
+{
+  "case_id": "medcasereasoning__000093",
+  "source_id": "93",
+  "champion": "Streptokinase-induced hemolytic anemia",
+  "ordered_diagnoses": [
+    "Streptokinase-induced hemolytic anemia",
+    "Prosthetic valve endocarditis",
+    "Antiphospholipid syndrome",
+    "Rheumatic fever"
+  ],
+  "llm_calls": 3,
+  "stages": {
+    "mode": "lite",
+    "vignette_chars": 1284,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Prosthetic valve endocarditis",
+          "support_spans": [
+            "progressive dyspnea on exertion, orthopnea, and paroxysmal nocturnal dyspnea",
+            "fever"
+          ],
+          "contradict_spans": [
+            "Dermatologic, cardiovascular, and respiratory exams were unremarkable"
+          ],
+          "why": "The patient has a history of prosthetic mitral valve and presents with symptoms of heart failure and fever, which could indicate endocarditis."
+        },
+        {
+          "name": "Streptokinase-induced hemolytic anemia",
+          "support_spans": [
+            "hemoglobin 9.65 g/dL",
+            "streptokinase for suspected prosthetic mitral valve thrombosis"
+          ],
+          "contradict_spans": [],
+          "why": "The patient received streptokinase and now has anemia, which could be a side effect of the medication."
+        },
+        {
+          "name": "Rheumatic fever",
+          "support_spans": [
+            "rheumatic mitral stenosis",
+            "bilateral knee pain"
+          ],
+          "contradict_spans": [
+            "no swelling, erythema, or warmth",
+            "anti–cyclic citrullinated peptide antibody... were negative"
+          ],
+          "why": "The patient has a history of rheumatic mitral stenosis and presents with joint pain, which could indicate rheumatic fever."
+        }
+      ],
+      "key_evidence_spans": [
+        "progressive dyspnea on exertion, orthopnea, and paroxysmal nocturnal dyspnea",
+        "fever",
+        "hemoglobin 9.65 g/dL",
+        "streptokinase for suspected prosthetic mitral valve thrombosis"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Antiphospholipid syndrome",
+          "support_spans": [
+            "prothrombin time 32.8 s, INR 2.5",
+            "platelets 4,456,000/µL"
+          ],
+          "contradict_spans": [
+            "no pallor, icterus, cyanosis, edema, or jugular venous distension"
+          ],
+          "why": "The patient's elevated INR and thrombocytosis could be indicative of antiphospholipid syndrome, which can cause valve thrombosis and embolic events.",
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare cause of valve thrombosis and can be easily missed in patients with a history of rheumatic heart disease."
+        },
+        {
+          "name": "Rheumatic fever",
+          "support_spans": [
+            "rheumatic mitral stenosis",
+            "fever and bilateral knee pain"
+          ],
+          "contradict_spans": [
+            "no swelling, erythema, or warmth on joint exam"
+          ],
+          "why": "The patient's history of rheumatic mitral stenosis and current symptoms of fever and bilateral knee pain could suggest a recurrence of rheumatic fever.",
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare cause of symptoms in adults and can be easily missed in patients with a history of rheumatic heart disease."
+        },
+        {
+          "name": "Prosthetic valve endocarditis",
+          "support_spans": [
+            "fever",
+            "prosthetic mitral valve"
+          ],
+          "contradict_spans": [
+            "blood and urine cultures were sterile"
+          ],
+          "why": "The patient's fever and history of prosthetic mitral valve could suggest prosthetic valve endocarditis, which can be a rare and easily missed diagnosis.",
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare cause of fever in patients with prosthetic valves and can be difficult to diagnose due to the lack of positive blood cultures."
+        }
+      ],
+      "key_evidence_spans": [
+        "prothrombin time 32.8 s, INR 2.5",
+        "platelets 4,456,000/µL",
+        "fever and bilateral knee pain",
+        "rheumatic mitral stenosis"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "Dermatologic, cardiovascular, and respiratory exams were unremarkable",
+        "no swelling, erythema, or warmth",
+        "anti–cyclic citrullinated peptide antibody... were negative",
+        "no pallor, icterus, cyanosis, edema, or jugular venous distension",
+        "no swelling, erythema, or warmth on joint exam",
+        "blood and urine cultures were sterile"
+      ],
+      "generator_jaccard": 0.5,
+      "top1_same_across_views": false,
+      "top_margin": 0.8999999999999999,
+      "leave_one_view_instability": true,
+      "contradiction_mass": 0
+    },
+    "frontier_after_g": [
+      {
+        "concept_id": "C002",
+        "preferred_name": "Streptokinase-induced hemolytic anemia",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E004"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 2.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C001",
+        "preferred_name": "Prosthetic valve endocarditis",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G2E015"
+        ],
+        "contradicting_evidence": [
+          "G1E005",
+          "G2E016"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare cause of fever in patients with prosthetic valves and can be difficult to diagnose due to the lack of positive blood cultures.",
+        "score_logit": 1.1,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Antiphospholipid syndrome",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G2E010",
+          "G2E011"
+        ],
+        "contradicting_evidence": [
+          "G2E013"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare cause of valve thrombosis and can be easily missed in patients with a history of rheumatic heart disease.",
+        "score_logit": 1.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Rheumatic fever",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E006",
+          "G1E007",
+          "G2E012"
+        ],
+        "contradicting_evidence": [
+          "G1E008",
+          "G1E009",
+          "G2E014"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare cause of symptoms in adults and can be easily missed in patients with a history of rheumatic heart disease.",
+        "score_logit": -0.15000000000000002,
+        "status": "live"
+      }
+    ],
+    "adaptive_action": null,
+    "selector": {
+      "champion": "Streptokinase-induced hemolytic anemia",
+      "runner_up": "Prosthetic valve endocarditis",
+      "rationale": "Low hemoglobin level and recent streptokinase administration support the champion diagnosis, while the lack of positive blood cultures and unremarkable exams contradict the runner-up",
+      "rejected": [
+        {
+          "label": "Antiphospholipid syndrome",
+          "why": "Lack of specific clinical findings and no clear evidence of thrombosis"
+        },
+        {
+          "label": "Rheumatic fever",
+          "why": "Negative anti-CCP antibody and lack of joint swelling or warmth"
+        }
+      ],
+      "margin": "medium"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "progressive dyspnea on exertion, orthopnea, and paroxysmal nocturnal dyspnea",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "fever",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "hemoglobin 9.65 g/dL",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "streptokinase for suspected prosthetic mitral valve thrombosis",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E005",
+        "raw_span": "Dermatologic, cardiovascular, and respiratory exams were unremarkable",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E006",
+        "raw_span": "rheumatic mitral stenosis",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E007",
+        "raw_span": "bilateral knee pain",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E008",
+        "raw_span": "no swelling, erythema, or warmth",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E009",
+        "raw_span": "anti–cyclic citrullinated peptide antibody... were negative",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E010",
+        "raw_span": "prothrombin time 32.8 s, INR 2.5",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E011",
+        "raw_span": "platelets 4,456,000/µL",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E012",
+        "raw_span": "fever and bilateral knee pain",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E013",
+        "raw_span": "no pallor, icterus, cyanosis, edema, or jugular venous distension",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E014",
+        "raw_span": "no swelling, erythema, or warmth on joint exam",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E015",
+        "raw_span": "prosthetic mitral valve",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E016",
+        "raw_span": "blood and urine cultures were sterile",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Prosthetic valve endocarditis",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E002",
+          "G2E015"
+        ],
+        "contradicting_evidence": [
+          "G1E005",
+          "G2E016"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare cause of fever in patients with prosthetic valves and can be difficult to diagnose due to the lack of positive blood cultures.",
+        "score_logit": 1.1,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Streptokinase-induced hemolytic anemia",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E004"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 2.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Rheumatic fever",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E006",
+          "G1E007",
+          "G2E012"
+        ],
+        "contradicting_evidence": [
+          "G1E008",
+          "G1E009",
+          "G2E014"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare cause of symptoms in adults and can be easily missed in patients with a history of rheumatic heart disease.",
+        "score_logit": -0.15000000000000002,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Antiphospholipid syndrome",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G2E010",
+          "G2E011"
+        ],
+        "contradicting_evidence": [
+          "G2E013"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare cause of valve thrombosis and can be easily missed in patients with a history of rheumatic heart disease.",
+        "score_logit": 1.0,
+        "status": "live"
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Prosthetic valve endocarditis",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Streptokinase-induced hemolytic anemia",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Rheumatic fever",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C004",
+        "name": "Antiphospholipid syndrome",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C003",
+        "name": "Rheumatic fever",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Prosthetic valve endocarditis",
+        "view": "g2"
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 4,
+    "n_evidence": 16,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.5,
+    "frontier_n": 4,
+    "protected_n": 3,
+    "g1_n": 3,
+    "g2_n": 3,
+    "adaptive_action": null,
+    "llm_calls": 3,
+    "history_leakage": 0
+  },
+  "prediction": {
+    "arm": "mosaic_lite_v1",
+    "case_id": "medcasereasoning__000093",
+    "source_id": "93",
+    "dataset": "medcasereasoning",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Streptokinase-induced hemolytic anemia",
+      "Prosthetic valve endocarditis",
+      "Antiphospholipid syndrome",
+      "Rheumatic fever"
+    ],
+    "top2_diagnoses": [
+      "Streptokinase-induced hemolytic anemia",
+      "Prosthetic valve endocarditis"
+    ],
+    "cost": {
+      "llm_calls": 3
+    },
+    "stages": {
+      "mode": "lite",
+      "vignette_chars": 1284,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Prosthetic valve endocarditis",
+            "support_spans": [
+              "progressive dyspnea on exertion, orthopnea, and paroxysmal nocturnal dyspnea",
+              "fever"
+            ],
+            "contradict_spans": [
+              "Dermatologic, cardiovascular, and respiratory exams were unremarkable"
+            ],
+            "why": "The patient has a history of prosthetic mitral valve and presents with symptoms of heart failure and fever, which could indicate endocarditis."
+          },
+          {
+            "name": "Streptokinase-induced hemolytic anemia",
+            "support_spans": [
+              "hemoglobin 9.65 g/dL",
+              "streptokinase for suspected prosthetic mitral valve thrombosis"
+            ],
+            "contradict_spans": [],
+            "why": "The patient received streptokinase and now has anemia, which could be a side effect of the medication."
+          },
+          {
+            "name": "Rheumatic fever",
+            "support_spans": [
+              "rheumatic mitral stenosis",
+              "bilateral knee pain"
+            ],
+            "contradict_spans": [
+              "no swelling, erythema, or warmth",
+              "anti–cyclic citrullinated peptide antibody... were negative"
+            ],
+            "why": "The patient has a history of rheumatic mitral stenosis and presents with joint pain, which could indicate rheumatic fever."
+          }
+        ],
+        "key_evidence_spans": [
+          "progressive dyspnea on exertion, orthopnea, and paroxysmal nocturnal dyspnea",
+          "fever",
+          "hemoglobin 9.65 g/dL",
+          "streptokinase for suspected prosthetic mitral valve thrombosis"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Antiphospholipid syndrome",
+            "support_spans": [
+              "prothrombin time 32.8 s, INR 2.5",
+              "platelets 4,456,000/µL"
+            ],
+            "contradict_spans": [
+              "no pallor, icterus, cyanosis, edema, or jugular venous distension"
+            ],
+            "why": "The patient's elevated INR and thrombocytosis could be indicative of antiphospholipid syndrome, which can cause valve thrombosis and embolic events.",
+            "protected_reason": "This diagnosis may deserve minority protection because it is a rare cause of valve thrombosis and can be easily missed in patients with a history of rheumatic heart disease."
+          },
+          {
+            "name": "Rheumatic fever",
+            "support_spans": [
+              "rheumatic mitral stenosis",
+              "fever and bilateral knee pain"
+            ],
+            "contradict_spans": [
+              "no swelling, erythema, or warmth on joint exam"
+            ],
+            "why": "The patient's history of rheumatic mitral stenosis and current symptoms of fever and bilateral knee pain could suggest a recurrence of rheumatic fever.",
+            "protected_reason": "This diagnosis may deserve minority protection because it is a rare cause of symptoms in adults and can be easily missed in patients with a history of rheumatic heart disease."
+          },
+          {
+            "name": "Prosthetic valve endocarditis",
+            "support_spans": [
+              "fever",
+              "prosthetic mitral valve"
+            ],
+            "contradict_spans": [
+              "blood and urine cultures were sterile"
+            ],
+            "why": "The patient's fever and history of prosthetic mitral valve could suggest prosthetic valve endocarditis, which can be a rare and easily missed diagnosis.",
+            "protected_reason": "This diagnosis may deserve minority protection because it is a rare cause of fever in patients with prosthetic valves and can be difficult to diagnose due to the lack of positive blood cultures."
+          }
+        ],
+        "key_evidence_spans": [
+          "prothrombin time 32.8 s, INR 2.5",
+          "platelets 4,456,000/µL",
+          "fever and bilateral knee pain",
+          "rheumatic mitral stenosis"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "Dermatologic, cardiovascular, and respiratory exams were unremarkable",
+          "no swelling, erythema, or warmth",
+          "anti–cyclic citrullinated peptide antibody... were negative",
+          "no pallor, icterus, cyanosis, edema, or jugular venous distension",
+          "no swelling, erythema, or warmth on joint exam",
+          "blood and urine cultures were sterile"
+        ],
+        "generator_jaccard": 0.5,
+        "top1_same_across_views": false,
+        "top_margin": 0.8999999999999999,
+        "leave_one_view_instability": true,
+        "contradiction_mass": 0
+      },
+      "frontier_after_g": [
+        {
+          "concept_id": "C002",
+          "preferred_name": "Streptokinase-induced hemolytic anemia",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E004"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 2.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C001",
+          "preferred_name": "Prosthetic valve endocarditis",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G2E015"
+          ],
+          "contradicting_evidence": [
+            "G1E005",
+            "G2E016"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare cause of fever in patients with prosthetic valves and can be difficult to diagnose due to the lack of positive blood cultures.",
+          "score_logit": 1.1,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Antiphospholipid syndrome",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G2E010",
+            "G2E011"
+          ],
+          "contradicting_evidence": [
+            "G2E013"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare cause of valve thrombosis and can be easily missed in patients with a history of rheumatic heart disease.",
+          "score_logit": 1.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Rheumatic fever",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E006",
+            "G1E007",
+            "G2E012"
+          ],
+          "contradicting_evidence": [
+            "G1E008",
+            "G1E009",
+            "G2E014"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare cause of symptoms in adults and can be easily missed in patients with a history of rheumatic heart disease.",
+          "score_logit": -0.15000000000000002,
+          "status": "live"
+        }
+      ],
+      "adaptive_action": null,
+      "selector": {
+        "champion": "Streptokinase-induced hemolytic anemia",
+        "runner_up": "Prosthetic valve endocarditis",
+        "rationale": "Low hemoglobin level and recent streptokinase administration support the champion diagnosis, while the lack of positive blood cultures and unremarkable exams contradict the runner-up",
+        "rejected": [
+          {
+            "label": "Antiphospholipid syndrome",
+            "why": "Lack of specific clinical findings and no clear evidence of thrombosis"
+          },
+          {
+            "label": "Rheumatic fever",
+            "why": "Negative anti-CCP antibody and lack of joint swelling or warmth"
+          }
+        ],
+        "margin": "medium"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "progressive dyspnea on exertion, orthopnea, and paroxysmal nocturnal dyspnea",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "fever",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "hemoglobin 9.65 g/dL",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "streptokinase for suspected prosthetic mitral valve thrombosis",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E005",
+          "raw_span": "Dermatologic, cardiovascular, and respiratory exams were unremarkable",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E006",
+          "raw_span": "rheumatic mitral stenosis",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E007",
+          "raw_span": "bilateral knee pain",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E008",
+          "raw_span": "no swelling, erythema, or warmth",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E009",
+          "raw_span": "anti–cyclic citrullinated peptide antibody... were negative",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E010",
+          "raw_span": "prothrombin time 32.8 s, INR 2.5",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E011",
+          "raw_span": "platelets 4,456,000/µL",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E012",
+          "raw_span": "fever and bilateral knee pain",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E013",
+          "raw_span": "no pallor, icterus, cyanosis, edema, or jugular venous distension",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E014",
+          "raw_span": "no swelling, erythema, or warmth on joint exam",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E015",
+          "raw_span": "prosthetic mitral valve",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E016",
+          "raw_span": "blood and urine cultures were sterile",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Prosthetic valve endocarditis",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E002",
+            "G2E015"
+          ],
+          "contradicting_evidence": [
+            "G1E005",
+            "G2E016"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare cause of fever in patients with prosthetic valves and can be difficult to diagnose due to the lack of positive blood cultures.",
+          "score_logit": 1.1,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Streptokinase-induced hemolytic anemia",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E004"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 2.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Rheumatic fever",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E006",
+            "G1E007",
+            "G2E012"
+          ],
+          "contradicting_evidence": [
+            "G1E008",
+            "G1E009",
+            "G2E014"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare cause of symptoms in adults and can be easily missed in patients with a history of rheumatic heart disease.",
+          "score_logit": -0.15000000000000002,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Antiphospholipid syndrome",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G2E010",
+            "G2E011"
+          ],
+          "contradicting_evidence": [
+            "G2E013"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare cause of valve thrombosis and can be easily missed in patients with a history of rheumatic heart disease.",
+          "score_logit": 1.0,
+          "status": "live"
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Prosthetic valve endocarditis",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Streptokinase-induced hemolytic anemia",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Rheumatic fever",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C004",
+          "name": "Antiphospholipid syndrome",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C003",
+          "name": "Rheumatic fever",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Prosthetic valve endocarditis",
+          "view": "g2"
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 4,
+      "n_evidence": 16,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.5,
+      "frontier_n": 4,
+      "protected_n": 3,
+      "g1_n": 3,
+      "g2_n": 3,
+      "adaptive_action": null,
+      "llm_calls": 3,
+      "history_leakage": 0
+    },
+    "wall_s": 4.335
+  },
+  "created_at": "2026-08-08T01:50:19.188024+00:00"
+}

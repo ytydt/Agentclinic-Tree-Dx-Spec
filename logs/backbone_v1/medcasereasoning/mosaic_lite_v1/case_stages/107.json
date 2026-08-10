@@ -1,0 +1,822 @@
+{
+  "case_id": "medcasereasoning__000107",
+  "source_id": "107",
+  "champion": "Leydig cell tumor",
+  "ordered_diagnoses": [
+    "Leydig cell tumor",
+    "Seminoma",
+    "Adrenal rests tumor",
+    "Adrenal incidentaloma"
+  ],
+  "llm_calls": 3,
+  "stages": {
+    "mode": "lite",
+    "vignette_chars": 1278,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Leydig cell tumor",
+          "support_spans": [
+            "painless right testicular swelling",
+            "testicular ultrasound showed enlargement and inhomogeneity of the right testis"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's presentation with painless testicular swelling and ultrasound findings are consistent with a testicular tumor, and Leydig cell tumor is a possible diagnosis."
+        },
+        {
+          "name": "Seminoma",
+          "support_spans": [
+            "intense uptake (SUVmax 25.5) in the right testis"
+          ],
+          "contradict_spans": [],
+          "why": "The high SUVmax value on the 18 FDG PET/CT scan suggests a highly metabolic tumor, which is consistent with seminoma."
+        },
+        {
+          "name": "Adrenal incidentaloma",
+          "support_spans": [
+            "bilateral macronodular adrenal enlargement measuring 15×12 mm on the right and 27×18 mm on the left"
+          ],
+          "contradict_spans": [
+            "no uptake in the adrenal glands"
+          ],
+          "why": "The presence of bilateral adrenal nodules is consistent with adrenal incidentaloma, but the lack of uptake on the PET/CT scan makes this diagnosis less likely."
+        }
+      ],
+      "key_evidence_spans": [
+        "testicular ultrasound showed enlargement and inhomogeneity of the right testis and epididymis",
+        "intense uptake (SUVmax 25.5) in the right testis",
+        "bilateral macronodular adrenal enlargement measuring 15×12 mm on the right and 27×18 mm on the left"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Leydig cell tumor",
+          "support_spans": [
+            "painless right testicular swelling",
+            "testicular ultrasound showed enlargement and inhomogeneity of the right testis and epididymis"
+          ],
+          "contradict_spans": [
+            "no uptake in the adrenal glands"
+          ],
+          "why": "Leydig cell tumors can present with painless testicular swelling and may not always have associated hormonal imbalances or adrenal involvement",
+          "protected_reason": "This diagnosis may be overlooked due to its rarity and the presence of other potential causes of testicular swelling"
+        },
+        {
+          "name": "Adrenal rests tumor",
+          "support_spans": [
+            "bilateral macronodular adrenal enlargement",
+            "new bilateral macronodular adrenal enlargement measuring 15×12 mm on the right and 27×18 mm on the left"
+          ],
+          "contradict_spans": [
+            "no uptake in the adrenal glands"
+          ],
+          "why": "Adrenal rests tumors can present with bilateral adrenal enlargement and may not always have associated hormonal imbalances or increased uptake on PET/CT",
+          "protected_reason": "This diagnosis may be challenging to consider due to its rarity and the need for careful evaluation of adrenal imaging"
+        },
+        {
+          "name": "Seminoma with adrenal metastasis",
+          "support_spans": [
+            "intense uptake (SUVmax 25.5) in the right testis",
+            "bilateral macronodular adrenal enlargement"
+          ],
+          "contradict_spans": [
+            "no uptake in the adrenal glands"
+          ],
+          "why": "Seminoma can present with testicular swelling and may metastasize to the adrenal glands, although the lack of uptake on PET/CT is unusual",
+          "protected_reason": "This diagnosis may be overlooked due to the rarity of adrenal metastasis and the need for careful correlation of imaging and laboratory findings"
+        }
+      ],
+      "key_evidence_spans": [
+        "painless right testicular swelling",
+        "bilateral macronodular adrenal enlargement",
+        "intense uptake (SUVmax 25.5) in the right testis",
+        "no uptake in the adrenal glands"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "no uptake in the adrenal glands"
+      ],
+      "generator_jaccard": 0.2,
+      "top1_same_across_views": true,
+      "top_margin": 1.0,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 1
+    },
+    "frontier_after_g": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Leydig cell tumor",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E004",
+          "G1E005",
+          "G1E001"
+        ],
+        "contradicting_evidence": [
+          "G1E006"
+        ],
+        "protected_reason": "This diagnosis may be overlooked due to its rarity and the presence of other potential causes of testicular swelling",
+        "score_logit": 2.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Seminoma",
+        "aliases": [
+          "Seminoma with adrenal metastasis"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E002",
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G1E006"
+        ],
+        "protected_reason": "This diagnosis may be overlooked due to the rarity of adrenal metastasis and the need for careful correlation of imaging and laboratory findings",
+        "score_logit": 1.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Adrenal rests tumor",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G2E007",
+          "G2E008"
+        ],
+        "contradicting_evidence": [
+          "G1E006"
+        ],
+        "protected_reason": "This diagnosis may be challenging to consider due to its rarity and the need for careful evaluation of adrenal imaging",
+        "score_logit": 1.0,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Adrenal incidentaloma",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E003"
+        ],
+        "contradicting_evidence": [
+          "G1E006"
+        ],
+        "protected_reason": "",
+        "score_logit": -0.25,
+        "status": "live"
+      }
+    ],
+    "adaptive_action": null,
+    "selector": {
+      "champion": "Leydig cell tumor",
+      "runner_up": "Seminoma",
+      "rationale": "Leydig cell tumor is supported by painless right testicular swelling and testicular ultrasound findings, with no strong contradictions",
+      "rejected": [
+        {
+          "label": "Adrenal rests tumor",
+          "why": "lack of uptake in the adrenal glands on PET/CT"
+        },
+        {
+          "label": "Adrenal incidentaloma",
+          "why": "no clear connection to testicular pathology"
+        }
+      ],
+      "margin": "medium"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "testicular ultrasound showed enlargement and inhomogeneity of the right testis and epididymis",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "intense uptake (SUVmax 25.5) in the right testis",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "bilateral macronodular adrenal enlargement measuring 15×12 mm on the right and 27×18 mm on the left",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "painless right testicular swelling",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E005",
+        "raw_span": "testicular ultrasound showed enlargement and inhomogeneity of the right testis",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E006",
+        "raw_span": "no uptake in the adrenal glands",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E007",
+        "raw_span": "bilateral macronodular adrenal enlargement",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E008",
+        "raw_span": "new bilateral macronodular adrenal enlargement measuring 15×12 mm on the right and 27×18 mm on the left",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Leydig cell tumor",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E004",
+          "G1E005",
+          "G1E001"
+        ],
+        "contradicting_evidence": [
+          "G1E006"
+        ],
+        "protected_reason": "This diagnosis may be overlooked due to its rarity and the presence of other potential causes of testicular swelling",
+        "score_logit": 2.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Seminoma",
+        "aliases": [
+          "Seminoma with adrenal metastasis"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G1E002",
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G1E006"
+        ],
+        "protected_reason": "This diagnosis may be overlooked due to the rarity of adrenal metastasis and the need for careful correlation of imaging and laboratory findings",
+        "score_logit": 1.35,
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Adrenal incidentaloma",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "supporting_evidence": [
+          "G1E003"
+        ],
+        "contradicting_evidence": [
+          "G1E006"
+        ],
+        "protected_reason": "",
+        "score_logit": -0.25,
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Adrenal rests tumor",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "supporting_evidence": [
+          "G2E007",
+          "G2E008"
+        ],
+        "contradicting_evidence": [
+          "G1E006"
+        ],
+        "protected_reason": "This diagnosis may be challenging to consider due to its rarity and the need for careful evaluation of adrenal imaging",
+        "score_logit": 1.0,
+        "status": "live"
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Leydig cell tumor",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Seminoma",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Adrenal incidentaloma",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Leydig cell tumor",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C004",
+        "name": "Adrenal rests tumor",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Seminoma with adrenal metastasis",
+        "view": "g2"
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 4,
+    "n_evidence": 8,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.2,
+    "frontier_n": 4,
+    "protected_n": 3,
+    "g1_n": 3,
+    "g2_n": 3,
+    "adaptive_action": null,
+    "llm_calls": 3,
+    "history_leakage": 0
+  },
+  "prediction": {
+    "arm": "mosaic_lite_v1",
+    "case_id": "medcasereasoning__000107",
+    "source_id": "107",
+    "dataset": "medcasereasoning",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Leydig cell tumor",
+      "Seminoma",
+      "Adrenal rests tumor",
+      "Adrenal incidentaloma"
+    ],
+    "top2_diagnoses": [
+      "Leydig cell tumor",
+      "Seminoma"
+    ],
+    "cost": {
+      "llm_calls": 3
+    },
+    "stages": {
+      "mode": "lite",
+      "vignette_chars": 1278,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Leydig cell tumor",
+            "support_spans": [
+              "painless right testicular swelling",
+              "testicular ultrasound showed enlargement and inhomogeneity of the right testis"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's presentation with painless testicular swelling and ultrasound findings are consistent with a testicular tumor, and Leydig cell tumor is a possible diagnosis."
+          },
+          {
+            "name": "Seminoma",
+            "support_spans": [
+              "intense uptake (SUVmax 25.5) in the right testis"
+            ],
+            "contradict_spans": [],
+            "why": "The high SUVmax value on the 18 FDG PET/CT scan suggests a highly metabolic tumor, which is consistent with seminoma."
+          },
+          {
+            "name": "Adrenal incidentaloma",
+            "support_spans": [
+              "bilateral macronodular adrenal enlargement measuring 15×12 mm on the right and 27×18 mm on the left"
+            ],
+            "contradict_spans": [
+              "no uptake in the adrenal glands"
+            ],
+            "why": "The presence of bilateral adrenal nodules is consistent with adrenal incidentaloma, but the lack of uptake on the PET/CT scan makes this diagnosis less likely."
+          }
+        ],
+        "key_evidence_spans": [
+          "testicular ultrasound showed enlargement and inhomogeneity of the right testis and epididymis",
+          "intense uptake (SUVmax 25.5) in the right testis",
+          "bilateral macronodular adrenal enlargement measuring 15×12 mm on the right and 27×18 mm on the left"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Leydig cell tumor",
+            "support_spans": [
+              "painless right testicular swelling",
+              "testicular ultrasound showed enlargement and inhomogeneity of the right testis and epididymis"
+            ],
+            "contradict_spans": [
+              "no uptake in the adrenal glands"
+            ],
+            "why": "Leydig cell tumors can present with painless testicular swelling and may not always have associated hormonal imbalances or adrenal involvement",
+            "protected_reason": "This diagnosis may be overlooked due to its rarity and the presence of other potential causes of testicular swelling"
+          },
+          {
+            "name": "Adrenal rests tumor",
+            "support_spans": [
+              "bilateral macronodular adrenal enlargement",
+              "new bilateral macronodular adrenal enlargement measuring 15×12 mm on the right and 27×18 mm on the left"
+            ],
+            "contradict_spans": [
+              "no uptake in the adrenal glands"
+            ],
+            "why": "Adrenal rests tumors can present with bilateral adrenal enlargement and may not always have associated hormonal imbalances or increased uptake on PET/CT",
+            "protected_reason": "This diagnosis may be challenging to consider due to its rarity and the need for careful evaluation of adrenal imaging"
+          },
+          {
+            "name": "Seminoma with adrenal metastasis",
+            "support_spans": [
+              "intense uptake (SUVmax 25.5) in the right testis",
+              "bilateral macronodular adrenal enlargement"
+            ],
+            "contradict_spans": [
+              "no uptake in the adrenal glands"
+            ],
+            "why": "Seminoma can present with testicular swelling and may metastasize to the adrenal glands, although the lack of uptake on PET/CT is unusual",
+            "protected_reason": "This diagnosis may be overlooked due to the rarity of adrenal metastasis and the need for careful correlation of imaging and laboratory findings"
+          }
+        ],
+        "key_evidence_spans": [
+          "painless right testicular swelling",
+          "bilateral macronodular adrenal enlargement",
+          "intense uptake (SUVmax 25.5) in the right testis",
+          "no uptake in the adrenal glands"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "no uptake in the adrenal glands"
+        ],
+        "generator_jaccard": 0.2,
+        "top1_same_across_views": true,
+        "top_margin": 1.0,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 1
+      },
+      "frontier_after_g": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Leydig cell tumor",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E004",
+            "G1E005",
+            "G1E001"
+          ],
+          "contradicting_evidence": [
+            "G1E006"
+          ],
+          "protected_reason": "This diagnosis may be overlooked due to its rarity and the presence of other potential causes of testicular swelling",
+          "score_logit": 2.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Seminoma",
+          "aliases": [
+            "Seminoma with adrenal metastasis"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E002",
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G1E006"
+          ],
+          "protected_reason": "This diagnosis may be overlooked due to the rarity of adrenal metastasis and the need for careful correlation of imaging and laboratory findings",
+          "score_logit": 1.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Adrenal rests tumor",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G2E007",
+            "G2E008"
+          ],
+          "contradicting_evidence": [
+            "G1E006"
+          ],
+          "protected_reason": "This diagnosis may be challenging to consider due to its rarity and the need for careful evaluation of adrenal imaging",
+          "score_logit": 1.0,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Adrenal incidentaloma",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E003"
+          ],
+          "contradicting_evidence": [
+            "G1E006"
+          ],
+          "protected_reason": "",
+          "score_logit": -0.25,
+          "status": "live"
+        }
+      ],
+      "adaptive_action": null,
+      "selector": {
+        "champion": "Leydig cell tumor",
+        "runner_up": "Seminoma",
+        "rationale": "Leydig cell tumor is supported by painless right testicular swelling and testicular ultrasound findings, with no strong contradictions",
+        "rejected": [
+          {
+            "label": "Adrenal rests tumor",
+            "why": "lack of uptake in the adrenal glands on PET/CT"
+          },
+          {
+            "label": "Adrenal incidentaloma",
+            "why": "no clear connection to testicular pathology"
+          }
+        ],
+        "margin": "medium"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "testicular ultrasound showed enlargement and inhomogeneity of the right testis and epididymis",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "intense uptake (SUVmax 25.5) in the right testis",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "bilateral macronodular adrenal enlargement measuring 15×12 mm on the right and 27×18 mm on the left",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "painless right testicular swelling",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E005",
+          "raw_span": "testicular ultrasound showed enlargement and inhomogeneity of the right testis",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E006",
+          "raw_span": "no uptake in the adrenal glands",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E007",
+          "raw_span": "bilateral macronodular adrenal enlargement",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E008",
+          "raw_span": "new bilateral macronodular adrenal enlargement measuring 15×12 mm on the right and 27×18 mm on the left",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Leydig cell tumor",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E004",
+            "G1E005",
+            "G1E001"
+          ],
+          "contradicting_evidence": [
+            "G1E006"
+          ],
+          "protected_reason": "This diagnosis may be overlooked due to its rarity and the presence of other potential causes of testicular swelling",
+          "score_logit": 2.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Seminoma",
+          "aliases": [
+            "Seminoma with adrenal metastasis"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G1E002",
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G1E006"
+          ],
+          "protected_reason": "This diagnosis may be overlooked due to the rarity of adrenal metastasis and the need for careful correlation of imaging and laboratory findings",
+          "score_logit": 1.35,
+          "status": "live"
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Adrenal incidentaloma",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "supporting_evidence": [
+            "G1E003"
+          ],
+          "contradicting_evidence": [
+            "G1E006"
+          ],
+          "protected_reason": "",
+          "score_logit": -0.25,
+          "status": "live"
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Adrenal rests tumor",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "supporting_evidence": [
+            "G2E007",
+            "G2E008"
+          ],
+          "contradicting_evidence": [
+            "G1E006"
+          ],
+          "protected_reason": "This diagnosis may be challenging to consider due to its rarity and the need for careful evaluation of adrenal imaging",
+          "score_logit": 1.0,
+          "status": "live"
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Leydig cell tumor",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Seminoma",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Adrenal incidentaloma",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Leydig cell tumor",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C004",
+          "name": "Adrenal rests tumor",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Seminoma with adrenal metastasis",
+          "view": "g2"
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 4,
+      "n_evidence": 8,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.2,
+      "frontier_n": 4,
+      "protected_n": 3,
+      "g1_n": 3,
+      "g2_n": 3,
+      "adaptive_action": null,
+      "llm_calls": 3,
+      "history_leakage": 0
+    },
+    "wall_s": 4.828
+  },
+  "created_at": "2026-08-08T01:50:20.527778+00:00"
+}
