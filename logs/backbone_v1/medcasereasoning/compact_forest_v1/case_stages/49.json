@@ -1,0 +1,354 @@
+{
+  "source_id": "49",
+  "case_id": "medcasereasoning__000049",
+  "champion": "intra-abdominal abscess",
+  "ordered_diagnoses": [
+    "intra-abdominal abscess",
+    "appendiceal stump leak",
+    "diverticulitis",
+    "typhlitis",
+    "appendicitis"
+  ],
+  "llm_calls": 2,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "appendicitis",
+              "support_spans": [
+                "right iliac fossa pain",
+                "pain in the right lower quadrant"
+              ],
+              "contradict_spans": [
+                "he had a laparoscopic appendectomy performed 8 months earlier"
+              ],
+              "why": "The patient's symptoms and examination results suggest a condition affecting the right lower quadrant of the abdomen.",
+              "axis_node": "right lower quadrant pain"
+            },
+            {
+              "name": "diverticulitis",
+              "support_spans": [
+                "abdominal palpation elicited pain in the right lower quadrant"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's symptoms and laboratory results could be consistent with diverticulitis.",
+              "axis_node": "inflammatory bowel disease"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "typhlitis",
+              "support_spans": [
+                "neutrophil count of 85%"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's elevated white-blood-cell count with a high percentage of neutrophils suggests a possible infectious or inflammatory process.",
+              "axis_node": "neutrophilic inflammation"
+            },
+            {
+              "name": "intra-abdominal abscess",
+              "support_spans": [
+                "a 25-mm pericecal collection adjacent to surgical clips"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's abdominal CT scan results indicate a possible abscess formation.",
+              "axis_node": "abscess formation"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "abscess",
+              "support_spans": [
+                "a 25-mm pericecal collection adjacent to surgical clips"
+              ],
+              "contradict_spans": [],
+              "why": "The abdominal CT scan results provide decisive evidence for the presence of an abscess.",
+              "axis_node": "imaging findings"
+            },
+            {
+              "name": "appendiceal stump leak",
+              "support_spans": [
+                "a swollen and thickened tubular structure measuring 36 × 27 mm at the cecal pole"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's surgical history and abdominal CT scan results suggest a possible leak from the appendiceal stump.",
+              "axis_node": "surgical complications"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "right iliac fossa pain",
+        "pain in the right lower quadrant without peritoneal signs",
+        "a white‐blood‐cell count of 25,000 cells/mm3 with 85% neutrophils",
+        "a C‐reactive protein level of 180 mg/dL",
+        "a swollen and thickened tubular structure measuring 36 × 27 mm at the cecal pole",
+        "a 25‐mm pericecal collection adjacent to surgical clips"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [
+        "pain in the right lower quadrant without peritoneal signs",
+        "a white‐blood‐cell count of 25,000 cells/mm3 with 85% neutrophils",
+        "a C‐reactive protein level of 180 mg/dL",
+        "a 25‐mm pericecal collection adjacent to surgical clips",
+        "he had a laparoscopic appendectomy performed 8 months earlier"
+      ],
+      "generator_jaccard": 0.0,
+      "top1_same_across_views": true,
+      "top_margin": 0.5,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "appendicitis",
+        "preferred_label": "appendicitis",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "right lower quadrant pain"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "SYNDE007"
+        ],
+        "contradicting_evidence": [
+          "SYNDE008"
+        ],
+        "support_spans": [
+          "right iliac fossa pain",
+          "pain in the right lower quadrant"
+        ],
+        "contradict_spans": [
+          "he had a laparoscopic appendectomy performed 8 months earlier"
+        ],
+        "score_logit": 0.75,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "diverticulitis",
+        "preferred_label": "diverticulitis",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "inflammatory bowel disease"
+        ],
+        "supporting_evidence": [
+          "SYNDE009"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "abdominal palpation elicited pain in the right lower quadrant"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "typhlitis",
+        "preferred_label": "typhlitis",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "neutrophilic inflammation"
+        ],
+        "supporting_evidence": [
+          "MECHE010"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "neutrophil count of 85%"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "intra-abdominal abscess",
+        "preferred_label": "intra-abdominal abscess",
+        "generator_views": [
+          "mechanism",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "abscess formation",
+          "imaging findings"
+        ],
+        "supporting_evidence": [
+          "MECHE011"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "a 25-mm pericecal collection adjacent to surgical clips"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.5,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "appendiceal stump leak",
+        "preferred_label": "appendiceal stump leak",
+        "generator_views": [
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "surgical complications"
+        ],
+        "supporting_evidence": [
+          "KE005"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "a swollen and thickened tubular structure measuring 36 × 27 mm at the cecal pole"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "right iliac fossa pain",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "pain in the right lower quadrant without peritoneal signs",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "a white‐blood‐cell count of 25,000 cells/mm3 with 85% neutrophils",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "a C‐reactive protein level of 180 mg/dL",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "a swollen and thickened tubular structure measuring 36 × 27 mm at the cecal pole",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "a 25‐mm pericecal collection adjacent to surgical clips",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "SYNDE007",
+        "raw_span": "pain in the right lower quadrant",
+        "source_view": "syndrome_anatomy"
+      },
+      {
+        "evidence_id": "SYNDE008",
+        "raw_span": "he had a laparoscopic appendectomy performed 8 months earlier",
+        "source_view": "syndrome_anatomy"
+      },
+      {
+        "evidence_id": "SYNDE009",
+        "raw_span": "abdominal palpation elicited pain in the right lower quadrant",
+        "source_view": "syndrome_anatomy"
+      },
+      {
+        "evidence_id": "MECHE010",
+        "raw_span": "neutrophil count of 85%",
+        "source_view": "mechanism"
+      },
+      {
+        "evidence_id": "MECHE011",
+        "raw_span": "a 25-mm pericecal collection adjacent to surgical clips",
+        "source_view": "mechanism"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "intra-abdominal abscess",
+        "preferred_label": "intra-abdominal abscess",
+        "support_spans": [
+          "a 25-mm pericecal collection adjacent to surgical clips"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.5
+      },
+      {
+        "preferred_name": "appendiceal stump leak",
+        "preferred_label": "appendiceal stump leak",
+        "support_spans": [
+          "a swollen and thickened tubular structure measuring 36 × 27 mm at the cecal pole"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "diverticulitis",
+        "preferred_label": "diverticulitis",
+        "support_spans": [
+          "abdominal palpation elicited pain in the right lower quadrant"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "typhlitis",
+        "preferred_label": "typhlitis",
+        "support_spans": [
+          "neutrophil count of 85%"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "appendicitis",
+        "preferred_label": "appendicitis",
+        "support_spans": [
+          "right iliac fossa pain",
+          "pain in the right lower quadrant"
+        ],
+        "contradict_spans": [
+          "he had a laparoscopic appendectomy performed 8 months earlier"
+        ],
+        "score_logit": 0.75
+      }
+    ],
+    "vignette_chars": 820,
+    "frontier_selector": {
+      "champion": "intra-abdominal abscess",
+      "runner_up": "appendiceal stump leak",
+      "why": "the presence of a 25-mm pericecal collection adjacent to surgical clips decided it"
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {}
+  },
+  "metrics": {
+    "llm_calls": 2,
+    "top_margin": 0.5,
+    "unexplained_n": 5
+  }
+}

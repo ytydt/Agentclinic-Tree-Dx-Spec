@@ -1,0 +1,399 @@
+{
+  "source_id": "67",
+  "case_id": "diagnosisarena__000067",
+  "champion": "Bradyarrhythmia",
+  "ordered_diagnoses": [
+    "Bradyarrhythmia",
+    "Hypoxemic respiratory failure",
+    "Pulmonary embolism",
+    "Cardiac arrest",
+    "Pneumonia"
+  ],
+  "llm_calls": 1,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "Intracranial hemorrhage",
+              "support_spans": [
+                "altered mental status",
+                "headache"
+              ],
+              "contradict_spans": [
+                "Computed tomography of the head: No acute pathology"
+              ],
+              "why": "Patient presented with symptoms that could indicate a hemorrhage, but imaging did not confirm.",
+              "axis_node": "CNS"
+            },
+            {
+              "name": "Pulmonary embolism",
+              "support_spans": [
+                "emesis",
+                "pulmonary consolidation"
+              ],
+              "contradict_spans": [],
+              "why": "Patient has symptoms and imaging consistent with a pulmonary issue.",
+              "axis_node": "Respiratory"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "Bradyarrhythmia",
+              "support_spans": [
+                "heart rate of 49 beats/min",
+                "intrinsic junctional rhythm at rate of about 60 beats/min"
+              ],
+              "contradict_spans": [],
+              "why": "Patient's heart rate is abnormally low, indicating a potential issue with the heart's rhythm.",
+              "axis_node": "Cardiac conduction"
+            },
+            {
+              "name": "Hypoxemic respiratory failure",
+              "support_spans": [
+                "oxygen saturation of 95% on a nonrebreather mask",
+                "respiratory rate of 27 breaths/min"
+              ],
+              "contradict_spans": [],
+              "why": "Patient requires supplemental oxygen and has an elevated respiratory rate.",
+              "axis_node": "Respiratory drive"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "Pneumonia",
+              "support_spans": [
+                "pulmonary consolidation"
+              ],
+              "contradict_spans": [],
+              "why": "Imaging shows consolidation, which could indicate an infectious process.",
+              "axis_node": "Infectious disease"
+            },
+            {
+              "name": "Cardiac arrest",
+              "support_spans": [
+                "pulse rate in the 20s"
+              ],
+              "contradict_spans": [],
+              "why": "Patient's initial presentation included a critically low pulse rate.",
+              "axis_node": "Cardiac arrest"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "altered mental status",
+        "weakness",
+        "slurred speech",
+        "emesis",
+        "headache",
+        "pulse rate in the 20s",
+        "pulmonary consolidation",
+        "intrinsic junctional rhythm at rate of about 60 beats/min"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [
+        "slurred speech",
+        "Computed tomography of the head: No acute pathology"
+      ],
+      "generator_jaccard": 0.0,
+      "top1_same_across_views": false,
+      "top_margin": 0.0,
+      "leave_one_view_instability": true,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Intracranial hemorrhage",
+        "preferred_label": "Intracranial hemorrhage",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "CNS"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE005"
+        ],
+        "contradicting_evidence": [
+          "SYNDE009"
+        ],
+        "support_spans": [
+          "altered mental status",
+          "headache"
+        ],
+        "contradict_spans": [
+          "Computed tomography of the head: No acute pathology"
+        ],
+        "score_logit": 0.75,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Pulmonary embolism",
+        "preferred_label": "Pulmonary embolism",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "Respiratory"
+        ],
+        "supporting_evidence": [
+          "KE004",
+          "KE007"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "emesis",
+          "pulmonary consolidation"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Bradyarrhythmia",
+        "preferred_label": "Bradyarrhythmia",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Cardiac conduction"
+        ],
+        "supporting_evidence": [
+          "MECHE010",
+          "KE008"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "heart rate of 49 beats/min",
+          "intrinsic junctional rhythm at rate of about 60 beats/min"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Hypoxemic respiratory failure",
+        "preferred_label": "Hypoxemic respiratory failure",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Respiratory drive"
+        ],
+        "supporting_evidence": [
+          "MECHE011",
+          "MECHE012"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "oxygen saturation of 95% on a nonrebreather mask",
+          "respiratory rate of 27 breaths/min"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Pneumonia",
+        "preferred_label": "Pneumonia",
+        "generator_views": [
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Infectious disease"
+        ],
+        "supporting_evidence": [
+          "KE007"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "pulmonary consolidation"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C006",
+        "preferred_name": "Cardiac arrest",
+        "preferred_label": "Cardiac arrest",
+        "generator_views": [
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Cardiac arrest"
+        ],
+        "supporting_evidence": [
+          "KE006"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "pulse rate in the 20s"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "altered mental status",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "weakness",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "slurred speech",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "emesis",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "headache",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "pulse rate in the 20s",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE007",
+        "raw_span": "pulmonary consolidation",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE008",
+        "raw_span": "intrinsic junctional rhythm at rate of about 60 beats/min",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "SYNDE009",
+        "raw_span": "Computed tomography of the head: No acute pathology",
+        "source_view": "syndrome_anatomy"
+      },
+      {
+        "evidence_id": "MECHE010",
+        "raw_span": "heart rate of 49 beats/min",
+        "source_view": "mechanism"
+      },
+      {
+        "evidence_id": "MECHE011",
+        "raw_span": "oxygen saturation of 95% on a nonrebreather mask",
+        "source_view": "mechanism"
+      },
+      {
+        "evidence_id": "MECHE012",
+        "raw_span": "respiratory rate of 27 breaths/min",
+        "source_view": "mechanism"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "Bradyarrhythmia",
+        "preferred_label": "Bradyarrhythmia",
+        "support_spans": [
+          "heart rate of 49 beats/min",
+          "intrinsic junctional rhythm at rate of about 60 beats/min"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "Hypoxemic respiratory failure",
+        "preferred_label": "Hypoxemic respiratory failure",
+        "support_spans": [
+          "oxygen saturation of 95% on a nonrebreather mask",
+          "respiratory rate of 27 breaths/min"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "Pulmonary embolism",
+        "preferred_label": "Pulmonary embolism",
+        "support_spans": [
+          "emesis",
+          "pulmonary consolidation"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "Cardiac arrest",
+        "preferred_label": "Cardiac arrest",
+        "support_spans": [
+          "pulse rate in the 20s"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "Pneumonia",
+        "preferred_label": "Pneumonia",
+        "support_spans": [
+          "pulmonary consolidation"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "Intracranial hemorrhage",
+        "preferred_label": "Intracranial hemorrhage",
+        "support_spans": [
+          "altered mental status",
+          "headache"
+        ],
+        "contradict_spans": [
+          "Computed tomography of the head: No acute pathology"
+        ],
+        "score_logit": 0.75
+      }
+    ],
+    "vignette_chars": 914,
+    "frontier_selector": {
+      "champion": "Bradyarrhythmia",
+      "runner_up": "Pulmonary embolism",
+      "why": "The evidence of a heart rate of 49 beats/min and an intrinsic junctional rhythm at a rate of about 60 beats/min specifically supports Bradyarrhythmia."
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {
+      "mode": "evidence",
+      "before": 6,
+      "after": 6
+    },
+    "reselect_from": "compact_forest_v1"
+  }
+}

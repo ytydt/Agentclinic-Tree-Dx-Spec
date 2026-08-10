@@ -1,0 +1,365 @@
+{
+  "source_id": "2",
+  "case_id": "medcasereasoning__000002",
+  "champion": "renal tubular acidosis",
+  "ordered_diagnoses": [
+    "renal tubular acidosis",
+    "lactic acidosis",
+    "methanol poisoning",
+    "pyogenic arthritis",
+    "diabetic ketoacidosis"
+  ],
+  "llm_calls": 1,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "septic arthritis",
+              "support_spans": [
+                "A 75-year-old Caucasian woman was admitted with a prosthetic hip infection"
+              ],
+              "contradict_spans": [],
+              "why": "The patient was admitted with a prosthetic hip infection, which is a common cause of septic arthritis.",
+              "axis_node": "infection"
+            },
+            {
+              "name": "renal tubular acidosis",
+              "support_spans": [
+                "bicarbonate 5 mmol/L",
+                "base excess –22.7 mmol/L"
+              ],
+              "contradict_spans": [],
+              "why": "The patient has a low bicarbonate level and a high anion gap, which is consistent with renal tubular acidosis.",
+              "axis_node": "electrolyte imbalance"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "lactic acidosis",
+              "support_spans": [
+                "lactic acid 0.7 mmol/L"
+              ],
+              "contradict_spans": [],
+              "why": "The patient has an elevated lactic acid level, which is consistent with lactic acidosis.",
+              "axis_node": "metabolic disorder"
+            },
+            {
+              "name": "diabetic ketoacidosis",
+              "support_spans": [
+                "type 2 diabetes"
+              ],
+              "contradict_spans": [
+                "blood ketones <0.2 mmol/L"
+              ],
+              "why": "The patient has type 2 diabetes, which is a risk factor for diabetic ketoacidosis, but the blood ketone level is not elevated.",
+              "axis_node": "endocrine disorder"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "pyogenic arthritis",
+              "support_spans": [
+                "prosthetic hip infection"
+              ],
+              "contradict_spans": [],
+              "why": "The patient has a prosthetic hip infection, which can be diagnosed with joint aspiration or biopsy.",
+              "axis_node": "infectious disease"
+            },
+            {
+              "name": "methanol poisoning",
+              "support_spans": [
+                "osmolar gap was mildly elevated at 21 mOsm/kg"
+              ],
+              "contradict_spans": [],
+              "why": "The patient has an elevated osmolar gap, which is consistent with methanol poisoning.",
+              "axis_node": "toxicology"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "A 75-year-old Caucasian woman was admitted with a prosthetic hip infection",
+        "bicarbonate 5 mmol/L",
+        "base excess –22.7 mmol/L",
+        "lactic acid 0.7 mmol/L",
+        "type 2 diabetes",
+        "blood ketones <0.2 mmol/L",
+        "osmolar gap was mildly elevated at 21 mOsm/kg"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [
+        "blood ketones <0.2 mmol/L"
+      ],
+      "generator_jaccard": 0.0,
+      "top1_same_across_views": false,
+      "top_margin": 1.0,
+      "leave_one_view_instability": true,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "septic arthritis",
+        "preferred_label": "septic arthritis",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "infection"
+        ],
+        "supporting_evidence": [
+          "KE001"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "A 75-year-old Caucasian woman was admitted with a prosthetic hip infection"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "renal tubular acidosis",
+        "preferred_label": "renal tubular acidosis",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "electrolyte imbalance"
+        ],
+        "supporting_evidence": [
+          "KE002",
+          "KE003"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "bicarbonate 5 mmol/L",
+          "base excess –22.7 mmol/L"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "lactic acidosis",
+        "preferred_label": "lactic acidosis",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "metabolic disorder"
+        ],
+        "supporting_evidence": [
+          "KE004"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "lactic acid 0.7 mmol/L"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "diabetic ketoacidosis",
+        "preferred_label": "diabetic ketoacidosis",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "endocrine disorder"
+        ],
+        "supporting_evidence": [
+          "KE005"
+        ],
+        "contradicting_evidence": [
+          "KE006"
+        ],
+        "support_spans": [
+          "type 2 diabetes"
+        ],
+        "contradict_spans": [
+          "blood ketones <0.2 mmol/L"
+        ],
+        "score_logit": -0.25,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "pyogenic arthritis",
+        "preferred_label": "pyogenic arthritis",
+        "generator_views": [
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "infectious disease"
+        ],
+        "supporting_evidence": [
+          "MODAE008"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "prosthetic hip infection"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C006",
+        "preferred_name": "methanol poisoning",
+        "preferred_label": "methanol poisoning",
+        "generator_views": [
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "toxicology"
+        ],
+        "supporting_evidence": [
+          "KE007"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "osmolar gap was mildly elevated at 21 mOsm/kg"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "A 75-year-old Caucasian woman was admitted with a prosthetic hip infection",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "bicarbonate 5 mmol/L",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "base excess –22.7 mmol/L",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "lactic acid 0.7 mmol/L",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "type 2 diabetes",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "blood ketones <0.2 mmol/L",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE007",
+        "raw_span": "osmolar gap was mildly elevated at 21 mOsm/kg",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "MODAE008",
+        "raw_span": "prosthetic hip infection",
+        "source_view": "modality_decisive"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "renal tubular acidosis",
+        "preferred_label": "renal tubular acidosis",
+        "support_spans": [
+          "bicarbonate 5 mmol/L",
+          "base excess –22.7 mmol/L"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "lactic acidosis",
+        "preferred_label": "lactic acidosis",
+        "support_spans": [
+          "lactic acid 0.7 mmol/L"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "methanol poisoning",
+        "preferred_label": "methanol poisoning",
+        "support_spans": [
+          "osmolar gap was mildly elevated at 21 mOsm/kg"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "pyogenic arthritis",
+        "preferred_label": "pyogenic arthritis",
+        "support_spans": [
+          "prosthetic hip infection"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "septic arthritis",
+        "preferred_label": "septic arthritis",
+        "support_spans": [
+          "A 75-year-old Caucasian woman was admitted with a prosthetic hip infection"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "diabetic ketoacidosis",
+        "preferred_label": "diabetic ketoacidosis",
+        "support_spans": [
+          "type 2 diabetes"
+        ],
+        "contradict_spans": [
+          "blood ketones <0.2 mmol/L"
+        ],
+        "score_logit": -0.25
+      }
+    ],
+    "vignette_chars": 1653,
+    "frontier_selector": {
+      "champion": "renal tubular acidosis",
+      "runner_up": "",
+      "why": "The evidence of severe metabolic acidosis with low bicarbonate and significant base excess deficit decided it."
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {
+      "mode": "evidence",
+      "before": 6,
+      "after": 5
+    },
+    "reselect_from": "compact_forest_v1"
+  }
+}

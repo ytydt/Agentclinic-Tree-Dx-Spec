@@ -1,0 +1,361 @@
+{
+  "source_id": "692",
+  "case_id": "diagnosisarena__000692",
+  "champion": "Abscess",
+  "ordered_diagnoses": [
+    "Abscess",
+    "Mediastinitis",
+    "Empyema",
+    "Mediastinal infection",
+    "Sepsis"
+  ],
+  "llm_calls": 1,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "Mediastinitis",
+              "support_spans": [
+                "mediastinal mass",
+                "low breath sound in left lung",
+                "C-reactive protein 20.85 mg/L, later increased to 261.62 mg/L"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's symptoms and laboratory findings suggest an inflammatory process in the mediastinum.",
+              "axis_node": "Mediastinal syndrome"
+            },
+            {
+              "name": "Empyema",
+              "support_spans": [
+                "low breath sound in left lung",
+                "Complete atelectasis of left lung"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's respiratory symptoms and imaging findings suggest a possible pleural infection.",
+              "axis_node": "Pleural syndrome"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "Abscess",
+              "support_spans": [
+                "Cyst fluid positive for Streptococcus pyogenes",
+                "high fever and chest pain occurred"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's symptoms and laboratory findings suggest a bacterial infection leading to abscess formation.",
+              "axis_node": "Infectious mechanism"
+            },
+            {
+              "name": "Sepsis",
+              "support_spans": [
+                "White cell count 12,110/μL, later increased to 31,400/μL",
+                "C-reactive protein 20.85 mg/L, later increased to 261.62 mg/L"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's laboratory findings suggest a systemic inflammatory response to infection.",
+              "axis_node": "Systemic mechanism"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "Pyogenic mediastinal abscess",
+              "support_spans": [
+                "Cyst fluid positive for Streptococcus pyogenes",
+                "CT findings: Mass of soft tissue density in mediastinum"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's imaging and laboratory findings suggest a bacterial abscess in the mediastinum.",
+              "axis_node": "Imaging diagnosis"
+            },
+            {
+              "name": "Mediastinal infection",
+              "support_spans": [
+                "EUS findings: Hypoechoic lesion of 40mm outside the esophagus",
+                "MRI findings: Enlarged mediastinal mass"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's imaging findings suggest an infectious process in the mediastinum.",
+              "axis_node": "Imaging diagnosis"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "mediastinal mass",
+        "low breath sound in left lung",
+        "C-reactive protein 20.85 mg/L, later increased to 261.62 mg/L",
+        "Cyst fluid positive for Streptococcus pyogenes",
+        "Complete atelectasis of left lung",
+        "CT findings: Mass of soft tissue density in mediastinum",
+        "EUS findings: Hypoechoic lesion of 40mm outside the esophagus",
+        "MRI findings: Enlarged mediastinal mass"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [],
+      "generator_jaccard": 0.0,
+      "top1_same_across_views": true,
+      "top_margin": 0.5,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Mediastinitis",
+        "preferred_label": "Mediastinitis",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "Mediastinal syndrome"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE002",
+          "KE003"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "mediastinal mass",
+          "low breath sound in left lung",
+          "C-reactive protein 20.85 mg/L, later increased to 261.62 mg/L"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Empyema",
+        "preferred_label": "Empyema",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "Pleural syndrome"
+        ],
+        "supporting_evidence": [
+          "KE002",
+          "KE005"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "low breath sound in left lung",
+          "Complete atelectasis of left lung"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Abscess",
+        "preferred_label": "Abscess",
+        "generator_views": [
+          "mechanism",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Infectious mechanism",
+          "Imaging diagnosis"
+        ],
+        "supporting_evidence": [
+          "KE004",
+          "MECHE009",
+          "KE006"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Cyst fluid positive for Streptococcus pyogenes",
+          "high fever and chest pain occurred",
+          "CT findings: Mass of soft tissue density in mediastinum"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.5,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Sepsis",
+        "preferred_label": "Sepsis",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Systemic mechanism"
+        ],
+        "supporting_evidence": [
+          "MECHE010",
+          "KE003"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "White cell count 12,110/μL, later increased to 31,400/μL",
+          "C-reactive protein 20.85 mg/L, later increased to 261.62 mg/L"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Mediastinal infection",
+        "preferred_label": "Mediastinal infection",
+        "generator_views": [
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Imaging diagnosis"
+        ],
+        "supporting_evidence": [
+          "KE007",
+          "KE008"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "EUS findings: Hypoechoic lesion of 40mm outside the esophagus",
+          "MRI findings: Enlarged mediastinal mass"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "mediastinal mass",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "low breath sound in left lung",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "C-reactive protein 20.85 mg/L, later increased to 261.62 mg/L",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "Cyst fluid positive for Streptococcus pyogenes",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "Complete atelectasis of left lung",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "CT findings: Mass of soft tissue density in mediastinum",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE007",
+        "raw_span": "EUS findings: Hypoechoic lesion of 40mm outside the esophagus",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE008",
+        "raw_span": "MRI findings: Enlarged mediastinal mass",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "MECHE009",
+        "raw_span": "high fever and chest pain occurred",
+        "source_view": "mechanism"
+      },
+      {
+        "evidence_id": "MECHE010",
+        "raw_span": "White cell count 12,110/μL, later increased to 31,400/μL",
+        "source_view": "mechanism"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "Abscess",
+        "preferred_label": "Abscess",
+        "support_spans": [
+          "Cyst fluid positive for Streptococcus pyogenes",
+          "high fever and chest pain occurred",
+          "CT findings: Mass of soft tissue density in mediastinum"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.5
+      },
+      {
+        "preferred_name": "Mediastinitis",
+        "preferred_label": "Mediastinitis",
+        "support_spans": [
+          "mediastinal mass",
+          "low breath sound in left lung",
+          "C-reactive protein 20.85 mg/L, later increased to 261.62 mg/L"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.0
+      },
+      {
+        "preferred_name": "Empyema",
+        "preferred_label": "Empyema",
+        "support_spans": [
+          "low breath sound in left lung",
+          "Complete atelectasis of left lung"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "Mediastinal infection",
+        "preferred_label": "Mediastinal infection",
+        "support_spans": [
+          "EUS findings: Hypoechoic lesion of 40mm outside the esophagus",
+          "MRI findings: Enlarged mediastinal mass"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "Sepsis",
+        "preferred_label": "Sepsis",
+        "support_spans": [
+          "White cell count 12,110/μL, later increased to 31,400/μL",
+          "C-reactive protein 20.85 mg/L, later increased to 261.62 mg/L"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      }
+    ],
+    "vignette_chars": 1273,
+    "frontier_selector": {
+      "champion": "Abscess",
+      "runner_up": "Mediastinitis",
+      "why": "Cyst fluid positive for Streptococcus pyogenes decided it"
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {
+      "mode": "evidence",
+      "before": 5,
+      "after": 5
+    },
+    "reselect_from": "compact_forest_v1"
+  }
+}

@@ -1,0 +1,327 @@
+{
+  "source_id": "598",
+  "case_id": "diagnosisarena__000598",
+  "champion": "Emphysema",
+  "ordered_diagnoses": [
+    "Emphysema",
+    "Chronic obstructive pulmonary disease (COPD)",
+    "Spontaneous pneumothorax",
+    "Smoking-related lung disease",
+    "Alpha-1 antitrypsin deficiency"
+  ],
+  "llm_calls": 1,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "Chronic obstructive pulmonary disease (COPD)",
+              "support_spans": [
+                "Severe emphysema and bullous changes throughout the lungs",
+                "15 pack-year smoking history of tobacco"
+              ],
+              "contradict_spans": [],
+              "why": "Patient's history of smoking and laboratory results indicate COPD",
+              "axis_node": "Pulmonary"
+            },
+            {
+              "name": "Spontaneous pneumothorax",
+              "support_spans": [
+                "Right lateral and basilar pneumothorax, approximately 30% in volume"
+              ],
+              "contradict_spans": [],
+              "why": "Patient's imaging results indicate pneumothorax",
+              "axis_node": "Pulmonary"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "Alpha-1 antitrypsin deficiency",
+              "support_spans": [
+                "Severe emphysema and bullous changes throughout the lungs"
+              ],
+              "contradict_spans": [
+                "Alpha-1 antitrypsin level: Normal"
+              ],
+              "why": "Patient's laboratory results indicate normal alpha-1 antitrypsin level, but emphysema is present",
+              "axis_node": "Protease-antiprotease imbalance"
+            },
+            {
+              "name": "Smoking-related lung disease",
+              "support_spans": [
+                "15 pack-year smoking history of tobacco"
+              ],
+              "contradict_spans": [],
+              "why": "Patient's history of smoking indicates smoking-related lung disease",
+              "axis_node": "Toxic exposure"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "Pneumothorax",
+              "support_spans": [
+                "Right lateral and basilar pneumothorax, approximately 30% in volume"
+              ],
+              "contradict_spans": [],
+              "why": "Patient's imaging results confirm pneumothorax",
+              "axis_node": "Imaging"
+            },
+            {
+              "name": "Emphysema",
+              "support_spans": [
+                "Severe emphysema and bullous changes throughout the lungs"
+              ],
+              "contradict_spans": [],
+              "why": "Patient's imaging results confirm emphysema",
+              "axis_node": "Imaging"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "Severe emphysema and bullous changes throughout the lungs",
+        "15 pack-year smoking history of tobacco",
+        "Right lateral and basilar pneumothorax, approximately 30% in volume",
+        "Alpha-1 antitrypsin level: Normal",
+        "Urine drug screen: Positive for methamphetamines and opiates",
+        "CT angiography of chest (with and without contrast): Severe emphysema and bullous changes throughout the lungs"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [
+        "Alpha-1 antitrypsin level: Normal",
+        "Urine drug screen: Positive for methamphetamines and opiates",
+        "CT angiography of chest (with and without contrast): Severe emphysema and bullous changes throughout the lungs"
+      ],
+      "generator_jaccard": 0.0,
+      "top1_same_across_views": false,
+      "top_margin": 0.5,
+      "leave_one_view_instability": true,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Chronic obstructive pulmonary disease (COPD)",
+        "preferred_label": "Chronic obstructive pulmonary disease (COPD)",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "Pulmonary"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE002"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Severe emphysema and bullous changes throughout the lungs",
+          "15 pack-year smoking history of tobacco"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Spontaneous pneumothorax",
+        "preferred_label": "Spontaneous pneumothorax",
+        "generator_views": [
+          "syndrome_anatomy",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Pulmonary",
+          "Imaging"
+        ],
+        "supporting_evidence": [
+          "KE003"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Right lateral and basilar pneumothorax, approximately 30% in volume"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.5,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Alpha-1 antitrypsin deficiency",
+        "preferred_label": "Alpha-1 antitrypsin deficiency",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Protease-antiprotease imbalance"
+        ],
+        "supporting_evidence": [
+          "KE001"
+        ],
+        "contradicting_evidence": [
+          "KE004"
+        ],
+        "support_spans": [
+          "Severe emphysema and bullous changes throughout the lungs"
+        ],
+        "contradict_spans": [
+          "Alpha-1 antitrypsin level: Normal"
+        ],
+        "score_logit": -0.25,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Smoking-related lung disease",
+        "preferred_label": "Smoking-related lung disease",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Toxic exposure"
+        ],
+        "supporting_evidence": [
+          "KE002"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "15 pack-year smoking history of tobacco"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Emphysema",
+        "preferred_label": "Emphysema",
+        "generator_views": [
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Imaging"
+        ],
+        "supporting_evidence": [
+          "KE001"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Severe emphysema and bullous changes throughout the lungs"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "Severe emphysema and bullous changes throughout the lungs",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "15 pack-year smoking history of tobacco",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "Right lateral and basilar pneumothorax, approximately 30% in volume",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "Alpha-1 antitrypsin level: Normal",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "Urine drug screen: Positive for methamphetamines and opiates",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "CT angiography of chest (with and without contrast): Severe emphysema and bullous changes throughout the lungs",
+        "source_view": "batched"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "Chronic obstructive pulmonary disease (COPD)",
+        "preferred_label": "Chronic obstructive pulmonary disease (COPD)",
+        "support_spans": [
+          "Severe emphysema and bullous changes throughout the lungs",
+          "15 pack-year smoking history of tobacco"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "Spontaneous pneumothorax",
+        "preferred_label": "Spontaneous pneumothorax",
+        "support_spans": [
+          "Right lateral and basilar pneumothorax, approximately 30% in volume"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.5
+      },
+      {
+        "preferred_name": "Emphysema",
+        "preferred_label": "Emphysema",
+        "support_spans": [
+          "Severe emphysema and bullous changes throughout the lungs"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "Smoking-related lung disease",
+        "preferred_label": "Smoking-related lung disease",
+        "support_spans": [
+          "15 pack-year smoking history of tobacco"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "Alpha-1 antitrypsin deficiency",
+        "preferred_label": "Alpha-1 antitrypsin deficiency",
+        "support_spans": [
+          "Severe emphysema and bullous changes throughout the lungs"
+        ],
+        "contradict_spans": [
+          "Alpha-1 antitrypsin level: Normal"
+        ],
+        "score_logit": -0.25
+      }
+    ],
+    "vignette_chars": 1712,
+    "frontier_selector": {
+      "champion": "Emphysema",
+      "runner_up": "Chronic obstructive pulmonary disease (COPD)",
+      "why": "The evidence of severe emphysema and bullous changes throughout the lungs, specifically the large bulla at the posterior left lower lobe, decided it."
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {
+      "mode": "evidence",
+      "before": 5,
+      "after": 5
+    },
+    "reselect_from": "compact_forest_v1"
+  }
+}

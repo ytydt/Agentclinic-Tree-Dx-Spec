@@ -1,0 +1,327 @@
+{
+  "source_id": "668",
+  "case_id": "diagnosisarena__000668",
+  "champion": "Epilepsy",
+  "ordered_diagnoses": [
+    "Epilepsy",
+    "Cerebrovascular disease",
+    "Posterior circulation infarct",
+    "Transient ischemic attack",
+    "Seizure disorder"
+  ],
+  "llm_calls": 2,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "Transient ischemic attack",
+              "support_spans": [
+                "episodes of prominent dizziness, vertigo, intermittent left arm shaking, and bouts of dull response"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's symptoms are consistent with transient ischemic attacks, which can cause dizziness, vertigo, and limb shaking.",
+              "axis_node": "Cerebrovascular"
+            },
+            {
+              "name": "Seizure disorder",
+              "support_spans": [
+                "episodes of prominent dizziness, vertigo, intermittent left arm shaking, and bouts of dull response",
+                "EEG findings: Right hemispheric rhythmic activities"
+              ],
+              "contradict_spans": [
+                "He had no prior history of seizures"
+              ],
+              "why": "The patient's symptoms and EEG findings are consistent with a seizure disorder, which can cause dizziness, vertigo, and limb shaking.",
+              "axis_node": "Neurological"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "Epilepsy",
+              "support_spans": [
+                "EEG findings: Right hemispheric rhythmic activities"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's EEG findings are consistent with epilepsy, which can cause seizures and altered mental status.",
+              "axis_node": "Neuroelectrical"
+            },
+            {
+              "name": "Cerebrovascular disease",
+              "support_spans": [
+                "episodes of prominent dizziness, vertigo, intermittent left arm shaking, and bouts of dull response"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's symptoms are consistent with cerebrovascular disease, which can cause transient ischemic attacks and strokes.",
+              "axis_node": "Vascular"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "Frontal lobe epilepsy",
+              "support_spans": [
+                "EEG findings: Right hemispheric rhythmic activities"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's EEG findings are consistent with frontal lobe epilepsy, which can be confirmed with EEG and imaging studies.",
+              "axis_node": "Neurodiagnostic"
+            },
+            {
+              "name": "Posterior circulation infarct",
+              "support_spans": [
+                "Brain MRI revealed non-specific white matter changes with no signal alterations in the posterior circulation or brainstem"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's MRI findings are consistent with a posterior circulation infarct, which can be confirmed with imaging studies.",
+              "axis_node": "Neuroradiological"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "episodes of prominent dizziness, vertigo, intermittent left arm shaking, and bouts of dull response",
+        "EEG findings: Right hemispheric rhythmic activities",
+        "Brain MRI revealed non-specific white matter changes with no signal alterations in the posterior circulation or brainstem",
+        "Blood pressure was 200/110 mmHg at triage",
+        "He had no prior history of seizures",
+        "Neurological examination was unremarkable except for the presence of a dull response during the events"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [
+        "Blood pressure was 200/110 mmHg at triage",
+        "He had no prior history of seizures",
+        "Neurological examination was unremarkable except for the presence of a dull response during the events"
+      ],
+      "generator_jaccard": 0.0,
+      "top1_same_across_views": true,
+      "top_margin": 0.5,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Transient ischemic attack",
+        "preferred_label": "Transient ischemic attack",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "Cerebrovascular"
+        ],
+        "supporting_evidence": [
+          "KE001"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "episodes of prominent dizziness, vertigo, intermittent left arm shaking, and bouts of dull response"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Seizure disorder",
+        "preferred_label": "Seizure disorder",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "Neurological"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE002"
+        ],
+        "contradicting_evidence": [
+          "KE005"
+        ],
+        "support_spans": [
+          "episodes of prominent dizziness, vertigo, intermittent left arm shaking, and bouts of dull response",
+          "EEG findings: Right hemispheric rhythmic activities"
+        ],
+        "contradict_spans": [
+          "He had no prior history of seizures"
+        ],
+        "score_logit": 0.75,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Epilepsy",
+        "preferred_label": "Epilepsy",
+        "generator_views": [
+          "mechanism",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Neuroelectrical",
+          "Neurodiagnostic"
+        ],
+        "supporting_evidence": [
+          "KE002"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "EEG findings: Right hemispheric rhythmic activities"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.5,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Cerebrovascular disease",
+        "preferred_label": "Cerebrovascular disease",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Vascular"
+        ],
+        "supporting_evidence": [
+          "KE001"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "episodes of prominent dizziness, vertigo, intermittent left arm shaking, and bouts of dull response"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Posterior circulation infarct",
+        "preferred_label": "Posterior circulation infarct",
+        "generator_views": [
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Neuroradiological"
+        ],
+        "supporting_evidence": [
+          "KE003"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Brain MRI revealed non-specific white matter changes with no signal alterations in the posterior circulation or brainstem"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "episodes of prominent dizziness, vertigo, intermittent left arm shaking, and bouts of dull response",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "EEG findings: Right hemispheric rhythmic activities",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "Brain MRI revealed non-specific white matter changes with no signal alterations in the posterior circulation or brainstem",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "Blood pressure was 200/110 mmHg at triage",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "He had no prior history of seizures",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "Neurological examination was unremarkable except for the presence of a dull response during the events",
+        "source_view": "batched"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "Epilepsy",
+        "preferred_label": "Epilepsy",
+        "support_spans": [
+          "EEG findings: Right hemispheric rhythmic activities"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.5
+      },
+      {
+        "preferred_name": "Cerebrovascular disease",
+        "preferred_label": "Cerebrovascular disease",
+        "support_spans": [
+          "episodes of prominent dizziness, vertigo, intermittent left arm shaking, and bouts of dull response"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "Posterior circulation infarct",
+        "preferred_label": "Posterior circulation infarct",
+        "support_spans": [
+          "Brain MRI revealed non-specific white matter changes with no signal alterations in the posterior circulation or brainstem"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "Transient ischemic attack",
+        "preferred_label": "Transient ischemic attack",
+        "support_spans": [
+          "episodes of prominent dizziness, vertigo, intermittent left arm shaking, and bouts of dull response"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "Seizure disorder",
+        "preferred_label": "Seizure disorder",
+        "support_spans": [
+          "episodes of prominent dizziness, vertigo, intermittent left arm shaking, and bouts of dull response",
+          "EEG findings: Right hemispheric rhythmic activities"
+        ],
+        "contradict_spans": [
+          "He had no prior history of seizures"
+        ],
+        "score_logit": 0.75
+      }
+    ],
+    "vignette_chars": 1423,
+    "frontier_selector": {
+      "champion": "Epilepsy",
+      "runner_up": "Seizure disorder",
+      "why": "The EEG findings of right hemispheric rhythmic activities specifically support the diagnosis of Epilepsy."
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {}
+  },
+  "metrics": {
+    "llm_calls": 2,
+    "top_margin": 0.5,
+    "unexplained_n": 3
+  }
+}

@@ -1,0 +1,348 @@
+{
+  "source_id": "420",
+  "case_id": "diagnosisarena__000420",
+  "champion": "Myocarditis",
+  "ordered_diagnoses": [
+    "Myocarditis",
+    "Stress Cardiomyopathy",
+    "Acute Coronary Syndrome",
+    "Acute Myocardial Infarction"
+  ],
+  "llm_calls": 2,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "Myocarditis",
+              "support_spans": [
+                "chest pain and dyspnea",
+                "palpitations and symptoms of upper respiratory tract infection 3 days prior",
+                "Troponin T: 4.74 μg/L"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's symptoms and laboratory results suggest an inflammatory condition affecting the heart.",
+              "axis_node": "Cardiac"
+            },
+            {
+              "name": "Acute Coronary Syndrome",
+              "support_spans": [
+                "chest pain",
+                "Troponin T: 4.74 μg/L"
+              ],
+              "contradict_spans": [
+                "Normal coronary arteries"
+              ],
+              "why": "The patient's symptoms and elevated troponin levels suggest a cardiac event, but the normal coronary arteries make this diagnosis less likely.",
+              "axis_node": "Cardiac"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "Myocarditis",
+              "support_spans": [
+                "palpitations and symptoms of upper respiratory tract infection 3 days prior",
+                "Severe left ventricular dysfunction"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's symptoms and laboratory results suggest an inflammatory condition affecting the heart, which could be caused by a viral infection.",
+              "axis_node": "Inflammatory"
+            },
+            {
+              "name": "Stress Cardiomyopathy",
+              "support_spans": [
+                "lost consciousness 20 minutes after arrival",
+                "blood pressure decreasing to 67/43 mm Hg"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's sudden loss of consciousness and hypotension could be caused by a stress-induced cardiomyopathy.",
+              "axis_node": "Stress-induced"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "Myocarditis",
+              "support_spans": [
+                "Transthoracic echocardiography: Severe left ventricular dysfunction",
+                "Troponin T: 4.74 μg/L"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's echocardiography and laboratory results suggest an inflammatory condition affecting the heart, which could be confirmed by a cardiac MRI or biopsy.",
+              "axis_node": "Cardiac Imaging"
+            },
+            {
+              "name": "Acute Myocardial Infarction",
+              "support_spans": [
+                "Troponin T: 4.74 μg/L",
+                "ST-segment elevation in leads II, III, aVF, and V1-V6"
+              ],
+              "contradict_spans": [
+                "Normal coronary arteries"
+              ],
+              "why": "The patient's symptoms and laboratory results suggest a cardiac event, which could be confirmed by a coronary angiography or cardiac MRI.",
+              "axis_node": "Cardiac Imaging"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "chest pain and dyspnea",
+        "palpitations and symptoms of upper respiratory tract infection 3 days prior",
+        "Troponin T: 4.74 μg/L",
+        "Transthoracic echocardiography: Severe left ventricular dysfunction",
+        "ST-segment elevation in leads II, III, aVF, and V1-V6",
+        "lost consciousness 20 minutes after arrival",
+        "blood pressure decreasing to 67/43 mm Hg"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [
+        "Normal coronary arteries"
+      ],
+      "generator_jaccard": 0.3333333333333333,
+      "top1_same_across_views": true,
+      "top_margin": 4.0,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Myocarditis",
+        "preferred_label": "Myocarditis",
+        "generator_views": [
+          "syndrome_anatomy",
+          "mechanism",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Cardiac",
+          "Inflammatory",
+          "Cardiac Imaging"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE002",
+          "KE003",
+          "MECHE010",
+          "KE004"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "chest pain and dyspnea",
+          "palpitations and symptoms of upper respiratory tract infection 3 days prior",
+          "Troponin T: 4.74 μg/L",
+          "Severe left ventricular dysfunction",
+          "Transthoracic echocardiography: Severe left ventricular dysfunction"
+        ],
+        "contradict_spans": [],
+        "score_logit": 6.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Acute Coronary Syndrome",
+        "preferred_label": "Acute Coronary Syndrome",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "Cardiac"
+        ],
+        "supporting_evidence": [
+          "SYNDE008",
+          "KE003"
+        ],
+        "contradicting_evidence": [
+          "SYNDE009"
+        ],
+        "support_spans": [
+          "chest pain",
+          "Troponin T: 4.74 μg/L"
+        ],
+        "contradict_spans": [
+          "Normal coronary arteries"
+        ],
+        "score_logit": 0.75,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Stress Cardiomyopathy",
+        "preferred_label": "Stress Cardiomyopathy",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Stress-induced"
+        ],
+        "supporting_evidence": [
+          "KE006",
+          "KE007"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "lost consciousness 20 minutes after arrival",
+          "blood pressure decreasing to 67/43 mm Hg"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Acute Myocardial Infarction",
+        "preferred_label": "Acute Myocardial Infarction",
+        "generator_views": [
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Cardiac Imaging"
+        ],
+        "supporting_evidence": [
+          "KE003",
+          "KE005"
+        ],
+        "contradicting_evidence": [
+          "SYNDE009"
+        ],
+        "support_spans": [
+          "Troponin T: 4.74 μg/L",
+          "ST-segment elevation in leads II, III, aVF, and V1-V6"
+        ],
+        "contradict_spans": [
+          "Normal coronary arteries"
+        ],
+        "score_logit": 0.75,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "chest pain and dyspnea",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "palpitations and symptoms of upper respiratory tract infection 3 days prior",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "Troponin T: 4.74 μg/L",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "Transthoracic echocardiography: Severe left ventricular dysfunction",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "ST-segment elevation in leads II, III, aVF, and V1-V6",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "lost consciousness 20 minutes after arrival",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE007",
+        "raw_span": "blood pressure decreasing to 67/43 mm Hg",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "SYNDE008",
+        "raw_span": "chest pain",
+        "source_view": "syndrome_anatomy"
+      },
+      {
+        "evidence_id": "SYNDE009",
+        "raw_span": "Normal coronary arteries",
+        "source_view": "syndrome_anatomy"
+      },
+      {
+        "evidence_id": "MECHE010",
+        "raw_span": "Severe left ventricular dysfunction",
+        "source_view": "mechanism"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "Myocarditis",
+        "preferred_label": "Myocarditis",
+        "support_spans": [
+          "chest pain and dyspnea",
+          "palpitations and symptoms of upper respiratory tract infection 3 days prior",
+          "Troponin T: 4.74 μg/L",
+          "Severe left ventricular dysfunction",
+          "Transthoracic echocardiography: Severe left ventricular dysfunction"
+        ],
+        "contradict_spans": [],
+        "score_logit": 6.0
+      },
+      {
+        "preferred_name": "Stress Cardiomyopathy",
+        "preferred_label": "Stress Cardiomyopathy",
+        "support_spans": [
+          "lost consciousness 20 minutes after arrival",
+          "blood pressure decreasing to 67/43 mm Hg"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "Acute Coronary Syndrome",
+        "preferred_label": "Acute Coronary Syndrome",
+        "support_spans": [
+          "chest pain",
+          "Troponin T: 4.74 μg/L"
+        ],
+        "contradict_spans": [
+          "Normal coronary arteries"
+        ],
+        "score_logit": 0.75
+      },
+      {
+        "preferred_name": "Acute Myocardial Infarction",
+        "preferred_label": "Acute Myocardial Infarction",
+        "support_spans": [
+          "Troponin T: 4.74 μg/L",
+          "ST-segment elevation in leads II, III, aVF, and V1-V6"
+        ],
+        "contradict_spans": [
+          "Normal coronary arteries"
+        ],
+        "score_logit": 0.75
+      }
+    ],
+    "vignette_chars": 1238,
+    "frontier_selector": {
+      "champion": "Myocarditis",
+      "runner_up": "Stress Cardiomyopathy",
+      "why": "The combination of chest pain, dyspnea, palpitations, symptoms of upper respiratory tract infection, elevated Troponin T, and severe left ventricular dysfunction without evidence against it decided the diagnosis of Myocarditis."
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {}
+  },
+  "metrics": {
+    "llm_calls": 2,
+    "top_margin": 4.0,
+    "unexplained_n": 1
+  }
+}

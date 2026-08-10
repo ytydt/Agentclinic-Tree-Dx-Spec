@@ -1,0 +1,303 @@
+{
+  "source_id": "702",
+  "case_id": "diagnosisarena__000702",
+  "champion": "incarcerated hernia",
+  "ordered_diagnoses": [
+    "incarcerated hernia",
+    "sciatic hernia",
+    "intestinal obstruction",
+    "incarcerated bowel syndrome"
+  ],
+  "llm_calls": 2,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "incarcerated hernia",
+              "support_spans": [
+                "A non-reducible, tender mass measuring 10 cm × 8 cm × 8 cm was present in the left buttock area.",
+                "Revealed incarcerated bowel loops beneath left gluteal muscles"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's symptoms and imaging studies suggest a hernia that has become trapped and is causing bowel obstruction.",
+              "axis_node": "hernia"
+            },
+            {
+              "name": "sciatic hernia",
+              "support_spans": [
+                "herniation through left sciatic foramen containing small bowel loop"
+              ],
+              "contradict_spans": [],
+              "why": "The CT examination shows a hernia through the sciatic foramen, which is a specific type of hernia.",
+              "axis_node": "sciatic hernia"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "intestinal obstruction",
+              "support_spans": [
+                "Abdominal X-ray: Showed intestinal obstruction and gallstone",
+                "CT examination: Demonstrated seroperitoneum, pneumoperitoneum, low intestinal obstruction"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's symptoms and imaging studies suggest a blockage of the intestines, which is causing the abdominal pain and other symptoms.",
+              "axis_node": "obstruction"
+            },
+            {
+              "name": "incarcerated bowel syndrome",
+              "support_spans": [
+                "Revealed incarcerated bowel loops beneath left gluteal muscles"
+              ],
+              "contradict_spans": [],
+              "why": "The transgluteal ultrasonography shows that the bowel is trapped, which is causing the patient's symptoms.",
+              "axis_node": "incarcerated bowel"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "sciatic hernia",
+              "support_spans": [
+                "CT examination: Demonstrated seroperitoneum, pneumoperitoneum, low intestinal obstruction",
+                "herniation through left sciatic foramen containing small bowel loop"
+              ],
+              "contradict_spans": [],
+              "why": "The CT examination is decisive in confirming the diagnosis of a sciatic hernia.",
+              "axis_node": "CT scan"
+            },
+            {
+              "name": "incarcerated hernia",
+              "support_spans": [
+                "Transgluteal ultrasonography: Revealed incarcerated bowel loops beneath left gluteal muscles"
+              ],
+              "contradict_spans": [],
+              "why": "The transgluteal ultrasonography is decisive in confirming the diagnosis of an incarcerated hernia.",
+              "axis_node": "ultrasonography"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "A non-reducible, tender mass measuring 10 cm × 8 cm × 8 cm was present in the left buttock area.",
+        "Revealed incarcerated bowel loops beneath left gluteal muscles",
+        "herniation through left sciatic foramen containing small bowel loop",
+        "Abdominal X-ray: Showed intestinal obstruction and gallstone",
+        "CT examination: Demonstrated seroperitoneum, pneumoperitoneum, low intestinal obstruction",
+        "Patient appeared in acute pain, dehydrated, and poorly nourished."
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [
+        "Patient appeared in acute pain, dehydrated, and poorly nourished."
+      ],
+      "generator_jaccard": 0.3333333333333333,
+      "top1_same_across_views": true,
+      "top_margin": 1.0,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "incarcerated hernia",
+        "preferred_label": "incarcerated hernia",
+        "generator_views": [
+          "syndrome_anatomy",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "hernia",
+          "ultrasonography"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE002",
+          "MODAE007"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "A non-reducible, tender mass measuring 10 cm × 8 cm × 8 cm was present in the left buttock area.",
+          "Revealed incarcerated bowel loops beneath left gluteal muscles",
+          "Transgluteal ultrasonography: Revealed incarcerated bowel loops beneath left gluteal muscles"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.5,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "sciatic hernia",
+        "preferred_label": "sciatic hernia",
+        "generator_views": [
+          "syndrome_anatomy",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "sciatic hernia",
+          "CT scan"
+        ],
+        "supporting_evidence": [
+          "KE003",
+          "KE005"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "herniation through left sciatic foramen containing small bowel loop",
+          "CT examination: Demonstrated seroperitoneum, pneumoperitoneum, low intestinal obstruction"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.5,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "intestinal obstruction",
+        "preferred_label": "intestinal obstruction",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "obstruction"
+        ],
+        "supporting_evidence": [
+          "KE004",
+          "KE005"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Abdominal X-ray: Showed intestinal obstruction and gallstone",
+          "CT examination: Demonstrated seroperitoneum, pneumoperitoneum, low intestinal obstruction"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "incarcerated bowel syndrome",
+        "preferred_label": "incarcerated bowel syndrome",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "incarcerated bowel"
+        ],
+        "supporting_evidence": [
+          "KE002"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Revealed incarcerated bowel loops beneath left gluteal muscles"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "A non-reducible, tender mass measuring 10 cm × 8 cm × 8 cm was present in the left buttock area.",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "Revealed incarcerated bowel loops beneath left gluteal muscles",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "herniation through left sciatic foramen containing small bowel loop",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "Abdominal X-ray: Showed intestinal obstruction and gallstone",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "CT examination: Demonstrated seroperitoneum, pneumoperitoneum, low intestinal obstruction",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "Patient appeared in acute pain, dehydrated, and poorly nourished.",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "MODAE007",
+        "raw_span": "Transgluteal ultrasonography: Revealed incarcerated bowel loops beneath left gluteal muscles",
+        "source_view": "modality_decisive"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "incarcerated hernia",
+        "preferred_label": "incarcerated hernia",
+        "support_spans": [
+          "A non-reducible, tender mass measuring 10 cm × 8 cm × 8 cm was present in the left buttock area.",
+          "Revealed incarcerated bowel loops beneath left gluteal muscles",
+          "Transgluteal ultrasonography: Revealed incarcerated bowel loops beneath left gluteal muscles"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.5
+      },
+      {
+        "preferred_name": "sciatic hernia",
+        "preferred_label": "sciatic hernia",
+        "support_spans": [
+          "herniation through left sciatic foramen containing small bowel loop",
+          "CT examination: Demonstrated seroperitoneum, pneumoperitoneum, low intestinal obstruction"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.5
+      },
+      {
+        "preferred_name": "intestinal obstruction",
+        "preferred_label": "intestinal obstruction",
+        "support_spans": [
+          "Abdominal X-ray: Showed intestinal obstruction and gallstone",
+          "CT examination: Demonstrated seroperitoneum, pneumoperitoneum, low intestinal obstruction"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "incarcerated bowel syndrome",
+        "preferred_label": "incarcerated bowel syndrome",
+        "support_spans": [
+          "Revealed incarcerated bowel loops beneath left gluteal muscles"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      }
+    ],
+    "vignette_chars": 1399,
+    "frontier_selector": {
+      "champion": "incarcerated hernia",
+      "runner_up": "sciatic hernia",
+      "why": "The presence of a non-reducible, tender mass in the left buttock area and the ultrasonography revealing incarcerated bowel loops beneath the left gluteal muscles decided it."
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {}
+  },
+  "metrics": {
+    "llm_calls": 2,
+    "top_margin": 1.0,
+    "unexplained_n": 1
+  }
+}

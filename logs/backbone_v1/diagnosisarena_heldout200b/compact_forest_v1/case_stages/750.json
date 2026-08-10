@@ -1,0 +1,367 @@
+{
+  "source_id": "750",
+  "case_id": "diagnosisarena__000750",
+  "champion": "Lung cancer",
+  "ordered_diagnoses": [
+    "Lung cancer",
+    "Malignant mesothelioma",
+    "Pleural disease",
+    "Adenocarcinoma",
+    "Squamous cell carcinoma"
+  ],
+  "llm_calls": 2,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "Lung cancer",
+              "support_spans": [
+                "cough accompanied by chest tightness for a month",
+                "Lesion next to right lower hilar (3.79 × 5.82cm)"
+              ],
+              "contradict_spans": [],
+              "why": "The patient presents with cough and chest tightness, and imaging studies show a lesion in the lung.",
+              "axis_node": "Respiratory"
+            },
+            {
+              "name": "Pleural disease",
+              "support_spans": [
+                "Right pleura locally thickened"
+              ],
+              "contradict_spans": [],
+              "why": "The patient has a locally thickened right pleura, which could indicate a pleural disease.",
+              "axis_node": "Pleura"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "Non-small cell lung cancer",
+              "support_spans": [
+                "Immunohistochemistry showed: CK7 (+++)",
+                "KEAP1 mutation in exon 2 (c.556G＞A p.G186S)"
+              ],
+              "contradict_spans": [],
+              "why": "The patient has a KEAP1 mutation and immunohistochemistry results consistent with non-small cell lung cancer.",
+              "axis_node": "Genetic mutation"
+            },
+            {
+              "name": "Squamous cell carcinoma",
+              "support_spans": [
+                "CK5/6 (part of+)",
+                "P63 (−)"
+              ],
+              "contradict_spans": [
+                "P63 (−)"
+              ],
+              "why": "The patient has immunohistochemistry results that could be consistent with squamous cell carcinoma, but the absence of P63 staining makes it less likely.",
+              "axis_node": "Cell type"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "Adenocarcinoma",
+              "support_spans": [
+                "Immunohistochemistry showed: CK7 (+++)",
+                "TTF1 (−)"
+              ],
+              "contradict_spans": [
+                "TTF1 (−)"
+              ],
+              "why": "The patient has immunohistochemistry results that could be consistent with adenocarcinoma, but the absence of TTF1 staining makes it less likely.",
+              "axis_node": "Immunohistochemistry"
+            },
+            {
+              "name": "Malignant mesothelioma",
+              "support_spans": [
+                "Right pleura locally thickened",
+                "D2-40 (+)"
+              ],
+              "contradict_spans": [],
+              "why": "The patient has a locally thickened right pleura and immunohistochemistry results that could be consistent with malignant mesothelioma.",
+              "axis_node": "Pleural disease"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "cough accompanied by chest tightness for a month",
+        "Lesion next to right lower hilar (3.79 × 5.82cm)",
+        "Right pleura locally thickened",
+        "Immunohistochemistry showed: CK7 (+++)",
+        "KEAP1 mutation in exon 2 (c.556G＞A p.G186S)",
+        "CK5/6 (part of+)",
+        "P63 (−)",
+        "D2-40 (+)"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [],
+      "generator_jaccard": 0.0,
+      "top1_same_across_views": true,
+      "top_margin": 2.5,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Lung cancer",
+        "preferred_label": "Lung cancer",
+        "generator_views": [
+          "syndrome_anatomy",
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Respiratory",
+          "Genetic mutation"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE002",
+          "KE004",
+          "KE005"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "cough accompanied by chest tightness for a month",
+          "Lesion next to right lower hilar (3.79 × 5.82cm)",
+          "Immunohistochemistry showed: CK7 (+++)",
+          "KEAP1 mutation in exon 2 (c.556G＞A p.G186S)"
+        ],
+        "contradict_spans": [],
+        "score_logit": 4.5,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Pleural disease",
+        "preferred_label": "Pleural disease",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "Pleura"
+        ],
+        "supporting_evidence": [
+          "KE003"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Right pleura locally thickened"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Squamous cell carcinoma",
+        "preferred_label": "Squamous cell carcinoma",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Cell type"
+        ],
+        "supporting_evidence": [
+          "KE006",
+          "KE007"
+        ],
+        "contradicting_evidence": [
+          "KE007"
+        ],
+        "support_spans": [
+          "CK5/6 (part of+)",
+          "P63 (−)"
+        ],
+        "contradict_spans": [
+          "P63 (−)"
+        ],
+        "score_logit": 0.75,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Adenocarcinoma",
+        "preferred_label": "Adenocarcinoma",
+        "generator_views": [
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Immunohistochemistry"
+        ],
+        "supporting_evidence": [
+          "KE004",
+          "MODAE009"
+        ],
+        "contradicting_evidence": [
+          "MODAE009"
+        ],
+        "support_spans": [
+          "Immunohistochemistry showed: CK7 (+++)",
+          "TTF1 (−)"
+        ],
+        "contradict_spans": [
+          "TTF1 (−)"
+        ],
+        "score_logit": 0.75,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Malignant mesothelioma",
+        "preferred_label": "Malignant mesothelioma",
+        "generator_views": [
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Pleural disease"
+        ],
+        "supporting_evidence": [
+          "KE003",
+          "KE008"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Right pleura locally thickened",
+          "D2-40 (+)"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "cough accompanied by chest tightness for a month",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "Lesion next to right lower hilar (3.79 × 5.82cm)",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "Right pleura locally thickened",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "Immunohistochemistry showed: CK7 (+++)",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "KEAP1 mutation in exon 2 (c.556G＞A p.G186S)",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "CK5/6 (part of+)",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE007",
+        "raw_span": "P63 (−)",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE008",
+        "raw_span": "D2-40 (+)",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "MODAE009",
+        "raw_span": "TTF1 (−)",
+        "source_view": "modality_decisive"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "Lung cancer",
+        "preferred_label": "Lung cancer",
+        "support_spans": [
+          "cough accompanied by chest tightness for a month",
+          "Lesion next to right lower hilar (3.79 × 5.82cm)",
+          "Immunohistochemistry showed: CK7 (+++)",
+          "KEAP1 mutation in exon 2 (c.556G＞A p.G186S)"
+        ],
+        "contradict_spans": [],
+        "score_logit": 4.5
+      },
+      {
+        "preferred_name": "Malignant mesothelioma",
+        "preferred_label": "Malignant mesothelioma",
+        "support_spans": [
+          "Right pleura locally thickened",
+          "D2-40 (+)"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "Pleural disease",
+        "preferred_label": "Pleural disease",
+        "support_spans": [
+          "Right pleura locally thickened"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "Adenocarcinoma",
+        "preferred_label": "Adenocarcinoma",
+        "support_spans": [
+          "Immunohistochemistry showed: CK7 (+++)",
+          "TTF1 (−)"
+        ],
+        "contradict_spans": [
+          "TTF1 (−)"
+        ],
+        "score_logit": 0.75
+      },
+      {
+        "preferred_name": "Squamous cell carcinoma",
+        "preferred_label": "Squamous cell carcinoma",
+        "support_spans": [
+          "CK5/6 (part of+)",
+          "P63 (−)"
+        ],
+        "contradict_spans": [
+          "P63 (−)"
+        ],
+        "score_logit": 0.75
+      }
+    ],
+    "vignette_chars": 1170,
+    "frontier_selector": {
+      "champion": "Lung cancer",
+      "runner_up": "Malignant mesothelioma",
+      "why": "The presence of a lesion next to the right lower hilar and specific immunohistochemistry results such as CK7 (+++) along with a KEAP1 mutation strongly support Lung cancer as the diagnosis."
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {}
+  },
+  "metrics": {
+    "llm_calls": 2,
+    "top_margin": 2.5,
+    "unexplained_n": 0
+  }
+}

@@ -1,0 +1,315 @@
+{
+  "source_id": "227",
+  "case_id": "medcasereasoning__000227",
+  "champion": "Pulmonary Embolism",
+  "ordered_diagnoses": [
+    "Pulmonary Embolism",
+    "Pulmonary Thromboembolism",
+    "Acute Coronary Syndrome",
+    "Myocardial Infarction"
+  ],
+  "llm_calls": 2,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "Acute Coronary Syndrome",
+              "support_spans": [
+                "continuous chest pain for two hours",
+                "ST-segment elevation in leads V2 and V3"
+              ],
+              "contradict_spans": [
+                "coronary angiography revealed normal coronary arteries without stenosis"
+              ],
+              "why": "The patient presented with chest pain and ST-segment elevation, which are typical symptoms of acute coronary syndrome.",
+              "axis_node": "Cardiovascular"
+            },
+            {
+              "name": "Pulmonary Embolism",
+              "support_spans": [
+                "right ventricular dilatation",
+                "estimated pulmonary arterial pressure of 60 mmHg"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's right ventricular dilatation and elevated pulmonary arterial pressure suggest a possible pulmonary embolism.",
+              "axis_node": "Cardiovascular"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "Myocardial Infarction",
+              "support_spans": [
+                "ST-segment elevation in leads V2 and V3"
+              ],
+              "contradict_spans": [
+                "coronary angiography revealed normal coronary arteries without stenosis"
+              ],
+              "why": "The patient's ST-segment elevation suggests a possible myocardial infarction due to ischemia.",
+              "axis_node": "Ischemic"
+            },
+            {
+              "name": "Pulmonary Thromboembolism",
+              "support_spans": [
+                "right ventricular dilatation",
+                "estimated pulmonary arterial pressure of 60 mmHg"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's right ventricular dilatation and elevated pulmonary arterial pressure suggest a possible pulmonary thromboembolism.",
+              "axis_node": "Thromboembolic"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "Pulmonary Embolism",
+              "support_spans": [
+                "right ventricular dilatation",
+                "estimated pulmonary arterial pressure of 60 mmHg"
+              ],
+              "contradict_spans": [],
+              "why": "A decisive CT pulmonary angiography or ventilation-perfusion scan would confirm the diagnosis of pulmonary embolism.",
+              "axis_node": "Imaging"
+            },
+            {
+              "name": "Myocardial Infarction",
+              "support_spans": [
+                "ST-segment elevation in leads V2 and V3"
+              ],
+              "contradict_spans": [
+                "coronary angiography revealed normal coronary arteries without stenosis"
+              ],
+              "why": "A decisive cardiac troponin test or coronary angiography would confirm the diagnosis of myocardial infarction.",
+              "axis_node": "Cardiac Biomarkers"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "continuous chest pain for two hours",
+        "ST-segment elevation in leads V2 and V3",
+        "right ventricular dilatation",
+        "estimated pulmonary arterial pressure of 60 mmHg",
+        "coronary angiography revealed normal coronary arteries without stenosis",
+        "new right bundle branch block and resolution of the precordial ST-segment elevations"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [
+        "coronary angiography revealed normal coronary arteries without stenosis",
+        "new right bundle branch block and resolution of the precordial ST-segment elevations"
+      ],
+      "generator_jaccard": 0.2222222222222222,
+      "top1_same_across_views": true,
+      "top_margin": 0.5,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Acute Coronary Syndrome",
+        "preferred_label": "Acute Coronary Syndrome",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "Cardiovascular"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE002"
+        ],
+        "contradicting_evidence": [
+          "KE005"
+        ],
+        "support_spans": [
+          "continuous chest pain for two hours",
+          "ST-segment elevation in leads V2 and V3"
+        ],
+        "contradict_spans": [
+          "coronary angiography revealed normal coronary arteries without stenosis"
+        ],
+        "score_logit": 0.75,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Pulmonary Embolism",
+        "preferred_label": "Pulmonary Embolism",
+        "generator_views": [
+          "syndrome_anatomy",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Cardiovascular",
+          "Imaging"
+        ],
+        "supporting_evidence": [
+          "KE003",
+          "KE004"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "right ventricular dilatation",
+          "estimated pulmonary arterial pressure of 60 mmHg"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.5,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Myocardial Infarction",
+        "preferred_label": "Myocardial Infarction",
+        "generator_views": [
+          "mechanism",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Ischemic",
+          "Cardiac Biomarkers"
+        ],
+        "supporting_evidence": [
+          "KE002"
+        ],
+        "contradicting_evidence": [
+          "KE005"
+        ],
+        "support_spans": [
+          "ST-segment elevation in leads V2 and V3"
+        ],
+        "contradict_spans": [
+          "coronary angiography revealed normal coronary arteries without stenosis"
+        ],
+        "score_logit": 0.24999999999999997,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Pulmonary Thromboembolism",
+        "preferred_label": "Pulmonary Thromboembolism",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Thromboembolic"
+        ],
+        "supporting_evidence": [
+          "KE003",
+          "KE004"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "right ventricular dilatation",
+          "estimated pulmonary arterial pressure of 60 mmHg"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "continuous chest pain for two hours",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "ST-segment elevation in leads V2 and V3",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "right ventricular dilatation",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "estimated pulmonary arterial pressure of 60 mmHg",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "coronary angiography revealed normal coronary arteries without stenosis",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "new right bundle branch block and resolution of the precordial ST-segment elevations",
+        "source_view": "batched"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "Pulmonary Embolism",
+        "preferred_label": "Pulmonary Embolism",
+        "support_spans": [
+          "right ventricular dilatation",
+          "estimated pulmonary arterial pressure of 60 mmHg"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.5
+      },
+      {
+        "preferred_name": "Pulmonary Thromboembolism",
+        "preferred_label": "Pulmonary Thromboembolism",
+        "support_spans": [
+          "right ventricular dilatation",
+          "estimated pulmonary arterial pressure of 60 mmHg"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "Acute Coronary Syndrome",
+        "preferred_label": "Acute Coronary Syndrome",
+        "support_spans": [
+          "continuous chest pain for two hours",
+          "ST-segment elevation in leads V2 and V3"
+        ],
+        "contradict_spans": [
+          "coronary angiography revealed normal coronary arteries without stenosis"
+        ],
+        "score_logit": 0.75
+      },
+      {
+        "preferred_name": "Myocardial Infarction",
+        "preferred_label": "Myocardial Infarction",
+        "support_spans": [
+          "ST-segment elevation in leads V2 and V3"
+        ],
+        "contradict_spans": [
+          "coronary angiography revealed normal coronary arteries without stenosis"
+        ],
+        "score_logit": 0.24999999999999997
+      }
+    ],
+    "vignette_chars": 1043,
+    "frontier_selector": {
+      "champion": "Pulmonary Embolism",
+      "runner_up": "Pulmonary Thromboembolism",
+      "why": "right ventricular dilatation and estimated pulmonary arterial pressure of 60 mmHg decided it"
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {}
+  },
+  "metrics": {
+    "llm_calls": 2,
+    "top_margin": 0.5,
+    "unexplained_n": 2
+  }
+}

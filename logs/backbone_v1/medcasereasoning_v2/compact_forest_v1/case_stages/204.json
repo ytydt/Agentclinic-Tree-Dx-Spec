@@ -1,0 +1,311 @@
+{
+  "source_id": "204",
+  "case_id": "medcasereasoning__000204",
+  "champion": "Tubo-ovarian abscess",
+  "ordered_diagnoses": [
+    "Tubo-ovarian abscess",
+    "Ovarian cyst",
+    "Pelvic inflammatory disease",
+    "Ovarian torsion"
+  ],
+  "llm_calls": 2,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "Ovarian cyst",
+              "support_spans": [
+                "a 15 × 6 cm cystic mass with regular margins was found arising from the right tubo-ovarian complex"
+              ],
+              "contradict_spans": [],
+              "why": "The patient presented with right lower-quadrant abdominal pain and a cystic mass was found in the right tubo-ovarian complex.",
+              "axis_node": "Pelvic"
+            },
+            {
+              "name": "Tubo-ovarian abscess",
+              "support_spans": [
+                "purulent fluid was noted"
+              ],
+              "contradict_spans": [],
+              "why": "The presence of purulent fluid in the cystic mass suggests an infectious process.",
+              "axis_node": "Pelvic"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "Pelvic inflammatory disease",
+              "support_spans": [
+                "a 15 × 6 cm cystic mass with regular margins was found arising from the right tubo-ovarian complex",
+                "purulent fluid was noted"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's symptoms and the presence of a cystic mass with purulent fluid suggest an infectious process.",
+              "axis_node": "Infection"
+            },
+            {
+              "name": "Ovarian torsion",
+              "support_spans": [
+                "right lower-quadrant abdominal pain"
+              ],
+              "contradict_spans": [
+                "the appendix appeared clinically normal"
+              ],
+              "why": "The patient's symptoms could be consistent with ovarian torsion, but the normal appearance of the appendix makes this less likely.",
+              "axis_node": "Obstruction"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "Ovarian cyst",
+              "support_spans": [
+                "a bedside abdominal ultrasound showed no abnormalities",
+                "a second abdominopelvic ultrasound was interpreted as suggestive of retrocecal appendicitis"
+              ],
+              "contradict_spans": [],
+              "why": "The diagnosis of an ovarian cyst was ultimately made through a combination of clinical presentation and imaging studies.",
+              "axis_node": "Imaging"
+            },
+            {
+              "name": "Tubo-ovarian abscess",
+              "support_spans": [
+                "cultures were deferred until after the weekend"
+              ],
+              "contradict_spans": [],
+              "why": "The diagnosis of a tubo-ovarian abscess would be confirmed through culture results.",
+              "axis_node": "Microbiology"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "a 15 × 6 cm cystic mass with regular margins was found arising from the right tubo-ovarian complex",
+        "purulent fluid was noted",
+        "right lower-quadrant abdominal pain",
+        "a bedside abdominal ultrasound showed no abnormalities",
+        "a second abdominopelvic ultrasound was interpreted as suggestive of retrocecal appendicitis",
+        "cultures were deferred until after the weekend",
+        "the appendix appeared clinically normal"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [
+        "the appendix appeared clinically normal"
+      ],
+      "generator_jaccard": 0.3333333333333333,
+      "top1_same_across_views": true,
+      "top_margin": 1.0,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Ovarian cyst",
+        "preferred_label": "Ovarian cyst",
+        "generator_views": [
+          "syndrome_anatomy",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Pelvic",
+          "Imaging"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE004",
+          "KE005"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "a 15 × 6 cm cystic mass with regular margins was found arising from the right tubo-ovarian complex",
+          "a bedside abdominal ultrasound showed no abnormalities",
+          "a second abdominopelvic ultrasound was interpreted as suggestive of retrocecal appendicitis"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.5,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Tubo-ovarian abscess",
+        "preferred_label": "Tubo-ovarian abscess",
+        "generator_views": [
+          "syndrome_anatomy",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Pelvic",
+          "Microbiology"
+        ],
+        "supporting_evidence": [
+          "KE002",
+          "KE006"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "purulent fluid was noted",
+          "cultures were deferred until after the weekend"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.5,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Pelvic inflammatory disease",
+        "preferred_label": "Pelvic inflammatory disease",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Infection"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE002"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "a 15 × 6 cm cystic mass with regular margins was found arising from the right tubo-ovarian complex",
+          "purulent fluid was noted"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Ovarian torsion",
+        "preferred_label": "Ovarian torsion",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Obstruction"
+        ],
+        "supporting_evidence": [
+          "KE003"
+        ],
+        "contradicting_evidence": [
+          "KE007"
+        ],
+        "support_spans": [
+          "right lower-quadrant abdominal pain"
+        ],
+        "contradict_spans": [
+          "the appendix appeared clinically normal"
+        ],
+        "score_logit": -0.25,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "a 15 × 6 cm cystic mass with regular margins was found arising from the right tubo-ovarian complex",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "purulent fluid was noted",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "right lower-quadrant abdominal pain",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "a bedside abdominal ultrasound showed no abnormalities",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "a second abdominopelvic ultrasound was interpreted as suggestive of retrocecal appendicitis",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "cultures were deferred until after the weekend",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE007",
+        "raw_span": "the appendix appeared clinically normal",
+        "source_view": "batched"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "Ovarian cyst",
+        "preferred_label": "Ovarian cyst",
+        "support_spans": [
+          "a 15 × 6 cm cystic mass with regular margins was found arising from the right tubo-ovarian complex",
+          "a bedside abdominal ultrasound showed no abnormalities",
+          "a second abdominopelvic ultrasound was interpreted as suggestive of retrocecal appendicitis"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.5
+      },
+      {
+        "preferred_name": "Tubo-ovarian abscess",
+        "preferred_label": "Tubo-ovarian abscess",
+        "support_spans": [
+          "purulent fluid was noted",
+          "cultures were deferred until after the weekend"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.5
+      },
+      {
+        "preferred_name": "Pelvic inflammatory disease",
+        "preferred_label": "Pelvic inflammatory disease",
+        "support_spans": [
+          "a 15 × 6 cm cystic mass with regular margins was found arising from the right tubo-ovarian complex",
+          "purulent fluid was noted"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "Ovarian torsion",
+        "preferred_label": "Ovarian torsion",
+        "support_spans": [
+          "right lower-quadrant abdominal pain"
+        ],
+        "contradict_spans": [
+          "the appendix appeared clinically normal"
+        ],
+        "score_logit": -0.25
+      }
+    ],
+    "vignette_chars": 1152,
+    "frontier_selector": {
+      "champion": "Tubo-ovarian abscess",
+      "runner_up": "Ovarian cyst",
+      "why": "The presence of purulent fluid noted upon incision of the cyst wall strongly supports the diagnosis of Tubo-ovarian abscess."
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {}
+  },
+  "metrics": {
+    "llm_calls": 2,
+    "top_margin": 1.0,
+    "unexplained_n": 1
+  }
+}

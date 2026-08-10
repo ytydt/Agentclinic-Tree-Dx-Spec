@@ -1,0 +1,343 @@
+{
+  "source_id": "206",
+  "case_id": "diagnosisarena__000206",
+  "champion": "Acute Coronary Syndrome",
+  "ordered_diagnoses": [
+    "Acute Coronary Syndrome",
+    "Myocardial Infarction",
+    "Acute Coronary Thrombosis",
+    "Occlusive Lesion of Proximal Obtuse Marginal Artery",
+    "Thrombotic Occlusion of Saphenous Vein Graft"
+  ],
+  "llm_calls": 1,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "Acute Coronary Syndrome",
+              "support_spans": [
+                "dull chest pain of 2 hours' duration",
+                "ST segment depression >1mm in V2 and V3",
+                "new discordant ST elevation of 1mm in leads II, III, and aVF"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's symptoms and ECG findings are consistent with acute coronary syndrome.",
+              "axis_node": "Cardiovascular"
+            },
+            {
+              "name": "Myocardial Infarction",
+              "support_spans": [
+                "ST segment depression >1mm in V2 and V3",
+                "new discordant ST elevation of 1mm in leads II, III, and aVF"
+              ],
+              "contradict_spans": [
+                "Initial troponin (2 hours after symptom onset): Negative"
+              ],
+              "why": "The patient's ECG findings suggest myocardial infarction, but the negative troponin result contradicts this diagnosis.",
+              "axis_node": "Cardiovascular"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "Thrombotic Occlusion of Saphenous Vein Graft",
+              "support_spans": [
+                "thrombotic occlusion of saphenous vein graft proximal to circumflex anastomosis"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's cardiac catheterization revealed thrombotic occlusion of the saphenous vein graft, which is a known mechanism of acute coronary syndrome.",
+              "axis_node": "Graft Occlusion"
+            },
+            {
+              "name": "Occlusive Lesion of Proximal Obtuse Marginal Artery",
+              "support_spans": [
+                "occlusive lesions in proximal obtuse marginal artery"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's cardiac catheterization revealed occlusive lesions in the proximal obtuse marginal artery, which is a known mechanism of myocardial infarction.",
+              "axis_node": "Arterial Occlusion"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "Acute Coronary Thrombosis",
+              "support_spans": [
+                "thrombotic occlusion of saphenous vein graft proximal to circumflex anastomosis"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's cardiac catheterization revealed thrombotic occlusion of the saphenous vein graft, which is a decisive finding for acute coronary thrombosis.",
+              "axis_node": "Cardiac Catheterization"
+            },
+            {
+              "name": "Myocardial Infarction due to Occlusive Lesion",
+              "support_spans": [
+                "occlusive lesions in proximal obtuse marginal artery"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's cardiac catheterization revealed occlusive lesions in the proximal obtuse marginal artery, which is a decisive finding for myocardial infarction due to occlusive lesion.",
+              "axis_node": "Cardiac Catheterization"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "dull chest pain of 2 hours' duration",
+        "ST segment depression >1mm in V2 and V3",
+        "new discordant ST elevation of 1mm in leads II, III, and aVF",
+        "thrombotic occlusion of saphenous vein graft proximal to circumflex anastomosis",
+        "occlusive lesions in proximal obtuse marginal artery",
+        "Initial troponin (2 hours after symptom onset): Negative",
+        "Shows resolution of ST segment changes"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [
+        "Initial troponin (2 hours after symptom onset): Negative",
+        "Shows resolution of ST segment changes"
+      ],
+      "generator_jaccard": 0.0,
+      "top1_same_across_views": false,
+      "top_margin": 0.75,
+      "leave_one_view_instability": true,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Acute Coronary Syndrome",
+        "preferred_label": "Acute Coronary Syndrome",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "Cardiovascular"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE002",
+          "KE003"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "dull chest pain of 2 hours' duration",
+          "ST segment depression >1mm in V2 and V3",
+          "new discordant ST elevation of 1mm in leads II, III, and aVF"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Myocardial Infarction",
+        "preferred_label": "Myocardial Infarction",
+        "generator_views": [
+          "syndrome_anatomy",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Cardiovascular",
+          "Cardiac Catheterization"
+        ],
+        "supporting_evidence": [
+          "KE002",
+          "KE003",
+          "KE005"
+        ],
+        "contradicting_evidence": [
+          "KE006"
+        ],
+        "support_spans": [
+          "ST segment depression >1mm in V2 and V3",
+          "new discordant ST elevation of 1mm in leads II, III, and aVF",
+          "occlusive lesions in proximal obtuse marginal artery"
+        ],
+        "contradict_spans": [
+          "Initial troponin (2 hours after symptom onset): Negative"
+        ],
+        "score_logit": 2.25,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Thrombotic Occlusion of Saphenous Vein Graft",
+        "preferred_label": "Thrombotic Occlusion of Saphenous Vein Graft",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Graft Occlusion"
+        ],
+        "supporting_evidence": [
+          "KE004"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "thrombotic occlusion of saphenous vein graft proximal to circumflex anastomosis"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Occlusive Lesion of Proximal Obtuse Marginal Artery",
+        "preferred_label": "Occlusive Lesion of Proximal Obtuse Marginal Artery",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Arterial Occlusion"
+        ],
+        "supporting_evidence": [
+          "KE005"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "occlusive lesions in proximal obtuse marginal artery"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Acute Coronary Thrombosis",
+        "preferred_label": "Acute Coronary Thrombosis",
+        "generator_views": [
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Cardiac Catheterization"
+        ],
+        "supporting_evidence": [
+          "KE004"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "thrombotic occlusion of saphenous vein graft proximal to circumflex anastomosis"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "dull chest pain of 2 hours' duration",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "ST segment depression >1mm in V2 and V3",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "new discordant ST elevation of 1mm in leads II, III, and aVF",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "thrombotic occlusion of saphenous vein graft proximal to circumflex anastomosis",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "occlusive lesions in proximal obtuse marginal artery",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "Initial troponin (2 hours after symptom onset): Negative",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE007",
+        "raw_span": "Shows resolution of ST segment changes",
+        "source_view": "batched"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "Acute Coronary Syndrome",
+        "preferred_label": "Acute Coronary Syndrome",
+        "support_spans": [
+          "dull chest pain of 2 hours' duration",
+          "ST segment depression >1mm in V2 and V3",
+          "new discordant ST elevation of 1mm in leads II, III, and aVF"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.0
+      },
+      {
+        "preferred_name": "Myocardial Infarction",
+        "preferred_label": "Myocardial Infarction",
+        "support_spans": [
+          "ST segment depression >1mm in V2 and V3",
+          "new discordant ST elevation of 1mm in leads II, III, and aVF",
+          "occlusive lesions in proximal obtuse marginal artery"
+        ],
+        "contradict_spans": [
+          "Initial troponin (2 hours after symptom onset): Negative"
+        ],
+        "score_logit": 2.25
+      },
+      {
+        "preferred_name": "Acute Coronary Thrombosis",
+        "preferred_label": "Acute Coronary Thrombosis",
+        "support_spans": [
+          "thrombotic occlusion of saphenous vein graft proximal to circumflex anastomosis"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "Occlusive Lesion of Proximal Obtuse Marginal Artery",
+        "preferred_label": "Occlusive Lesion of Proximal Obtuse Marginal Artery",
+        "support_spans": [
+          "occlusive lesions in proximal obtuse marginal artery"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "Thrombotic Occlusion of Saphenous Vein Graft",
+        "preferred_label": "Thrombotic Occlusion of Saphenous Vein Graft",
+        "support_spans": [
+          "thrombotic occlusion of saphenous vein graft proximal to circumflex anastomosis"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      }
+    ],
+    "vignette_chars": 1440,
+    "frontier_selector": {
+      "champion": "Acute Coronary Syndrome",
+      "runner_up": "Myocardial Infarction",
+      "why": "The combination of dull chest pain, ST segment depression, and new discordant ST elevation in multiple leads decided it."
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {
+      "mode": "oracle_gold",
+      "before": 5,
+      "after": 5
+    },
+    "reselect_from": "compact_forest_v1"
+  }
+}

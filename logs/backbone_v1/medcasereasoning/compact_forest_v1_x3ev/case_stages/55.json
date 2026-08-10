@@ -1,0 +1,304 @@
+{
+  "source_id": "55",
+  "case_id": "medcasereasoning__000055",
+  "champion": "Urinary Tract Infection",
+  "ordered_diagnoses": [
+    "Urinary Tract Infection",
+    "Bladder Cancer",
+    "Pyelonephritis",
+    "Cystitis"
+  ],
+  "llm_calls": 1,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "Urinary Tract Infection",
+              "support_spans": [
+                "fever, left-sided flank pain, and foul-smelling urine",
+                "Urinalysis is positive for leukocyte esterase, nitrites, and white blood cells",
+                "Blood and urine cultures grow Escherichia coli"
+              ],
+              "contradict_spans": [],
+              "why": "The patient presents with symptoms and laboratory results consistent with a urinary tract infection.",
+              "axis_node": "Urinary Tract"
+            },
+            {
+              "name": "Bladder Cancer",
+              "support_spans": [
+                "irregular, nodular thickening of the bladder wall, suspicious for neoplasm"
+              ],
+              "contradict_spans": [],
+              "why": "The CT scan of the abdomen and pelvis reveals irregular, nodular thickening of the bladder wall, which is suspicious for neoplasm.",
+              "axis_node": "Bladder"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "Pyelonephritis",
+              "support_spans": [
+                "fever, left-sided flank pain, and foul-smelling urine",
+                "leukocytosis of 20,000 per µL"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's symptoms and laboratory results are consistent with an ascending infection of the urinary tract, which could lead to pyelonephritis.",
+              "axis_node": "Infection"
+            },
+            {
+              "name": "Cystitis",
+              "support_spans": [
+                "Urinalysis is positive for leukocyte esterase, nitrites, and white blood cells"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's urinalysis results are consistent with cystitis, which is an inflammation of the bladder.",
+              "axis_node": "Inflammation"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "Urinary Tract Infection",
+              "support_spans": [
+                "Blood and urine cultures grow Escherichia coli"
+              ],
+              "contradict_spans": [],
+              "why": "The growth of Escherichia coli in blood and urine cultures is a decisive finding for urinary tract infection.",
+              "axis_node": "Culture"
+            },
+            {
+              "name": "Bladder Cancer",
+              "support_spans": [
+                "CT of the abdomen and pelvis reveals a non-obstructing right nephrolithiasis and irregular, nodular thickening of the bladder wall, suspicious for neoplasm"
+              ],
+              "contradict_spans": [],
+              "why": "The CT scan of the abdomen and pelvis reveals irregular, nodular thickening of the bladder wall, which is suspicious for neoplasm and would require further evaluation for bladder cancer.",
+              "axis_node": "Imaging"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "fever, left-sided flank pain, and foul-smelling urine",
+        "Urinalysis is positive for leukocyte esterase, nitrites, and white blood cells",
+        "Blood and urine cultures grow Escherichia coli",
+        "CT of the abdomen and pelvis reveals a non-obstructing right nephrolithiasis and irregular, nodular thickening of the bladder wall, suspicious for neoplasm",
+        "leukocytosis of 20,000 per µL",
+        "hyponatremia (122 mEq/L)",
+        "irregular, nodular thickening of the bladder wall, suspicious for neoplasm"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [
+        "hyponatremia (122 mEq/L)"
+      ],
+      "generator_jaccard": 0.3333333333333333,
+      "top1_same_across_views": true,
+      "top_margin": 1.0,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Urinary Tract Infection",
+        "preferred_label": "Urinary Tract Infection",
+        "generator_views": [
+          "syndrome_anatomy",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Urinary Tract",
+          "Culture"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE002",
+          "KE003"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "fever, left-sided flank pain, and foul-smelling urine",
+          "Urinalysis is positive for leukocyte esterase, nitrites, and white blood cells",
+          "Blood and urine cultures grow Escherichia coli"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.5,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Bladder Cancer",
+        "preferred_label": "Bladder Cancer",
+        "generator_views": [
+          "syndrome_anatomy",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Bladder",
+          "Imaging"
+        ],
+        "supporting_evidence": [
+          "KE007",
+          "KE004"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "irregular, nodular thickening of the bladder wall, suspicious for neoplasm",
+          "CT of the abdomen and pelvis reveals a non-obstructing right nephrolithiasis and irregular, nodular thickening of the bladder wall, suspicious for neoplasm"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.5,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Pyelonephritis",
+        "preferred_label": "Pyelonephritis",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Infection"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE005"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "fever, left-sided flank pain, and foul-smelling urine",
+          "leukocytosis of 20,000 per µL"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Cystitis",
+        "preferred_label": "Cystitis",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Inflammation"
+        ],
+        "supporting_evidence": [
+          "KE002"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Urinalysis is positive for leukocyte esterase, nitrites, and white blood cells"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "fever, left-sided flank pain, and foul-smelling urine",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "Urinalysis is positive for leukocyte esterase, nitrites, and white blood cells",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "Blood and urine cultures grow Escherichia coli",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "CT of the abdomen and pelvis reveals a non-obstructing right nephrolithiasis and irregular, nodular thickening of the bladder wall, suspicious for neoplasm",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "leukocytosis of 20,000 per µL",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "hyponatremia (122 mEq/L)",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE007",
+        "raw_span": "irregular, nodular thickening of the bladder wall, suspicious for neoplasm",
+        "source_view": "batched"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "Urinary Tract Infection",
+        "preferred_label": "Urinary Tract Infection",
+        "support_spans": [
+          "fever, left-sided flank pain, and foul-smelling urine",
+          "Urinalysis is positive for leukocyte esterase, nitrites, and white blood cells",
+          "Blood and urine cultures grow Escherichia coli"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.5
+      },
+      {
+        "preferred_name": "Bladder Cancer",
+        "preferred_label": "Bladder Cancer",
+        "support_spans": [
+          "irregular, nodular thickening of the bladder wall, suspicious for neoplasm",
+          "CT of the abdomen and pelvis reveals a non-obstructing right nephrolithiasis and irregular, nodular thickening of the bladder wall, suspicious for neoplasm"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.5
+      },
+      {
+        "preferred_name": "Pyelonephritis",
+        "preferred_label": "Pyelonephritis",
+        "support_spans": [
+          "fever, left-sided flank pain, and foul-smelling urine",
+          "leukocytosis of 20,000 per µL"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "Cystitis",
+        "preferred_label": "Cystitis",
+        "support_spans": [
+          "Urinalysis is positive for leukocyte esterase, nitrites, and white blood cells"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      }
+    ],
+    "vignette_chars": 1145,
+    "frontier_selector": {
+      "champion": "Urinary Tract Infection",
+      "runner_up": "Pyelonephritis",
+      "why": "The presence of fever, left-sided flank pain, foul-smelling urine, positive urinalysis, and blood and urine cultures growing Escherichia coli specifically support Urinary Tract Infection."
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {
+      "mode": "evidence",
+      "before": 4,
+      "after": 4
+    },
+    "reselect_from": "compact_forest_v1"
+  }
+}

@@ -1,0 +1,306 @@
+{
+  "source_id": "653",
+  "case_id": "diagnosisarena__000653",
+  "champion": "thrombosis",
+  "ordered_diagnoses": [
+    "thrombosis",
+    "pyelonephritis",
+    "arteritis",
+    "bile duct dilation"
+  ],
+  "llm_calls": 2,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "pyelonephritis",
+              "support_spans": [
+                "left-sided pyelonephritis",
+                "left flank pain"
+              ],
+              "contradict_spans": [],
+              "why": "Patient presented with left-sided pyelonephritis and left flank pain.",
+              "axis_node": "urinary tract"
+            },
+            {
+              "name": "bile duct dilation",
+              "support_spans": [
+                "Multifocal peripheral dilation of bile ducts at right liver lobe"
+              ],
+              "contradict_spans": [],
+              "why": "Imaging studies showed multifocal peripheral dilation of bile ducts.",
+              "axis_node": "biliary system"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "thrombosis",
+              "support_spans": [
+                "elevated international normalized ratio of 1.4",
+                "filling defect in the common hepatic artery"
+              ],
+              "contradict_spans": [],
+              "why": "Elevated INR and filling defect in the common hepatic artery suggest thrombosis.",
+              "axis_node": "coagulation"
+            },
+            {
+              "name": "arteritis",
+              "support_spans": [
+                "filling defect in the common hepatic artery"
+              ],
+              "contradict_spans": [],
+              "why": "Filling defect in the common hepatic artery could indicate arteritis.",
+              "axis_node": "inflammation"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "hepatic artery thrombosis",
+              "support_spans": [
+                "filling defect in the common hepatic artery"
+              ],
+              "contradict_spans": [],
+              "why": "MRI showing a filling defect in the common hepatic artery is decisive for hepatic artery thrombosis.",
+              "axis_node": "imaging"
+            },
+            {
+              "name": "pyelonephritis",
+              "support_spans": [
+                "Cortical enhancement of left kidney with surrounding inflammatory stranding"
+              ],
+              "contradict_spans": [],
+              "why": "Abdominal CT scan showing cortical enhancement and inflammatory stranding is decisive for pyelonephritis.",
+              "axis_node": "imaging"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "left-sided pyelonephritis",
+        "elevated international normalized ratio of 1.4",
+        "filling defect in the common hepatic artery",
+        "Cortical enhancement of left kidney with surrounding inflammatory stranding",
+        "Multifocal peripheral dilation of bile ducts at right liver lobe",
+        "Relative atrophy of left lobe",
+        "Liver showed smooth contours with no signs of cirrhosis"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [
+        "Relative atrophy of left lobe",
+        "Liver showed smooth contours with no signs of cirrhosis"
+      ],
+      "generator_jaccard": 0.1111111111111111,
+      "top1_same_across_views": true,
+      "top_margin": 1.0,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "pyelonephritis",
+        "preferred_label": "pyelonephritis",
+        "generator_views": [
+          "syndrome_anatomy",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "urinary tract",
+          "imaging"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "SYNDE008",
+          "KE004"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "left-sided pyelonephritis",
+          "left flank pain",
+          "Cortical enhancement of left kidney with surrounding inflammatory stranding"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.5,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "bile duct dilation",
+        "preferred_label": "bile duct dilation",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "biliary system"
+        ],
+        "supporting_evidence": [
+          "KE005"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Multifocal peripheral dilation of bile ducts at right liver lobe"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "thrombosis",
+        "preferred_label": "thrombosis",
+        "generator_views": [
+          "mechanism",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "coagulation",
+          "imaging"
+        ],
+        "supporting_evidence": [
+          "KE002",
+          "KE003"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "elevated international normalized ratio of 1.4",
+          "filling defect in the common hepatic artery"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.5,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "arteritis",
+        "preferred_label": "arteritis",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "inflammation"
+        ],
+        "supporting_evidence": [
+          "KE003"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "filling defect in the common hepatic artery"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "left-sided pyelonephritis",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "elevated international normalized ratio of 1.4",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "filling defect in the common hepatic artery",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "Cortical enhancement of left kidney with surrounding inflammatory stranding",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "Multifocal peripheral dilation of bile ducts at right liver lobe",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "Relative atrophy of left lobe",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE007",
+        "raw_span": "Liver showed smooth contours with no signs of cirrhosis",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "SYNDE008",
+        "raw_span": "left flank pain",
+        "source_view": "syndrome_anatomy"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "pyelonephritis",
+        "preferred_label": "pyelonephritis",
+        "support_spans": [
+          "left-sided pyelonephritis",
+          "left flank pain",
+          "Cortical enhancement of left kidney with surrounding inflammatory stranding"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.5
+      },
+      {
+        "preferred_name": "thrombosis",
+        "preferred_label": "thrombosis",
+        "support_spans": [
+          "elevated international normalized ratio of 1.4",
+          "filling defect in the common hepatic artery"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.5
+      },
+      {
+        "preferred_name": "arteritis",
+        "preferred_label": "arteritis",
+        "support_spans": [
+          "filling defect in the common hepatic artery"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "bile duct dilation",
+        "preferred_label": "bile duct dilation",
+        "support_spans": [
+          "Multifocal peripheral dilation of bile ducts at right liver lobe"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      }
+    ],
+    "vignette_chars": 1320,
+    "frontier_selector": {
+      "champion": "thrombosis",
+      "runner_up": "pyelonephritis",
+      "why": "The evidence of a filling defect in the common hepatic artery decided it."
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {}
+  },
+  "metrics": {
+    "llm_calls": 2,
+    "top_margin": 1.0,
+    "unexplained_n": 2
+  }
+}

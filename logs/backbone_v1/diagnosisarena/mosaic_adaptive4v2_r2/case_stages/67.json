@@ -1,0 +1,948 @@
+{
+  "case_id": "diagnosisarena__000067",
+  "source_id": "67",
+  "champion": "Pulmonary Infection",
+  "ordered_diagnoses": [
+    "Pulmonary Infection",
+    "Pulmonary Embolism with Cardiac Involvement",
+    "Intracranial Hemorrhage",
+    "Myocardial Infarction"
+  ],
+  "llm_calls": 3,
+  "stages": {
+    "mode": "adaptive4v2",
+    "vignette_chars": 914,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Myocardial Infarction",
+          "support_spans": [
+            "ECG showing intrinsic junctional rhythm at rate of about 60 beats/min"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's ECG results and symptoms such as altered mental status, weakness, and bradycardia could be indicative of myocardial infarction."
+        },
+        {
+          "name": "Intracranial Hemorrhage",
+          "support_spans": [
+            "headache"
+          ],
+          "contradict_spans": [
+            "Computed tomography of the head: No acute pathology"
+          ],
+          "why": "The patient's headache could suggest intracranial hemorrhage, but the CT head scan did not show any acute pathology."
+        },
+        {
+          "name": "Pulmonary Infection",
+          "support_spans": [
+            "Chest radiography: Showed pulmonary consolidation",
+            "emesis",
+            "respiratory rate of 27 breaths/min"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's symptoms such as emesis, increased respiratory rate, and the chest radiography results could indicate a pulmonary infection."
+        }
+      ],
+      "key_evidence_spans": [
+        "ECG showing intrinsic junctional rhythm at rate of about 60 beats/min",
+        "Chest radiography: Showed pulmonary consolidation",
+        "Computed tomography of the head: No acute pathology"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Intracranial Hemorrhage with Brainstem Involvement",
+          "support_spans": [
+            "altered mental status, weakness, slurred speech, emesis, and headache"
+          ],
+          "contradict_spans": [
+            "Computed tomography of the head: No acute pathology"
+          ],
+          "why": "The patient's presentation with altered mental status, weakness, slurred speech, emesis, and headache could suggest intracranial hemorrhage with brainstem involvement, despite the CT head showing no acute pathology, as small brainstem hemorrhages may not always be visible on initial CT scans.",
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare and easily missed cause of the patient's symptoms, and the initial CT head may not have captured the full extent of the hemorrhage."
+        },
+        {
+          "name": "Myocardial Infarction with High-Degree AV Block",
+          "support_spans": [
+            "heart rate of 49 beats/min",
+            "ECG showing intrinsic junctional rhythm at rate of about 60 beats/min"
+          ],
+          "contradict_spans": [
+            "No mention of cardiac biomarkers or further cardiac evaluation"
+          ],
+          "why": "The patient's bradycardia and junctional rhythm on ECG could suggest myocardial infarction with high-degree AV block, which may require prompt cardiac evaluation and intervention.",
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare and potentially life-threatening cause of the patient's bradycardia, and may not be immediately apparent without further cardiac evaluation."
+        },
+        {
+          "name": "Pulmonary Embolism with Cardiac Involvement",
+          "support_spans": [
+            "pulmonary consolidation on chest radiography",
+            "heart rate of 49 beats/min"
+          ],
+          "contradict_spans": [
+            "No mention of D-dimer or further pulmonary evaluation"
+          ],
+          "why": "The patient's pulmonary consolidation and bradycardia could suggest pulmonary embolism with cardiac involvement, which may require prompt evaluation and anticoagulation.",
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare and potentially life-threatening cause of the patient's symptoms, and may not be immediately apparent without further pulmonary evaluation."
+        }
+      ],
+      "key_evidence_spans": [
+        "altered mental status, weakness, slurred speech, emesis, and headache",
+        "heart rate of 49 beats/min",
+        "ECG showing intrinsic junctional rhythm at rate of about 60 beats/min",
+        "pulmonary consolidation on chest radiography"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "Computed tomography of the head: No acute pathology",
+        "No mention of cardiac biomarkers or further cardiac evaluation",
+        "No mention of D-dimer or further pulmonary evaluation"
+      ],
+      "generator_jaccard": 0.0,
+      "top1_same_across_views": false,
+      "top_margin": 1.65,
+      "leave_one_view_instability": true,
+      "contradiction_mass": 0
+    },
+    "state_after_a1": {
+      "unexplained_specific_evidence": [
+        "Computed tomography of the head: No acute pathology",
+        "No mention of cardiac biomarkers or further cardiac evaluation",
+        "No mention of D-dimer or further pulmonary evaluation"
+      ],
+      "generator_jaccard": 0.0,
+      "top1_same_across_views": false,
+      "top_margin": 1.65,
+      "leave_one_view_instability": true,
+      "contradiction_mass": 0
+    },
+    "adaptive_action": null,
+    "selector": {
+      "champion": "Pulmonary Infection",
+      "runner_up": "Pulmonary Embolism with Cardiac Involvement",
+      "rationale": "Pulmonary consolidation on chest radiography and symptoms such as emesis and increased respiratory rate support Pulmonary Infection, with no strong contradictions.",
+      "rejected": [
+        {
+          "label": "Intracranial Hemorrhage",
+          "why": "Computed tomography of the head showed no acute pathology, contradicting this diagnosis."
+        },
+        {
+          "label": "Myocardial Infarction",
+          "why": "Lack of cardiac biomarkers or further cardiac evaluation makes this diagnosis less likely."
+        },
+        {
+          "label": "Pulmonary Embolism with Cardiac Involvement",
+          "why": "Not selected as champion due to lack of D-dimer or further pulmonary evaluation, but remains a plausible alternative due to some supporting evidence."
+        }
+      ],
+      "margin": "medium"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "ECG showing intrinsic junctional rhythm at rate of about 60 beats/min",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "Chest radiography: Showed pulmonary consolidation",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "Computed tomography of the head: No acute pathology",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "headache",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E005",
+        "raw_span": "emesis",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E006",
+        "raw_span": "respiratory rate of 27 breaths/min",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E007",
+        "raw_span": "altered mental status, weakness, slurred speech, emesis, and headache",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E008",
+        "raw_span": "heart rate of 49 beats/min",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E009",
+        "raw_span": "pulmonary consolidation on chest radiography",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E010",
+        "raw_span": "No mention of cardiac biomarkers or further cardiac evaluation",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E011",
+        "raw_span": "No mention of D-dimer or further pulmonary evaluation",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Myocardial Infarction",
+        "aliases": [
+          "Myocardial Infarction with High-Degree AV Block"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G2E008"
+        ],
+        "contradicting_evidence": [
+          "G2E010"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare and potentially life-threatening cause of the patient's bradycardia, and may not be immediately apparent without further cardiac evaluation.",
+        "score_logit": 1.35,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Intracranial Hemorrhage",
+        "aliases": [
+          "Intracranial Hemorrhage with Brainstem Involvement"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E004",
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G1E003"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare and easily missed cause of the patient's symptoms, and the initial CT head may not have captured the full extent of the hemorrhage.",
+        "score_logit": 1.35,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Pulmonary Infection",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E002",
+          "G1E005",
+          "G1E006"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 3.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Pulmonary Embolism with Cardiac Involvement",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G2E009",
+          "G2E008"
+        ],
+        "contradicting_evidence": [
+          "G2E011"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare and potentially life-threatening cause of the patient's symptoms, and may not be immediately apparent without further pulmonary evaluation.",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Myocardial Infarction",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Intracranial Hemorrhage",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Pulmonary Infection",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Intracranial Hemorrhage with Brainstem Involvement",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Myocardial Infarction with High-Degree AV Block",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C004",
+        "name": "Pulmonary Embolism with Cardiac Involvement",
+        "view": "g2"
+      }
+    ],
+    "frontier_final": [
+      {
+        "concept_id": "C003",
+        "preferred_name": "Pulmonary Infection",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E002",
+          "G1E005",
+          "G1E006"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 3.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Intracranial Hemorrhage",
+        "aliases": [
+          "Intracranial Hemorrhage with Brainstem Involvement"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E004",
+          "G2E007"
+        ],
+        "contradicting_evidence": [
+          "G1E003"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare and easily missed cause of the patient's symptoms, and the initial CT head may not have captured the full extent of the hemorrhage.",
+        "score_logit": 1.35,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C001",
+        "preferred_name": "Myocardial Infarction",
+        "aliases": [
+          "Myocardial Infarction with High-Degree AV Block"
+        ],
+        "generator_views": [
+          "g1",
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G2E008"
+        ],
+        "contradicting_evidence": [
+          "G2E010"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare and potentially life-threatening cause of the patient's bradycardia, and may not be immediately apparent without further cardiac evaluation.",
+        "score_logit": 1.35,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Pulmonary Embolism with Cardiac Involvement",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G2E009",
+          "G2E008"
+        ],
+        "contradicting_evidence": [
+          "G2E011"
+        ],
+        "protected_reason": "This diagnosis may deserve minority protection because it is a rare and potentially life-threatening cause of the patient's symptoms, and may not be immediately apparent without further pulmonary evaluation.",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 4,
+    "n_evidence": 11,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.0,
+    "frontier_n": 4,
+    "protected_n": 3,
+    "n_generators": 2,
+    "adaptive_action": null,
+    "llm_calls": 3,
+    "history_leakage": 0,
+    "mode": "adaptive4v2"
+  },
+  "prediction": {
+    "arm": "mosaic_adaptive4v2_r2",
+    "case_id": "diagnosisarena__000067",
+    "source_id": "67",
+    "dataset": "diagnosisarena",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Pulmonary Infection",
+      "Pulmonary Embolism with Cardiac Involvement",
+      "Intracranial Hemorrhage",
+      "Myocardial Infarction"
+    ],
+    "top2_diagnoses": [
+      "Pulmonary Infection",
+      "Pulmonary Embolism with Cardiac Involvement"
+    ],
+    "cost": {
+      "llm_calls": 3
+    },
+    "stages": {
+      "mode": "adaptive4v2",
+      "vignette_chars": 914,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Myocardial Infarction",
+            "support_spans": [
+              "ECG showing intrinsic junctional rhythm at rate of about 60 beats/min"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's ECG results and symptoms such as altered mental status, weakness, and bradycardia could be indicative of myocardial infarction."
+          },
+          {
+            "name": "Intracranial Hemorrhage",
+            "support_spans": [
+              "headache"
+            ],
+            "contradict_spans": [
+              "Computed tomography of the head: No acute pathology"
+            ],
+            "why": "The patient's headache could suggest intracranial hemorrhage, but the CT head scan did not show any acute pathology."
+          },
+          {
+            "name": "Pulmonary Infection",
+            "support_spans": [
+              "Chest radiography: Showed pulmonary consolidation",
+              "emesis",
+              "respiratory rate of 27 breaths/min"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's symptoms such as emesis, increased respiratory rate, and the chest radiography results could indicate a pulmonary infection."
+          }
+        ],
+        "key_evidence_spans": [
+          "ECG showing intrinsic junctional rhythm at rate of about 60 beats/min",
+          "Chest radiography: Showed pulmonary consolidation",
+          "Computed tomography of the head: No acute pathology"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Intracranial Hemorrhage with Brainstem Involvement",
+            "support_spans": [
+              "altered mental status, weakness, slurred speech, emesis, and headache"
+            ],
+            "contradict_spans": [
+              "Computed tomography of the head: No acute pathology"
+            ],
+            "why": "The patient's presentation with altered mental status, weakness, slurred speech, emesis, and headache could suggest intracranial hemorrhage with brainstem involvement, despite the CT head showing no acute pathology, as small brainstem hemorrhages may not always be visible on initial CT scans.",
+            "protected_reason": "This diagnosis may deserve minority protection because it is a rare and easily missed cause of the patient's symptoms, and the initial CT head may not have captured the full extent of the hemorrhage."
+          },
+          {
+            "name": "Myocardial Infarction with High-Degree AV Block",
+            "support_spans": [
+              "heart rate of 49 beats/min",
+              "ECG showing intrinsic junctional rhythm at rate of about 60 beats/min"
+            ],
+            "contradict_spans": [
+              "No mention of cardiac biomarkers or further cardiac evaluation"
+            ],
+            "why": "The patient's bradycardia and junctional rhythm on ECG could suggest myocardial infarction with high-degree AV block, which may require prompt cardiac evaluation and intervention.",
+            "protected_reason": "This diagnosis may deserve minority protection because it is a rare and potentially life-threatening cause of the patient's bradycardia, and may not be immediately apparent without further cardiac evaluation."
+          },
+          {
+            "name": "Pulmonary Embolism with Cardiac Involvement",
+            "support_spans": [
+              "pulmonary consolidation on chest radiography",
+              "heart rate of 49 beats/min"
+            ],
+            "contradict_spans": [
+              "No mention of D-dimer or further pulmonary evaluation"
+            ],
+            "why": "The patient's pulmonary consolidation and bradycardia could suggest pulmonary embolism with cardiac involvement, which may require prompt evaluation and anticoagulation.",
+            "protected_reason": "This diagnosis may deserve minority protection because it is a rare and potentially life-threatening cause of the patient's symptoms, and may not be immediately apparent without further pulmonary evaluation."
+          }
+        ],
+        "key_evidence_spans": [
+          "altered mental status, weakness, slurred speech, emesis, and headache",
+          "heart rate of 49 beats/min",
+          "ECG showing intrinsic junctional rhythm at rate of about 60 beats/min",
+          "pulmonary consolidation on chest radiography"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "Computed tomography of the head: No acute pathology",
+          "No mention of cardiac biomarkers or further cardiac evaluation",
+          "No mention of D-dimer or further pulmonary evaluation"
+        ],
+        "generator_jaccard": 0.0,
+        "top1_same_across_views": false,
+        "top_margin": 1.65,
+        "leave_one_view_instability": true,
+        "contradiction_mass": 0
+      },
+      "state_after_a1": {
+        "unexplained_specific_evidence": [
+          "Computed tomography of the head: No acute pathology",
+          "No mention of cardiac biomarkers or further cardiac evaluation",
+          "No mention of D-dimer or further pulmonary evaluation"
+        ],
+        "generator_jaccard": 0.0,
+        "top1_same_across_views": false,
+        "top_margin": 1.65,
+        "leave_one_view_instability": true,
+        "contradiction_mass": 0
+      },
+      "adaptive_action": null,
+      "selector": {
+        "champion": "Pulmonary Infection",
+        "runner_up": "Pulmonary Embolism with Cardiac Involvement",
+        "rationale": "Pulmonary consolidation on chest radiography and symptoms such as emesis and increased respiratory rate support Pulmonary Infection, with no strong contradictions.",
+        "rejected": [
+          {
+            "label": "Intracranial Hemorrhage",
+            "why": "Computed tomography of the head showed no acute pathology, contradicting this diagnosis."
+          },
+          {
+            "label": "Myocardial Infarction",
+            "why": "Lack of cardiac biomarkers or further cardiac evaluation makes this diagnosis less likely."
+          },
+          {
+            "label": "Pulmonary Embolism with Cardiac Involvement",
+            "why": "Not selected as champion due to lack of D-dimer or further pulmonary evaluation, but remains a plausible alternative due to some supporting evidence."
+          }
+        ],
+        "margin": "medium"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "ECG showing intrinsic junctional rhythm at rate of about 60 beats/min",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "Chest radiography: Showed pulmonary consolidation",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "Computed tomography of the head: No acute pathology",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "headache",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E005",
+          "raw_span": "emesis",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E006",
+          "raw_span": "respiratory rate of 27 breaths/min",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E007",
+          "raw_span": "altered mental status, weakness, slurred speech, emesis, and headache",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E008",
+          "raw_span": "heart rate of 49 beats/min",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E009",
+          "raw_span": "pulmonary consolidation on chest radiography",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E010",
+          "raw_span": "No mention of cardiac biomarkers or further cardiac evaluation",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E011",
+          "raw_span": "No mention of D-dimer or further pulmonary evaluation",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Myocardial Infarction",
+          "aliases": [
+            "Myocardial Infarction with High-Degree AV Block"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G2E008"
+          ],
+          "contradicting_evidence": [
+            "G2E010"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare and potentially life-threatening cause of the patient's bradycardia, and may not be immediately apparent without further cardiac evaluation.",
+          "score_logit": 1.35,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Intracranial Hemorrhage",
+          "aliases": [
+            "Intracranial Hemorrhage with Brainstem Involvement"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E004",
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G1E003"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare and easily missed cause of the patient's symptoms, and the initial CT head may not have captured the full extent of the hemorrhage.",
+          "score_logit": 1.35,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Pulmonary Infection",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E002",
+            "G1E005",
+            "G1E006"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 3.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Pulmonary Embolism with Cardiac Involvement",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G2E009",
+            "G2E008"
+          ],
+          "contradicting_evidence": [
+            "G2E011"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare and potentially life-threatening cause of the patient's symptoms, and may not be immediately apparent without further pulmonary evaluation.",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Myocardial Infarction",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Intracranial Hemorrhage",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Pulmonary Infection",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Intracranial Hemorrhage with Brainstem Involvement",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Myocardial Infarction with High-Degree AV Block",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C004",
+          "name": "Pulmonary Embolism with Cardiac Involvement",
+          "view": "g2"
+        }
+      ],
+      "frontier_final": [
+        {
+          "concept_id": "C003",
+          "preferred_name": "Pulmonary Infection",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E002",
+            "G1E005",
+            "G1E006"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 3.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Intracranial Hemorrhage",
+          "aliases": [
+            "Intracranial Hemorrhage with Brainstem Involvement"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E004",
+            "G2E007"
+          ],
+          "contradicting_evidence": [
+            "G1E003"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare and easily missed cause of the patient's symptoms, and the initial CT head may not have captured the full extent of the hemorrhage.",
+          "score_logit": 1.35,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C001",
+          "preferred_name": "Myocardial Infarction",
+          "aliases": [
+            "Myocardial Infarction with High-Degree AV Block"
+          ],
+          "generator_views": [
+            "g1",
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G2E008"
+          ],
+          "contradicting_evidence": [
+            "G2E010"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare and potentially life-threatening cause of the patient's bradycardia, and may not be immediately apparent without further cardiac evaluation.",
+          "score_logit": 1.35,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Pulmonary Embolism with Cardiac Involvement",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G2E009",
+            "G2E008"
+          ],
+          "contradicting_evidence": [
+            "G2E011"
+          ],
+          "protected_reason": "This diagnosis may deserve minority protection because it is a rare and potentially life-threatening cause of the patient's symptoms, and may not be immediately apparent without further pulmonary evaluation.",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 4,
+      "n_evidence": 11,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.0,
+      "frontier_n": 4,
+      "protected_n": 3,
+      "n_generators": 2,
+      "adaptive_action": null,
+      "llm_calls": 3,
+      "history_leakage": 0,
+      "mode": "adaptive4v2"
+    },
+    "wall_s": 7.077
+  },
+  "created_at": "2026-08-10T02:52:47.997797+00:00"
+}

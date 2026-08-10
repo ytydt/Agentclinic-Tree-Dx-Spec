@@ -1,0 +1,305 @@
+{
+  "source_id": "567",
+  "case_id": "diagnosisarena__000567",
+  "champion": "sepsis",
+  "ordered_diagnoses": [
+    "sepsis",
+    "end-stage renal disease",
+    "acute kidney injury",
+    "septicemia"
+  ],
+  "llm_calls": 2,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "sepsis",
+              "support_spans": [
+                "Patient was afebrile, hypertensive to 185/104 mm Hg, and tachycardic to 122 beats/min",
+                "Leukocytosis to 22.4×10⁹/L",
+                "Lactatemia to 2.5 mmol/L"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's presentation with tachycardia, hypertension, and leukocytosis suggests a systemic infection.",
+              "axis_node": "systemic infection"
+            },
+            {
+              "name": "end-stage renal disease",
+              "support_spans": [
+                "progressive renal failure with microscopic hematuria",
+                "Serum creatinine level of 312.1 μmol/L (3.53 mg/dL; baseline, 171.5 μmol/L [1.94 mg/dL])"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's renal function is deteriorating, as evidenced by increasing creatinine levels and microscopic hematuria.",
+              "axis_node": "renal disease"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "neutropenic sepsis",
+              "support_spans": [
+                "A 59-year-old immunocompromised man",
+                "Leukocytosis to 22.4×10⁹/L"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's immunocompromised state and development of sepsis suggest a mechanism of neutropenic sepsis.",
+              "axis_node": "immunocompromised state"
+            },
+            {
+              "name": "gram-negative sepsis",
+              "support_spans": [
+                "Peripheral blood cultures: 2/2 cultures grew Gram-negative cocci"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's blood cultures grew Gram-negative cocci, suggesting a mechanism of gram-negative sepsis.",
+              "axis_node": "gram-negative infection"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "septicemia",
+              "support_spans": [
+                "Peripheral blood cultures: 2/2 cultures grew Gram-negative cocci"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's blood cultures are decisive in confirming septicemia.",
+              "axis_node": "blood culture"
+            },
+            {
+              "name": "acute kidney injury",
+              "support_spans": [
+                "Serum creatinine level of 312.1 μmol/L (3.53 mg/dL; baseline, 171.5 μmol/L [1.94 mg/dL])"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's increasing creatinine levels are decisive in confirming acute kidney injury.",
+              "axis_node": "renal function test"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "A 59-year-old immunocompromised man",
+        "Leukocytosis to 22.4×10⁹/L",
+        "Lactatemia to 2.5 mmol/L",
+        "Peripheral blood cultures: 2/2 cultures grew Gram-negative cocci",
+        "Serum creatinine level of 312.1 μmol/L (3.53 mg/dL; baseline, 171.5 μmol/L [1.94 mg/dL])",
+        "progressive renal failure with microscopic hematuria",
+        "Patient was afebrile, hypertensive to 185/104 mm Hg, and tachycardic to 122 beats/min"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [],
+      "generator_jaccard": 0.0,
+      "top1_same_across_views": true,
+      "top_margin": 3.6499999999999995,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "sepsis",
+        "preferred_label": "sepsis",
+        "generator_views": [
+          "syndrome_anatomy",
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "systemic infection",
+          "immunocompromised state",
+          "gram-negative infection"
+        ],
+        "supporting_evidence": [
+          "KE007",
+          "KE002",
+          "KE003",
+          "KE001",
+          "KE004"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Patient was afebrile, hypertensive to 185/104 mm Hg, and tachycardic to 122 beats/min",
+          "Leukocytosis to 22.4×10⁹/L",
+          "Lactatemia to 2.5 mmol/L",
+          "A 59-year-old immunocompromised man",
+          "Peripheral blood cultures: 2/2 cultures grew Gram-negative cocci"
+        ],
+        "contradict_spans": [],
+        "score_logit": 5.6499999999999995,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "end-stage renal disease",
+        "preferred_label": "end-stage renal disease",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "renal disease"
+        ],
+        "supporting_evidence": [
+          "KE006",
+          "KE005"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "progressive renal failure with microscopic hematuria",
+          "Serum creatinine level of 312.1 μmol/L (3.53 mg/dL; baseline, 171.5 μmol/L [1.94 mg/dL])"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "septicemia",
+        "preferred_label": "septicemia",
+        "generator_views": [
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "blood culture"
+        ],
+        "supporting_evidence": [
+          "KE004"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Peripheral blood cultures: 2/2 cultures grew Gram-negative cocci"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "acute kidney injury",
+        "preferred_label": "acute kidney injury",
+        "generator_views": [
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "renal function test"
+        ],
+        "supporting_evidence": [
+          "KE005"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Serum creatinine level of 312.1 μmol/L (3.53 mg/dL; baseline, 171.5 μmol/L [1.94 mg/dL])"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "A 59-year-old immunocompromised man",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "Leukocytosis to 22.4×10⁹/L",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "Lactatemia to 2.5 mmol/L",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "Peripheral blood cultures: 2/2 cultures grew Gram-negative cocci",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "Serum creatinine level of 312.1 μmol/L (3.53 mg/dL; baseline, 171.5 μmol/L [1.94 mg/dL])",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "progressive renal failure with microscopic hematuria",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE007",
+        "raw_span": "Patient was afebrile, hypertensive to 185/104 mm Hg, and tachycardic to 122 beats/min",
+        "source_view": "batched"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "sepsis",
+        "preferred_label": "sepsis",
+        "support_spans": [
+          "Patient was afebrile, hypertensive to 185/104 mm Hg, and tachycardic to 122 beats/min",
+          "Leukocytosis to 22.4×10⁹/L",
+          "Lactatemia to 2.5 mmol/L",
+          "A 59-year-old immunocompromised man",
+          "Peripheral blood cultures: 2/2 cultures grew Gram-negative cocci"
+        ],
+        "contradict_spans": [],
+        "score_logit": 5.6499999999999995
+      },
+      {
+        "preferred_name": "end-stage renal disease",
+        "preferred_label": "end-stage renal disease",
+        "support_spans": [
+          "progressive renal failure with microscopic hematuria",
+          "Serum creatinine level of 312.1 μmol/L (3.53 mg/dL; baseline, 171.5 μmol/L [1.94 mg/dL])"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "acute kidney injury",
+        "preferred_label": "acute kidney injury",
+        "support_spans": [
+          "Serum creatinine level of 312.1 μmol/L (3.53 mg/dL; baseline, 171.5 μmol/L [1.94 mg/dL])"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "septicemia",
+        "preferred_label": "septicemia",
+        "support_spans": [
+          "Peripheral blood cultures: 2/2 cultures grew Gram-negative cocci"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      }
+    ],
+    "vignette_chars": 918,
+    "frontier_selector": {
+      "champion": "sepsis",
+      "runner_up": "septicemia",
+      "why": "The presence of leukocytosis, lactatemia, and positive blood culture results, along with the patient's immunocompromised state and presentation with fatigue and chills, decided it."
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {}
+  },
+  "metrics": {
+    "llm_calls": 2,
+    "top_margin": 3.6499999999999995,
+    "unexplained_n": 0
+  }
+}

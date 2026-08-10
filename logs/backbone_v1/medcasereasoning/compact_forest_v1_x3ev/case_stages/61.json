@@ -1,0 +1,369 @@
+{
+  "source_id": "61",
+  "case_id": "medcasereasoning__000061",
+  "champion": "Hemorrhagic Liver Cyst",
+  "ordered_diagnoses": [
+    "Hemorrhagic Liver Cyst",
+    "Focal Nodular Hyperplasia",
+    "Hepatic Artery Aneurysm",
+    "Hepatocellular Carcinoma"
+  ],
+  "llm_calls": 1,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "Hepatic Adenoma",
+              "support_spans": [
+                "histologically proven adenoma without malignancy",
+                "hypervascular liver lesions in segment IV"
+              ],
+              "contradict_spans": [],
+              "why": "Patient has a history of hypervascular liver lesions with biopsy-proven adenoma",
+              "axis_node": "Liver"
+            },
+            {
+              "name": "Hemorrhagic Liver Cyst",
+              "support_spans": [
+                "subcapsular hepatic bleeding",
+                "active bleeding from one of the two hypervascular lesions in segment IV"
+              ],
+              "contradict_spans": [],
+              "why": "Patient presented with acute-onset abdominal pain and anemia due to hepatic bleeding",
+              "axis_node": "Liver"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "Hepatocellular Carcinoma",
+              "support_spans": [
+                "suspicion for an atypical hepatocellular carcinoma"
+              ],
+              "contradict_spans": [
+                "without typical features of hepatocellular carcinoma"
+              ],
+              "why": "Patient has hypervascular lesions with central necrosis, raising suspicion for hepatocellular carcinoma",
+              "axis_node": "Neoplastic Transformation"
+            },
+            {
+              "name": "Hepatic Artery Aneurysm",
+              "support_spans": [
+                "active bleeding from one of the two hypervascular lesions in segment IV"
+              ],
+              "contradict_spans": [],
+              "why": "Patient has a history of hypervascular liver lesions with active bleeding",
+              "axis_node": "Vascular Malformation"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "Focal Nodular Hyperplasia",
+              "support_spans": [
+                "hypervascular lesions without typical features of hepatocellular carcinoma"
+              ],
+              "contradict_spans": [],
+              "why": "Patient has hypervascular lesions that could be characteristic of focal nodular hyperplasia",
+              "axis_node": "Imaging Diagnosis"
+            },
+            {
+              "name": "Hepatocellular Adenoma",
+              "support_spans": [
+                "histologically proven adenoma without malignancy"
+              ],
+              "contradict_spans": [],
+              "why": "Patient has a history of biopsy-proven adenoma",
+              "axis_node": "Pathology Diagnosis"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "histologically proven adenoma without malignancy",
+        "hypervascular liver lesions in segment IV",
+        "subcapsular hepatic bleeding",
+        "active bleeding from one of the two hypervascular lesions in segment IV",
+        "suspicion for an atypical hepatocellular carcinoma",
+        "hypervascular lesions without typical features of hepatocellular carcinoma",
+        "hypervascular lesions with central necrosis"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [
+        "hypervascular lesions with central necrosis",
+        "without typical features of hepatocellular carcinoma"
+      ],
+      "generator_jaccard": 0.0,
+      "top1_same_across_views": false,
+      "top_margin": 0.0,
+      "leave_one_view_instability": true,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Hepatic Adenoma",
+        "preferred_label": "Hepatic Adenoma",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "Liver"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE002"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "histologically proven adenoma without malignancy",
+          "hypervascular liver lesions in segment IV"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Hemorrhagic Liver Cyst",
+        "preferred_label": "Hemorrhagic Liver Cyst",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "Liver"
+        ],
+        "supporting_evidence": [
+          "KE003",
+          "KE004"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "subcapsular hepatic bleeding",
+          "active bleeding from one of the two hypervascular lesions in segment IV"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Hepatocellular Carcinoma",
+        "preferred_label": "Hepatocellular Carcinoma",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Neoplastic Transformation"
+        ],
+        "supporting_evidence": [
+          "KE005"
+        ],
+        "contradicting_evidence": [
+          "MECHE008"
+        ],
+        "support_spans": [
+          "suspicion for an atypical hepatocellular carcinoma"
+        ],
+        "contradict_spans": [
+          "without typical features of hepatocellular carcinoma"
+        ],
+        "score_logit": -0.25,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Hepatic Artery Aneurysm",
+        "preferred_label": "Hepatic Artery Aneurysm",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Vascular Malformation"
+        ],
+        "supporting_evidence": [
+          "KE004"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "active bleeding from one of the two hypervascular lesions in segment IV"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Focal Nodular Hyperplasia",
+        "preferred_label": "Focal Nodular Hyperplasia",
+        "generator_views": [
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Imaging Diagnosis"
+        ],
+        "supporting_evidence": [
+          "KE006"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "hypervascular lesions without typical features of hepatocellular carcinoma"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C006",
+        "preferred_name": "Hepatocellular Adenoma",
+        "preferred_label": "Hepatocellular Adenoma",
+        "generator_views": [
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Pathology Diagnosis"
+        ],
+        "supporting_evidence": [
+          "KE001"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "histologically proven adenoma without malignancy"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "histologically proven adenoma without malignancy",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "hypervascular liver lesions in segment IV",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "subcapsular hepatic bleeding",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "active bleeding from one of the two hypervascular lesions in segment IV",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "suspicion for an atypical hepatocellular carcinoma",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "hypervascular lesions without typical features of hepatocellular carcinoma",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE007",
+        "raw_span": "hypervascular lesions with central necrosis",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "MECHE008",
+        "raw_span": "without typical features of hepatocellular carcinoma",
+        "source_view": "mechanism"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "Hemorrhagic Liver Cyst",
+        "preferred_label": "Hemorrhagic Liver Cyst",
+        "support_spans": [
+          "subcapsular hepatic bleeding",
+          "active bleeding from one of the two hypervascular lesions in segment IV"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "Hepatic Adenoma",
+        "preferred_label": "Hepatic Adenoma",
+        "support_spans": [
+          "histologically proven adenoma without malignancy",
+          "hypervascular liver lesions in segment IV"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "Focal Nodular Hyperplasia",
+        "preferred_label": "Focal Nodular Hyperplasia",
+        "support_spans": [
+          "hypervascular lesions without typical features of hepatocellular carcinoma"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "Hepatic Artery Aneurysm",
+        "preferred_label": "Hepatic Artery Aneurysm",
+        "support_spans": [
+          "active bleeding from one of the two hypervascular lesions in segment IV"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "Hepatocellular Adenoma",
+        "preferred_label": "Hepatocellular Adenoma",
+        "support_spans": [
+          "histologically proven adenoma without malignancy"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "Hepatocellular Carcinoma",
+        "preferred_label": "Hepatocellular Carcinoma",
+        "support_spans": [
+          "suspicion for an atypical hepatocellular carcinoma"
+        ],
+        "contradict_spans": [
+          "without typical features of hepatocellular carcinoma"
+        ],
+        "score_logit": -0.25
+      }
+    ],
+    "vignette_chars": 1222,
+    "frontier_selector": {
+      "champion": "Hemorrhagic Liver Cyst",
+      "runner_up": "Hepatic Artery Aneurysm",
+      "why": "The presence of subcapsular hepatic bleeding and active bleeding from one of the two hypervascular lesions in segment IV decided it"
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {
+      "mode": "evidence",
+      "before": 6,
+      "after": 4
+    },
+    "reselect_from": "compact_forest_v1"
+  }
+}

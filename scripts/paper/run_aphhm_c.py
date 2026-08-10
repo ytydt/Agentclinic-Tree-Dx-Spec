@@ -67,6 +67,17 @@ def main() -> int:
         default="commit,coverage,mechanism",
         help="comma-separated generation stances, used by --mode multistance",
     )
+    ap.add_argument(
+        "--near-dedup-shortlist",
+        action="store_true",
+        help="Collapse near-duplicate labels on the selector shortlist (R6 X3)",
+    )
+    ap.add_argument(
+        "--group-near-dedup",
+        action="store_true",
+        help="Collapse near-duplicates inside each stance group before nomination",
+    )
+    ap.add_argument("--near-dedup-jaccard", type=float, default=0.4)
     ap.add_argument("--score", action="store_true")
     ap.add_argument("--mcr-judge-workers", type=int, default=50)
     args = ap.parse_args()
@@ -108,6 +119,9 @@ def main() -> int:
         concept_contract=args.concept_contract,
         axis_mode=args.axis_mode,
         stances=[x.strip() for x in args.stances.split(",") if x.strip()],
+        near_dedup_shortlist=bool(args.near_dedup_shortlist),
+        group_near_dedup=bool(args.group_near_dedup),
+        near_dedup_jaccard=float(args.near_dedup_jaccard),
     )
 
     _atomic_json(
@@ -123,6 +137,9 @@ def main() -> int:
             "concept_contract": args.concept_contract,
             "axis_mode": args.axis_mode,
             "stances": pipe.stances,
+            "near_dedup_shortlist": pipe.near_dedup_shortlist,
+            "group_near_dedup": pipe.group_near_dedup,
+            "near_dedup_jaccard": pipe.near_dedup_jaccard,
             "max_facts": args.max_facts,
             "axis_lambda": args.axis_lambda,
             "max_calls": pipe.max_calls,

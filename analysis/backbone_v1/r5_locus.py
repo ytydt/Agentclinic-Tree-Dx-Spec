@@ -46,10 +46,14 @@ def _sub_aphhm_c(traj: dict[str, Any], gold: str, bucket: str) -> str:
                 return "gate_veto_p5_shared_phenotype"
             if vr and vr not in ("", "not_admitted"):
                 return "gate_veto_p4"
-        # gold in pool but not shortlist
+        # gold in pool but not shortlist. Selector arms (collapse3c /
+        # multistance / msplit) keep registry.score == 0.0 because c4 is
+        # skipped, so "score_below_frontier" was a false attribution —
+        # rename to no_numeric_score (frontier cut is prompt / nomination,
+        # not a numeric ledger rank).
         if traj.get("finalists") is not None and traj.get("finalists") == []:
             pass
-        return "score_below_frontier"
+        return "no_numeric_score"
     if bucket == "decision_loss":
         fins = traj.get("finalists") or []
         if fins:

@@ -1,0 +1,962 @@
+{
+  "case_id": "diagnosisarena__000440",
+  "source_id": "440",
+  "champion": "Hyperthyroidism",
+  "ordered_diagnoses": [
+    "Hyperthyroidism",
+    "Graves' disease",
+    "Choriocarcinoma",
+    "Molar pregnancy"
+  ],
+  "llm_calls": 4,
+  "stages": {
+    "mode": "adaptive4v2",
+    "vignette_chars": 793,
+    "g1": {
+      "candidates": [
+        {
+          "name": "Molar pregnancy",
+          "support_spans": [
+            "Serum hCG: 74,503 mIU/mL"
+          ],
+          "contradict_spans": [
+            "Ultrasonography: Confirmed live intrauterine pregnancy at 24 weeks"
+          ],
+          "why": "The patient has a high serum hCG level, which could be indicative of a molar pregnancy, but the ultrasonography confirms a live intrauterine pregnancy."
+        },
+        {
+          "name": "Hyperthyroidism",
+          "support_spans": [
+            "thyroid-stimulating hormone was undetectable"
+          ],
+          "contradict_spans": [],
+          "why": "The patient has a history of thyroid condition and undetectable thyroid-stimulating hormone, which could indicate hyperthyroidism."
+        },
+        {
+          "name": "Graves' disease",
+          "support_spans": [
+            "thyroid-stimulating hormone was undetectable",
+            "She was prescribed methimazole"
+          ],
+          "contradict_spans": [],
+          "why": "The patient was prescribed methimazole, which is a common treatment for Graves' disease, and has undetectable thyroid-stimulating hormone."
+        }
+      ],
+      "key_evidence_spans": [
+        "Serum hCG: 74,503 mIU/mL",
+        "Ultrasonography: Confirmed live intrauterine pregnancy at 24 weeks",
+        "thyroid-stimulating hormone was undetectable"
+      ]
+    },
+    "g2": {
+      "candidates": [
+        {
+          "name": "Molar pregnancy",
+          "support_spans": [
+            "thyroid-stimulating hormone was undetectable",
+            "Serum hCG: 74,503 mIU/mL"
+          ],
+          "contradict_spans": [
+            "POC urine human chorionic gonadotropin (hCG) test: negative"
+          ],
+          "why": "The extremely high hCG level is suggestive of a molar pregnancy, but the presence of a live intrauterine pregnancy makes this less likely.",
+          "protected_reason": "Molar pregnancy is a rare condition that can be easily missed, especially in the presence of a live pregnancy."
+        },
+        {
+          "name": "Choriocarcinoma",
+          "support_spans": [
+            "thyroid-stimulating hormone was undetectable",
+            "Serum hCG: 74,503 mIU/mL"
+          ],
+          "contradict_spans": [
+            "Ultrasonography: Confirmed live intrauterine pregnancy at 24 weeks"
+          ],
+          "why": "The very high hCG level could be indicative of choriocarcinoma, a rare tumor that can produce hCG.",
+          "protected_reason": "Choriocarcinoma is a rare and aggressive tumor that requires prompt diagnosis and treatment."
+        },
+        {
+          "name": "Hyperthyroidism due to trophoblastic disease",
+          "support_spans": [
+            "thyroid-stimulating hormone was undetectable",
+            "Serum hCG: 74,503 mIU/mL"
+          ],
+          "contradict_spans": [
+            "She had a history of thyroid condition"
+          ],
+          "why": "The undetectable TSH and very high hCG level could be indicative of hyperthyroidism caused by trophoblastic disease.",
+          "protected_reason": "Hyperthyroidism due to trophoblastic disease is a rare condition that can be easily missed, especially in patients with a history of thyroid disease."
+        }
+      ],
+      "key_evidence_spans": [
+        "thyroid-stimulating hormone was undetectable",
+        "Serum hCG: 74,503 mIU/mL",
+        "Ultrasonography: Confirmed live intrauterine pregnancy at 24 weeks"
+      ]
+    },
+    "state_after_g": {
+      "unexplained_specific_evidence": [
+        "Ultrasonography: Confirmed live intrauterine pregnancy at 24 weeks",
+        "POC urine human chorionic gonadotropin (hCG) test: negative",
+        "She had a history of thyroid condition"
+      ],
+      "generator_jaccard": 0.2,
+      "top1_same_across_views": false,
+      "top_margin": 0.6499999999999999,
+      "leave_one_view_instability": true,
+      "contradiction_mass": 0
+    },
+    "a1": {
+      "candidates": [
+        {
+          "name": "Hyperthyroidism",
+          "support_spans": [
+            "She had a history of thyroid condition",
+            "thyroid-stimulating hormone was undetectable"
+          ],
+          "contradict_spans": [],
+          "why": "The patient's history of thyroid condition and undetectable thyroid-stimulating hormone levels suggest hyperthyroidism.",
+          "protected_reason": "explains unexplained high-specificity evidence"
+        },
+        {
+          "name": "Molar pregnancy",
+          "support_spans": [
+            "Serum hCG: 74,503 mIU/mL"
+          ],
+          "contradict_spans": [
+            "POC urine human chorionic gonadotropin (hCG) test: negative"
+          ],
+          "why": "The significantly elevated serum hCG level is consistent with a molar pregnancy, despite the initial negative POC urine hCG test.",
+          "protected_reason": "explains unexplained high-specificity evidence"
+        },
+        {
+          "name": "Trophoblastic disease",
+          "support_spans": [
+            "Serum hCG: 74,503 mIU/mL",
+            "Ultrasonography: Confirmed live intrauterine pregnancy at 24 weeks"
+          ],
+          "contradict_spans": [],
+          "why": "The combination of elevated serum hCG and a confirmed live intrauterine pregnancy suggests trophoblastic disease.",
+          "protected_reason": "explains unexplained high-specificity evidence"
+        }
+      ]
+    },
+    "state_after_a1": {
+      "unexplained_specific_evidence": [
+        "POC urine human chorionic gonadotropin (hCG) test: negative"
+      ],
+      "generator_jaccard": 0.2,
+      "top1_same_across_views": true,
+      "top_margin": 1.7000000000000002,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 1
+    },
+    "adaptive_action": "ORTHOGONAL_GENERATE",
+    "selector": {
+      "champion": "Hyperthyroidism",
+      "runner_up": "Graves' disease",
+      "rationale": "Undetectable thyroid-stimulating hormone and history of thyroid condition support Hyperthyroidism, with elevated hCG levels potentially due to trophoblastic disease",
+      "rejected": [
+        {
+          "label": "Choriocarcinoma",
+          "why": "Confirmed live intrauterine pregnancy contradicts this diagnosis"
+        },
+        {
+          "label": "Molar pregnancy",
+          "why": "Confirmed live intrauterine pregnancy and negative POC urine hCG test contradict this diagnosis"
+        }
+      ],
+      "margin": "medium"
+    },
+    "evidence": [
+      {
+        "evidence_id": "G1E001",
+        "raw_span": "Serum hCG: 74,503 mIU/mL",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E002",
+        "raw_span": "Ultrasonography: Confirmed live intrauterine pregnancy at 24 weeks",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E003",
+        "raw_span": "thyroid-stimulating hormone was undetectable",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G1E004",
+        "raw_span": "She was prescribed methimazole",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g1"
+      },
+      {
+        "evidence_id": "G2E005",
+        "raw_span": "POC urine human chorionic gonadotropin (hCG) test: negative",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      },
+      {
+        "evidence_id": "G2E006",
+        "raw_span": "She had a history of thyroid condition",
+        "polarity": "present",
+        "epistemic_status": "observed",
+        "modality": "text",
+        "reliability": 1.0,
+        "source_view": "g2"
+      }
+    ],
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Molar pregnancy",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2",
+          "a1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E003"
+        ],
+        "contradicting_evidence": [
+          "G1E002",
+          "G2E005"
+        ],
+        "protected_reason": "Molar pregnancy is a rare condition that can be easily missed, especially in the presence of a live pregnancy.",
+        "score_logit": 0.44999999999999996,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Hyperthyroidism",
+        "aliases": [
+          "Hyperthyroidism due to trophoblastic disease",
+          "Trophoblastic disease"
+        ],
+        "generator_views": [
+          "g1",
+          "g2",
+          "a1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E001",
+          "G2E006",
+          "G1E002"
+        ],
+        "contradicting_evidence": [
+          "G2E006"
+        ],
+        "protected_reason": "Hyperthyroidism due to trophoblastic disease is a rare condition that can be easily missed, especially in patients with a history of thyroid disease.",
+        "score_logit": 3.7,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Graves' disease",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E004"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 2.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Choriocarcinoma",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E001"
+        ],
+        "contradicting_evidence": [
+          "G1E002"
+        ],
+        "protected_reason": "Choriocarcinoma is a rare and aggressive tumor that requires prompt diagnosis and treatment.",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      }
+    ],
+    "events": [
+      {
+        "op": "add",
+        "concept_id": "C001",
+        "name": "Molar pregnancy",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C002",
+        "name": "Hyperthyroidism",
+        "view": "g1"
+      },
+      {
+        "op": "add",
+        "concept_id": "C003",
+        "name": "Graves' disease",
+        "view": "g1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Molar pregnancy",
+        "view": "g2"
+      },
+      {
+        "op": "add",
+        "concept_id": "C004",
+        "name": "Choriocarcinoma",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Hyperthyroidism due to trophoblastic disease",
+        "view": "g2"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Hyperthyroidism",
+        "view": "a1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C001",
+        "name": "Molar pregnancy",
+        "view": "a1"
+      },
+      {
+        "op": "merge",
+        "concept_id": "C002",
+        "name": "Trophoblastic disease",
+        "view": "a1"
+      }
+    ],
+    "frontier_final": [
+      {
+        "concept_id": "C002",
+        "preferred_name": "Hyperthyroidism",
+        "aliases": [
+          "Hyperthyroidism due to trophoblastic disease",
+          "Trophoblastic disease"
+        ],
+        "generator_views": [
+          "g1",
+          "g2",
+          "a1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E001",
+          "G2E006",
+          "G1E002"
+        ],
+        "contradicting_evidence": [
+          "G2E006"
+        ],
+        "protected_reason": "Hyperthyroidism due to trophoblastic disease is a rare condition that can be easily missed, especially in patients with a history of thyroid disease.",
+        "score_logit": 3.7,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Graves' disease",
+        "aliases": [],
+        "generator_views": [
+          "g1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E004"
+        ],
+        "contradicting_evidence": [],
+        "protected_reason": "",
+        "score_logit": 2.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Choriocarcinoma",
+        "aliases": [],
+        "generator_views": [
+          "g2"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E003",
+          "G1E001"
+        ],
+        "contradicting_evidence": [
+          "G1E002"
+        ],
+        "protected_reason": "Choriocarcinoma is a rare and aggressive tumor that requires prompt diagnosis and treatment.",
+        "score_logit": 1.0,
+        "status": "live",
+        "agent_votes": 0
+      },
+      {
+        "concept_id": "C001",
+        "preferred_name": "Molar pregnancy",
+        "aliases": [],
+        "generator_views": [
+          "g1",
+          "g2",
+          "a1"
+        ],
+        "axis_nodes": [],
+        "supporting_evidence": [
+          "G1E001",
+          "G1E003"
+        ],
+        "contradicting_evidence": [
+          "G1E002",
+          "G2E005"
+        ],
+        "protected_reason": "Molar pregnancy is a rare condition that can be easily missed, especially in the presence of a live pregnancy.",
+        "score_logit": 0.44999999999999996,
+        "status": "live",
+        "agent_votes": 0
+      }
+    ]
+  },
+  "metrics": {
+    "n_concepts": 4,
+    "n_evidence": 6,
+    "exact_duplicates": 0,
+    "generator_jaccard": 0.2,
+    "frontier_n": 4,
+    "protected_n": 3,
+    "n_generators": 2,
+    "adaptive_action": "ORTHOGONAL_GENERATE",
+    "llm_calls": 4,
+    "history_leakage": 0,
+    "mode": "adaptive4v2"
+  },
+  "prediction": {
+    "arm": "mosaic_adaptive4v2_r2",
+    "case_id": "diagnosisarena__000440",
+    "source_id": "440",
+    "dataset": "diagnosisarena_heldout",
+    "list_k": 2,
+    "ordered_diagnoses": [
+      "Hyperthyroidism",
+      "Graves' disease",
+      "Choriocarcinoma",
+      "Molar pregnancy"
+    ],
+    "top2_diagnoses": [
+      "Hyperthyroidism",
+      "Graves' disease"
+    ],
+    "cost": {
+      "llm_calls": 4
+    },
+    "stages": {
+      "mode": "adaptive4v2",
+      "vignette_chars": 793,
+      "g1": {
+        "candidates": [
+          {
+            "name": "Molar pregnancy",
+            "support_spans": [
+              "Serum hCG: 74,503 mIU/mL"
+            ],
+            "contradict_spans": [
+              "Ultrasonography: Confirmed live intrauterine pregnancy at 24 weeks"
+            ],
+            "why": "The patient has a high serum hCG level, which could be indicative of a molar pregnancy, but the ultrasonography confirms a live intrauterine pregnancy."
+          },
+          {
+            "name": "Hyperthyroidism",
+            "support_spans": [
+              "thyroid-stimulating hormone was undetectable"
+            ],
+            "contradict_spans": [],
+            "why": "The patient has a history of thyroid condition and undetectable thyroid-stimulating hormone, which could indicate hyperthyroidism."
+          },
+          {
+            "name": "Graves' disease",
+            "support_spans": [
+              "thyroid-stimulating hormone was undetectable",
+              "She was prescribed methimazole"
+            ],
+            "contradict_spans": [],
+            "why": "The patient was prescribed methimazole, which is a common treatment for Graves' disease, and has undetectable thyroid-stimulating hormone."
+          }
+        ],
+        "key_evidence_spans": [
+          "Serum hCG: 74,503 mIU/mL",
+          "Ultrasonography: Confirmed live intrauterine pregnancy at 24 weeks",
+          "thyroid-stimulating hormone was undetectable"
+        ]
+      },
+      "g2": {
+        "candidates": [
+          {
+            "name": "Molar pregnancy",
+            "support_spans": [
+              "thyroid-stimulating hormone was undetectable",
+              "Serum hCG: 74,503 mIU/mL"
+            ],
+            "contradict_spans": [
+              "POC urine human chorionic gonadotropin (hCG) test: negative"
+            ],
+            "why": "The extremely high hCG level is suggestive of a molar pregnancy, but the presence of a live intrauterine pregnancy makes this less likely.",
+            "protected_reason": "Molar pregnancy is a rare condition that can be easily missed, especially in the presence of a live pregnancy."
+          },
+          {
+            "name": "Choriocarcinoma",
+            "support_spans": [
+              "thyroid-stimulating hormone was undetectable",
+              "Serum hCG: 74,503 mIU/mL"
+            ],
+            "contradict_spans": [
+              "Ultrasonography: Confirmed live intrauterine pregnancy at 24 weeks"
+            ],
+            "why": "The very high hCG level could be indicative of choriocarcinoma, a rare tumor that can produce hCG.",
+            "protected_reason": "Choriocarcinoma is a rare and aggressive tumor that requires prompt diagnosis and treatment."
+          },
+          {
+            "name": "Hyperthyroidism due to trophoblastic disease",
+            "support_spans": [
+              "thyroid-stimulating hormone was undetectable",
+              "Serum hCG: 74,503 mIU/mL"
+            ],
+            "contradict_spans": [
+              "She had a history of thyroid condition"
+            ],
+            "why": "The undetectable TSH and very high hCG level could be indicative of hyperthyroidism caused by trophoblastic disease.",
+            "protected_reason": "Hyperthyroidism due to trophoblastic disease is a rare condition that can be easily missed, especially in patients with a history of thyroid disease."
+          }
+        ],
+        "key_evidence_spans": [
+          "thyroid-stimulating hormone was undetectable",
+          "Serum hCG: 74,503 mIU/mL",
+          "Ultrasonography: Confirmed live intrauterine pregnancy at 24 weeks"
+        ]
+      },
+      "state_after_g": {
+        "unexplained_specific_evidence": [
+          "Ultrasonography: Confirmed live intrauterine pregnancy at 24 weeks",
+          "POC urine human chorionic gonadotropin (hCG) test: negative",
+          "She had a history of thyroid condition"
+        ],
+        "generator_jaccard": 0.2,
+        "top1_same_across_views": false,
+        "top_margin": 0.6499999999999999,
+        "leave_one_view_instability": true,
+        "contradiction_mass": 0
+      },
+      "a1": {
+        "candidates": [
+          {
+            "name": "Hyperthyroidism",
+            "support_spans": [
+              "She had a history of thyroid condition",
+              "thyroid-stimulating hormone was undetectable"
+            ],
+            "contradict_spans": [],
+            "why": "The patient's history of thyroid condition and undetectable thyroid-stimulating hormone levels suggest hyperthyroidism.",
+            "protected_reason": "explains unexplained high-specificity evidence"
+          },
+          {
+            "name": "Molar pregnancy",
+            "support_spans": [
+              "Serum hCG: 74,503 mIU/mL"
+            ],
+            "contradict_spans": [
+              "POC urine human chorionic gonadotropin (hCG) test: negative"
+            ],
+            "why": "The significantly elevated serum hCG level is consistent with a molar pregnancy, despite the initial negative POC urine hCG test.",
+            "protected_reason": "explains unexplained high-specificity evidence"
+          },
+          {
+            "name": "Trophoblastic disease",
+            "support_spans": [
+              "Serum hCG: 74,503 mIU/mL",
+              "Ultrasonography: Confirmed live intrauterine pregnancy at 24 weeks"
+            ],
+            "contradict_spans": [],
+            "why": "The combination of elevated serum hCG and a confirmed live intrauterine pregnancy suggests trophoblastic disease.",
+            "protected_reason": "explains unexplained high-specificity evidence"
+          }
+        ]
+      },
+      "state_after_a1": {
+        "unexplained_specific_evidence": [
+          "POC urine human chorionic gonadotropin (hCG) test: negative"
+        ],
+        "generator_jaccard": 0.2,
+        "top1_same_across_views": true,
+        "top_margin": 1.7000000000000002,
+        "leave_one_view_instability": false,
+        "contradiction_mass": 1
+      },
+      "adaptive_action": "ORTHOGONAL_GENERATE",
+      "selector": {
+        "champion": "Hyperthyroidism",
+        "runner_up": "Graves' disease",
+        "rationale": "Undetectable thyroid-stimulating hormone and history of thyroid condition support Hyperthyroidism, with elevated hCG levels potentially due to trophoblastic disease",
+        "rejected": [
+          {
+            "label": "Choriocarcinoma",
+            "why": "Confirmed live intrauterine pregnancy contradicts this diagnosis"
+          },
+          {
+            "label": "Molar pregnancy",
+            "why": "Confirmed live intrauterine pregnancy and negative POC urine hCG test contradict this diagnosis"
+          }
+        ],
+        "margin": "medium"
+      },
+      "evidence": [
+        {
+          "evidence_id": "G1E001",
+          "raw_span": "Serum hCG: 74,503 mIU/mL",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E002",
+          "raw_span": "Ultrasonography: Confirmed live intrauterine pregnancy at 24 weeks",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E003",
+          "raw_span": "thyroid-stimulating hormone was undetectable",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G1E004",
+          "raw_span": "She was prescribed methimazole",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g1"
+        },
+        {
+          "evidence_id": "G2E005",
+          "raw_span": "POC urine human chorionic gonadotropin (hCG) test: negative",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        },
+        {
+          "evidence_id": "G2E006",
+          "raw_span": "She had a history of thyroid condition",
+          "polarity": "present",
+          "epistemic_status": "observed",
+          "modality": "text",
+          "reliability": 1.0,
+          "source_view": "g2"
+        }
+      ],
+      "registry": [
+        {
+          "concept_id": "C001",
+          "preferred_name": "Molar pregnancy",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2",
+            "a1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E003"
+          ],
+          "contradicting_evidence": [
+            "G1E002",
+            "G2E005"
+          ],
+          "protected_reason": "Molar pregnancy is a rare condition that can be easily missed, especially in the presence of a live pregnancy.",
+          "score_logit": 0.44999999999999996,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C002",
+          "preferred_name": "Hyperthyroidism",
+          "aliases": [
+            "Hyperthyroidism due to trophoblastic disease",
+            "Trophoblastic disease"
+          ],
+          "generator_views": [
+            "g1",
+            "g2",
+            "a1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E001",
+            "G2E006",
+            "G1E002"
+          ],
+          "contradicting_evidence": [
+            "G2E006"
+          ],
+          "protected_reason": "Hyperthyroidism due to trophoblastic disease is a rare condition that can be easily missed, especially in patients with a history of thyroid disease.",
+          "score_logit": 3.7,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Graves' disease",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E004"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 2.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Choriocarcinoma",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E001"
+          ],
+          "contradicting_evidence": [
+            "G1E002"
+          ],
+          "protected_reason": "Choriocarcinoma is a rare and aggressive tumor that requires prompt diagnosis and treatment.",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        }
+      ],
+      "events": [
+        {
+          "op": "add",
+          "concept_id": "C001",
+          "name": "Molar pregnancy",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C002",
+          "name": "Hyperthyroidism",
+          "view": "g1"
+        },
+        {
+          "op": "add",
+          "concept_id": "C003",
+          "name": "Graves' disease",
+          "view": "g1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Molar pregnancy",
+          "view": "g2"
+        },
+        {
+          "op": "add",
+          "concept_id": "C004",
+          "name": "Choriocarcinoma",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Hyperthyroidism due to trophoblastic disease",
+          "view": "g2"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Hyperthyroidism",
+          "view": "a1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C001",
+          "name": "Molar pregnancy",
+          "view": "a1"
+        },
+        {
+          "op": "merge",
+          "concept_id": "C002",
+          "name": "Trophoblastic disease",
+          "view": "a1"
+        }
+      ],
+      "frontier_final": [
+        {
+          "concept_id": "C002",
+          "preferred_name": "Hyperthyroidism",
+          "aliases": [
+            "Hyperthyroidism due to trophoblastic disease",
+            "Trophoblastic disease"
+          ],
+          "generator_views": [
+            "g1",
+            "g2",
+            "a1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E001",
+            "G2E006",
+            "G1E002"
+          ],
+          "contradicting_evidence": [
+            "G2E006"
+          ],
+          "protected_reason": "Hyperthyroidism due to trophoblastic disease is a rare condition that can be easily missed, especially in patients with a history of thyroid disease.",
+          "score_logit": 3.7,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C003",
+          "preferred_name": "Graves' disease",
+          "aliases": [],
+          "generator_views": [
+            "g1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E004"
+          ],
+          "contradicting_evidence": [],
+          "protected_reason": "",
+          "score_logit": 2.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C004",
+          "preferred_name": "Choriocarcinoma",
+          "aliases": [],
+          "generator_views": [
+            "g2"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E003",
+            "G1E001"
+          ],
+          "contradicting_evidence": [
+            "G1E002"
+          ],
+          "protected_reason": "Choriocarcinoma is a rare and aggressive tumor that requires prompt diagnosis and treatment.",
+          "score_logit": 1.0,
+          "status": "live",
+          "agent_votes": 0
+        },
+        {
+          "concept_id": "C001",
+          "preferred_name": "Molar pregnancy",
+          "aliases": [],
+          "generator_views": [
+            "g1",
+            "g2",
+            "a1"
+          ],
+          "axis_nodes": [],
+          "supporting_evidence": [
+            "G1E001",
+            "G1E003"
+          ],
+          "contradicting_evidence": [
+            "G1E002",
+            "G2E005"
+          ],
+          "protected_reason": "Molar pregnancy is a rare condition that can be easily missed, especially in the presence of a live pregnancy.",
+          "score_logit": 0.44999999999999996,
+          "status": "live",
+          "agent_votes": 0
+        }
+      ]
+    },
+    "mosaic_metrics": {
+      "n_concepts": 4,
+      "n_evidence": 6,
+      "exact_duplicates": 0,
+      "generator_jaccard": 0.2,
+      "frontier_n": 4,
+      "protected_n": 3,
+      "n_generators": 2,
+      "adaptive_action": "ORTHOGONAL_GENERATE",
+      "llm_calls": 4,
+      "history_leakage": 0,
+      "mode": "adaptive4v2"
+    },
+    "wall_s": 18.881
+  },
+  "created_at": "2026-08-10T02:54:17.471176+00:00"
+}

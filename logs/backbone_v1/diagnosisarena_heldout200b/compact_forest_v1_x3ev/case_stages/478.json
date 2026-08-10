@@ -1,0 +1,343 @@
+{
+  "source_id": "478",
+  "case_id": "diagnosisarena__000478",
+  "champion": "Respiratory Syncytial Virus Infection",
+  "ordered_diagnoses": [
+    "Respiratory Syncytial Virus Infection",
+    "Pneumonia",
+    "Respiratory Distress Syndrome",
+    "Sepsis",
+    "Bronchiolitis"
+  ],
+  "llm_calls": 1,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "Respiratory Distress Syndrome",
+              "support_spans": [
+                "Required 3 days ventilation after birth due to neonatal respiratory distress syndrome",
+                "presented in respiratory failure"
+              ],
+              "contradict_spans": [],
+              "why": "Patient's history of respiratory distress and current presentation of respiratory failure support this diagnosis",
+              "axis_node": "Respiratory"
+            },
+            {
+              "name": "Sepsis",
+              "support_spans": [
+                "Positive for Staphylococcus epidermidis",
+                "Severe lactic acidosis"
+              ],
+              "contradict_spans": [
+                "Subsequent blood cultures (day 3 and 5): Negative"
+              ],
+              "why": "Initial positive blood culture and severe lactic acidosis suggest sepsis, but subsequent negative cultures contradict this",
+              "axis_node": "Infectious"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "Staphylococcal Sepsis",
+              "support_spans": [
+                "Positive for Staphylococcus epidermidis"
+              ],
+              "contradict_spans": [],
+              "why": "Presence of Staphylococcus epidermidis in blood culture suggests this disease",
+              "axis_node": "Infectious"
+            },
+            {
+              "name": "Bronchiolitis",
+              "support_spans": [
+                "RT-PCR of nasopharyngeal swab: Positive"
+              ],
+              "contradict_spans": [],
+              "why": "Positive RT-PCR suggests a viral etiology, which could be consistent with bronchiolitis",
+              "axis_node": "Infectious"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "Respiratory Syncytial Virus Infection",
+              "support_spans": [
+                "RT-PCR of nasopharyngeal swab: Positive"
+              ],
+              "contradict_spans": [],
+              "why": "Positive RT-PCR is a decisive finding for this disease",
+              "axis_node": "Viral"
+            },
+            {
+              "name": "Pneumonia",
+              "support_spans": [
+                "Bilateral airspace opacification",
+                "Worsening bilateral airspace opacification"
+              ],
+              "contradict_spans": [],
+              "why": "Imaging findings are consistent with pneumonia",
+              "axis_node": "Infectious"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "Required 3 days ventilation after birth due to neonatal respiratory distress syndrome",
+        "presented in respiratory failure",
+        "Positive for Staphylococcus epidermidis",
+        "Severe lactic acidosis",
+        "RT-PCR of nasopharyngeal swab: Positive",
+        "Bilateral airspace opacification",
+        "Worsening bilateral airspace opacification"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [
+        "Subsequent blood cultures (day 3 and 5): Negative"
+      ],
+      "generator_jaccard": 0.0,
+      "top1_same_across_views": false,
+      "top_margin": 0.0,
+      "leave_one_view_instability": true,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Respiratory Distress Syndrome",
+        "preferred_label": "Respiratory Distress Syndrome",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "Respiratory"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE002"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Required 3 days ventilation after birth due to neonatal respiratory distress syndrome",
+          "presented in respiratory failure"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Sepsis",
+        "preferred_label": "Sepsis",
+        "generator_views": [
+          "syndrome_anatomy",
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Infectious"
+        ],
+        "supporting_evidence": [
+          "KE003",
+          "KE004"
+        ],
+        "contradicting_evidence": [
+          "SYNDE008"
+        ],
+        "support_spans": [
+          "Positive for Staphylococcus epidermidis",
+          "Severe lactic acidosis"
+        ],
+        "contradict_spans": [
+          "Subsequent blood cultures (day 3 and 5): Negative"
+        ],
+        "score_logit": 1.1,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Bronchiolitis",
+        "preferred_label": "Bronchiolitis",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Infectious"
+        ],
+        "supporting_evidence": [
+          "KE005"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "RT-PCR of nasopharyngeal swab: Positive"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Respiratory Syncytial Virus Infection",
+        "preferred_label": "Respiratory Syncytial Virus Infection",
+        "generator_views": [
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Viral"
+        ],
+        "supporting_evidence": [
+          "KE005"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "RT-PCR of nasopharyngeal swab: Positive"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Pneumonia",
+        "preferred_label": "Pneumonia",
+        "generator_views": [
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Infectious"
+        ],
+        "supporting_evidence": [
+          "KE006",
+          "KE007"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Bilateral airspace opacification",
+          "Worsening bilateral airspace opacification"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "Required 3 days ventilation after birth due to neonatal respiratory distress syndrome",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "presented in respiratory failure",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "Positive for Staphylococcus epidermidis",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "Severe lactic acidosis",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "RT-PCR of nasopharyngeal swab: Positive",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "Bilateral airspace opacification",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE007",
+        "raw_span": "Worsening bilateral airspace opacification",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "SYNDE008",
+        "raw_span": "Subsequent blood cultures (day 3 and 5): Negative",
+        "source_view": "syndrome_anatomy"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "Pneumonia",
+        "preferred_label": "Pneumonia",
+        "support_spans": [
+          "Bilateral airspace opacification",
+          "Worsening bilateral airspace opacification"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "Respiratory Distress Syndrome",
+        "preferred_label": "Respiratory Distress Syndrome",
+        "support_spans": [
+          "Required 3 days ventilation after birth due to neonatal respiratory distress syndrome",
+          "presented in respiratory failure"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "Sepsis",
+        "preferred_label": "Sepsis",
+        "support_spans": [
+          "Positive for Staphylococcus epidermidis",
+          "Severe lactic acidosis"
+        ],
+        "contradict_spans": [
+          "Subsequent blood cultures (day 3 and 5): Negative"
+        ],
+        "score_logit": 1.1
+      },
+      {
+        "preferred_name": "Bronchiolitis",
+        "preferred_label": "Bronchiolitis",
+        "support_spans": [
+          "RT-PCR of nasopharyngeal swab: Positive"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "Respiratory Syncytial Virus Infection",
+        "preferred_label": "Respiratory Syncytial Virus Infection",
+        "support_spans": [
+          "RT-PCR of nasopharyngeal swab: Positive"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      }
+    ],
+    "vignette_chars": 1361,
+    "frontier_selector": {
+      "champion": "Respiratory Syncytial Virus Infection",
+      "runner_up": "Bronchiolitis",
+      "why": "The evidence of a positive RT-PCR of nasopharyngeal swab decided it, which is specific to both Respiratory Syncytial Virus Infection and Bronchiolitis, but given the clinical presentation of the infant, Respiratory Syncytial Virus Infection is more likely."
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {
+      "mode": "evidence",
+      "before": 5,
+      "after": 5
+    },
+    "reselect_from": "compact_forest_v1"
+  }
+}

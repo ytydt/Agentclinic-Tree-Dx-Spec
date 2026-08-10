@@ -24,6 +24,7 @@ from dataclasses import dataclass, field
 from typing import Any, Iterable, Mapping, Optional
 
 from agentclinic_tree_dx.backbone import _read_prompt
+from agentclinic_tree_dx import near_dedup as nd
 
 MODES = (
     "c4",
@@ -734,6 +735,9 @@ class AphhmCPipeline:
         concept_contract: str = "v1",
         axis_mode: str = "conditioned",
         stances: Optional[list[str]] = None,
+        near_dedup_shortlist: bool = False,
+        group_near_dedup: bool = False,
+        near_dedup_jaccard: float = 0.4,
     ) -> None:
         if mode not in MODES:
             raise ValueError(f"mode must be one of {MODES}")
@@ -793,6 +797,11 @@ class AphhmCPipeline:
             if bad:
                 raise ValueError(f"unknown stances {bad}; choose from {sorted(STANCES)}")
         self.tournament = mode in ("multistance", "multistance_split")
+        # R6/R6.1: near-sibling competition drives silent_drop / group_drop.
+        # Optional collapses before selector / stance nomination (off by default).
+        self.near_dedup_shortlist = bool(near_dedup_shortlist)
+        self.group_near_dedup = bool(group_near_dedup)
+        self.near_dedup_jaccard = float(near_dedup_jaccard)
         # §17.3 put conversion on a line that falls 4.6pp per extra candidate, and
         # the tournament sits 0.065 above it. Splitting the two rounds into their
         # own calls tests whether the single-call version was losing the final for
@@ -1440,6 +1449,23 @@ class AphhmCPipeline:
                     {"group": g, "candidates": v} for g, v in groups.items()
                 ],
             }
+            if self.group_near_dedup:
+                before = sum(len(g["candidates"]) for g in payload["groups"])
+                payload["groups"] = nd.dedupe_group_notes(
+                    payload["groups"], jaccard=self.near_dedup_jaccard
+                )
+                # refresh flat shortlist from deduped groups
+                labs = []
+                for g in payload["groups"]:
+                    for c in g["candidates"]:
+                        lab = str(c.get("label") or "")
+                        if lab and lab not in labs:
+                            labs.append(lab)
+                payload["shortlist"] = labs
+                payload["group_near_dedup"] = {
+                    "before": before,
+                    "after": sum(len(g["candidates"]) for g in payload["groups"]),
+                }
         else:
             payload = {
                 "vignette": vignette,
@@ -1618,6 +1644,18 @@ class AphhmCPipeline:
         if self.selector_unanchored:
             # present in generation order so the shortlist carries no ranking
             shortlist = sorted(shortlist, key=lambda c: c.concept_id)
+        if self.near_dedup_shortlist and shortlist:
+            before_n = len(shortlist)
+            shortlist = nd.dedupe_by_label(
+                shortlist,
+                lambda c: c.preferred_label,
+                jaccard=self.near_dedup_jaccard,
+            )
+            stages["near_dedup_shortlist"] = {
+                "before": before_n,
+                "after": len(shortlist),
+                "jaccard": self.near_dedup_jaccard,
+            }
         rounds = 2 if self.split_final else 1
         if self.frontier_selector and shortlist and calls + rounds <= self.max_calls:
             sel, champion, used = self._select_frontier(

@@ -1,0 +1,330 @@
+{
+  "source_id": "770",
+  "case_id": "diagnosisarena__000770",
+  "champion": "Pneumonia",
+  "ordered_diagnoses": [
+    "Pneumonia",
+    "Acute Respiratory Distress Syndrome (ARDS)",
+    "Severe acute respiratory syndrome (SARS)",
+    "Pulmonary embolism"
+  ],
+  "llm_calls": 2,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "Pneumonia",
+              "support_spans": [
+                "complaints of hemoptysis, fever, and difficulty exhaling",
+                "Dyspnea present",
+                "exudative lesions"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's symptoms and imaging studies suggest a respiratory infection.",
+              "axis_node": "Respiratory"
+            },
+            {
+              "name": "Acute Respiratory Distress Syndrome (ARDS)",
+              "support_spans": [
+                "type II respiratory failure",
+                "required intubation"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's respiratory failure and need for intubation are consistent with ARDS.",
+              "axis_node": "Respiratory"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "Influenza pneumonia",
+              "support_spans": [
+                "fever",
+                "exudative lesions"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's symptoms and imaging studies suggest a viral pneumonia.",
+              "axis_node": "Infectious"
+            },
+            {
+              "name": "Severe acute respiratory syndrome (SARS)",
+              "support_spans": [
+                "diffuse inflammatory changes in both lungs",
+                "type II respiratory failure"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's symptoms and laboratory results are consistent with SARS.",
+              "axis_node": "Infectious"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "Pulmonary embolism",
+              "support_spans": [
+                "hemoptysis",
+                "difficulty exhaling"
+              ],
+              "contradict_spans": [
+                "exudative lesions"
+              ],
+              "why": "The patient's symptoms could suggest a pulmonary embolism, but imaging studies do not support this diagnosis.",
+              "axis_node": "Cardiovascular"
+            },
+            {
+              "name": "Community-acquired pneumonia",
+              "support_spans": [
+                "fever",
+                "exudative lesions"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's symptoms and imaging studies are consistent with community-acquired pneumonia.",
+              "axis_node": "Infectious"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "complaints of hemoptysis, fever, and difficulty exhaling",
+        "Dyspnea present",
+        "exudative lesions",
+        "type II respiratory failure",
+        "required intubation",
+        "diffuse inflammatory changes in both lungs",
+        "fever",
+        "hemoptysis"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [],
+      "generator_jaccard": 0.0,
+      "top1_same_across_views": true,
+      "top_margin": 2.8500000000000005,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Pneumonia",
+        "preferred_label": "Pneumonia",
+        "generator_views": [
+          "syndrome_anatomy",
+          "mechanism",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Respiratory",
+          "Infectious"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE002",
+          "KE003",
+          "KE007"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "complaints of hemoptysis, fever, and difficulty exhaling",
+          "Dyspnea present",
+          "exudative lesions",
+          "fever"
+        ],
+        "contradict_spans": [],
+        "score_logit": 4.8500000000000005,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Acute Respiratory Distress Syndrome (ARDS)",
+        "preferred_label": "Acute Respiratory Distress Syndrome (ARDS)",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "Respiratory"
+        ],
+        "supporting_evidence": [
+          "KE004",
+          "KE005"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "type II respiratory failure",
+          "required intubation"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Severe acute respiratory syndrome (SARS)",
+        "preferred_label": "Severe acute respiratory syndrome (SARS)",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Infectious"
+        ],
+        "supporting_evidence": [
+          "KE006",
+          "KE004"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "diffuse inflammatory changes in both lungs",
+          "type II respiratory failure"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Pulmonary embolism",
+        "preferred_label": "Pulmonary embolism",
+        "generator_views": [
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Cardiovascular"
+        ],
+        "supporting_evidence": [
+          "KE008",
+          "MODAE009"
+        ],
+        "contradicting_evidence": [
+          "KE003"
+        ],
+        "support_spans": [
+          "hemoptysis",
+          "difficulty exhaling"
+        ],
+        "contradict_spans": [
+          "exudative lesions"
+        ],
+        "score_logit": 0.75,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "complaints of hemoptysis, fever, and difficulty exhaling",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "Dyspnea present",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "exudative lesions",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "type II respiratory failure",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "required intubation",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "diffuse inflammatory changes in both lungs",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE007",
+        "raw_span": "fever",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE008",
+        "raw_span": "hemoptysis",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "MODAE009",
+        "raw_span": "difficulty exhaling",
+        "source_view": "modality_decisive"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "Pneumonia",
+        "preferred_label": "Pneumonia",
+        "support_spans": [
+          "complaints of hemoptysis, fever, and difficulty exhaling",
+          "Dyspnea present",
+          "exudative lesions",
+          "fever"
+        ],
+        "contradict_spans": [],
+        "score_logit": 4.8500000000000005
+      },
+      {
+        "preferred_name": "Acute Respiratory Distress Syndrome (ARDS)",
+        "preferred_label": "Acute Respiratory Distress Syndrome (ARDS)",
+        "support_spans": [
+          "type II respiratory failure",
+          "required intubation"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "Severe acute respiratory syndrome (SARS)",
+        "preferred_label": "Severe acute respiratory syndrome (SARS)",
+        "support_spans": [
+          "diffuse inflammatory changes in both lungs",
+          "type II respiratory failure"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "Pulmonary embolism",
+        "preferred_label": "Pulmonary embolism",
+        "support_spans": [
+          "hemoptysis",
+          "difficulty exhaling"
+        ],
+        "contradict_spans": [
+          "exudative lesions"
+        ],
+        "score_logit": 0.75
+      }
+    ],
+    "vignette_chars": 1172,
+    "frontier_selector": {
+      "champion": "Pneumonia",
+      "runner_up": "Acute Respiratory Distress Syndrome (ARDS)",
+      "why": "The presence of exudative lesions, complaints of hemoptysis, fever, and difficulty exhaling, and dyspnea, which are specific to pneumonia, decided it."
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {}
+  },
+  "metrics": {
+    "llm_calls": 2,
+    "top_margin": 2.8500000000000005,
+    "unexplained_n": 0
+  }
+}

@@ -1,0 +1,331 @@
+{
+  "source_id": "85",
+  "case_id": "medcasereasoning__000085",
+  "champion": "appendicitis",
+  "ordered_diagnoses": [
+    "appendicitis",
+    "intestinal obstruction",
+    "intussusception",
+    "diverticulitis"
+  ],
+  "llm_calls": 1,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "appendicitis",
+              "support_spans": [
+                "abdominal pain that began around the umbilicus 2 days earlier and migrated to the right lower quadrant",
+                "voluntary guarding in the right lower quadrant and minimal tenderness elsewhere",
+                "Ultrasound assessment was interpreted as compatible with plastron appendicitis"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's symptoms and examination results are consistent with appendicitis, which is further supported by the ultrasound assessment.",
+              "axis_node": "right lower quadrant pain"
+            },
+            {
+              "name": "intestinal obstruction",
+              "support_spans": [
+                "several air–fluid levels without free air under the diaphragm",
+                "partial luminal obliteration and edema on the anterolateral aspect of the cecum"
+              ],
+              "contradict_spans": [],
+              "why": "The presence of air-fluid levels and partial luminal obliteration suggests a possible intestinal obstruction.",
+              "axis_node": "intestinal lumen"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "appendicitis",
+              "support_spans": [
+                "abdominal pain that began around the umbilicus 2 days earlier and migrated to the right lower quadrant",
+                "white-cell count of 15,600/mL"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's elevated white-cell count and abdominal pain suggest an inflammatory process, which is consistent with appendicitis.",
+              "axis_node": "inflammation"
+            },
+            {
+              "name": "diverticulitis",
+              "support_spans": [
+                "abdominal pain",
+                "voluntary guarding in the right lower quadrant and minimal tenderness elsewhere"
+              ],
+              "contradict_spans": [
+                "no prior abdominal surgeries or systemic disease"
+              ],
+              "why": "The patient's symptoms could be consistent with diverticulitis, although the lack of prior abdominal surgeries or systemic disease makes it less likely.",
+              "axis_node": "inflammatory bowel disease"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "appendicitis",
+              "support_spans": [
+                "Ultrasound assessment was interpreted as compatible with plastron appendicitis",
+                "Computed tomography of the abdomen revealed a linear lesion within the intestinal lumen in the right lower quadrant"
+              ],
+              "contradict_spans": [],
+              "why": "The ultrasound and CT scan results provide strong evidence for appendicitis.",
+              "axis_node": "imaging findings"
+            },
+            {
+              "name": "intussusception",
+              "support_spans": [
+                "partial luminal obliteration and edema on the anterolateral aspect of the cecum"
+              ],
+              "contradict_spans": [],
+              "why": "The CT scan results could also be consistent with intussusception, which would require further evaluation.",
+              "axis_node": "intestinal lumen"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "abdominal pain that began around the umbilicus 2 days earlier and migrated to the right lower quadrant",
+        "voluntary guarding in the right lower quadrant and minimal tenderness elsewhere",
+        "several air–fluid levels without free air under the diaphragm",
+        "Ultrasound assessment was interpreted as compatible with plastron appendicitis",
+        "Computed tomography of the abdomen revealed a linear lesion within the intestinal lumen in the right lower quadrant",
+        "white-cell count of 15,600/mL",
+        "partial luminal obliteration and edema on the anterolateral aspect of the cecum"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [
+        "no prior abdominal surgeries or systemic disease"
+      ],
+      "generator_jaccard": 0.3333333333333333,
+      "top1_same_across_views": true,
+      "top_margin": 4.0,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "appendicitis",
+        "preferred_label": "appendicitis",
+        "generator_views": [
+          "syndrome_anatomy",
+          "mechanism",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "right lower quadrant pain",
+          "inflammation",
+          "imaging findings"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE002",
+          "KE004",
+          "KE006",
+          "KE005"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "abdominal pain that began around the umbilicus 2 days earlier and migrated to the right lower quadrant",
+          "voluntary guarding in the right lower quadrant and minimal tenderness elsewhere",
+          "Ultrasound assessment was interpreted as compatible with plastron appendicitis",
+          "white-cell count of 15,600/mL",
+          "Computed tomography of the abdomen revealed a linear lesion within the intestinal lumen in the right lower quadrant"
+        ],
+        "contradict_spans": [],
+        "score_logit": 6.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "intestinal obstruction",
+        "preferred_label": "intestinal obstruction",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "intestinal lumen"
+        ],
+        "supporting_evidence": [
+          "KE003",
+          "KE007"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "several air–fluid levels without free air under the diaphragm",
+          "partial luminal obliteration and edema on the anterolateral aspect of the cecum"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "diverticulitis",
+        "preferred_label": "diverticulitis",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "inflammatory bowel disease"
+        ],
+        "supporting_evidence": [
+          "MECHE008",
+          "KE002"
+        ],
+        "contradicting_evidence": [
+          "MECHE009"
+        ],
+        "support_spans": [
+          "abdominal pain",
+          "voluntary guarding in the right lower quadrant and minimal tenderness elsewhere"
+        ],
+        "contradict_spans": [
+          "no prior abdominal surgeries or systemic disease"
+        ],
+        "score_logit": 0.75,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "intussusception",
+        "preferred_label": "intussusception",
+        "generator_views": [
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "intestinal lumen"
+        ],
+        "supporting_evidence": [
+          "KE007"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "partial luminal obliteration and edema on the anterolateral aspect of the cecum"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "abdominal pain that began around the umbilicus 2 days earlier and migrated to the right lower quadrant",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "voluntary guarding in the right lower quadrant and minimal tenderness elsewhere",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "several air–fluid levels without free air under the diaphragm",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "Ultrasound assessment was interpreted as compatible with plastron appendicitis",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "Computed tomography of the abdomen revealed a linear lesion within the intestinal lumen in the right lower quadrant",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "white-cell count of 15,600/mL",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE007",
+        "raw_span": "partial luminal obliteration and edema on the anterolateral aspect of the cecum",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "MECHE008",
+        "raw_span": "abdominal pain",
+        "source_view": "mechanism"
+      },
+      {
+        "evidence_id": "MECHE009",
+        "raw_span": "no prior abdominal surgeries or systemic disease",
+        "source_view": "mechanism"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "appendicitis",
+        "preferred_label": "appendicitis",
+        "support_spans": [
+          "abdominal pain that began around the umbilicus 2 days earlier and migrated to the right lower quadrant",
+          "voluntary guarding in the right lower quadrant and minimal tenderness elsewhere",
+          "Ultrasound assessment was interpreted as compatible with plastron appendicitis",
+          "white-cell count of 15,600/mL",
+          "Computed tomography of the abdomen revealed a linear lesion within the intestinal lumen in the right lower quadrant"
+        ],
+        "contradict_spans": [],
+        "score_logit": 6.0
+      },
+      {
+        "preferred_name": "intestinal obstruction",
+        "preferred_label": "intestinal obstruction",
+        "support_spans": [
+          "several air–fluid levels without free air under the diaphragm",
+          "partial luminal obliteration and edema on the anterolateral aspect of the cecum"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "intussusception",
+        "preferred_label": "intussusception",
+        "support_spans": [
+          "partial luminal obliteration and edema on the anterolateral aspect of the cecum"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "diverticulitis",
+        "preferred_label": "diverticulitis",
+        "support_spans": [
+          "abdominal pain",
+          "voluntary guarding in the right lower quadrant and minimal tenderness elsewhere"
+        ],
+        "contradict_spans": [
+          "no prior abdominal surgeries or systemic disease"
+        ],
+        "score_logit": 0.75
+      }
+    ],
+    "vignette_chars": 1002,
+    "frontier_selector": {
+      "champion": "appendicitis",
+      "runner_up": "intestinal obstruction",
+      "why": "The evidence of abdominal pain migrating to the right lower quadrant, voluntary guarding, and ultrasound assessment compatible with plastron appendicitis decided it."
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {
+      "mode": "evidence",
+      "before": 4,
+      "after": 4
+    },
+    "reselect_from": "compact_forest_v1"
+  }
+}

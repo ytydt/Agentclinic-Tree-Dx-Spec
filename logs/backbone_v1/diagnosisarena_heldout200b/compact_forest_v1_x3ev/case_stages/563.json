@@ -1,0 +1,348 @@
+{
+  "source_id": "563",
+  "case_id": "diagnosisarena__000563",
+  "champion": "Sepsis",
+  "ordered_diagnoses": [
+    "Sepsis",
+    "Acute cholecystitis",
+    "Alcoholic pancreatitis",
+    "Enterobacteriaceae infection",
+    "Pyelonephritis"
+  ],
+  "llm_calls": 1,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "Acute cholecystitis",
+              "support_spans": [
+                "upper abdominal pain",
+                "fever, and shaking chills"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's symptoms of upper abdominal pain, fever, and shaking chills are consistent with acute cholecystitis.",
+              "axis_node": "Abdominal pain syndrome"
+            },
+            {
+              "name": "Pyelonephritis",
+              "support_spans": [
+                "fever, and shaking chills"
+              ],
+              "contradict_spans": [
+                "Urine culture: Negative"
+              ],
+              "why": "The patient's symptoms of fever and shaking chills could be consistent with pyelonephritis, but the negative urine culture contradicts this diagnosis.",
+              "axis_node": "Urinary tract infection syndrome"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "Sepsis",
+              "support_spans": [
+                "fever, and shaking chills",
+                "Leukocyte count: 14.6 × 10⁹/L"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's symptoms of fever, shaking chills, and elevated leukocyte count are consistent with sepsis.",
+              "axis_node": "Systemic inflammatory response syndrome"
+            },
+            {
+              "name": "Alcoholic pancreatitis",
+              "support_spans": [
+                "alcoholic acute pancreatitis",
+                "consumed 400 mL of Japanese spirit with 25% alcohol content daily"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's history of alcoholic acute pancreatitis and daily alcohol consumption suggest a possible mechanism of alcoholic pancreatitis.",
+              "axis_node": "Toxic-metabolic syndrome"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "Gram-negative sepsis",
+              "support_spans": [
+                "Blood cultures: Positive for gram-negative bacilli"
+              ],
+              "contradict_spans": [],
+              "why": "The positive blood culture for gram-negative bacilli is a decisive finding for gram-negative sepsis.",
+              "axis_node": "Microbiological diagnosis"
+            },
+            {
+              "name": "Enterobacteriaceae infection",
+              "support_spans": [
+                "Gram staining of blood cultures showing enterobacteria-like negative rods"
+              ],
+              "contradict_spans": [],
+              "why": "The gram staining result showing enterobacteria-like negative rods is a decisive finding for Enterobacteriaceae infection.",
+              "axis_node": "Microbiological diagnosis"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "upper abdominal pain",
+        "fever, and shaking chills",
+        "Leukocyte count: 14.6 × 10⁹/L",
+        "Blood cultures: Positive for gram-negative bacilli",
+        "Gram staining of blood cultures showing enterobacteria-like negative rods",
+        "alcoholic acute pancreatitis",
+        "consumed 400 mL of Japanese spirit with 25% alcohol content daily",
+        "Urine culture: Negative"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [
+        "Urine culture: Negative"
+      ],
+      "generator_jaccard": 0.0,
+      "top1_same_across_views": true,
+      "top_margin": 1.5,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Acute cholecystitis",
+        "preferred_label": "Acute cholecystitis",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "Abdominal pain syndrome"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE002"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "upper abdominal pain",
+          "fever, and shaking chills"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Pyelonephritis",
+        "preferred_label": "Pyelonephritis",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "Urinary tract infection syndrome"
+        ],
+        "supporting_evidence": [
+          "KE002"
+        ],
+        "contradicting_evidence": [
+          "KE008"
+        ],
+        "support_spans": [
+          "fever, and shaking chills"
+        ],
+        "contradict_spans": [
+          "Urine culture: Negative"
+        ],
+        "score_logit": -0.25,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Sepsis",
+        "preferred_label": "Sepsis",
+        "generator_views": [
+          "mechanism",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Systemic inflammatory response syndrome",
+          "Microbiological diagnosis"
+        ],
+        "supporting_evidence": [
+          "KE002",
+          "KE003",
+          "KE004"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "fever, and shaking chills",
+          "Leukocyte count: 14.6 × 10⁹/L",
+          "Blood cultures: Positive for gram-negative bacilli"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.5,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Alcoholic pancreatitis",
+        "preferred_label": "Alcoholic pancreatitis",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Toxic-metabolic syndrome"
+        ],
+        "supporting_evidence": [
+          "KE006",
+          "KE007"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "alcoholic acute pancreatitis",
+          "consumed 400 mL of Japanese spirit with 25% alcohol content daily"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Enterobacteriaceae infection",
+        "preferred_label": "Enterobacteriaceae infection",
+        "generator_views": [
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Microbiological diagnosis"
+        ],
+        "supporting_evidence": [
+          "KE005"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Gram staining of blood cultures showing enterobacteria-like negative rods"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "upper abdominal pain",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "fever, and shaking chills",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "Leukocyte count: 14.6 × 10⁹/L",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "Blood cultures: Positive for gram-negative bacilli",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "Gram staining of blood cultures showing enterobacteria-like negative rods",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "alcoholic acute pancreatitis",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE007",
+        "raw_span": "consumed 400 mL of Japanese spirit with 25% alcohol content daily",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE008",
+        "raw_span": "Urine culture: Negative",
+        "source_view": "batched"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "Sepsis",
+        "preferred_label": "Sepsis",
+        "support_spans": [
+          "fever, and shaking chills",
+          "Leukocyte count: 14.6 × 10⁹/L",
+          "Blood cultures: Positive for gram-negative bacilli"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.5
+      },
+      {
+        "preferred_name": "Acute cholecystitis",
+        "preferred_label": "Acute cholecystitis",
+        "support_spans": [
+          "upper abdominal pain",
+          "fever, and shaking chills"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "Alcoholic pancreatitis",
+        "preferred_label": "Alcoholic pancreatitis",
+        "support_spans": [
+          "alcoholic acute pancreatitis",
+          "consumed 400 mL of Japanese spirit with 25% alcohol content daily"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "Enterobacteriaceae infection",
+        "preferred_label": "Enterobacteriaceae infection",
+        "support_spans": [
+          "Gram staining of blood cultures showing enterobacteria-like negative rods"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "Pyelonephritis",
+        "preferred_label": "Pyelonephritis",
+        "support_spans": [
+          "fever, and shaking chills"
+        ],
+        "contradict_spans": [
+          "Urine culture: Negative"
+        ],
+        "score_logit": -0.25
+      }
+    ],
+    "vignette_chars": 1252,
+    "frontier_selector": {
+      "champion": "Sepsis",
+      "runner_up": "Enterobacteriaceae infection",
+      "why": "The presence of fever, shaking chills, elevated leukocyte count, and positive blood cultures for gram-negative bacilli decided it."
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {
+      "mode": "evidence",
+      "before": 5,
+      "after": 5
+    },
+    "reselect_from": "compact_forest_v1"
+  }
+}

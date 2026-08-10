@@ -1,0 +1,339 @@
+{
+  "source_id": "250",
+  "case_id": "medcasereasoning__000250",
+  "champion": "Toxocara infection",
+  "ordered_diagnoses": [
+    "Toxocara infection",
+    "Viral myopericarditis",
+    "Eosinophilic pneumonia",
+    "Loeffler syndrome",
+    "Mycoplasma pneumoniae infection"
+  ],
+  "llm_calls": 2,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "Viral myopericarditis",
+              "support_spans": [
+                "She was admitted with a working diagnosis of viral myopericarditis."
+              ],
+              "contradict_spans": [],
+              "why": "The patient presented with chest pain and dyspnea after recovering from an upper respiratory infection, which is consistent with viral myopericarditis.",
+              "axis_node": "Cardiac"
+            },
+            {
+              "name": "Loeffler syndrome",
+              "support_spans": [
+                "Laboratory studies revealed a leukocyte count of 12,000 cells/µL with an absolute eosinophil count of 1,570 cells/µL"
+              ],
+              "contradict_spans": [],
+              "why": "The patient has a high absolute eosinophil count, which is consistent with Loeffler syndrome.",
+              "axis_node": "Pulmonary"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "Mycoplasma pneumoniae infection",
+              "support_spans": [
+                "Mycoplasma pneumoniae IgM and IgG were elevated"
+              ],
+              "contradict_spans": [
+                "nasopharyngeal Mycoplasma PCR was negative"
+              ],
+              "why": "The patient has elevated Mycoplasma pneumoniae IgM and IgG, which suggests a possible infection.",
+              "axis_node": "Infectious"
+            },
+            {
+              "name": "Toxocara infection",
+              "support_spans": [
+                "Toxocara serology was sent and was pending at discharge.",
+                "Further history elicited pica and exposure to two dogs and a cat."
+              ],
+              "contradict_spans": [],
+              "why": "The patient has a history of pica and exposure to animals, which increases the risk of Toxocara infection.",
+              "axis_node": "Parasitic"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "Viral myopericarditis",
+              "support_spans": [
+                "Transthoracic echocardiography demonstrated a moderate circumferential pericardial effusion with right atrial collapse"
+              ],
+              "contradict_spans": [],
+              "why": "The echocardiography results are consistent with viral myopericarditis.",
+              "axis_node": "Cardiac Imaging"
+            },
+            {
+              "name": "Eosinophilic pneumonia",
+              "support_spans": [
+                "Chest computed tomography revealed multiple pulmonary nodules with adjacent ground-glass opacities."
+              ],
+              "contradict_spans": [],
+              "why": "The CT scan results are consistent with eosinophilic pneumonia.",
+              "axis_node": "Pulmonary Imaging"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "She was admitted with a working diagnosis of viral myopericarditis.",
+        "Laboratory studies revealed a leukocyte count of 12,000 cells/µL with an absolute eosinophil count of 1,570 cells/µL",
+        "Mycoplasma pneumoniae IgM and IgG were elevated",
+        "Transthoracic echocardiography demonstrated a moderate circumferential pericardial effusion with right atrial collapse",
+        "Chest computed tomography revealed multiple pulmonary nodules with adjacent ground-glass opacities.",
+        "Toxocara serology was sent and was pending at discharge.",
+        "Further history elicited pica and exposure to two dogs and a cat."
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [
+        "nasopharyngeal Mycoplasma PCR was negative"
+      ],
+      "generator_jaccard": 0.1111111111111111,
+      "top1_same_across_views": true,
+      "top_margin": 0.5,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Viral myopericarditis",
+        "preferred_label": "Viral myopericarditis",
+        "generator_views": [
+          "syndrome_anatomy",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Cardiac",
+          "Cardiac Imaging"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE004"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "She was admitted with a working diagnosis of viral myopericarditis.",
+          "Transthoracic echocardiography demonstrated a moderate circumferential pericardial effusion with right atrial collapse"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.5,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Loeffler syndrome",
+        "preferred_label": "Loeffler syndrome",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "Pulmonary"
+        ],
+        "supporting_evidence": [
+          "KE002"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Laboratory studies revealed a leukocyte count of 12,000 cells/µL with an absolute eosinophil count of 1,570 cells/µL"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Mycoplasma pneumoniae infection",
+        "preferred_label": "Mycoplasma pneumoniae infection",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Infectious"
+        ],
+        "supporting_evidence": [
+          "KE003"
+        ],
+        "contradicting_evidence": [
+          "MECHE008"
+        ],
+        "support_spans": [
+          "Mycoplasma pneumoniae IgM and IgG were elevated"
+        ],
+        "contradict_spans": [
+          "nasopharyngeal Mycoplasma PCR was negative"
+        ],
+        "score_logit": -0.25,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Toxocara infection",
+        "preferred_label": "Toxocara infection",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Parasitic"
+        ],
+        "supporting_evidence": [
+          "KE006",
+          "KE007"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Toxocara serology was sent and was pending at discharge.",
+          "Further history elicited pica and exposure to two dogs and a cat."
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Eosinophilic pneumonia",
+        "preferred_label": "Eosinophilic pneumonia",
+        "generator_views": [
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Pulmonary Imaging"
+        ],
+        "supporting_evidence": [
+          "KE005"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Chest computed tomography revealed multiple pulmonary nodules with adjacent ground-glass opacities."
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "She was admitted with a working diagnosis of viral myopericarditis.",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "Laboratory studies revealed a leukocyte count of 12,000 cells/µL with an absolute eosinophil count of 1,570 cells/µL",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "Mycoplasma pneumoniae IgM and IgG were elevated",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "Transthoracic echocardiography demonstrated a moderate circumferential pericardial effusion with right atrial collapse",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "Chest computed tomography revealed multiple pulmonary nodules with adjacent ground-glass opacities.",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "Toxocara serology was sent and was pending at discharge.",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE007",
+        "raw_span": "Further history elicited pica and exposure to two dogs and a cat.",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "MECHE008",
+        "raw_span": "nasopharyngeal Mycoplasma PCR was negative",
+        "source_view": "mechanism"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "Viral myopericarditis",
+        "preferred_label": "Viral myopericarditis",
+        "support_spans": [
+          "She was admitted with a working diagnosis of viral myopericarditis.",
+          "Transthoracic echocardiography demonstrated a moderate circumferential pericardial effusion with right atrial collapse"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.5
+      },
+      {
+        "preferred_name": "Toxocara infection",
+        "preferred_label": "Toxocara infection",
+        "support_spans": [
+          "Toxocara serology was sent and was pending at discharge.",
+          "Further history elicited pica and exposure to two dogs and a cat."
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "Eosinophilic pneumonia",
+        "preferred_label": "Eosinophilic pneumonia",
+        "support_spans": [
+          "Chest computed tomography revealed multiple pulmonary nodules with adjacent ground-glass opacities."
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "Loeffler syndrome",
+        "preferred_label": "Loeffler syndrome",
+        "support_spans": [
+          "Laboratory studies revealed a leukocyte count of 12,000 cells/µL with an absolute eosinophil count of 1,570 cells/µL"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "Mycoplasma pneumoniae infection",
+        "preferred_label": "Mycoplasma pneumoniae infection",
+        "support_spans": [
+          "Mycoplasma pneumoniae IgM and IgG were elevated"
+        ],
+        "contradict_spans": [
+          "nasopharyngeal Mycoplasma PCR was negative"
+        ],
+        "score_logit": -0.25
+      }
+    ],
+    "vignette_chars": 2221,
+    "frontier_selector": {
+      "champion": "Toxocara infection",
+      "runner_up": "Loeffler syndrome",
+      "why": "The evidence of pica and exposure to two dogs and a cat, along with the elevated absolute eosinophil count, decided it."
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {}
+  },
+  "metrics": {
+    "llm_calls": 2,
+    "top_margin": 0.5,
+    "unexplained_n": 1
+  }
+}

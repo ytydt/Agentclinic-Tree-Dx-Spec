@@ -1,0 +1,299 @@
+{
+  "source_id": "216",
+  "case_id": "diagnosisarena__000216",
+  "champion": "COVID-19",
+  "ordered_diagnoses": [
+    "COVID-19",
+    "Pneumonia",
+    "Acute Respiratory Distress Syndrome",
+    "Influenza"
+  ],
+  "llm_calls": 1,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "Pneumonia",
+              "support_spans": [
+                "bilateral multifocal pneumonia",
+                "coarse rales at the lung bases bilaterally"
+              ],
+              "contradict_spans": [],
+              "why": "Patient presents with symptoms and test results consistent with pneumonia",
+              "axis_node": "Respiratory"
+            },
+            {
+              "name": "Acute Respiratory Distress Syndrome",
+              "support_spans": [
+                "Oxygen saturation of 85% on room air",
+                "shortness of breath"
+              ],
+              "contradict_spans": [],
+              "why": "Patient's low oxygen saturation and shortness of breath are consistent with ARDS",
+              "axis_node": "Respiratory"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "COVID-19",
+              "support_spans": [
+                "Nasopharyngeal swab positive by reverse transcriptase–polymerase chain reaction",
+                "anosmia"
+              ],
+              "contradict_spans": [],
+              "why": "Patient's symptoms and positive nasopharyngeal swab are consistent with COVID-19",
+              "axis_node": "Infectious"
+            },
+            {
+              "name": "Influenza",
+              "support_spans": [
+                "fever with a temperature up to 39°C"
+              ],
+              "contradict_spans": [],
+              "why": "Patient's high fever is consistent with influenza",
+              "axis_node": "Infectious"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "COVID-19",
+              "support_spans": [
+                "Nasopharyngeal swab positive by reverse transcriptase–polymerase chain reaction"
+              ],
+              "contradict_spans": [],
+              "why": "Positive nasopharyngeal swab is decisive for COVID-19 diagnosis",
+              "axis_node": "Virology"
+            },
+            {
+              "name": "Community-Acquired Pneumonia",
+              "support_spans": [
+                "bilateral multifocal pneumonia"
+              ],
+              "contradict_spans": [],
+              "why": "Chest radiography showing bilateral multifocal pneumonia is consistent with community-acquired pneumonia",
+              "axis_node": "Imaging"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "Nasopharyngeal swab positive by reverse transcriptase–polymerase chain reaction",
+        "bilateral multifocal pneumonia",
+        "Oxygen saturation of 85% on room air",
+        "coarse rales at the lung bases bilaterally",
+        "fever with a temperature up to 39°C",
+        "anosmia",
+        "shortness of breath"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [],
+      "generator_jaccard": 0.1111111111111111,
+      "top1_same_across_views": true,
+      "top_margin": 0.0,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Pneumonia",
+        "preferred_label": "Pneumonia",
+        "generator_views": [
+          "syndrome_anatomy",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Respiratory",
+          "Imaging"
+        ],
+        "supporting_evidence": [
+          "KE002",
+          "KE004"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "bilateral multifocal pneumonia",
+          "coarse rales at the lung bases bilaterally"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.5,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Acute Respiratory Distress Syndrome",
+        "preferred_label": "Acute Respiratory Distress Syndrome",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "Respiratory"
+        ],
+        "supporting_evidence": [
+          "KE003",
+          "KE007"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Oxygen saturation of 85% on room air",
+          "shortness of breath"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "COVID-19",
+        "preferred_label": "COVID-19",
+        "generator_views": [
+          "mechanism",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Infectious",
+          "Virology"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE006"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Nasopharyngeal swab positive by reverse transcriptase–polymerase chain reaction",
+          "anosmia"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.5,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Influenza",
+        "preferred_label": "Influenza",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Infectious"
+        ],
+        "supporting_evidence": [
+          "KE005"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "fever with a temperature up to 39°C"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "Nasopharyngeal swab positive by reverse transcriptase–polymerase chain reaction",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "bilateral multifocal pneumonia",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "Oxygen saturation of 85% on room air",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "coarse rales at the lung bases bilaterally",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "fever with a temperature up to 39°C",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "anosmia",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE007",
+        "raw_span": "shortness of breath",
+        "source_view": "batched"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "COVID-19",
+        "preferred_label": "COVID-19",
+        "support_spans": [
+          "Nasopharyngeal swab positive by reverse transcriptase–polymerase chain reaction",
+          "anosmia"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.5
+      },
+      {
+        "preferred_name": "Pneumonia",
+        "preferred_label": "Pneumonia",
+        "support_spans": [
+          "bilateral multifocal pneumonia",
+          "coarse rales at the lung bases bilaterally"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.5
+      },
+      {
+        "preferred_name": "Acute Respiratory Distress Syndrome",
+        "preferred_label": "Acute Respiratory Distress Syndrome",
+        "support_spans": [
+          "Oxygen saturation of 85% on room air",
+          "shortness of breath"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "Influenza",
+        "preferred_label": "Influenza",
+        "support_spans": [
+          "fever with a temperature up to 39°C"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      }
+    ],
+    "vignette_chars": 782,
+    "frontier_selector": {
+      "champion": "COVID-19",
+      "runner_up": "Pneumonia",
+      "why": "The presence of a nasopharyngeal swab positive by reverse transcriptase–polymerase chain reaction and anosmia specifically support COVID-19."
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {
+      "mode": "oracle_gold",
+      "before": 4,
+      "after": 4
+    },
+    "reselect_from": "compact_forest_v1"
+  }
+}

@@ -1,0 +1,373 @@
+{
+  "source_id": "44",
+  "case_id": "medcasereasoning__000044",
+  "champion": "Surgical site infection",
+  "ordered_diagnoses": [
+    "Surgical site infection",
+    "Cellulitis",
+    "Device-related infection",
+    "Staphylococcal infection",
+    "Sepsis"
+  ],
+  "llm_calls": 1,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "Surgical site infection",
+              "support_spans": [
+                "inflamed, infiltrating, necrotic lesion over the implant site",
+                "fever (38.1°C)"
+              ],
+              "contradict_spans": [],
+              "why": "The patient presented with symptoms of infection at the pacemaker implant site.",
+              "axis_node": "Implant site infection"
+            },
+            {
+              "name": "Device-related infection",
+              "support_spans": [
+                "inflamed, infiltrating, necrotic lesion over the implant site"
+              ],
+              "contradict_spans": [],
+              "why": "The infection is related to the implanted device.",
+              "axis_node": "Device-related complications"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "Staphylococcal infection",
+              "support_spans": [
+                "A swab of the lesion grew Staphylococcus epidermidis"
+              ],
+              "contradict_spans": [],
+              "why": "The infection is caused by Staphylococcus epidermidis.",
+              "axis_node": "Bacterial infection"
+            },
+            {
+              "name": "Sepsis",
+              "support_spans": [
+                "elevated inflammatory syndrome",
+                "fever (38.1°C)"
+              ],
+              "contradict_spans": [
+                "blood cultures remained negative"
+              ],
+              "why": "The patient has symptoms of sepsis, but blood cultures are negative.",
+              "axis_node": "Systemic infection"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "Prosthetic valve endocarditis",
+              "support_spans": [
+                "dual-chamber pacemaker implantation"
+              ],
+              "contradict_spans": [
+                "The procedure was uneventful"
+              ],
+              "why": "The patient has a prosthetic device that can increase the risk of endocarditis.",
+              "axis_node": "Cardiac device-related infection"
+            },
+            {
+              "name": "Cellulitis",
+              "support_spans": [
+                "inflamed, infiltrating, necrotic lesion over the implant site"
+              ],
+              "contradict_spans": [],
+              "why": "The patient has symptoms of cellulitis.",
+              "axis_node": "Skin and soft tissue infection"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "inflamed, infiltrating, necrotic lesion over the implant site",
+        "fever (38.1°C)",
+        "A swab of the lesion grew Staphylococcus epidermidis",
+        "elevated inflammatory syndrome",
+        "blood cultures remained negative",
+        "dual-chamber pacemaker implantation",
+        "The procedure was uneventful"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [
+        "blood cultures remained negative",
+        "The procedure was uneventful"
+      ],
+      "generator_jaccard": 0.0,
+      "top1_same_across_views": false,
+      "top_margin": 1.0,
+      "leave_one_view_instability": true,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Surgical site infection",
+        "preferred_label": "Surgical site infection",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "Implant site infection"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE002"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "inflamed, infiltrating, necrotic lesion over the implant site",
+          "fever (38.1°C)"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Device-related infection",
+        "preferred_label": "Device-related infection",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "Device-related complications"
+        ],
+        "supporting_evidence": [
+          "KE001"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "inflamed, infiltrating, necrotic lesion over the implant site"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Staphylococcal infection",
+        "preferred_label": "Staphylococcal infection",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Bacterial infection"
+        ],
+        "supporting_evidence": [
+          "KE003"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "A swab of the lesion grew Staphylococcus epidermidis"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Sepsis",
+        "preferred_label": "Sepsis",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Systemic infection"
+        ],
+        "supporting_evidence": [
+          "KE004",
+          "KE002"
+        ],
+        "contradicting_evidence": [
+          "KE005"
+        ],
+        "support_spans": [
+          "elevated inflammatory syndrome",
+          "fever (38.1°C)"
+        ],
+        "contradict_spans": [
+          "blood cultures remained negative"
+        ],
+        "score_logit": 0.75,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Prosthetic valve endocarditis",
+        "preferred_label": "Prosthetic valve endocarditis",
+        "generator_views": [
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Cardiac device-related infection"
+        ],
+        "supporting_evidence": [
+          "KE006"
+        ],
+        "contradicting_evidence": [
+          "KE007"
+        ],
+        "support_spans": [
+          "dual-chamber pacemaker implantation"
+        ],
+        "contradict_spans": [
+          "The procedure was uneventful"
+        ],
+        "score_logit": -0.25,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C006",
+        "preferred_name": "Cellulitis",
+        "preferred_label": "Cellulitis",
+        "generator_views": [
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Skin and soft tissue infection"
+        ],
+        "supporting_evidence": [
+          "KE001"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "inflamed, infiltrating, necrotic lesion over the implant site"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "inflamed, infiltrating, necrotic lesion over the implant site",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "fever (38.1°C)",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "A swab of the lesion grew Staphylococcus epidermidis",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "elevated inflammatory syndrome",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "blood cultures remained negative",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "dual-chamber pacemaker implantation",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE007",
+        "raw_span": "The procedure was uneventful",
+        "source_view": "batched"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "Surgical site infection",
+        "preferred_label": "Surgical site infection",
+        "support_spans": [
+          "inflamed, infiltrating, necrotic lesion over the implant site",
+          "fever (38.1°C)"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "Cellulitis",
+        "preferred_label": "Cellulitis",
+        "support_spans": [
+          "inflamed, infiltrating, necrotic lesion over the implant site"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "Device-related infection",
+        "preferred_label": "Device-related infection",
+        "support_spans": [
+          "inflamed, infiltrating, necrotic lesion over the implant site"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "Staphylococcal infection",
+        "preferred_label": "Staphylococcal infection",
+        "support_spans": [
+          "A swab of the lesion grew Staphylococcus epidermidis"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "Sepsis",
+        "preferred_label": "Sepsis",
+        "support_spans": [
+          "elevated inflammatory syndrome",
+          "fever (38.1°C)"
+        ],
+        "contradict_spans": [
+          "blood cultures remained negative"
+        ],
+        "score_logit": 0.75
+      },
+      {
+        "preferred_name": "Prosthetic valve endocarditis",
+        "preferred_label": "Prosthetic valve endocarditis",
+        "support_spans": [
+          "dual-chamber pacemaker implantation"
+        ],
+        "contradict_spans": [
+          "The procedure was uneventful"
+        ],
+        "score_logit": -0.25
+      }
+    ],
+    "vignette_chars": 698,
+    "frontier_selector": {
+      "champion": "Surgical site infection",
+      "runner_up": "Device-related infection",
+      "why": "The presence of an inflamed, infiltrating, necrotic lesion over the implant site and fever decided it."
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {
+      "mode": "evidence",
+      "before": 6,
+      "after": 6
+    },
+    "reselect_from": "compact_forest_v1"
+  }
+}

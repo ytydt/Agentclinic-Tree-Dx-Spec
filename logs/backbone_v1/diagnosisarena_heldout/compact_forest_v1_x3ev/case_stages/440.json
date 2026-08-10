@@ -1,0 +1,312 @@
+{
+  "source_id": "440",
+  "case_id": "diagnosisarena__000440",
+  "champion": "Intrauterine pregnancy",
+  "ordered_diagnoses": [
+    "Intrauterine pregnancy",
+    "Graves' disease"
+  ],
+  "llm_calls": 1,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "Graves' disease",
+              "support_spans": [
+                "She had a history of thyroid condition",
+                "thyroid-stimulating hormone was undetectable"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's history of thyroid condition and undetectable thyroid-stimulating hormone levels suggest Graves' disease.",
+              "axis_node": "Thyroid"
+            },
+            {
+              "name": "Intrauterine pregnancy",
+              "support_spans": [
+                "Confirmed live intrauterine pregnancy at 24 weeks"
+              ],
+              "contradict_spans": [
+                "POC urine human chorionic gonadotropin (hCG) test: negative"
+              ],
+              "why": "The ultrasonography confirmed a live intrauterine pregnancy, which explains the patient's amenorrhea and abdominal fullness.",
+              "axis_node": "Uterus"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "Hyperthyroidism due to Graves' disease",
+              "support_spans": [
+                "She had a history of thyroid condition",
+                "thyroid-stimulating hormone was undetectable"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's undetectable thyroid-stimulating hormone levels and history of thyroid condition suggest hyperthyroidism due to Graves' disease.",
+              "axis_node": "Thyroid hormone regulation"
+            },
+            {
+              "name": "Ectopic pregnancy",
+              "support_spans": [],
+              "contradict_spans": [
+                "Confirmed live intrauterine pregnancy at 24 weeks"
+              ],
+              "why": "The patient's initial negative POC urine hCG test and subsequent positive serum hCG test could have suggested an ectopic pregnancy, but the ultrasonography confirmed an intrauterine pregnancy.",
+              "axis_node": "Hormonal regulation of pregnancy"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "Molar pregnancy",
+              "support_spans": [
+                "Serum hCG: 74,503 mIU/mL"
+              ],
+              "contradict_spans": [
+                "Confirmed live intrauterine pregnancy at 24 weeks"
+              ],
+              "why": "The patient's highly elevated serum hCG levels could suggest a molar pregnancy, but the ultrasonography confirmed a live intrauterine pregnancy.",
+              "axis_node": "hCG level"
+            },
+            {
+              "name": "Intrauterine pregnancy",
+              "support_spans": [
+                "Confirmed live intrauterine pregnancy at 24 weeks"
+              ],
+              "contradict_spans": [
+                "POC urine human chorionic gonadotropin (hCG) test: negative"
+              ],
+              "why": "The ultrasonography confirmed a live intrauterine pregnancy, which is a decisive finding for this diagnosis.",
+              "axis_node": "Ultrasonography"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "She had a history of thyroid condition",
+        "thyroid-stimulating hormone was undetectable",
+        "Confirmed live intrauterine pregnancy at 24 weeks",
+        "POC urine human chorionic gonadotropin (hCG) test: negative",
+        "Serum hCG: 74,503 mIU/mL",
+        "She continued to have amenorrhea and reported abdominal fullness and constipation",
+        "Physical examination revealed a tender midline abdominal mass"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [
+        "POC urine human chorionic gonadotropin (hCG) test: negative",
+        "She continued to have amenorrhea and reported abdominal fullness and constipation",
+        "Physical examination revealed a tender midline abdominal mass"
+      ],
+      "generator_jaccard": 0.1111111111111111,
+      "top1_same_across_views": true,
+      "top_margin": 2.25,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Graves' disease",
+        "preferred_label": "Graves' disease",
+        "generator_views": [
+          "syndrome_anatomy",
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Thyroid",
+          "Thyroid hormone regulation"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE002"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "She had a history of thyroid condition",
+          "thyroid-stimulating hormone was undetectable"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.5,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Intrauterine pregnancy",
+        "preferred_label": "Intrauterine pregnancy",
+        "generator_views": [
+          "syndrome_anatomy",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Uterus",
+          "Ultrasonography"
+        ],
+        "supporting_evidence": [
+          "KE003"
+        ],
+        "contradicting_evidence": [
+          "KE004"
+        ],
+        "support_spans": [
+          "Confirmed live intrauterine pregnancy at 24 weeks"
+        ],
+        "contradict_spans": [
+          "POC urine human chorionic gonadotropin (hCG) test: negative"
+        ],
+        "score_logit": 0.24999999999999997,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Ectopic pregnancy",
+        "preferred_label": "Ectopic pregnancy",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Hormonal regulation of pregnancy"
+        ],
+        "supporting_evidence": [],
+        "contradicting_evidence": [
+          "KE003"
+        ],
+        "support_spans": [],
+        "contradict_spans": [
+          "Confirmed live intrauterine pregnancy at 24 weeks"
+        ],
+        "score_logit": -1.75,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Molar pregnancy",
+        "preferred_label": "Molar pregnancy",
+        "generator_views": [
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "hCG level"
+        ],
+        "supporting_evidence": [
+          "KE005"
+        ],
+        "contradicting_evidence": [
+          "KE003"
+        ],
+        "support_spans": [
+          "Serum hCG: 74,503 mIU/mL"
+        ],
+        "contradict_spans": [
+          "Confirmed live intrauterine pregnancy at 24 weeks"
+        ],
+        "score_logit": -0.25,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "She had a history of thyroid condition",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "thyroid-stimulating hormone was undetectable",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "Confirmed live intrauterine pregnancy at 24 weeks",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "POC urine human chorionic gonadotropin (hCG) test: negative",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "Serum hCG: 74,503 mIU/mL",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "She continued to have amenorrhea and reported abdominal fullness and constipation",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE007",
+        "raw_span": "Physical examination revealed a tender midline abdominal mass",
+        "source_view": "batched"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "Graves' disease",
+        "preferred_label": "Graves' disease",
+        "support_spans": [
+          "She had a history of thyroid condition",
+          "thyroid-stimulating hormone was undetectable"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.5
+      },
+      {
+        "preferred_name": "Intrauterine pregnancy",
+        "preferred_label": "Intrauterine pregnancy",
+        "support_spans": [
+          "Confirmed live intrauterine pregnancy at 24 weeks"
+        ],
+        "contradict_spans": [
+          "POC urine human chorionic gonadotropin (hCG) test: negative"
+        ],
+        "score_logit": 0.24999999999999997
+      },
+      {
+        "preferred_name": "Molar pregnancy",
+        "preferred_label": "Molar pregnancy",
+        "support_spans": [
+          "Serum hCG: 74,503 mIU/mL"
+        ],
+        "contradict_spans": [
+          "Confirmed live intrauterine pregnancy at 24 weeks"
+        ],
+        "score_logit": -0.25
+      },
+      {
+        "preferred_name": "Ectopic pregnancy",
+        "preferred_label": "Ectopic pregnancy",
+        "support_spans": [],
+        "contradict_spans": [
+          "Confirmed live intrauterine pregnancy at 24 weeks"
+        ],
+        "score_logit": -1.75
+      }
+    ],
+    "vignette_chars": 793,
+    "frontier_selector": {
+      "champion": "Intrauterine pregnancy",
+      "runner_up": "Graves' disease",
+      "why": "The evidence of a confirmed live intrauterine pregnancy at 24 weeks decided it"
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {
+      "mode": "evidence",
+      "before": 4,
+      "after": 2
+    },
+    "reselect_from": "compact_forest_v1"
+  }
+}

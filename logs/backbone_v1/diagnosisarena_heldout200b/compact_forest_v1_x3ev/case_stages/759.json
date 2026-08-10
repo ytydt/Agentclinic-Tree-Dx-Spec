@@ -1,0 +1,347 @@
+{
+  "source_id": "759",
+  "case_id": "diagnosisarena__000759",
+  "champion": "Bacteroides fragilis infection",
+  "ordered_diagnoses": [
+    "Bacteroides fragilis infection",
+    "Perforated appendicitis",
+    "Intestinal perforation",
+    "Peritonitis",
+    "Pseudomonas aeruginosa infection"
+  ],
+  "llm_calls": 1,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "Perforated appendicitis",
+              "support_spans": [
+                "open abdominal injury",
+                "persistent lower abdominal pain",
+                "total abdominal tenderness, especially in lower abdomen, with rebound pain and muscle tension"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's symptoms and physical exam results suggest a condition affecting the lower abdomen.",
+              "axis_node": "Abdominal"
+            },
+            {
+              "name": "Intestinal perforation",
+              "support_spans": [
+                "CT scan showed intestinal perforation"
+              ],
+              "contradict_spans": [],
+              "why": "The CT scan result directly indicates intestinal perforation.",
+              "axis_node": "Intestinal"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "Bacteroides fragilis infection",
+              "support_spans": [
+                "Gram-negative bacteria",
+                "Slow-growing, moist, gray-white colonies after 3 days",
+                "100% match to reference strain"
+              ],
+              "contradict_spans": [],
+              "why": "The microbiology results suggest a bacterial infection, and the characteristics match those of Bacteroides fragilis.",
+              "axis_node": "Infection"
+            },
+            {
+              "name": "Pseudomonas aeruginosa infection",
+              "support_spans": [
+                "Gram-negative bacteria"
+              ],
+              "contradict_spans": [
+                "100% match to reference strain"
+              ],
+              "why": "While the Gram stain indicates Gram-negative bacteria, the 16S rRNA sequencing result does not match Pseudomonas aeruginosa.",
+              "axis_node": "Infection"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "Peritonitis",
+              "support_spans": [
+                "CT scan showed intestinal perforation, peritonitis"
+              ],
+              "contradict_spans": [],
+              "why": "The CT scan result directly indicates peritonitis.",
+              "axis_node": "Inflammatory"
+            },
+            {
+              "name": "Appendicitis",
+              "support_spans": [
+                "persistent lower abdominal pain",
+                "total abdominal tenderness, especially in lower abdomen, with rebound pain and muscle tension"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's symptoms and physical exam results suggest a condition affecting the lower abdomen, which could be confirmed by imaging or pathology.",
+              "axis_node": "Inflammatory"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "open abdominal injury",
+        "persistent lower abdominal pain",
+        "total abdominal tenderness, especially in lower abdomen, with rebound pain and muscle tension",
+        "CT scan showed intestinal perforation, peritonitis",
+        "Gram-negative bacteria",
+        "Slow-growing, moist, gray-white colonies after 3 days",
+        "100% match to reference strain"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [],
+      "generator_jaccard": 0.0,
+      "top1_same_across_views": true,
+      "top_margin": 0.5,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Perforated appendicitis",
+        "preferred_label": "Perforated appendicitis",
+        "generator_views": [
+          "syndrome_anatomy",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Abdominal",
+          "Inflammatory"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE002",
+          "KE003"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "open abdominal injury",
+          "persistent lower abdominal pain",
+          "total abdominal tenderness, especially in lower abdomen, with rebound pain and muscle tension"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.5,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Intestinal perforation",
+        "preferred_label": "Intestinal perforation",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "Intestinal"
+        ],
+        "supporting_evidence": [
+          "SYNDE008"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "CT scan showed intestinal perforation"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Bacteroides fragilis infection",
+        "preferred_label": "Bacteroides fragilis infection",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Infection"
+        ],
+        "supporting_evidence": [
+          "KE005",
+          "KE006",
+          "KE007"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Gram-negative bacteria",
+          "Slow-growing, moist, gray-white colonies after 3 days",
+          "100% match to reference strain"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Pseudomonas aeruginosa infection",
+        "preferred_label": "Pseudomonas aeruginosa infection",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Infection"
+        ],
+        "supporting_evidence": [
+          "KE005"
+        ],
+        "contradicting_evidence": [
+          "KE007"
+        ],
+        "support_spans": [
+          "Gram-negative bacteria"
+        ],
+        "contradict_spans": [
+          "100% match to reference strain"
+        ],
+        "score_logit": -0.25,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Peritonitis",
+        "preferred_label": "Peritonitis",
+        "generator_views": [
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Inflammatory"
+        ],
+        "supporting_evidence": [
+          "KE004"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "CT scan showed intestinal perforation, peritonitis"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "open abdominal injury",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "persistent lower abdominal pain",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "total abdominal tenderness, especially in lower abdomen, with rebound pain and muscle tension",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "CT scan showed intestinal perforation, peritonitis",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "Gram-negative bacteria",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "Slow-growing, moist, gray-white colonies after 3 days",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE007",
+        "raw_span": "100% match to reference strain",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "SYNDE008",
+        "raw_span": "CT scan showed intestinal perforation",
+        "source_view": "syndrome_anatomy"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "Perforated appendicitis",
+        "preferred_label": "Perforated appendicitis",
+        "support_spans": [
+          "open abdominal injury",
+          "persistent lower abdominal pain",
+          "total abdominal tenderness, especially in lower abdomen, with rebound pain and muscle tension"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.5
+      },
+      {
+        "preferred_name": "Bacteroides fragilis infection",
+        "preferred_label": "Bacteroides fragilis infection",
+        "support_spans": [
+          "Gram-negative bacteria",
+          "Slow-growing, moist, gray-white colonies after 3 days",
+          "100% match to reference strain"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.0
+      },
+      {
+        "preferred_name": "Intestinal perforation",
+        "preferred_label": "Intestinal perforation",
+        "support_spans": [
+          "CT scan showed intestinal perforation"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "Peritonitis",
+        "preferred_label": "Peritonitis",
+        "support_spans": [
+          "CT scan showed intestinal perforation, peritonitis"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "Pseudomonas aeruginosa infection",
+        "preferred_label": "Pseudomonas aeruginosa infection",
+        "support_spans": [
+          "Gram-negative bacteria"
+        ],
+        "contradict_spans": [
+          "100% match to reference strain"
+        ],
+        "score_logit": -0.25
+      }
+    ],
+    "vignette_chars": 1392,
+    "frontier_selector": {
+      "champion": "Bacteroides fragilis infection",
+      "runner_up": "Perforated appendicitis",
+      "why": "The evidence of Gram-negative bacteria, slow-growing colonies, and a 100% match to the reference strain decided it"
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {
+      "mode": "evidence",
+      "before": 5,
+      "after": 5
+    },
+    "reselect_from": "compact_forest_v1"
+  }
+}

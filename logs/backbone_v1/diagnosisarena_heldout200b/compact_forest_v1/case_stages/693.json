@@ -1,0 +1,350 @@
+{
+  "source_id": "693",
+  "case_id": "diagnosisarena__000693",
+  "champion": "Klebsiella pneumoniae infection",
+  "ordered_diagnoses": [
+    "Klebsiella pneumoniae infection",
+    "Spontaneous Bacterial Peritonitis",
+    "Cirrhosis",
+    "Pyogenic Liver Abscess",
+    "Hepatic Encephalopathy"
+  ],
+  "llm_calls": 2,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "Spontaneous Bacterial Peritonitis",
+              "support_spans": [
+                "Abdomen was distended with high tension",
+                "massive ascites",
+                "pus culture from abscess positive for Klebsiella pneumoniae ssp pneumoniae"
+              ],
+              "contradict_spans": [],
+              "why": "Patient has decompensated cirrhosis and abdominal distention with ascites, which are risk factors for Spontaneous Bacterial Peritonitis",
+              "axis_node": "Abdominal Infection"
+            },
+            {
+              "name": "Hepatic Encephalopathy",
+              "support_spans": [
+                "decompensated cirrhosis",
+                "jaundice"
+              ],
+              "contradict_spans": [
+                "Patient was alert and oriented"
+              ],
+              "why": "Patient has a history of decompensated cirrhosis, which is a risk factor for Hepatic Encephalopathy",
+              "axis_node": "Liver Disease"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "Klebsiella pneumoniae infection",
+              "support_spans": [
+                "pus culture from abscess positive for Klebsiella pneumoniae ssp pneumoniae"
+              ],
+              "contradict_spans": [],
+              "why": "Patient has a positive culture for Klebsiella pneumoniae, which suggests an infectious mechanism",
+              "axis_node": "Infectious Disease"
+            },
+            {
+              "name": "Cirrhosis",
+              "support_spans": [
+                "decompensated cirrhosis",
+                "liver cirrhosis"
+              ],
+              "contradict_spans": [],
+              "why": "Patient has a history of cirrhosis, which is a chronic liver disease",
+              "axis_node": "Liver Disease"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "Pyogenic Liver Abscess",
+              "support_spans": [
+                "Low-density cystic mass with peripheral rim and septal enhancement in right posterior perinephric space"
+              ],
+              "contradict_spans": [],
+              "why": "Imaging studies show a liver abscess, which is a decisive finding for Pyogenic Liver Abscess",
+              "axis_node": "Imaging Diagnosis"
+            },
+            {
+              "name": "Spontaneous Bacterial Peritonitis",
+              "support_spans": [
+                "pus culture from abscess positive for Klebsiella pneumoniae ssp pneumoniae",
+                "massive ascites"
+              ],
+              "contradict_spans": [],
+              "why": "Patient has a positive culture and ascites, which are decisive findings for Spontaneous Bacterial Peritonitis",
+              "axis_node": "Infectious Disease Diagnosis"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "Abdomen was distended with high tension",
+        "massive ascites",
+        "pus culture from abscess positive for Klebsiella pneumoniae ssp pneumoniae",
+        "decompensated cirrhosis",
+        "jaundice",
+        "Low-density cystic mass with peripheral rim and septal enhancement in right posterior perinephric space",
+        "liver cirrhosis",
+        "Patient was alert and oriented"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [
+        "Patient was alert and oriented"
+      ],
+      "generator_jaccard": 0.1111111111111111,
+      "top1_same_across_views": true,
+      "top_margin": 1.5,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Spontaneous Bacterial Peritonitis",
+        "preferred_label": "Spontaneous Bacterial Peritonitis",
+        "generator_views": [
+          "syndrome_anatomy",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Abdominal Infection",
+          "Infectious Disease Diagnosis"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE002",
+          "KE003"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Abdomen was distended with high tension",
+          "massive ascites",
+          "pus culture from abscess positive for Klebsiella pneumoniae ssp pneumoniae"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.5,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Hepatic Encephalopathy",
+        "preferred_label": "Hepatic Encephalopathy",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "Liver Disease"
+        ],
+        "supporting_evidence": [
+          "KE004",
+          "KE005"
+        ],
+        "contradicting_evidence": [
+          "KE008"
+        ],
+        "support_spans": [
+          "decompensated cirrhosis",
+          "jaundice"
+        ],
+        "contradict_spans": [
+          "Patient was alert and oriented"
+        ],
+        "score_logit": 0.75,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Klebsiella pneumoniae infection",
+        "preferred_label": "Klebsiella pneumoniae infection",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Infectious Disease"
+        ],
+        "supporting_evidence": [
+          "KE003"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "pus culture from abscess positive for Klebsiella pneumoniae ssp pneumoniae"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Cirrhosis",
+        "preferred_label": "Cirrhosis",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Liver Disease"
+        ],
+        "supporting_evidence": [
+          "KE004",
+          "KE007"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "decompensated cirrhosis",
+          "liver cirrhosis"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Pyogenic Liver Abscess",
+        "preferred_label": "Pyogenic Liver Abscess",
+        "generator_views": [
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Imaging Diagnosis"
+        ],
+        "supporting_evidence": [
+          "KE006"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Low-density cystic mass with peripheral rim and septal enhancement in right posterior perinephric space"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "Abdomen was distended with high tension",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "massive ascites",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "pus culture from abscess positive for Klebsiella pneumoniae ssp pneumoniae",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "decompensated cirrhosis",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "jaundice",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "Low-density cystic mass with peripheral rim and septal enhancement in right posterior perinephric space",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE007",
+        "raw_span": "liver cirrhosis",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE008",
+        "raw_span": "Patient was alert and oriented",
+        "source_view": "batched"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "Spontaneous Bacterial Peritonitis",
+        "preferred_label": "Spontaneous Bacterial Peritonitis",
+        "support_spans": [
+          "Abdomen was distended with high tension",
+          "massive ascites",
+          "pus culture from abscess positive for Klebsiella pneumoniae ssp pneumoniae"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.5
+      },
+      {
+        "preferred_name": "Cirrhosis",
+        "preferred_label": "Cirrhosis",
+        "support_spans": [
+          "decompensated cirrhosis",
+          "liver cirrhosis"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "Klebsiella pneumoniae infection",
+        "preferred_label": "Klebsiella pneumoniae infection",
+        "support_spans": [
+          "pus culture from abscess positive for Klebsiella pneumoniae ssp pneumoniae"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "Pyogenic Liver Abscess",
+        "preferred_label": "Pyogenic Liver Abscess",
+        "support_spans": [
+          "Low-density cystic mass with peripheral rim and septal enhancement in right posterior perinephric space"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "Hepatic Encephalopathy",
+        "preferred_label": "Hepatic Encephalopathy",
+        "support_spans": [
+          "decompensated cirrhosis",
+          "jaundice"
+        ],
+        "contradict_spans": [
+          "Patient was alert and oriented"
+        ],
+        "score_logit": 0.75
+      }
+    ],
+    "vignette_chars": 1831,
+    "frontier_selector": {
+      "champion": "Klebsiella pneumoniae infection",
+      "runner_up": "Spontaneous Bacterial Peritonitis",
+      "why": "The pus culture from abscess positive for Klebsiella pneumoniae ssp pneumoniae decided it"
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {}
+  },
+  "metrics": {
+    "llm_calls": 2,
+    "top_margin": 1.5,
+    "unexplained_n": 1
+  }
+}

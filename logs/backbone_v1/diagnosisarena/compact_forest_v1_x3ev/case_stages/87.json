@@ -1,0 +1,320 @@
+{
+  "source_id": "87",
+  "case_id": "diagnosisarena__000087",
+  "champion": "Myocarditis",
+  "ordered_diagnoses": [
+    "Myocarditis",
+    "Acute Coronary Syndrome",
+    "Myocardial Infarction",
+    "Pericarditis"
+  ],
+  "llm_calls": 1,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "Acute Coronary Syndrome",
+              "support_spans": [
+                "1 day of chest pressure",
+                "constant chest pressure radiating to the right jaw"
+              ],
+              "contradict_spans": [],
+              "why": "Patient presented with chest pressure and radiating pain, which is a common symptom of acute coronary syndrome.",
+              "axis_node": "Cardiovascular"
+            },
+            {
+              "name": "Myocarditis",
+              "support_spans": [
+                "subjective fevers, rhinorrhea, a dry cough, and sinus congestion",
+                "elevated erythrocyte sedimentation rate and C-reactive protein"
+              ],
+              "contradict_spans": [],
+              "why": "Patient's symptoms and laboratory results suggest an inflammatory process, which could be indicative of myocarditis.",
+              "axis_node": "Cardiovascular"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "Myocardial Infarction",
+              "support_spans": [
+                "Initial serum troponin I level: 6.18 ng/mL",
+                "ST-segment elevations with PR-segment depression in leads II, III, and aVF"
+              ],
+              "contradict_spans": [],
+              "why": "Elevated troponin levels and ECG changes suggest myocardial infarction due to ischemia.",
+              "axis_node": "Ischemic Injury"
+            },
+            {
+              "name": "Pericarditis",
+              "support_spans": [
+                "ST-segment elevations with PR-segment depression in leads II, III, and aVF",
+                "PR-segment elevation in lead aVR"
+              ],
+              "contradict_spans": [],
+              "why": "ECG changes are consistent with pericarditis, which could be the underlying mechanism.",
+              "axis_node": "Inflammatory Process"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "Acute Coronary Syndrome",
+              "support_spans": [
+                "Coronary angiography: Normal coronary arteries"
+              ],
+              "contradict_spans": [],
+              "why": "Normal coronary angiography results do not rule out acute coronary syndrome, as the disease can be caused by other factors such as vasospasm.",
+              "axis_node": "Cardiovascular Imaging"
+            },
+            {
+              "name": "Myocarditis",
+              "support_spans": [
+                "Transthoracic echocardiogram: Normal results"
+              ],
+              "contradict_spans": [],
+              "why": "Normal echocardiogram results do not exclude myocarditis, as the disease can have a variable presentation.",
+              "axis_node": "Cardiovascular Imaging"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "1 day of chest pressure",
+        "constant chest pressure radiating to the right jaw",
+        "subjective fevers, rhinorrhea, a dry cough, and sinus congestion",
+        "elevated erythrocyte sedimentation rate and C-reactive protein",
+        "Initial serum troponin I level: 6.18 ng/mL",
+        "ST-segment elevations with PR-segment depression in leads II, III, and aVF",
+        "Coronary angiography: Normal coronary arteries",
+        "Transthoracic echocardiogram: Normal results"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [],
+      "generator_jaccard": 0.3333333333333333,
+      "top1_same_across_views": true,
+      "top_margin": 0.0,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Acute Coronary Syndrome",
+        "preferred_label": "Acute Coronary Syndrome",
+        "generator_views": [
+          "syndrome_anatomy",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Cardiovascular",
+          "Cardiovascular Imaging"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE002",
+          "KE007"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "1 day of chest pressure",
+          "constant chest pressure radiating to the right jaw",
+          "Coronary angiography: Normal coronary arteries"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.5,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Myocarditis",
+        "preferred_label": "Myocarditis",
+        "generator_views": [
+          "syndrome_anatomy",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Cardiovascular",
+          "Cardiovascular Imaging"
+        ],
+        "supporting_evidence": [
+          "KE003",
+          "KE004",
+          "KE008"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "subjective fevers, rhinorrhea, a dry cough, and sinus congestion",
+          "elevated erythrocyte sedimentation rate and C-reactive protein",
+          "Transthoracic echocardiogram: Normal results"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.5,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Myocardial Infarction",
+        "preferred_label": "Myocardial Infarction",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Ischemic Injury"
+        ],
+        "supporting_evidence": [
+          "KE005",
+          "KE006"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Initial serum troponin I level: 6.18 ng/mL",
+          "ST-segment elevations with PR-segment depression in leads II, III, and aVF"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Pericarditis",
+        "preferred_label": "Pericarditis",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Inflammatory Process"
+        ],
+        "supporting_evidence": [
+          "KE006",
+          "MECHE009"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "ST-segment elevations with PR-segment depression in leads II, III, and aVF",
+          "PR-segment elevation in lead aVR"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "1 day of chest pressure",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "constant chest pressure radiating to the right jaw",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "subjective fevers, rhinorrhea, a dry cough, and sinus congestion",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "elevated erythrocyte sedimentation rate and C-reactive protein",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "Initial serum troponin I level: 6.18 ng/mL",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "ST-segment elevations with PR-segment depression in leads II, III, and aVF",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE007",
+        "raw_span": "Coronary angiography: Normal coronary arteries",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE008",
+        "raw_span": "Transthoracic echocardiogram: Normal results",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "MECHE009",
+        "raw_span": "PR-segment elevation in lead aVR",
+        "source_view": "mechanism"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "Acute Coronary Syndrome",
+        "preferred_label": "Acute Coronary Syndrome",
+        "support_spans": [
+          "1 day of chest pressure",
+          "constant chest pressure radiating to the right jaw",
+          "Coronary angiography: Normal coronary arteries"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.5
+      },
+      {
+        "preferred_name": "Myocarditis",
+        "preferred_label": "Myocarditis",
+        "support_spans": [
+          "subjective fevers, rhinorrhea, a dry cough, and sinus congestion",
+          "elevated erythrocyte sedimentation rate and C-reactive protein",
+          "Transthoracic echocardiogram: Normal results"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.5
+      },
+      {
+        "preferred_name": "Myocardial Infarction",
+        "preferred_label": "Myocardial Infarction",
+        "support_spans": [
+          "Initial serum troponin I level: 6.18 ng/mL",
+          "ST-segment elevations with PR-segment depression in leads II, III, and aVF"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "Pericarditis",
+        "preferred_label": "Pericarditis",
+        "support_spans": [
+          "ST-segment elevations with PR-segment depression in leads II, III, and aVF",
+          "PR-segment elevation in lead aVR"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      }
+    ],
+    "vignette_chars": 1394,
+    "frontier_selector": {
+      "champion": "Myocarditis",
+      "runner_up": "Pericarditis",
+      "why": "The evidence of subjective fevers, rhinorrhea, a dry cough, and sinus congestion, along with elevated erythrocyte sedimentation rate and C-reactive protein, decided it."
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {
+      "mode": "evidence",
+      "before": 4,
+      "after": 4
+    },
+    "reselect_from": "compact_forest_v1"
+  }
+}

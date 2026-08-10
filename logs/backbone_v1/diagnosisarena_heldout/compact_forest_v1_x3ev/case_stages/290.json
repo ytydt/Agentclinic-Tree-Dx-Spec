@@ -1,0 +1,364 @@
+{
+  "source_id": "290",
+  "case_id": "diagnosisarena__000290",
+  "champion": "Acute Coronary Syndrome",
+  "ordered_diagnoses": [
+    "Acute Coronary Syndrome",
+    "Cardiac Ischemia",
+    "Coronary Artery Disease",
+    "Unstable Angina",
+    "Myocardial Infarction"
+  ],
+  "llm_calls": 1,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "Acute Coronary Syndrome",
+              "support_spans": [
+                "intermittent compression-like chest pain",
+                "occurring during activities and relieved by rest",
+                "Total occlusion at the ostium of the left anterior descending coronary artery"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's symptoms and ECG findings are consistent with acute coronary syndrome.",
+              "axis_node": "Cardiovascular"
+            },
+            {
+              "name": "Myocardial Infarction",
+              "support_spans": [
+                "Total occlusion at the ostium of the left anterior descending coronary artery",
+                "Deeply inverted T-waves in leads V2 to V4"
+              ],
+              "contradict_spans": [
+                "Creatinine and high-sensitivity troponin levels within normal limits"
+              ],
+              "why": "The patient's ECG findings and coronary angiography results suggest myocardial infarction.",
+              "axis_node": "Cardiovascular"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "Coronary Artery Disease",
+              "support_spans": [
+                "Total occlusion at the ostium of the left anterior descending coronary artery",
+                "Hypertension and diabetes for 8 years"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's medical history and coronary angiography results suggest coronary artery disease.",
+              "axis_node": "Atherosclerosis"
+            },
+            {
+              "name": "Cardiac Ischemia",
+              "support_spans": [
+                "intermittent compression-like chest pain",
+                "occurring during activities and relieved by rest"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's symptoms are consistent with cardiac ischemia.",
+              "axis_node": "Ischemic Heart Disease"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "ST-Elevation Myocardial Infarction",
+              "support_spans": [
+                "Total occlusion at the ostium of the left anterior descending coronary artery"
+              ],
+              "contradict_spans": [
+                "No ST segment elevation"
+              ],
+              "why": "The patient's coronary angiography results suggest ST-elevation myocardial infarction, but the ECG findings do not.",
+              "axis_node": "ECG Diagnosis"
+            },
+            {
+              "name": "Unstable Angina",
+              "support_spans": [
+                "intermittent compression-like chest pain",
+                "occurring during activities and relieved by rest"
+              ],
+              "contradict_spans": [
+                "Total occlusion at the ostium of the left anterior descending coronary artery"
+              ],
+              "why": "The patient's symptoms are consistent with unstable angina, but the coronary angiography results suggest a more severe condition.",
+              "axis_node": "Cardiac Catheterization"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "intermittent compression-like chest pain",
+        "occurring during activities and relieved by rest",
+        "Total occlusion at the ostium of the left anterior descending coronary artery",
+        "Deeply inverted T-waves in leads V2 to V4",
+        "Creatinine and high-sensitivity troponin levels within normal limits",
+        "Hypertension and diabetes for 8 years"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [
+        "Creatinine and high-sensitivity troponin levels within normal limits",
+        "No ST segment elevation"
+      ],
+      "generator_jaccard": 0.0,
+      "top1_same_across_views": false,
+      "top_margin": 1.0,
+      "leave_one_view_instability": true,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Acute Coronary Syndrome",
+        "preferred_label": "Acute Coronary Syndrome",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "Cardiovascular"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE002",
+          "KE003"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "intermittent compression-like chest pain",
+          "occurring during activities and relieved by rest",
+          "Total occlusion at the ostium of the left anterior descending coronary artery"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Myocardial Infarction",
+        "preferred_label": "Myocardial Infarction",
+        "generator_views": [
+          "syndrome_anatomy",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Cardiovascular",
+          "ECG Diagnosis"
+        ],
+        "supporting_evidence": [
+          "KE003",
+          "KE004"
+        ],
+        "contradicting_evidence": [
+          "KE005",
+          "MODAE007"
+        ],
+        "support_spans": [
+          "Total occlusion at the ostium of the left anterior descending coronary artery",
+          "Deeply inverted T-waves in leads V2 to V4"
+        ],
+        "contradict_spans": [
+          "Creatinine and high-sensitivity troponin levels within normal limits",
+          "No ST segment elevation"
+        ],
+        "score_logit": -2.7755575615628914e-17,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Coronary Artery Disease",
+        "preferred_label": "Coronary Artery Disease",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Atherosclerosis"
+        ],
+        "supporting_evidence": [
+          "KE003",
+          "KE006"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Total occlusion at the ostium of the left anterior descending coronary artery",
+          "Hypertension and diabetes for 8 years"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Cardiac Ischemia",
+        "preferred_label": "Cardiac Ischemia",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Ischemic Heart Disease"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE002"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "intermittent compression-like chest pain",
+          "occurring during activities and relieved by rest"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Unstable Angina",
+        "preferred_label": "Unstable Angina",
+        "generator_views": [
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Cardiac Catheterization"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE002"
+        ],
+        "contradicting_evidence": [
+          "KE003"
+        ],
+        "support_spans": [
+          "intermittent compression-like chest pain",
+          "occurring during activities and relieved by rest"
+        ],
+        "contradict_spans": [
+          "Total occlusion at the ostium of the left anterior descending coronary artery"
+        ],
+        "score_logit": 0.75,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "intermittent compression-like chest pain",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "occurring during activities and relieved by rest",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "Total occlusion at the ostium of the left anterior descending coronary artery",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "Deeply inverted T-waves in leads V2 to V4",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "Creatinine and high-sensitivity troponin levels within normal limits",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "Hypertension and diabetes for 8 years",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "MODAE007",
+        "raw_span": "No ST segment elevation",
+        "source_view": "modality_decisive"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "Acute Coronary Syndrome",
+        "preferred_label": "Acute Coronary Syndrome",
+        "support_spans": [
+          "intermittent compression-like chest pain",
+          "occurring during activities and relieved by rest",
+          "Total occlusion at the ostium of the left anterior descending coronary artery"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.0
+      },
+      {
+        "preferred_name": "Cardiac Ischemia",
+        "preferred_label": "Cardiac Ischemia",
+        "support_spans": [
+          "intermittent compression-like chest pain",
+          "occurring during activities and relieved by rest"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "Coronary Artery Disease",
+        "preferred_label": "Coronary Artery Disease",
+        "support_spans": [
+          "Total occlusion at the ostium of the left anterior descending coronary artery",
+          "Hypertension and diabetes for 8 years"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "Unstable Angina",
+        "preferred_label": "Unstable Angina",
+        "support_spans": [
+          "intermittent compression-like chest pain",
+          "occurring during activities and relieved by rest"
+        ],
+        "contradict_spans": [
+          "Total occlusion at the ostium of the left anterior descending coronary artery"
+        ],
+        "score_logit": 0.75
+      },
+      {
+        "preferred_name": "Myocardial Infarction",
+        "preferred_label": "Myocardial Infarction",
+        "support_spans": [
+          "Total occlusion at the ostium of the left anterior descending coronary artery",
+          "Deeply inverted T-waves in leads V2 to V4"
+        ],
+        "contradict_spans": [
+          "Creatinine and high-sensitivity troponin levels within normal limits",
+          "No ST segment elevation"
+        ],
+        "score_logit": -2.7755575615628914e-17
+      }
+    ],
+    "vignette_chars": 1079,
+    "frontier_selector": {
+      "champion": "Acute Coronary Syndrome",
+      "runner_up": "Coronary Artery Disease",
+      "why": "The evidence of total occlusion at the ostium of the left anterior descending coronary artery and intermittent compression-like chest pain decided it."
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {
+      "mode": "evidence",
+      "before": 5,
+      "after": 5
+    },
+    "reselect_from": "compact_forest_v1"
+  }
+}

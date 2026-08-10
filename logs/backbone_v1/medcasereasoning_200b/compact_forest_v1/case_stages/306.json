@@ -1,0 +1,318 @@
+{
+  "source_id": "306",
+  "case_id": "medcasereasoning__000306",
+  "champion": "Meningitis",
+  "ordered_diagnoses": [
+    "Meningitis",
+    "Diffuse Alveolar Hemorrhage",
+    "Infective Endocarditis",
+    "Purpuric Rash due to Vasculitis",
+    "Systemic Lupus Erythematosus"
+  ],
+  "llm_calls": 2,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "Systemic Lupus Erythematosus",
+              "support_spans": [
+                "with systemic lupus erythematosus since 2003 (cutaneous, joint, and renal involvement)"
+              ],
+              "contradict_spans": [],
+              "why": "Patient has a history of SLE with multiple system involvement",
+              "axis_node": "Immune System"
+            },
+            {
+              "name": "Meningitis",
+              "support_spans": [
+                "nuchal rigidity",
+                "Lumbar puncture revealed a pH of 7.35, glucose 45 mg/dL (serum glucose 130 mg/dL), protein 329 mg/dL, 42 white cells/mm3 (95% neutrophils)"
+              ],
+              "contradict_spans": [],
+              "why": "Patient presents with symptoms and lab results consistent with meningitis",
+              "axis_node": "Central Nervous System"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "Infective Endocarditis",
+              "support_spans": [
+                "Cerebrospinal fluid culture grew Enterococcus gallinarum"
+              ],
+              "contradict_spans": [],
+              "why": "Patient has a positive culture result for a bacterium that can cause endocarditis",
+              "axis_node": "Infection"
+            },
+            {
+              "name": "Diffuse Alveolar Hemorrhage",
+              "support_spans": [
+                "hemoptysis, bilateral patchy pulmonary infiltrates on chest radiograph, a drop in hemoglobin concentration, and acute respiratory failure"
+              ],
+              "contradict_spans": [],
+              "why": "Patient presents with symptoms and lab results consistent with diffuse alveolar hemorrhage",
+              "axis_node": "Pulmonary System"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "Purpuric Rash due to Vasculitis",
+              "support_spans": [
+                "On hospital day 4, she developed a purpuric skin rash, and a skin biopsy was performed"
+              ],
+              "contradict_spans": [],
+              "why": "Patient develops a purpuric rash, which can be diagnostic of vasculitis",
+              "axis_node": "Dermatology"
+            },
+            {
+              "name": "Enterococcal Meningitis",
+              "support_spans": [
+                "Cerebrospinal fluid culture grew Enterococcus gallinarum"
+              ],
+              "contradict_spans": [],
+              "why": "Patient has a positive culture result for a bacterium that can cause meningitis",
+              "axis_node": "Infectious Disease"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "with systemic lupus erythematosus since 2003 (cutaneous, joint, and renal involvement)",
+        "nuchal rigidity",
+        "Lumbar puncture revealed a pH of 7.35, glucose 45 mg/dL (serum glucose 130 mg/dL), protein 329 mg/dL, 42 white cells/mm3 (95% neutrophils)",
+        "Cerebrospinal fluid culture grew Enterococcus gallinarum",
+        "hemoptysis, bilateral patchy pulmonary infiltrates on chest radiograph, a drop in hemoglobin concentration, and acute respiratory failure",
+        "On hospital day 4, she developed a purpuric skin rash, and a skin biopsy was performed"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [],
+      "generator_jaccard": 0.0,
+      "top1_same_across_views": true,
+      "top_margin": 2.5,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Systemic Lupus Erythematosus",
+        "preferred_label": "Systemic Lupus Erythematosus",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "Immune System"
+        ],
+        "supporting_evidence": [
+          "KE001"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "with systemic lupus erythematosus since 2003 (cutaneous, joint, and renal involvement)"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Meningitis",
+        "preferred_label": "Meningitis",
+        "generator_views": [
+          "syndrome_anatomy",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Central Nervous System",
+          "Infectious Disease"
+        ],
+        "supporting_evidence": [
+          "KE002",
+          "KE003",
+          "KE004"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "nuchal rigidity",
+          "Lumbar puncture revealed a pH of 7.35, glucose 45 mg/dL (serum glucose 130 mg/dL), protein 329 mg/dL, 42 white cells/mm3 (95% neutrophils)",
+          "Cerebrospinal fluid culture grew Enterococcus gallinarum"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.5,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Infective Endocarditis",
+        "preferred_label": "Infective Endocarditis",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Infection"
+        ],
+        "supporting_evidence": [
+          "KE004"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Cerebrospinal fluid culture grew Enterococcus gallinarum"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Diffuse Alveolar Hemorrhage",
+        "preferred_label": "Diffuse Alveolar Hemorrhage",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Pulmonary System"
+        ],
+        "supporting_evidence": [
+          "KE005"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "hemoptysis, bilateral patchy pulmonary infiltrates on chest radiograph, a drop in hemoglobin concentration, and acute respiratory failure"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Purpuric Rash due to Vasculitis",
+        "preferred_label": "Purpuric Rash due to Vasculitis",
+        "generator_views": [
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Dermatology"
+        ],
+        "supporting_evidence": [
+          "KE006"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "On hospital day 4, she developed a purpuric skin rash, and a skin biopsy was performed"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "with systemic lupus erythematosus since 2003 (cutaneous, joint, and renal involvement)",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "nuchal rigidity",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "Lumbar puncture revealed a pH of 7.35, glucose 45 mg/dL (serum glucose 130 mg/dL), protein 329 mg/dL, 42 white cells/mm3 (95% neutrophils)",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "Cerebrospinal fluid culture grew Enterococcus gallinarum",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "hemoptysis, bilateral patchy pulmonary infiltrates on chest radiograph, a drop in hemoglobin concentration, and acute respiratory failure",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "On hospital day 4, she developed a purpuric skin rash, and a skin biopsy was performed",
+        "source_view": "batched"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "Meningitis",
+        "preferred_label": "Meningitis",
+        "support_spans": [
+          "nuchal rigidity",
+          "Lumbar puncture revealed a pH of 7.35, glucose 45 mg/dL (serum glucose 130 mg/dL), protein 329 mg/dL, 42 white cells/mm3 (95% neutrophils)",
+          "Cerebrospinal fluid culture grew Enterococcus gallinarum"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.5
+      },
+      {
+        "preferred_name": "Diffuse Alveolar Hemorrhage",
+        "preferred_label": "Diffuse Alveolar Hemorrhage",
+        "support_spans": [
+          "hemoptysis, bilateral patchy pulmonary infiltrates on chest radiograph, a drop in hemoglobin concentration, and acute respiratory failure"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "Infective Endocarditis",
+        "preferred_label": "Infective Endocarditis",
+        "support_spans": [
+          "Cerebrospinal fluid culture grew Enterococcus gallinarum"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "Purpuric Rash due to Vasculitis",
+        "preferred_label": "Purpuric Rash due to Vasculitis",
+        "support_spans": [
+          "On hospital day 4, she developed a purpuric skin rash, and a skin biopsy was performed"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "Systemic Lupus Erythematosus",
+        "preferred_label": "Systemic Lupus Erythematosus",
+        "support_spans": [
+          "with systemic lupus erythematosus since 2003 (cutaneous, joint, and renal involvement)"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      }
+    ],
+    "vignette_chars": 1764,
+    "frontier_selector": {
+      "champion": "Meningitis",
+      "runner_up": "Diffuse Alveolar Hemorrhage",
+      "why": "The presence of nuchal rigidity, abnormal lumbar puncture results, and cerebrospinal fluid culture growing Enterococcus gallinarum specifically support the diagnosis of Meningitis."
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {}
+  },
+  "metrics": {
+    "llm_calls": 2,
+    "top_margin": 2.5,
+    "unexplained_n": 0
+  }
+}

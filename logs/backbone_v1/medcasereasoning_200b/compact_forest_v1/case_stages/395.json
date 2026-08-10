@@ -1,0 +1,325 @@
+{
+  "source_id": "395",
+  "case_id": "medcasereasoning__000395",
+  "champion": "Kummell disease",
+  "ordered_diagnoses": [
+    "Kummell disease",
+    "Osteonecrosis",
+    "Osteoporosis",
+    "Vertebral osteomyelitis"
+  ],
+  "llm_calls": 2,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "Osteoporosis",
+              "support_spans": [
+                "L2 compression fracture",
+                "L5 burst fracture"
+              ],
+              "contradict_spans": [],
+              "why": "The patient has a history of using unlicensed substances, which could contribute to osteoporosis, and presents with multiple vertebral fractures.",
+              "axis_node": "Vertebral"
+            },
+            {
+              "name": "Kummell disease",
+              "support_spans": [
+                "intravertebral vacuum cleft at L5",
+                "T2-weighted “double line sign” at L5"
+              ],
+              "contradict_spans": [],
+              "why": "The presence of an intravertebral vacuum cleft and a double line sign on MRI are characteristic of Kummell disease.",
+              "axis_node": "Vertebral"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "Osteonecrosis",
+              "support_spans": [
+                "elevated C-reactive protein level",
+                "intravertebral vacuum cleft at L5"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's elevated C-reactive protein level and the presence of an intravertebral vacuum cleft suggest osteonecrosis as a possible mechanism.",
+              "axis_node": "Bone"
+            },
+            {
+              "name": "Vertebral osteomyelitis",
+              "support_spans": [
+                "elevated C-reactive protein level"
+              ],
+              "contradict_spans": [
+                "no paravertebral soft-tissue mass or abscess"
+              ],
+              "why": "The patient's elevated C-reactive protein level could indicate vertebral osteomyelitis, but the absence of a paravertebral soft-tissue mass or abscess makes this less likely.",
+              "axis_node": "Infection"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "Vertebral fracture with osteonecrosis",
+              "support_spans": [
+                "T2-weighted “double line sign” at L5"
+              ],
+              "contradict_spans": [],
+              "why": "The double line sign on MRI is a decisive finding for vertebral fracture with osteonecrosis.",
+              "axis_node": "Imaging"
+            },
+            {
+              "name": "Kummell disease",
+              "support_spans": [
+                "intravertebral vacuum cleft at L5"
+              ],
+              "contradict_spans": [],
+              "why": "The presence of an intravertebral vacuum cleft is a decisive finding for Kummell disease.",
+              "axis_node": "Imaging"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "severe back pain and inability to walk for two weeks",
+        "progressive bilateral leg weakness and diffuse paresthesia",
+        "elevated C-reactive protein level",
+        "L2 compression fracture and an L5 burst fracture with canal compromise",
+        "T2-weighted “double line sign” at L5",
+        "intravertebral vacuum cleft at L5",
+        "no paravertebral soft-tissue mass or abscess"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [
+        "severe back pain and inability to walk for two weeks",
+        "progressive bilateral leg weakness and diffuse paresthesia",
+        "L2 compression fracture and an L5 burst fracture with canal compromise",
+        "no paravertebral soft-tissue mass or abscess"
+      ],
+      "generator_jaccard": 0.1111111111111111,
+      "top1_same_across_views": true,
+      "top_margin": 1.0,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Osteoporosis",
+        "preferred_label": "Osteoporosis",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "Vertebral"
+        ],
+        "supporting_evidence": [
+          "SYNDE008",
+          "SYNDE009"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "L2 compression fracture",
+          "L5 burst fracture"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Kummell disease",
+        "preferred_label": "Kummell disease",
+        "generator_views": [
+          "syndrome_anatomy",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Vertebral",
+          "Imaging"
+        ],
+        "supporting_evidence": [
+          "KE006",
+          "KE005"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "intravertebral vacuum cleft at L5",
+          "T2-weighted “double line sign” at L5"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.5,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Osteonecrosis",
+        "preferred_label": "Osteonecrosis",
+        "generator_views": [
+          "mechanism",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Bone",
+          "Imaging"
+        ],
+        "supporting_evidence": [
+          "KE003",
+          "KE006",
+          "KE005"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "elevated C-reactive protein level",
+          "intravertebral vacuum cleft at L5",
+          "T2-weighted “double line sign” at L5"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.5,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Vertebral osteomyelitis",
+        "preferred_label": "Vertebral osteomyelitis",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Infection"
+        ],
+        "supporting_evidence": [
+          "KE003"
+        ],
+        "contradicting_evidence": [
+          "KE007"
+        ],
+        "support_spans": [
+          "elevated C-reactive protein level"
+        ],
+        "contradict_spans": [
+          "no paravertebral soft-tissue mass or abscess"
+        ],
+        "score_logit": -0.25,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "severe back pain and inability to walk for two weeks",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "progressive bilateral leg weakness and diffuse paresthesia",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "elevated C-reactive protein level",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "L2 compression fracture and an L5 burst fracture with canal compromise",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "T2-weighted “double line sign” at L5",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "intravertebral vacuum cleft at L5",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE007",
+        "raw_span": "no paravertebral soft-tissue mass or abscess",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "SYNDE008",
+        "raw_span": "L2 compression fracture",
+        "source_view": "syndrome_anatomy"
+      },
+      {
+        "evidence_id": "SYNDE009",
+        "raw_span": "L5 burst fracture",
+        "source_view": "syndrome_anatomy"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "Osteonecrosis",
+        "preferred_label": "Osteonecrosis",
+        "support_spans": [
+          "elevated C-reactive protein level",
+          "intravertebral vacuum cleft at L5",
+          "T2-weighted “double line sign” at L5"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.5
+      },
+      {
+        "preferred_name": "Kummell disease",
+        "preferred_label": "Kummell disease",
+        "support_spans": [
+          "intravertebral vacuum cleft at L5",
+          "T2-weighted “double line sign” at L5"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.5
+      },
+      {
+        "preferred_name": "Osteoporosis",
+        "preferred_label": "Osteoporosis",
+        "support_spans": [
+          "L2 compression fracture",
+          "L5 burst fracture"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "Vertebral osteomyelitis",
+        "preferred_label": "Vertebral osteomyelitis",
+        "support_spans": [
+          "elevated C-reactive protein level"
+        ],
+        "contradict_spans": [
+          "no paravertebral soft-tissue mass or abscess"
+        ],
+        "score_logit": -0.25
+      }
+    ],
+    "vignette_chars": 1219,
+    "frontier_selector": {
+      "champion": "Kummell disease",
+      "runner_up": "Osteonecrosis",
+      "why": "The presence of an intravertebral vacuum cleft at L5 and a T2-weighted 'double line sign' at L5, which are specific findings for Kummell disease."
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {}
+  },
+  "metrics": {
+    "llm_calls": 2,
+    "top_margin": 1.0,
+    "unexplained_n": 4
+  }
+}

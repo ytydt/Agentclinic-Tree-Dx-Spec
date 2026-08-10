@@ -1,0 +1,283 @@
+{
+  "source_id": "188",
+  "case_id": "medcasereasoning__000188",
+  "champion": "Gastrointestinal stromal tumor",
+  "ordered_diagnoses": [
+    "Gastrointestinal stromal tumor",
+    "Gastric lipoma",
+    "Kaposi sarcoma"
+  ],
+  "llm_calls": 2,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "Gastric lipoma",
+              "support_spans": [
+                "a submucosal tumour below the esophagogastric junction",
+                "a 70 × 50 × 55 mm hypoechogenic, subcardial mass on the posterior gastric wall"
+              ],
+              "contradict_spans": [],
+              "why": "The tumour is located in the stomach and has been identified as a lipoma.",
+              "axis_node": "Gastric"
+            },
+            {
+              "name": "Gastrointestinal stromal tumor",
+              "support_spans": [
+                "a submucosal tumour below the esophagogastric junction",
+                "a recurrent bleeding tumour at the same site"
+              ],
+              "contradict_spans": [
+                "histopathology reportedly confirmed a lipoma"
+              ],
+              "why": "The tumour's location and recurrence suggest a possible GIST.",
+              "axis_node": "Gastrointestinal"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "Gastric lipoma",
+              "support_spans": [
+                "histopathology reportedly confirmed a lipoma"
+              ],
+              "contradict_spans": [],
+              "why": "The histopathology report confirms the tumour as a lipoma.",
+              "axis_node": "Lipoma"
+            },
+            {
+              "name": "Kaposi sarcoma",
+              "support_spans": [
+                "a recurrent bleeding tumour at the same site"
+              ],
+              "contradict_spans": [
+                "histopathology reportedly confirmed a lipoma"
+              ],
+              "why": "The tumour's recurrence and bleeding suggest a possible vascular tumour like Kaposi sarcoma.",
+              "axis_node": "Vascular"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "Gastric lipoma",
+              "support_spans": [
+                "histopathology reportedly confirmed a lipoma"
+              ],
+              "contradict_spans": [],
+              "why": "The histopathology report is decisive in confirming the tumour as a lipoma.",
+              "axis_node": "Histopathology"
+            },
+            {
+              "name": "Gastrointestinal stromal tumor",
+              "support_spans": [
+                "a recurrent bleeding tumour at the same site"
+              ],
+              "contradict_spans": [
+                "histopathology reportedly confirmed a lipoma"
+              ],
+              "why": "Immunohistochemistry or molecular testing could be decisive in confirming a GIST.",
+              "axis_node": "Immunohistochemistry"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "a submucosal tumour below the esophagogastric junction",
+        "a 70 × 50 × 55 mm hypoechogenic, subcardial mass on the posterior gastric wall",
+        "histopathology reportedly confirmed a lipoma",
+        "a recurrent bleeding tumour at the same site",
+        "melena and progressive anemia",
+        "her hemoglobin level was 7.5 g/dL"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [
+        "melena and progressive anemia",
+        "her hemoglobin level was 7.5 g/dL"
+      ],
+      "generator_jaccard": 0.5555555555555555,
+      "top1_same_across_views": true,
+      "top_margin": 2.75,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Gastric lipoma",
+        "preferred_label": "Gastric lipoma",
+        "generator_views": [
+          "syndrome_anatomy",
+          "mechanism",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Gastric",
+          "Lipoma",
+          "Histopathology"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE002",
+          "KE003"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "a submucosal tumour below the esophagogastric junction",
+          "a 70 × 50 × 55 mm hypoechogenic, subcardial mass on the posterior gastric wall",
+          "histopathology reportedly confirmed a lipoma"
+        ],
+        "contradict_spans": [],
+        "score_logit": 4.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Gastrointestinal stromal tumor",
+        "preferred_label": "Gastrointestinal stromal tumor",
+        "generator_views": [
+          "syndrome_anatomy",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Gastrointestinal",
+          "Immunohistochemistry"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE004"
+        ],
+        "contradicting_evidence": [
+          "KE003"
+        ],
+        "support_spans": [
+          "a submucosal tumour below the esophagogastric junction",
+          "a recurrent bleeding tumour at the same site"
+        ],
+        "contradict_spans": [
+          "histopathology reportedly confirmed a lipoma"
+        ],
+        "score_logit": 1.25,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Kaposi sarcoma",
+        "preferred_label": "Kaposi sarcoma",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Vascular"
+        ],
+        "supporting_evidence": [
+          "KE004"
+        ],
+        "contradicting_evidence": [
+          "KE003"
+        ],
+        "support_spans": [
+          "a recurrent bleeding tumour at the same site"
+        ],
+        "contradict_spans": [
+          "histopathology reportedly confirmed a lipoma"
+        ],
+        "score_logit": -0.25,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "a submucosal tumour below the esophagogastric junction",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "a 70 × 50 × 55 mm hypoechogenic, subcardial mass on the posterior gastric wall",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "histopathology reportedly confirmed a lipoma",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "a recurrent bleeding tumour at the same site",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "melena and progressive anemia",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "her hemoglobin level was 7.5 g/dL",
+        "source_view": "batched"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "Gastric lipoma",
+        "preferred_label": "Gastric lipoma",
+        "support_spans": [
+          "a submucosal tumour below the esophagogastric junction",
+          "a 70 × 50 × 55 mm hypoechogenic, subcardial mass on the posterior gastric wall",
+          "histopathology reportedly confirmed a lipoma"
+        ],
+        "contradict_spans": [],
+        "score_logit": 4.0
+      },
+      {
+        "preferred_name": "Gastrointestinal stromal tumor",
+        "preferred_label": "Gastrointestinal stromal tumor",
+        "support_spans": [
+          "a submucosal tumour below the esophagogastric junction",
+          "a recurrent bleeding tumour at the same site"
+        ],
+        "contradict_spans": [
+          "histopathology reportedly confirmed a lipoma"
+        ],
+        "score_logit": 1.25
+      },
+      {
+        "preferred_name": "Kaposi sarcoma",
+        "preferred_label": "Kaposi sarcoma",
+        "support_spans": [
+          "a recurrent bleeding tumour at the same site"
+        ],
+        "contradict_spans": [
+          "histopathology reportedly confirmed a lipoma"
+        ],
+        "score_logit": -0.25
+      }
+    ],
+    "vignette_chars": 614,
+    "frontier_selector": {
+      "champion": "Gastrointestinal stromal tumor",
+      "runner_up": "Gastric lipoma",
+      "why": "histopathology reportedly confirmed a lipoma is a strong against evidence for Gastric lipoma and Kaposi sarcoma, but the recurrent bleeding tumour at the same site after resection is more specific to Gastrointestinal stromal tumor"
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {}
+  },
+  "metrics": {
+    "llm_calls": 2,
+    "top_margin": 2.75,
+    "unexplained_n": 2
+  }
+}

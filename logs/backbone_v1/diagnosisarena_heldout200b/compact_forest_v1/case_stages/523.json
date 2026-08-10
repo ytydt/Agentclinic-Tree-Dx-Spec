@@ -1,0 +1,302 @@
+{
+  "source_id": "523",
+  "case_id": "diagnosisarena__000523",
+  "champion": "Hepatitis C",
+  "ordered_diagnoses": [
+    "Hepatitis C",
+    "Cirrhosis",
+    "Hepatic Encephalopathy",
+    "Alcoholic Liver Disease"
+  ],
+  "llm_calls": 2,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "Hepatic Encephalopathy",
+              "support_spans": [
+                "Patient presented with hepatic encephalopathy, acute kidney injury, and recurrent pleural effusion.",
+                "Progressive deterioration led to increased encephalopathy with concurrent hypotension requiring critical care unit transfer."
+              ],
+              "contradict_spans": [],
+              "why": "The patient's presentation with hepatic encephalopathy and its progression suggest a liver-related condition.",
+              "axis_node": "Liver and Brain"
+            },
+            {
+              "name": "Cirrhosis",
+              "support_spans": [
+                "A 61-year-old woman with cirrhosis secondary to alcohol use disorder in remission.",
+                "Demonstrated micronodular cirrhosis with dense fibrosis, scattered simple cysts, and bile duct hamartomas"
+              ],
+              "contradict_spans": [],
+              "why": "The patient has a history of cirrhosis and the liver explant histology confirms micronodular cirrhosis.",
+              "axis_node": "Liver"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "Hepatitis C",
+              "support_spans": [
+                "Initial negative HCV antibody, later positive",
+                "HCV viral load: 4,510,319 copies/mL (Hospital Day 4)"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's seroconversion to HCV positive and high viral load suggest a hepatitis C infection.",
+              "axis_node": "Viral Infection"
+            },
+            {
+              "name": "Alcoholic Liver Disease",
+              "support_spans": [
+                "A 61-year-old woman with cirrhosis secondary to alcohol use disorder in remission."
+              ],
+              "contradict_spans": [],
+              "why": "The patient's history of alcohol use disorder suggests a possible mechanism for her liver disease.",
+              "axis_node": "Toxic Injury"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "Hepatitis C",
+              "support_spans": [
+                "Initial negative HCV antibody, later positive",
+                "HCV viral load: 4,510,319 copies/mL (Hospital Day 4)"
+              ],
+              "contradict_spans": [],
+              "why": "The HCV antibody test and viral load results are decisive for diagnosing hepatitis C.",
+              "axis_node": "Viral Testing"
+            },
+            {
+              "name": "Cirrhosis",
+              "support_spans": [
+                "Demonstrated micronodular cirrhosis with dense fibrosis, scattered simple cysts, and bile duct hamartomas"
+              ],
+              "contradict_spans": [],
+              "why": "The liver explant histology is decisive for diagnosing cirrhosis.",
+              "axis_node": "Liver Histology"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "A 61-year-old woman with cirrhosis secondary to alcohol use disorder in remission.",
+        "Patient presented with hepatic encephalopathy, acute kidney injury, and recurrent pleural effusion.",
+        "Initial negative HCV antibody, later positive",
+        "HCV viral load: 4,510,319 copies/mL (Hospital Day 4)",
+        "Demonstrated micronodular cirrhosis with dense fibrosis, scattered simple cysts, and bile duct hamartomas",
+        "Progressive deterioration led to increased encephalopathy with concurrent hypotension requiring critical care unit transfer.",
+        "Aspartate aminotransferase and alanine aminotransferase elevated to greater than 1000 U/L"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [
+        "Aspartate aminotransferase and alanine aminotransferase elevated to greater than 1000 U/L"
+      ],
+      "generator_jaccard": 0.2222222222222222,
+      "top1_same_across_views": true,
+      "top_margin": 0.0,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Hepatic Encephalopathy",
+        "preferred_label": "Hepatic Encephalopathy",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "Liver and Brain"
+        ],
+        "supporting_evidence": [
+          "KE002",
+          "KE006"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Patient presented with hepatic encephalopathy, acute kidney injury, and recurrent pleural effusion.",
+          "Progressive deterioration led to increased encephalopathy with concurrent hypotension requiring critical care unit transfer."
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Cirrhosis",
+        "preferred_label": "Cirrhosis",
+        "generator_views": [
+          "syndrome_anatomy",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Liver",
+          "Liver Histology"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE005"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "A 61-year-old woman with cirrhosis secondary to alcohol use disorder in remission.",
+          "Demonstrated micronodular cirrhosis with dense fibrosis, scattered simple cysts, and bile duct hamartomas"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.5,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Hepatitis C",
+        "preferred_label": "Hepatitis C",
+        "generator_views": [
+          "mechanism",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Viral Infection",
+          "Viral Testing"
+        ],
+        "supporting_evidence": [
+          "KE003",
+          "KE004"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Initial negative HCV antibody, later positive",
+          "HCV viral load: 4,510,319 copies/mL (Hospital Day 4)"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.5,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Alcoholic Liver Disease",
+        "preferred_label": "Alcoholic Liver Disease",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Toxic Injury"
+        ],
+        "supporting_evidence": [
+          "KE001"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "A 61-year-old woman with cirrhosis secondary to alcohol use disorder in remission."
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "A 61-year-old woman with cirrhosis secondary to alcohol use disorder in remission.",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "Patient presented with hepatic encephalopathy, acute kidney injury, and recurrent pleural effusion.",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "Initial negative HCV antibody, later positive",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "HCV viral load: 4,510,319 copies/mL (Hospital Day 4)",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "Demonstrated micronodular cirrhosis with dense fibrosis, scattered simple cysts, and bile duct hamartomas",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "Progressive deterioration led to increased encephalopathy with concurrent hypotension requiring critical care unit transfer.",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE007",
+        "raw_span": "Aspartate aminotransferase and alanine aminotransferase elevated to greater than 1000 U/L",
+        "source_view": "batched"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "Cirrhosis",
+        "preferred_label": "Cirrhosis",
+        "support_spans": [
+          "A 61-year-old woman with cirrhosis secondary to alcohol use disorder in remission.",
+          "Demonstrated micronodular cirrhosis with dense fibrosis, scattered simple cysts, and bile duct hamartomas"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.5
+      },
+      {
+        "preferred_name": "Hepatitis C",
+        "preferred_label": "Hepatitis C",
+        "support_spans": [
+          "Initial negative HCV antibody, later positive",
+          "HCV viral load: 4,510,319 copies/mL (Hospital Day 4)"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.5
+      },
+      {
+        "preferred_name": "Hepatic Encephalopathy",
+        "preferred_label": "Hepatic Encephalopathy",
+        "support_spans": [
+          "Patient presented with hepatic encephalopathy, acute kidney injury, and recurrent pleural effusion.",
+          "Progressive deterioration led to increased encephalopathy with concurrent hypotension requiring critical care unit transfer."
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "Alcoholic Liver Disease",
+        "preferred_label": "Alcoholic Liver Disease",
+        "support_spans": [
+          "A 61-year-old woman with cirrhosis secondary to alcohol use disorder in remission."
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      }
+    ],
+    "vignette_chars": 1598,
+    "frontier_selector": {
+      "champion": "Hepatitis C",
+      "runner_up": "Cirrhosis",
+      "why": "The initial negative HCV antibody that later turned positive along with a high HCV viral load decided it."
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {}
+  },
+  "metrics": {
+    "llm_calls": 2,
+    "top_margin": 0.0,
+    "unexplained_n": 1
+  }
+}

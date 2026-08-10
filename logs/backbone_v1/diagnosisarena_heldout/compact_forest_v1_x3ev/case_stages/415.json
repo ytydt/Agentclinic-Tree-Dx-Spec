@@ -1,0 +1,336 @@
+{
+  "source_id": "415",
+  "case_id": "diagnosisarena__000415",
+  "champion": "Myocardial Infarction",
+  "ordered_diagnoses": [
+    "Myocardial Infarction",
+    "Acute Coronary Syndrome",
+    "Hypertensive Heart Disease",
+    "Coronary Artery Disease"
+  ],
+  "llm_calls": 1,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "Acute Coronary Syndrome",
+              "support_spans": [
+                "1 hour of acute, severe precordial chest pain radiating to his left arm",
+                "Initial serum troponin I level: 1.159 ng/mL"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's symptoms and elevated troponin level suggest acute coronary syndrome.",
+              "axis_node": "Cardiovascular"
+            },
+            {
+              "name": "Myocardial Infarction",
+              "support_spans": [
+                "ST-segment elevation in avR",
+                "Reciprocal ST-segment depression in leads II, III, and aVF"
+              ],
+              "contradict_spans": [],
+              "why": "The ECG findings and elevated troponin level indicate myocardial infarction.",
+              "axis_node": "Cardiovascular"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "Atherosclerotic Heart Disease",
+              "support_spans": [
+                "95% stenosis of the proximal left anterior descending artery"
+              ],
+              "contradict_spans": [],
+              "why": "The coronary angiography results suggest atherosclerotic heart disease as the underlying mechanism.",
+              "axis_node": "Atherosclerosis"
+            },
+            {
+              "name": "Hypertensive Heart Disease",
+              "support_spans": [
+                "Hypertension for 5 years, treated with reserpine",
+                "Blood pressure 170/109 mm Hg"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's history of hypertension and elevated blood pressure suggest hypertensive heart disease as a contributing mechanism.",
+              "axis_node": "Hypertension"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "ST-Elevation Myocardial Infarction",
+              "support_spans": [
+                "2-mm ST-segment elevation in avR"
+              ],
+              "contradict_spans": [],
+              "why": "The ECG finding of ST-segment elevation is decisive for diagnosing ST-elevation myocardial infarction.",
+              "axis_node": "ECG"
+            },
+            {
+              "name": "Coronary Artery Disease",
+              "support_spans": [
+                "95% stenosis of the proximal left anterior descending artery"
+              ],
+              "contradict_spans": [],
+              "why": "The coronary angiography results are decisive for diagnosing coronary artery disease.",
+              "axis_node": "Coronary Angiography"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "1 hour of acute, severe precordial chest pain radiating to his left arm",
+        "Initial serum troponin I level: 1.159 ng/mL",
+        "ST-segment elevation in avR",
+        "Reciprocal ST-segment depression in leads II, III, and aVF",
+        "95% stenosis of the proximal left anterior descending artery",
+        "Hypertension for 5 years, treated with reserpine",
+        "Blood pressure 170/109 mm Hg"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [],
+      "generator_jaccard": 0.0,
+      "top1_same_across_views": true,
+      "top_margin": 1.5,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Acute Coronary Syndrome",
+        "preferred_label": "Acute Coronary Syndrome",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "Cardiovascular"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE002"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "1 hour of acute, severe precordial chest pain radiating to his left arm",
+          "Initial serum troponin I level: 1.159 ng/mL"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Myocardial Infarction",
+        "preferred_label": "Myocardial Infarction",
+        "generator_views": [
+          "syndrome_anatomy",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Cardiovascular",
+          "ECG"
+        ],
+        "supporting_evidence": [
+          "KE003",
+          "KE004",
+          "MODAE008"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "ST-segment elevation in avR",
+          "Reciprocal ST-segment depression in leads II, III, and aVF",
+          "2-mm ST-segment elevation in avR"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.5,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Atherosclerotic Heart Disease",
+        "preferred_label": "Atherosclerotic Heart Disease",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Atherosclerosis"
+        ],
+        "supporting_evidence": [
+          "KE005"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "95% stenosis of the proximal left anterior descending artery"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Hypertensive Heart Disease",
+        "preferred_label": "Hypertensive Heart Disease",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Hypertension"
+        ],
+        "supporting_evidence": [
+          "KE006",
+          "KE007"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Hypertension for 5 years, treated with reserpine",
+          "Blood pressure 170/109 mm Hg"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Coronary Artery Disease",
+        "preferred_label": "Coronary Artery Disease",
+        "generator_views": [
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Coronary Angiography"
+        ],
+        "supporting_evidence": [
+          "KE005"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "95% stenosis of the proximal left anterior descending artery"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "1 hour of acute, severe precordial chest pain radiating to his left arm",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "Initial serum troponin I level: 1.159 ng/mL",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "ST-segment elevation in avR",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "Reciprocal ST-segment depression in leads II, III, and aVF",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "95% stenosis of the proximal left anterior descending artery",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "Hypertension for 5 years, treated with reserpine",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE007",
+        "raw_span": "Blood pressure 170/109 mm Hg",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "MODAE008",
+        "raw_span": "2-mm ST-segment elevation in avR",
+        "source_view": "modality_decisive"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "Myocardial Infarction",
+        "preferred_label": "Myocardial Infarction",
+        "support_spans": [
+          "ST-segment elevation in avR",
+          "Reciprocal ST-segment depression in leads II, III, and aVF",
+          "2-mm ST-segment elevation in avR"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.5
+      },
+      {
+        "preferred_name": "Acute Coronary Syndrome",
+        "preferred_label": "Acute Coronary Syndrome",
+        "support_spans": [
+          "1 hour of acute, severe precordial chest pain radiating to his left arm",
+          "Initial serum troponin I level: 1.159 ng/mL"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "Hypertensive Heart Disease",
+        "preferred_label": "Hypertensive Heart Disease",
+        "support_spans": [
+          "Hypertension for 5 years, treated with reserpine",
+          "Blood pressure 170/109 mm Hg"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "Atherosclerotic Heart Disease",
+        "preferred_label": "Atherosclerotic Heart Disease",
+        "support_spans": [
+          "95% stenosis of the proximal left anterior descending artery"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "Coronary Artery Disease",
+        "preferred_label": "Coronary Artery Disease",
+        "support_spans": [
+          "95% stenosis of the proximal left anterior descending artery"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      }
+    ],
+    "vignette_chars": 1477,
+    "frontier_selector": {
+      "champion": "Myocardial Infarction",
+      "runner_up": "Acute Coronary Syndrome",
+      "why": "The presence of ST-segment elevation in avR and reciprocal ST-segment depression in leads II, III, and aVF, along with elevated serum troponin I level, decided it"
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {
+      "mode": "evidence",
+      "before": 5,
+      "after": 4
+    },
+    "reselect_from": "compact_forest_v1"
+  }
+}

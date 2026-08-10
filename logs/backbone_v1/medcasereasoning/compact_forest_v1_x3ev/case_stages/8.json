@@ -1,0 +1,259 @@
+{
+  "source_id": "8",
+  "case_id": "medcasereasoning__000008",
+  "champion": "liver metastasis",
+  "ordered_diagnoses": [
+    "liver metastasis",
+    "hepatocellular carcinoma",
+    "portal vein tumor thrombus"
+  ],
+  "llm_calls": 1,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "liver metastasis",
+              "support_spans": [
+                "follow-up CT revealed a 25 mm lesion in segment 8 of the liver"
+              ],
+              "contradict_spans": [],
+              "why": "The patient has a history of colon cancer and now has a liver lesion, suggesting metastasis.",
+              "axis_node": "liver"
+            },
+            {
+              "name": "portal vein tumor thrombus",
+              "support_spans": [
+                "CTAP showed absence of the right portal vein and a perfusion defect throughout the right lobe, suggestive of portal vein tumor thrombus"
+              ],
+              "contradict_spans": [],
+              "why": "The CTAP results suggest a tumor thrombus in the portal vein.",
+              "axis_node": "portal vein"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "hepatocellular carcinoma",
+              "support_spans": [
+                "liver tumor with two components: a solid portion that enhanced in the early phase and washed out in the delayed phase, and a cystic component"
+              ],
+              "contradict_spans": [],
+              "why": "The liver tumor's characteristics are consistent with hepatocellular carcinoma.",
+              "axis_node": "liver cancer"
+            },
+            {
+              "name": "colorectal cancer liver metastasis",
+              "support_spans": [
+                "A 55-year-old man underwent right hemicolectomy for moderately differentiated adenocarcinoma of the ascending colon"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's history of colon cancer increases the likelihood of liver metastasis.",
+              "axis_node": "colon cancer"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "hepatocellular carcinoma",
+              "support_spans": [
+                "CTA demonstrated a liver tumor with two components: a solid portion that enhanced in the early phase and washed out in the delayed phase, and a cystic component"
+              ],
+              "contradict_spans": [],
+              "why": "The CTA results are consistent with hepatocellular carcinoma, and a decisive diagnosis could be made with imaging or biopsy.",
+              "axis_node": "liver imaging"
+            },
+            {
+              "name": "liver metastasis",
+              "support_spans": [
+                "follow-up CT revealed a 25 mm lesion in segment 8 of the liver"
+              ],
+              "contradict_spans": [],
+              "why": "A decisive diagnosis of liver metastasis could be made with imaging or biopsy.",
+              "axis_node": "liver imaging"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "A 55-year-old man underwent right hemicolectomy for moderately differentiated adenocarcinoma of the ascending colon",
+        "follow-up CT revealed a 25 mm lesion in segment 8 of the liver",
+        "CTA demonstrated a liver tumor with two components: a solid portion that enhanced in the early phase and washed out in the delayed phase, and a cystic component",
+        "CTAP showed absence of the right portal vein and a perfusion defect throughout the right lobe, suggestive of portal vein tumor thrombus",
+        "liver tumor with two components: a solid portion that enhanced in the early phase and washed out in the delayed phase, and a cystic component",
+        "Tumor markers including CEA, CA19-9, α-fetoprotein, and PIVKA-II were all within normal limits"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [
+        "Tumor markers including CEA, CA19-9, α-fetoprotein, and PIVKA-II were all within normal limits"
+      ],
+      "generator_jaccard": 0.2222222222222222,
+      "top1_same_across_views": true,
+      "top_margin": 0.5,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "liver metastasis",
+        "preferred_label": "liver metastasis",
+        "generator_views": [
+          "syndrome_anatomy",
+          "mechanism",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "liver",
+          "colon cancer",
+          "liver imaging"
+        ],
+        "supporting_evidence": [
+          "KE002",
+          "KE001"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "follow-up CT revealed a 25 mm lesion in segment 8 of the liver",
+          "A 55-year-old man underwent right hemicolectomy for moderately differentiated adenocarcinoma of the ascending colon"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "portal vein tumor thrombus",
+        "preferred_label": "portal vein tumor thrombus",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "portal vein"
+        ],
+        "supporting_evidence": [
+          "KE004"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "CTAP showed absence of the right portal vein and a perfusion defect throughout the right lobe, suggestive of portal vein tumor thrombus"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "hepatocellular carcinoma",
+        "preferred_label": "hepatocellular carcinoma",
+        "generator_views": [
+          "mechanism",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "liver cancer",
+          "liver imaging"
+        ],
+        "supporting_evidence": [
+          "KE005",
+          "KE003"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "liver tumor with two components: a solid portion that enhanced in the early phase and washed out in the delayed phase, and a cystic component",
+          "CTA demonstrated a liver tumor with two components: a solid portion that enhanced in the early phase and washed out in the delayed phase, and a cystic component"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.5,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "A 55-year-old man underwent right hemicolectomy for moderately differentiated adenocarcinoma of the ascending colon",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "follow-up CT revealed a 25 mm lesion in segment 8 of the liver",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "CTA demonstrated a liver tumor with two components: a solid portion that enhanced in the early phase and washed out in the delayed phase, and a cystic component",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "CTAP showed absence of the right portal vein and a perfusion defect throughout the right lobe, suggestive of portal vein tumor thrombus",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "liver tumor with two components: a solid portion that enhanced in the early phase and washed out in the delayed phase, and a cystic component",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "Tumor markers including CEA, CA19-9, α-fetoprotein, and PIVKA-II were all within normal limits",
+        "source_view": "batched"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "liver metastasis",
+        "preferred_label": "liver metastasis",
+        "support_spans": [
+          "follow-up CT revealed a 25 mm lesion in segment 8 of the liver",
+          "A 55-year-old man underwent right hemicolectomy for moderately differentiated adenocarcinoma of the ascending colon"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.0
+      },
+      {
+        "preferred_name": "hepatocellular carcinoma",
+        "preferred_label": "hepatocellular carcinoma",
+        "support_spans": [
+          "liver tumor with two components: a solid portion that enhanced in the early phase and washed out in the delayed phase, and a cystic component",
+          "CTA demonstrated a liver tumor with two components: a solid portion that enhanced in the early phase and washed out in the delayed phase, and a cystic component"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.5
+      },
+      {
+        "preferred_name": "portal vein tumor thrombus",
+        "preferred_label": "portal vein tumor thrombus",
+        "support_spans": [
+          "CTAP showed absence of the right portal vein and a perfusion defect throughout the right lobe, suggestive of portal vein tumor thrombus"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      }
+    ],
+    "vignette_chars": 1056,
+    "frontier_selector": {
+      "champion": "liver metastasis",
+      "runner_up": "hepatocellular carcinoma",
+      "why": "The evidence of a previous adenocarcinoma of the ascending colon and a new liver lesion, as revealed by follow-up CT, decided it."
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {
+      "mode": "evidence",
+      "before": 3,
+      "after": 3
+    },
+    "reselect_from": "compact_forest_v1"
+  }
+}

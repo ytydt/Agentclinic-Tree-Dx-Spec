@@ -1,0 +1,328 @@
+{
+  "source_id": "328",
+  "case_id": "medcasereasoning__000328",
+  "champion": "Necrotizing fasciitis",
+  "ordered_diagnoses": [
+    "Necrotizing fasciitis",
+    "Toxic shock syndrome",
+    "Gas gangrene",
+    "Labial cellulitis"
+  ],
+  "llm_calls": 2,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "Necrotizing fasciitis",
+              "support_spans": [
+                "progressive swelling of the left labia",
+                "ruptured and began draining serosanguinous fluid",
+                "subcutaneous gas on CT"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's symptoms and imaging findings are consistent with necrotizing fasciitis, a disease that affects the skin and subcutaneous tissue.",
+              "axis_node": "skin and soft tissue"
+            },
+            {
+              "name": "Labial cellulitis",
+              "support_spans": [
+                "progressive swelling of the left labia"
+              ],
+              "contradict_spans": [
+                "subcutaneous gas on CT"
+              ],
+              "why": "The patient's symptoms could be consistent with labial cellulitis, but the presence of subcutaneous gas on CT suggests a more severe condition.",
+              "axis_node": "skin and soft tissue"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "Toxic shock syndrome",
+              "support_spans": [
+                "sepsis",
+                "hypotension"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's symptoms and laboratory findings are consistent with toxic shock syndrome, a disease caused by bacterial toxins.",
+              "axis_node": "infectious disease"
+            },
+            {
+              "name": "Necrotizing fasciitis",
+              "support_spans": [
+                "subcutaneous gas on CT",
+                "inflammatory fat stranding"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's imaging findings are consistent with necrotizing fasciitis, a disease caused by bacterial infection.",
+              "axis_node": "infectious disease"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "Necrotizing fasciitis",
+              "support_spans": [
+                "subcutaneous gas on CT",
+                "LRINEC score"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's imaging and laboratory findings are consistent with necrotizing fasciitis, and surgical exploration is often necessary for definitive diagnosis.",
+              "axis_node": "surgical diagnosis"
+            },
+            {
+              "name": "Gas gangrene",
+              "support_spans": [
+                "subcutaneous gas on CT"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's imaging findings are consistent with gas gangrene, a disease that can be diagnosed with imaging and laboratory studies.",
+              "axis_node": "infectious disease"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "progressive swelling of the left labia",
+        "ruptured and began draining serosanguinous fluid",
+        "subcutaneous gas on CT",
+        "LRINEC score was calculated as 3",
+        "sepsis",
+        "hypotension",
+        "inflammatory fat stranding along the left lateral abdominal wall"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [
+        "LRINEC score was calculated as 3",
+        "inflammatory fat stranding along the left lateral abdominal wall"
+      ],
+      "generator_jaccard": 0.3333333333333333,
+      "top1_same_across_views": true,
+      "top_margin": 4.0,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Necrotizing fasciitis",
+        "preferred_label": "Necrotizing fasciitis",
+        "generator_views": [
+          "syndrome_anatomy",
+          "mechanism",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "skin and soft tissue",
+          "infectious disease",
+          "surgical diagnosis"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE002",
+          "KE003",
+          "MECHE008",
+          "MODAE009"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "progressive swelling of the left labia",
+          "ruptured and began draining serosanguinous fluid",
+          "subcutaneous gas on CT",
+          "inflammatory fat stranding",
+          "LRINEC score"
+        ],
+        "contradict_spans": [],
+        "score_logit": 6.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Labial cellulitis",
+        "preferred_label": "Labial cellulitis",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "skin and soft tissue"
+        ],
+        "supporting_evidence": [
+          "KE001"
+        ],
+        "contradicting_evidence": [
+          "KE003"
+        ],
+        "support_spans": [
+          "progressive swelling of the left labia"
+        ],
+        "contradict_spans": [
+          "subcutaneous gas on CT"
+        ],
+        "score_logit": -0.25,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Toxic shock syndrome",
+        "preferred_label": "Toxic shock syndrome",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "infectious disease"
+        ],
+        "supporting_evidence": [
+          "KE005",
+          "KE006"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "sepsis",
+          "hypotension"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Gas gangrene",
+        "preferred_label": "Gas gangrene",
+        "generator_views": [
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "infectious disease"
+        ],
+        "supporting_evidence": [
+          "KE003"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "subcutaneous gas on CT"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "progressive swelling of the left labia",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "ruptured and began draining serosanguinous fluid",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "subcutaneous gas on CT",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "LRINEC score was calculated as 3",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "sepsis",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "hypotension",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE007",
+        "raw_span": "inflammatory fat stranding along the left lateral abdominal wall",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "MECHE008",
+        "raw_span": "inflammatory fat stranding",
+        "source_view": "mechanism"
+      },
+      {
+        "evidence_id": "MODAE009",
+        "raw_span": "LRINEC score",
+        "source_view": "modality_decisive"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "Necrotizing fasciitis",
+        "preferred_label": "Necrotizing fasciitis",
+        "support_spans": [
+          "progressive swelling of the left labia",
+          "ruptured and began draining serosanguinous fluid",
+          "subcutaneous gas on CT",
+          "inflammatory fat stranding",
+          "LRINEC score"
+        ],
+        "contradict_spans": [],
+        "score_logit": 6.0
+      },
+      {
+        "preferred_name": "Toxic shock syndrome",
+        "preferred_label": "Toxic shock syndrome",
+        "support_spans": [
+          "sepsis",
+          "hypotension"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "Gas gangrene",
+        "preferred_label": "Gas gangrene",
+        "support_spans": [
+          "subcutaneous gas on CT"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "Labial cellulitis",
+        "preferred_label": "Labial cellulitis",
+        "support_spans": [
+          "progressive swelling of the left labia"
+        ],
+        "contradict_spans": [
+          "subcutaneous gas on CT"
+        ],
+        "score_logit": -0.25
+      }
+    ],
+    "vignette_chars": 1192,
+    "frontier_selector": {
+      "champion": "Necrotizing fasciitis",
+      "runner_up": "Toxic shock syndrome",
+      "why": "The presence of subcutaneous gas on CT, inflammatory fat stranding, and the patient's clinical presentation of progressive swelling and drainage of serosanguinous fluid decided it."
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {}
+  },
+  "metrics": {
+    "llm_calls": 2,
+    "top_margin": 4.0,
+    "unexplained_n": 2
+  }
+}

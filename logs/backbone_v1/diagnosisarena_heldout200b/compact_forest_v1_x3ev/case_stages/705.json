@@ -1,0 +1,323 @@
+{
+  "source_id": "705",
+  "case_id": "diagnosisarena__000705",
+  "champion": "Listeriosis",
+  "ordered_diagnoses": [
+    "Listeriosis",
+    "Sepsis",
+    "Bacteremia",
+    "Pyelonephritis"
+  ],
+  "llm_calls": 1,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "Listeriosis",
+              "support_spans": [
+                "fever for four days",
+                "axillary temperature >38.7°C",
+                "Blood culture: positive"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's symptoms and positive blood culture suggest a bacterial infection, and Listeriosis is a known cause of fever and weakness in pregnant women.",
+              "axis_node": "Infectious syndrome"
+            },
+            {
+              "name": "Pyelonephritis",
+              "support_spans": [
+                "fever for four days",
+                "axillary temperature >38.7°C"
+              ],
+              "contradict_spans": [
+                "Urine and liver function tests: normal"
+              ],
+              "why": "The patient's symptoms could suggest a urinary tract infection, but the normal urine tests make this less likely.",
+              "axis_node": "Urinary tract infection"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "Listeriosis",
+              "support_spans": [
+                "Blood culture: positive",
+                "Serotyping identified serovars 1/2b, 3b, and 7"
+              ],
+              "contradict_spans": [],
+              "why": "The positive blood culture and serotyping results suggest that Listeria monocytogenes is the causative agent of the patient's illness.",
+              "axis_node": "Bacterial infection"
+            },
+            {
+              "name": "Sepsis",
+              "support_spans": [
+                "fever for four days",
+                "axillary temperature >38.7°C",
+                "CRP: 11.5 mg/L"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's symptoms and elevated CRP suggest a systemic inflammatory response, which could be due to sepsis.",
+              "axis_node": "Systemic inflammation"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "Listeriosis",
+              "support_spans": [
+                "Blood culture: positive",
+                "Serotyping identified serovars 1/2b, 3b, and 7"
+              ],
+              "contradict_spans": [],
+              "why": "The positive blood culture and serotyping results are decisive in confirming the diagnosis of Listeriosis.",
+              "axis_node": "Microbiological diagnosis"
+            },
+            {
+              "name": "Bacteremia",
+              "support_spans": [
+                "Blood culture: positive"
+              ],
+              "contradict_spans": [],
+              "why": "The positive blood culture is decisive in confirming the diagnosis of Bacteremia.",
+              "axis_node": "Bloodstream infection"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "fever for four days",
+        "axillary temperature >38.7°C",
+        "Blood culture: positive",
+        "Serotyping identified serovars 1/2b, 3b, and 7",
+        "CRP: 11.5 mg/L",
+        "Urine and liver function tests: normal",
+        "Vaginal swabs: negative for pathogens"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [
+        "Urine and liver function tests: normal",
+        "Vaginal swabs: negative for pathogens"
+      ],
+      "generator_jaccard": 0.3333333333333333,
+      "top1_same_across_views": true,
+      "top_margin": 2.0,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Listeriosis",
+        "preferred_label": "Listeriosis",
+        "generator_views": [
+          "syndrome_anatomy",
+          "mechanism",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Infectious syndrome",
+          "Bacterial infection",
+          "Microbiological diagnosis"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE002",
+          "KE003",
+          "KE004"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "fever for four days",
+          "axillary temperature >38.7°C",
+          "Blood culture: positive",
+          "Serotyping identified serovars 1/2b, 3b, and 7"
+        ],
+        "contradict_spans": [],
+        "score_logit": 5.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Pyelonephritis",
+        "preferred_label": "Pyelonephritis",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "Urinary tract infection"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE002"
+        ],
+        "contradicting_evidence": [
+          "KE006"
+        ],
+        "support_spans": [
+          "fever for four days",
+          "axillary temperature >38.7°C"
+        ],
+        "contradict_spans": [
+          "Urine and liver function tests: normal"
+        ],
+        "score_logit": 0.75,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Sepsis",
+        "preferred_label": "Sepsis",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Systemic inflammation"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE002",
+          "KE005"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "fever for four days",
+          "axillary temperature >38.7°C",
+          "CRP: 11.5 mg/L"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Bacteremia",
+        "preferred_label": "Bacteremia",
+        "generator_views": [
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Bloodstream infection"
+        ],
+        "supporting_evidence": [
+          "KE003"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Blood culture: positive"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "fever for four days",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "axillary temperature >38.7°C",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "Blood culture: positive",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "Serotyping identified serovars 1/2b, 3b, and 7",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "CRP: 11.5 mg/L",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "Urine and liver function tests: normal",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE007",
+        "raw_span": "Vaginal swabs: negative for pathogens",
+        "source_view": "batched"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "Listeriosis",
+        "preferred_label": "Listeriosis",
+        "support_spans": [
+          "fever for four days",
+          "axillary temperature >38.7°C",
+          "Blood culture: positive",
+          "Serotyping identified serovars 1/2b, 3b, and 7"
+        ],
+        "contradict_spans": [],
+        "score_logit": 5.0
+      },
+      {
+        "preferred_name": "Sepsis",
+        "preferred_label": "Sepsis",
+        "support_spans": [
+          "fever for four days",
+          "axillary temperature >38.7°C",
+          "CRP: 11.5 mg/L"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.0
+      },
+      {
+        "preferred_name": "Bacteremia",
+        "preferred_label": "Bacteremia",
+        "support_spans": [
+          "Blood culture: positive"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "Pyelonephritis",
+        "preferred_label": "Pyelonephritis",
+        "support_spans": [
+          "fever for four days",
+          "axillary temperature >38.7°C"
+        ],
+        "contradict_spans": [
+          "Urine and liver function tests: normal"
+        ],
+        "score_logit": 0.75
+      }
+    ],
+    "vignette_chars": 980,
+    "frontier_selector": {
+      "champion": "Listeriosis",
+      "runner_up": "Sepsis",
+      "why": "The presence of a positive blood culture with serotyping identified serovars 1/2b, 3b, and 7 specifically supports Listeriosis."
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {
+      "mode": "evidence",
+      "before": 4,
+      "after": 4
+    },
+    "reselect_from": "compact_forest_v1"
+  }
+}

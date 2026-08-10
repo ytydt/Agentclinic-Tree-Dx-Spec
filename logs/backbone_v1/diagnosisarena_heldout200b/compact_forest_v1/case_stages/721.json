@@ -1,0 +1,262 @@
+{
+  "source_id": "721",
+  "case_id": "diagnosisarena__000721",
+  "champion": "COVID-19 pneumonia",
+  "ordered_diagnoses": [
+    "COVID-19 pneumonia",
+    "atypical viral pneumonia",
+    "immunodeficiency-related pneumonia"
+  ],
+  "llm_calls": 2,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "atypical viral pneumonia",
+              "support_spans": [
+                "Haziness in both lower lung fields with infiltrations in around 10% of both lungs, consistent with atypical viral pneumonia"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's symptoms and imaging studies are consistent with atypical viral pneumonia.",
+              "axis_node": "Respiratory"
+            },
+            {
+              "name": "COVID-19 pneumonia",
+              "support_spans": [
+                "RT-PCR test of sputum: Positive for SARS-CoV-2"
+              ],
+              "contradict_spans": [],
+              "why": "The patient tested positive for SARS-CoV-2, which is consistent with COVID-19 pneumonia.",
+              "axis_node": "Respiratory"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "COVID-19",
+              "support_spans": [
+                "RT-PCR test of sputum: Positive for SARS-CoV-2"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's positive SARS-CoV-2 test suggests a viral mechanism.",
+              "axis_node": "Infectious"
+            },
+            {
+              "name": "immunodeficiency-related pneumonia",
+              "support_spans": [
+                "The patient had received two doses of viral vector vaccine (AstraZeneca)"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's history of immunosuppressive therapy and vaccination may contribute to an increased risk of pneumonia.",
+              "axis_node": "Immunologic"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "COVID-19",
+              "support_spans": [
+                "RT-PCR test of sputum: Positive for SARS-CoV-2"
+              ],
+              "contradict_spans": [],
+              "why": "A positive SARS-CoV-2 RT-PCR test is decisive for diagnosing COVID-19.",
+              "axis_node": "Molecular"
+            },
+            {
+              "name": "viral pneumonia",
+              "support_spans": [
+                "Haziness in both lower lung fields with infiltrations in around 10% of both lungs, consistent with atypical viral pneumonia"
+              ],
+              "contradict_spans": [],
+              "why": "Imaging studies showing haziness and infiltrations in the lungs are decisive for diagnosing viral pneumonia.",
+              "axis_node": "Imaging"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "RT-PCR test of sputum: Positive for SARS-CoV-2",
+        "Haziness in both lower lung fields with infiltrations in around 10% of both lungs, consistent with atypical viral pneumonia",
+        "The patient had received two doses of viral vector vaccine (AstraZeneca)",
+        "CRP: 14 mg/L (mildly elevated)",
+        "Absolute lymphocyte count: 1.42 × 10^9/L (23% of total white blood cells)",
+        "Ground glass opacities and 'crazy paving' pattern bilaterally in the lower lobes",
+        "Bilateral ground-glass appearance with progression in haziness in both lower and middle lung fields"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [
+        "CRP: 14 mg/L (mildly elevated)",
+        "Absolute lymphocyte count: 1.42 × 10^9/L (23% of total white blood cells)",
+        "Ground glass opacities and 'crazy paving' pattern bilaterally in the lower lobes",
+        "Bilateral ground-glass appearance with progression in haziness in both lower and middle lung fields"
+      ],
+      "generator_jaccard": 0.1111111111111111,
+      "top1_same_across_views": true,
+      "top_margin": 0.5,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "atypical viral pneumonia",
+        "preferred_label": "atypical viral pneumonia",
+        "generator_views": [
+          "syndrome_anatomy",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Respiratory",
+          "Imaging"
+        ],
+        "supporting_evidence": [
+          "KE002"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Haziness in both lower lung fields with infiltrations in around 10% of both lungs, consistent with atypical viral pneumonia"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.5,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "COVID-19 pneumonia",
+        "preferred_label": "COVID-19 pneumonia",
+        "generator_views": [
+          "syndrome_anatomy",
+          "mechanism",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Respiratory",
+          "Infectious",
+          "Molecular"
+        ],
+        "supporting_evidence": [
+          "KE001"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "RT-PCR test of sputum: Positive for SARS-CoV-2"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "immunodeficiency-related pneumonia",
+        "preferred_label": "immunodeficiency-related pneumonia",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Immunologic"
+        ],
+        "supporting_evidence": [
+          "KE003"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "The patient had received two doses of viral vector vaccine (AstraZeneca)"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "RT-PCR test of sputum: Positive for SARS-CoV-2",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "Haziness in both lower lung fields with infiltrations in around 10% of both lungs, consistent with atypical viral pneumonia",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "The patient had received two doses of viral vector vaccine (AstraZeneca)",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "CRP: 14 mg/L (mildly elevated)",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "Absolute lymphocyte count: 1.42 × 10^9/L (23% of total white blood cells)",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "Ground glass opacities and 'crazy paving' pattern bilaterally in the lower lobes",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE007",
+        "raw_span": "Bilateral ground-glass appearance with progression in haziness in both lower and middle lung fields",
+        "source_view": "batched"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "COVID-19 pneumonia",
+        "preferred_label": "COVID-19 pneumonia",
+        "support_spans": [
+          "RT-PCR test of sputum: Positive for SARS-CoV-2"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "atypical viral pneumonia",
+        "preferred_label": "atypical viral pneumonia",
+        "support_spans": [
+          "Haziness in both lower lung fields with infiltrations in around 10% of both lungs, consistent with atypical viral pneumonia"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.5
+      },
+      {
+        "preferred_name": "immunodeficiency-related pneumonia",
+        "preferred_label": "immunodeficiency-related pneumonia",
+        "support_spans": [
+          "The patient had received two doses of viral vector vaccine (AstraZeneca)"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      }
+    ],
+    "vignette_chars": 1393,
+    "frontier_selector": {
+      "champion": "COVID-19 pneumonia",
+      "runner_up": "atypical viral pneumonia",
+      "why": "The RT-PCR test of sputum was positive for SARS-CoV-2, which is specific evidence for COVID-19 pneumonia."
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {}
+  },
+  "metrics": {
+    "llm_calls": 2,
+    "top_margin": 0.5,
+    "unexplained_n": 4
+  }
+}

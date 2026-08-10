@@ -1,0 +1,276 @@
+{
+  "source_id": "177",
+  "case_id": "diagnosisarena__000177",
+  "champion": "Myocardial Infarction",
+  "ordered_diagnoses": [
+    "Myocardial Infarction",
+    "Acute Coronary Syndrome",
+    "Cardiogenic Shock"
+  ],
+  "llm_calls": 1,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "Acute Coronary Syndrome",
+              "support_spans": [
+                "sudden-onset chest pain",
+                "ST-segment elevation in leads II, III, and aVF"
+              ],
+              "contradict_spans": [],
+              "why": "The patient presented with sudden-onset chest pain and ECG findings consistent with myocardial infarction.",
+              "axis_node": "Cardiovascular"
+            },
+            {
+              "name": "Myocardial Infarction",
+              "support_spans": [
+                "ST-segment elevation in leads II, III, and aVF",
+                "high-sensitive troponin T level: 0.309 ng/mL"
+              ],
+              "contradict_spans": [],
+              "why": "The patient had ECG findings and laboratory results consistent with myocardial infarction.",
+              "axis_node": "Cardiovascular"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "Acute Myocardial Infarction due to Thrombotic Occlusion",
+              "support_spans": [
+                "thrombotic occlusion of the distal left circumflex artery"
+              ],
+              "contradict_spans": [],
+              "why": "The patient had emergency angiography showing thrombotic occlusion of the distal left circumflex artery.",
+              "axis_node": "Thrombotic Occlusion"
+            },
+            {
+              "name": "Cardiogenic Shock",
+              "support_spans": [
+                "blood pressure fell to 60/40 mm Hg"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's blood pressure fell significantly, indicating cardiogenic shock.",
+              "axis_node": "Cardiogenic Shock"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "Myocardial Infarction with Thrombotic Occlusion",
+              "support_spans": [
+                "emergency angiography showed thrombotic occlusion of the distal left circumflex artery"
+              ],
+              "contradict_spans": [],
+              "why": "The emergency angiography was decisive in confirming the thrombotic occlusion.",
+              "axis_node": "Angiography"
+            },
+            {
+              "name": "Acute Coronary Syndrome with Cardiac Injury",
+              "support_spans": [
+                "high-sensitive troponin T level: 0.309 ng/mL"
+              ],
+              "contradict_spans": [],
+              "why": "The high-sensitive troponin T level was decisive in confirming cardiac injury.",
+              "axis_node": "Troponin Level"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "sudden-onset chest pain",
+        "ST-segment elevation in leads II, III, and aVF",
+        "high-sensitive troponin T level: 0.309 ng/mL",
+        "thrombotic occlusion of the distal left circumflex artery",
+        "blood pressure fell to 60/40 mm Hg",
+        "emergency angiography showed thrombotic occlusion of the distal left circumflex artery",
+        "Computer tomography angiography revealed contrast present in the myocardium and pericardial effusion"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [
+        "Computer tomography angiography revealed contrast present in the myocardium and pericardial effusion"
+      ],
+      "generator_jaccard": 0.0,
+      "top1_same_across_views": true,
+      "top_margin": 1.5,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Acute Coronary Syndrome",
+        "preferred_label": "Acute Coronary Syndrome",
+        "generator_views": [
+          "syndrome_anatomy",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Cardiovascular",
+          "Troponin Level"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE002",
+          "KE003"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "sudden-onset chest pain",
+          "ST-segment elevation in leads II, III, and aVF",
+          "high-sensitive troponin T level: 0.309 ng/mL"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.5,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Myocardial Infarction",
+        "preferred_label": "Myocardial Infarction",
+        "generator_views": [
+          "syndrome_anatomy",
+          "mechanism",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Cardiovascular",
+          "Thrombotic Occlusion",
+          "Angiography"
+        ],
+        "supporting_evidence": [
+          "KE002",
+          "KE003",
+          "KE004",
+          "KE006"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "ST-segment elevation in leads II, III, and aVF",
+          "high-sensitive troponin T level: 0.309 ng/mL",
+          "thrombotic occlusion of the distal left circumflex artery",
+          "emergency angiography showed thrombotic occlusion of the distal left circumflex artery"
+        ],
+        "contradict_spans": [],
+        "score_logit": 5.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Cardiogenic Shock",
+        "preferred_label": "Cardiogenic Shock",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Cardiogenic Shock"
+        ],
+        "supporting_evidence": [
+          "KE005"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "blood pressure fell to 60/40 mm Hg"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "sudden-onset chest pain",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "ST-segment elevation in leads II, III, and aVF",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "high-sensitive troponin T level: 0.309 ng/mL",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "thrombotic occlusion of the distal left circumflex artery",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "blood pressure fell to 60/40 mm Hg",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "emergency angiography showed thrombotic occlusion of the distal left circumflex artery",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE007",
+        "raw_span": "Computer tomography angiography revealed contrast present in the myocardium and pericardial effusion",
+        "source_view": "batched"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "Myocardial Infarction",
+        "preferred_label": "Myocardial Infarction",
+        "support_spans": [
+          "ST-segment elevation in leads II, III, and aVF",
+          "high-sensitive troponin T level: 0.309 ng/mL",
+          "thrombotic occlusion of the distal left circumflex artery",
+          "emergency angiography showed thrombotic occlusion of the distal left circumflex artery"
+        ],
+        "contradict_spans": [],
+        "score_logit": 5.0
+      },
+      {
+        "preferred_name": "Acute Coronary Syndrome",
+        "preferred_label": "Acute Coronary Syndrome",
+        "support_spans": [
+          "sudden-onset chest pain",
+          "ST-segment elevation in leads II, III, and aVF",
+          "high-sensitive troponin T level: 0.309 ng/mL"
+        ],
+        "contradict_spans": [],
+        "score_logit": 3.5
+      },
+      {
+        "preferred_name": "Cardiogenic Shock",
+        "preferred_label": "Cardiogenic Shock",
+        "support_spans": [
+          "blood pressure fell to 60/40 mm Hg"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      }
+    ],
+    "vignette_chars": 1063,
+    "frontier_selector": {
+      "champion": "Myocardial Infarction",
+      "runner_up": "Acute Coronary Syndrome",
+      "why": "The evidence of ST-segment elevation in multiple leads, high-sensitive troponin T level, and thrombotic occlusion of the distal left circumflex artery specifically supported Myocardial Infarction."
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {
+      "mode": "evidence",
+      "before": 3,
+      "after": 3
+    },
+    "reselect_from": "compact_forest_v1"
+  }
+}

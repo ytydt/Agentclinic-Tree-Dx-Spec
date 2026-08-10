@@ -1,0 +1,324 @@
+{
+  "source_id": "591",
+  "case_id": "diagnosisarena__000591",
+  "champion": "Myocardial Infarction",
+  "ordered_diagnoses": [
+    "Myocardial Infarction",
+    "Acute Coronary Syndrome",
+    "Atherosclerotic Coronary Artery Disease"
+  ],
+  "llm_calls": 1,
+  "stages": {
+    "mode": "compact_forest_v1",
+    "batched_axes": {
+      "views": [
+        {
+          "view": "syndrome_anatomy",
+          "candidates": [
+            {
+              "name": "Acute Coronary Syndrome",
+              "support_spans": [
+                "A 39-year-old Hispanic man presented with chest pain and shortness of breath for 12 to 24 hours.",
+                "High-sensitivity troponin T: 888 ng/L (normal range, 0–14 ng/L)"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's symptoms and elevated troponin levels suggest acute coronary syndrome.",
+              "axis_node": "Cardiovascular"
+            },
+            {
+              "name": "Myocardial Infarction",
+              "support_spans": [
+                "Past medical history significant for acute myocardial infarction 9 years ago at age 30.",
+                "High-sensitivity troponin T: 888 ng/L (normal range, 0–14 ng/L)"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's history of myocardial infarction and current symptoms suggest a possible recurrent event.",
+              "axis_node": "Cardiovascular"
+            }
+          ]
+        },
+        {
+          "view": "mechanism",
+          "candidates": [
+            {
+              "name": "Thrombotic Coronary Artery Disease",
+              "support_spans": [
+                "Coronary Angiogram: Widely patent RCA; left anterior descending artery showed a large filling defect in the proximal segment with TIMI flow grade 3"
+              ],
+              "contradict_spans": [],
+              "why": "The coronary angiogram findings suggest a thrombotic mechanism.",
+              "axis_node": "Thrombosis"
+            },
+            {
+              "name": "Atherosclerotic Coronary Artery Disease",
+              "support_spans": [
+                "Past medical history significant for acute myocardial infarction 9 years ago at age 30.",
+                "Coronary Angiogram: Widely patent RCA; left anterior descending artery showed a large filling defect in the proximal segment with TIMI flow grade 3"
+              ],
+              "contradict_spans": [],
+              "why": "The patient's history and current angiogram findings suggest atherosclerotic disease.",
+              "axis_node": "Atherosclerosis"
+            }
+          ]
+        },
+        {
+          "view": "modality_decisive",
+          "candidates": [
+            {
+              "name": "Coronary Artery Thrombosis",
+              "support_spans": [
+                "Coronary Angiogram: Widely patent RCA; left anterior descending artery showed a large filling defect in the proximal segment with TIMI flow grade 3"
+              ],
+              "contradict_spans": [],
+              "why": "The coronary angiogram is decisive in diagnosing coronary artery thrombosis.",
+              "axis_node": "Angiography"
+            },
+            {
+              "name": "Myocardial Infarction",
+              "support_spans": [
+                "High-sensitivity troponin T: 888 ng/L (normal range, 0–14 ng/L)"
+              ],
+              "contradict_spans": [],
+              "why": "Elevated troponin levels are decisive in diagnosing myocardial infarction.",
+              "axis_node": "Biomarkers"
+            }
+          ]
+        }
+      ],
+      "key_evidence_spans": [
+        "A 39-year-old Hispanic man presented with chest pain and shortness of breath for 12 to 24 hours.",
+        "Past medical history significant for acute myocardial infarction 9 years ago at age 30.",
+        "High-sensitivity troponin T: 888 ng/L (normal range, 0–14 ng/L)",
+        "Coronary Angiogram: Widely patent RCA; left anterior descending artery showed a large filling defect in the proximal segment with TIMI flow grade 3",
+        "Electrocardiogram: No apparent abnormalities on current admission",
+        "Echocardiogram: Normal biventricular size and systolic function, no regional wall motion abnormalities, no pericardial effusion"
+      ]
+    },
+    "state_after_axes": {
+      "unexplained_specific_evidence": [
+        "Electrocardiogram: No apparent abnormalities on current admission",
+        "Echocardiogram: Normal biventricular size and systolic function, no regional wall motion abnormalities, no pericardial effusion"
+      ],
+      "generator_jaccard": 0.1111111111111111,
+      "top1_same_across_views": true,
+      "top_margin": 0.5,
+      "leave_one_view_instability": false,
+      "contradiction_mass": 0
+    },
+    "registry": [
+      {
+        "concept_id": "C001",
+        "preferred_name": "Acute Coronary Syndrome",
+        "preferred_label": "Acute Coronary Syndrome",
+        "generator_views": [
+          "syndrome_anatomy"
+        ],
+        "axis_nodes": [
+          "Cardiovascular"
+        ],
+        "supporting_evidence": [
+          "KE001",
+          "KE003"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "A 39-year-old Hispanic man presented with chest pain and shortness of breath for 12 to 24 hours.",
+          "High-sensitivity troponin T: 888 ng/L (normal range, 0–14 ng/L)"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C002",
+        "preferred_name": "Myocardial Infarction",
+        "preferred_label": "Myocardial Infarction",
+        "generator_views": [
+          "syndrome_anatomy",
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Cardiovascular",
+          "Biomarkers"
+        ],
+        "supporting_evidence": [
+          "KE002",
+          "KE003"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Past medical history significant for acute myocardial infarction 9 years ago at age 30.",
+          "High-sensitivity troponin T: 888 ng/L (normal range, 0–14 ng/L)"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.5,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C003",
+        "preferred_name": "Thrombotic Coronary Artery Disease",
+        "preferred_label": "Thrombotic Coronary Artery Disease",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Thrombosis"
+        ],
+        "supporting_evidence": [
+          "KE004"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Coronary Angiogram: Widely patent RCA; left anterior descending artery showed a large filling defect in the proximal segment with TIMI flow grade 3"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C004",
+        "preferred_name": "Atherosclerotic Coronary Artery Disease",
+        "preferred_label": "Atherosclerotic Coronary Artery Disease",
+        "generator_views": [
+          "mechanism"
+        ],
+        "axis_nodes": [
+          "Atherosclerosis"
+        ],
+        "supporting_evidence": [
+          "KE002",
+          "KE004"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Past medical history significant for acute myocardial infarction 9 years ago at age 30.",
+          "Coronary Angiogram: Widely patent RCA; left anterior descending artery showed a large filling defect in the proximal segment with TIMI flow grade 3"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0,
+        "protected_reason": "",
+        "status": "live"
+      },
+      {
+        "concept_id": "C005",
+        "preferred_name": "Coronary Artery Thrombosis",
+        "preferred_label": "Coronary Artery Thrombosis",
+        "generator_views": [
+          "modality_decisive"
+        ],
+        "axis_nodes": [
+          "Angiography"
+        ],
+        "supporting_evidence": [
+          "KE004"
+        ],
+        "contradicting_evidence": [],
+        "support_spans": [
+          "Coronary Angiogram: Widely patent RCA; left anterior descending artery showed a large filling defect in the proximal segment with TIMI flow grade 3"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0,
+        "protected_reason": "",
+        "status": "live"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "KE001",
+        "raw_span": "A 39-year-old Hispanic man presented with chest pain and shortness of breath for 12 to 24 hours.",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE002",
+        "raw_span": "Past medical history significant for acute myocardial infarction 9 years ago at age 30.",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE003",
+        "raw_span": "High-sensitivity troponin T: 888 ng/L (normal range, 0–14 ng/L)",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE004",
+        "raw_span": "Coronary Angiogram: Widely patent RCA; left anterior descending artery showed a large filling defect in the proximal segment with TIMI flow grade 3",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE005",
+        "raw_span": "Electrocardiogram: No apparent abnormalities on current admission",
+        "source_view": "batched"
+      },
+      {
+        "evidence_id": "KE006",
+        "raw_span": "Echocardiogram: Normal biventricular size and systolic function, no regional wall motion abnormalities, no pericardial effusion",
+        "source_view": "batched"
+      }
+    ],
+    "frontier": [
+      {
+        "preferred_name": "Myocardial Infarction",
+        "preferred_label": "Myocardial Infarction",
+        "support_spans": [
+          "Past medical history significant for acute myocardial infarction 9 years ago at age 30.",
+          "High-sensitivity troponin T: 888 ng/L (normal range, 0–14 ng/L)"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.5
+      },
+      {
+        "preferred_name": "Acute Coronary Syndrome",
+        "preferred_label": "Acute Coronary Syndrome",
+        "support_spans": [
+          "A 39-year-old Hispanic man presented with chest pain and shortness of breath for 12 to 24 hours.",
+          "High-sensitivity troponin T: 888 ng/L (normal range, 0–14 ng/L)"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "Atherosclerotic Coronary Artery Disease",
+        "preferred_label": "Atherosclerotic Coronary Artery Disease",
+        "support_spans": [
+          "Past medical history significant for acute myocardial infarction 9 years ago at age 30.",
+          "Coronary Angiogram: Widely patent RCA; left anterior descending artery showed a large filling defect in the proximal segment with TIMI flow grade 3"
+        ],
+        "contradict_spans": [],
+        "score_logit": 2.0
+      },
+      {
+        "preferred_name": "Coronary Artery Thrombosis",
+        "preferred_label": "Coronary Artery Thrombosis",
+        "support_spans": [
+          "Coronary Angiogram: Widely patent RCA; left anterior descending artery showed a large filling defect in the proximal segment with TIMI flow grade 3"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      },
+      {
+        "preferred_name": "Thrombotic Coronary Artery Disease",
+        "preferred_label": "Thrombotic Coronary Artery Disease",
+        "support_spans": [
+          "Coronary Angiogram: Widely patent RCA; left anterior descending artery showed a large filling defect in the proximal segment with TIMI flow grade 3"
+        ],
+        "contradict_spans": [],
+        "score_logit": 1.0
+      }
+    ],
+    "vignette_chars": 1364,
+    "frontier_selector": {
+      "champion": "Myocardial Infarction",
+      "runner_up": "Acute Coronary Syndrome",
+      "why": "The high-sensitivity troponin T level of 888 ng/L, significantly above the normal range, decided it."
+    },
+    "selector_family": "aphhm_c_candev",
+    "x3": {
+      "mode": "evidence",
+      "before": 5,
+      "after": 3
+    },
+    "reselect_from": "compact_forest_v1"
+  }
+}
