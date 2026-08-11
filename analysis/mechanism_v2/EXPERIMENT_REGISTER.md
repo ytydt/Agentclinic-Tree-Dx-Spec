@@ -31,6 +31,7 @@ No excluded control is silently reintroduced as a scientific factor.
 | E5 | Candidate-set interference / IIA | synthesis E5; independent E3 | yes | queued |
 | E6 | Raw vs flat facts vs typed relation graph | synthesis E6/E12; independent E2 | yes | queued |
 | E7 | Substring vs exact-synonym vs typed registry | synthesis E7; independent E1 | selector replay | complete: E7a offline replay + E7b 400-case fresh blinded selector; exact identity restores exposure, generic relation edge adds no top-1 benefit |
+| E7c | Directional clinical relation + bounded evidence inheritance after safe identity | newly exposed by E7b; not specified in either source audit | relation typing + fresh selector | complete: 299 unsafe-fold cases; actual noisy typed graph was -0.67 pp vs exact and bounded inheritance was net zero; only 64.8% internal direction agreement and 80.6% repeated-pair consistency, so this falsifies the implementation, not the ideal mechanism |
 | E8 | Atemporal hard veto vs time/scope-aware soft veto | synthesis E8; independent E5 | yes | queued |
 | E9 | Forest real/duplicate/shuffled view independence | synthesis E9; independent E6 | selector replay | queued |
 | E10 | B06 isolated/sequential × supervisor/RRF | synthesis E10 | yes | queued |
