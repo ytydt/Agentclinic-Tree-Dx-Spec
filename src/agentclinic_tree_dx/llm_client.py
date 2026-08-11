@@ -66,6 +66,8 @@ except ImportError:
 _LOG_TLS = threading.local()
 _TELEMETRY_TLS = threading.local()
 _TELEMETRY_WRITE_LOCK = threading.Lock()
+_PROVIDER_ROUTE_LOCK = threading.Lock()
+_PROVIDER_ROUTE_COUNTER = 0
 
 
 def set_thread_log_path(path: str | None) -> None:
@@ -479,15 +481,33 @@ class RobustLLMClient:
             # Novita is retired for this project — do not route or fall back to it.
             # google-vertex rejects max_tokens≥8193; when TREE_DX_DIRECT_POST_OUTPUT_CAP
             # escalates past 8k (truncation/error retries), Vertex 400s the whole call.
-            # Prefer Groq / DeepInfra only for this backbone.
+            # Use both Groq and DeepInfra. ``ordered`` preserves historical
+            # behaviour; ``balanced`` alternates the primary across semantic
+            # calls and then reverses it on an internal transport retry.  The
+            # latter prevents a large concurrent experiment from depending on
+            # one provider's transient quality/capacity state.
+            policy = os.environ.get(
+                "TREE_DX_LLAMA_PROVIDER_POLICY", "ordered"
+            ).strip().lower()
+            if policy not in {"ordered", "balanced"}:
+                raise ValueError(
+                    "TREE_DX_LLAMA_PROVIDER_POLICY must be ordered or balanced"
+                )
             if not change_model:
-                return {
-                    "order": ["groq", "deepinfra/base"],
-                    "ignore": ["google-vertex", "google-ai-studio", "novita"],
-                    "allow_fallbacks": False,
-                }
+                primary = "groq"
+                if policy == "balanced":
+                    global _PROVIDER_ROUTE_COUNTER
+                    with _PROVIDER_ROUTE_LOCK:
+                        route_index = _PROVIDER_ROUTE_COUNTER
+                        _PROVIDER_ROUTE_COUNTER += 1
+                    primary = "groq" if route_index % 2 == 0 else "deepinfra/base"
+                _TELEMETRY_TLS.llama_primary = primary
+            else:
+                initial = getattr(_TELEMETRY_TLS, "llama_primary", "groq")
+                primary = "deepinfra/base" if initial == "groq" else "groq"
+            secondary = "deepinfra/base" if primary == "groq" else "groq"
             return {
-                "order": ["deepinfra/base", "groq"],
+                "order": [primary, secondary],
                 "ignore": ["google-vertex", "google-ai-studio", "novita"],
                 "allow_fallbacks": False,
             }

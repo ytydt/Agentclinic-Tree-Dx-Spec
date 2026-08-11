@@ -109,6 +109,37 @@ def test_explicit_openai_transport_fails_diagnostically_without_sdk(monkeypatch)
         raise AssertionError("missing SDK must not silently change transport")
 
 
+def test_llama_balanced_policy_alternates_primary_and_reverses_on_retry(monkeypatch):
+    monkeypatch.setenv("TREE_DX_LLAMA_PROVIDER_POLICY", "balanced")
+    monkeypatch.setattr(llm_client, "_PROVIDER_ROUTE_COUNTER", 0)
+
+    first = RobustLLMClient._get_openrouter_provider(
+        "meta-llama/llama-3.3-70b-instruct"
+    )
+    first_retry = RobustLLMClient._get_openrouter_provider(
+        "meta-llama/llama-3.3-70b-instruct", change_model=True
+    )
+    second = RobustLLMClient._get_openrouter_provider(
+        "meta-llama/llama-3.3-70b-instruct"
+    )
+
+    assert first["order"] == ["groq", "deepinfra/base"]
+    assert first_retry["order"] == ["deepinfra/base", "groq"]
+    assert second["order"] == ["deepinfra/base", "groq"]
+
+
+def test_llama_provider_policy_rejects_unknown_value(monkeypatch):
+    monkeypatch.setenv("TREE_DX_LLAMA_PROVIDER_POLICY", "single-provider")
+    try:
+        RobustLLMClient._get_openrouter_provider(
+            "meta-llama/llama-3.3-70b-instruct"
+        )
+    except ValueError as exc:
+        assert "ordered or balanced" in str(exc)
+    else:
+        raise AssertionError("unknown provider policy must fail closed")
+
+
 def test_call_module_writes_key_free_structured_telemetry(tmp_path, monkeypatch):
     client = RobustLLMClient(model="deepseek/deepseek-v4-flash")
     monkeypatch.setattr(
