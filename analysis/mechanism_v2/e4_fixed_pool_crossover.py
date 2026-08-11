@@ -735,6 +735,12 @@ def finalize(
     input_hash: str,
     bridge: FrozenExactSynonymBridge,
 ) -> None:
+    preregistration = json.loads(
+        (out / "preregistration.json").read_text(encoding="utf-8")
+    )
+    environment_record = json.loads(
+        (out / "environment.json").read_text(encoding="utf-8")
+    )
     rows: list[dict[str, Any]] = []
     for arm in ARMS:
         arm_rows = read_jsonl(out / "arms" / arm / "case_results.jsonl")
@@ -772,16 +778,25 @@ def finalize(
             model="deterministic" if arm == ARM_DETERMINISTIC else model,
             workers=1 if arm == ARM_DETERMINISTIC else workers,
             rag=False,
-            source_commit=source_commit(),
+            source_commit=str(preregistration.get("source_commit") or source_commit()),
             prompt_hashes={} if arm == ARM_DETERMINISTIC else {arm: sha256_text(PROMPTS[arm])},
             input_hash=input_hash,
             selection_freeze="preregistration.json + per-case pool_sha256",
             endpoint_contract=ENDPOINT_CONTRACT,
             excluded_variance_controls=["repeat runs", "new confirmation set", "provider/retry standardisation"],
+            capabilities=dict(environment_record.get("capabilities") or {}),
         )
         for arm in ARMS
     }
-    atomic_json(out / "manifests.json", {arm: manifest.__dict__ for arm, manifest in manifests.items()})
+    manifest_documents: dict[str, Any] = {}
+    for arm, manifest in manifests.items():
+        document = dict(manifest.__dict__)
+        document["execution_reasoning_controls"] = environment_record.get(
+            "reasoning_controls"
+        )
+        document["manifest_generated_after_all_arms"] = True
+        manifest_documents[arm] = document
+    atomic_json(out / "manifests.json", manifest_documents)
 
 
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
@@ -828,20 +843,22 @@ def main(argv: Sequence[str] | None = None) -> int:
         if existing_hashes != rebuilt_hashes:
             raise AssertionError("canonical payload pools differ from frozen reconstruction")
     write_jsonl(pools_path, pools)
-    atomic_json(
-        out / "environment.json",
-        {
-            "capabilities": dependency_capabilities(),
-            "model": args.model,
-            "workers": workers,
-            "reasoning_controls": {
-                "effort": __import__("os").environ.get("TREE_DX_REASONING_EFFORT"),
-                "max_tokens": __import__("os").environ.get("TREE_DX_REASONING_MAX_TOKENS"),
-                "exclude": __import__("os").environ.get("TREE_DX_REASONING_EXCLUDE"),
+    environment_path = out / "environment.json"
+    if not environment_path.is_file():
+        atomic_json(
+            environment_path,
+            {
+                "capabilities": dependency_capabilities(),
+                "model": args.model,
+                "workers": workers,
+                "reasoning_controls": {
+                    "effort": __import__("os").environ.get("TREE_DX_REASONING_EFFORT"),
+                    "max_tokens": __import__("os").environ.get("TREE_DX_REASONING_MAX_TOKENS"),
+                    "exclude": __import__("os").environ.get("TREE_DX_REASONING_EXCLUDE"),
+                },
+                "preregistration_sha256": file_sha256(out / "preregistration.json"),
             },
-            "preregistration_sha256": file_sha256(out / "preregistration.json"),
-        },
-    )
+        )
     if args.prepare_only:
         print(f"prepared {len(jobs)} cases; input_hash={input_hash}")
         return 0
