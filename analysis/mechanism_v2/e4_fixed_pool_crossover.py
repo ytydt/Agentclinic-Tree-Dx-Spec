@@ -20,7 +20,13 @@ from pathlib import Path
 from typing import Any, Mapping, Sequence
 
 if __package__ in {None, ""}:
-    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+    _ROOT_FOR_IMPORT = Path(__file__).resolve().parents[2]
+    sys.path.insert(0, str(_ROOT_FOR_IMPORT))
+    # ``OnlineJSONCaller`` imports the production client lazily inside worker
+    # threads.  Keep direct-script execution equivalent to the installed
+    # package/official-SDK environment without requiring a caller-specific
+    # PYTHONPATH wrapper.
+    sys.path.insert(0, str(_ROOT_FOR_IMPORT / "src"))
 
 from analysis.mechanism_v2.common import (  # noqa: E402
     DEVELOPMENT_SLICES,
