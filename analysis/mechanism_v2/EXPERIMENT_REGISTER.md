@@ -27,7 +27,7 @@ No excluded control is silently reintroduced as a scientific factor.
 | E1 | Same-code clean/options × fixed/shuffled-format input | synthesis E1 | yes | queued |
 | E2 | Strict completeness + identifiability blinded adjudication | synthesis E2; independent §12.1 | heterogeneous proxy reviewers + final audit | queued |
 | E3 | Claim ledger and frozen analysis dependencies | synthesis E3 | no | implemented |
-| E4 | Fixed-pool selector crossover | synthesis E4; independent E4 | yes | queued |
+| E4 | Fixed-pool selector crossover | synthesis E4; independent E4 | yes | implementation + 400-case/source-blind pool frozen; arms executing |
 | E5 | Candidate-set interference / IIA | synthesis E5; independent E3 | yes | queued |
 | E6 | Raw vs flat facts vs typed relation graph | synthesis E6/E12; independent E2 | yes | queued |
 | E7 | Substring vs exact-synonym vs typed registry | synthesis E7; independent E1 | selector replay | complete: E7a offline replay + E7b 400-case fresh blinded selector; exact identity restores exposure, generic relation edge adds no top-1 benefit |
