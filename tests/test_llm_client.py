@@ -123,9 +123,9 @@ def test_llama_balanced_policy_alternates_primary_and_reverses_on_retry(monkeypa
         "meta-llama/llama-3.3-70b-instruct"
     )
 
-    assert first["order"] == ["groq", "deepinfra/base"]
-    assert first_retry["order"] == ["deepinfra/base", "groq"]
-    assert second["order"] == ["deepinfra/base", "groq"]
+    assert first["order"] == ["groq", "deepinfra"]
+    assert first_retry["order"] == ["deepinfra", "groq"]
+    assert second["order"] == ["deepinfra", "groq"]
 
 
 def test_llama_provider_policy_rejects_unknown_value(monkeypatch):

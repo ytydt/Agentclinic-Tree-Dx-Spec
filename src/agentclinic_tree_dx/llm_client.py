@@ -500,12 +500,12 @@ class RobustLLMClient:
                     with _PROVIDER_ROUTE_LOCK:
                         route_index = _PROVIDER_ROUTE_COUNTER
                         _PROVIDER_ROUTE_COUNTER += 1
-                    primary = "groq" if route_index % 2 == 0 else "deepinfra/base"
+                    primary = "groq" if route_index % 2 == 0 else "deepinfra"
                 _TELEMETRY_TLS.llama_primary = primary
             else:
                 initial = getattr(_TELEMETRY_TLS, "llama_primary", "groq")
-                primary = "deepinfra/base" if initial == "groq" else "groq"
-            secondary = "deepinfra/base" if primary == "groq" else "groq"
+                primary = "deepinfra" if initial == "groq" else "groq"
+            secondary = "deepinfra" if primary == "groq" else "groq"
             return {
                 "order": [primary, secondary],
                 "ignore": ["google-vertex", "google-ai-studio", "novita"],
