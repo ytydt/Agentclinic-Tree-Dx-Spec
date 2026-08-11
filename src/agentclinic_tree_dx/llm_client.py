@@ -17,6 +17,11 @@ backward-compatible meaning: true selects ``fixed`` and false selects
 ``direct``.
 
 To override host / port use ``TREE_DX_PROXY_HOST`` / ``TREE_DX_PROXY_PORT``.
+
+OpenRouter reasoning output is opt-in and resolved per request:
+  - ``TREE_DX_REASONING_EFFORT`` → xhigh/high/medium/low/minimal/none
+  - ``TREE_DX_REASONING_MAX_TOKENS`` → positive integer budget (exclusive with effort)
+  - ``TREE_DX_REASONING_EXCLUDE`` → omit returned reasoning text while retaining usage
 """
 
 from __future__ import annotations
@@ -315,6 +320,76 @@ if _TRANSPORT_MODE not in {"auto", "openai", "stdlib"}:
     raise ValueError(
         "TREE_DX_LLM_TRANSPORT must be one of: auto, openai, stdlib"
     )
+
+
+_REASONING_EFFORT_VALUES = {
+    "xhigh",
+    "high",
+    "medium",
+    "low",
+    "minimal",
+    "none",
+}
+
+
+def _openrouter_reasoning_config(
+    environ: dict[str, str] | None = None,
+) -> dict[str, Any] | None:
+    """Read an optional OpenRouter reasoning policy from the environment.
+
+    The policy is resolved per request rather than at module import, allowing
+    experiment runners to set a bounded policy without changing repository
+    defaults.  OpenRouter accepts either an effort level or a token budget, not
+    both.  ``exclude`` controls whether reasoning text is returned while usage
+    remains visible in provider telemetry.
+    """
+    env = os.environ if environ is None else environ
+    effort = str(env.get("TREE_DX_REASONING_EFFORT", "")).strip().lower()
+    budget_text = str(env.get("TREE_DX_REASONING_MAX_TOKENS", "")).strip()
+    exclude_text = str(env.get("TREE_DX_REASONING_EXCLUDE", "")).strip().lower()
+
+    if effort and budget_text:
+        raise ValueError(
+            "set only one of TREE_DX_REASONING_EFFORT and "
+            "TREE_DX_REASONING_MAX_TOKENS"
+        )
+    config: dict[str, Any] = {}
+    if effort:
+        if effort not in _REASONING_EFFORT_VALUES:
+            raise ValueError(
+                "TREE_DX_REASONING_EFFORT must be one of: "
+                + ", ".join(sorted(_REASONING_EFFORT_VALUES))
+            )
+        config["effort"] = effort
+    if budget_text:
+        try:
+            budget = int(budget_text)
+        except ValueError as exc:
+            raise ValueError(
+                "TREE_DX_REASONING_MAX_TOKENS must be a positive integer"
+            ) from exc
+        if budget <= 0:
+            raise ValueError(
+                "TREE_DX_REASONING_MAX_TOKENS must be a positive integer"
+            )
+        config["max_tokens"] = budget
+    if exclude_text:
+        if exclude_text not in {"1", "true", "yes", "on", "0", "false", "no", "off"}:
+            raise ValueError(
+                "TREE_DX_REASONING_EXCLUDE must be a boolean value"
+            )
+        config["exclude"] = exclude_text in {"1", "true", "yes", "on"}
+    return config or None
+
+
+def _with_openrouter_reasoning(
+    body: dict[str, Any], config: dict[str, Any] | None
+) -> dict[str, Any]:
+    """Return a request body with an isolated copy of the reasoning policy."""
+    result = dict(body)
+    if config is not None:
+        result["reasoning"] = dict(config)
+    return result
 
 # ── Set A: models that should use the OpenRouter API as base_url ─────────────
 # Corresponds to debate.py line 196 `elif model in [...]`.
@@ -645,6 +720,7 @@ class RobustLLMClient:
         )
 
         client = None
+        sdk_uses_openrouter = False
         if not use_direct:
             client_kwargs: dict[str, Any] = {}
             if _http_client is not None:
@@ -670,12 +746,17 @@ class RobustLLMClient:
                     base_url="https://openrouter.ai/api/v1",
                     **client_kwargs,
                 )
+                sdk_uses_openrouter = True
         elif model.startswith("phala/") or model.startswith("gpt-3.5-turbo"):
             raise RuntimeError(
                 f"stdlib transport supports OpenRouter models only; got {model!r}"
             )
 
         change_model = False
+        reasoning_config = _openrouter_reasoning_config()
+        telemetry = _current_telemetry()
+        if telemetry is not None:
+            telemetry["reasoning_config"] = reasoning_config
         # Escalating direct-POST output budget across truncation retries.
         # Without this, ``max_tokens += 10000`` is a no-op under a fixed 1024 cap
         # (root cause of DiscriminatorAgentMatrix finish_reason=length storms).
@@ -699,11 +780,20 @@ class RobustLLMClient:
                     return response.choices[0].text
 
                 elif not use_direct:
+                    request_kwargs: dict[str, Any] = {
+                        "model": model,
+                        "messages": messages,
+                        "temperature": temperature,
+                        "max_tokens": max_tokens,
+                    }
+                    if sdk_uses_openrouter and reasoning_config is not None:
+                        # ``extra_body`` is the official OpenAI SDK escape hatch
+                        # for OpenRouter-specific request fields.
+                        request_kwargs["extra_body"] = {
+                            "reasoning": dict(reasoning_config)
+                        }
                     response = client.chat.completions.create(
-                        model=model,
-                        messages=messages,
-                        temperature=temperature,
-                        max_tokens=max_tokens,
+                        **request_kwargs,
                     )
 
                 else:
@@ -731,13 +821,13 @@ class RobustLLMClient:
                     }
                     try:
                         status_code, payload = _post_openrouter_json(
-                            {
+                            _with_openrouter_reasoning({
                                 "model": model,
                                 "messages": messages,
                                 "temperature": temperature,
                                 "max_tokens": min(max_tokens, attempt_output_cap),
                                 "provider": provider,
-                            },
+                            }, reasoning_config),
                             headers,
                             timeout=180,
                         )
