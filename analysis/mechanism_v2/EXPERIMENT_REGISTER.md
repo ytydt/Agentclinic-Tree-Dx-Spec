@@ -24,7 +24,7 @@ No excluded control is silently reintroduced as a scientific factor.
 | ID | Consolidated experiment | Source proposals merged | LLM required | Status |
 |---|---|---|---:|---|
 | E0 | Runtime, payload and cost ledger | synthesis E0; independent §12.0 | probe only | implemented |
-| E1 | Same-code clean/options × fixed/shuffled-format input | synthesis E1 | yes | 200-case, 8-arm input-sensitive APHHM/AB02 micro-pipeline frozen; executing (explicitly not full production APHHM) |
+| E1 | Same-code clean/options × fixed/shuffled-format input | synthesis E1 | yes | complete: 200 cases × 8 arms; option visibility raises paired top-1 by 41.0pp hierarchical and 40.2pp flat under fixed format, but the effect is label-copy/format sensitive and is not a full-production APHHM result |
 | E2 | Strict completeness + identifiability blinded adjudication | synthesis E2; independent §12.1 | heterogeneous proxy reviewers + final audit | queued |
 | E3 | Claim ledger and frozen analysis dependencies | synthesis E3 | no | implemented |
 | E4 | Fixed-pool selector crossover | synthesis E4; independent E4 | yes | complete: 400 cases × 5 arms; Forest +2.0pp vs e7 (9/1, p=.0215), but all strict gain is MCR and 3/9 gains are surface/scope artifacts; pairwise adds cost without beating Forest |
