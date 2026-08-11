@@ -82,6 +82,13 @@ def normalize_label(value: str) -> str:
     return re.sub(r"[^\w\s\-/\+]", "", value)
 
 
+def clean_vignette(case_text: str) -> str:
+    """Return the runtime vignette without the benchmark option block."""
+    text = str(case_text or "").strip()
+    split = re.split(r"(?im)^\s*options?\s*:\s*$", text, maxsplit=1)
+    return split[0].strip()
+
+
 def json_sha256(value: Any) -> str:
     encoded = json.dumps(
         value, ensure_ascii=False, sort_keys=True, separators=(",", ":")
