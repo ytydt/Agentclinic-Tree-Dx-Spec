@@ -7,9 +7,14 @@ from LLM-Structured-Data-main/debate.py.  It exposes:
   - ``RobustLLMClient`` – drop-in replacement for the original ``OpenAILLMClient``
     with the same ``call_module(module_name, prompt_text, payload)`` interface
 
-Proxy mode is controlled by the environment variable ``TREE_DX_USE_PROXY``:
-  - unset or "1" / "true"  → proxy ON  (default, matching the server environment)
-  - "0" / "false"          → proxy OFF (direct connection)
+Proxy mode is controlled by ``TREE_DX_PROXY_MODE``:
+  - ``fixed``        → repository/server Clash proxy (the historical default)
+  - ``environment``  → preserve the execution environment's dynamic proxy
+  - ``direct``       → ignore proxy environment variables
+
+When ``TREE_DX_PROXY_MODE`` is unset, ``TREE_DX_USE_PROXY`` retains its
+backward-compatible meaning: true selects ``fixed`` and false selects
+``direct``.
 
 To override host / port use ``TREE_DX_PROXY_HOST`` / ``TREE_DX_PROXY_PORT``.
 """
@@ -105,32 +110,74 @@ def _env_bool(key: str, default: bool) -> bool:
     return v not in ("0", "false", "no", "off")
 
 
-USE_PROXY  = _env_bool("TREE_DX_USE_PROXY", default=True)
+def _resolve_proxy_mode(
+    explicit_mode: str | None = None,
+    legacy_use_proxy: bool | None = None,
+) -> str:
+    """Resolve proxy policy without mutating process environment.
+
+    ``environment`` is essential in managed runtimes whose proxy ports are
+    injected per process.  Replacing those values with the historical local
+    Clash port makes the official SDK fail before reaching the provider.
+    """
+    mode = (
+        explicit_mode
+        if explicit_mode is not None
+        else os.environ.get("TREE_DX_PROXY_MODE", "")
+    ).strip().lower()
+    if not mode:
+        enabled = (
+            legacy_use_proxy
+            if legacy_use_proxy is not None
+            else _env_bool("TREE_DX_USE_PROXY", default=True)
+        )
+        return "fixed" if enabled else "direct"
+    aliases = {"env": "environment", "off": "direct", "on": "fixed"}
+    mode = aliases.get(mode, mode)
+    if mode not in {"fixed", "environment", "direct"}:
+        raise ValueError(
+            "TREE_DX_PROXY_MODE must be fixed, environment, or direct"
+        )
+    return mode
+
+
+_PROXY_MODE = _resolve_proxy_mode()
+USE_PROXY = _PROXY_MODE != "direct"
 PROXY_HOST = os.environ.get("TREE_DX_PROXY_HOST", "127.0.0.1")
 PROXY_PORT = int(os.environ.get("TREE_DX_PROXY_PORT", "7890"))
 
 _PROXY_URL = f"http://{PROXY_HOST}:{PROXY_PORT}"
-_PROXIES   = {"https": _PROXY_URL, "http": _PROXY_URL} if USE_PROXY else {}
+_PROXIES = (
+    {"https": _PROXY_URL, "http": _PROXY_URL}
+    if _PROXY_MODE == "fixed"
+    else {}
+)
 
-if USE_PROXY:
+if _PROXY_MODE == "fixed":
     os.environ["HTTP_PROXY"]  = _PROXY_URL
     os.environ["HTTPS_PROXY"] = _PROXY_URL
-else:
-    for _k in ("HTTP_PROXY", "HTTPS_PROXY", "http_proxy", "https_proxy"):
+elif _PROXY_MODE == "direct":
+    for _k in (
+        "HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY",
+        "http_proxy", "https_proxy", "all_proxy",
+    ):
         os.environ.pop(_k, None)
+# ``environment`` deliberately leaves every injected proxy variable untouched.
 
 # httpx client used by openai.OpenAI().  ``proxy`` replaced ``proxies`` in
 # recent httpx versions; detect the installed signature instead of pinning the
 # runner to one server image.
 _http_client = None
 if httpx is not None:
-    if USE_PROXY:
+    if _PROXY_MODE == "fixed":
         try:
             _http_client = httpx.Client(proxy=_PROXY_URL, timeout=180.0)
         except TypeError:  # httpx < 0.28
             _http_client = httpx.Client(proxies=_PROXY_URL, timeout=180.0)
+    elif _PROXY_MODE == "environment":
+        _http_client = httpx.Client(timeout=180.0, trust_env=True)
     else:
-        _http_client = httpx.Client(timeout=180.0)
+        _http_client = httpx.Client(timeout=180.0, trust_env=False)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -145,8 +192,8 @@ _WATCHDOG_PID = "/home/wanghongyi/clashctl/resources/watchdog.pid"
 
 def _is_proxy_port_open(host: str | None = None, port: int | None = None,
                          timeout: float = 3.0) -> bool:
-    """TCP-connect test for the proxy port.  Always True when USE_PROXY=False."""
-    if not USE_PROXY:
+    """TCP-connect test for the repository-managed fixed proxy only."""
+    if _PROXY_MODE != "fixed":
         return True
     host = host or PROXY_HOST
     port = port or PROXY_PORT
@@ -159,8 +206,8 @@ def _is_proxy_port_open(host: str | None = None, port: int | None = None,
 
 def _ensure_watchdog_running() -> None:
     """Start the Clash watchdog daemon if it is not already running.
-    No-op when USE_PROXY=False or the watchdog scripts are absent."""
-    if not USE_PROXY:
+    No-op outside fixed-proxy mode or when watchdog scripts are absent."""
+    if _PROXY_MODE != "fixed":
         return
     if not os.path.exists(_WATCHDOG_SH):
         return
@@ -185,9 +232,11 @@ def _ensure_watchdog_running() -> None:
 
 
 def _restore_vpn_blocking(wait: int = 25) -> bool:
-    """Call clashon.sh to recover the VPN, then wait for the port to reopen.
+    """Recover the repository-managed fixed proxy, then wait for its port.
+
+    Environment-proxy and direct modes are externally managed and no-op here.
     Returns True when the port is reachable again within *wait* seconds."""
-    if not USE_PROXY:
+    if _PROXY_MODE != "fixed":
         return True
     if not os.path.exists(_CLASHON_SH):
         print("[VPN] clashon.sh not found; skipping recovery.")
@@ -229,9 +278,11 @@ if requests is not None and Retry is not None and HTTPAdapter is not None:
         pool_maxsize=8,
     )
     _openrouter_session = requests.Session()
+    if _PROXY_MODE == "direct":
+        _openrouter_session.trust_env = False
     _openrouter_session.mount("https://", _http_adapter)
     _openrouter_session.mount("http://",  _http_adapter)
-    if USE_PROXY:
+    if _PROXY_MODE == "fixed":
         _openrouter_session.proxies.update(_PROXIES)
 
 
@@ -402,7 +453,12 @@ def _post_openrouter_json(
 
     encoded = json.dumps(body, ensure_ascii=False).encode("utf-8")
     request = urllib.request.Request(url, data=encoded, headers=headers, method="POST")
-    proxy_handler = urllib.request.ProxyHandler(_PROXIES if USE_PROXY else {})
+    if _PROXY_MODE == "fixed":
+        proxy_handler = urllib.request.ProxyHandler(_PROXIES)
+    elif _PROXY_MODE == "environment":
+        proxy_handler = urllib.request.ProxyHandler()
+    else:
+        proxy_handler = urllib.request.ProxyHandler({})
     opener = urllib.request.build_opener(proxy_handler)
     try:
         with opener.open(request, timeout=timeout) as response:

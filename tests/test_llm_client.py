@@ -2,6 +2,22 @@ from agentclinic_tree_dx import llm_client
 from agentclinic_tree_dx.llm_client import RobustLLMClient
 
 
+def test_proxy_mode_preserves_backward_compatibility_and_managed_env():
+    assert llm_client._resolve_proxy_mode("", True) == "fixed"
+    assert llm_client._resolve_proxy_mode("", False) == "direct"
+    assert llm_client._resolve_proxy_mode("env", True) == "environment"
+    assert llm_client._resolve_proxy_mode("environment", False) == "environment"
+
+
+def test_proxy_mode_rejects_unknown_value():
+    try:
+        llm_client._resolve_proxy_mode("mystery", True)
+    except ValueError as exc:
+        assert "fixed, environment, or direct" in str(exc)
+    else:
+        raise AssertionError("unknown proxy policy must fail closed")
+
+
 def test_call_module_accepts_compact_valid_json_without_retry(monkeypatch):
     client = RobustLLMClient(
         min_response_length=10,

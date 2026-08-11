@@ -64,6 +64,7 @@ def dependency_capabilities() -> dict[str, Any]:
             for name in names
         },
         "transport_requested": os.environ.get("TREE_DX_LLM_TRANSPORT", "auto"),
+        "proxy_mode_requested": os.environ.get("TREE_DX_PROXY_MODE", "legacy"),
         "proxy_enabled": os.environ.get("TREE_DX_USE_PROXY", "1").lower()
         not in {"0", "false", "no", "off"},
         "openrouter_key_present": bool(os.environ.get("OPENROUTER_API_KEY")),
@@ -125,4 +126,3 @@ def aggregate_telemetry(rows: Iterable[Mapping[str, Any]]) -> dict[str, Any]:
             }
         ),
     }
-
