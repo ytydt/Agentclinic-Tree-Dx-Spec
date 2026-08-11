@@ -30,7 +30,7 @@ No excluded control is silently reintroduced as a scientific factor.
 | E4 | Fixed-pool selector crossover | synthesis E4; independent E4 | yes | queued |
 | E5 | Candidate-set interference / IIA | synthesis E5; independent E3 | yes | queued |
 | E6 | Raw vs flat facts vs typed relation graph | synthesis E6/E12; independent E2 | yes | queued |
-| E7 | Substring vs exact-synonym vs typed registry | synthesis E7; independent E1 | selector replay | queued |
+| E7 | Substring vs exact-synonym vs typed registry | synthesis E7; independent E1 | selector replay | E7a offline identity/exposure replay complete; E7b fresh blinded selector queued |
 | E8 | Atemporal hard veto vs time/scope-aware soft veto | synthesis E8; independent E5 | yes | queued |
 | E9 | Forest real/duplicate/shuffled view independence | synthesis E9; independent E6 | selector replay | queued |
 | E10 | B06 isolated/sequential × supervisor/RRF | synthesis E10 | yes | queued |
@@ -61,4 +61,3 @@ debugging endpoint.
 Each row above receives its own code/result/log commit after all of its stated
 conditions finish.  Failed or partially served calls remain in the artifact and
 are not silently dropped; their cases appear in an intention-to-analyse table.
-
