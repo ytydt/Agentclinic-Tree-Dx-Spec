@@ -6,6 +6,7 @@ from analysis.mechanism_v2.e6_representation_fidelity import (
     RAW,
     matched_representations,
     paired,
+    repair_grounded_quote,
     select_cases,
     validate_builder,
     validate_selector,
@@ -102,6 +103,17 @@ def test_builder_validator_enforces_grounded_quotes_and_typed_edges():
     response = _builder_response()
     response["graph_relations"][0]["target_id"] = "N99"
     assert "endpoint" in validate_builder(response, VIGNETTE)
+
+
+def test_quote_repair_copies_exact_source_span_without_fuzzy_substitution():
+    source = "No tobacco, alcohol, intravenous drug use, or high-risk sexual behavior."
+    assert repair_grounded_quote(
+        "No tobacco, alcohol, intravenous drug use", source
+    ) == "No tobacco, alcohol, intravenous drug use"
+    assert repair_grounded_quote(
+        "No ... intravenous drug use", source
+    ) == "No tobacco, alcohol, intravenous drug use"
+    assert repair_grounded_quote("No illicit drug use", source) is None
 
 
 def test_all_representations_are_word_matched_per_case():

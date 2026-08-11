@@ -123,3 +123,22 @@ def test_stdlib_transport_receives_reasoning_body():
             os.environ.pop("TREE_DX_REASONING_EFFORT", None)
         else:
             os.environ["TREE_DX_REASONING_EFFORT"] = old_effort
+
+
+def test_long_json_output_ceiling_is_explicit_and_bounded():
+    old_cap = os.environ.get("TREE_DX_DIRECT_POST_OUTPUT_CAP")
+    old_ceiling = os.environ.get("TREE_DX_DIRECT_POST_OUTPUT_MAX_CAP")
+    try:
+        os.environ["TREE_DX_DIRECT_POST_OUTPUT_CAP"] = "8192"
+        os.environ["TREE_DX_DIRECT_POST_OUTPUT_MAX_CAP"] = "16384"
+        assert RobustLLMClient._bump_direct_post_output_cap() == 16384
+        assert os.environ["TREE_DX_DIRECT_POST_OUTPUT_CAP"] == "16384"
+    finally:
+        if old_cap is None:
+            os.environ.pop("TREE_DX_DIRECT_POST_OUTPUT_CAP", None)
+        else:
+            os.environ["TREE_DX_DIRECT_POST_OUTPUT_CAP"] = old_cap
+        if old_ceiling is None:
+            os.environ.pop("TREE_DX_DIRECT_POST_OUTPUT_MAX_CAP", None)
+        else:
+            os.environ["TREE_DX_DIRECT_POST_OUTPUT_MAX_CAP"] = old_ceiling

@@ -6,6 +6,7 @@ import argparse
 import csv
 import json
 import math
+import os
 import re
 import sys
 from collections import Counter, defaultdict
@@ -219,6 +220,179 @@ def quote_is_grounded(quote: str, vignette: str) -> bool:
     return bool(len(quote_norm) >= 3 and quote_norm in whitespace_normalize(vignette))
 
 
+def repair_grounded_quote(quote: str, vignette: str) -> str | None:
+    """Return the exact vignette span for punctuation-only quote drift.
+
+    The builder sometimes replaces source bullets with commas or omits a
+    Markdown ``*``.  Accepting the generated string as "verbatim" would weaken
+    the audit contract.  Instead, align an identical contiguous sequence of
+    case-folded word tokens and copy the corresponding characters from the
+    source vignette.  No fuzzy substitutions, omissions or reorderings pass.
+    """
+    quote_norm = whitespace_normalize(quote)
+    vignette_norm = whitespace_normalize(vignette)
+    if quote_is_grounded(quote_norm, vignette_norm):
+        return quote_norm
+    quote_tokens = [match.group(0).casefold() for match in re.finditer(r"\w+", quote_norm)]
+    source_matches = list(re.finditer(r"\w+", vignette_norm))
+    if not quote_tokens or len(quote_norm) < 3 or len(quote_tokens) > len(source_matches):
+        return None
+    source_tokens = [match.group(0).casefold() for match in source_matches]
+    width = len(quote_tokens)
+    for start in range(len(source_tokens) - width + 1):
+        if source_tokens[start:start + width] != quote_tokens:
+            continue
+        matched = vignette_norm[
+            source_matches[start].start():source_matches[start + width - 1].end()
+        ]
+        if len(matched) >= 3:
+            return matched
+    # A literal ellipsis is an explicit omission marker, not a fuzzy edit.
+    # Locate every unchanged segment in source order and return the shortest
+    # exact source span that covers them.  This keeps the stored quote truly
+    # verbatim while refusing substitutions or reordered tokens.
+    if re.search(r"(?:\.{3}|…)", quote_norm):
+        segment_tokens = [
+            [match.group(0).casefold() for match in re.finditer(r"\w+", segment)]
+            for segment in re.split(r"(?:\.{3}|…)", quote_norm)
+        ]
+        segment_tokens = [tokens for tokens in segment_tokens if tokens]
+        candidates: list[tuple[int, int]] = []
+        if len(segment_tokens) >= 2:
+            first = segment_tokens[0]
+            for start in range(len(source_tokens) - len(first) + 1):
+                if source_tokens[start:start + len(first)] != first:
+                    continue
+                cursor = start + len(first)
+                end = cursor - 1
+                complete = True
+                for segment in segment_tokens[1:]:
+                    located = None
+                    for probe in range(cursor, len(source_tokens) - len(segment) + 1):
+                        if source_tokens[probe:probe + len(segment)] == segment:
+                            located = probe
+                            break
+                    if located is None:
+                        complete = False
+                        break
+                    end = located + len(segment) - 1
+                    cursor = end + 1
+                if complete:
+                    candidates.append((start, end))
+        if candidates:
+            start, end = min(
+                candidates,
+                key=lambda pair: (
+                    source_matches[pair[1]].end() - source_matches[pair[0]].start(),
+                    pair[0],
+                ),
+            )
+            matched = vignette_norm[
+                source_matches[start].start():source_matches[end].end()
+            ]
+            if len(matched) <= 400:
+                return matched
+    return None
+
+
+def normalize_builder_response(
+    response: Mapping[str, Any], vignette: str
+) -> tuple[dict[str, Any], list[str]]:
+    """Apply bounded, target-blind schema repairs while retaining provenance."""
+    normalized = json.loads(json.dumps(dict(response), ensure_ascii=False))
+    actions: list[str] = []
+    raw_facts = normalized.get("flat_facts")
+    raw_nodes = normalized.get("graph_nodes")
+    raw_relations = normalized.get("graph_relations")
+    facts = list(raw_facts) if isinstance(raw_facts, list) else []
+    nodes = list(raw_nodes) if isinstance(raw_nodes, list) else []
+    relations = list(raw_relations) if isinstance(raw_relations, list) else []
+
+    if len(facts) > 24:
+        actions.append(f"trim_flat_facts:{len(facts)}->24")
+        facts = facts[:24]
+    if len(nodes) > 28:
+        actions.append(f"trim_graph_nodes:{len(nodes)}->28")
+        nodes = nodes[:28]
+
+    for index, row in enumerate(facts):
+        if not isinstance(row, dict):
+            continue
+        wanted_id = f"F{index + 1:02d}"
+        if row.get("fact_id") != wanted_id:
+            actions.append(f"canonicalize_fact_id:{row.get('fact_id')}->{wanted_id}")
+            row["fact_id"] = wanted_id
+        quote = str(row.get("source_quote") or "")
+        repaired = repair_grounded_quote(quote, vignette)
+        if repaired is not None and repaired != whitespace_normalize(quote):
+            row["source_quote"] = repaired
+            actions.append(f"repair_flat_quote:{wanted_id}")
+
+    kind_aliases = {
+        "event": "other", "history": "other", "procedure": "other",
+        "lab": "test", "laboratory": "test", "medication": "treatment",
+        "therapy": "treatment", "finding": "sign",
+    }
+    polarity_aliases = {
+        "positive": "present", "negative": "absent", "unknown": "uncertain",
+        "possible": "uncertain", "past": "historical",
+    }
+    scope_aliases = {"self": "patient", "subject": "patient", "unknown": "other"}
+    for row in nodes:
+        if not isinstance(row, dict):
+            continue
+        node_id = str(row.get("node_id") or "")
+        kind = str(row.get("kind") or "").strip().lower()
+        if kind not in NODE_KINDS and kind in kind_aliases:
+            row["kind"] = kind_aliases[kind]
+            actions.append(f"canonicalize_kind:{node_id}:{kind}->{row['kind']}")
+        polarity = str(row.get("polarity") or "").strip().lower()
+        if polarity not in POLARITIES and polarity in polarity_aliases:
+            row["polarity"] = polarity_aliases[polarity]
+            actions.append(
+                f"canonicalize_polarity:{node_id}:{polarity}->{row['polarity']}"
+            )
+        scope = str(row.get("scope") or "").strip().lower()
+        if scope not in SCOPES and scope in scope_aliases:
+            row["scope"] = scope_aliases[scope]
+            actions.append(f"canonicalize_scope:{node_id}:{scope}->{row['scope']}")
+        if not str(row.get("time_anchor") or "").strip():
+            row["time_anchor"] = "unspecified"
+            actions.append(f"fill_unspecified_time:{node_id}")
+        quote = str(row.get("source_quote") or "")
+        repaired = repair_grounded_quote(quote, vignette)
+        if repaired is not None and repaired != whitespace_normalize(quote):
+            row["source_quote"] = repaired
+            actions.append(f"repair_node_quote:{node_id}")
+
+    node_ids = {
+        str(row.get("node_id") or "") for row in nodes if isinstance(row, Mapping)
+    }
+    kept_relations: list[Any] = []
+    for index, row in enumerate(relations, 1):
+        if not isinstance(row, Mapping):
+            kept_relations.append(row)
+            continue
+        source_id = str(row.get("source_id") or "")
+        target_id = str(row.get("target_id") or "")
+        reason = None
+        if source_id not in node_ids or target_id not in node_ids:
+            reason = "missing_endpoint"
+        elif source_id == target_id:
+            reason = "self_loop"
+        if reason is not None:
+            actions.append(f"drop_relation_{index}:{reason}")
+            continue
+        kept_relations.append(row)
+    if len(kept_relations) > 36:
+        actions.append(f"trim_graph_relations:{len(kept_relations)}->36")
+        kept_relations = kept_relations[:36]
+    normalized["flat_facts"] = facts
+    normalized["graph_nodes"] = nodes
+    normalized["graph_relations"] = kept_relations
+    return normalized, actions
+
+
 def validate_builder(response: Mapping[str, Any], vignette: str) -> str | None:
     facts = response.get("flat_facts") or []
     nodes = response.get("graph_nodes") or []
@@ -395,13 +569,27 @@ def validate_selector(response: Mapping[str, Any]) -> str | None:
 
 def runtime_environment(directory: Path, model: str, workers: int, phase: str) -> None:
     path = directory / "environment.json"
-    if path.is_file():
-        return
-    environment = dependency_capabilities()
+    environment = (
+        json.loads(path.read_text(encoding="utf-8"))
+        if path.is_file()
+        else dependency_capabilities()
+    )
     environment.update({
         "capture_phase": phase,
         "model": model,
         "workers": workers,
+        "runtime_controls": {
+            key: os.environ.get(key)
+            for key in (
+                "TREE_DX_PROXY_MODE",
+                "TREE_DX_LLM_TRANSPORT",
+                "TREE_DX_DIRECT_POST_OUTPUT_CAP",
+                "TREE_DX_DIRECT_POST_OUTPUT_MAX_CAP",
+                "TREE_DX_REASONING_MAX_TOKENS",
+                "TREE_DX_REASONING_EXCLUDE",
+                "TREE_DX_LLAMA_PROVIDER_POLICY",
+            )
+        },
     })
     atomic_json(path, environment)
 
@@ -444,16 +632,25 @@ def run_builder(
             payload=payload,
             validator=lambda response: validate_builder(response, str(job["vignette"])),
         )
+        normalized, normalization_actions = normalize_builder_response(
+            outcome.response, str(job["vignette"])
+        )
+        normalized_error = validate_builder(normalized, str(job["vignette"]))
         return {
             "case_key": job["case_key"],
             "family": job["family"],
             "challenge": job["challenge"],
-            "success": outcome.success,
-            "error": outcome.error,
+            "success": not bool(normalized_error),
+            "error": normalized_error or "",
+            "online_schema_success": outcome.success,
+            "online_schema_error": outcome.error,
+            "normalization_applied": bool(normalization_actions),
+            "normalization_actions": normalization_actions,
+            "raw_response_sha256": canonical_sha256(outcome.response),
             "cache_hit": outcome.cache_hit,
             "cache_key": outcome.cache_key,
             "payload_sha256": outcome.payload_sha256,
-            "response": outcome.response,
+            "response": normalized,
         }
 
     rows: list[dict[str, Any]] = []
@@ -473,6 +670,9 @@ def run_builder(
                     "challenge": job["challenge"], "success": False,
                     "error": f"{type(exc).__name__}: {exc}", "cache_hit": False,
                     "cache_key": "", "payload_sha256": "", "response": {},
+                    "online_schema_success": False, "online_schema_error": "",
+                    "normalization_applied": False, "normalization_actions": [],
+                    "raw_response_sha256": "",
                 }
             rows.append(row)
             if done % 25 == 0 or done == len(jobs):

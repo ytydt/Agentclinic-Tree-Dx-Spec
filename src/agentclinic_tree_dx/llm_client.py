@@ -885,10 +885,23 @@ class RobustLLMClient:
                     if attempt_output_cap is not None:
                         # Length truncations must raise the hard cap, not only
                         # max_tokens (otherwise min(max_tokens, 1024) stays 1024).
-                        # Soft ceiling 8192: several OpenRouter providers (esp.
-                        # Google Vertex) reject ≥8193; keep retries inside that band.
+                        # Default ceiling 8192: several OpenRouter providers
+                        # (especially Google Vertex) reject >=8193.  A dedicated
+                        # long-JSON experiment may opt into a larger ceiling;
+                        # the initial cap and every physical attempt remain in
+                        # telemetry, so this cannot silently alter old runs.
+                        configured_ceiling = int(
+                            os.environ.get("TREE_DX_DIRECT_POST_OUTPUT_MAX_CAP")
+                            or "8192"
+                        )
+                        if not 1024 <= configured_ceiling <= 32768:
+                            raise ValueError(
+                                "TREE_DX_DIRECT_POST_OUTPUT_MAX_CAP must be "
+                                "between 1024 and 32768"
+                            )
+                        retry_ceiling = max(attempt_output_cap, configured_ceiling)
                         attempt_output_cap = min(
-                            max(attempt_output_cap * 2, 4096), 8192
+                            max(attempt_output_cap * 2, 4096), retry_ceiling
                         )
                     raise RuntimeError(
                         "Completion did not finish "
@@ -1157,11 +1170,22 @@ class RobustLLMClient:
         return text.count("{") != text.count("}") or text.count("[") != text.count("]")
 
     @staticmethod
-    def _bump_direct_post_output_cap(*, floor: int = 8192, ceiling: int = 8192) -> int:
-        # Ceiling 8192: Google Vertex / AI Studio reject maxOutputTokens ≥ 8193.
-        # Even with those providers ignored for llama, keep the shared env cap
-        # inside the strictest OpenRouter provider band used by this project.
+    def _bump_direct_post_output_cap(
+        *, floor: int = 8192, ceiling: int | None = None
+    ) -> int:
+        # The compatibility default remains 8192.  Long structured-output
+        # experiments can explicitly raise the ceiling for providers that
+        # support it without changing the default route used by llama/GVertex.
+        if ceiling is None:
+            ceiling = int(
+                os.environ.get("TREE_DX_DIRECT_POST_OUTPUT_MAX_CAP") or "8192"
+            )
+        if not 1024 <= ceiling <= 32768:
+            raise ValueError(
+                "TREE_DX_DIRECT_POST_OUTPUT_MAX_CAP must be between 1024 and 32768"
+            )
         current = int(os.environ.get("TREE_DX_DIRECT_POST_OUTPUT_CAP") or "1024")
+        ceiling = max(current, ceiling)
         nxt = min(max(current * 2, floor), ceiling)
         os.environ["TREE_DX_DIRECT_POST_OUTPUT_CAP"] = str(nxt)
         return nxt
