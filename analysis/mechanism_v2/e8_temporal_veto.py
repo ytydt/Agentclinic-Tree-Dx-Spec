@@ -82,6 +82,7 @@ ALLOWED_KINDS = {
     "ruleout_statement", "other",
 }
 ALLOWED_SENSITIVITY = {"adequate", "limited", "unknown"}
+POSTPROCESS_SCHEMA = "E8_negative_ledger_postprocess_v2"
 
 BUILDER_PROMPT = """Role: candidate-blind clinical negative-event extractor.
 
@@ -277,6 +278,15 @@ def normalize_builder(response: Mapping[str, Any], vignette: str) -> tuple[dict[
             actions.append("drop_duplicate_quote")
             continue
         seen_quotes.add(quote_key)
+        sensitivity = _normal(row.get("sensitivity")).lower()
+        basis = _normal(row.get("sensitivity_basis")).lower()
+        # The prompt explicitly forbids inferring sensitivity from outside
+        # knowledge.  Several otherwise valid responses wrote "adequate" next
+        # to an "unspecified" basis.  This deterministic downgrade enforces
+        # the frozen contract; it does not make a clinical judgment.
+        if sensitivity in {"adequate", "limited"} and basis in {"", "unknown", "unspecified"}:
+            row["sensitivity"] = "unknown"
+            actions.append(f"downgrade_unsupported_sensitivity:{row.get('event_id')}")
         kept.append(row)
     for index, row in enumerate(kept, 1):
         wanted = f"N{index}"
@@ -397,10 +407,50 @@ def construction_row(case: Mapping[str, Any], **updates: Any) -> dict[str, Any]:
         "success": False, "error": "", "cache_hit": False, "cache_key": "",
         "prompt_sha256": sha256_text(BUILDER_PROMPT), "payload_sha256": "",
         "repair_actions": [], "negative_events": [], "redacted_context": "",
-        "permutation_eligible": False,
+        "permutation_eligible": False, "postprocess_schema": POSTPROCESS_SCHEMA,
     }
     row.update(updates)
     return row
+
+
+def postprocess_builder_response(
+    case: Mapping[str, Any], response: Mapping[str, Any], **provenance: Any
+) -> dict[str, Any]:
+    """Validate one immutable raw builder response under the frozen contract."""
+    normalized, actions = normalize_builder(response, str(case["vignette"]))
+    error = validate_builder(normalized, str(case["vignette"]))
+    common = {"response": dict(response), "repair_actions": actions, **provenance}
+    if error:
+        return construction_row(case, error=error, **common)
+    events = list(normalized["negative_events"])
+    try:
+        context = redacted_context(str(case["vignette"]), events)
+    except Exception as exc:
+        return construction_row(
+            case, error=f"redaction:{type(exc).__name__}:{exc}",
+            negative_events=events, **common,
+        )
+    anchors = {(str(row["time_anchor"]), str(row["episode_id"])) for row in events}
+    return construction_row(
+        case, success=True, negative_events=events, redacted_context=context,
+        permutation_eligible=len(anchors) >= 2, **common,
+    )
+
+
+def construction_summary(rows: Sequence[Mapping[str, Any]], telemetry: Mapping[str, Any]) -> dict[str, Any]:
+    return {
+        "postprocess_schema": POSTPROCESS_SCHEMA,
+        "n_selected": len(rows), "served": sum(row["success"] for row in rows),
+        "failed": sum(not row["success"] for row in rows),
+        "permutation_eligible": sum(row["success"] and row["permutation_eligible"] for row in rows),
+        "event_count_distribution": dict(Counter(str(len(row["negative_events"])) for row in rows if row["success"])),
+        "repair_actions": dict(Counter(
+            str(action).split(":", 1)[0]
+            for row in rows for action in (row.get("repair_actions") or [])
+        )),
+        "errors": dict(Counter(str(row["error"]) for row in rows if not row["success"])),
+        "telemetry": dict(telemetry),
+    }
 
 
 def run_construction(
@@ -413,6 +463,30 @@ def run_construction(
         rows = read_jsonl(result_path)
         if len(rows) != len(cases):
             raise AssertionError("partial construction result requires audit")
+        if any(row.get("postprocess_schema") != POSTPROCESS_SCHEMA for row in rows):
+            by_key = {str(case["case_key"]): case for case in cases}
+            revised: list[dict[str, Any]] = []
+            for old in rows:
+                case = by_key[str(old["case_key"])]
+                response = old.get("response")
+                if not isinstance(response, Mapping):
+                    revised.append(construction_row(
+                        case, error=str(old.get("error") or "missing immutable raw response")
+                    ))
+                    continue
+                revised.append(postprocess_builder_response(
+                    case, response,
+                    cache_hit=bool(old.get("cache_hit")), cache_key=str(old.get("cache_key") or ""),
+                    payload_sha256=str(old.get("payload_sha256") or ""),
+                ))
+            revised.sort(key=lambda row: row["case_key"])
+            write_jsonl(result_path, revised)
+            telemetry = aggregate_telemetry(read_jsonl(stage_dir / "telemetry.jsonl"))
+            atomic_json(stage_dir / "summary.json", construction_summary(revised, telemetry))
+            with (stage_dir / "run.log").open("a", encoding="utf-8") as stream:
+                stream.write(f"postprocessed_at_utc={datetime.now(timezone.utc).isoformat()}\n")
+                stream.write(f"postprocess_schema={POSTPROCESS_SCHEMA}\n")
+            rows = revised
         return rows
     telemetry_path = stage_dir / "telemetry.jsonl"
     caller = OnlineJSONCaller(
@@ -423,30 +497,9 @@ def run_construction(
     def one(case: Mapping[str, Any]) -> dict[str, Any]:
         payload = {"case_id": case["case_key"], "vignette": case["vignette"]}
         outcome = caller.call(module="E8_negative_ledger_builder", prompt=BUILDER_PROMPT, payload=payload)
-        normalized, actions = normalize_builder(outcome.response, str(case["vignette"]))
-        error = validate_builder(normalized, str(case["vignette"]))
-        if error:
-            return construction_row(
-                case, response=outcome.response, error=error, cache_hit=outcome.cache_hit,
-                cache_key=outcome.cache_key, payload_sha256=outcome.payload_sha256,
-                repair_actions=actions,
-            )
-        events = list(normalized["negative_events"])
-        try:
-            context = redacted_context(str(case["vignette"]), events)
-        except Exception as exc:
-            return construction_row(
-                case, response=outcome.response, error=f"redaction:{type(exc).__name__}:{exc}",
-                cache_hit=outcome.cache_hit, cache_key=outcome.cache_key,
-                payload_sha256=outcome.payload_sha256, repair_actions=actions,
-                negative_events=events,
-            )
-        anchors = {(str(row["time_anchor"]), str(row["episode_id"])) for row in events}
-        return construction_row(
-            case, success=True, response=outcome.response, cache_hit=outcome.cache_hit,
+        return postprocess_builder_response(
+            case, outcome.response, cache_hit=outcome.cache_hit,
             cache_key=outcome.cache_key, payload_sha256=outcome.payload_sha256,
-            repair_actions=actions, negative_events=events, redacted_context=context,
-            permutation_eligible=len(anchors) >= 2,
         )
 
     rows: list[dict[str, Any]] = []
@@ -469,14 +522,7 @@ def run_construction(
     write_jsonl(result_path, rows)
     telemetry = aggregate_telemetry(read_jsonl(telemetry_path))
     atomic_json(stage_dir / "telemetry_summary.json", telemetry)
-    summary = {
-        "n_selected": len(rows), "served": sum(row["success"] for row in rows),
-        "failed": sum(not row["success"] for row in rows),
-        "permutation_eligible": sum(row["success"] and row["permutation_eligible"] for row in rows),
-        "event_count_distribution": dict(Counter(str(len(row["negative_events"])) for row in rows if row["success"])),
-        "errors": dict(Counter(str(row["error"]) for row in rows if not row["success"])),
-        "telemetry": telemetry,
-    }
+    summary = construction_summary(rows, telemetry)
     atomic_json(stage_dir / "summary.json", summary)
     log.extend([f"served={summary['served']}", f"permutation_eligible={summary['permutation_eligible']}",
                 f"completed_at_utc={datetime.now(timezone.utc).isoformat()}"])

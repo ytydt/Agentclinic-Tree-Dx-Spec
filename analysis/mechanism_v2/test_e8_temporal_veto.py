@@ -5,6 +5,7 @@ from analysis.mechanism_v2.e8_temporal_veto import (
     permute_ledger,
     redacted_context,
     selector_ledger,
+    normalize_builder,
     validate_builder,
     validate_selector,
 )
@@ -57,3 +58,13 @@ def test_selector_rejects_unknown_ids():
     bad = dict(good)
     bad["active_vetoes"] = [{"candidate_id": "D9", "event_ids": ["N1"], "severity": "hard", "reason": "x"}]
     assert validate_selector(bad, {"D1", "D2"}, {"N1", "N2"}) is not None
+
+
+def test_unsupported_sensitivity_is_downgraded_without_semantic_repair():
+    response = {"negative_events": EVENTS}
+    normalized, actions = normalize_builder(
+        response,
+        "Initially no fever was present. Later blood cultures were negative.",
+    )
+    assert normalized["negative_events"][1]["sensitivity"] == "unknown"
+    assert any(action.startswith("downgrade_unsupported_sensitivity") for action in actions)
