@@ -26,3 +26,9 @@ The corresponding `role_rotated` arm has 400 validated cache/result rows and
 arm's provenance. This larger metadata gap changes neither response validity
 nor the paired endpoint, but it prevents exact arm-to-arm cost attribution;
 reported token and physical-attempt differences are lower-bound descriptions.
+
+`single_anchor` similarly completed 400 validated cache/result rows with 398
+telemetry records; its two missing IDs are in provenance. Across all arms,
+response validity is checked from the immutable cache and result row, while
+transport accounting is independently reconciled and never silently assumed
+complete.
