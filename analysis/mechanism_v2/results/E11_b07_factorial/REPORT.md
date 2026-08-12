@@ -6,9 +6,9 @@ E11 没有证明“检索增强”优于无检索，也没有证明“检索本�
 
 第一，当前被命名为 `relevant` 的处理只是**病例 query 与 Merck 段落的 TF-IDF query-top bundle**，不是经临床验证的高质量 RAG。325 个可审计病例中，`relevant` 的 1,950 个 chunk 只有 129 个（6.62%）被判为 case-specific fit，1,397 个（71.64%）无病例适配；160/325 个 bundle 对 reference 的支持完全 absent。相反，`hard_negative` 仍含 51 个同病 chunk、9 个病例定义亚型 chunk，84/325 个 bundle 对 reference 有 direct/partial support。处理操纵因此只足以识别“弱词法 bundle 被强制注入后的行为”，不能识别理想 RAG 与 no-RAG 的差异。
 
-第二，在该处理定义下，query-top `relevant` 相对 `off` 的方向稳定地偏负，但证据没有通过七重比较校正。预注册 strict Top-1 为 29/400→24/400（`−1.25 pp`，5 loss/0 gain，McNemar `p=.0625`，Holm `q=.4375`）；根审计校正临床完整等价后为 77/400→69/400（`−2.00 pp`，10/2，`p=.0386`，`q=.2700`）。Top-2 临床完整等价为 97/400→90/400（`−1.75 pp`，9/2，`p=.0654`，`q=.4580`）。一旦允许疾病族正确但部位、病因、慢性度或分子修饰不完整，Top-1 变为 164/400→166/400（`+0.50 pp`），Top-2 为 219/400→220/400（`+0.25 pp`）。这说明主要损伤不是把所有病例推到完全无关疾病，而是**把具体诊断压平为泛病种、把病因降为表现、或删除少见而具体的第二候选**。
+第二，在该处理定义下，query-top `relevant` 相对 `off` 的方向稳定地偏负，但证据没有通过七重比较校正。预注册 `safe-exact` Top-1 为 29/400→24/400（`−1.25 pp`，5 loss/0 gain，McNemar `p=.0625`，Holm `q=.4375`）；根审计优先、异质 proxy 补全的临床完整等价敏感性端点为 77/400→69/400（`−2.00 pp`，10/2，`p=.0386`，`q=.2700`）。Top-2 临床完整等价为 97/400→90/400（`−1.75 pp`，9/2，`p=.0654`，`q=.4580`）。一旦允许疾病族正确但部位、病因、慢性度或分子修饰不完整，Top-1 变为 164/400→166/400（`+0.50 pp`），Top-2 为 219/400→220/400（`+0.25 pp`）。这说明主要损伤不是把所有病例推到完全无关疾病，而是**把具体诊断压平为泛病种、把病因降为表现、或删除少见而具体的第二候选**。
 
-第三，generic refine 是高行为强度、低净端点效应的模块。四个条件合计有 176/400 个病例至少一次改变，单臂 Top-1 改变 39–70 例，但 strict 和临床完整等价的七个主比较无一通过 Holm 校正。仅在“完整或部分正确”的代理敏感性端点，`off` 条件 refine 为 164/400→178/400（`+3.50 pp`，5 loss/19 gain，`p=.00661`，`q=.0463`）。这个结果符合 refine 把错误或过窄候选拉回正确疾病族的机制，但它不是预注册 primary，且多数非关键病例仍使用异质 LLM proxy，不能把它升级为确认性收益。
+第三，generic refine 是高行为强度、低净端点效应的模块。四个条件合计有 176/400 个病例至少一次改变，单臂 Top-1 改变 39–70 例，但 `safe-exact` 和临床完整等价的七个主比较无一通过 Holm 校正。仅在“完整或部分正确”的 proxy 敏感性端点，`off` 条件 refine 为 164/400→178/400（`+3.50 pp`，5 loss/19 gain，`p=.00661`，`q=.0463`）。这个结果符合 refine 把错误或过窄候选拉回正确疾病族的机制，但它不是预注册 primary，且多数非关键病例仍使用异质 LLM proxy，不能把它升级为确认性收益。
 
 最可靠的系统结论是：**当前 B07 的主要问题不是有没有一次 generic refine，而是检索入口缺少临床相关性和实体/范围约束；refine 偶尔能修复粒度与排序，却也会系统性删除少见候选、把病因降为表现，无法作为安全兜底。**
 
@@ -31,17 +31,19 @@ refine-off 直接生成 Top-2；refine-on 看到同一病例、同一知识 bund
 
 三个端点被有意分开：
 
-1. `strict`：冻结 exact/safe-synonym bridge，是预注册 primary，但对拼写、同义、部位/修饰语敏感；
-2. `clinical_complete`：候选与 reference 临床完整等价；
-3. `complete_or_partial`：进一步接受疾病族正确但范围欠具体的候选，只作敏感性分析。
+1. `safe-exact`（历史结果字段 `strict`）：冻结 exact/frozen-safe-synonym bridge，是预注册 primary，但对桥外拼写、同义、部位/修饰语敏感；
+2. `clinical_complete*`：候选与 reference 临床完整等价；根 override 覆盖关键队列，其余位置保留异质 proxy；
+3. `complete_or_partial*`：进一步接受疾病族正确但范围欠具体的候选，同样为 proxy 补全的敏感性分析。
 
-DeepSeek v4 flash 只承担候选关系与检索证据的队列扩展分包。根审计逐候选覆盖全部 17 个 strict Top-1/Top-2 discordance 病例、全部 clinical-complete `relevant↔off` Top-1/Top-2 discordance，以及 7 个 candidate-screen 失败病例；去重后为 32 条深轨迹、39 个候选审计病例、624 个 arm-rank occurrence。其余 5,776 个 occurrence 保留异质 proxy，而不是被称为人工 gold。
+`safe-exact` 是 mapper 前保守身份下界，不是临床完全等价或 task/mapper 正确率；本报告没有把 E2 的 full-800 审计数值移植到 E11。
+
+DeepSeek v4 flash 只承担候选关系与检索证据的队列扩展分包。根审计逐候选覆盖全部 17 个 `safe-exact` Top-1/Top-2 discordance 病例、全部 clinical-complete `relevant↔off` Top-1/Top-2 discordance，以及 7 个 candidate-screen 失败病例；去重后为 32 条深轨迹、39 个候选审计病例、624 个 arm-rank occurrence。其余 5,776/6,400 个 occurrence 没有人工 candidate-by-candidate 裁决，保留异质 proxy；其中 proxy-negative 也只是未审负类，不是人工 gold。故带星号临床端点是“根覆盖端点关键分歧 + proxy 补全全表”，不能当作 400 例全人工临床标注。
 
 代码设有硬断言：当前 6,400 个 arm×rank occurrence 必须全部解析；7 个 candidate-screen 失败必须全部有根 override；所有 clinical-complete `relevant↔off` discordance 必须在 deep-review 集合中。根判断与有效 proxy 在 16 个候选关系上分歧，其中包括把 cryptococcosis 当作 cutaneous histoplasmosis 的可接受变体，以及把 severe sepsis 当作“septic shock with anuric kidney failure”的完整等价。报告以下关于关键翻转的判断以根审计为准。
 
 ## 八臂端点全景
 
-| 臂 | strict Top-1 / Top-2 | clinical complete Top-1 / Top-2 | complete+partial Top-1 / Top-2 |
+| 臂 | safe-exact Top-1 / Top-2 | clinical complete* Top-1 / Top-2 | complete+partial* Top-1 / Top-2 |
 |---|---:|---:|---:|
 | off, refine off | 29 / 34 | 77 / 97 | 164 / 219 |
 | off, refine on | 27 / 33 | 80 / 99 | 178 / 223 |
@@ -52,13 +54,13 @@ DeepSeek v4 flash 只承担候选关系与检索证据的队列扩展分包。�
 | hard-negative, refine off | 27 / 32 | 73 / 94 | 160 / 223 |
 | hard-negative, refine on | 27 / 31 | 76 / 95 | 170 / 222 |
 
-绝对 strict 率只有 5.75%–8.50%，临床完整等价约 17.25%–24.75%，而疾病族完整或部分正确的 Top-1 为 40.0%–44.5%。同一输出在三层端点间的巨大跃迁说明 E11 的首要诊断对象问题是**本体身份、复合范围和具体度**，不是可以被一个 exact accuracy 概括的模型能力差。
+绝对 `safe-exact` 率只有 5.75%–8.50%，proxy 补全的临床完整等价约 17.25%–24.75%，而疾病族完整或部分正确的 Top-1 为 40.0%–44.5%。同一输出在三层端点间的巨大跃迁说明 E11 的首要诊断对象问题是**本体身份、复合范围和具体度**，不是可以被一个 exact accuracy 概括的模型能力差；但跃迁幅度也受未审 proxy 误差影响。
 
 ### 七个预注册 Top-1 比较
 
 表中 discordance 为 left-only/right-only；差值均为右减左。
 
-| 比较 | strict 差值；discordance；p/q | clinical complete 差值；discordance；p/q |
+| 比较 | safe-exact 差值；discordance；p/q | clinical complete* 差值；discordance；p/q |
 |---|---:|---:|
 | off → relevant，无 refine | −1.25 pp；5/0；.0625/.4375 | −2.00 pp；10/2；.0386/.2700 |
 | random → relevant，无 refine | 0；2/2；1/1 | −1.00 pp；7/3；.3438/1 |
@@ -148,7 +150,7 @@ chunk 关系进一步揭示命名误导。`relevant` 中 933/1,950 为 generic/u
 - `MCR_v1_seq100/69`：四个检索条件的 refine 都用 CT fat attenuation 与 benign biopsy 把 GIST 反转为 gastric lipoma，是最稳定的跨上下文病例证据排序收益；
 - `MCR_seq200b/345`：从 generic hypophosphatemic rickets 恢复 HHRH，是具体度修复；
 - `MCR_v1_seq100/45`：off refine 把 ambiguous rheumatoid-nodule-or-GA composite 拆开，将 exact granuloma annulare 恢复到 Top-2；但 relevant/hard 条件又被 recent surgery 锚定到 foreign-body granuloma，说明同一 refine 逻辑受上下文吸引域控制；
-- `MCR_seq200b/441`：refine 输出 dengue encephalitis with hemorrhagic transformation，临床是病例支持的 subtype；strict 把它记作 loss，是 mapper 假阴性而非 reasoning harm。
+- `MCR_seq200b/441`：refine 输出 dengue encephalitis with hemorrhagic transformation，临床是病例支持的 subtype；`safe-exact` 把它记作 loss，是 identity bridge 假阴性而非 reasoning harm。
 
 可复核伤害包括：
 
@@ -160,9 +162,9 @@ chunk 关系进一步揭示命名误导。`relevant` 中 933/1,950 为 generic/u
 
 历史 B07 draft/final 有 375/400（93.75%）ordered-equal，而 E11 fresh refine 明显更活跃；两者 prompt、路由与执行时点不同，不能把差异当同代码的因果复现。它只说明当前 refine prompt 有足够自由度改写候选，必须用“保留/删除了哪个实体、依据哪条 decisive contrast”约束，而不能只要求再想一次。
 
-## strict mapper 如何制造假机制
+## `safe-exact` identity bridge 如何制造假机制
 
-17 个 strict discordance 的根审计显示多类非临床 flip：
+17 个 `safe-exact` discordance 的根审计显示多类非临床 flip：
 
 - `Peeling Skin Syndrome` 与 `peeling skin disease` 同实体；
 - `Pyknodysostosis` 是 `Pycnodysostosis` 常见拼写变体；
@@ -171,7 +173,7 @@ chunk 关系进一步揭示命名误导。`relevant` 中 933/1,950 为 generic/u
 - `angiomyolipoma with renal-vein extension` 是 reference 加病例支持并发症；
 - `dengue encephalitis with hemorrhagic transformation` 是支持充分的具体化。
 
-根临床重编码后，32 个 deep case 中 strict discordance 有 5 个 Top-1、7 个 Top-2 被完全消解。这解释为什么 strict 下 refine 方向略负，而 clinical-complete 或 partial 下方向转正。strict 必须保留用于复现冻结 benchmark，但任何机制结论都必须读取候选对象层级；否则会把“模型说得更具体”错误记成伤害，也会把 disease-family 泛化错误记成完全正确。
+根临床重编码后，32 个 deep case 中 `safe-exact` discordance 有 5 个 Top-1、7 个 Top-2 被完全消解。这解释为什么 `safe-exact` 下 refine 方向略负，而 clinical-complete 或 partial 下方向转正。`safe-exact` 必须保留用于复现冻结 benchmark，但任何机制结论都必须读取候选对象层级；否则会把“模型说得更具体”错误记成伤害，也会把 disease-family 泛化错误记成完全正确。
 
 ## provider 路由是混杂，而不是完整解释
 
@@ -205,9 +207,9 @@ clinical Top-1 relevant-vs-off 的 10 个 loss 中，2 个是 DeepInfra→DeepIn
 
 优点是能在少数病例真正利用时距、影像特异征和生化关系，且 refine 可跨四种上下文稳定救回 gastric lipoma。弱点是对泛主题、常见病与表现层锚定强；第二次调用会删除 rare-but-plausible Top-2，且 provider/上下文变化可使大量错候选互换。更多 reasoning 并不天然等于更安全的 coverage。
 
-### strict bridge 与异质语义 screen
+### `safe-exact` bridge 与异质语义 screen
 
-strict bridge 可重复、不会把宽泛相关性偷换成正确，但对拼写、词序、临床 subtype 和复合修饰的 recall 明显不足。异质 screen 大幅扩大临床等价审计覆盖，并成功暴露 bundle 操纵失败；但它也出现 distinct fungus 合并、复合 reference 过度接受和 75 个 retrieval schema failure。因此 proxy 适合扩队列与敏感性分析，不适合替代根审计。
+`safe-exact` bridge 可重复、不会把宽泛相关性偷换成正确，但对桥外拼写、词序、临床 subtype 和复合修饰的 recall 明显不足。异质 screen 大幅扩大临床等价审计覆盖，并成功暴露 bundle 操纵失败；但它也出现 distinct fungus 合并、复合 reference 过度接受和 75 个 retrieval schema failure。因此 proxy 适合扩队列与敏感性分析，不适合替代根审计。
 
 ## 对 RCR-3 的直接约束
 
@@ -221,4 +223,4 @@ strict bridge 可重复、不会把宽泛相关性偷换成正确，但对拼写
 8. retrieval quality gate 应在入模前完成；若没有通过 typed relevance 的 chunk，安全行为是回到 no-retrieval comparator，而不是为了“用了 RAG”强制注入上下文。
 9. provider、payload hash、候选删除和 decisive evidence 全部进入病例级 provenance；provider 分布不均时只作敏感性限制，不从结果倒推 provider 优劣。
 
-E11 是开发集机制实验，不是新确认集。它足以否定“query-top 就等于 relevant evidence”和“再 refine 一次可自动兜底”这两个实现假设；它没有否定经 typed need、临床相关性 gate、实体安全聚合和对比排序约束后的 RAG。后续 RCR-3 应把 E11 暴露的诊断粒度损失与少见候选删除设为显式可证伪失败条件。
+E11 是开发集机制实验，不是新确认集。它足以否定“query-top 就等于 relevant evidence”和“再 refine 一次可自动兜底”这两个实现假设；它没有否定经 typed need、临床相关性 gate、实体安全聚合和对比排序约束后的 RAG。后续 RCR-3 应把 E11 暴露的诊断粒度损失与少见候选删除设为显式可证伪失败条件：在冻结 draft、selector 与候选 ID 的重放中，typed-relevant bundle 必须提高 case-specific/decisive relation 命中且不降低 complete exposure；coverage-guard refine 必须在不增加 manifestation-over-etiology harm 的情况下减少 rare Top-2 deletion。若任一条件不满足，就不能把改善归因于 RAG/refine 机制。

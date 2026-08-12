@@ -12,6 +12,8 @@ E8 明确推翻了“一个显式阴性只要与候选的典型表现冲突，�
 
 ## 设计：只改变否证合同
 
+端点命名先澄清：下文表格中的“正确”“命中”和 reference exposure 均由 mapper 前 exact/frozen-safe-synonym bridge 计算，统一展示为 **`safe-exact`（历史结果字段 `strict`）**。它是可重放的保守身份下界，不是临床完整等价，也不是 task/mapper 正确率；本报告没有把 E2 的 800 例审计数值移植到 E8。
+
 样本从 E4 的 400 个固定 canonical pool 中按输入标记预先选择 220 例，DA/MCR 各 110；入选条件为 clean vignette 至少一个时间标记和三个否定/正常标记。候选 ID、标签、顺序和 clean vignette 在所有主臂冻结，不使用 gold、选项、历史 champion、来源名、旧 rank 或 score。
 
 候选盲 Gemini 构造器先提取 2–6 个带原文 quote 的 negative events：observation、negation kind、time anchor、episode、person scope、anatomy、test context 和 sensitivity。为使时间置换可识别，每个被提取阴性的原文 span 从 selector 上下文中精确替换为 ledger 引用；否则模型可从未改动原文直接纠正伪时间。selector 只看到同一正向上下文、同一候选池和 ledger，不看到 negative source quote。
@@ -105,6 +107,8 @@ OpenAI GPT-4.1 mini 作为与 Gemini builder、DeepSeek selector 均不同的第
 
 因此代理输出完整保留用于追责，但报告只使用 `manual_audit.jsonl` 的最终分层。不同模型族降低了同族偏差，却没有消除任务定义偏差。
 
+人工覆盖必须按队列理解，而不是按 220 例总体理解：根代理逐案审计 30 例，覆盖全部 9 个 reference hard-veto、hard↔soft/合法顺序/错时的 accuracy discordance、若干 champion flip 与 4 个冻结 stable control；选择原因可重叠。外部代理抽到 29 例、成功 25 例，只是分包初读，30 例最终标签全部由根代理负责。其余 190/220 例未做临床 complete/partial/no 逐案裁决；未入队的 `safe-exact` 阴性或 flip-neutral 病例不能被称为人工确认的临床阴性，本报告也不据此给出全 220 例临床准确率。
+
 ## 运行可用性与环境适配
 
 E8 连同异质审计共记录 946 个 semantic calls、1082 个 physical attempts、122 万 input tokens、267 万 output tokens；latency 求和约 62,489 秒（并发下不能当墙钟时间）。DeepSeek 四臂经多个 OpenRouter provider 路由，无 Groq；Gemini builder 走 Google，代理审计走 OpenAI。
@@ -122,5 +126,7 @@ E8 连同异质审计共记录 946 个 semantic calls、1082 个 physical attemp
 5. time/episode 先做确定性一致性校验，再交给 LLM；字段置换不应在没有对应 contrast 变化时重写全局 champion。
 6. soft veto 只能解决错误排除，不能修复 gold 未暴露、复合对象缺失或 subtype identity。候选层与否证层必须分开评估。
 7. 完整性 gate 应在 polarity 反转、scope collision、关键阴性遗漏或低 margin/cycle 时回看原文，而不是无条件增加一次调用。
+
+这些约束给出可证伪的后续预测：在冻结同一候选池、同一 comparator 随机种子/缓存结果的条件下，仅移除 time/scope/sensitivity 应重新增加对 gold 的错误 hard-veto；仅置换合法行序不应再产生与时间置换同量级的 champion flip；若 soft 合同减少错误 veto 却持续不能提高已暴露 gold 的临床完整转化，则瓶颈应被判定在候选具体度/比较器而非否证层。任一预测不成立，都应收缩而不是扩大 E8 的机制结论。
 
 E8 是开发集机制实验，不是确认性优越性试验。它足以禁止一种危险操作，却不足以冻结 soft ranker 为新最佳算法。

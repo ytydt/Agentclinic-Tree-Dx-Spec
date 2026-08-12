@@ -7,7 +7,7 @@ only the candidate set alter its choice among candidates whose text and IDs
 remain unchanged?
 
 The frozen development sample has 200 cases (DA 100, MCR 100). Every base
-pool contains four natural source options, including one exact/frozen-synonym
+pool contains four natural source options, including one safe-exact
 gold option and three outcome-blind selected non-gold options. A target-blind
 DeepSeek-v4-flash selector saw the clean vignette and arbitrary candidate IDs;
 it never saw the gold flag, source option letter, perturbation relation, prior
@@ -24,7 +24,11 @@ Nine arms changed only candidate membership:
 The four width candidates were generated once before selector calls. Width 6
 uses a stable two-candidate prefix and width 8 adds the remaining two. Shared
 candidate labels, IDs and relative order are byte-stable. Primary endpoint is
-strict exact-or-frozen-synonym top-1. This is a mechanism/development study,
+**safe-exact（历史字段 `strict`）** top-1. The runner computes it with
+`FrozenExactSynonymBridge.equivalent`: normalized equality or a frozen,
+collision-filtered synonym/own-initialism equivalence, never substring or fuzzy
+resolution. It is a high-precision label-identity lower bound, not an estimate
+of exhaustive clinical correctness. This is a mechanism/development study,
 not a confirmation cohort.
 
 ## Execution and missingness
@@ -36,7 +40,7 @@ typed labels. These failures were retained and every dependent arm failed
 closed. Selector schema failures removed one additional sibling case, one
 synonym case and two width-8 cases. Base and removal served all 200.
 
-| Arm | Served | Strict top-1 / 200 ITA | ITA 95% Wilson | Strict among served |
+| Arm | Served | Safe-exact top-1 / 200 ITA | ITA 95% Wilson | Safe-exact among served |
 |---|---:|---:|---:|---:|
 | Base width 4 | 200 | 136 (68.0%) | 61.2–74.1% | 68.0% |
 | Remove one | 200 | 152 (76.0%) | 69.6–81.4% | 76.0% |
@@ -56,7 +60,7 @@ contrasts below use successful pairs and state their denominator.
 The eight all-case base contrasts are one preregistered family. Raw McNemar
 p-values and Holm-adjusted p-values are both shown.
 
-| Right arm vs base | Paired n | Harms / gains | Strict delta | Paired bootstrap 95% CI | Raw p | Holm p |
+| Right arm vs base | Paired n | Harms / gains | Safe-exact delta | Paired bootstrap 95% CI | Raw p | Holm p |
 |---|---:|---:|---:|---:|---:|---:|
 | Remove one | 200 | 13 / 29 | +8.00pp | +2.00 to +14.50pp | .01952 | .11712 |
 | Add parent | 166 | 24 / 10 | −8.43pp | −15.06 to −1.81pp | .02431 | .12153 |
@@ -81,16 +85,16 @@ less gold-concordant without recognizing a corresponding confidence loss.
 ## Independence is falsified, but “more/fewer is always better” is also false
 
 Removing one fixed non-gold candidate changes the champion in 50/200 cases.
-It directly removes the prior champion in 23 cases: 18 become strict rescues,
+It directly removes the prior champion in 23 cases: 18 become safe-exact rescues,
 but five remain wrong. Eleven additional gains occur even though the removed
-candidate was not the old champion. Conversely, 13 cases lose the strict gold
-after a non-gold candidate is removed. Thus both strict IIA and casewise
+candidate was not the old champion. Conversely, 13 cases lose the safe-exact gold
+after a non-gold candidate is removed. Thus both safe-exact IIA and casewise
 monotonic “fewer candidates is safer” are falsified. The average removal
 effect is favorable, but it is neither universal nor corrected-positive.
 
 Adding candidates produces two separable mechanisms:
 
-| Arm | Champion flips | New candidate champions | Direct new-candidate harms | Shared-candidate context harms | Strict gains |
+| Arm | Champion flips | New candidate champions | Direct new-candidate harms | Shared-candidate context harms | Safe-exact gains |
 |---|---:|---:|---:|---:|---:|
 | Parent | 44 | 13 | 8 | 16 | 10 |
 | Sibling | 44 | 18 | 13 | 12 | 7 |
@@ -102,7 +106,7 @@ Adding candidates produces two separable mechanisms:
 
 “Direct” means the added candidate becomes champion. “Context” means the
 added candidate does not win, but its presence changes which shared base
-candidate wins. Width 8's 33 strict harms are therefore not simply 33 decoy
+candidate wins. Width 8's 33 safe-exact harms are therefore not simply 33 decoy
 captures: 23 are direct and ten are set-induced reordering among unchanged
 base candidates. Candidate-set context is itself causally active.
 
@@ -155,22 +159,30 @@ of the component arm is therefore not evidence that component competition is
 safe; the manipulation itself is semantically mixed.
 
 The frozen bridge recognizes only 2/166 generated synonyms. None of the 12
-synonyms that becomes champion receives strict credit. Manual review finds
-nine fully equivalent and three partially equivalent. Keeping the strict
+synonyms that becomes champion receives safe-exact credit. Manual review finds
+nine fully equivalent and three partially equivalent. Keeping the safe-exact
 endpoint unchanged, a conservative semantic sensitivity that credits only the
 nine clear equivalents changes the synonym contrast from −0.61pp (20/19) to
 **+4.85pp** (11/19, p=.2005). Crediting the three partial equivalents yields
-+6.67pp (9/20, p=.0614). The strict null is primarily a synonym-bridge failure,
++6.67pp (9/20, p=.0614). The safe-exact null is primarily a synonym-bridge failure,
 not evidence that equivalent labels destabilize clinical choice.
 
 The 24 sampled context harms contain only three clear switches to a competing
 diagnosis. Fourteen are compatible underspecification, incomplete composites,
 near-equivalents or reframings; five are non-diagnostic/source-surface
 artifacts; two depend on which timepoint or lesion is being asked about. All
-24 sampled gains are switches back to the exact frozen target. Strict scoring
+24 sampled gains are switches back to the exact frozen target. Safe-exact scoring
 therefore asymmetrically makes gains look clinically clean and many harms look
 worse than they are. It remains a reproducible endpoint, but not a complete
 clinical-loss measure.
+
+The manual clinical audit contains 339 explicit judgments: all 180 labels in
+the frozen 20-case construction sample, all 111 unique injected labels that
+became champions, and a frozen 48-transition mechanism sample. It is exhaustive
+for those objects, not for every output or every safe-exact transition across
+the nine arms. In particular, unreviewed safe-exact-negative rows cannot be
+treated as clinical negatives, and the synonym sensitivity is a targeted
+mechanism analysis rather than a replacement whole-experiment clinical score.
 
 ## Order integrity and a residual position mechanism
 
@@ -226,7 +238,7 @@ accuracy delta is too coarse:
 2. additions and removals also reorder unchanged candidates, especially the
    near-duplicate/composite DA pools;
 3. serial position remains a plausible secondary mechanism;
-4. frozen strict scoring overstates many granularity losses and entirely
+4. frozen safe-exact scoring overstates many granularity losses and entirely
    misses most genuine synonym selections;
 5. typed perturbation builders need audited direction and semantic
    deduplication before component/synonym effects can be interpreted cleanly.

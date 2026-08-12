@@ -10,11 +10,11 @@ E7a found at least one unsafe substring fold, exact identity:
 - increased the displayed gold label's candidate exposure from 23 to 33
   (11 paired restorations versus 1 loss; exact McNemar `p=0.00635`);
 - changed the displayed champion in 158/299 cases (52.8%);
-- increased strict displayed-label top-1 from 18 to 21, but with only 8 paired
+- increased safe-exact displayed-label top-1 from 18 to 21, but with only 8 paired
   gains versus 5 losses (`p=0.581`), so no accuracy claim is warranted.
 
 Adding generic non-equivalence relations changed 45/299 champions but produced
-no strict top-1 gains and one loss relative to exact identity. The case audit
+no safe-exact top-1 gains and one loss relative to exact identity. The case audit
 shows why: undirected warnings do not specify whether the requested object is
 an etiology, manifestation, complication, parent, subtype or complete
 composition. RCR-3 therefore needs typed directional relations and an explicit
@@ -26,6 +26,10 @@ task-projection check, not merely more relation text.
   controls.
 - Arms: production-compatible `legacy_substring`, `exact_synonym`, and
   `typed_relation` (exact identity plus explicit non-equivalence edges).
+- `legacy_substring` is the **registry-construction treatment name**, not the
+  historical `legacy-chain` scoring endpoint. All three arms are scored by
+  the same displayed-label safe-exact bridge; hidden registry members and
+  downstream task/mapper credit do not enter the primary endpoint.
 - Per arm, the selector saw a clean vignette, neutral candidate IDs, displayed
   labels, up to three support spans and two contradiction spans. It did not see
   gold labels, benchmark options, previous scores, source views, registry arm
@@ -33,8 +37,12 @@ task-projection check, not merely more relation text.
 - Candidate ordering was stable-SHA by case and normalized label.
 - Model: `deepseek/deepseek-v4-flash-0731`; 50 non-RAG workers; official OpenAI
   SDK transport through OpenRouter.
-- Primary endpoint: exact/frozen-synonym match on the **displayed champion
-  label** before mapper intervention.
+- Primary endpoint: **safe-exact（历史字段 `strict`）** match on the
+  **displayed champion label** before mapper intervention. The implementation
+  calls `FrozenExactSynonymBridge.equivalent`: normalized equality or a frozen,
+  collision-filtered synonym/own-initialism equivalence, with no substring or
+  fuzzy fallback. It is an arm-invariant identity lower bound, not clinical
+  completeness.
 - Failures remained in the intention-to-analyse ledger and were not imputed.
 
 The 800 source trajectories are development/mechanism data, not an independent
@@ -44,7 +52,7 @@ confirmation cohort.
 
 ### All 400 selected cases
 
-| Arm | Served | Displayed-gold exposure | Displayed top-1 | Hidden-member top-1 | Registry-credit leaks | Contaminated champions |
+| Arm | Served | Safe-exact displayed-gold exposure | Safe-exact displayed top-1 | Hidden-member top-1 | Registry-credit leaks | Contaminated champions |
 |---|---:|---:|---:|---:|---:|---:|
 | Legacy substring | 399/400 | 33 (8.27%) | 25 (6.27%) | 35 | 10 | 160 |
 | Exact synonym | 399/400 | 43 (10.78%) | 28 (7.02%) | 28 | 0 | 0 |
@@ -100,7 +108,7 @@ restore unsafe merging.
 
 Exact identity recovered three net displayed-label top-1 cases, but the paired
 evidence is weak. DA is especially coverage-limited: only four exact pools
-exposed the gold label, so its 96 champion flips cannot improve strict accuracy
+exposed the gold label, so its 96 champion flips cannot improve safe-exact accuracy
 unless proposal completeness improves first. MCR has better exposure, yet its
 discordances are dominated by parent/subtype resolution and task projection.
 
@@ -123,13 +131,13 @@ effect.
 
 Exact and typed arms had identical candidate sets. Generic non-equivalence
 edges were present in 289 evaluable cases and changed 45 champions (15.6%).
-They yielded no strict gains and one loss. Two cases are especially diagnostic:
+They yielded no safe-exact gains and one loss. Two cases are especially diagnostic:
 
 - `MCR_seq200b/326`: exact correctly selects Brucellosis; typed selects its
   spinal epidural abscess complication.
 - `MCR_v2_seq100/159`: exact selects the dissemination mechanism; typed selects
   grade-3 endometrioid adenocarcinoma, clinically improving task projection,
-  but the strict coarse mapper gives neither credit.
+  but the safe-exact bridge gives neither label-identity credit.
 
 The arm therefore falsifies the claim that a generic “these labels are not
 equivalent” warning is enough. Direction and object type must be represented:
@@ -151,7 +159,16 @@ Using the final cache record per byte-identical key is independent of gold and
 arm. It reduced exact-versus-legacy flips from 176 to 158 and typed-versus-exact
 flips from 60 to 45. The main conclusions are robust: exact exposure advantage
 is unchanged; displayed top-1 remains non-significant; typed relations add no
-strict benefit. Future runs use an in-process per-key single-flight lock.
+safe-exact benefit. Future runs use an in-process per-key single-flight lock.
+
+Clinical audit coverage is explicitly limited to all 40 cases in the frozen
+priority queue: all 13 exact-versus-legacy safe-exact top-1 discordances, the
+one additional typed-versus-exact discordance, and 26 mechanism-priority cases.
+The remaining 360 selected cases were not exhaustively adjudicated for clinical
+equivalence. Consequently, an unreviewed safe-exact miss is not a clinical
+negative, and the 40-case audit explains registry/ranking mechanisms without
+converting the 400-case surface table into a clinical-complete leaderboard.
+No E2 replay value is inserted into these E7b outputs.
 
 ## Runtime and payload audit
 
@@ -176,7 +193,7 @@ prices and no authoritative billed amount was returned.
 |---|---|
 | Substring identity causes clinically unsafe non-synonym folding. | Supported by E7a and 160 contaminated selected concepts in E7b. |
 | Exact identity restores separately addressable candidates. | Supported: +1.04 candidates/unsafe case and 11 vs 1 paired exposure restorations. |
-| Exact identity alone improves strict top-1. | Not supported: 8 vs 5 paired gains/losses, `p=0.581`. |
+| Exact identity alone improves safe-exact top-1. | Not supported: 8 vs 5 paired gains/losses, `p=0.581`. |
 | Generic non-equivalence edges improve ranking. | Falsified in this form: 0 gains, 1 loss relative to exact. |
 | Legacy's hidden-member gold credit is a valid accuracy endpoint. | Falsified: 10 credit leaks and treatment-dependent scoring. |
 
@@ -187,7 +204,7 @@ prices and no authoritative billed amount was returned.
    batching and an explicit width experiment (E12), not unsafe compression.
 3. Replace generic relation warnings with typed directional relations and an
    explicit requested-object projection (RCR-3 Calls 1–3).
-4. Separate displayed-label strict accuracy, clinical completeness, parent/
+4. Separate displayed-label safe-exact accuracy, clinical completeness, parent/
    subtype relations, component completeness and mapper rescue (E2).
 5. Audit internal concept membership and evidence transfer even when the final
    displayed label is unchanged.

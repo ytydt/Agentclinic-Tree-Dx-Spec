@@ -3,7 +3,7 @@
 ## 摘要
 
 在冻结的 300 例 E6/E12 relation-challenge 开发集上，默认三调用 RCR-3 **没有优于同预算 Lite**。
-根校正临床完整 Top-1 为 Lite 29/300、RCR-3 20/300、Compact4 18/300；Top-2 为 42、31、26。
+根审计优先、异质 proxy 补全的临床完整 Top-1 为 Lite 29/300、RCR-3 20/300、Compact4 18/300；Top-2 为 42、31、26。
 RCR-3 相对 Lite 的完整 Top-1 差 −3.00pp（6 gain/15 loss，Holm q=.1567），Top-2 差 −3.67pp
 （8/19，q=.1045）。方向稳定为负，但在三个预注册臂间比较校正后不显著。
 
@@ -18,7 +18,7 @@ RCR-3 相对 Lite 的完整 Top-1 差 −3.00pp（6 gain/15 loss，Holm q=.1567�
 自称 `complete` 的 66 个冠军只有 9 个根完整，38 个是错误实体。RCR-3 因而未达到预注册的 relation
 fidelity、exposure preservation 或 complete conversion 成功条件。
 
-这不是“所有结构化推理无效”的证据。exact/frozen-synonym identity 没有发现危险误合并；typed view
+这不是“所有结构化推理无效”的证据。safe-exact identity 没有发现危险误合并；typed view
 确实救回少数完整复合对象；一次显式 comparator 仍比无比较有价值。被否证的是当前把生成式结构字段
 当作可靠事实、用固定 priority 截断、再信任同一模型自报完整性的组合。
 
@@ -36,8 +36,8 @@ RCR-3 的三次调用不是 Lite 的简单重采样：它把一次 generator 预
 生成 syndrome/anatomy、etiology/temporal、subtype/exception 三个 view。所有臂使用安全 exact identity，
 不以 substring、Jaccard 或宽泛 subtype 自动合并实体。
 
-主要分析集是 300 例 fail-closed ITA；共同成功只作 survivor-selected sensitivity。严格端点先于临床
-screen 冻结；异质 DeepSeek v4 Flash 只扩展候选关系队列，最终高影响关系和机制解释由根审计负责。
+主要分析集是 300 例 fail-closed ITA；共同成功只作 survivor-selected sensitivity。`safe-exact` 端点先于临床
+screen 冻结；其实现只接受 exact/frozen-safe-synonym，历史结果字段名仍为 `strict`。它是 mapper 前保守身份下界，不是临床完全等价或 task/mapper 正确率；异质 DeepSeek v4 Flash 只扩展候选关系队列，最终高影响关系和机制解释由根审计负责。本报告没有移植 E2 full-800 的数值。
 
 ## 执行完整性与 API 路径
 
@@ -58,21 +58,21 @@ Llama 路由并非 Groq 单点：Lite provider response association 为 DeepInfr
 DeepSeek 调用成功完成，没有 Google region unsupported 或公用机房 IP block，也未使用仓库 VPN/Clash。
 真正的裸 `direct` 模式在该容器不能解析 DNS；“无需 VPN”指环境网络路径可用，不是取消环境代理。
 
-## 严格端点：先验方向已经不利
+## `safe-exact` 端点：先验方向已经不利
 
-严格 exact/frozen-synonym 结果为：
+exact/frozen-safe-synonym 结果为：
 
-| 臂 | strict Top-1 | strict Top-2 | raw exposure | frontier exposure |
+| 臂 | safe-exact Top-1 | safe-exact Top-2 | raw exposure | frontier exposure |
 |---|---:|---:|---:|---:|
 | Lite | 16 | 24 | 37 | 37 |
 | RCR-3 | 7 | 12 | 19 | 16 |
 | Compact4 | 8 | 15 | 24 | 24 |
 
-RCR vs Lite strict Top-1 −3.00pp（2 gain/11 loss，Holm q=.0645），Top-2 −4.00pp（4/16，
+RCR vs Lite `safe-exact` Top-1 −3.00pp（2 gain/11 loss，Holm q=.0645），Top-2 −4.00pp（4/16，
 q=.0355），raw exposure −6.00pp（4/22，q=.00160），frontier exposure −7.00pp（4/25，
-q=.000311）。所以严格 Top-2 的显著损害不是 selector 单层造成：reference 在候选生成/保留之前就已少了。
+q=.000311）。所以 `safe-exact` Top-2 的显著损害不是 selector 单层造成：reference 在候选生成/保留之前就已少了。
 
-严格命中全部位于 MCR；DA 因复合 stage、病因、部位和时间修饰，exact bridge recall 极低。严格端点
+`safe-exact` 命中全部位于 MCR；DA 因复合 stage、病因、部位和时间修饰，identity bridge recall 极低。`safe-exact` 端点
 不能作为最终临床准确率，但 exposure 的配对损失仍是有效机制信号：宽松同义审计不能凭空恢复从未生成
 或已被 frontier 删除的候选。
 
@@ -84,14 +84,14 @@ response fail-closed。代理给出的完整 Top-1/Top-2 是：Lite 41/58、RCR 
 根审计覆盖：
 
 - 每一个被任一臂选中且代理判 complete 的关系；
-- 每一个代理/严格端点不一致病例中的被选关系；
+- 每一个代理/`safe-exact` 端点不一致病例中的被选关系；
 - 唯一 screen failure；
 - 每族 15 个冻结代理阴性病例；
-- 共 109 例、375 个 candidate-reference 关系，且所有最终完整端点 discordance 都在根复核范围内。
+- 共 109/300 例、375/3,533 个 candidate-reference 关系，且所有 48 个最终完整端点 discordance 病例都在根复核范围内。
 
 代理的 104 个 selected-complete 中，根审计只保留 69 个，25 个降为 partial，10 个改为 not-equivalent。
 全部 375 个高影响关系有 107 个三分类分歧。30 个代理阴性病例、106 个被选关系没有发现额外 root-
-complete，说明本次 root correction 主要纠正 false positive，而不是只向一个方向压低某个臂。
+complete，说明本次 root correction 主要纠正 false positive，而不是只向一个方向压低某个臂。其余 3,151 条非关键关系保留 heterogeneous proxy，另 7 条 screen failure 按 fail-closed 处理；它们都没有人工逐候选复核，proxy-negative 也不是人工 gold。因此下文临床表是 root-priority/proxy-completed 端点，而非 300 例全候选人工审计。
 
 典型代理错误包括：
 
@@ -107,9 +107,9 @@ complete，说明本次 root correction 主要纠正 false positive，而不是�
 
 最后一点是 E2 的必要性：relation 与 identifiability 必须分栏，不能在一个“equivalence”判断里混合。
 
-## 根校正临床端点
+## 根审计优先的临床端点（其余关系由 proxy 补全）
 
-### 完整等价
+### 完整等价（clinical-complete*）
 
 | 臂 | Top-1 | Top-2 | DA Top-1/2 | MCR Top-1/2 |
 |---|---:|---:|---:|---:|
@@ -130,7 +130,7 @@ Compact4 vs Lite ITA Top-1 −3.67pp（15/4，q=.0576），Top-2 −5.33pp（21/
 成功 174 例 Top-1 为 +0.57pp（3/4），Top-2 为 0（5/5）。显著 Top-2 损害几乎全是第四调用的合同
 失败，而不是成功调用中的稳定排序损害。
 
-### Complete + partial sensitivity
+### Complete + partial sensitivity*
 
 | 臂 | Top-1 | Top-2 |
 |---|---:|---:|
@@ -212,8 +212,7 @@ exact PE 仅因稳定 ID 次序被删；Takotsubo generic core 被三个 subtype
 ## 解释边界
 
 1. 这是 300 例开发集，不是外部确认集；不做“总体临床模型优劣”的外推。
-2. 根审计穷尽 endpoint-critical selected relation，不穷尽 3,533 个所有未选 candidate relation；剩余关系
-   明确标记 heterogeneous proxy provenance。
+2. 根审计穷尽 endpoint-critical selected relation，不穷尽 3,533 个全部 candidate relation；375 条为 root manual、3,151 条为 heterogeneous proxy noncritical、7 条 screen failure fail-closed。未审 proxy-negative 不能解释为人工阴性。
 3. relation 分层样本等额而非 prevalence-weighted；29/60 不能直接当总体 precision。
 4. 完整关系与 reference identifiability 分离。病例可以不唯一支持 reference，但 exact output 仍与 reference
    相同；反之，病例中真实存在的 manifestation 不因此等价于 reference。E2 专门估计这两轴。

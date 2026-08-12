@@ -7,13 +7,15 @@ E12 最可靠的正结论不是“更多候选”或“更多调用”有效，�
 - raw、k=5、pairwise 相对 first：51/300→65/300，`+4.67 pp`，16 gain/2 loss，McNemar `p=.00131`，Holm `q=.04987`；
 - raw、k=10、pairwise 相对 first：51/300→66/300，`+5.00 pp`，17/2，`p=.000729`，`q=.02842`。
 
+这里及下文的临床完整等价记为 `clinical-complete*`：全部 45 个现有 primary discordance 病例进入根复核，但绝对计数仍由 385 条 root relation 覆盖关键队列、2,806 条异质 proxy 补全非关键关系。它不是 300 例全候选人工标注；精确覆盖与未审 proxy-negative 边界见“端点与根审计”。
+
 这证明候选顺序不是充分排序器，病例证据可以把更完整的病因、亚型或实体从候选池中提到第一。但它**没有证明 pairwise 优于 pointwise**：raw k=5 两者同为 65/300，raw k=10 为 60/300 对 66/300，后一个 `+2.00 pp` 只有 8/2 discordance，39 重校正后 `q=1`。pairwise 的强结论是“胜过不比较”，不是“已经胜过所有单次比较方式”。
 
 表征因素给出更重要的负结论。历史 e7 S1 摘要经常删除病理、解剖压迫、时间演化、病原学或病例末尾的诊断性句子。raw 相对 S1 的 clinical-complete Top-1 在四个在线比较中均为正：k=5 pointwise `+5.00 pp`（19/4，未校正 `p=.00260`，Holm `q=.09534`），k=5 pairwise `+4.00 pp`（14/2，`q=.14633`），k=10 pointwise `+3.33 pp`（14/4，`q=1`），k=10 pairwise `+4.00 pp`（14/2，`q=.14633`）。它们未通过 39 重 primary 校正，不能宣称确认性表征优势；不过方向、病例链路和 complete+partial 敏感性端点一致，足以定位 S1 的破坏性压缩机制。
 
 冻结 E6 graph 也没有修复这个问题。graph 相对 S1 的主比较近零，且 42/300 病例没有合格 graph、在线臂必须 fail-closed；graph JSON 平均 3,590 字符，反而显著长于 raw 的 1,511 字符。它既不是更短的压缩，也不是可靠的信息保持变换。病例审计显示它会把“未见某细胞谱系”编码成对病灶本身的宽泛 `contradicts`，或保留观察却丢失观察对病因/亚型的限定关系。E12 因而再次否定当前生成式 graph 实现，而不是否定所有关系图。
 
-宽度和调用深度均没有稳定净收益。k=5→k=10 只新增 2 个 strict reference exposure、无 exposure loss，但 raw pointwise 的 clinical-complete Top-1 反而 `−1.67 pp`（4 gain/9 loss），raw pairwise 仅 `+0.33 pp`（3/2）。第二次 S2 调用改变 81/300 个 capped pool、加入并挤出各 117 个候选，却没有 strict exposure gain；第三次改变 44/300、加入并挤出各 56 个，仍没有 strict exposure gain。clinical-complete Top-1 为 depth1 62、depth2 65、depth3 66；两次增量比较均未通过两重校正。更关键的是，depth1→2 的 5 个端点翻转只有 2 个真的改变了候选池，depth2→3 的 3 个翻转只有 1 个改变候选池；其余是相同输入的独立 selector 调用、schema failure 或路由方差，不能归因为“额外生成调用”。
+宽度和调用深度均没有稳定净收益。k=5→k=10 只新增 2 个 `safe-exact` reference exposure、无 exposure loss，但 raw pointwise 的 clinical-complete Top-1 反而 `−1.67 pp`（4 gain/9 loss），raw pairwise 仅 `+0.33 pp`（3/2）。第二次 S2 调用改变 81/300 个 capped pool、加入并挤出各 117 个候选，却没有 `safe-exact` exposure gain；第三次改变 44/300、加入并挤出各 56 个，仍没有 `safe-exact` exposure gain。clinical-complete Top-1 为 depth1 62、depth2 65、depth3 66；两次增量比较均未通过两重校正。更关键的是，depth1→2 的 5 个端点翻转只有 2 个真的改变了候选池，depth2→3 的 3 个翻转只有 1 个改变候选池；其余是相同输入的独立 selector 调用、schema failure 或路由方差，不能归因为“额外生成调用”。
 
 所以 E12 对 RCR-3 的直接约束是：保留原文 span 和关系，不再以 S1 摘要替代病例；候选新增必须携带可区分的证据与类型，而不是在固定 k 上做无证据替换；Call-3 应以成对 decisive contrast 排序并保留罕见候选覆盖；调用深度的收益必须以“新实体/新证据进入并造成何种变化”计量，不能只比较三次独立 selector 的最终准确率。
 
@@ -41,11 +43,13 @@ E12 最可靠的正结论不是“更多候选”或“更多调用”有效，�
 
 三个端点有意分层：
 
-1. `strict`：exact 或冻结 safe-synonym，预注册 primary；
-2. `clinical complete`：与 reference 是病例要求层级上的完整同一实体；
-3. `complete+partial`：允许疾病族、表现或复合诊断的一部分正确，只作范围敏感性分析。
+1. `safe-exact`（历史结果字段 `strict`）：exact 或冻结 safe-synonym，预注册 primary；
+2. `clinical complete*`：与 reference 是病例要求层级上的完整同一实体；
+3. `complete+partial*`：允许疾病族、表现或复合诊断的一部分正确，只作范围敏感性分析。
 
-Gemini 2.5 Flash 只用于异质候选关系 screen 和扩展审计队列，300/300 病例成功。它对 3,191 个候选给出 81 exact、148 acceptable variant、260 broader/narrower、1,299 related、1,403 unrelated。根审计随后逐候选复核 154 个病例、385 个 case-candidate relation，覆盖全部 45 个最终 primary clinical-complete discordance 病例和 30 个分层负样本病例。
+`safe-exact` 是 mapper 前保守身份下界，不是临床完全等价或 task/mapper 正确率；本报告没有把 E2 full-800 的审计数值移植到 E12。
+
+Gemini 2.5 Flash 只用于异质候选关系 screen 和扩展审计队列，300/300 病例成功。它对 3,191 个候选给出 81 exact、148 acceptable variant、260 broader/narrower、1,299 related、1,403 unrelated。根审计随后逐候选复核 154/300 个病例、385/3,191 个 case-candidate relation，覆盖全部 45 个由现有端点识别的 primary clinical-complete discordance 病例、125 个 endpoint-critical proxy 病例和 30 个分层 proxy-negative 病例（类别重叠）。
 
 异质 screen 与根判断的分歧很大：385 个复核关系中有 154 个类别下调。screen 所称的 102 个 `acceptable_clinical_variant` 中，根审计只保留 14 个 complete，65 个降为 partial，23 个降为 not-equivalent；59 个 `exact` 中也有 15 个 partial、5 个 not-equivalent。典型错误包括：
 
@@ -56,13 +60,13 @@ Gemini 2.5 Flash 只用于异质候选关系 screen 和扩展审计队列，300/
 - 把 diabetic amyotrophy 当成肾癌；
 - 把复合 reference 的单个表现或病因组件当作完整答案。
 
-最终根关系为 53 complete、116 partial、216 not-equivalent。以下机制结论以根审计 clinical-complete 为主；未进入端点关键队列的关系仍明确保留 heterogeneous proxy 来源，未伪称全量人工 gold。
+最终 385 条根关系为 53 complete、116 partial、216 not-equivalent；其余 2,806 条关系没有人工逐候选复核，保留 heterogeneous proxy，其中 proxy-negative 不是人工确认的临床阴性。下文带星号临床端点以 root override 覆盖关键队列、以 proxy 补全其余关系；30 例阴性抽样未发现新增 complete，但不能把它升级为 300 例全量人工 gold。病例机制解读以根审计队列为主。
 
 ## 二十个条件的端点全景
 
 表中每格为 Top-1/Top-2 病例数，分母均按 ITA 计为 300；在线失败按错处理。
 
-| 表征/宽度/比较器 | strict | clinical complete | complete+partial |
+| 表征/宽度/比较器 | safe-exact | clinical complete* | complete+partial* |
 |---|---:|---:|---:|
 | raw k5 first | 21 / 24 | 51 / 62 | 120 / 160 |
 | raw k5 pointwise | 24 / 28 | 65 / 71 | 140 / 175 |
@@ -87,7 +91,7 @@ Gemini 2.5 Flash 只用于异质候选关系 screen 和扩展审计队列，300/
 
 first 的九个表征/宽度组合输出完全相同，是设计正确的负控制：first 不读取表征，宽度从 5 扩到 10 也不改变第一历史候选。它们的恒等结果说明后续差异来自 online comparator 或其输入，而不是候选 ID 构造在不同表征间漂移。
 
-strict Top-1 只有 17–26/300，clinical complete 为 50–66/300，complete+partial 为 108–146/300。三层之间的巨大差距不是可以忽略的评估细节：系统主要在“泛病种/表现/病因/亚型/复合范围”之间移动，而不是简单地在正确和完全无关之间移动。
+`safe-exact` Top-1 只有 17–26/300，proxy 补全的 clinical complete 为 50–66/300，complete+partial 为 108–146/300。三层之间的巨大差距不是可以忽略的评估细节：系统主要在“泛病种/表现/病因/亚型/复合范围”之间移动，而不是简单地在正确和完全无关之间移动；但绝对跃迁也包含 2,806 条未审 proxy 的不确定性。
 
 ## 39 个预注册比较：哪些结果能说、哪些不能说
 
@@ -147,7 +151,7 @@ pointwise 的主要弱点是输出量和 schema 稳定性。raw k10 pointwise �
 
 ## 宽度：新增暴露很少，干扰发生在正确候选已经存在时
 
-k=5→k=10 每例机械增加 5 个候选，共 1,500 个新 exposure，只带来 2 个 strict reference exposure：`DA_d2_heldout200b/540` 的 acute oxalate nephropathy 和 `MCR_seq200b/480` 的 reference；没有 strict exposure loss。即每 750 个新增候选才有一个 strict reference 暴露，边际召回极低。
+k=5→k=10 每例机械增加 5 个候选，共 1,500 个新 exposure，只带来 2 个 `safe-exact` reference exposure：`DA_d2_heldout200b/540` 的 acute oxalate nephropathy 和 `MCR_seq200b/480` 的 reference；没有 `safe-exact` exposure loss。即每 750 个新增候选才有一个 `safe-exact` reference 暴露，边际召回极低。
 
 端点也没有单调上升：
 
@@ -162,14 +166,14 @@ k=5→k=10 每例机械增加 5 个候选，共 1,500 个新 exposure，只带�
 
 ## 调用深度：实体新增、cap displacement 与重复 selector 方差必须分开
 
-Call-2 相对 Call-1：81 个 pool 改变，117 个新候选进入、117 个旧候选被 cap 挤出；strict exposure 0 gain/0 loss。clinical-complete Top-1 62→65，4 gain/1 loss，`p=.375`、两重 Holm `q=.75`。五个 endpoint flip 中：
+Call-2 相对 Call-1：81 个 pool 改变，117 个新候选进入、117 个旧候选被 cap 挤出；`safe-exact` exposure 0 gain/0 loss。clinical-complete Top-1 62→65，4 gain/1 loss，`p=.375`、两重 Holm `q=.75`。五个 endpoint flip 中：
 
 - `DA_d2_heldout100/439` 与 `MCR_seq200b/411` 的 pool 真正改变。前者 Call-2 加入 lightning-induced maculopathy，后者加入 plexiform schwannoma，均把正确具体实体带进选择路径，是可信的生成深度收益；
 - `DA_d2_heldout100/372`、`MCR_v1_seq100/112`、`MCR_seq200b/335` 的 pool SHA 在 depth1/2 相同。MCR112 的 depth1 是一个 fail-closed schema row，depth2 才成功；另外两个是相同候选输入的独立 selector 翻转。它们不能归因于 Call-2 新信息。
 
-Call-3 相对 Call-2：44 个 pool 改变，56 入/56 出，仍无 strict exposure变化。clinical-complete Top-1 65→66，2 gain/1 loss，`p=1`。三例中只有 `MCR_seq200b/283` 的 pool 发生改变并得到可信 rescue；`MCR_seq200b/335` 的 repair 与 `DA_d2_heldout100/372` 的 harm 都发生在相同 pool 上。
+Call-3 相对 Call-2：44 个 pool 改变，56 入/56 出，仍无 `safe-exact` exposure 变化。clinical-complete Top-1 65→66，2 gain/1 loss，`p=1`。三例中只有 `MCR_seq200b/283` 的 pool 发生改变并得到可信 rescue；`MCR_seq200b/335` 的 repair 与 `DA_d2_heldout100/372` 的 harm 都发生在相同 pool 上。
 
-strict 层也只有 Call-3 的 `MCR_seq200b/283` 一个 rescue；总体 strict Top-1 为 25→25→26。历史 S3 另有 14 个病例、18 个标签在全部冻结 S2 中不存在，包括 metastatic melanoma、ALK-positive lung adenocarcinoma、rhabdomyolysis、sepsis、glioblastoma、PCNSL、Hurthle-cell carcinoma、disseminated aspergillosis/candidiasis 等。E12 按预注册将其审计但排除，避免让 S3 “凭空造候选”污染 S2 深度比较。这同时暴露旧流水线的阶段合同不完整：历史 shortlist 并非严格只是上游 proposal 的子集。
+`safe-exact` 层也只有 Call-3 的 `MCR_seq200b/283` 一个 rescue；总体 `safe-exact` Top-1 为 25→25→26。历史 S3 另有 14 个病例、18 个标签在全部冻结 S2 中不存在，包括 metastatic melanoma、ALK-positive lung adenocarcinoma、rhabdomyolysis、sepsis、glioblastoma、PCNSL、Hurthle-cell carcinoma、disseminated aspergillosis/candidiasis 等。E12 按预注册将其审计但排除，避免让 S3 “凭空造候选”污染 S2 深度比较。这同时暴露旧流水线的阶段合同不完整：历史 shortlist 并非严格只是上游 proposal 的子集。
 
 因此不能把 62→65→66 读成“三次调用逐步有效”。可归因于 pool 改变的完整 Top-1 新收益只有 Call-2 两例、Call-3 一例；其余净变化混有相同输入重采样和失败恢复。RCR-3 必须复用一次冻结 Call-3 comparator 来比较不同累计 pool，或至少对相同 payload 强制同一缓存结果；否则“调用深度”与“又抽一次 selector”不可识别。
 
@@ -199,9 +203,9 @@ first 是稳定低成本负控制，但把 proposal order 偷换成诊断排序�
 
 优点是显式记录 source quote、极性、scope、time 和 relation，在 May–Thurner 等解剖关系清楚的病例可恢复 raw 结果。弱点是构造失败率、长度和关系错误同时存在；“节点都在”不等于“决定性关系正确”。RCR Call-1 应把 graph 当可审计索引，selector 仍能回看原文 span，不能只读 graph serialization。
 
-### strict bridge 与语义审计
+### `safe-exact` bridge 与语义审计
 
-strict bridge 可复现、不会把组件偷算完整，但对临床同义和安全具体化 recall 低。异质 screen 适合扩队列，却在 154/385 个根复核关系上过度授予等价，绝不能代替人工责任。E2 应把完整性和可识别性拆开盲审：先判输出对象与 reference 的关系，再判病例文本是否足以唯一要求该具体 reference。
+`safe-exact` bridge 可复现、不会把组件偷算完整，但对临床同义和安全具体化 recall 低。异质 screen 适合扩队列，却在 154/385 个根复核关系上与根判断分歧，且主要表现为过度授予等价，绝不能代替人工责任。完整性和可识别性必须拆开盲审：先判输出对象与 reference 的关系，再判病例文本是否足以唯一要求该具体 reference；E12 本身不声称已完成 full-800 可识别性审计。
 
 ## 对 RCR-3 的可执行约束与可证伪预测
 
@@ -215,4 +219,4 @@ strict bridge 可复现、不会把组件偷算完整，但对临床同义和安
 8. 对含作者诊断结论句的病例单独标记，报告保留/遮蔽该句的轨迹敏感性；这不是重复降方差实验，而是检验 raw 优势是否来自标签性文本。
 9. 预注册失败条件：若 RCR-3 不能提高 complete exposure→Top-1 conversion，或新增候选造成的 loss 不少于 gain，或 relation skeleton 的关键关系错误仍接近 E6，则关系保留机制被否证。
 
-E12 已经回答了“现有 e7 哪一段值得保留”：保留多候选覆盖和一次显式 comparator；停止以 S1 为唯一输入、停止无证据填宽、停止把额外独立 selector 抽样称为调用深度收益。RCR-3 的价值必须来自关系忠实、类型化候选、范围安全和可追溯对比，而不是把现有流水线简单再调用一次。
+E12 已经回答了“现有 e7 哪一段值得保留”：保留多候选覆盖和一次显式 comparator；停止以 S1 为唯一输入、停止无证据填宽、停止把额外独立 selector 抽样称为调用深度收益。RCR-3 的价值必须来自关系忠实、类型化候选、范围安全和可追溯对比，而不是把现有流水线简单再调用一次。后续应直接检验三条反事实：遮蔽作者诊断句后 raw comparator 的 complete conversion 若消失，原 raw 优势应归为结论句泄漏；在同一缓存 comparator 下累计 pool 若不再呈现 depth gain，历史“调用深度”效应应撤回；程序化 span/relation 保真若不能同时降低 decisive-evidence drop 与 manifestation-over-etiology 错排，则新 graph 仍被否证。

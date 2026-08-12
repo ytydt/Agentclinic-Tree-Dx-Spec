@@ -6,15 +6,31 @@ Across 800 existing development trajectories, the legacy substring registry made
 
 These are mechanism/development estimates, not a new confirmation result. The offline replay isolates identity and exposure mechanics; it does not count the old selector's answer as if the selector had seen the changed pool.
 
-## Primary endpoints
+## Endpoint and audit boundary
 
-| Group | n | Cases with unsafe fold | Unsafe pairs | Evidence-transfer targets | Mean nodes restored | Legacy gold identity contamination | Exact-synonym contamination |
+`legacy substring` names the **registry-construction treatment** in this
+offline replay. It is not the historical `legacy-chain` scoring endpoint.
+Likewise, exact frozen-synonym identity is used here to test node separation
+and contamination; this report does not present safe-exact diagnosis accuracy,
+clinical-complete accuracy, partial credit or task/mapper accuracy. Those
+endpoints require an actual arm output under their own frozen contracts.
+
+The 800-case counts below are deterministic structural replay results. Human
+clinical review in `MANUAL_AUDIT.md` covers ten purposively selected
+high-leverage trajectories and is exhaustive only for those ten mechanism
+traces. The other cases did not receive complete/partial/no root adjudication,
+so the review cannot be converted into a clinical rate. No E2 full-800 replay
+number is inserted into this E7a cohort.
+
+## Primary structural endpoints
+
+| Group | n | Cases with unsafe fold | Unsafe pairs | Evidence-transfer targets | Mean nodes restored | Legacy-registry gold identity contamination | Exact-synonym contamination |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | ALL | 800 | 299 (37.4%) | 1199 | 1040 | 0.550 | 2.8% | 0.0% |
 | DA | 400 | 167 (41.8%) | 725 | 588 | 0.645 | 0.5% | 0.0% |
 | MCR | 400 | 132 (33.0%) | 474 | 452 | 0.455 | 5.0% | 0.0% |
 
-The identity-contamination endpoint asks whether the node containing an exact/frozen-synonym gold or selected label also contains a label that is not a confirmed synonym. It is therefore stricter than simple post-registry recall: a swallowed gold string can remain textually present while losing its own node.
+The identity-contamination endpoint asks whether the node containing an exact/frozen-synonym gold or selected label also contains a label that is not a confirmed synonym. It is therefore a more conservative structural condition than simple post-registry recall: a swallowed gold string can remain textually present while losing its own node.
 
 ## Reconstruction check
 
@@ -58,4 +74,6 @@ This mechanism would be weakened if (a) unsafe folds were rare with tight case-l
 - The disease bridge is used only by exact normalized key lookup; its fuzzy and substring resolver tiers are disabled.
 - Lexical relation edges assert non-identity and surface containment only; they are not a clinical ontology gold standard.
 - Logged selector outputs are mapped for identity contamination only; no clinical win/loss is credited without a fresh selector call.
+- No task result is inferred from the pre-mapper registry, and no
+  `legacy-chain` or safe-exact result is inferred from node containment.
 - Full unsafe-pair ledger contains 1199 rows; case-level JSONL retains all arm payloads.

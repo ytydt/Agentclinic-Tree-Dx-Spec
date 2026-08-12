@@ -18,14 +18,19 @@ This deliberately probes the input-sensitive stage. It is not the full
 multi-call production APHHM or AB02 runtime and cannot establish an end-to-end
 architecture ranking.
 
-Primary endpoint: exact-or-frozen-synonym pre-mapper top-1. Raw candidate
-recall, option copying, candidate-set instability, failures and runtime are
-mechanism endpoints. Invalid responses remain failures in intention-to-analyse
-(ITA) arm totals; paired contrasts require both conditions to be valid.
+Primary endpoint: **safe-exact（历史字段 `strict`）** pre-mapper top-1. The
+implementation calls `FrozenExactSynonymBridge.equivalent`: normalized surface
+equality plus a frozen, collision-filtered synonym dictionary (and a narrowly
+defined full-name/own-initialism rule), with no substring or fuzzy resolver
+tier. Raw candidate recall, option copying, candidate-set instability, failures
+and runtime are mechanism endpoints. Invalid responses remain failures in
+intention-to-analyse (ITA) arm totals; paired contrasts require both conditions
+to be valid. Safe-exact is a reproducible high-precision lower bound, not a
+clinical-completeness endpoint.
 
 ## Arm results
 
-| Architecture / condition | Served | Raw gold recall (ITA) | Strict top-1 (ITA) | Mean candidate option-copy among served | Champion copied an option | Output tokens |
+| Architecture / condition | Served | Raw gold recall (ITA) | Safe-exact top-1 (ITA) | Mean candidate option-copy among served | Champion copied an option | Output tokens |
 |---|---:|---:|---:|---:|---:|---:|
 | H clean fixed | 189/200 | 22/200 | 16/200 | 5.6% | 28/189 | 1,181,395 |
 | H clean reordered | 189/200 | 21/200 | 17/200 | 5.2% | 29/189 | 1,208,051 |
@@ -45,7 +50,7 @@ collapsing generative search, not merely improving a downstream choice.
 Positive deltas favor the right-hand condition. Confidence intervals are
 case-bootstrap percentile intervals; p values are exact two-sided McNemar.
 
-| Architecture | Contrast | Comparable | Gains / harms | Strict top-1 delta | 95% CI | p |
+| Architecture | Contrast | Comparable | Gains / harms | Safe-exact top-1 delta | 95% CI | p |
 |---|---|---:|---:|---:|---:|---:|
 | H | options fixed − clean fixed | 178 | 75 / 2 | **+41.0pp** | +33.1 to +48.3 | 3.98e-20 |
 | H | options reordered − clean reordered | 168 | 47 / 8 | **+23.2pp** | +15.5 to +31.0 | 8.07e-8 |
@@ -78,21 +83,29 @@ points in both architectures, while champion copying rises from 14.8% to 63.6%
 among served H cases and 11.5% to 62.3% for F. The candidate set itself is
 therefore contaminated before champion selection.
 
-### Strict improvement mixes clinical rescue and endpoint alignment
+### Safe-exact improvement mixes clinical rescue and endpoint alignment
 
 Manual review of all four fixed harms and 18 mechanism-stratified transitions
 finds real rescues (histiocytoid Sweet syndrome, PAPT, tricuspid valve
 aneurysm, MHIBCC), direct spelling/expansion repairs, compound-label supply,
 parent/component substitutions, and two credible distractor harms. One H harm
 is simply `Cohen syndrome` versus `Cohen综合征`; one F harm is fibrous dysplasia
-versus its monostotic subtype. Strict accuracy therefore both under-credits
+versus its monostotic subtype. Safe-exact accuracy therefore both under-credits
 clinical equivalence and overstates independent reasoning when the exact
 source label is visible.
+
+The clinical review covered all 4/4 fixed-format safe-exact harms and a frozen
+mechanism sample of 18 additional transitions. It did **not** clinically
+adjudicate every output or every safe-exact miss in the eight arms. Unreviewed
+safe-exact-negative rows are therefore lexical lower-bound misses of unknown
+clinical status, not demonstrated clinical errors. The reviewed cases explain
+which mechanisms can generate the aggregate effect; they do not turn the
+remaining experiment into an exhaustive clinical leaderboard.
 
 ### Format changes trajectories even when aggregate accuracy does not move
 
 Clean reordering flips 133/180 H champions and 165/199 F champions while mean
-candidate-set Jaccard falls to 0.180 and 0.132. Net strict accuracy remains near
+candidate-set Jaccard falls to 0.180 and 0.132. Net safe-exact accuracy remains near
 zero because gains and harms cancel at a low floor. Aggregate top-1 equality is
 thus compatible with wholesale case-level trajectory replacement.
 
@@ -101,7 +114,7 @@ thus compatible with wholesale case-level trajectory replacement.
 H has 11, 11, 13 and 24 invalid outputs across its four arms, mostly failure
 to return the required 3–8 L2 candidates. F has 0, 1, 1 and 1. H also uses
 roughly two to three times F's output tokens under corresponding conditions,
-without higher clean strict accuracy. This is evidence about these prompts and
+without higher clean safe-exact accuracy. This is evidence about these prompts and
 schema burden, not about full APHHM.
 
 ## Runtime and provenance
@@ -128,8 +141,8 @@ E1 passes as a causal mechanism experiment and rejects three simple stories:
 3. similar aggregate accuracy does not imply similar diagnostic trajectories.
 
 It does **not** show a 40-point gain in independent clinical reasoning, because
-the endpoint mixes substantive rescue with exact-label supply and ontology
-alignment. It also does not compare complete production architectures. The
+the safe-exact endpoint mixes substantive rescue with exact-label supply and
+ontology alignment. It also does not compare complete production architectures. The
 actionable design requirement is to keep source options outside generative
 reasoning, preserve the requested diagnostic object explicitly, and evaluate
 clinical completeness separately from exact label agreement.

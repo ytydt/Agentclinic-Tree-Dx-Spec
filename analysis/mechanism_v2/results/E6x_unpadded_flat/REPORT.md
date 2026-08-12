@@ -4,11 +4,11 @@
 
 E6 的 whitespace 长度控制被证伪：`[LENGTH_CONTROL_PAD]` 在 DeepSeek tokenizer 中约占 8 token，而不是一个 token。去掉 padding 后，256 个 telemetry 匹配病例的平均输入 token 从 1721.0 降到 604.8，减少 1116.2（64.9%）。在两臂均只有一次物理尝试的 184 例中，移除的 whitespace pad 数与输入 token 节省几乎严格线性（Pearson `r=1.000`；斜率约 8.00 token/pad，截距约 −3）。因此原 E6 的“每例三表示 whitespace 词数完全相等”不能作为模型注意力预算相等的证据。
 
-但“padding 解释 flat 的语义劣势”同样没有得到支持。人工校正后的 255 个共同输出中，unpadded 相对 padded：
+但“padding 解释 flat 的语义劣势”同样没有得到支持。在外部臂盲筛查并按冻结队列接受根代理定向纠错的 255 个共同输出语义敏感性汇总中，unpadded 相对 padded：
 
 - 完整等价增加 1.57 个百分点（padded-only 7，unpadded-only 11；`p=0.481`）；
 - 完整或部分等价反而下降 3.53 个百分点（padded-only 19，unpadded-only 10；`p=0.136`）；
-- 严格 top-1 从 3 降到 2，gold recall 从 6 降到 5，均 `p=1`。
+- safe-exact top-1 从 3 降到 2，gold recall 从 6 降到 5，均 `p=1`。
 
 这是一项负向但有价值的可证伪结果：padding 是严重的 token/成本混杂，却不是观察到的诊断质量差异的单向机制。
 
@@ -16,9 +16,9 @@ E6 的 whitespace 长度控制被证伪：`[LENGTH_CONTROL_PAD]` 在 DeepSeek to
 
 E6x 复用 E6 的同一批 300 例、同一 258 个成功 builder 结果、同一无序事实文本、同一 DeepSeek V4 Flash selector 提示词、校验器、温度和 retry 上限。唯一表示干预是删除补齐到三臂最大 whitespace 词数的 sentinel；不重建 facts，不调整候选合同，不改变 gold 隔离。
 
-原 padded 臂、builder 结果、telemetry 和同义桥均在调用前记录 SHA-256。42 个 builder 失败继续 fail-closed；unpadded 的 258 个可构造病例全部最终通过 selector 合同，padded 为 255 个。这里不重复运行、不扩确认集、不统一 provider/retry，符合总实验排除项。
+原 padded 臂、builder 结果、telemetry 和同义桥均在调用前记录 SHA-256。42 个 builder 失败继续 fail-closed；unpadded 的 258 个可构造病例全部最终通过 selector 合同，padded 为 255 个。冻结表面终点展示为 **safe-exact（历史字段 `strict`）**：由 `FrozenExactSynonymBridge.equivalent` 实现，只接受归一化相等、冻结且排除冲突的同义词及窄定义的自身首字母缩写，不使用 substring/fuzzy tier。它是标签身份下界而非临床完整性判定。这里不重复运行、不扩确认集、不统一 provider/retry，符合总实验排除项。
 
-语义审计在看到 selector 结果后、调用审计模型前另行冻结。Gemini 2.5 Flash 只看到随机顺序的 O1/O2，不看到 padded/unpadded 名称；255 例双输出、3 例单输出、42 例零输出。根代理最终复核 33 个完整等价分歧和 30 个冻结一致样本，共 63 例、126 个判断；33 个外部判断被改判，涉及 25 例。
+语义审计在看到 selector 结果后、调用审计模型前另行冻结。Gemini 2.5 Flash 只看到随机顺序的 O1/O2，不看到 padded/unpadded 名称；255 例双输出、3 例单输出、42 例零输出。根代理最终复核 33 个完整等价分歧和 30 个冻结一致样本，共 63 例、126 个判断；33 个外部判断被改判，涉及 25 例。其余病例没有接受逐输出人工临床裁决，因此未审 safe-exact-negative 或外部语义-negative 不能当作已证实的临床阴性；本报告的语义数值是定向纠错敏感性分析，不是完整 300 例临床 leaderboard，也不移植 E2 replay 数值。
 
 ## tokenizer 混杂的定量解剖
 
@@ -81,7 +81,7 @@ Gemini 原始结果给出完整等价 46→47（+0.39 pp）。根代理改判后
 - 因词序把“DVT secondary to May-Thurner”误判为没有识别 May-Thurner；
 - 漏掉真正的本体冲突，例如 early nonatrophic autoimmune gastritis 被叫成 chronic atrophic gastritis。
 
-这说明 E6x 的近零净效应不是审计员一个阈值造成；人工修正改变绝对计数，但没有产生显著单向优势。
+这说明 E6x 的近零净效应没有被冻结人工复核队列中的阈值纠错逆转；该结论限于定向审计覆盖，不能扩写为全部输出都已人工判定。
 
 ## 对主研究问题的含义
 
@@ -95,8 +95,8 @@ Gemini 原始结果给出完整等价 46→47（+0.39 pp）。根代理改判后
 
 - `preregistration.json`、`semantic_preregistration.json`：两阶段冻结设计；
 - `arm/`：258 个 unpadded selector 缓存、结果、telemetry、日志；
-- `summary.json`：严格与运行指标的 padded/unpadded 配对；
-- `semantic_judgments_final.jsonl`、`semantic_final_summary.json`：人工责任语义终点；
+- `summary.json`：safe-exact（保留历史字段 `strict_top1`）与运行指标的 padded/unpadded 配对；
+- `semantic_judgments_final.jsonl`、`semantic_final_summary.json`：外部臂盲筛查并按冻结队列接受根代理纠错的语义敏感性终点；
 - `case_trajectory_diagnostics.jsonl`：255 例候选集、champion、token、延迟和语义方向逐案对照；
 - `semantic_manual_adjudication.jsonl`、`manual_audit_manifest.json`：63 例人工裁决与冻结覆盖。
 

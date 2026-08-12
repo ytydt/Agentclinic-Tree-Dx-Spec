@@ -4,13 +4,13 @@
 
 E9 支持一个有限但重要的结论：Forest 的三视图不是三张独立选票，也不只是三个换名副本。它们是**中度重叠、偶尔补足关键候选或证据、同时会把 selector 推入不同错误吸引域的相关视图**。
 
-固定 400 例上，真实三视图 `real_views` 相对单锚点 `single_anchor` 的严格 top-1 从 29/400 提高到 38/400（`+2.25 pp`，病例 bootstrap 95% CI `[+0.75,+4.00] pp`；独赢 10/1，精确 McNemar `p=0.0117`）。这不是纯 selector 效应，因为真实视图把 reference 暴露从 39 例扩到 48 例。把候选可达性与选择转化拆开后：
+固定 400 例上，真实三视图 `real_views` 相对单锚点 `single_anchor` 的 `safe-exact` top-1 从 29/400 提高到 38/400（`+2.25 pp`，病例 bootstrap 95% CI `[+0.75,+4.00] pp`；独赢 10/1，精确 McNemar `p=0.0117`）。这不是纯 selector 效应，因为真实视图把 reference 暴露从 39 例扩到 48 例。把候选可达性与选择转化拆开后：
 
 - 39 个共同暴露病例中，single 为 29 个 top-1，real 为 32 个；real-only 4、single-only 1，净增 3；
-- 9 个 real-only 暴露病例中，real 将 6 个推到严格 top-1；
-- 因而严格净增 9 由“新增可达候选”和“共同候选上的重新排序”共同产生，不是单一的 recall 故事。
+- 9 个 real-only 暴露病例中，real 将 6 个推到 `safe-exact` top-1；
+- 因而 `safe-exact` 净增 9 由“新增可达候选”和“共同候选上的重新排序”共同产生，不是单一的 recall 故事。
 
-但根代理对全部 11 个 real↔single 严格胜负病例逐例复核后，10 个 strict real-only 中只有 6 个是真实临床收益：3 个来自新候选捕获，3 个来自已有候选上的选择/重复效应；另 4 个只是疾病范围、部位、亚型或同义表面的 benchmark 口径收益。single 的 1 个独赢则是真实误伤。换言之，严格净胜 `+9` 经这组完整 discordance 的临床重编码后变成 6 gain、1 harm、4 neutral；不能把 `+2.25 pp` 原样解释为临床净收益。
+但根代理对全部 11 个 real↔single `safe-exact` 胜负病例逐例复核后，10 个 real-only 中只有 6 个是真实临床收益：3 个来自新候选捕获，3 个来自已有候选上的选择/重复效应；另 4 个只是疾病范围、部位、亚型或同义表面的 benchmark 口径收益。single 的 1 个独赢则是真实误伤。换言之，`safe-exact` 净胜 `+9` 经这组完整 discordance 的临床重编码后变成 6 gain、1 harm、4 neutral；不能把 `+2.25 pp` 原样解释为临床净收益。
 
 两个更干净的干预没有显示稳定方向：
 
@@ -36,7 +36,7 @@ E9 支持一个有限但重要的结论：Forest 的三视图不是三张独立�
 | `single_anchor` | 一个冻结 anchor 及其 registry | 单视图基线 |
 | `duplicate_anchor` | anchor 内容精确复制三次，registry 不变 | 无新增信息的重复/伪投票效应 |
 
-selector 看不到 gold、选项、历史 champion、来源模型、旧 rank/score、arm 名或实验假设。primary endpoint 是 mapper 前 exact-or-frozen-synonym top-1；所有 schema/transport 失败 fail-closed，不修剪、不补值、不因结果重试。
+selector 看不到 gold、选项、历史 champion、来源模型、旧 rank/score、arm 名或实验假设。primary endpoint 是 mapper 前 exact-or-frozen-safe-synonym top-1，统一展示为 **`safe-exact`（历史结果字段 `strict`）**；所有 schema/transport 失败 fail-closed，不修剪、不补值、不因结果重试。该端点是保守身份下界，不是临床完整等价；E9 没有借用 E2 的 800 例审计数值。
 
 这一设计能把 `real↔rotated` 和 `single↔duplicate` 的 payload 内容差异压到指定干预，但 `single↔real` 有意同时改变候选 registry 与证据内容。后者从预注册起就只被解释为“额外视图内容的联合效果”，再用 capture/conditional-selection 分解，而不是伪称 selector-only 因果效应。
 
@@ -51,11 +51,11 @@ selector 看不到 gold、选项、历史 champion、来源模型、旧 rank/sco
 
 结果主要来自 MCR：single→real 为 27→35（`+4.00 pp`，95% CI `[+1.00,+7.50] pp`，独赢 1/9，`p=0.0215`）；DA 只有 2→3（`+0.50 pp`，CI `[0,+1.50] pp`，`p=1`）。这首先反映可达性 floor：DA 的 anchor/union reference 暴露仅 3/4 例，MCR 为 36/44 例。不能据此声称多视图只对某一临床来源天然有效。
 
-四臂的 intention accuracy 分别为 real 9.50%、rotated 9.00%、single 7.25%、duplicate 7.25%。这些低绝对值不是一个适合解释为端到端模型性能的数字：real 的 reference 也只在 48/400 个 registry 中可达。条件在暴露后，real 为 38/48（79.2%），single 为 29/39（74.4%）；E9 的首要瓶颈仍是候选对象可达性，而非最后一次排序的平均能力。
+四臂的 `safe-exact` intention accuracy 分别为 real 9.50%、rotated 9.00%、single 7.25%、duplicate 7.25%。这些低绝对值不是一个适合解释为端到端模型性能的数字：real 的 reference 也只在 48/400 个 registry 中可达。条件在暴露后，real 为 38/48（79.2%），single 为 29/39（74.4%）；E9 的首要瓶颈仍是候选对象可达性，而非最后一次排序的平均能力。
 
 ## “九个新增 reference”并不等于九个真实捕获收益
 
-三个视图的严格 reference 捕获为 syndrome 40、mechanism 42、modality 38；union 48，冻结 anchor 39。九个 union-only reference 按唯一来源分成 mechanism 5、syndrome 3、modality 1。
+三个视图的 `safe-exact` reference 捕获为 syndrome 40、mechanism 42、modality 38；union 48，冻结 anchor 39。九个 union-only reference 按唯一来源分成 mechanism 5、syndrome 3、modality 1。
 
 根代理审查全部九例后得到：
 
@@ -71,7 +71,7 @@ selector 看不到 gold、选项、历史 champion、来源模型、旧 rank/sco
 
 两个 capture-without-conversion 暴露了更重要的下一瓶颈。Ischemic colitis 已在 syndrome view 中出现且有出血/黏膜下病理，selector 却因“缺少常规危险因素”把它降到 ulcerative colitis；这是低先验压过病例特异证据。PMR 虽被捕获，但局灶单侧无力与髂腰肌附着 MRI 同时使 benchmark reference 本身支持不完整。候选召回和候选可证伪性必须分开记录。
 
-在更宽的 70 例机制队列中另有两个严格 bridge 没记作成功、但临床上明确的捕获：heterozygous HTRA1-CSVD 被输出为 HTRA1-related hereditary CSVD；carcinoma erysipelatoides 只少了 triple-negative 原发修饰。这解释 `trajectory_mechanism=capture_gain` 总数为何是 5，而九个 strict union-only 集合中的真 capture-to-top1 是 3。
+在更宽的 70 例机制队列中另有两个 `safe-exact` bridge 没记作成功、但临床上明确的捕获：heterozygous HTRA1-CSVD 被输出为 HTRA1-related hereditary CSVD；carcinoma erysipelatoides 只少了 triple-negative 原发修饰。这解释 `trajectory_mechanism=capture_gain` 总数为何是 5，而九个 `safe-exact` union-only 集合中的真 capture-to-top1 是 3。
 
 ## 共同候选上的选择收益与选择伤害
 
@@ -83,11 +83,11 @@ selector 看不到 gold、选项、历史 champion、来源模型、旧 rank/sco
 
 唯一真实 harm 是 Cryptococcal meningitis：single/duplicate 正确优先阳性 cryptococcal antigen；real/rotated 加入并重复 mass-lesion、低 CD4 和梗死图像后，反而覆盖高特异检测而选择 toxoplasmosis。这是典型的**证据量战胜证据特异度**，也是不能把 view count 当 confidence 的直接反例。
 
-另一个非 strict-discordance 的关键 harm 是 IPAH+PFO：两个对象分散在不同视图，selector 非法把它们合成为 Eisenmenger syndrome，尽管 PFO 不是造成肺高压的因果分流且肺动脉压低于主动脉压。union 不只扩 recall，也扩大错误组合空间；typed entity aggregation 必须禁止无关系边的跨视图拼接。
+另一个不属于 `safe-exact` outcome-discordance 的关键 harm 是 IPAH+PFO：两个对象分散在不同视图，selector 非法把它们合成为 Eisenmenger syndrome，尽管 PFO 不是造成肺高压的因果分流且肺动脉压低于主动脉压。union 不只扩 recall，也扩大错误组合空间；typed entity aggregation 必须禁止无关系边的跨视图拼接。
 
 ## 角色名：改变叙事吸引域，没有识别出稳定权重
 
-角色轮换造成 58/400 个 champion label flip，却只产生 4 个严格正确性 discordance。根审计的临床重编码为 real better 2、rotated better 1、同义口径 neutral 1：
+角色轮换造成 58/400 个 champion label flip，却只产生 4 个 `safe-exact` 正确性 discordance。根审计的临床重编码为 real better 2、rotated better 1、同义口径 neutral 1：
 
 - Warthin tumor 与 LAM 在真实角色下更好；
 - cone-rod dystrophy 在轮换角色后反而被救回；
@@ -101,7 +101,7 @@ selector 看不到 gold、选项、历史 champion、来源模型、旧 rank/sco
 
 single 与 duplicate 的 registry 和事实完全相同，后者只是把 anchor 内容放到三个 role block。仍有 51/399 个 champion flip，说明“提示中已写重复不是多票”不足以消除表示路径依赖。
 
-六个严格 outcome discordance 经临床重编码后为：
+六个 `safe-exact` outcome discordance 经临床重编码后为：
 
 - duplicate better 3：visceral leishmaniasis、Sturge-Weber、LAM；
 - single better 2：syphilitic aortitis、Warthin tumor；
@@ -125,11 +125,13 @@ single 与 duplicate 的 registry 和事实完全相同，后者只是把 anchor
 
 ## 手工审计范围与责任边界
 
-根代理在任何病例级判断前冻结 70 例队列，DA 28、MCR 42。队列包含：三个主对照的全部 strict outcome discordance、全部九个 unique capture、角色/重复同 outcome flip 的 SHA 冻结样本、语义高低 merge 样本和全部 13 个 partition failure。类别可重叠，70 不是各类别数量之和。
+根代理在任何病例级判断前冻结 70 例队列，DA 28、MCR 42。队列包含：三个主对照的全部 `safe-exact` outcome discordance、全部九个 unique capture、角色/重复同 outcome flip 的 SHA 冻结样本、语义高低 merge 样本和全部 13 个 partition failure。类别可重叠，70 不是各类别数量之和。
 
 每例读取 clean vignette、三个历史视图、anchor、四个 fresh selector trace 和合法时的完整语义 partition。`manual_audit.jsonl` 保存最终判断和逐例 clinical note；Gemini 只承担 target-blind proposition clustering 分包，未承担最终审计。
 
-70 例中有 17 例被判为严格 reference 的 scope/surface artifact，另有 6 例临床不等价；这再次表明 strict endpoint 需要保留，但不能取代病例级机制判断。轨迹主标签为 capture gain 5、selection harm 3、repetition instability 15、label instability 18、interface failure 1、stable 27、other 1。因为队列故意富集 flip/failure，这些计数只能描述机制谱，不是总体发生率。
+70 例中有 17 例被判为 `safe-exact` reference 的 scope/surface artifact，另有 6 例临床不等价；这再次表明 `safe-exact` 端点需要保留，但不能取代病例级机制判断。轨迹主标签为 capture gain 5、selection harm 3、repetition instability 15、label instability 18、interface failure 1、stable 27、other 1。因为队列故意富集 flip/failure，这些计数只能描述机制谱，不是总体发生率。
+
+这 70 例是机制富集人工队列，不是 400 例完整临床标注。其余 330 例没有 complete/partial/no 根裁决；Gemini 的 387 例输出只做命题 partition/重叠估计，并不是 candidate-reference 临床 proxy。因此未入队的 `safe-exact` 阴性病例保持“临床未审”，不能在任何全队列临床准确率中自动算作 proxy-negative，也不能用这 70 例的 6/1/4 重编码外推总体临床净效应。
 
 ## 运行、依赖与可复核性
 
@@ -149,7 +151,9 @@ DeepSeek 经多个 OpenRouter provider 路由，没有形成 Groq 单点。当�
 4. 支持强度按特异度、时间一致性和候选对反事实区分，不按同义证据条数累加；positive specific test 不能被大量泛影像描述淹没。
 5. syndrome/mechanism/modality 角色用于缺口覆盖检查，不作为固定权重。若角色轮换能在不改变命题时改写 champion，应触发低稳定性标记。
 6. 对重复/角色/顺序 perturbation 的 champion 不一致应进入安全聚合：比较 decisive contrast、检查 cycle/margin，并在必要时回看原文，而不是多数表决。
-7. 输出本体要允许 diagnosis、etiology、manifestation、subtype 和 composite 分层；严格字符串与临床等价分别报告，不能靠危险 substring bridge 掩盖 scope 错误。
+7. 输出本体要允许 diagnosis、etiology、manifestation、subtype 和 composite 分层；`safe-exact` 与临床等价分别报告，不能靠危险 substring bridge 掩盖 scope 错误。
 8. LLM semantic clustering 可作候选分包，但生产去重必须有 exact-partition gate，并对时间、对象、极性和影像限定做确定性校验。
+
+下一轮的可证伪门槛是：先把三视图压成相同的去重命题集合并复用同一冻结 comparator；若 role rotation 或精确复制仍改变 champion，则角色/表示路径敏感性成立，若 flip 消失则 E9 的新鲜调用方差解释更强。另应预注册 union-only 临床 complete capture 与 shared-exposure conversion 两个分开的终点；若 union 只增加错拼接而不增加前者，就应撤销多视图 union 的默认收益叙事。
 
 E9 是开发集机制实验，不是确认性性能试验。它足以否定“独立三票”和“重复即置信度”，也识别了多视图确有的候选覆盖价值；它没有证明当前三视图 selector 已是稳定最优实现。

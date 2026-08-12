@@ -2,7 +2,7 @@
 
 ## Decision
 
-The realised E7c treatment does **not** improve strict pre-mapper top-1 on the
+The realised E7c treatment does **not** improve safe-exact pre-mapper top-1 on the
 299 E7a unsafe-fold development cases. Directional relation typing loses two
 net cases against the exact-identity control (19/299 vs 21/299), while adding
 the bounded inheritance policy produces two gains and two harms relative to
@@ -33,9 +33,17 @@ is unrelated to the competing champions. The proper conclusion is therefore:
   (`generic_non_equivalence`), typed directional edges
   (`directional_relation`), and the same typed edges plus explicit bounded
   inheritance policy (`bounded_inheritance`).
-- Primary endpoint: displayed-label exact/frozen-synonym top-1 before any answer
-  mapper. Terminal failures are incorrect in the intention-to-analyse (ITA)
-  denominator.
+- These names denote registry/relation treatments, not alternative scoring
+  rules. Every arm uses the same displayed-label safe-exact endpoint; no
+  historical legacy-chain, hidden-member credit or task/mapper result is
+  substituted for it.
+- Primary endpoint: displayed-label **safe-exact（历史字段 `strict`）** top-1
+  before any answer mapper. It is computed by
+  `FrozenExactSynonymBridge.equivalent`: normalized equality or a frozen,
+  collision-filtered synonym/own-initialism equivalence, without substring or
+  fuzzy fallback. Terminal failures are incorrect in the intention-to-analyse
+  (ITA) denominator. Safe-exact is a reproducible label-identity lower bound,
+  not clinical-complete accuracy.
 - Status: development/mechanism evidence, not a new confirmation cohort.
 
 The preregistration was written before calls and is retained in
@@ -43,7 +51,7 @@ The preregistration was written before calls and is retained in
 
 ## Primary result
 
-| Arm | ITA correct | ITA rate | Served | Terminal failures |
+| Arm | Safe-exact ITA correct | Safe-exact ITA rate | Served | Terminal failures |
 |---|---:|---:|---:|---:|
 | Exact control | 21/299 | 7.02% | 299 | 0 |
 | Generic non-equivalence | 21/299 | 7.02% | 296 | 3 |
@@ -60,12 +68,21 @@ The preregistration was written before calls and is retained in
 The served-pair and complete-relation-typing sensitivities preserve the same
 direction. Restricting to the 290 cases with complete relation typing gives
 directional 6.55% versus exact 7.24% (delta -0.69 pp). The null intervals are
-wide because only 33/299 fixed candidate pools expose an exact/frozen-synonym
+wide because only 33/299 fixed candidate pools expose a safe-exact
 gold label; E7c is a conditional selector test, not an overall benchmark score.
 
 DA and MCR must not be pooled as if interchangeable. On DA, directional loses
 one case and gains none (2/167 vs 3/167). On MCR, it gains one and loses two
 (17/132 vs 18/132). Neither family contains evidence of a positive net effect.
+
+The manual clinical audit is exhaustive for all 84 cases with any champion or
+safe-exact correctness discordance at label/transition level, with full
+vignette/evidence/edge review for all seven safe-exact correctness transitions;
+all seven selector failures and nine failed relation chunks were also reviewed.
+It is not an exhaustive clinical adjudication of the remaining 215 cases.
+Accordingly, an unreviewed safe-exact miss is not a demonstrated clinical
+negative, and the ITA surface rates must not be relabeled as clinical-complete
+rates or replaced by E2 replay values.
 
 ## Treatment fidelity
 

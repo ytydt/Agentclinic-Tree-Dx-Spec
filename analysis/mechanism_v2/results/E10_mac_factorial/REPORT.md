@@ -4,7 +4,7 @@
 
 E10 不支持“MAC 的主要问题是 Supervisor 把本来多样的医生意见压坏了”。真正的主导机制是 **Doctor B/C 读取前文后发生高强度共识压缩**：平均 canonical union 从 6.82 降到 5.21，医生两两 Jaccard 从 0.689 升到 0.954；D2、D3 每例新增概念分别从 1.225、0.613 降到 0.213、0.015。400 例中 276 例的顺序 union 更窄，只有 14 例更宽。D3 在 400 例上合计只新增 6 个概念，已近乎不是独立诊断者。
 
-但“多样性下降”不等同于“总分下降”。本开发样本里，顺序历史以牺牲临床 reference exposure（121→109）换来更高的 exposed-candidate 转换：RRF exposure→Top-2 从 61.2% 升到 84.4%，Supervisor 从 66.9% 升到 86.2%。根审计临床重编码下，顺序相对独立的 Top-2 净效应为：
+但“多样性下降”不等同于“总分下降”。本开发样本里，顺序历史以牺牲临床 reference exposure（121→109）换来更高的 exposed-candidate 转换：RRF exposure→Top-2 从 61.2% 升到 84.4%，Supervisor 从 66.9% 升到 86.2%。在“根审计优先、未审筛查阴性保持阴性”的临床重编码下，顺序相对独立的 Top-2 净效应为：
 
 - RRF：74→92/400，+4.50pp，95% paired bootstrap CI [2.00, 7.25]pp，5/23 反向/正向病例，exact McNemar `p=0.00091`；
 - Supervisor：81→94/400，+3.25pp，CI [1.00, 5.50]pp，5/18，`p=0.0106`。
@@ -32,17 +32,17 @@ Doctor A 的 raw JSON、cache identity 和候选列表在两种 history 条件�
 
 ### 1.2 端点层次
 
-预注册主端点是 frozen-exact-synonym pre-mapper Top-1/Top-2、reference union exposure 和 exposure→selection conversion。它完全可重放，但会漏掉拼写、临床可接受亚型与更具体表述。
+预注册主端点是 frozen-exact-safe-synonym pre-mapper Top-1/Top-2、reference union exposure 和 exposure→selection conversion，统一展示为 **`safe-exact`（历史结果字段 `strict`）**。它完全可重放，但会漏掉拼写、临床可接受亚型与更具体表述；它不是临床完整等价或 mapper/task 正确率，本报告也没有移植 E2 的 800 例数值。
 
 因此另做异族语义高召回筛查：DeepSeek v4-flash 逐项比较 reference 与候选，只用于扩大根审计队列。最终队列为 166 例，覆盖：
 
-- 全部 53 个严格 reference-exposed 病例；
-- 全部 25 个严格 exposure/Top-1/Top-2 分歧病例；
+- 全部 53 个 `safe-exact` reference-exposed 病例；
+- 全部 25 个 `safe-exact` exposure/Top-1/Top-2 分歧病例；
 - 全部 125 个筛查等价、可接受或不确定病例；
 - 1 个筛查失败病例；
 - 按 family 和 SHA 冻结的 20+20 个筛查阴性病例。
 
-最终责任由根审计承担。40 个筛查阴性抽样中未发现漏掉的可接受等价项；根审计对 5 条唯一 surface 规则作了显式覆盖，并在 8 个候选位置与筛查器的二元接受决定不同。临床重编码仍是敏感性端点：未入队的筛查阴性病例一律不升级，不能被解读为 400 例全面双盲临床标注。
+最终责任由根审计承担，但覆盖必须精确限定：根代理审计 166/400 例，包括全部 125 个筛查阳性/不确定病例、1 个筛查失败、全部 `safe-exact` 暴露/端点关键病例，以及按 family+SHA 冻结的 40 个筛查阴性病例（类别重叠）。40 个阴性抽样中未发现漏掉的可接受等价项；根审计对 5 条唯一 surface 规则作了显式覆盖，并在 8 个候选位置与筛查器的二元接受决定不同。其余 234 例是**未人工复核的异质筛查阴性**，在敏感性计数中保守保持阴性，而不是人工 gold。故下文 `clinical-complete*` 是 screen-assisted/root-priority 重编码，不是 400 例全面盲法临床标注。
 
 ## 2. 运行完整性
 
@@ -54,18 +54,18 @@ Doctor A 的 raw JSON、cache identity 和候选列表在两种 history 条件�
 - 两个 Supervisor 臂均 400/400 有效、无候选越界；两个 RRF 臂均 400/400 可计算。无效医生不插补，病例按 ITA 保留。
 - 异族筛查 399/400 通过完整性校验；失败例与少量超时/截断事件见 `INCIDENTS.md`，不影响四个主臂。
 
-## 3. 结果：严格端点与临床重编码必须分开看
+## 3. 结果：`safe-exact` 与临床重编码必须分开看
 
-| history | aggregator | strict Top-1 | strict Top-2 | root clinical Top-1 | root clinical Top-2 |
+| history | aggregator | safe-exact Top-1 | safe-exact Top-2 | clinical-complete* Top-1 | clinical-complete* Top-2 |
 |---|---:|---:|---:|---:|---:|
 | isolated | RRF | 21/400 (5.25%) | 30/400 (7.50%) | 55/400 (13.75%) | 74/400 (18.50%) |
 | isolated | Supervisor | 22/400 (5.50%) | 30/400 (7.50%) | 63/400 (15.75%) | 81/400 (20.25%) |
 | sequential | RRF | 26/400 (6.50%) | 36/400 (9.00%) | 67/400 (16.75%) | 92/400 (23.00%) |
 | sequential | Supervisor | 26/400 (6.50%) | 39/400 (9.75%) | 70/400 (17.50%) | 94/400 (23.50%) |
 
-严格端点下，history 对 RRF 的 Top-1 为 +1.25pp（CI [0, 2.75]pp，1/6，`p=0.125`），Top-2 +1.50pp（CI [0, 3.00]pp，2/8，`p=0.109`）；对 Supervisor 的 Top-1 +1.00pp（CI [-0.50, 2.50]pp，3/7，`p=0.344`），Top-2 +2.25pp（CI [0.50, 4.25]pp，3/12，`p=0.0352`）。只有最后一个越过传统 0.05 阈值。
+`safe-exact` 端点下，history 对 RRF 的 Top-1 为 +1.25pp（CI [0, 2.75]pp，1/6，`p=0.125`），Top-2 +1.50pp（CI [0, 3.00]pp，2/8，`p=0.109`）；对 Supervisor 的 Top-1 +1.00pp（CI [-0.50, 2.50]pp，3/7，`p=0.344`），Top-2 +2.25pp（CI [0.50, 4.25]pp，3/12，`p=0.0352`）。只有最后一个越过传统 0.05 阈值。
 
-临床重编码把多个严格假阴性恢复，例如 `Pyknodysostosis/Pycnodysostosis`、`cardiac sarcoidosis/sarcoidosis`、更具体的 dengue hemorrhagic encephalitic phenotype。history 对 RRF 的 Top-1 为 +3.00pp（CI [1.00, 5.25]pp，3/15，`p=0.00754`），对 Supervisor +1.75pp（CI [-0.25, 3.75]pp，5/12，`p=0.143`）。这显示表面字符串会低估真实排序变化，也显示临床重编码不能替代严格主端点：两套定义回答的是不同问题。
+临床重编码把多个 `safe-exact` 假阴性恢复，例如 `Pyknodysostosis/Pycnodysostosis`、`cardiac sarcoidosis/sarcoidosis`、更具体的 dengue hemorrhagic encephalitic phenotype。history 对 RRF 的 Top-1 为 +3.00pp（CI [1.00, 5.25]pp，3/15，`p=0.00754`），对 Supervisor +1.75pp（CI [-0.25, 3.75]pp，5/12，`p=0.143`）。这显示表面字符串会低估真实排序变化，也显示带 proxy-negative 的临床敏感性重编码不能替代 `safe-exact` 主端点：两套定义回答的是不同问题。
 
 family 分层方向一致但幅度不同。临床 Top-2 的顺序 history 净胜负：DA 上 RRF 0/11、Supervisor 2/7；MCR 上 RRF 5/12、Supervisor 3/11。没有证据表明总效应只由一个 benchmark family 驱动。
 
@@ -86,7 +86,7 @@ union 的病例级变化为：顺序更窄 276/400，相同 110/400，更宽 14/
 
 ## 5. 为什么低召回仍能提高总分：capture–conversion 分解
 
-严格 reference exposure 从 isolated 52 降到 sequential 46；严格 exposure→Top-2 却从 57.7% 升到 RRF 78.3%、Supervisor 84.8%。临床重编码也呈同一结构：
+`safe-exact` reference exposure 从 isolated 52 降到 sequential 46；`safe-exact` exposure→Top-2 却从 57.7% 升到 RRF 78.3%、Supervisor 84.8%。临床重编码也呈同一结构：
 
 | history | clinical exposure | RRF exposure→T1/T2 | Supervisor exposure→T1/T2 |
 |---|---:|---:|---:|
@@ -141,27 +141,27 @@ Supervisor 在 sequential 条件相对 RRF 的临床 Top-2 仅 +0.50pp（4/6，C
 
 **`DA_d2_heldout100/334`（phaeohyphomycosis）**：isolated D3 已在第五位发现 reference；sequential D2 把它带到第二、D3 跟随。RRF 仍偏爱重复的 chromoblastomycosis/leprosy，Supervisor 才把 reference 放入 Top-2。该例同时包含 minority discovery、history 共识和语义聚合三个阶段，不能只归功于某一个模块。
 
-### 7.5 严格字符串造成的假机制
+### 7.5 `safe-exact` 身份下界造成的假机制
 
-**`MCR_seq200b/285`**：isolated Top-1 `Pyknodysostosis` 与 reference `Pycnodysostosis` 是同一疾病；所谓 sequential Top-1 gain 是拼写桥漏配。
+**`MCR_seq200b/285`**：isolated Top-1 `Pyknodysostosis` 与 reference `Pycnodysostosis` 是同一疾病；所谓 sequential `safe-exact` Top-1 gain 是拼写桥漏配。
 
-**`MCR_seq200b/260`**：顺序条件删除 exact surface `syphilitic aortitis`，但保留 `aortitis due to syphilis`；严格 exposure loss 不是临床 loss。
+**`MCR_seq200b/260`**：顺序条件删除 exact surface `syphilitic aortitis`，但保留 `aortitis due to syphilis`；`safe-exact` exposure loss 不是临床 loss。
 
-**`MCR_seq200b/418`**：顺序候选 `cardiac sarcoidosis` 比 generic reference `sarcoidosis` 更贴病例；严格端点把它当错，临床端点反而认为顺序更具体。
+**`MCR_seq200b/418`**：顺序候选 `cardiac sarcoidosis` 比 generic reference `sarcoidosis` 更贴病例；`safe-exact` 端点把它当错，临床端点反而认为顺序更具体。
 
-**`MCR_seq200b/441`**：`acute hemorrhagic leukoencephalitis due to Dengue` 是更具体的 dengue encephalitic phenotype；严格端点制造 Supervisor harm，同时暴露 registry 没有合并两个临床同义 surface 的缺陷。
+**`MCR_seq200b/441`**：`acute hemorrhagic leukoencephalitis due to Dengue` 是更具体的 dengue encephalitic phenotype；`safe-exact` 端点制造 Supervisor harm，同时暴露 registry 没有合并两个临床同义 surface 的缺陷。
 
-这些不是可以随意“宽松打分”的理由，而是要求同时保留严格、临床和身份错误三条 ledger。只报告任意一条都会把 mapper/ontology 界面问题误归因于 reasoning。
+这些不是可以随意“宽松打分”的理由，而是要求同时保留 `safe-exact`、临床关系和身份错误三条 ledger。只报告任意一条都会把 mapper/ontology 界面问题误归因于 reasoning。
 
-## 8. 25 个严格关键病例的机制分类
+## 8. 25 个 `safe-exact` 关键病例的机制分类
 
 | case | 根审计方向 | 主机制 |
 |---|---|---|
 | DA/317 | sequential better | rank propagation rescue |
 | DA/334 | sequential better | consensus + Supervisor rescue |
 | DA/87 | sequential better | composite-label preservation |
-| MCR/260 | strict artifact | equivalent surface retained |
-| MCR/285 | strict artifact | orthographic identity miss |
+| MCR/260 | safe-exact artifact | equivalent surface retained |
+| MCR/285 | safe-exact artifact | orthographic identity miss |
 | MCR/294 | sequential better | rank propagation |
 | MCR/309 | isolated better | Graves etiology erased |
 | MCR/326 | aggregator interaction | RRF retains etiology; Supervisor prefers manifestation |
@@ -172,7 +172,7 @@ Supervisor 在 sequential 条件相对 RRF 的临床 Top-2 仅 +0.50pp（4/6，C
 | MCR/418 | sequential clinically better | subtype/reference direction artifact |
 | MCR/423 | isolated recall better | unique schwannoma erased |
 | MCR/430 | isolated better under Supervisor | wrong specific mechanism anchor |
-| MCR/441 | strict artifact | specific subtype + identity fragmentation |
+| MCR/441 | safe-exact artifact | specific subtype + identity fragmentation |
 | MCR/455 | isolated better | independently discovered inversion erased |
 | MCR/22 | sequential better | rank-five→rank-one propagation |
 | MCR/28 | isolated recall better | unique TEN erased |
@@ -220,7 +220,7 @@ E10 不支持直接把 B06 改成“永远 isolated”或“永远 sequential”
 1. 这是冻结开发集，不是新确认集；按用户约束未重复运行、未扩容确认集、未统一 retry/provider。
 2. D2/D3 是不同语义调用，虽然温度 0、病例成对且 provider balanced，history 效应仍包含不可消除的单次 provider/model 随机性；Doctor A 和聚合器共享设计已尽量压缩这一混杂。
 3. prompt 基于历史 B06，但增加了“不把重复当独立证据”和闭池约束；结论针对受控机制，不等价于历史开放式 Supervisor 的精确重放。观察到的强回声是在已经抑制重复的 prompt 下发生，故方向并非由鼓励附和的措辞造成。
-4. 临床重编码采用异族模型做队列扩展而非裁判；166 例根审计和 40 个阴性抽样降低但不能消除漏检。严格端点仍是预注册主结果。
+4. 临床重编码采用异族模型做队列扩展而非裁判；166 例根审计和 40 个阴性抽样降低但不能消除剩余 234 个 proxy-negative 的漏检。`safe-exact` 端点仍是预注册主结果，临床表是敏感性而非全量人工 gold。
 5. “新 concept”不等于“新关系证据”。E10 证明候选新颖性不是获益必要条件，但没有直接测量 D2/D3 commentary 是否加入独特、正确的关系证据；该问题留给 RCR-3 的关系 fidelity ledger。
 
 ## 12. 最终裁决
@@ -229,3 +229,5 @@ E10 不支持直接把 B06 改成“永远 isolated”或“永远 sequential”
 - 当前 B06 的优势是低成本地强化已有候选排序，弱点是以共识压缩换取转换、并可永久删除正确少数意见。
 - 默认架构不应依赖自由文本顺序讨论来制造第三视角；应保留独立生成，再以类型化、闭池、必须解释少数候选排除的 comparator 完成收敛。
 - 本实验不证明历史在所有分布上净有益；它明确给出了净益与灾难模式同时存在的机制条件和病例证据。
+
+可证伪的下一步不是再跑一次相同 panel，而是在完全冻结 D1/D2/D3 候选和聚合器的重放中，只切换 history 可见性：若顺序条件不再降低 singleton/reference exposure，所谓信息级联机制应被撤回；若加入“保留所有有独有原文证据的 singleton”后 conversion 收益保留且 capture loss 消失，coverage guard 得到支持；若 Supervisor 在真正保留少数意见后仍不优于 RRF，则其语义边际价值应判为未复现。
