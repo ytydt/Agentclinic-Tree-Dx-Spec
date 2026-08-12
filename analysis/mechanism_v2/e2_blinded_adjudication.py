@@ -66,6 +66,7 @@ DEFAULT_OUT = ROOT / "analysis/mechanism_v2/results/E2_blinded_clinical_adjudica
 DEFAULT_MODELS = {
     "reviewer_a": "google/gemini-2.5-flash",
     "reviewer_b": "deepseek/deepseek-v4-flash-0731",
+    "reviewer_c": "openai/gpt-4.1",
 }
 TARGET_PER_FAMILY = 200
 SELECTION_FREEZE = "E2-blinded-clinical-adjudication-v1"
