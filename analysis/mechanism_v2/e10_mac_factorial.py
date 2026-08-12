@@ -735,6 +735,12 @@ def freeze(out: Path, jobs: Sequence[Mapping[str, Any]], inputs: Sequence[Path],
 
 
 def write_manifests(out: Path, prereg: Mapping[str, Any], model: str, workers: int) -> None:
+    manifest_path = out / "manifests.json"
+    # The preregistered manifests are immutable provenance, not per-command
+    # run clocks.  Rewriting them on every arm would make a read/resume mutate
+    # an already frozen design.
+    if manifest_path.is_file():
+        return
     manifests: dict[str, Any] = {}
     environment = json.loads((out / "environment.json").read_text(encoding="utf-8"))
     for arm in ARMS:
@@ -754,7 +760,7 @@ def write_manifests(out: Path, prereg: Mapping[str, Any], model: str, workers: i
             capabilities=dict(environment["capabilities"]),
         )
         manifests[arm] = dict(manifest.__dict__)
-    atomic_json(out / "manifests.json", manifests)
+    atomic_json(manifest_path, manifests)
 
 
 def package_arm(out: Path, arm: str) -> Path:
