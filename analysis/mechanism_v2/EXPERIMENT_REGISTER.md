@@ -34,11 +34,11 @@ No excluded control is silently reintroduced as a scientific factor.
 | E7 | Substring vs exact-synonym vs typed registry | synthesis E7; independent E1 | selector replay | complete: E7a offline replay + E7b 400-case fresh blinded selector; exact identity restores exposure, generic relation edge adds no top-1 benefit |
 | E7c | Directional clinical relation + bounded evidence inheritance after safe identity | newly exposed by E7b; not specified in either source audit | relation typing + fresh selector | complete: 299 unsafe-fold cases; actual noisy typed graph was -0.67 pp vs exact and bounded inheritance was net zero; only 64.8% internal direction agreement and 80.6% repeated-pair consistency, so this falsifies the implementation, not the ideal mechanism |
 | E8 | Atemporal hard veto vs time/scope-aware soft veto | synthesis E8; independent E5 | yes | complete: 220 fixed-pool cases; all 9 hard reference vetoes were manually invalid (8 overreach, 1 construction-induced), but soft vs hard paired accuracy was only +1.64pp (2/5, p=.453); invalid time and legal row order each flip about one quarter of champions with near-zero net accuracy, so absolute veto is unsafe while soft-ranker superiority remains unconfirmed |
-| E9 | Forest real/duplicate/shuffled view independence | synthesis E9; independent E6 | selector replay | queued |
+| E9 | Forest real/duplicate/shuffled view independence | synthesis E9; independent E6 | selector replay | complete: 400 cases x 4 selector arms plus heterogeneous semantic audit and 70-case root review; real views improve strict top-1 by 2.25pp over the balanced single-view anchor (10/1), but only 6/10 strict gains are clinical and just 3 are true new capture; role rotation and exact repetition both expose substantial selector instability |
 | E10 | B06 isolated/sequential × supervisor/RRF | synthesis E10 | yes | queued |
 | E11 | B07 retrieval off/on/random/hard-negative × refine off/on | synthesis E11 | yes, RAG | queued |
 | E12 | e7 representation × width × comparator | synthesis E12 | yes | queued |
-| E14x | Exploratory runtime-gate utility without multi-run latent labels | synthesis E14; RCR Call-4 gate | no additional call | queued; inferentially downgraded |
+| E14x | Exploratory runtime-gate utility without multi-run latent labels | synthesis E14; RCR Call-4 gate | no additional call | in progress: retrospective analysis contract frozen; inferentially downgraded |
 | RCR3 | End-to-end relation-preserving 3-call system | independent §11/E7 | yes | queued |
 
 The independent report's width, ranker and clean-Compact tests map to E5, E4
