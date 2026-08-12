@@ -41,3 +41,12 @@ IDs but returns enum arrays without generated explanations. Separate immutable
 caches prevent partial combined responses from being reused. This is an
 adaptive runtime repair, not a scientific treatment or a retry-normalization
 experiment.
+
+The compact candidate component was then started at 25 workers. After 284
+finalized semantic-call telemetry records (327 physical attempts, 18 recorded
+physical errors), concurrent 502 responses, `IncompleteRead`, closed
+connections and timeouts again formed a network storm. The process was stopped.
+The recovery amendment lowers only the audit-subcontractor concurrency to 8;
+287 immutable cache records are reused, including six schema-invalid records
+that remain failures and force root review. The stop rule used runtime errors,
+not candidate correctness or relation labels.

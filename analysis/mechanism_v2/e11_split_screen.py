@@ -192,11 +192,43 @@ def freeze(out: Path, documents: Sequence[Mapping[str, Any]], model: str, worker
     if path.is_file():
         current = json.loads(path.read_text(encoding="utf-8"))
         for key in (
-            "schema", "model", "workers", "n_cases", "document_sha256",
+            "schema", "model", "n_cases", "document_sha256",
             "candidate_prompt_sha256", "retrieval_prompt_sha256",
         ):
             if current.get(key) != expected.get(key):
                 raise AssertionError(f"frozen split screen mismatch: {key}")
+        frozen_workers = int(current["workers"])
+        if workers > frozen_workers:
+            raise AssertionError(
+                f"recovery workers may not exceed frozen ceiling {frozen_workers}: {workers}"
+            )
+        if workers < frozen_workers:
+            amendment_path = screen_dir / "split_recovery_amendment.json"
+            amendment = {
+                "schema": "e11_split_screen_recovery_amendment_v1",
+                "parent_preregistration": "split_preregistration.json",
+                "parent_sha256": file_sha256(path),
+                "created_before_low_concurrency_resume_utc": datetime.now(timezone.utc).isoformat(),
+                "frozen_initial_workers": frozen_workers,
+                "resume_workers": workers,
+                "reason": "25-way candidate screen produced concurrent 502, IncompleteRead, connection-close and timeout storm",
+                "completed_telemetry_before_resume": 284,
+                "physical_attempts_before_resume": 327,
+                "physical_errors_before_resume": 18,
+                "immutable_cache_records_before_resume": 287,
+                "outcome_independence": "resume threshold used runtime failures only; correctness and screen labels were not inspected",
+                "scope": "candidate and retrieval audit subcontractor calls only; scientific arms unchanged",
+            }
+            if amendment_path.is_file():
+                existing = json.loads(amendment_path.read_text(encoding="utf-8"))
+                for key in (
+                    "schema", "parent_sha256", "frozen_initial_workers",
+                    "resume_workers", "reason", "scope",
+                ):
+                    if existing.get(key) != amendment.get(key):
+                        raise AssertionError(f"split recovery amendment mismatch: {key}")
+            else:
+                atomic_json(amendment_path, amendment)
         return current
     atomic_json(path, expected)
     atomic_json(
