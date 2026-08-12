@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import json
 import math
+import random
 import sys
 import tarfile
 from collections import Counter, defaultdict
@@ -292,11 +293,22 @@ def _paired_from_values(left: Mapping[str, bool], right: Mapping[str, bool]) -> 
     left_only = sum(bool(left[key]) and not bool(right[key]) for key in keys)
     right_only = sum(bool(right[key]) and not bool(left[key]) for key in keys)
     discord = left_only + right_only
+    deltas = [int(bool(right[key])) - int(bool(left[key])) for key in keys]
+    bootstrap: list[float] = []
+    if deltas:
+        seed_text = json.dumps([(key, bool(left[key]), bool(right[key])) for key in keys])
+        rng = random.Random(int(hashlib.sha256(seed_text.encode()).hexdigest()[:16], 16))
+        for _ in range(10_000):
+            bootstrap.append(sum(deltas[rng.randrange(len(deltas))] for _ in deltas) / len(deltas))
+        bootstrap.sort()
     return {
         "n": len(keys),
         "left_only": left_only,
         "right_only": right_only,
         "delta_right_minus_left": (right_only - left_only) / len(keys) if keys else None,
+        "paired_bootstrap_delta_ci95": (
+            [bootstrap[249], bootstrap[9749]] if bootstrap else None
+        ),
         "exact_mcnemar_p": _binomial_two_sided(min(left_only, right_only), discord),
     }
 
@@ -319,9 +331,17 @@ def analyze(out: Path, manual: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
         endpoint: {arm: {} for arm in ARMS}
         for endpoint in ("clinical_top1", "clinical_top2")
     }
+    clinical_exposure: dict[str, dict[str, bool]] = {
+        history: {} for history in HISTORIES
+    }
     for key in case_keys:
+        audit = manual_by_key.get(key)
+        for history in HISTORIES:
+            value = bool(arm_rows[f"{history}_rrf"][key]["gold_union_exposed"])
+            if audit is not None:
+                value = value or bool(audit["clinical_union_exposed"][history])
+            clinical_exposure[history][key] = value
         for arm in ARMS:
-            audit = manual_by_key.get(key)
             for clinical_endpoint, strict_endpoint in (
                 ("clinical_top1", "gold_top1"), ("clinical_top2", "gold_top2")
             ):
@@ -329,6 +349,33 @@ def analyze(out: Path, manual: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
                 if audit is not None:
                     value = value or bool(audit["arm_clinical_hits"][arm][clinical_endpoint])
                 clinical_values[clinical_endpoint][arm][key] = value
+
+    clinical_mediation: list[dict[str, Any]] = []
+    for aggregator_name in ("rrf", "supervisor"):
+        for endpoint in ("clinical_top1", "clinical_top2"):
+            left = clinical_values[endpoint][f"isolated_{aggregator_name}"]
+            right = clinical_values[endpoint][f"sequential_{aggregator_name}"]
+            classes = Counter()
+            for key in case_keys:
+                if right[key] and not left[key]:
+                    classes[
+                        "sequential_capture_gain"
+                        if clinical_exposure["sequential"][key] and not clinical_exposure["isolated"][key]
+                        else "sequential_rank_conversion_gain"
+                    ] += 1
+                elif left[key] and not right[key]:
+                    classes[
+                        "sequential_capture_loss"
+                        if clinical_exposure["isolated"][key] and not clinical_exposure["sequential"][key]
+                        else "sequential_rank_conversion_loss"
+                    ] += 1
+            clinical_mediation.append(
+                {
+                    "aggregator": aggregator_name,
+                    "endpoint": endpoint,
+                    "discordance_mechanisms": dict(sorted(classes.items())),
+                }
+            )
 
     paired_contrasts: list[dict[str, Any]] = []
     contrast_pairs = (
@@ -392,6 +439,38 @@ def analyze(out: Path, manual: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
         any(bool(item["clinically_acceptable"]) for item in row["candidate_adjudications"].values())
         for row in negative_rows
     )
+    family_clinical: dict[str, Any] = {}
+    for family in ("DA", "MCR"):
+        family_keys = [
+            key for key in case_keys
+            if arm_rows[ARMS[0]][key]["family"] == family
+        ]
+        family_clinical[family] = {
+            "n_cases": len(family_keys),
+            "arm_counts": {
+                arm: {
+                    endpoint: sum(clinical_values[endpoint][arm][key] for key in family_keys)
+                    for endpoint in ("clinical_top1", "clinical_top2")
+                }
+                for arm in ARMS
+            },
+            "history_net_wins": {
+                f"{aggregator_name}_{endpoint}": {
+                    "isolated_only": sum(
+                        clinical_values[endpoint][f"isolated_{aggregator_name}"][key]
+                        and not clinical_values[endpoint][f"sequential_{aggregator_name}"][key]
+                        for key in family_keys
+                    ),
+                    "sequential_only": sum(
+                        clinical_values[endpoint][f"sequential_{aggregator_name}"][key]
+                        and not clinical_values[endpoint][f"isolated_{aggregator_name}"][key]
+                        for key in family_keys
+                    ),
+                }
+                for aggregator_name in ("rrf", "supervisor")
+                for endpoint in ("clinical_top1", "clinical_top2")
+            },
+        }
     summary = {
         "experiment_id": "E10",
         "n_cases": len(case_keys),
@@ -409,6 +488,30 @@ def analyze(out: Path, manual: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
             }
             for arm in ARMS
         },
+        "screen_assisted_root_clinical_exposure": {
+            history: {
+                "exposed_n": sum(clinical_exposure[history].values()),
+                "rrf_exposure_to_top1": (
+                    sum(clinical_values["clinical_top1"][f"{history}_rrf"].values())
+                    / sum(clinical_exposure[history].values())
+                ),
+                "rrf_exposure_to_top2": (
+                    sum(clinical_values["clinical_top2"][f"{history}_rrf"].values())
+                    / sum(clinical_exposure[history].values())
+                ),
+                "supervisor_exposure_to_top1": (
+                    sum(clinical_values["clinical_top1"][f"{history}_supervisor"].values())
+                    / sum(clinical_exposure[history].values())
+                ),
+                "supervisor_exposure_to_top2": (
+                    sum(clinical_values["clinical_top2"][f"{history}_supervisor"].values())
+                    / sum(clinical_exposure[history].values())
+                ),
+            }
+            for history in HISTORIES
+        },
+        "clinical_history_effect_mediation": clinical_mediation,
+        "family_stratified_clinical": family_clinical,
         "clinical_recode_scope": {
             "root_reviewed_cases": len(manual),
             "all_strict_exposures_included": True,
@@ -457,6 +560,8 @@ def package(out: Path) -> Path:
         out / "semantic_screen" / "telemetry.jsonl",
         out / "semantic_screen" / "run.log",
         out / "case_conditions.jsonl",
+        out / "E10_ANALYSIS_PLAN.md", out / "E10_SEMANTIC_AUDIT_PLAN.md",
+        out / "INCIDENTS.md", out / "REPORT.md", out / "BUNDLE_README.md",
     ]
     archive_path = out / "E10_FINAL_ANALYSIS_BUNDLE.tar.gz"
     with tarfile.open(archive_path, "w:gz") as archive:
