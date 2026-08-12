@@ -22,3 +22,22 @@ and the final analysis must not attribute a random/relevant contrast to a
 provider-normalized estimand. Subsequent Llama arms explicitly request balanced
 primary routing; actual provider remains recorded because OpenRouter may serve a
 different member of the permitted Groq/DeepInfra set.
+
+## Combined heterogeneous screen: length/timeout process storm
+
+The preregistered first screen asked one DeepSeek v4 Flash call to emit candidate
+relations, 18 verbose chunk rows, and three verbose bundle rows. At RAG
+concurrency 25, eight calls completed successfully, then many in-flight calls
+simultaneously entered `finish_reason=length` retries; 18 reached the 180-second
+semantic timeout together. The run was interrupted under the process-storm
+rule. No merged case-result file was produced and no screen decision entered an
+endpoint. The eight finalized telemetry records are preserved as
+`semantic_screen/aborted_combined_telemetry.jsonl`; unfinalized in-flight work is
+not represented as successful output.
+
+Recovery freezes two independent compact schemas: candidate equivalence and
+retrieval evidence. The latter retains every scientific field and all 18 chunk
+IDs but returns enum arrays without generated explanations. Separate immutable
+caches prevent partial combined responses from being reused. This is an
+adaptive runtime repair, not a scientific treatment or a retry-normalization
+experiment.
