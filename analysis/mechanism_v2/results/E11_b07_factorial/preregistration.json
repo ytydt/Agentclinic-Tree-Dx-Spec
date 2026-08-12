@@ -1,0 +1,118 @@
+{
+  "arms": [
+    "off_refine_off",
+    "off_refine_on",
+    "relevant_refine_off",
+    "relevant_refine_on",
+    "random_refine_off",
+    "random_refine_on",
+    "hard_negative_refine_off",
+    "hard_negative_refine_on"
+  ],
+  "created_before_online_calls_utc": "2026-08-12T09:12:42.335204+00:00",
+  "development_not_confirmation": true,
+  "endpoint_contract": "frozen-exact-synonym pre-mapper Top-1/Top-2; paired retrieval and refine transitions; draft-to-final candidate addition/deletion/reordering; historical-gate moderation; chunk support and confirmation-bias audit",
+  "excluded_variance_controls": [
+    "repeat runs",
+    "new confirmation set",
+    "provider/retry standardisation"
+  ],
+  "experiment_id": "E11",
+  "factor_isolation": {
+    "condition_masking": "retrieval condition labels and IR scores are withheld from model payloads",
+    "diagnose": "same model, prompt, vignette and orchestrator; only knowledge_chunks differ",
+    "forced_treatment": "all cases receive assigned bundle regardless of historical need_retrieval; historical gate is a moderator only",
+    "orchestrator": "historical B07 decision, queries and strategy frozen per case across all eight arms",
+    "refine": "same frozen diagnosis draft and same knowledge bundle; off is byte-level draft reuse, on is one generic refine call"
+  },
+  "failure_policy": "intention-to-analyse; invalid diagnose is incorrect and skips refine; invalid refine explicitly falls back to frozen draft as historical B07 did",
+  "hard_negative_caveat": "operational lexical near-neighbour, not assumed clinically false; contamination is a measured endpoint",
+  "input_hash": "8c0e0ad3c7e4470516af9664fb58bfe18542ed9293125c27ebb91412fe8a055b",
+  "model": "meta-llama/llama-3.3-70b-instruct",
+  "payload_transmitted": [
+    "clean vignette",
+    "historical target-blind queries/strategy",
+    "condition-specific chunks",
+    "frozen draft for refine-on"
+  ],
+  "payload_withheld": [
+    "gold",
+    "answer options",
+    "gold letter",
+    "other-arm outputs",
+    "treatment label",
+    "retrieval score"
+  ],
+  "primary_endpoint": "paired frozen-identity pre-mapper Top-1, Holm-adjusted across seven contrasts",
+  "prompt_hashes": {
+    "diagnose": "4297ab82293f6b396f2f32475c9492a37632141bc4bc507a99b71af403280454",
+    "refine": "f1c650d62500211786990a6487ad2dbf68cb5b26a37741a7a53ff9d509acbe98"
+  },
+  "rag_worker_ceiling": 25,
+  "retrieval_plan_sha256": "e5296a73b5a69cdbfc84f3568571cae5d3d3e35239e96627612c228b21f66c9d",
+  "retriever_backend": "merck_tfidf",
+  "schema": "e11_b07_factorial_prereg_v1",
+  "secondary_endpoints": [
+    "paired frozen-identity pre-mapper Top-2",
+    "clinical-complete/equivalent Top-1 and Top-2 after heterogeneous screen plus root audit",
+    "draft change, candidate introduction/deletion, and correct-to-wrong/wrong-to-correct transitions",
+    "family and historical retrieval-gate moderation",
+    "chunk relevance, gold support, incumbent support and confirmation index"
+  ],
+  "selection": {
+    "case_keys_sha256": "995400201478123600a5b30793d133e1e2e7fd676737015025a37a5dd584f6b9",
+    "family_counts": {
+      "DA": 200,
+      "MCR": 200
+    },
+    "n_cases": 400,
+    "slice_counts": {
+      "DA_d2_heldout100": 47,
+      "DA_d2_heldout200b": 101,
+      "DA_d2_seq100": 52,
+      "MCR_seq200b": 96,
+      "MCR_v1_seq100": 51,
+      "MCR_v2_seq100": 53
+    },
+    "source": "analysis/mechanism_v2/results/E4_fixed_pool_crossover/preregistration.json"
+  },
+  "seven_falsifiable_primary_contrasts": [
+    [
+      "off_refine_off",
+      "relevant_refine_off",
+      "relevant retrieval vs no chunks"
+    ],
+    [
+      "random_refine_off",
+      "relevant_refine_off",
+      "relevant retrieval vs nonspecific context"
+    ],
+    [
+      "hard_negative_refine_off",
+      "relevant_refine_off",
+      "top-ranked retrieval vs topically plausible near-miss context"
+    ],
+    [
+      "off_refine_off",
+      "off_refine_on",
+      "generic refine without retrieval"
+    ],
+    [
+      "relevant_refine_off",
+      "relevant_refine_on",
+      "generic refine with relevant retrieval"
+    ],
+    [
+      "random_refine_off",
+      "random_refine_on",
+      "generic refine with random context"
+    ],
+    [
+      "hard_negative_refine_off",
+      "hard_negative_refine_on",
+      "generic refine under misleading-context pressure"
+    ]
+  ],
+  "source_commit": "bb0fbd81d38bf0ab25ec492b771f81c7ea5db6e4",
+  "workers": 25
+}
