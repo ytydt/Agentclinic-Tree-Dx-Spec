@@ -104,6 +104,13 @@ def test_builder_validator_enforces_grounded_quotes_and_typed_edges():
     response["graph_relations"][0]["target_id"] = "N99"
     assert "endpoint" in validate_builder(response, VIGNETTE)
 
+    response = _builder_response()
+    response["flat_facts"] = response["flat_facts"] + [
+        {"fact_id": f"F{index:02d}", "text": f"extra {index}", "source_quote": "had fever"}
+        for index in range(9, 16)
+    ]
+    assert "8-14" in validate_builder(response, VIGNETTE)
+
 
 def test_quote_repair_copies_exact_source_span_without_fuzzy_substitution():
     source = "No tobacco, alcohol, intravenous drug use, or high-risk sexual behavior."

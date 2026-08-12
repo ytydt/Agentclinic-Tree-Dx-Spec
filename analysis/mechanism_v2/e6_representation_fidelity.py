@@ -59,6 +59,9 @@ GRAPH = "typed_event_graph"
 ARMS = (RAW, FLAT, GRAPH)
 WORD_CAP = 1_200
 PAD_TOKEN = "[LENGTH_CONTROL_PAD]"
+FLAT_FACT_LIMITS = (8, 14)
+GRAPH_NODE_LIMITS = (8, 16)
+GRAPH_RELATION_LIMITS = (4, 16)
 
 TEMPORAL_RE = re.compile(
     r"\b(?:previously|initially|subsequently|later|after|before|"
@@ -123,9 +126,13 @@ Return strict JSON only:
   ]
 }
 
-Use 8-24 flat facts, 8-28 graph nodes and 4-36 relations. Prefer omission to
-unsupported inference; preserve high-specificity pathology, imaging, temporal
-change, treatment response and explicit negative scope."""
+HARD COMPACTNESS CONTRACT: use 8-14 flat facts, 8-16 graph nodes and 4-16
+relations; never exceed those maxima.  Each fact text, node text and source
+quote must be at most 18 whitespace-delimited words, each time anchor at most
+8, and each relation justification at most 12.  Prefer a smaller set of
+high-information records to repetition.  Prefer omission to unsupported
+inference; preserve high-specificity pathology, imaging, temporal change,
+treatment response and explicit negative scope."""
 
 SELECTOR_PROMPT = """Role: source-blind clinical differential ranker.
 
@@ -308,12 +315,12 @@ def normalize_builder_response(
     nodes = list(raw_nodes) if isinstance(raw_nodes, list) else []
     relations = list(raw_relations) if isinstance(raw_relations, list) else []
 
-    if len(facts) > 24:
-        actions.append(f"trim_flat_facts:{len(facts)}->24")
-        facts = facts[:24]
-    if len(nodes) > 28:
-        actions.append(f"trim_graph_nodes:{len(nodes)}->28")
-        nodes = nodes[:28]
+    if len(facts) > FLAT_FACT_LIMITS[1]:
+        actions.append(f"trim_flat_facts:{len(facts)}->{FLAT_FACT_LIMITS[1]}")
+        facts = facts[:FLAT_FACT_LIMITS[1]]
+    if len(nodes) > GRAPH_NODE_LIMITS[1]:
+        actions.append(f"trim_graph_nodes:{len(nodes)}->{GRAPH_NODE_LIMITS[1]}")
+        nodes = nodes[:GRAPH_NODE_LIMITS[1]]
 
     for index, row in enumerate(facts):
         if not isinstance(row, dict):
@@ -384,9 +391,11 @@ def normalize_builder_response(
             actions.append(f"drop_relation_{index}:{reason}")
             continue
         kept_relations.append(row)
-    if len(kept_relations) > 36:
-        actions.append(f"trim_graph_relations:{len(kept_relations)}->36")
-        kept_relations = kept_relations[:36]
+    if len(kept_relations) > GRAPH_RELATION_LIMITS[1]:
+        actions.append(
+            f"trim_graph_relations:{len(kept_relations)}->{GRAPH_RELATION_LIMITS[1]}"
+        )
+        kept_relations = kept_relations[:GRAPH_RELATION_LIMITS[1]]
     normalized["flat_facts"] = facts
     normalized["graph_nodes"] = nodes
     normalized["graph_relations"] = kept_relations
@@ -397,12 +406,12 @@ def validate_builder(response: Mapping[str, Any], vignette: str) -> str | None:
     facts = response.get("flat_facts") or []
     nodes = response.get("graph_nodes") or []
     relations = response.get("graph_relations") or []
-    if not isinstance(facts, list) or not 8 <= len(facts) <= 24:
-        return "flat_facts must contain 8-24 rows"
-    if not isinstance(nodes, list) or not 8 <= len(nodes) <= 28:
-        return "graph_nodes must contain 8-28 rows"
-    if not isinstance(relations, list) or not 4 <= len(relations) <= 36:
-        return "graph_relations must contain 4-36 rows"
+    if not isinstance(facts, list) or not FLAT_FACT_LIMITS[0] <= len(facts) <= FLAT_FACT_LIMITS[1]:
+        return f"flat_facts must contain {FLAT_FACT_LIMITS[0]}-{FLAT_FACT_LIMITS[1]} rows"
+    if not isinstance(nodes, list) or not GRAPH_NODE_LIMITS[0] <= len(nodes) <= GRAPH_NODE_LIMITS[1]:
+        return f"graph_nodes must contain {GRAPH_NODE_LIMITS[0]}-{GRAPH_NODE_LIMITS[1]} rows"
+    if not isinstance(relations, list) or not GRAPH_RELATION_LIMITS[0] <= len(relations) <= GRAPH_RELATION_LIMITS[1]:
+        return f"graph_relations must contain {GRAPH_RELATION_LIMITS[0]}-{GRAPH_RELATION_LIMITS[1]} rows"
     if not all(isinstance(row, Mapping) for row in facts + nodes + relations):
         return "all representation rows must be objects"
     fact_ids = [str(row.get("fact_id") or "") for row in facts]
@@ -414,6 +423,10 @@ def validate_builder(response: Mapping[str, Any], vignette: str) -> str | None:
     for row in facts:
         if not str(row.get("text") or "").strip():
             return "flat fact text must be nonempty"
+        if whitespace_word_count(str(row.get("text") or "")) > 18:
+            return "flat fact text must contain at most 18 words"
+        if whitespace_word_count(str(row.get("source_quote") or "")) > 18:
+            return "flat fact source_quote must contain at most 18 words"
         if not quote_is_grounded(str(row.get("source_quote") or ""), vignette):
             return "flat fact source_quote must be a vignette substring"
     for row in nodes:
@@ -425,6 +438,12 @@ def validate_builder(response: Mapping[str, Any], vignette: str) -> str | None:
             return "invalid graph node scope"
         if not str(row.get("text") or "").strip() or not str(row.get("time_anchor") or "").strip():
             return "graph node text/time_anchor must be nonempty"
+        if whitespace_word_count(str(row.get("text") or "")) > 18:
+            return "graph node text must contain at most 18 words"
+        if whitespace_word_count(str(row.get("time_anchor") or "")) > 8:
+            return "graph node time_anchor must contain at most 8 words"
+        if whitespace_word_count(str(row.get("source_quote") or "")) > 18:
+            return "graph node source_quote must contain at most 18 words"
         if not quote_is_grounded(str(row.get("source_quote") or ""), vignette):
             return "graph node source_quote must be a vignette substring"
     node_set = set(node_ids)
@@ -437,6 +456,8 @@ def validate_builder(response: Mapping[str, Any], vignette: str) -> str | None:
             return "invalid graph relation type"
         if not str(row.get("justification") or "").strip():
             return "graph relation justification must be nonempty"
+        if whitespace_word_count(str(row.get("justification") or "")) > 12:
+            return "graph relation justification must contain at most 12 words"
     if len({normalize_label(str(row.get("text") or "")) for row in facts}) != len(facts):
         return "flat facts must be surface-unique"
     return None
@@ -621,9 +642,9 @@ def run_builder(
             "case_id": job["case_key"],
             "vignette": job["vignette"],
             "representation_limits": {
-                "flat_facts": "8-24",
-                "graph_nodes": "8-28",
-                "graph_relations": "4-36",
+                "flat_facts": f"{FLAT_FACT_LIMITS[0]}-{FLAT_FACT_LIMITS[1]}",
+                "graph_nodes": f"{GRAPH_NODE_LIMITS[0]}-{GRAPH_NODE_LIMITS[1]}",
+                "graph_relations": f"{GRAPH_RELATION_LIMITS[0]}-{GRAPH_RELATION_LIMITS[1]}",
             },
         }
         outcome = caller.call(
@@ -1037,9 +1058,21 @@ def freeze_preregistration(
     path = out / "preregistration.json"
     if path.is_file():
         frozen = json.loads(path.read_text(encoding="utf-8"))
-        for key in ("input_hash", "model", "arms", "builder_prompt_sha256", "selector_prompt_sha256", "length_control"):
+        for key in ("input_hash", "model", "arms", "selector_prompt_sha256", "length_control"):
             if frozen.get(key) != candidate.get(key):
                 raise AssertionError(f"preregistration mismatch: {key}")
+        if frozen.get("builder_prompt_sha256") != candidate.get("builder_prompt_sha256"):
+            amendment_path = out / "PROTOCOL_AMENDMENT_02.json"
+            if not amendment_path.is_file():
+                raise AssertionError("builder prompt changed without protocol amendment 02")
+            amendment = json.loads(amendment_path.read_text(encoding="utf-8"))
+            if (
+                amendment.get("prior_builder_prompt_sha256")
+                != frozen.get("builder_prompt_sha256")
+                or amendment.get("amended_builder_prompt_sha256")
+                != candidate.get("builder_prompt_sha256")
+            ):
+                raise AssertionError("builder prompt does not match protocol amendment 02")
         if frozen["sample"]["case_keys"] != candidate["sample"]["case_keys"]:
             raise AssertionError("frozen sample changed")
         if frozen["sample"]["raw_hashes"] != candidate["sample"]["raw_hashes"]:
