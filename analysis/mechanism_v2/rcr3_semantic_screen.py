@@ -16,9 +16,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 
+_ROOT_FOR_IMPORT = Path(__file__).resolve().parents[2]
 if __package__ in {None, ""}:
-    _ROOT_FOR_IMPORT = Path(__file__).resolve().parents[2]
     sys.path.insert(0, str(_ROOT_FOR_IMPORT))
+sys.path.insert(0, str(_ROOT_FOR_IMPORT / "src"))
 
 from analysis.mechanism_v2.common import file_sha256  # noqa: E402
 from analysis.mechanism_v2.online_runner import (  # noqa: E402

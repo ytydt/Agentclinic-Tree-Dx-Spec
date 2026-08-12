@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import importlib.util
 
 from analysis.mechanism_v2.online_runner import read_jsonl
 from analysis.mechanism_v2.rcr3_end_to_end import DEFAULT_OUT
@@ -51,3 +52,7 @@ def test_frozen_screen_inputs_are_complete() -> None:
         == len(row["candidate_registry"])
         for row in rows
     )
+
+
+def test_repository_client_is_importable_from_script_environment() -> None:
+    assert importlib.util.find_spec("agentclinic_tree_dx") is not None
