@@ -819,6 +819,11 @@ def finalize(
             writer.writerow({key: row.get(key) for key in fields})
     prereg = json.loads((out / "preregistration.json").read_text(encoding="utf-8"))
     environment = json.loads((out / "environment.json").read_text(encoding="utf-8"))
+    online_execution_path = out / "online_execution.json"
+    online_execution = (
+        json.loads(online_execution_path.read_text(encoding="utf-8"))
+        if online_execution_path.is_file() else None
+    )
     manifests = {}
     for arm in ARMS:
         manifest = RunManifest(
@@ -832,7 +837,12 @@ def finalize(
             excluded_variance_controls=["repeat runs", "new confirmation set", "provider/retry standardisation"],
             capabilities=dict(environment.get("capabilities") or {}),
         )
-        manifests[arm] = dict(manifest.__dict__)
+        document = dict(manifest.__dict__)
+        document["capabilities_snapshot_context"] = (
+            "finalization invocation; see online_execution for scientific calls"
+        )
+        document["online_execution"] = online_execution
+        manifests[arm] = document
     manifests["construction"] = {
         "model": builder_model, "prompt_sha256": sha256_text(BUILDER_PROMPT),
         "candidate_blind": True,
@@ -869,10 +879,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     ]
     write_jsonl(selected_path, selected_public)
     environment_path = out / "environment.json"
-    # Refresh this non-secret capability record on every invocation.  Design
-    # preparation is intentionally offline-safe, whereas later online arms may
-    # run in a protected shell with the API key injected only for that process.
-    atomic_json(environment_path, {
+    # Preserve an online capability snapshot rather than letting a later
+    # offline finalization overwrite it.  API keys are represented only by a
+    # boolean in ``dependency_capabilities`` and are never serialized.
+    current_environment = {
         "capabilities": dependency_capabilities(), "model": args.model,
         "builder_model": args.builder_model, "workers": workers,
         "reasoning_controls": {
@@ -881,7 +891,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             "exclude": os.environ.get("TREE_DX_REASONING_EXCLUDE"),
         },
         "preregistration_sha256": file_sha256(out / "preregistration.json"),
-    })
+    }
+    if args.build_ledger or args.arm or not environment_path.is_file():
+        atomic_json(environment_path, current_environment)
     if args.prepare_only:
         print(f"prepared {len(cases)} cases; input_hash={input_hash}")
         return 0
