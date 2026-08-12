@@ -594,6 +594,7 @@ def run_arm(
     if result_path.is_file():
         rows = read_jsonl(result_path)
         if len(rows) == len(jobs):
+            audit_arm_artifacts(out, arm, rows, model, workers)
             return rows
         raise AssertionError(f"partial result requires audit before resume: {result_path}")
     telemetry_path = arm_dir / "telemetry.jsonl"
@@ -637,24 +638,50 @@ def run_arm(
                 log.append(line)
     rows.sort(key=lambda row: row["case_key"])
     write_jsonl(result_path, rows)
-    atomic_json(arm_dir / "telemetry_summary.json", aggregate_telemetry(read_jsonl(telemetry_path)))
     log.extend(
         [f"completed_at_utc={datetime.now(timezone.utc).isoformat()}",
          f"served={sum(bool(row['success']) for row in rows)}",
          f"gold_top1={sum(bool(row['gold_top1']) for row in rows)}"]
     )
     (arm_dir / "run.log").write_text("\n".join(log) + "\n", encoding="utf-8")
+    audit_arm_artifacts(out, arm, rows, model, workers)
+    return rows
+
+
+def audit_arm_artifacts(
+    out: Path, arm: str, rows: Sequence[Mapping[str, Any]], model: str, workers: int
+) -> None:
+    """Reconcile result, cache and telemetry coverage before packaging an arm."""
+    arm_dir = out / "arms" / arm
+    telemetry_rows = read_jsonl(arm_dir / "telemetry.jsonl")
+    telemetry_summary = aggregate_telemetry(telemetry_rows)
+    result_cases = {str(row["case_key"]) for row in rows}
+    telemetry_cases = {
+        str(row.get("case_id") or "") for row in telemetry_rows if row.get("case_id")
+    }
+    missing_telemetry = sorted(result_cases - telemetry_cases)
+    cache_records = list((arm_dir / "cache").glob("*.json"))
+    atomic_json(arm_dir / "telemetry_summary.json", telemetry_summary)
     provenance = {
         "experiment_id": EXPERIMENT_ID, "arm": arm, "model": model,
         "workers": workers, "rag": False, "result_rows": len(rows),
         "served": sum(bool(row["success"]) for row in rows),
+        "cache_record_n": len(cache_records),
+        "telemetry_record_n": len(telemetry_rows),
+        "telemetry_case_coverage_n": len(telemetry_cases & result_cases),
+        "telemetry_missing_result_cases": missing_telemetry,
+        "telemetry_warning": (
+            "Per-call cost/provider totals are lower bounds because telemetry is absent "
+            f"for {len(missing_telemetry)} validated result cases. Responses remain in "
+            "immutable cache records; missing transport metadata is not reconstructed."
+            if missing_telemetry else ""
+        ),
         "prompt_sha256": sha256_text(SELECTOR_PROMPT),
         "preregistration_sha256": file_sha256(out / "preregistration.json"),
         "created_at_utc": datetime.now(timezone.utc).isoformat(),
     }
     atomic_json(arm_dir / "provenance.json", provenance)
     package_arm(out, arm)
-    return rows
 
 
 def _tar_add_sorted(archive: tarfile.TarFile, paths: Sequence[Path], base: Path) -> None:

@@ -1,0 +1,22 @@
+# E9 incidents and execution caveats
+
+## I001 — `real_views` transport long tails
+
+The full three-view payload arm completed 400/400 validated result rows, but
+many physical attempts returned `finish_reason=length` or reached the 180 s
+per-attempt timeout before the repository client recovered through its frozen
+retry path. This is retained as cost and latency evidence; no provider, retry,
+prompt, worker count or result was changed during the arm.
+
+The captured telemetry routes across multiple OpenRouter providers (including
+DeepInfra, Inceptron, Cloudflare, SiliconFlow and Io Net), not a Groq
+single-provider route. The API credential was operational.
+
+## I002 — three missing per-call telemetry records
+
+`real_views` has 400 validated immutable response cache records and 400 result
+rows, but only 397 per-call telemetry records. The missing telemetry cases are
+listed in the arm's `provenance.json`. Their validated responses remain
+available and are retained in the estimand; token, physical-attempt and
+provider totals are explicitly lower bounds and are not reconstructed or
+imputed. No call is repeated merely to repair transport accounting.
