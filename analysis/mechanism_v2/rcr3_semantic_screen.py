@@ -267,6 +267,11 @@ def _finalize_screen_artifacts(
         for row in rows
     )
     telemetry = read_jsonl(telemetry_path)
+    capabilities = dependency_capabilities()
+    capabilities["capture_phase"] = (
+        "postprocess; credentials intentionally absent when rebuilding frozen results"
+    )
+    capabilities["authenticated_online_telemetry_present"] = bool(telemetry)
     atomic_json(screen_dir / "telemetry_summary.json", aggregate_telemetry(telemetry))
     atomic_json(screen_dir / "summary.json", {
         "experiment_id": "RCR3-semantic-screen",
@@ -279,7 +284,7 @@ def _finalize_screen_artifacts(
         "reference_identifiability_counts": dict(sorted(identifiability_counts.items())),
         "proxy_endpoints": _proxy_summary(rows),
         "prompt_sha256": sha256_text(PROMPT),
-        "capabilities": dependency_capabilities(),
+        "capabilities": capabilities,
         "created_at_utc": datetime.now(timezone.utc).isoformat(),
     })
     queue = _clinical_queue(out, rows)
