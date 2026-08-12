@@ -92,6 +92,19 @@ def _consensus_sweep_codes() -> str:
     return str(CONSENSUS_SWEEP_RELATION_CODES)
 
 
+def _consensus_sweep_flip_mechanisms() -> dict[str, str]:
+    try:
+        from analysis.mechanism_v2.e2_root_consensus_decisions import (  # type: ignore
+            CONSENSUS_SWEEP_ENDPOINT_FLIP_MECHANISMS,
+        )
+    except ImportError:
+        return {}
+    return {
+        str(record_id): str(mechanism)
+        for record_id, mechanism in CONSENSUS_SWEEP_ENDPOINT_FLIP_MECHANISMS.items()
+    }
+
+
 def _load(out: Path) -> tuple[
     list[dict[str, Any]],
     dict[str, dict[str, Any]],
@@ -610,6 +623,7 @@ def build_consensus_sweep_reviews(out: Path) -> list[dict[str, Any]]:
     cards = read_jsonl(root_dir / "consensus_sweep_cards.jsonl")
     index_rows = read_jsonl(root_dir / "consensus_sweep_index.jsonl")
     codes = _consensus_sweep_codes()
+    flip_mechanisms = _consensus_sweep_flip_mechanisms()
     if len(codes) != len(cards) or not set(codes).issubset(RELATION_CODE_MAP):
         raise AssertionError(
             f"consensus sweep root code coverage mismatch: {len(codes)}/{len(cards)}"
@@ -626,10 +640,28 @@ def build_consensus_sweep_reviews(out: Path) -> list[dict[str, Any]]:
                 "candidate_label": card["candidate_label"],
                 "root_relation": relation,
                 "root_rationale": _generic_relation_rationale(relation),
+                "endpoint_flip_mechanism": flip_mechanisms.get(
+                    str(card["record_id"]), ""
+                ),
                 "provenance": "root_manual_consensus_sweep",
             }
         )
+    card_ids = {str(card["record_id"]) for card in cards}
+    if not set(flip_mechanisms).issubset(card_ids):
+        raise AssertionError("endpoint flip mechanism references a non-frozen sweep card")
+    for review in reviews:
+        original_accepted = str(review["reviewer_a_relation"]) in ACCEPTED
+        root_accepted = str(review["root_relation"]) in ACCEPTED
+        tagged = bool(review["endpoint_flip_mechanism"])
+        if tagged != (original_accepted != root_accepted):
+            raise AssertionError(
+                f"endpoint flip mechanism coverage mismatch: {review['record_id']}"
+            )
     write_jsonl(root_dir / "consensus_sweep_reviews.jsonl", reviews)
+    write_jsonl(
+        root_dir / "consensus_sweep_endpoint_corrections.jsonl",
+        [review for review in reviews if review["endpoint_flip_mechanism"]],
+    )
     return reviews
 
 
@@ -757,12 +789,19 @@ def _reviewer_calibration(
     selection: Sequence[dict[str, Any]],
     reviewer_a: Mapping[str, dict[str, Any]],
     reviewer_b: Mapping[str, dict[str, Any]],
+    reviewer_c: Mapping[str, dict[str, Any]] | None,
     identities: Mapping[str, dict[str, Any]],
     relations: Mapping[tuple[str, str], dict[str, Any]],
     root_dir: Path,
 ) -> dict[str, Any]:
     reviewers: dict[str, Any] = {}
-    for name, reviews in (("reviewer_a", reviewer_a), ("reviewer_b", reviewer_b)):
+    reviewer_sets: list[tuple[str, Mapping[str, dict[str, Any]]]] = [
+        ("reviewer_a", reviewer_a),
+        ("reviewer_b", reviewer_b),
+    ]
+    if reviewer_c is not None:
+        reviewer_sets.append(("reviewer_c_postfreeze_corrective", reviewer_c))
+    for name, reviews in reviewer_sets:
         identity_pairs: list[tuple[bool, bool]] = []
         identity_exact = 0
         identity_evaluable = 0
@@ -893,7 +932,69 @@ def _reviewer_calibration(
             )
         },
     }
-    return {"reviewers": reviewers, "root_queue_audits": queue_audits}
+    sweep_reviews = read_jsonl(root_dir / "consensus_sweep_reviews.jsonl")
+    sweep_pair_counts = Counter(
+        f"{row['reviewer_a_relation']}|{row['reviewer_b_relation']}"
+        for row in sweep_reviews
+    )
+    sweep_root_counts = Counter(str(row["root_relation"]) for row in sweep_reviews)
+    original_endpoint_pairs = [
+        (
+            str(row["reviewer_a_relation"]) in ACCEPTED,
+            str(row["root_relation"]) in ACCEPTED,
+        )
+        for row in sweep_reviews
+    ]
+    correction_counts = Counter()
+    correction_by_family: dict[str, Counter[str]] = defaultdict(Counter)
+    for row in sweep_reviews:
+        original_accepted = str(row["reviewer_a_relation"]) in ACCEPTED
+        root_accepted = str(row["root_relation"]) in ACCEPTED
+        direction = (
+            "accepted_to_nonaccepted"
+            if original_accepted and not root_accepted
+            else (
+                "nonaccepted_to_accepted"
+                if not original_accepted and root_accepted
+                else "endpoint_unchanged"
+            )
+        )
+        correction_counts[direction] += 1
+        correction_by_family[str(row["family"])][direction] += 1
+    sweep_audit = {
+        "n": len(sweep_reviews),
+        "reviewer_pair_counts": dict(sorted(sweep_pair_counts.items())),
+        "root_relation_counts": dict(sorted(sweep_root_counts.items())),
+        "original_a_endpoint_vs_root": _binary_metrics(original_endpoint_pairs),
+        "endpoint_correction_counts": dict(sorted(correction_counts.items())),
+        "endpoint_correction_counts_by_family": {
+            family: dict(sorted(counts.items()))
+            for family, counts in sorted(correction_by_family.items())
+        },
+        "endpoint_flip_mechanism_counts": dict(sorted(Counter(
+            str(row["endpoint_flip_mechanism"])
+            for row in sweep_reviews
+            if row.get("endpoint_flip_mechanism")
+        ).items())),
+        "interpretation": (
+            "The supplement is post-falsification corrective evidence. The "
+            "original A/B endpoint agreement is measured as a prediction, not "
+            "promoted to ground truth; reviewer C is likewise diagnostic evidence."
+        ),
+    }
+    return {
+        "reviewers": reviewers,
+        "reviewer_roles": {
+            "reviewer_a": "pre-frozen Gemini method-blind subcontractor",
+            "reviewer_b": "pre-frozen DeepSeek method-blind subcontractor",
+            "reviewer_c_postfreeze_corrective": (
+                "post-falsification GPT method-blind diagnostic subcontractor; "
+                "not part of the frozen two-reviewer design"
+            ),
+        },
+        "root_queue_audits": queue_audits,
+        "exhaustive_consensus_sweep": sweep_audit,
+    }
 
 
 def _bootstrap_delta(
@@ -929,6 +1030,16 @@ def _bootstrap_delta(
 
 def analyze(out: Path, repetitions: int) -> dict[str, Any]:
     selection, _cards, reviewer_a, reviewer_b = _load(out)
+    reviewer_c_rows = read_jsonl(out / "reviewer_c/reviews.jsonl")
+    reviewer_c = (
+        {str(row["case_key"]): row for row in reviewer_c_rows}
+        if reviewer_c_rows
+        else None
+    )
+    if reviewer_c is not None and set(reviewer_c) != {
+        str(row["case_key"]) for row in selection
+    }:
+        raise AssertionError("post-freeze reviewer C does not cover the frozen E2 cohort")
     identities, relations, provenance = _resolve(out)
     arm_rows: dict[str, list[dict[str, Any]]] = defaultdict(list)
     case_rows: list[dict[str, Any]] = []
@@ -1062,6 +1173,7 @@ def analyze(out: Path, repetitions: int) -> dict[str, Any]:
             selection,
             reviewer_a,
             reviewer_b,
+            reviewer_c,
             identities,
             relations,
             root_dir,
@@ -1107,6 +1219,7 @@ def analyze(out: Path, repetitions: int) -> dict[str, Any]:
             "identity_reviews.jsonl",
             "relation_reviews.jsonl",
             "consensus_sweep_reviews.jsonl",
+            "consensus_sweep_endpoint_corrections.jsonl",
             "resolved_identities.jsonl",
             "resolved_relations.jsonl",
             "analysis.json",

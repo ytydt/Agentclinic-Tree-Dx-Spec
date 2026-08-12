@@ -5,6 +5,9 @@ from analysis.mechanism_v2.e2_root_audit import (
     _bootstrap_delta,
     _weighted_rate,
 )
+from analysis.mechanism_v2.e2_root_consensus_decisions import (
+    CONSENSUS_SWEEP_RELATION_CODES,
+)
 
 
 def test_weighted_rate_uses_design_weights() -> None:
@@ -57,3 +60,8 @@ def test_binary_metrics_exposes_false_positive_precision() -> None:
     assert result["true_negative"] == 2
     assert result["precision"] == 0.5
     assert result["accuracy"] == 0.6
+
+
+def test_consensus_sweep_decisions_cover_frozen_queue() -> None:
+    assert len(CONSENSUS_SWEEP_RELATION_CODES) == 1070
+    assert set(CONSENSUS_SWEEP_RELATION_CODES).issubset({"C", "P", "X", "M", "N", "U"})
