@@ -156,7 +156,12 @@ def _write_csv(path: Path, rows: Sequence[Mapping[str, Any]]) -> None:
                 seen.add(key)
                 fieldnames.append(str(key))
     with path.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fieldnames, extrasaction="ignore")
+        writer = csv.DictWriter(
+            handle,
+            fieldnames=fieldnames,
+            extrasaction="ignore",
+            lineterminator="\n",
+        )
         writer.writeheader()
         for row in rows:
             writer.writerow(
@@ -513,9 +518,9 @@ def _rate(rows: Sequence[Mapping[str, Any]], endpoint: str) -> float:
     return sum(bool(row[endpoint]) for row in rows) / len(rows) if rows else math.nan
 
 
-def _wilson(k: int, n: int, z: float = 1.959963984540054) -> list[float]:
+def _wilson(k: int, n: int, z: float = 1.959963984540054) -> list[float | None]:
     if n == 0:
-        return [math.nan, math.nan]
+        return [None, None]
     p = k / n
     den = 1 + z * z / n
     centre = (p + z * z / (2 * n)) / den
@@ -736,40 +741,113 @@ def _identifiability_effect_modification(rows: Sequence[Mapping[str, Any]]) -> l
     case_keys = sorted({str(row["case_key"]) for row in rows})
     output: list[dict[str, Any]] = []
     for left, right in CONTRAST_PAIRS:
-        strata: dict[str, dict[str, tuple[bool, bool]]] = {"unique_full": {}, "nonunique_full": {}}
-        for key in case_keys:
-            left_row, right_row = row_map[(key, left)], row_map[(key, right)]
-            stratum = (
-                "unique_full"
-                if left_row["reference_identifiability"] == "unique_full_reference"
-                else "nonunique_full"
+        for scope in ("ALL", "DA", "MCR"):
+            strata: dict[str, dict[str, tuple[bool, bool]]] = {
+                "unique_full": {},
+                "nonunique_full": {},
+            }
+            for key in case_keys:
+                left_row, right_row = row_map[(key, left)], row_map[(key, right)]
+                if scope != "ALL" and left_row["benchmark_family"] != scope:
+                    continue
+                stratum = (
+                    "unique_full"
+                    if left_row["reference_identifiability"] == "unique_full_reference"
+                    else "nonunique_full"
+                )
+                strata[stratum][key] = (
+                    bool(left_row["clinical_complete"]), bool(right_row["clinical_complete"])
+                )
+            deltas = {
+                name: sum(int(b) - int(a) for a, b in pairs.values()) / len(pairs)
+                for name, pairs in strata.items()
+            }
+            cis = {
+                name: _paired_bootstrap(pairs, 20000)
+                for name, pairs in strata.items()
+            }
+            output.append(
+                {
+                    "left": left,
+                    "right": right,
+                    "scope": scope,
+                    "endpoint": "clinical_complete",
+                    "unique_full_n": len(strata["unique_full"]),
+                    "nonunique_full_n": len(strata["nonunique_full"]),
+                    "unique_full_delta_right_minus_left": deltas["unique_full"],
+                    "unique_full_ci95": cis["unique_full"],
+                    "nonunique_full_delta_right_minus_left": deltas["nonunique_full"],
+                    "nonunique_full_ci95": cis["nonunique_full"],
+                    "interaction_delta_unique_minus_nonunique": (
+                        deltas["unique_full"] - deltas["nonunique_full"]
+                    ),
+                }
             )
-            strata[stratum][key] = (
-                bool(left_row["clinical_complete"]), bool(right_row["clinical_complete"])
-            )
-        deltas = {
-            name: sum(int(b) - int(a) for a, b in pairs.values()) / len(pairs)
-            for name, pairs in strata.items()
-        }
-        cis = {
-            name: _paired_bootstrap(pairs, 20000)
-            for name, pairs in strata.items()
-        }
-        output.append(
+    return output
+
+
+def _reference_identifiability_outputs(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+    case_rows: dict[str, Mapping[str, Any]] = {}
+    for row in rows:
+        case_rows.setdefault(str(row["case_key"]), row)
+    identity_order = tuple(IDENTITY_CODE_MAP.values())
+    census = []
+    for scope in ("ALL", "DA", "MCR"):
+        scoped = [
+            row
+            for row in case_rows.values()
+            if scope == "ALL" or row["benchmark_family"] == scope
+        ]
+        counts = Counter(str(row["reference_identifiability"]) for row in scoped)
+        census.append(
             {
-                "left": left,
-                "right": right,
-                "endpoint": "clinical_complete",
-                "unique_full_n": len(strata["unique_full"]),
-                "nonunique_full_n": len(strata["nonunique_full"]),
-                "unique_full_delta_right_minus_left": deltas["unique_full"],
-                "unique_full_ci95": cis["unique_full"],
-                "nonunique_full_delta_right_minus_left": deltas["nonunique_full"],
-                "nonunique_full_ci95": cis["nonunique_full"],
-                "interaction_delta_unique_minus_nonunique": deltas["unique_full"] - deltas["nonunique_full"],
+                "scope": scope,
+                "n": len(scoped),
+                "identity_counts": {name: counts[name] for name in identity_order},
+                "unique_full_n": counts["unique_full_reference"],
+                "unique_full_rate": counts["unique_full_reference"] / len(scoped),
+                "unique_full_wilson95": _wilson(counts["unique_full_reference"], len(scoped)),
             }
         )
-    return output
+    endpoint_strata = []
+    for arm in CORE_ARMS:
+        for scope in ("ALL", "DA", "MCR"):
+            scoped = [
+                row
+                for row in rows
+                if row["arm_id"] == arm
+                and (scope == "ALL" or row["benchmark_family"] == scope)
+            ]
+            for identity in (*identity_order, "nonunique_full"):
+                stratum = [
+                    row
+                    for row in scoped
+                    if (
+                        row["reference_identifiability"] == identity
+                        if identity != "nonunique_full"
+                        else row["reference_identifiability"] != "unique_full_reference"
+                    )
+                ]
+                k = sum(bool(row["clinical_complete"]) for row in stratum)
+                endpoint_strata.append(
+                    {
+                        "arm": arm,
+                        "scope": scope,
+                        "reference_identifiability": identity,
+                        "n": len(stratum),
+                        "clinical_complete_n": k,
+                        "clinical_complete_rate": k / len(stratum) if stratum else None,
+                        "clinical_complete_wilson95": _wilson(k, len(stratum)),
+                    }
+                )
+    return {
+        "case_census": census,
+        "clinical_complete_by_arm_scope_identity": endpoint_strata,
+        "interpretation": (
+            "reference identifiability is a mandatory effect modifier; relation-to-recorded-reference "
+            "and whether the record uniquely supports that reference are not collapsed into one label"
+        ),
+    }
 
 
 def _rank_stability(rows: Sequence[Mapping[str, Any]], repetitions: int = 10000) -> list[dict[str, Any]]:
@@ -846,12 +924,34 @@ def build_replay(out: Path = DEFAULT_OUT) -> dict[str, Any]:
     atomic_json(out / "leaderboard.json", leaderboard)
     _write_csv(out / "leaderboard.csv", leaderboard)
 
-    calibration: dict[str, Any] = {"by_family": {}}
+    calibration: dict[str, Any] = {
+        "unit_warning": (
+            "descriptive output-level calibration only: each case contributes nine arm outputs; "
+            "do not treat 7200 rows as independent cases"
+        ),
+        "combined_task_warning": (
+            "ALL task pools two different interface contracts and is retained only as a row-level "
+            "diagnostic summary; DA and MCR are the interpretable task calibrations"
+        ),
+        "by_family": {},
+        "by_family_arm": {},
+    }
     for scope in ("ALL", "DA", "MCR"):
         scoped = rows if scope == "ALL" else [row for row in rows if row["benchmark_family"] == scope]
         calibration["by_family"][scope] = {
             proxy: _confusion(scoped, proxy, "clinical_complete")
             for proxy in ("safe_exact", "legacy_chain", "task")
+        }
+        calibration["by_family_arm"][scope] = {
+            arm: {
+                proxy: _confusion(
+                    [row for row in scoped if row["arm_id"] == arm],
+                    proxy,
+                    "clinical_complete",
+                )
+                for proxy in ("safe_exact", "legacy_chain", "task")
+            }
+            for arm in CORE_ARMS
         }
     atomic_json(out / "endpoint_calibration.json", calibration)
 
@@ -860,6 +960,8 @@ def build_replay(out: Path = DEFAULT_OUT) -> dict[str, Any]:
     for endpoint in endpoints:
         for left, right in CONTRAST_PAIRS:
             for scope in ("ALL", "DA", "MCR"):
+                if endpoint == "task" and scope == "ALL":
+                    continue
                 cases = sorted(
                     case["case_key"]
                     for case in universe
@@ -896,7 +998,9 @@ def build_replay(out: Path = DEFAULT_OUT) -> dict[str, Any]:
                 )
     for endpoint in endpoints:
         family = [row for row in contrasts if row["endpoint"] == endpoint]
-        _holm_adjust(family, "exact_mcnemar_p", "holm_adjusted_p_across_30")
+        _holm_adjust(family, "exact_mcnemar_p", "holm_adjusted_p_within_endpoint_family")
+        for row in family:
+            row["endpoint_multiplicity_family_n"] = len(family)
     coherent_families = {
         "clinical_complete_overall_10": [
             row for row in contrasts if row["endpoint"] == "clinical_complete" and row["scope"] == "ALL"
@@ -930,6 +1034,12 @@ def build_replay(out: Path = DEFAULT_OUT) -> dict[str, Any]:
     identifiability = _identifiability_effect_modification(rows)
     atomic_json(out / "identifiability_effect_modification.json", identifiability)
     _write_csv(out / "identifiability_effect_modification.csv", identifiability)
+    reference_identifiability = _reference_identifiability_outputs(rows)
+    atomic_json(out / "reference_identifiability.json", reference_identifiability)
+    _write_csv(
+        out / "clinical_complete_by_identifiability.csv",
+        reference_identifiability["clinical_complete_by_arm_scope_identity"],
+    )
     rank_stability = _rank_stability(rows)
     atomic_json(out / "rank_stability.json", rank_stability)
     _write_csv(out / "rank_stability.csv", rank_stability)
@@ -999,6 +1109,8 @@ def build_replay(out: Path = DEFAULT_OUT) -> dict[str, Any]:
                 "trajectory_endpoint_transitions.jsonl",
                 "identifiability_effect_modification.json",
                 "identifiability_effect_modification.csv",
+                "reference_identifiability.json",
+                "clinical_complete_by_identifiability.csv",
                 "rank_stability.json",
                 "rank_stability.csv",
             )
