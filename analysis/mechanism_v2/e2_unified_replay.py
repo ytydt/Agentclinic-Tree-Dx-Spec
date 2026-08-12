@@ -154,9 +154,19 @@ def freeze_audit(out: Path = DEFAULT_OUT) -> dict[str, Any]:
     safe_records = 0
     for case_index, row in enumerate(_audit_case_order(missing), 1):
         case_key = str(row["case_key"])
+        core_candidate_ids = {
+            str(row["arm_map"][arm]["candidate_id"])
+            for arm in CORE_ARMS
+            if arm in row["arm_map"]
+        }
+        core_candidates = [
+            candidate
+            for candidate in row["candidate_registry"]
+            if str(candidate["candidate_id"]) in core_candidate_ids
+        ]
         candidates = []
         for candidate_index, candidate in enumerate(
-            _audit_candidate_order(case_key, row["candidate_registry"]), 1
+            _audit_candidate_order(case_key, core_candidates), 1
         ):
             safe = bridge.equivalent(str(candidate["label"]), str(row["gold"]))
             blind_candidate_id = f"U{case_index:04d}C{candidate_index:02d}"
@@ -204,6 +214,7 @@ def freeze_audit(out: Path = DEFAULT_OUT) -> dict[str, Any]:
         "root_relation_codes_required_n": relation_records,
         "root_identity_codes_required_n": len(cards),
         "arm_scope": list(CORE_ARMS),
+        "candidate_scope": "union of champions emitted by the nine full-800 arms only",
         "blind_contract": (
             "cards exclude case keys, family, slice, arm provenance, all historical endpoint flags, "
             "sampling strata and leaderboard position"

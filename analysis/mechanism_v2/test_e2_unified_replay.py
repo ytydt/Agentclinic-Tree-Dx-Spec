@@ -26,10 +26,10 @@ def test_exact_mcnemar_known_values():
 def test_freeze_has_no_arm_or_endpoint_provenance(tmp_path: Path):
     summary = replay.freeze_audit(tmp_path)
     assert summary["new_root_audit_cases_n"] == 400
-    assert summary["candidate_relations_n"] == 1646
+    assert summary["candidate_relations_n"] == 1430
     cards = replay.read_jsonl(tmp_path / "root_audit/cards.jsonl")
     assert len(cards) == 400
     forbidden = {"case_key", "family", "slice", "arm", "legacy_chain", "task"}
     assert not (forbidden & set(cards[0]))
     assert all(not (forbidden | {"safe_exact"}) & set(candidate) for row in cards for candidate in row["candidate_registry"])
-    assert sum(len(row["candidate_registry"]) for row in cards) == 1587
+    assert sum(len(row["candidate_registry"]) for row in cards) == 1371
