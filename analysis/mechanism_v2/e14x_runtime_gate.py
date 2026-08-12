@@ -535,6 +535,7 @@ def manual_queue(rows: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
         row for row in rows
         if row["strict_delta"] != 0
         or bool(row["a1_new_champion"])
+        or bool(row["triggered"] and row["champion_flip"])
         or row.get("option_delta") not in (None, 0)
     ]
     output: list[dict[str, Any]] = []
@@ -544,6 +545,8 @@ def manual_queue(rows: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
             reasons.append("strict_concept_flip")
         if row["a1_new_champion"]:
             reasons.append("a1_new_label_became_champion")
+        if row["triggered"] and row["champion_flip"]:
+            reasons.append("triggered_champion_flip")
         if row.get("option_delta") not in (None, 0):
             reasons.append("da_option_projection_flip")
         output.append({
