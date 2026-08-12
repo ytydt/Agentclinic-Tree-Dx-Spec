@@ -4,8 +4,10 @@ from analysis.mechanism_v2.e6_representation_fidelity import (
     FLAT,
     GRAPH,
     RAW,
+    DEFAULT_BUILDER_MODEL,
     matched_representations,
     paired,
+    parse_args,
     repair_grounded_quote,
     select_cases,
     validate_builder,
@@ -121,6 +123,19 @@ def test_quote_repair_copies_exact_source_span_without_fuzzy_substitution():
         "No ... intravenous drug use", source
     ) == "No tobacco, alcohol, intravenous drug use"
     assert repair_grounded_quote("No illicit drug use", source) is None
+
+
+def test_exact_long_quote_is_audit_evidence_not_case_failure():
+    long_quote = "one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty"
+    response = _builder_response()
+    response["flat_facts"][0]["source_quote"] = long_quote
+    assert validate_builder(response, VIGNETTE + " " + long_quote) is None
+
+
+def test_builder_and_selector_models_are_separately_configurable():
+    args = parse_args(["--prepare-only"])
+    assert args.builder_model == DEFAULT_BUILDER_MODEL
+    assert args.model != args.builder_model
 
 
 def test_all_representations_are_word_matched_per_case():

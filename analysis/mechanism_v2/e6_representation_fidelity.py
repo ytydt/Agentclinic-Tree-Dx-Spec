@@ -50,6 +50,7 @@ from analysis.mechanism_v2.runtime_contract import (  # noqa: E402
 
 EXPERIMENT_ID = "E6"
 DEFAULT_MODEL = "deepseek/deepseek-v4-flash-0731"
+DEFAULT_BUILDER_MODEL = "google/gemini-2.5-flash"
 DEFAULT_OUT = ROOT / "analysis/mechanism_v2/results/E6_representation_fidelity"
 BRIDGE_PATH = ROOT / "data/knowledge_raw/disease_name_bridge.json"
 
@@ -423,10 +424,6 @@ def validate_builder(response: Mapping[str, Any], vignette: str) -> str | None:
     for row in facts:
         if not str(row.get("text") or "").strip():
             return "flat fact text must be nonempty"
-        if whitespace_word_count(str(row.get("text") or "")) > 18:
-            return "flat fact text must contain at most 18 words"
-        if whitespace_word_count(str(row.get("source_quote") or "")) > 18:
-            return "flat fact source_quote must contain at most 18 words"
         if not quote_is_grounded(str(row.get("source_quote") or ""), vignette):
             return "flat fact source_quote must be a vignette substring"
     for row in nodes:
@@ -438,12 +435,6 @@ def validate_builder(response: Mapping[str, Any], vignette: str) -> str | None:
             return "invalid graph node scope"
         if not str(row.get("text") or "").strip() or not str(row.get("time_anchor") or "").strip():
             return "graph node text/time_anchor must be nonempty"
-        if whitespace_word_count(str(row.get("text") or "")) > 18:
-            return "graph node text must contain at most 18 words"
-        if whitespace_word_count(str(row.get("time_anchor") or "")) > 8:
-            return "graph node time_anchor must contain at most 8 words"
-        if whitespace_word_count(str(row.get("source_quote") or "")) > 18:
-            return "graph node source_quote must contain at most 18 words"
         if not quote_is_grounded(str(row.get("source_quote") or ""), vignette):
             return "graph node source_quote must be a vignette substring"
     node_set = set(node_ids)
@@ -456,8 +447,6 @@ def validate_builder(response: Mapping[str, Any], vignette: str) -> str | None:
             return "invalid graph relation type"
         if not str(row.get("justification") or "").strip():
             return "graph relation justification must be nonempty"
-        if whitespace_word_count(str(row.get("justification") or "")) > 12:
-            return "graph relation justification must contain at most 12 words"
     if len({normalize_label(str(row.get("text") or "")) for row in facts}) != len(facts):
         return "flat facts must be surface-unique"
     return None
@@ -1086,6 +1075,7 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, default=DEFAULT_OUT)
     parser.add_argument("--model", default=DEFAULT_MODEL)
+    parser.add_argument("--builder-model", default=DEFAULT_BUILDER_MODEL)
     parser.add_argument("--workers", type=int, default=50)
     parser.add_argument("--per-family", type=int, default=150)
     parser.add_argument("--prepare-only", action="store_true")
@@ -1114,7 +1104,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(json.dumps(prereg["sample"], indent=2))
         return 0
     if args.build_representations:
-        rows = run_builder(out, jobs, args.model, workers)
+        rows = run_builder(out, jobs, args.builder_model, workers)
         build_manifest(out, jobs, rows)
         audit = freeze_builder_audit_sample(out, jobs, rows)
         print(f"representations served={sum(row['success'] for row in rows)}/{len(rows)}")
