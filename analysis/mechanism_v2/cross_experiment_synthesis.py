@@ -14,6 +14,7 @@ import gzip
 import hashlib
 import io
 import json
+import math
 import tarfile
 from datetime import datetime, timezone
 from pathlib import Path
@@ -25,10 +26,11 @@ DEFAULT_OUT = REPO_ROOT / "analysis/mechanism_v2/results/CROSS_EXPERIMENT_ROOT_S
 REGISTER = "analysis/mechanism_v2/EXPERIMENT_REGISTER.md"
 FINAL_REPORT = "analysis/mechanism_v2/CROSS_EXPERIMENT_ROOT_CRITICAL_SYNTHESIS.md"
 CLAIM_LEDGER = "analysis/mechanism_v2/claim_ledger.jsonl"
+E2_UNIFIED = "analysis/mechanism_v2/results/E2_blinded_clinical_adjudication/unified_800"
 
 GRADE_DEFINITIONS = {
     "A": "pre-frozen paired or factorial intervention with case-level ITA accounting",
-    "B": "frozen replay, weighted adjudication, or structured observational reconstruction",
+    "B": "frozen replay, full-census adjudication, or structured observational reconstruction",
     "C": "retrospective/exploratory evidence without a clean causal contrast",
     "D": "root-owned manual case or relation audit supporting mechanism attribution",
 }
@@ -59,30 +61,49 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
     {
         "experiment": "E2",
         "stage": "endpoint_and_identifiability",
-        "design": "method-blind heterogeneous review followed by exhaustive root adjudication and design weighting",
-        "population": {"sampled_cases": 400, "weighted_target": 800},
+        "design": "method-blind full-800 root census followed by a unified five-endpoint replay of all frozen outputs",
+        "population": {"cases": 800, "DA": 400, "MCR": 400, "case_arm_rows": 7200},
         "grade": "B+D",
         "finding": (
-            "Strict, task-projected, clinically complete, and complete-or-partial outcomes are different objects; "
-            "only 55.82% of full references are uniquely identifiable, and no predefined arm contrast survives Holm correction."
+            "Safe-exact is a deterministic lower bound, legacy-chain is a historical diagnostic, clinical-complete is the "
+            "primary ability endpoint, partial is a scope-loss state, and task is a family-specific interface. Only 455/800 "
+            "references are uniquely identifiable. No overall clinical-complete contrast survives its coherent Holm family; "
+            "the MCR Collapse3c-versus-IMPC contrast does, but its DA-versus-MCR interaction is not multiplicity-confirmed."
         ),
         "effect": {
-            "full_reference_identifiable_pct": 55.82,
-            "unique_full_cases": 230,
-            "family_only_cases": 96,
-            "unsupported_specificity_cases": 74,
-            "consensus_boundary_corrections": "73/1070",
+            "unique_full_reference": "455/800",
+            "family_only_cases": 139,
+            "unsupported_specificity_cases": 131,
+            "insufficient_information_cases": 70,
+            "multiple_complete_answers_cases": 5,
+            "safe_exact_range_pct": "7.12-8.62",
+            "legacy_chain_range_pct": "19.38-26.62",
+            "clinical_complete_range_pct": "12.25-15.25",
+            "partial_range_pct": "29.88-35.25",
+            "task_range_pct": "40.12-46.12",
+            "clinical_complete_leader": "collapse3c 122/800 (15.25%)",
+            "clinical_complete_runner_up": "multistance 121/800 (15.12%)",
+            "overall_coherent_holm_survivors": 0,
+            "DA_coherent_holm_survivors": 0,
+            "MCR_coherent_holm_survivors": 1,
+            "MCR_collapse3c_minus_impc_pp": 5.50,
+            "MCR_collapse3c_vs_impc_holm_q": 0.0456153274640822,
+            "family_interaction_holm_q": 0.22848857557122143,
         },
-        "causal_scope": "measurement and frozen-output anatomy; historical arm differences are not fresh runtime effects",
-        "refutes": ["one correctness flag measures clinical output quality", "heterogeneous reviewer consensus is a safe endpoint"],
+        "causal_scope": "full-census measurement and frozen-output anatomy; historical arm differences are not fresh runtime effects",
+        "refutes": [
+            "one correctness flag measures clinical output quality",
+            "legacy-chain is concept accuracy",
+            "the combined DA/MCR task column is a homogeneous ability estimand",
+        ],
         "report": "analysis/mechanism_v2/results/E2_blinded_clinical_adjudication/REPORT.md",
-        "anchors": ["55.82%", "73/1,070", "No predefined arm contrast survives Holm correction"],
+        "anchors": ["455 | 285 | 170", "7,200 个唯一 case-arm 行", "q10=.045615", "q=.228489"],
     },
     {
         "experiment": "E4",
         "stage": "fixed_pool_selection",
         "design": "five selectors on the same blinded canonical pool and evidence table",
-        "population": {"cases": 400, "strictly_exposed": 62},
+        "population": {"cases": 400, "safe_exact_exposed": 62},
         "grade": "A+D",
         "finding": (
             "Forest-style evidence integration converts an exposed fixed pool better than the e7 contrast selector, "
@@ -98,7 +119,7 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
         "causal_scope": "selector behavior on one frozen candidate/evidence state, chiefly exposed MCR cases",
         "refutes": ["generation alone explains all method differences", "evidence count or exhaustive tournament is sufficient"],
         "report": "analysis/mechanism_v2/results/E4_fixed_pool_crossover/REPORT.md",
-        "anchors": ["9 strict gains and one loss", "only seven DA cases are strictly exposed"],
+        "anchors": ["9 safe-exact gains and one loss", "only seven DA cases are safe-exact-exposed"],
     },
     {
         "experiment": "E5",
@@ -198,8 +219,8 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
             "contaminated_selected_concepts_legacy_exact": "160/0",
             "unsafe_exposure_restoration_gain_loss": "11/1",
             "exposure_mcnemar_p": 0.00635,
-            "strict_top1_gain_loss": "8/5",
-            "strict_mcnemar_p": 0.58105,
+            "safe_exact_top1_gain_loss": "8/5",
+            "safe_exact_mcnemar_p": 0.58105,
         },
         "causal_scope": "unsafe-fold development cases under a fixed-width selector payload",
         "refutes": ["safe identity repair alone fixes ranking", "undirected non-equivalence text supplies task projection"],
@@ -260,16 +281,16 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
             "and duplicate/role perturbations expose selector path dependence."
         ),
         "effect": {
-            "real_minus_single_strict_pp": 2.25,
+            "real_minus_single_safe_exact_pp": 2.25,
             "real_minus_single_mcnemar_p": 0.0117,
-            "strict_real_only_clinical_gains": "6/10",
+            "safe_exact_real_only_clinical_gains": "6/10",
             "true_new_capture_to_top1": 3,
             "semantic_cluster_observation_ratio": 0.552,
         },
         "causal_scope": "joint effect of extra view content on union plus selection; role/duplicate flips are instability upper bounds",
         "refutes": ["three views are three independent votes", "duplicate evidence should raise confidence"],
         "report": "analysis/mechanism_v2/results/E9_view_independence/REPORT.md",
-        "anchors": ["10 个 strict real-only 中只有 6", "cluster/observation 比为 0.552"],
+        "anchors": ["10 个 real-only 中只有 6 个", "cluster/observation 比为 0.552"],
     },
     {
         "experiment": "E10",
@@ -330,7 +351,7 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
             "raw_k5_pairwise_holm_q": 0.04987,
             "raw_k10_pairwise_minus_first_complete_pp": 5.0,
             "raw_k10_pairwise_holm_q": 0.02842,
-            "strict_exposure_gain_k5_to_k10": 2,
+            "safe_exact_exposure_gain_k5_to_k10": 2,
         },
         "causal_scope": "frozen historical e7 candidate pools; raw includes occasional author diagnostic assertions",
         "refutes": ["historical candidate order is a sufficient selector", "S1 or generated graph is a safe sole representation", "extra selector samples measure call-depth value"],
@@ -340,23 +361,23 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
     {
         "experiment": "E14x",
         "stage": "adaptive_call_gate",
-        "design": "retrospective strict-gate funnel with exhaustive root review of triggered champion flips",
+        "design": "retrospective safe-exact-gate funnel with exhaustive root review of triggered champion flips",
         "population": {"cases": 300, "triggered": 90, "triggered_champion_flips": 34},
         "grade": "C+D",
         "finding": (
-            "The realised unexplained-span/low-margin fourth-call gate adds many surviving entities but no strict reference discovery; "
+            "The realised unexplained-span/low-margin fourth-call gate adds many surviving entities but no safe-exact reference discovery; "
             "its clinical flips are harm-heavy and the historical upstream states are not causally exchangeable."
         ),
         "effect": {
             "new_entities": 135,
-            "strict_reference_discoveries": 0,
+            "safe_exact_reference_discoveries": 0,
             "root_repairs_harms_neutral": "6/15/13",
             "identical_upstream_pairs": "0/300",
         },
         "causal_scope": "deployment decision on the current gate; no causal coefficient for an ideal relation-aware Call-4",
         "refutes": ["unexplained span count is an adequate call target", "more surviving novelty implies utility"],
         "report": "analysis/mechanism_v2/results/E14x_runtime_gate/REPORT.md",
-        "anchors": ["135 个新实体没有一个严格命中", "6 个观察到的临床 repair、15 个 harm、13 个 neutral"],
+        "anchors": ["135 个新实体没有一个 `safe-exact` 命中", "6 个观察到的临床 repair、15 个 harm、13 个 neutral"],
     },
     {
         "experiment": "RCR3",
@@ -440,7 +461,10 @@ MECHANISM_CHAIN: tuple[dict[str, Any], ...] = (
         "stage": "diagnostic object and task projection",
         "failure_modes": ["parent/component credited as complete", "manifestation substituted for etiology", "mapper rescue/harm", "reference over-specificity"],
         "evidence": ["E2", "E7b", "E10", "E11", "RCR3"],
-        "safe_contract": "report strict, task, complete, partial, requested-object relation, and reference identifiability separately",
+        "safe_contract": (
+            "report safe-exact, legacy-chain, clinical-complete, partial, family-specific task, requested-object relation, "
+            "and reference identifiability separately; clinical-complete is the primary ability endpoint"
+        ),
     },
 )
 
@@ -456,16 +480,16 @@ BASELINE_PROFILES: tuple[dict[str, Any], ...] = (
     },
     {
         "system": "Collapse3c",
-        "strength": "best weighted full clinical equivalence and accepted rate in E2; retains causal, anatomical, temporal, stage, and composite qualifiers",
-        "weakness": "lower strict score and less stable canonical parent selection than Forest/IMPC",
+        "strength": "highest full-800 clinical-complete rate (122/800, 15.25%); retains causal, anatomical, temporal, stage, and composite qualifiers",
+        "weakness": "specificity retention is offset by generation misses and catastrophic substitutions; no overall complete contrast is multiplicity-confirmed",
         "best_supported_use": "specificity/composite-retention reference implementation",
         "evidence": ["E2"],
-        "caveat": "no predefined E2 contrast survives multiplicity correction",
+        "caveat": "MCR favors Collapse3c over IMPC within its coherent family, but the DA-MCR interaction is not multiplicity-confirmed and no universal winner follows",
     },
     {
         "system": "MultiStance",
-        "strength": "broad family coverage and second-highest complete rate in the weighted E2 table",
-        "weakness": "wider correlated competition does not reliably convert to full objects",
+        "strength": "second-highest full-800 clinical-complete rate (121/800, 15.12%) and the highest safe-exact lower bound (8.62%)",
+        "weakness": "its 21 complete gains over Collapse3c are offset by 22 losses; wider correlated competition has essentially zero net complete effect",
         "best_supported_use": "proposal diversity source, not a default final selector",
         "evidence": ["E2", "E5"],
         "caveat": "profile is frozen-output anatomy, not a fresh head-to-head intervention",
@@ -473,26 +497,26 @@ BASELINE_PROFILES: tuple[dict[str, Any], ...] = (
     {
         "system": "Lite",
         "strength": "simple, reliable two-proposal plus comparator path; preserves broader frontier exposure and beats current RCR-3",
-        "weakness": "lower weighted full-equivalence than Collapse3c and vulnerable to incomplete disease-family outputs",
+        "weakness": "full-800 clinical-complete is 106/800 (13.25%), below Collapse3c, and many outputs remain parent/component partials",
         "best_supported_use": "current three-call default control",
         "evidence": ["E2", "RCR3"],
         "caveat": "not demonstrated universally superior; chosen because the proposed replacement failed",
     },
     {
         "system": "Forest",
-        "strength": "best fixed-pool evidence integration in E4 and useful small-view coverage; high weighted strict rate",
-        "weakness": "stable-parent preference loses full specificity; view repetition can overpower specific evidence; legacy substring registry is unsafe",
+        "strength": "best fixed-pool evidence integration in E4, useful residual view capture, and the highest complete-or-partial coverage in E2 (48.25%)",
+        "weakness": "its high legacy-chain rate (26.62%) does not imply clinical completeness (13.38%); stable-parent preference, repeated views, and unsafe substring identity compress scope",
         "best_supported_use": "evidence-integration comparator pattern after exact identity repair",
         "evidence": ["E2", "E4", "E7a", "E7b", "E9"],
         "caveat": "fixed-pool selector advantage is not a complete Forest architecture win",
     },
     {
         "system": "IMPC",
-        "strength": "highest weighted strict rate in E2 and broad stable family recognition",
-        "weakness": "large strict-minus-complete gap shows under-specified object retention",
+        "strength": "broad stable family recognition and 19 object rescues relative to Collapse3c in the full-800 transition audit",
+        "weakness": "legacy-chain is 26.50% but clinical-complete only 12.25%; 32 catastrophic substitutions and 17 scope compressions outweigh those rescues",
         "best_supported_use": "canonical-family proposal signal, not full-object endpoint leader",
         "evidence": ["E2"],
-        "caveat": "strict endpoint is high precision for acceptance but not for completeness",
+        "caveat": "Collapse3c-to-IMPC is -3.00pp overall (q=.070843) and -5.50pp in MCR (q=.045615); the family interaction is not confirmed (q=.228489)",
     },
     {
         "system": "e7",
@@ -505,30 +529,30 @@ BASELINE_PROFILES: tuple[dict[str, Any], ...] = (
     {
         "system": "v0",
         "strength": "small/simple state offers a useful minimal baseline",
-        "weakness": "lowest weighted strict, task, complete, and accepted rates among E2 core arms",
+        "weakness": "clinical-complete is 12.88% and task 40.12%; e7 loses 21 complete cases but rescues only 11 when replaced by v0",
         "best_supported_use": "historical lower-complexity comparator",
         "evidence": ["E2"],
-        "caveat": "absolute rates are development-weighted historical outputs",
+        "caveat": "full-census historical outputs remain development data; v0 is not the lowest arm on every endpoint",
     },
     {
         "system": "B06",
-        "strength": "sequential history converts already-exposed candidates and an isolated closed-pool Supervisor can rescue minority candidates",
-        "weakness": "history nearly eliminates D3 novelty and can erase rare correct minority opinions",
+        "strength": "sequential history converts already-exposed candidates; E2 shows 32 complete rescues versus B07 and E10 isolates rank propagation",
+        "weakness": "B07 simultaneously rescues 28 cases, while history nearly eliminates D3 novelty and can erase rare correct minority opinions",
         "best_supported_use": "rank-propagation mechanism, not an independent multi-expert panel",
         "evidence": ["E2", "E10"],
         "caveat": "current-sample ranking gain and long-tail capture harm coexist",
     },
     {
         "system": "B07",
-        "strength": "soft landing in a compatible disease family and relatively high weighted accepted rate",
-        "weakness": "low full specificity; current lexical retrieval is weakly relevant and generic refine may delete rare candidates",
+        "strength": "highest partial rate (35.25%) and frequent soft landing in a compatible disease family",
+        "weakness": "clinical-complete is only 12.62%; current lexical retrieval is weakly relevant and generic refine may delete rare candidates",
         "best_supported_use": "no-retrieval draft plus typed, gated retrieval research control",
         "evidence": ["E2", "E11"],
         "caveat": "E11 tests the realised TF-IDF bundle, not ideal RAG",
     },
     {
         "system": "RCR-3",
-        "strength": "safe exact identity, explicit typed composite proposals, original-span intent, and a testable three-stage contract",
+        "strength": "safe-exact identity, explicit typed composite proposals, original-span intent, and a testable three-stage contract",
         "weakness": "span drops, relation errors, schema failures, fixed frontier losses, requested-object leakage, and severe self-calibration error",
         "best_supported_use": "falsified research prototype; mine validated components only",
         "evidence": ["E6", "E7c", "E8", "E12", "RCR3"],
@@ -550,13 +574,14 @@ TRAJECTORY_MOTIFS: tuple[dict[str, Any], ...] = (
         "case": "MCR_seq200b/320",
         "reference": "May-Thurner syndrome",
         "chain": [
+            "E2 full-800 replay shows B07 and e7 complete, while B06 regresses to the downstream DVT manifestation",
             "E12 raw/graph preserve the iliac artery-on-vein compression and beat S1's generic DVT",
             "RCR-3 span alignment drops the decisive CT relation",
             "the damaged support score removes May-Thurner from the frontier",
             "the selector then returns the manifestation DVT",
         ],
         "mechanism": "representation loss -> exposure loss -> requested-object regression",
-        "evidence": ["E12", "RCR3"],
+        "evidence": ["E2", "E12", "RCR3"],
     },
     {
         "case": "MCR_seq200b/345",
@@ -636,6 +661,61 @@ TRAJECTORY_MOTIFS: tuple[dict[str, Any], ...] = (
         "mechanism": "removing one bad veto is necessary but cannot repair omitted discriminators or common-disease anchoring",
         "evidence": ["E8", "E11", "E12"],
     },
+    {
+        "case": "DA_d2_heldout200b/729",
+        "reference": "acute myocardial infarction with left-ventricular free-wall rupture",
+        "chain": [
+            "E2 full-800 root replay scores Collapse3c's MI-with-rupture as complete",
+            "Forest retains only myocardial infarction and becomes partial despite contrast leaking from myocardium into the pericardium",
+            "a task mapper may still select the intended option, so task success would conceal the lost complication object",
+        ],
+        "mechanism": "stable-parent preference -> scope compression -> projection can conceal the loss",
+        "evidence": ["E2"],
+    },
+    {
+        "case": "MCR_seq200b/292",
+        "reference": "anaplastic large-cell lymphoma",
+        "chain": [
+            "Collapse3c preserves ALCL as complete in the full-800 replay",
+            "Forest substitutes Hodgkin lymphoma despite CD30 positivity with CD15 negativity and the full morphology/IHC pattern",
+            "the transition is conflicting subtype/entity, not a harmless alias or broader parent",
+        ],
+        "mechanism": "salient morphologic mimic overwhelms discriminative immunophenotype",
+        "evidence": ["E2"],
+    },
+    {
+        "case": "MCR_seq200b/395",
+        "reference": "Kummell disease",
+        "chain": [
+            "Collapse3c and v0 retain the named syndrome supported by delayed collapse and an intravertebral vacuum cleft",
+            "MultiStance substitutes unsupported steroid-induced osteoporosis",
+            "e7 stops at the compatible but incomplete parent vertebral osteonecrosis",
+        ],
+        "mechanism": "weak exposure narrative can cause catastrophic substitution, while conservative abstraction causes scope compression",
+        "evidence": ["E2"],
+    },
+    {
+        "case": "DA_d2_heldout200b/628",
+        "reference": "peri-infarction pericarditis",
+        "chain": [
+            "B06 preserves acute MI followed by acute pericarditis as a complete temporal-causal object",
+            "e7 composes myocardium plus pericardium into myopericarditis",
+            "the latter reverses causality because inflammation follows an angiographically proven infarct",
+        ],
+        "mechanism": "component co-occurrence without temporal direction creates a false composite",
+        "evidence": ["E2", "E12"],
+    },
+    {
+        "case": "MCR_v2_seq100/134",
+        "reference": "malakoplakia",
+        "chain": [
+            "Collapse3c returns the partial morphologic family gastrointestinal histiocytosis",
+            "IMPC uses Michaelis-Gutmann bodies with von Kossa/PAS positivity to recover malakoplakia",
+            "the same arm nevertheless has more catastrophic substitutions than object rescues across the full census",
+        ],
+        "mechanism": "a genuine pathology-specific rescue does not imply a monotone system-level selector advantage",
+        "evidence": ["E2"],
+    },
 )
 
 
@@ -703,6 +783,237 @@ def write_jsonl(path: Path, rows: Iterable[Mapping[str, Any]]) -> None:
         for row in rows:
             handle.write(json.dumps(dict(row), ensure_ascii=False, sort_keys=True) + "\n")
     temporary.replace(path)
+
+
+def read_json(path: Path) -> Any:
+    if not path.is_file():
+        raise FileNotFoundError(path)
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def build_e2_full800_snapshot(repo_root: Path) -> dict[str, Any]:
+    """Validate and preserve the full-census E2 measurement basis.
+
+    The cross-experiment ledger used to transcribe an outcome-enriched subset
+    analysis.  This loader deliberately fails closed unless the new
+    9-arm x 800-case five-endpoint replay is complete.  It emits the complete
+    leaderboard plus the clinical paired/transition anatomy needed to audit the
+    prose without treating 7,200 repeated case-arm rows as independent cases.
+    """
+    base = repo_root / E2_UNIFIED
+    names = {
+        "manifest": "manifest.json",
+        "validation": "validation_summary.json",
+        "leaderboard": "leaderboard.json",
+        "paired_contrasts": "paired_contrasts.json",
+        "identifiability": "reference_identifiability.json",
+        "identifiability_effect_modification": "identifiability_effect_modification.json",
+        "clinical_interactions": "clinical_interaction_inference.json",
+        "relation_transitions": "relation_transition_matrices.json",
+        "projection_error": "projection_error_decomposition.json",
+    }
+    paths = {key: base / name for key, name in names.items()}
+    payload = {key: read_json(path) for key, path in paths.items()}
+
+    def assert_close(actual: Any, expected: float, label: str) -> None:
+        if not math.isclose(float(actual), expected, rel_tol=0, abs_tol=1e-15):
+            raise ValueError(f"{label} drifted: {actual!r} != {expected!r}")
+
+    def assert_interval(actual: Any, expected: Sequence[float], label: str) -> None:
+        if not isinstance(actual, list) or len(actual) != len(expected):
+            raise ValueError(f"{label} has invalid interval shape: {actual!r}")
+        for index, (observed, target) in enumerate(zip(actual, expected)):
+            assert_close(observed, target, f"{label}[{index}]")
+
+    manifest = payload["manifest"]
+    validation = payload["validation"]
+    endpoints = ["safe_exact", "legacy_chain", "clinical_complete", "partial", "task"]
+    arms = ["collapse3c", "multistance", "lite", "forest", "impc", "e7", "v0", "B06", "B07"]
+    if manifest.get("cases_n") != 800 or manifest.get("arm_case_rows_n") != 7200:
+        raise ValueError("E2 unified replay is not the required 800-case/7,200-row census")
+    if manifest.get("arms") != arms or manifest.get("endpoint_columns") != endpoints:
+        raise ValueError("E2 arm order or five-endpoint contract drifted")
+    if validation.get("cases_n") != 800 or validation.get("case_arm_rows_n") != 7200:
+        raise ValueError("E2 validation counts disagree with the manifest")
+    if validation.get("clinical_missing_n") != 0 or validation.get("complete_partial_overlap_n") != 0:
+        raise ValueError("E2 clinical endpoint replay has missing or overlapping labels")
+    if any(validation.get("arm_counts", {}).get(arm) != 800 for arm in arms):
+        raise ValueError("E2 has incomplete arm coverage")
+
+    leaderboard = payload["leaderboard"]
+    expected_cells = {(scope, arm) for scope in ("ALL", "DA", "MCR") for arm in arms}
+    observed_cells = {(row["scope"], row["arm"]) for row in leaderboard}
+    if observed_cells != expected_cells or len(leaderboard) != 27:
+        raise ValueError("E2 leaderboard does not contain exactly 9 arms x 3 scopes")
+    identities = payload["identifiability"]["case_census"]
+    identity_all = next(row for row in identities if row["scope"] == "ALL")
+    if identity_all.get("unique_full_n") != 455 or identity_all.get("n") != 800:
+        raise ValueError("E2 identifiability census drifted from 455/800 unique-full")
+
+    complete_contrasts = [
+        row for row in payload["paired_contrasts"] if row.get("endpoint") == "clinical_complete"
+    ]
+    if len(complete_contrasts) != 30:
+        raise ValueError("E2 must contain ten clinical-complete contrasts in each of ALL/DA/MCR")
+    coherent_counts = {
+        scope: sum(row.get("scope") == scope for row in complete_contrasts)
+        for scope in ("ALL", "DA", "MCR")
+    }
+    if coherent_counts != {"ALL": 10, "DA": 10, "MCR": 10}:
+        raise ValueError(f"E2 coherent clinical contrast families drifted: {coherent_counts}")
+    mcr_collapse_impc = next(
+        row
+        for row in complete_contrasts
+        if row.get("scope") == "MCR"
+        and row.get("left") == "collapse3c"
+        and row.get("right") == "impc"
+    )
+    overall_collapse_impc = next(
+        row
+        for row in complete_contrasts
+        if row.get("scope") == "ALL"
+        and row.get("left") == "collapse3c"
+        and row.get("right") == "impc"
+    )
+    assert_close(
+        overall_collapse_impc.get("coherent_family_holm_p"),
+        0.07084252673880494,
+        "E2 overall coherent clinical Holm q",
+    )
+    assert_interval(
+        overall_collapse_impc.get("slice_stratified_case_bootstrap_ci95"),
+        [-0.05, -0.00875],
+        "E2 overall Collapse3c-to-IMPC unadjusted CI",
+    )
+    assert_close(
+        mcr_collapse_impc.get("coherent_family_holm_p"),
+        0.0456153274640822,
+        "E2 MCR coherent clinical Holm q",
+    )
+    assert_close(
+        mcr_collapse_impc.get("holm_adjusted_p_within_endpoint_family"),
+        0.1368459823922466,
+        "E2 MCR mixed-30 clinical Holm q",
+    )
+    assert_interval(
+        mcr_collapse_impc.get("slice_stratified_case_bootstrap_ci95"),
+        [-0.0925, -0.0175],
+        "E2 MCR Collapse3c-to-IMPC unadjusted CI",
+    )
+    if any(
+        row.get("bootstrap_ci_multiplicity_status") != "unadjusted"
+        for row in complete_contrasts
+    ):
+        raise ValueError("E2 clinical contrast percentile CI lost its unadjusted label")
+    complete_effects = [
+        row
+        for row in payload["identifiability_effect_modification"]
+        if row.get("endpoint") == "clinical_complete"
+    ]
+    if len(complete_effects) != 30:
+        raise ValueError("E2 identifiability effect-modification table is incomplete")
+    transitions = payload["relation_transitions"]
+    if len(transitions) != 30:
+        raise ValueError("E2 relation transition table is incomplete")
+    task_calibration = [
+        row
+        for row in payload["projection_error"]["rows"]
+        if row.get("proxy") == "task" and row.get("scope") in {"DA", "MCR"}
+    ]
+    if len(task_calibration) != 20:
+        raise ValueError("E2 DA/MCR task calibration table (nine arms plus macro row per family) is incomplete")
+    interactions = payload["clinical_interactions"]
+    family_interactions = interactions.get("family_interactions", [])
+    identifiability_interactions = interactions.get("identifiability_interactions", [])
+    if len(family_interactions) != 10 or len(identifiability_interactions) != 30:
+        raise ValueError("E2 clinical interaction inference is incomplete")
+    collapse_impc_interaction = next(
+        row
+        for row in family_interactions
+        if row.get("left") == "collapse3c" and row.get("right") == "impc"
+    )
+    assert_close(
+        collapse_impc_interaction.get("holm_adjusted_bootstrap_p"),
+        0.22848857557122143,
+        "E2 family-interaction Holm q",
+    )
+    assert_interval(
+        collapse_impc_interaction.get("unadjusted_percentile_bootstrap_ci95"),
+        [-0.0925, -0.0075000000000000015],
+        "E2 DA-MCR family-interaction unadjusted CI",
+    )
+    if "unadjusted descriptive uncertainty" not in str(interactions.get("method")):
+        raise ValueError("E2 interaction CI lost its unadjusted descriptive label")
+    expected_identifiability_min_q = {
+        "ALL": 0.1544922753862307,
+        "DA": 1.0,
+        "MCR": 0.5864706764661767,
+    }
+    observed_identifiability_min_q = {
+        scope: min(
+            float(row["holm_adjusted_bootstrap_p"])
+            for row in identifiability_interactions
+            if row.get("scope") == scope
+        )
+        for scope in expected_identifiability_min_q
+    }
+    for scope, expected in expected_identifiability_min_q.items():
+        assert_close(
+            observed_identifiability_min_q[scope],
+            expected,
+            f"E2 {scope} identifiability-interaction minimum Holm q",
+        )
+
+    return {
+        "schema_version": "cross-synthesis-e2-full800-v1",
+        "coverage": {
+            "cases": 800,
+            "DA": 400,
+            "MCR": 400,
+            "arms": 9,
+            "case_arm_rows": 7200,
+            "candidate_reference_registry_relations": 3103,
+            "old_400_registry_relations": 1673,
+            "supplemental_400_registry_relations": 1430,
+            "unique_case_output_clusters": 2878,
+            "clinical_missing": 0,
+            "inference_unit": "case; the nine arm rows per case are correlated",
+        },
+        "endpoint_contract": manifest["endpoint_contract"],
+        "endpoint_definitions": {
+            "safe_exact": "exact or frozen safe synonym; deterministic conservative lower bound",
+            "legacy_chain": "historical substring/resolver chain; diagnostic compatibility only",
+            "clinical_complete": "root-audited complete clinical object; primary true diagnostic ability",
+            "partial": "root-audited parent/component or otherwise incomplete but clinically related object",
+            "task": "DA option mapper or MCR cached calibrated semantic judge; never pool as one homogeneous estimand",
+        },
+        "identifiability_census": identities,
+        "leaderboard": leaderboard,
+        "clinical_complete_paired_contrasts": complete_contrasts,
+        "clinical_complete_identifiability_effect_modification": complete_effects,
+        "clinical_interaction_inference": interactions,
+        "inferential_sentinels": {
+            "overall_collapse3c_vs_impc_holm_q": 0.07084252673880494,
+            "MCR_collapse3c_vs_impc_holm_q": 0.0456153274640822,
+            "MCR_collapse3c_vs_impc_mixed30_holm_q": 0.1368459823922466,
+            "family_interaction_holm_q": 0.22848857557122143,
+            "identifiability_interaction_min_holm_q": expected_identifiability_min_q,
+            "percentile_ci_multiplicity_status": "unadjusted",
+        },
+        "relation_transition_matrices": transitions,
+        "task_calibration_DA_MCR": task_calibration,
+        "source_files": [
+            {
+                "path": str(path.relative_to(repo_root)),
+                "sha256": sha256(path),
+            }
+            for path in paths.values()
+        ],
+        "interpretation_guard": (
+            "clinical-complete is the primary ability endpoint; safe-exact is a lower bound, legacy-chain is historical-only, "
+            "partial is not complete, and combined task mixes two different benchmark interfaces"
+        ),
+    }
 
 
 def validate_evidence(repo_root: Path, evidence: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
@@ -779,6 +1090,7 @@ def deterministic_tar_gz(archive: Path, files: Sequence[Path], base: Path) -> No
 
 def build(repo_root: Path, out: Path) -> dict[str, Any]:
     started = datetime.now(timezone.utc).isoformat()
+    e2_snapshot = build_e2_full800_snapshot(repo_root)
     validated = validate_evidence(repo_root, EVIDENCE)
     closure = validate_closure(CLOSURE_ITEMS)
     register_path = repo_root / REGISTER
@@ -807,6 +1119,7 @@ def build(repo_root: Path, out: Path) -> dict[str, Any]:
     write_json(out / "baseline_profiles.json", {"profiles": list(BASELINE_PROFILES)})
     write_json(out / "trajectory_motifs.json", {"motifs": list(TRAJECTORY_MOTIFS)})
     write_json(out / "closure_matrix.json", closure)
+    write_json(out / "e2_full800_snapshot.json", e2_snapshot)
 
     experiments = {str(row["experiment"]) for row in validated}
     stage_references = {item for stage in MECHANISM_CHAIN for item in stage["evidence"]}
@@ -822,6 +1135,12 @@ def build(repo_root: Path, out: Path) -> dict[str, Any]:
         for line in claim_path.read_text(encoding="utf-8").splitlines()
         if line.strip()
     ]
+    for claim in claims:
+        if claim.get("claim_id") == "C015":
+            claim["claim"] = (
+                "Safe-exact (historical field strict), legacy-chain, family-specific task, clinical-complete, partial, "
+                "and reference-identifiability are different endpoints; clinical-complete is the primary ability measure."
+            )
     claim_ids = [str(row["claim_id"]) for row in claims]
     if len(claim_ids) != len(set(claim_ids)):
         raise ValueError("duplicate final claim ids")
@@ -846,6 +1165,22 @@ def build(repo_root: Path, out: Path) -> dict[str, Any]:
         "cross_case_motif_count": len(TRAJECTORY_MOTIFS),
         "final_claim_count": len(claims),
         "eligible_remaining_experiments": closure["eligible_remaining_count"],
+        "e2_full800_cases": e2_snapshot["coverage"]["cases"],
+        "e2_case_arm_rows": e2_snapshot["coverage"]["case_arm_rows"],
+        "e2_unique_full_references": 455,
+        "e2_overall_clinical_holm_survivors": 0,
+        "e2_MCR_clinical_holm_survivors": 1,
+        "e2_MCR_collapse3c_vs_impc_holm_q": 0.0456153274640822,
+        "e2_overall_collapse3c_vs_impc_holm_q": 0.07084252673880494,
+        "e2_MCR_collapse3c_vs_impc_mixed30_holm_q": 0.1368459823922466,
+        "e2_family_interaction_holm_q": 0.22848857557122143,
+        "e2_identifiability_interaction_holm_survivors": 0,
+        "e2_identifiability_interaction_min_holm_q": {
+            "ALL": 0.1544922753862307,
+            "DA": 1.0,
+            "MCR": 0.5864706764661767,
+        },
+        "primary_diagnostic_endpoint": "clinical_complete",
         "default_system_decision": "retain Lite-like two independent proposals plus one frozen-pool comparator",
         "rejected_default": "current RCR-3 and current fourth-call gate",
         "network_finding": (
@@ -865,6 +1200,8 @@ def build(repo_root: Path, out: Path) -> dict[str, Any]:
         f"trajectory_motifs={len(TRAJECTORY_MOTIFS)}",
         f"final_claims={len(claims)}",
         f"eligible_remaining={closure['eligible_remaining_count']}",
+        "e2_full800_validation=passed",
+        "e2_endpoint_contract=safe_exact,legacy_chain,clinical_complete,partial,task",
         "source_anchor_validation=passed",
         "cross_reference_validation=passed",
         "closure_validation=passed",
@@ -878,6 +1215,7 @@ def build(repo_root: Path, out: Path) -> dict[str, Any]:
         out / "baseline_profiles.json",
         out / "trajectory_motifs.json",
         out / "closure_matrix.json",
+        out / "e2_full800_snapshot.json",
         out / "claim_ledger_final.jsonl",
         out / "synthesis_summary.json",
         out / "run.log",
