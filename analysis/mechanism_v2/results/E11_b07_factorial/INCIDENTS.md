@@ -58,3 +58,16 @@ tokens; concurrent length retries and three timeouts began. Before reviewing any
 retrieval label, the component was stopped and a second amendment disabled
 hidden reasoning (`effort=none`, `exclude=true`). Model, prompt, payload, enum
 schema, 8-worker cap and immutable caches remain unchanged.
+
+## Retrieval-screen workspace recovery
+
+The six cache and telemetry records described above had not been committed when
+the ephemeral execution workspace was manually stopped. The resumed environment
+could recover the remote branch through `9ad279757` but not those uncommitted
+files. Their retrieval labels and case correctness were therefore unavailable
+and were not reviewed. The recovery amendment was frozen before any replacement
+call and applies the already-preregistered hidden-reasoning-disabled settings to
+all 400 cases. No result from the unavailable six-record run enters an endpoint;
+the recovered retrieval component is one complete and internally consistent
+400-case execution. This is environment recovery, not a new treatment arm or a
+repeated-run variance experiment.
