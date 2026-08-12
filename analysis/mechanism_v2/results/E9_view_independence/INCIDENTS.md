@@ -32,3 +32,17 @@ telemetry records; its two missing IDs are in provenance. Across all arms,
 response validity is checked from the immutable cache and result row, while
 transport accounting is independently reconciled and never silently assumed
 complete.
+
+## I003 — one preregistered schema failure in `duplicate_anchor`
+
+`MCR_seq200b/285` returned four decisive evidence IDs although the frozen
+schema permits at most three. The content explicitly described V2 and V3 as
+the “same findings repeated,” which is useful evidence that the model noticed
+the duplication, but the row remains an invalid/failed response. It is not
+trimmed, repaired, retried or imputed. The paired repetition contrast therefore
+has 399 double-served cases and the intention-to-analyse arm has 399/400 served.
+
+This case had only one modality-view candidate and no strict frozen-synonym
+reference exposure (`Pycnodysostosis` vs the generated `Pyknodysostosis`), so
+the schema failure does not turn a locally exposed reference hit into a miss;
+that observation does not excuse or remove the failure.
