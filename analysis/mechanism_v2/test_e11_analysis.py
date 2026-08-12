@@ -1,0 +1,42 @@
+from __future__ import annotations
+
+from analysis.mechanism_v2.e11_analysis import (
+    exact_mcnemar,
+    holm_adjust,
+    load_arms,
+    paired_contrast,
+)
+from analysis.mechanism_v2.e11_b07_factorial import DEFAULT_OUT
+
+
+def test_exact_mcnemar_known_values() -> None:
+    assert exact_mcnemar(0, 0) == 1.0
+    assert exact_mcnemar(0, 5) == 0.0625
+    assert exact_mcnemar(1, 4) == 0.375
+
+
+def test_holm_is_monotone_in_p_order() -> None:
+    records = [
+        {"exact_mcnemar_p": 0.03, "label": "b"},
+        {"exact_mcnemar_p": 0.01, "label": "a"},
+        {"exact_mcnemar_p": 0.5, "label": "c"},
+    ]
+    adjusted = holm_adjust(records, "holm")
+    by_label = {row["label"]: row["holm"] for row in adjusted}
+    assert by_label["a"] <= by_label["b"] <= by_label["c"]
+
+
+def test_completed_arm_join_and_primary_direction() -> None:
+    arms = load_arms(DEFAULT_OUT)
+    record = paired_contrast(
+        arms,
+        "off_refine_off",
+        "relevant_refine_off",
+        "gold_top1",
+        "test",
+        repetitions=100,
+    )
+    assert record["n"] == 400
+    assert record["left_only"] == 5
+    assert record["right_only"] == 0
+    assert record["delta_right_minus_left"] == -0.0125
