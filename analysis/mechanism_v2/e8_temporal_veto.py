@@ -698,7 +698,7 @@ def _binomial_two_sided(k: int, n: int) -> float:
 
 def paired_summary(
     rows_by_arm: Mapping[str, Mapping[str, Mapping[str, Any]]], left: str, right: str,
-    family: str | None = None,
+    family: str | None = None, *, exposed_only: bool = False,
 ) -> dict[str, Any]:
     keys = sorted(set(rows_by_arm[left]) & set(rows_by_arm[right]))
     pairs = []
@@ -706,23 +706,35 @@ def paired_summary(
         a, b = rows_by_arm[left][key], rows_by_arm[right][key]
         if family and a["family"] != family:
             continue
+        if exposed_only and not (a["gold_exposed"] and b["gold_exposed"]):
+            continue
         if a["success"] and b["success"]:
             pairs.append((a, b))
     left_only = sum(a["gold_top1"] and not b["gold_top1"] for a, b in pairs)
     right_only = sum(b["gold_top1"] and not a["gold_top1"] for a, b in pairs)
     discordant = left_only + right_only
+    veto_removed = sum(a["gold_hard_veto"] and not b["gold_hard_veto"] for a, b in pairs)
+    veto_added = sum(b["gold_hard_veto"] and not a["gold_hard_veto"] for a, b in pairs)
     return {
-        "left": left, "right": right, "family": family or "ALL", "paired_served": len(pairs),
+        "left": left, "right": right, "family": family or "ALL",
+        "gold_exposed_only": exposed_only, "paired_served": len(pairs),
         "left_accuracy": sum(a["gold_top1"] for a, _ in pairs) / len(pairs) if pairs else None,
         "right_accuracy": sum(b["gold_top1"] for _, b in pairs) / len(pairs) if pairs else None,
         "delta_right_minus_left": (right_only - left_only) / len(pairs) if pairs else None,
         "left_only_correct": left_only, "right_only_correct": right_only,
         "mcnemar_exact_p": _binomial_two_sided(min(left_only, right_only), discordant),
         "champion_flips": sum(a["champion_id"] != b["champion_id"] for a, b in pairs),
+        "champion_flip_rate": (
+            sum(a["champion_id"] != b["champion_id"] for a, b in pairs) / len(pairs)
+            if pairs else None
+        ),
         "gold_hard_veto_left": sum(a["gold_hard_veto"] for a, _ in pairs),
         "gold_hard_veto_right": sum(b["gold_hard_veto"] for _, b in pairs),
-        "gold_veto_removed": sum(a["gold_hard_veto"] and not b["gold_hard_veto"] for a, b in pairs),
-        "gold_veto_added": sum(b["gold_hard_veto"] and not a["gold_hard_veto"] for a, b in pairs),
+        "gold_veto_removed": veto_removed,
+        "gold_veto_added": veto_added,
+        "gold_veto_mcnemar_exact_p": _binomial_two_sided(
+            min(veto_removed, veto_added), veto_removed + veto_added
+        ),
         "veto_removed_and_rescued": sum(
             a["gold_hard_veto"] and not b["gold_hard_veto"] and not a["gold_top1"] and b["gold_top1"]
             for a, b in pairs
@@ -751,7 +763,15 @@ def finalize(
     for left, right in ((HARD, SOFT), (SOFT, LEGAL), (SOFT, INVALID)):
         key = f"{left}__to__{right}"
         comparisons[key] = {
-            family: paired_summary(by_arm, left, right, None if family == "ALL" else family)
+            family: {
+                "all_both_served": paired_summary(
+                    by_arm, left, right, None if family == "ALL" else family
+                ),
+                "gold_exposed_both_served": paired_summary(
+                    by_arm, left, right, None if family == "ALL" else family,
+                    exposed_only=True,
+                ),
+            }
             for family in ("ALL", "DA", "MCR")
         }
     arm_summaries = {}
