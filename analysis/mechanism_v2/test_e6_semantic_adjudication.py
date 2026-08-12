@@ -47,6 +47,15 @@ def test_frozen_jobs_blind_arm_names_and_preserve_all_successful_outputs():
     assert "opaque" in AUDITOR_PROMPT.lower()
 
 
+def test_preregistration_distribution_uses_json_stable_string_keys():
+    from analysis.mechanism_v2.e6_representation_fidelity import DEFAULT_OUT
+    from analysis.mechanism_v2.e6_semantic_adjudication import freeze_design
+
+    jobs, hashes = load_jobs(DEFAULT_OUT)
+    frozen = freeze_design(DEFAULT_OUT, jobs, hashes, "google/gemini-2.5-flash")
+    assert frozen["output_count_distribution"] == {"0": 1, "1": 41, "2": 11, "3": 247}
+
+
 def test_exact_mcnemar_boundary_cases():
     assert exact_mcnemar(0, 0) == 1.0
     assert exact_mcnemar(0, 8) == 2 / 256

@@ -171,7 +171,12 @@ def freeze_design(
         "auditor_prompt_sha256": sha256_text(AUDITOR_PROMPT),
         "arm_input_hashes": dict(input_hashes),
         "n_cases": len(jobs),
-        "output_count_distribution": dict(sorted(Counter(len(job["outputs"]) for job in jobs).items())),
+        "output_count_distribution": {
+            str(count): frequency
+            for count, frequency in sorted(
+                Counter(len(job["outputs"]) for job in jobs).items()
+            )
+        },
         "case_payload_hashes": {
             str(job["case_key"]): canonical_sha256({
                 "case_id": job["case_key"],
