@@ -38,7 +38,7 @@ No excluded control is silently reintroduced as a scientific factor.
 | E10 | B06 isolated/sequential × supervisor/RRF | synthesis E10 | yes | queued |
 | E11 | B07 retrieval off/on/random/hard-negative × refine off/on | synthesis E11 | yes, RAG | queued |
 | E12 | e7 representation × width × comparator | synthesis E12 | yes | queued |
-| E14x | Exploratory runtime-gate utility without multi-run latent labels | synthesis E14; RCR Call-4 gate | no additional call | in progress: retrospective analysis contract frozen; inferentially downgraded |
+| E14x | Exploratory runtime-gate utility without multi-run latent labels | synthesis E14; RCR Call-4 gate | no additional call | complete: 300 strict-gate pairs plus 200 legacy permissive-gate pairs; no primary pair has identical G1/G2, so no causal coefficient is claimed; 90 strict-gate calls add 135 new frozen-identity entities but zero strict reference discoveries, and root review of all 34 triggered champion flips finds 6 observed repairs, 15 harms and 13 neutral; old Call-4 gate disabled by default |
 | RCR3 | End-to-end relation-preserving 3-call system | independent §11/E7 | yes | queued |
 
 The independent report's width, ranker and clean-Compact tests map to E5, E4

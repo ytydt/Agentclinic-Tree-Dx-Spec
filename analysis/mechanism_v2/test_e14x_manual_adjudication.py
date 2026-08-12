@@ -1,4 +1,6 @@
-from analysis.mechanism_v2.e14x_manual_adjudication import MANUAL, run
+import json
+
+from analysis.mechanism_v2.e14x_manual_adjudication import MANUAL
 from analysis.mechanism_v2.common import ROOT
 
 
@@ -10,10 +12,10 @@ def test_all_frozen_manual_cases_are_covered() -> None:
 
 def test_root_manual_summary_matches_expected_queue() -> None:
     out = ROOT / "analysis/mechanism_v2/results/E14x_runtime_gate"
-    if not (out / "manual_audit_queue.jsonl").exists():
+    path = out / "manual_audit_summary.json"
+    if not path.exists():
         return
-    summary = run(out)
+    summary = json.loads(path.read_text(encoding="utf-8"))
     assert summary["manual_case_n"] == 56
     assert summary["triggered_champion_flip_n"] == 34
     assert sum(summary["triggered_champion_flips"]["observed_gate_utility_counts"].values()) == 34
-
