@@ -46,3 +46,14 @@ This case had only one modality-view candidate and no strict frozen-synonym
 reference exposure (`Pycnodysostosis` vs the generated `Pyknodysostosis`), so
 the schema failure does not turn a locally exposed reference hit into a miss;
 that observation does not excuse or remove the failure.
+
+## I004 — heterogeneous semantic-auditor partition failures
+
+The target-blind Gemini semantic clustering subcontractor served 387/400
+cases. Thirteen outputs failed the exact-partition contract: nine duplicated
+observation IDs, three omitted at least one ID, and one invented an unknown ID.
+All 400 raw cache records are retained; failed clusters are excluded from
+aggregate semantic-overlap metrics and are not repaired or imputed. One of 400
+transport telemetry records is also absent and is listed in semantic-audit
+provenance. Root manual review remains authoritative over the subcontractor's
+valid-looking merges as well as these explicit failures.
