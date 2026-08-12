@@ -20,3 +20,9 @@ listed in the arm's `provenance.json`. Their validated responses remain
 available and are retained in the estimand; token, physical-attempt and
 provider totals are explicitly lower bounds and are not reconstructed or
 imputed. No call is repeated merely to repair transport accounting.
+
+The corresponding `role_rotated` arm has 400 validated cache/result rows and
+392 telemetry records. Its eight missing case IDs are likewise frozen in that
+arm's provenance. This larger metadata gap changes neither response validity
+nor the paired endpoint, but it prevents exact arm-to-arm cost attribution;
+reported token and physical-attempt differences are lower-bound descriptions.
