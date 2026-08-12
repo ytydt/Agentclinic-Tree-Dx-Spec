@@ -224,6 +224,8 @@ def build_queue(out: Path) -> list[dict[str, Any]]:
             reasons.append("strict_endpoint_or_exposure_discordance")
         if screen_positive:
             reasons.append("heterogeneous_screen_positive_or_uncertain")
+        if not bool(screen.get("success")):
+            reasons.append("semantic_screen_failure")
         if not reasons:
             negative_pool.append(case_key)
             continue
