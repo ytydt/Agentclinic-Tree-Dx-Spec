@@ -377,6 +377,10 @@ def compact_mechanism(
     third_counts: Counter[int] = Counter()
     third_types: Counter[str] = Counter()
     registry_added_total = frontier_added_total = frontier_removed_total = 0
+    common_registry_n = 0
+    common_registry_added = 0
+    common_frontier_added = 0
+    common_frontier_removed = 0
     registry_changed_keys: list[str] = []
     for key in sorted(compact):
         left = lite[key]
@@ -404,6 +408,11 @@ def compact_mechanism(
         rfconcept = {rby[value] for value in rfront if value in rby}
         frontier_added_total += len(rfconcept - lfconcept)
         frontier_removed_total += len(lfconcept - rfconcept)
+        if lreg and rreg:
+            common_registry_n += 1
+            common_registry_added += len(rreg - lreg)
+            common_frontier_added += len(rfconcept - lfconcept)
+            common_frontier_removed += len(lfconcept - rfconcept)
     return {
         "shared_first_two_generator_documents_equal_n": shared_equal,
         "third_generator_candidate_count": {str(key): value for key, value in sorted(third_counts.items())},
@@ -413,6 +422,10 @@ def compact_mechanism(
         "new_registry_concept_total": registry_added_total,
         "frontier_concept_added_total": frontier_added_total,
         "frontier_concept_removed_total": frontier_removed_total,
+        "common_nonempty_registry_case_n": common_registry_n,
+        "common_nonempty_registry_new_concept_total": common_registry_added,
+        "common_nonempty_registry_frontier_added_total": common_frontier_added,
+        "common_nonempty_registry_frontier_removed_total": common_frontier_removed,
     }
 
 
