@@ -37,7 +37,6 @@ import csv
 import hashlib
 import json
 import math
-import random
 import sys
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
@@ -54,9 +53,15 @@ from analysis.mechanism_v2.common import (  # noqa: E402
     FrozenExactSynonymBridge,
     ROOT,
     file_sha256,
+    normalize_label,
 )
 from analysis.mechanism_v2.e2_blinded_adjudication import (  # noqa: E402
+    CHAIN_PATH,
+    SCORED_PATH,
+    _bool_cell,
     _load_case_universe,
+    key_for,
+    read_table,
 )
 from analysis.mechanism_v2.online_runner import read_jsonl, write_jsonl  # noqa: E402
 from analysis.mechanism_v2.runtime_contract import atomic_json, stable_seed  # noqa: E402
@@ -97,6 +102,26 @@ CORE_ARMS = (
     "B06",
     "B07",
 )
+RELATION_ORDER = (
+    "complete_equivalent",
+    "partial_parent_or_component",
+    "conflicting_subtype_or_scope",
+    "manifestation_or_related",
+    "not_equivalent",
+    "uncertain",
+)
+CONTRAST_PAIRS = (
+    ("collapse3c", "multistance"),
+    ("collapse3c", "forest"),
+    ("collapse3c", "impc"),
+    ("e7", "v0"),
+    ("forest", "e7"),
+    ("forest", "B06"),
+    ("B06", "e7"),
+    ("B07", "e7"),
+    ("B07", "B06"),
+    ("forest", "lite"),
+)
 
 
 def _root_codes() -> tuple[str, str]:
@@ -117,6 +142,33 @@ def _sha256_json(value: Any) -> str:
 
 def _utcnow() -> str:
     return datetime.now(timezone.utc).isoformat()
+
+
+def _write_csv(path: Path, rows: Sequence[Mapping[str, Any]]) -> None:
+    if not rows:
+        path.write_text("", encoding="utf-8")
+        return
+    fieldnames: list[str] = []
+    seen: set[str] = set()
+    for row in rows:
+        for key in row:
+            if key not in seen:
+                seen.add(key)
+                fieldnames.append(str(key))
+    with path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, extrasaction="ignore")
+        writer.writeheader()
+        for row in rows:
+            writer.writerow(
+                {
+                    key: (
+                        json.dumps(value, ensure_ascii=False, sort_keys=True)
+                        if isinstance(value, (dict, list, tuple))
+                        else value
+                    )
+                    for key, value in row.items()
+                }
+            )
 
 
 def _audit_case_order(rows: Iterable[Mapping[str, Any]]) -> list[Mapping[str, Any]]:
@@ -296,6 +348,12 @@ def _old_root_decisions() -> tuple[dict[str, str], dict[tuple[str, str], str]]:
     return identities, relations
 
 
+def _safe_match_kind(label: str, gold: str, bridge: FrozenExactSynonymBridge) -> str:
+    if not bridge.equivalent(label, gold):
+        return "none"
+    return "normalized_exact" if normalize_label(label) == normalize_label(gold) else "frozen_safe_synonym"
+
+
 def _arm_rows(universe: Sequence[Mapping[str, Any]], out: Path) -> list[dict[str, Any]]:
     old_identities, old_relations = _old_root_decisions()
     new_identities, new_relations = _new_root_decisions(out)
@@ -321,25 +379,134 @@ def _arm_rows(universe: Sequence[Mapping[str, Any]], out: Path) -> list[dict[str
                 raise AssertionError(f"safe identity contradicted by root relation: {case_key}/{arm}")
             rows.append(
                 {
+                    "schema_version": "e2-unified-five-endpoint-v1",
                     "case_key": case_key,
-                    "family": str(case["family"]),
+                    "benchmark_family": str(case["family"]),
                     "slice_id": str(case["slice_id"]),
                     "source_id": str(case["source_id"]),
-                    "arm": arm,
+                    "arm_id": arm,
+                    "method_family": str(mapping["method_family"]),
+                    "eligible": True,
+                    "served": True,
                     "reference_diagnosis": str(case["gold"]),
-                    "candidate_label": str(mapping["surface_label"]),
+                    "prediction_pre_projection": str(mapping["surface_label"]),
+                    "output_cluster_id": candidate_id,
                     "reference_identifiability": identity[case_key],
-                    "relation": relation,
+                    "clinical_relation": relation,
+                    "clinical_audit_source": (
+                        "e2_v1_blinded_root_census_sample"
+                        if case_key in old_identities
+                        else "e2_v2_blinded_root_census_supplement"
+                    ),
+                    "clinical_audit_status": "root_adjudicated",
+                    "e2_v1_sampled": case_key in old_identities,
+                    "analysis_weight": 1.0,
                     "safe_exact": safe_exact,
+                    "safe_exact_match_kind": _safe_match_kind(
+                        str(mapping["surface_label"]), str(case["gold"]), bridge
+                    ),
                     "legacy_chain": bool(mapping["strict_chain_correct"]),
                     "clinical_complete": relation == "complete_equivalent",
                     "partial": relation == "partial_parent_or_component",
                     "task": bool(mapping["task_correct"]),
+                    "task_contract": (
+                        "da_option_mapper" if case["family"] == "DA" else "mcr_cached_semantic_judge"
+                    ),
                 }
             )
     if len(rows) != 800 * len(CORE_ARMS):
         raise AssertionError("incomplete arm-by-case replay")
     return rows
+
+
+def _validate_source_contract(
+    universe: Sequence[Mapping[str, Any]], rows: Sequence[Mapping[str, Any]], out: Path
+) -> dict[str, Any]:
+    if len(universe) != 800 or Counter(row["family"] for row in universe) != {"DA": 400, "MCR": 400}:
+        raise AssertionError("unified replay requires exactly DA400 + MCR400")
+    if len(rows) != 7200:
+        raise AssertionError(f"expected 7200 case-arm rows, found {len(rows)}")
+    unique = {(str(row["case_key"]), str(row["arm_id"])) for row in rows}
+    if len(unique) != len(rows):
+        raise AssertionError("duplicate case-arm replay key")
+    arm_counts = Counter(str(row["arm_id"]) for row in rows)
+    if arm_counts != {arm: 800 for arm in CORE_ARMS}:
+        raise AssertionError(f"incomplete full-domain arms: {arm_counts}")
+    family_arm = Counter((str(row["benchmark_family"]), str(row["arm_id"])) for row in rows)
+    expected_family_arm = {(family, arm): 400 for family in ("DA", "MCR") for arm in CORE_ARMS}
+    if family_arm != expected_family_arm:
+        raise AssertionError("every arm must have DA400 and MCR400")
+
+    chain = {key_for(row): row for row in read_table(CHAIN_PATH)}
+    scored = {key_for(row): row for row in read_table(SCORED_PATH)}
+    matrix_chain_mismatches = 0
+    matrix_task_mismatches = 0
+    case_by_key = {
+        (str(case["dataset"]), str(case["slice"]), str(case["source_id"])): case
+        for case in universe
+    }
+    for row in rows:
+        case_key = str(row["case_key"])
+        case = next(case for case in universe if str(case["case_key"]) == case_key)
+        key = (str(case["dataset"]), str(case["slice"]), str(case["source_id"]))
+        if key not in case_by_key or key not in chain or key not in scored:
+            raise AssertionError(f"missing matrix source for {key}")
+        arm = str(row["arm_id"])
+        matrix_chain_mismatches += int(_bool_cell(chain[key][arm]) != bool(row["legacy_chain"]))
+        matrix_task_mismatches += int(_bool_cell(scored[key][arm]) != bool(row["task"]))
+    if matrix_chain_mismatches or matrix_task_mismatches:
+        raise AssertionError(
+            f"dual/matrix mismatch chain={matrix_chain_mismatches} task={matrix_task_mismatches}"
+        )
+
+    old_relations_n = len(read_jsonl(ROOT_RELATIONS_PATH))
+    old_identities_n = len(read_jsonl(ROOT_IDENTITIES_PATH))
+    new_cards = read_jsonl(out / "root_audit/cards.jsonl")
+    new_index = read_jsonl(out / "root_audit/index.jsonl")
+    expected_audit = (old_relations_n, old_identities_n, len(new_cards), len(new_index))
+    if expected_audit != (1673, 400, 400, 1430):
+        raise AssertionError(f"unexpected root audit coverage {expected_audit}")
+    contradictions = sum(
+        bool(row["safe_exact"]) and not bool(row["clinical_complete"]) for row in rows
+    )
+    overlaps = sum(bool(row["clinical_complete"]) and bool(row["partial"]) for row in rows)
+    if contradictions or overlaps:
+        raise AssertionError(f"endpoint contract contradiction={contradictions} overlap={overlaps}")
+
+    safe_legacy = Counter(
+        (bool(row["safe_exact"]), bool(row["legacy_chain"])) for row in rows
+    )
+    return {
+        "schema_version": "e2-unified-five-endpoint-v1",
+        "cases_n": len(universe),
+        "case_arm_rows_n": len(rows),
+        "arm_counts": dict(sorted(arm_counts.items())),
+        "family_arm_counts": {
+            f"{family}:{arm}": n for (family, arm), n in sorted(family_arm.items())
+        },
+        "old_e2_root_cases_n": old_identities_n,
+        "old_e2_root_candidate_relations_n": old_relations_n,
+        "supplemental_root_cases_n": len(new_cards),
+        "supplemental_candidate_registry_n": len(new_index),
+        "supplemental_manual_relation_codes_n": sum(
+            not bool(row["safe_exact"]) for row in new_index
+        ),
+        "matrix_legacy_chain_mismatches_n": matrix_chain_mismatches,
+        "matrix_task_mismatches_n": matrix_task_mismatches,
+        "safe_exact_root_contradictions_n": contradictions,
+        "complete_partial_overlap_n": overlaps,
+        "safe_exact_by_legacy_chain": {
+            f"safe_{int(safe)}_legacy_{int(legacy)}": safe_legacy[(safe, legacy)]
+            for safe in (False, True)
+            for legacy in (False, True)
+        },
+        "clinical_missing_n": 0,
+        "task_semantics": {
+            "DA": "option mapper",
+            "MCR": "cached semantic diagnostic judge",
+            "combined": "heterogeneous interface summary; not a homogeneous capability estimand",
+        },
+    }
 
 
 def _rate(rows: Sequence[Mapping[str, Any]], endpoint: str) -> float:
@@ -364,7 +531,15 @@ def _confusion(rows: Sequence[Mapping[str, Any]], predicted: str, truth: str) ->
     sensitivity = tp / (tp + fn) if tp + fn else None
     specificity = tn / (tn + fp) if tn + fp else None
     ppv = tp / (tp + fp) if tp + fp else None
+    npv = tn / (tn + fn) if tn + fn else None
     f1 = 2 * tp / (2 * tp + fp + fn) if 2 * tp + fp + fn else None
+    balanced_accuracy = (
+        (sensitivity + specificity) / 2
+        if sensitivity is not None and specificity is not None
+        else None
+    )
+    mcc_denominator = math.sqrt((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn))
+    mcc = (tp * tn - fp * fn) / mcc_denominator if mcc_denominator else None
     return {
         "tp": tp,
         "fp": fp,
@@ -373,7 +548,10 @@ def _confusion(rows: Sequence[Mapping[str, Any]], predicted: str, truth: str) ->
         "sensitivity": sensitivity,
         "specificity": specificity,
         "ppv": ppv,
+        "npv": npv,
         "f1": f1,
+        "balanced_accuracy": balanced_accuracy,
+        "mcc": mcc,
     }
 
 
@@ -398,6 +576,26 @@ def _paired_bootstrap(
     return [float(value) for value in np.quantile(effects, [0.025, 0.975], method="nearest")]
 
 
+def _stratified_paired_bootstrap(
+    pairs_by_stratum: Mapping[str, Mapping[str, tuple[bool, bool]]],
+    repetitions: int = 20000,
+    namespace: str = "stratified-paired",
+) -> list[float]:
+    rng = np.random.default_rng(stable_seed(EXPERIMENT_ID, namespace, *sorted(pairs_by_stratum)))
+    effects = np.zeros(repetitions, dtype=float)
+    total_n = 0
+    for stratum, pairs in sorted(pairs_by_stratum.items()):
+        differences = [int(value[1]) - int(value[0]) for value in pairs.values()]
+        counts = Counter(differences)
+        n = len(differences)
+        probabilities = np.array([counts[-1], counts[0], counts[1]], dtype=float) / n
+        draws = rng.multinomial(n, probabilities, size=repetitions)
+        effects += draws[:, 2] - draws[:, 0]
+        total_n += n
+    effects /= total_n
+    return [float(value) for value in np.quantile(effects, [0.025, 0.975], method="nearest")]
+
+
 def _holm_adjust(rows: Sequence[dict[str, Any]], p_key: str, out_key: str) -> None:
     order = sorted(range(len(rows)), key=lambda index: float(rows[index][p_key]))
     running = 0.0
@@ -408,18 +606,234 @@ def _holm_adjust(rows: Sequence[dict[str, Any]], p_key: str, out_key: str) -> No
         rows[index][out_key] = running
 
 
+def _transition_mechanism(left: str, right: str) -> str:
+    if left == right:
+        return "no_relation_change"
+    if left == "partial_parent_or_component" and right == "complete_equivalent":
+        return "specificity_rescue"
+    if left not in {"complete_equivalent", "partial_parent_or_component"} and right == "complete_equivalent":
+        return "object_rescue"
+    if left == "complete_equivalent" and right == "partial_parent_or_component":
+        return "scope_compression"
+    if left == "complete_equivalent" and right != "complete_equivalent":
+        return "catastrophic_substitution"
+    if left == "partial_parent_or_component" and right not in {
+        "complete_equivalent", "partial_parent_or_component"
+    }:
+        return "family_coverage_loss"
+    if left not in {"complete_equivalent", "partial_parent_or_component"} and right == "partial_parent_or_component":
+        return "family_coverage_rescue"
+    return "wrong_object_exchange"
+
+
+def _projection_decomposition(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+    output: dict[str, Any] = {
+        "unit_warning": (
+            "descriptive case-arm projection anatomy; the same case appears in nine arms and "
+            "must not be treated as 7200 independent observations"
+        ),
+        "rows": [],
+    }
+    for scope in ("DA", "MCR"):
+        for arm in (*CORE_ARMS, "MACRO_OUTPUT"):
+            scoped = [
+                row
+                for row in rows
+                if row["benchmark_family"] == scope
+                and (arm == "MACRO_OUTPUT" or row["arm_id"] == arm)
+            ]
+            for proxy in ("safe_exact", "legacy_chain", "task"):
+                confusion = _confusion(scoped, proxy, "clinical_complete")
+                false_positive_relations = Counter(
+                    str(row["clinical_relation"])
+                    for row in scoped
+                    if bool(row[proxy]) and not bool(row["clinical_complete"])
+                )
+                false_negative_relations = Counter(
+                    str(row["clinical_relation"])
+                    for row in scoped
+                    if not bool(row[proxy]) and bool(row["clinical_complete"])
+                )
+                output["rows"].append(
+                    {
+                        "scope": scope,
+                        "arm": arm,
+                        "proxy": proxy,
+                        "n": len(scoped),
+                        **confusion,
+                        "false_positive_relation_counts": dict(sorted(false_positive_relations.items())),
+                        "false_negative_relation_counts": dict(sorted(false_negative_relations.items())),
+                    }
+                )
+    return output
+
+
+def _relation_transition_outputs(
+    rows: Sequence[Mapping[str, Any]], out: Path
+) -> list[dict[str, Any]]:
+    row_map = {(str(row["case_key"]), str(row["arm_id"])): row for row in rows}
+    case_keys = sorted({str(row["case_key"]) for row in rows})
+    summary: list[dict[str, Any]] = []
+    trajectories: list[dict[str, Any]] = []
+    for left, right in CONTRAST_PAIRS:
+        for scope in ("ALL", "DA", "MCR"):
+            eligible = [
+                key
+                for key in case_keys
+                if scope == "ALL" or row_map[(key, left)]["benchmark_family"] == scope
+            ]
+            matrix = Counter(
+                (
+                    str(row_map[(key, left)]["clinical_relation"]),
+                    str(row_map[(key, right)]["clinical_relation"]),
+                )
+                for key in eligible
+            )
+            mechanisms = Counter(_transition_mechanism(a, b) for (a, b), n in matrix.items() for _ in range(n))
+            summary.append(
+                {
+                    "left": left,
+                    "right": right,
+                    "scope": scope,
+                    "n": len(eligible),
+                    "transition_counts": {
+                        f"{a} -> {b}": matrix[(a, b)] for a in RELATION_ORDER for b in RELATION_ORDER
+                    },
+                    "mechanism_counts": dict(sorted(mechanisms.items())),
+                    "specificity_rescue_pp": 100 * mechanisms["specificity_rescue"] / len(eligible),
+                    "object_rescue_pp": 100 * mechanisms["object_rescue"] / len(eligible),
+                    "scope_compression_pp": 100 * mechanisms["scope_compression"] / len(eligible),
+                    "catastrophic_substitution_pp": 100 * mechanisms["catastrophic_substitution"] / len(eligible),
+                }
+            )
+        for key in case_keys:
+            left_row, right_row = row_map[(key, left)], row_map[(key, right)]
+            left_relation = str(left_row["clinical_relation"])
+            right_relation = str(right_row["clinical_relation"])
+            if left_relation == right_relation:
+                continue
+            trajectories.append(
+                {
+                    "case_key": key,
+                    "benchmark_family": left_row["benchmark_family"],
+                    "reference_identifiability": left_row["reference_identifiability"],
+                    "reference_diagnosis": left_row["reference_diagnosis"],
+                    "left_arm": left,
+                    "left_prediction": left_row["prediction_pre_projection"],
+                    "left_relation": left_relation,
+                    "right_arm": right,
+                    "right_prediction": right_row["prediction_pre_projection"],
+                    "right_relation": right_relation,
+                    "transition_mechanism": _transition_mechanism(left_relation, right_relation),
+                }
+            )
+    write_jsonl(out / "trajectory_endpoint_transitions.jsonl", trajectories)
+    return summary
+
+
+def _identifiability_effect_modification(rows: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
+    row_map = {(str(row["case_key"]), str(row["arm_id"])): row for row in rows}
+    case_keys = sorted({str(row["case_key"]) for row in rows})
+    output: list[dict[str, Any]] = []
+    for left, right in CONTRAST_PAIRS:
+        strata: dict[str, dict[str, tuple[bool, bool]]] = {"unique_full": {}, "nonunique_full": {}}
+        for key in case_keys:
+            left_row, right_row = row_map[(key, left)], row_map[(key, right)]
+            stratum = (
+                "unique_full"
+                if left_row["reference_identifiability"] == "unique_full_reference"
+                else "nonunique_full"
+            )
+            strata[stratum][key] = (
+                bool(left_row["clinical_complete"]), bool(right_row["clinical_complete"])
+            )
+        deltas = {
+            name: sum(int(b) - int(a) for a, b in pairs.values()) / len(pairs)
+            for name, pairs in strata.items()
+        }
+        cis = {
+            name: _paired_bootstrap(pairs, 20000)
+            for name, pairs in strata.items()
+        }
+        output.append(
+            {
+                "left": left,
+                "right": right,
+                "endpoint": "clinical_complete",
+                "unique_full_n": len(strata["unique_full"]),
+                "nonunique_full_n": len(strata["nonunique_full"]),
+                "unique_full_delta_right_minus_left": deltas["unique_full"],
+                "unique_full_ci95": cis["unique_full"],
+                "nonunique_full_delta_right_minus_left": deltas["nonunique_full"],
+                "nonunique_full_ci95": cis["nonunique_full"],
+                "interaction_delta_unique_minus_nonunique": deltas["unique_full"] - deltas["nonunique_full"],
+            }
+        )
+    return output
+
+
+def _rank_stability(rows: Sequence[Mapping[str, Any]], repetitions: int = 10000) -> list[dict[str, Any]]:
+    output: list[dict[str, Any]] = []
+    row_map = {(str(row["case_key"]), str(row["arm_id"])): row for row in rows}
+    case_meta = {
+        str(row["case_key"]): (str(row["benchmark_family"]), str(row["slice_id"])) for row in rows
+    }
+    for family in ("DA", "MCR"):
+        family_keys = sorted(key for key, (fam, _slice) in case_meta.items() if fam == family)
+        by_slice: dict[str, list[str]] = defaultdict(list)
+        for key in family_keys:
+            by_slice[case_meta[key][1]].append(key)
+        for endpoint in ("clinical_complete", "safe_exact", "legacy_chain", "task"):
+            rng = np.random.default_rng(stable_seed(EXPERIMENT_ID, "rank", family, endpoint))
+            totals = np.zeros((repetitions, len(CORE_ARMS)), dtype=float)
+            for slice_id, keys in sorted(by_slice.items()):
+                matrix = np.array(
+                    [[int(bool(row_map[(key, arm)][endpoint])) for arm in CORE_ARMS] for key in keys],
+                    dtype=float,
+                )
+                sampled = rng.integers(0, len(keys), size=(repetitions, len(keys)))
+                totals += matrix[sampled].sum(axis=1)
+            scores = totals / len(family_keys)
+            greater = (scores[:, :, None] < scores[:, None, :]).sum(axis=2)
+            ties = (scores[:, :, None] == scores[:, None, :]).sum(axis=2) - 1
+            ranks = 1.0 + greater + 0.5 * ties
+            maxima = scores.max(axis=1, keepdims=True)
+            tied_first = scores == maxima
+            unique_first = tied_first & (tied_first.sum(axis=1, keepdims=True) == 1)
+            for index, arm in enumerate(CORE_ARMS):
+                output.append(
+                    {
+                        "family": family,
+                        "endpoint": endpoint,
+                        "arm": arm,
+                        "repetitions": repetitions,
+                        "mean_rank": float(ranks[:, index].mean()),
+                        "median_rank": float(np.median(ranks[:, index])),
+                        "rank_interval95": [
+                            float(value)
+                            for value in np.quantile(ranks[:, index], [0.025, 0.975], method="nearest")
+                        ],
+                        "p_tied_for_first": float(tied_first[:, index].mean()),
+                        "p_unique_first": float(unique_first[:, index].mean()),
+                    }
+                )
+    return output
+
+
 def build_replay(out: Path = DEFAULT_OUT) -> dict[str, Any]:
     universe, source_hashes = _load_case_universe()
     rows = _arm_rows(universe, out)
     out.mkdir(parents=True, exist_ok=True)
     write_jsonl(out / "five_endpoint_replay.jsonl", rows)
+    validation = _validate_source_contract(universe, rows, out)
+    atomic_json(out / "validation_summary.json", validation)
 
     endpoints = ("safe_exact", "legacy_chain", "clinical_complete", "partial", "task")
     leaderboard: list[dict[str, Any]] = []
     for arm in CORE_ARMS:
-        arm_rows = [row for row in rows if row["arm"] == arm]
+        arm_rows = [row for row in rows if row["arm_id"] == arm]
         for scope in ("ALL", "DA", "MCR"):
-            scoped = arm_rows if scope == "ALL" else [row for row in arm_rows if row["family"] == scope]
+            scoped = arm_rows if scope == "ALL" else [row for row in arm_rows if row["benchmark_family"] == scope]
             item: dict[str, Any] = {"arm": arm, "scope": scope, "n": len(scoped)}
             for endpoint in endpoints:
                 k = sum(bool(row[endpoint]) for row in scoped)
@@ -430,17 +844,11 @@ def build_replay(out: Path = DEFAULT_OUT) -> dict[str, Any]:
             item["complete_or_partial_rate"] = item["complete_or_partial_n"] / len(scoped)
             leaderboard.append(item)
     atomic_json(out / "leaderboard.json", leaderboard)
-    with (out / "leaderboard.csv").open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(
-            handle,
-            fieldnames=[key for key in leaderboard[0] if not key.endswith("wilson95")],
-        )
-        writer.writeheader()
-        writer.writerows(leaderboard)
+    _write_csv(out / "leaderboard.csv", leaderboard)
 
     calibration: dict[str, Any] = {"by_family": {}}
     for scope in ("ALL", "DA", "MCR"):
-        scoped = rows if scope == "ALL" else [row for row in rows if row["family"] == scope]
+        scoped = rows if scope == "ALL" else [row for row in rows if row["benchmark_family"] == scope]
         calibration["by_family"][scope] = {
             proxy: _confusion(scoped, proxy, "clinical_complete")
             for proxy in ("safe_exact", "legacy_chain", "task")
@@ -448,21 +856,9 @@ def build_replay(out: Path = DEFAULT_OUT) -> dict[str, Any]:
     atomic_json(out / "endpoint_calibration.json", calibration)
 
     contrasts = []
-    contrast_pairs = (
-        ("collapse3c", "multistance"),
-        ("collapse3c", "forest"),
-        ("collapse3c", "impc"),
-        ("e7", "v0"),
-        ("forest", "e7"),
-        ("forest", "B06"),
-        ("B06", "e7"),
-        ("B07", "e7"),
-        ("B07", "B06"),
-        ("forest", "lite"),
-    )
-    row_map = {(str(row["case_key"]), str(row["arm"])): row for row in rows}
+    row_map = {(str(row["case_key"]), str(row["arm_id"])): row for row in rows}
     for endpoint in endpoints:
-        for left, right in contrast_pairs:
+        for left, right in CONTRAST_PAIRS:
             for scope in ("ALL", "DA", "MCR"):
                 cases = sorted(
                     case["case_key"]
@@ -476,6 +872,9 @@ def build_replay(out: Path = DEFAULT_OUT) -> dict[str, Any]:
                     )
                     for key in cases
                 }
+                pairs_by_slice: dict[str, dict[str, tuple[bool, bool]]] = defaultdict(dict)
+                for key, value in pairs.items():
+                    pairs_by_slice[str(row_map[(key, left)]["slice_id"])][key] = value
                 left_only = sum(a and not b for a, b in pairs.values())
                 right_only = sum(b and not a for a, b in pairs.values())
                 contrasts.append(
@@ -488,14 +887,75 @@ def build_replay(out: Path = DEFAULT_OUT) -> dict[str, Any]:
                         "left_only": left_only,
                         "right_only": right_only,
                         "delta_right_minus_left": (right_only - left_only) / len(cases),
-                        "paired_bootstrap_ci95": _paired_bootstrap(pairs),
+                        "slice_stratified_case_bootstrap_ci95": _stratified_paired_bootstrap(
+                            pairs_by_slice,
+                            namespace=f"contrast:{endpoint}:{scope}:{left}:{right}",
+                        ),
                         "exact_mcnemar_p": _mcnemar_exact(left_only, right_only),
                     }
                 )
     for endpoint in endpoints:
         family = [row for row in contrasts if row["endpoint"] == endpoint]
         _holm_adjust(family, "exact_mcnemar_p", "holm_adjusted_p_across_30")
+    coherent_families = {
+        "clinical_complete_overall_10": [
+            row for row in contrasts if row["endpoint"] == "clinical_complete" and row["scope"] == "ALL"
+        ],
+        "safe_exact_overall_10": [
+            row for row in contrasts if row["endpoint"] == "safe_exact" and row["scope"] == "ALL"
+        ],
+        "legacy_chain_overall_10": [
+            row for row in contrasts if row["endpoint"] == "legacy_chain" and row["scope"] == "ALL"
+        ],
+        "da_option_mapper_10": [
+            row for row in contrasts if row["endpoint"] == "task" and row["scope"] == "DA"
+        ],
+        "mcr_semantic_judge_10": [
+            row for row in contrasts if row["endpoint"] == "task" and row["scope"] == "MCR"
+        ],
+    }
+    for family_name, family_rows in coherent_families.items():
+        _holm_adjust(family_rows, "exact_mcnemar_p", "coherent_family_holm_p")
+        for row in family_rows:
+            row["coherent_multiplicity_family"] = family_name
     atomic_json(out / "paired_contrasts.json", contrasts)
+    _write_csv(out / "paired_contrasts.csv", contrasts)
+
+    projection = _projection_decomposition(rows)
+    atomic_json(out / "projection_error_decomposition.json", projection)
+    _write_csv(out / "projection_error_decomposition.csv", projection["rows"])
+    transitions = _relation_transition_outputs(rows, out)
+    atomic_json(out / "relation_transition_matrices.json", transitions)
+    _write_csv(out / "relation_transition_matrices.csv", transitions)
+    identifiability = _identifiability_effect_modification(rows)
+    atomic_json(out / "identifiability_effect_modification.json", identifiability)
+    _write_csv(out / "identifiability_effect_modification.csv", identifiability)
+    rank_stability = _rank_stability(rows)
+    atomic_json(out / "rank_stability.json", rank_stability)
+    _write_csv(out / "rank_stability.csv", rank_stability)
+
+    endpoint_contract = {
+        "schema_version": "e2-unified-five-endpoint-v1",
+        "primary_endpoint": "clinical_complete",
+        "columns": {
+            "safe_exact": "exact or frozen-safe-synonym identity; deterministic conservative lower bound",
+            "legacy_chain": "historical bidirectional-substring/resolver chain_correct; diagnostic compatibility only",
+            "clinical_complete": "root-adjudicated complete equivalence to the full requested reference object",
+            "partial": "root-adjudicated compatible parent/component/underspecified object; mutually exclusive with complete",
+            "task": "family-specific interface success: DA option mapper or MCR cached semantic diagnostic judge",
+        },
+        "derived_endpoint": {
+            "complete_or_partial": "clinical_complete OR partial; secondary coverage sensitivity only"
+        },
+        "mandatory_stratifier": "reference_identifiability",
+        "forbidden_interpretations": [
+            "legacy_chain as strict or concept accuracy",
+            "partial as complete diagnosis",
+            "combined DA+MCR task as a homogeneous clinical estimand",
+            "safe-exact as an unbiased absolute capability estimate",
+        ],
+    }
+    atomic_json(out / "endpoint_contract.json", endpoint_contract)
 
     manifest = {
         "experiment_id": EXPERIMENT_ID,
@@ -529,6 +989,18 @@ def build_replay(out: Path = DEFAULT_OUT) -> dict[str, Any]:
                 "leaderboard.csv",
                 "endpoint_calibration.json",
                 "paired_contrasts.json",
+                "paired_contrasts.csv",
+                "endpoint_contract.json",
+                "validation_summary.json",
+                "projection_error_decomposition.json",
+                "projection_error_decomposition.csv",
+                "relation_transition_matrices.json",
+                "relation_transition_matrices.csv",
+                "trajectory_endpoint_transitions.jsonl",
+                "identifiability_effect_modification.json",
+                "identifiability_effect_modification.csv",
+                "rank_stability.json",
+                "rank_stability.csv",
             )
         },
     }
