@@ -122,6 +122,7 @@ CONTRAST_PAIRS = (
     ("B07", "B06"),
     ("forest", "lite"),
 )
+INTERACTION_BOOTSTRAP_REPETITIONS = 20000
 
 
 def _root_codes() -> tuple[str, str]:
@@ -511,6 +512,18 @@ def _validate_source_contract(
             "MCR": "cached semantic diagnostic judge",
             "combined": "heterogeneous interface summary; not a homogeneous capability estimand",
         },
+        "statistical_inference_contract": {
+            "paired_contrast_unit": "case",
+            "paired_contrast_scope": "ALL, DA, and MCR are reported separately",
+            "clinical_coherent_holm_families": [
+                "clinical_complete_overall_10",
+                "clinical_complete_DA_10",
+                "clinical_complete_MCR_10",
+            ],
+            "interaction_bootstrap_unit": "case with observed slice counts fixed",
+            "interaction_ci_status": "unadjusted percentile descriptive uncertainty",
+            "interaction_test_status": "null-centered bootstrap p with Holm within each named 10-contrast family",
+        },
     }
 
 
@@ -599,6 +612,92 @@ def _stratified_paired_bootstrap(
         total_n += n
     effects /= total_n
     return [float(value) for value in np.quantile(effects, [0.025, 0.975], method="nearest")]
+
+
+def _slice_fixed_group_interaction_bootstrap(
+    first_by_slice: Mapping[str, Sequence[int]],
+    second_by_slice: Mapping[str, Sequence[int]],
+    *,
+    repetitions: int = INTERACTION_BOOTSTRAP_REPETITIONS,
+    namespace: str,
+) -> dict[str, Any]:
+    """Bootstrap a difference between two means of paired case differences.
+
+    Each input value must be a case-level paired binary-endpoint difference in
+    ``{-1, 0, 1}``.  Resampling is independent between the two comparison
+    groups and fixes the observed number of cases in every slice.  The
+    percentile interval is deliberately labelled unadjusted.  The two-sided
+    p-value uses the empirical bootstrap distribution recentered at the null;
+    it is approximate rather than an exact randomization test.
+    """
+    if repetitions < 1:
+        raise ValueError("bootstrap repetitions must be positive")
+
+    def validate(group: Mapping[str, Sequence[int]], label: str) -> int:
+        total = sum(len(values) for values in group.values())
+        if total == 0:
+            raise ValueError(f"{label} bootstrap group is empty")
+        invalid = sorted(
+            {
+                int(value)
+                for values in group.values()
+                for value in values
+                if int(value) not in {-1, 0, 1}
+            }
+        )
+        if invalid:
+            raise ValueError(f"{label} has invalid paired differences: {invalid}")
+        return total
+
+    first_n = validate(first_by_slice, "first")
+    second_n = validate(second_by_slice, "second")
+    seed_parts = (
+        EXPERIMENT_ID,
+        "slice-fixed-group-interaction",
+        namespace,
+        *sorted(f"first:{key}" for key in first_by_slice),
+        *sorted(f"second:{key}" for key in second_by_slice),
+    )
+    rng = np.random.default_rng(stable_seed(*seed_parts))
+
+    def bootstrap_group(group: Mapping[str, Sequence[int]], total_n: int) -> np.ndarray:
+        sums = np.zeros(repetitions, dtype=float)
+        for _slice_id, values in sorted(group.items()):
+            counts = Counter(int(value) for value in values)
+            n = len(values)
+            probabilities = np.array(
+                [counts[-1], counts[0], counts[1]], dtype=float
+            ) / n
+            draws = rng.multinomial(n, probabilities, size=repetitions)
+            sums += draws[:, 2] - draws[:, 0]
+        return sums / total_n
+
+    first_values = [int(value) for values in first_by_slice.values() for value in values]
+    second_values = [int(value) for values in second_by_slice.values() for value in values]
+    estimate = sum(first_values) / first_n - sum(second_values) / second_n
+    bootstrap_effects = (
+        bootstrap_group(first_by_slice, first_n)
+        - bootstrap_group(second_by_slice, second_n)
+    )
+    interval = np.quantile(
+        bootstrap_effects, [0.025, 0.975], method="nearest"
+    )
+    null_centered = bootstrap_effects - estimate
+    extreme_n = int(
+        np.count_nonzero(np.abs(null_centered) >= abs(estimate) - 1e-15)
+    )
+    p_value = (extreme_n + 1) / (repetitions + 1)
+    return {
+        "estimate_first_minus_second": float(estimate),
+        "unadjusted_percentile_bootstrap_ci95": [float(value) for value in interval],
+        "null_centered_two_sided_bootstrap_p": float(p_value),
+        "bootstrap_p_monte_carlo_se": float(
+            math.sqrt(p_value * (1.0 - p_value) / (repetitions + 1))
+        ),
+        "bootstrap_repetitions": repetitions,
+        "bootstrap_unit": "case",
+        "slice_counts_fixed": True,
+    }
 
 
 def _holm_adjust(rows: Sequence[dict[str, Any]], p_key: str, out_key: str) -> None:
@@ -781,9 +880,140 @@ def _identifiability_effect_modification(rows: Sequence[Mapping[str, Any]]) -> l
                     "interaction_delta_unique_minus_nonunique": (
                         deltas["unique_full"] - deltas["nonunique_full"]
                     ),
+                    "stratum_ci_status": (
+                        "unadjusted descriptive percentile bootstrap; not an interaction test"
+                    ),
+                    "interaction_inference_output": "clinical_interaction_inference.json",
                 }
             )
     return output
+
+
+def _clinical_interaction_inference(
+    rows: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    """Confirmatory interaction contrasts on case-level paired differences.
+
+    Family interactions compare MCR versus DA.  Identifiability interactions
+    compare unique-full versus all other frozen identity classes, separately
+    within ALL, DA and MCR.  Holm correction is applied to the ten predefined
+    arm contrasts within each explicitly named interaction family.
+    """
+    row_map = {(str(row["case_key"]), str(row["arm_id"])): row for row in rows}
+    case_rows: dict[str, Mapping[str, Any]] = {}
+    for row in rows:
+        case_rows.setdefault(str(row["case_key"]), row)
+
+    def paired_difference(key: str, left: str, right: str) -> int:
+        return int(bool(row_map[(key, right)]["clinical_complete"])) - int(
+            bool(row_map[(key, left)]["clinical_complete"])
+        )
+
+    family_rows: list[dict[str, Any]] = []
+    for left, right in CONTRAST_PAIRS:
+        by_family: dict[str, dict[str, list[int]]] = {
+            "DA": defaultdict(list),
+            "MCR": defaultdict(list),
+        }
+        for key, case_row in case_rows.items():
+            family = str(case_row["benchmark_family"])
+            by_family[family][str(case_row["slice_id"])].append(
+                paired_difference(key, left, right)
+            )
+        inference = _slice_fixed_group_interaction_bootstrap(
+            by_family["MCR"],
+            by_family["DA"],
+            namespace=f"family:{left}:{right}",
+        )
+        family_rows.append(
+            {
+                "endpoint": "clinical_complete",
+                "left": left,
+                "right": right,
+                "interaction": "MCR_delta_minus_DA_delta",
+                "MCR_n": sum(len(values) for values in by_family["MCR"].values()),
+                "DA_n": sum(len(values) for values in by_family["DA"].values()),
+                **inference,
+            }
+        )
+    _holm_adjust(
+        family_rows,
+        "null_centered_two_sided_bootstrap_p",
+        "holm_adjusted_bootstrap_p",
+    )
+    for row in family_rows:
+        row["multiplicity_family"] = "clinical_complete_family_interactions_10"
+        row["multiplicity_family_n"] = len(family_rows)
+
+    identifiability_rows: list[dict[str, Any]] = []
+    for scope in ("ALL", "DA", "MCR"):
+        scope_rows: list[dict[str, Any]] = []
+        for left, right in CONTRAST_PAIRS:
+            by_identity: dict[str, dict[str, list[int]]] = {
+                "unique_full": defaultdict(list),
+                "nonunique_full": defaultdict(list),
+            }
+            for key, case_row in case_rows.items():
+                if scope != "ALL" and str(case_row["benchmark_family"]) != scope:
+                    continue
+                identity = (
+                    "unique_full"
+                    if str(case_row["reference_identifiability"])
+                    == "unique_full_reference"
+                    else "nonunique_full"
+                )
+                by_identity[identity][str(case_row["slice_id"])].append(
+                    paired_difference(key, left, right)
+                )
+            inference = _slice_fixed_group_interaction_bootstrap(
+                by_identity["unique_full"],
+                by_identity["nonunique_full"],
+                namespace=f"identifiability:{scope}:{left}:{right}",
+            )
+            scope_rows.append(
+                {
+                    "endpoint": "clinical_complete",
+                    "scope": scope,
+                    "left": left,
+                    "right": right,
+                    "interaction": "unique_full_delta_minus_nonunique_full_delta",
+                    "unique_full_n": sum(
+                        len(values) for values in by_identity["unique_full"].values()
+                    ),
+                    "nonunique_full_n": sum(
+                        len(values) for values in by_identity["nonunique_full"].values()
+                    ),
+                    **inference,
+                }
+            )
+        _holm_adjust(
+            scope_rows,
+            "null_centered_two_sided_bootstrap_p",
+            "holm_adjusted_bootstrap_p",
+        )
+        for row in scope_rows:
+            row["multiplicity_family"] = (
+                f"clinical_complete_identifiability_interactions_{scope}_10"
+            )
+            row["multiplicity_family_n"] = len(scope_rows)
+        identifiability_rows.extend(scope_rows)
+
+    return {
+        "schema_version": "e2-clinical-interaction-inference-v1",
+        "endpoint": "clinical_complete",
+        "method": (
+            "slice-fixed case bootstrap of paired right-minus-left binary endpoint "
+            "differences; percentile CIs are unadjusted descriptive uncertainty, "
+            "null-centered two-sided bootstrap p-values receive Holm correction"
+        ),
+        "interpretation_warning": (
+            "nonunique_full pools family-only, multiple-complete, unsupported-specificity, "
+            "insufficient-information and uncertain reference classes; interaction estimates "
+            "must not be interpreted as one homogeneous nonidentifiability mechanism"
+        ),
+        "family_interactions": family_rows,
+        "identifiability_interactions": identifiability_rows,
+    }
 
 
 def _reference_identifiability_outputs(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
@@ -993,6 +1223,7 @@ def build_replay(out: Path = DEFAULT_OUT) -> dict[str, Any]:
                             pairs_by_slice,
                             namespace=f"contrast:{endpoint}:{scope}:{left}:{right}",
                         ),
+                        "bootstrap_ci_multiplicity_status": "unadjusted",
                         "exact_mcnemar_p": _mcnemar_exact(left_only, right_only),
                     }
                 )
@@ -1004,6 +1235,12 @@ def build_replay(out: Path = DEFAULT_OUT) -> dict[str, Any]:
     coherent_families = {
         "clinical_complete_overall_10": [
             row for row in contrasts if row["endpoint"] == "clinical_complete" and row["scope"] == "ALL"
+        ],
+        "clinical_complete_DA_10": [
+            row for row in contrasts if row["endpoint"] == "clinical_complete" and row["scope"] == "DA"
+        ],
+        "clinical_complete_MCR_10": [
+            row for row in contrasts if row["endpoint"] == "clinical_complete" and row["scope"] == "MCR"
         ],
         "safe_exact_overall_10": [
             row for row in contrasts if row["endpoint"] == "safe_exact" and row["scope"] == "ALL"
@@ -1034,6 +1271,68 @@ def build_replay(out: Path = DEFAULT_OUT) -> dict[str, Any]:
     identifiability = _identifiability_effect_modification(rows)
     atomic_json(out / "identifiability_effect_modification.json", identifiability)
     _write_csv(out / "identifiability_effect_modification.csv", identifiability)
+    interaction_inference = _clinical_interaction_inference(rows)
+    clinical_coherent_family_sizes = {
+        name: len(family_rows)
+        for name, family_rows in coherent_families.items()
+        if name.startswith("clinical_complete_")
+    }
+    expected_clinical_families = {
+        "clinical_complete_overall_10": 10,
+        "clinical_complete_DA_10": 10,
+        "clinical_complete_MCR_10": 10,
+    }
+    if clinical_coherent_family_sizes != expected_clinical_families:
+        raise AssertionError(
+            f"invalid coherent clinical Holm families: {clinical_coherent_family_sizes}"
+        )
+    family_interactions = interaction_inference["family_interactions"]
+    identifiability_interactions = interaction_inference["identifiability_interactions"]
+    identifiability_interaction_counts = Counter(
+        str(row["scope"]) for row in identifiability_interactions
+    )
+    if len(family_interactions) != 10 or identifiability_interaction_counts != {
+        "ALL": 10,
+        "DA": 10,
+        "MCR": 10,
+    }:
+        raise AssertionError(
+            "incomplete clinical interaction inference "
+            f"family={len(family_interactions)} identifiability={identifiability_interaction_counts}"
+        )
+    inferential_rows = [*family_interactions, *identifiability_interactions]
+    p_values_valid = all(
+        math.isfinite(float(row[key])) and 0.0 <= float(row[key]) <= 1.0
+        for row in inferential_rows
+        for key in (
+            "null_centered_two_sided_bootstrap_p",
+            "holm_adjusted_bootstrap_p",
+        )
+    )
+    if not p_values_valid:
+        raise AssertionError("invalid bootstrap or Holm interaction p-value")
+    validation["statistical_output_validation"] = {
+        "clinical_coherent_holm_family_sizes": clinical_coherent_family_sizes,
+        "family_interaction_rows_n": len(family_interactions),
+        "identifiability_interaction_rows_by_scope": dict(
+            sorted(identifiability_interaction_counts.items())
+        ),
+        "interaction_bootstrap_repetitions": INTERACTION_BOOTSTRAP_REPETITIONS,
+        "interaction_p_values_finite_and_bounded": p_values_valid,
+        "interaction_case_pairing_preserved": True,
+        "interaction_slice_counts_fixed": True,
+        "interaction_percentile_ci_multiplicity_status": "unadjusted",
+    }
+    atomic_json(out / "validation_summary.json", validation)
+    atomic_json(out / "clinical_interaction_inference.json", interaction_inference)
+    _write_csv(
+        out / "clinical_family_interactions.csv",
+        interaction_inference["family_interactions"],
+    )
+    _write_csv(
+        out / "clinical_identifiability_interactions.csv",
+        interaction_inference["identifiability_interactions"],
+    )
     reference_identifiability = _reference_identifiability_outputs(rows)
     atomic_json(out / "reference_identifiability.json", reference_identifiability)
     _write_csv(
@@ -1082,6 +1381,16 @@ def build_replay(out: Path = DEFAULT_OUT) -> dict[str, Any]:
             "legacy_diagnostic_only": "legacy_chain",
             "family_specific_interface": "task (DA option mapper; MCR cached semantic judge)",
         },
+        "statistical_inference": {
+            "clinical_coherent_holm_families": expected_clinical_families,
+            "family_interaction_multiplicity_family": "clinical_complete_family_interactions_10",
+            "identifiability_interaction_multiplicity_families": {
+                scope: f"clinical_complete_identifiability_interactions_{scope}_10"
+                for scope in ("ALL", "DA", "MCR")
+            },
+            "interaction_bootstrap_repetitions": INTERACTION_BOOTSTRAP_REPETITIONS,
+            "interaction_ci_multiplicity_status": "unadjusted",
+        },
         "online_calls": 0,
         "source_hashes": source_hashes,
         "root_sources": {
@@ -1109,6 +1418,9 @@ def build_replay(out: Path = DEFAULT_OUT) -> dict[str, Any]:
                 "trajectory_endpoint_transitions.jsonl",
                 "identifiability_effect_modification.json",
                 "identifiability_effect_modification.csv",
+                "clinical_interaction_inference.json",
+                "clinical_family_interactions.csv",
+                "clinical_identifiability_interactions.csv",
                 "reference_identifiability.json",
                 "clinical_complete_by_identifiability.csv",
                 "rank_stability.json",
@@ -1119,7 +1431,9 @@ def build_replay(out: Path = DEFAULT_OUT) -> dict[str, Any]:
     atomic_json(out / "manifest.json", manifest)
     (out / "run.log").write_text(
         f"{manifest['created_at_utc']} replay complete cases=800 arms={len(CORE_ARMS)} "
-        f"rows={len(rows)} online_calls=0\n",
+        f"rows={len(rows)} online_calls=0 clinical_holm_families=ALL10,DA10,MCR10 "
+        f"family_interactions=10 identifiability_interactions=30 "
+        f"interaction_bootstrap_repetitions={INTERACTION_BOOTSTRAP_REPETITIONS}\n",
         encoding="utf-8",
     )
     return manifest
