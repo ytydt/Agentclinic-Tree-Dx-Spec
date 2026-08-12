@@ -22,6 +22,8 @@ from analysis.mechanism_v2.e11_b07_factorial import (  # noqa: E402
     BRIDGE_PATH,
     DEFAULT_OUT,
     RETRIEVALS,
+    _online_chunks,
+    _orchestrator_payload,
     load_jobs,
 )
 from analysis.mechanism_v2.online_runner import read_jsonl, write_jsonl  # noqa: E402
@@ -180,6 +182,14 @@ def holm_adjust(records: Sequence[Mapping[str, Any]], field_name: str) -> list[d
     return output
 
 
+def stable_most_common(counter: Counter[str], n: int) -> list[tuple[str, int]]:
+    """Return frequency-ranked labels with deterministic lexical tie-breaking."""
+    return sorted(
+        counter.items(),
+        key=lambda item: (-item[1], normalize_label(item[0]), item[0]),
+    )[:n]
+
+
 def _telemetry_by_payload(out: Path, arm: str) -> dict[str, dict[str, Any]]:
     records: dict[str, dict[str, Any]] = {}
     for row in read_jsonl(out / "arms" / arm / "telemetry.jsonl"):
@@ -187,6 +197,38 @@ def _telemetry_by_payload(out: Path, arm: str) -> dict[str, dict[str, Any]]:
         if payload:
             records[payload] = row
     return records
+
+
+def _runtime_payload_sha_by_case(out: Path, arm: str) -> dict[str, str]:
+    """Rebuild the client telemetry hash (not the canonical cache hash)."""
+    retrieval, refine = arm.rsplit("_refine_", 1)
+    jobs, _ = load_jobs()
+    plan = {
+        str(row["case_key"]): row
+        for row in read_jsonl(out / "retrieval_plan.jsonl")
+    }
+    drafts: dict[str, dict[str, Any]] = {}
+    if refine == "on":
+        drafts = {
+            str(row["case_key"]): row
+            for row in read_jsonl(
+                out / "arms" / f"{retrieval}_refine_off" / "case_results.jsonl"
+            )
+        }
+    output: dict[str, str] = {}
+    for job in jobs:
+        case_key = str(job["case_key"])
+        chunks = list(plan[case_key]["bundles"][retrieval])
+        payload: dict[str, Any] = {
+            "vignette": str(job["vignette"]),
+            "knowledge_chunks": _online_chunks(chunks),
+        }
+        if refine == "on":
+            payload["draft_top2"] = list(drafts[case_key]["top2_labels"])
+        payload["orchestrator"] = _orchestrator_payload(job)
+        user_content = json.dumps(payload, default=str, ensure_ascii=False)
+        output[case_key] = hashlib.sha256(user_content.encode("utf-8")).hexdigest()
+    return output
 
 
 def arm_statistics(
@@ -197,6 +239,15 @@ def arm_statistics(
         rows = list(arms[arm].values())
         telemetry_rows = read_jsonl(out / "arms" / arm / "telemetry.jsonl")
         telemetry_by_payload = _telemetry_by_payload(out, arm)
+        runtime_payload_by_case = _runtime_payload_sha_by_case(out, arm)
+        telemetry_by_case = {
+            case_key: telemetry_by_payload.get(payload_sha)
+            for case_key, payload_sha in runtime_payload_by_case.items()
+        }
+        missing_provider_join = sorted(
+            case_key for case_key, telemetry in telemetry_by_case.items()
+            if telemetry is None
+        )
         providers = Counter(
             provider for row in telemetry_rows for provider in (row.get("providers") or [])
         )
@@ -204,7 +255,10 @@ def arm_statistics(
         for provider in sorted(providers):
             joined = [
                 row for row in rows
-                if provider in (telemetry_by_payload.get(str(row.get("payload_sha256") or ""), {}).get("providers") or [])
+                if provider in (
+                    (telemetry_by_case[str(row["case_key"])] or {}).get("providers")
+                    or []
+                )
             ]
             provider_endpoint[provider] = {
                 "n_unique_payload_case_rows": len(joined),
@@ -225,6 +279,8 @@ def arm_statistics(
             "input_tokens": sum(int(row.get("input_tokens") or 0) for row in telemetry_rows),
             "output_tokens": sum(int(row.get("output_tokens") or 0) for row in telemetry_rows),
             "provider_response_counts": dict(sorted(providers.items())),
+            "provider_case_join_coverage_n": len(telemetry_by_case) - len(missing_provider_join),
+            "provider_case_join_missing_case_keys": missing_provider_join,
             "provider_endpoint_descriptive_only": provider_endpoint,
             "by_family": {
                 family: {
@@ -282,8 +338,8 @@ def refine_mechanisms(
             removed_labels.update(str(before_labels[item]) for item in left_set - right_set if item in before_labels)
         output[retrieval] = {
             "counts": dict(sorted(counts.items())),
-            "most_common_introduced_labels": introduced_labels.most_common(20),
-            "most_common_removed_labels": removed_labels.most_common(20),
+            "most_common_introduced_labels": stable_most_common(introduced_labels, 20),
+            "most_common_removed_labels": stable_most_common(removed_labels, 20),
         }
     return output
 
