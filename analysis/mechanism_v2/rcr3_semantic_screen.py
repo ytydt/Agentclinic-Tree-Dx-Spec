@@ -163,6 +163,13 @@ def _archive(out: Path) -> tuple[Path, Path]:
     return archive, sha
 
 
+def _relation_rows(response: Mapping[str, Any]) -> list[Mapping[str, Any]]:
+    rows = response.get("candidate_relations")
+    if not isinstance(rows, list):
+        return []
+    return [row for row in rows if isinstance(row, Mapping)]
+
+
 def _proxy_summary(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
     endpoints: dict[str, Counter[str]] = {arm: Counter() for arm in ARMS}
     discord_top1 = discord_top2 = 0
@@ -170,7 +177,7 @@ def _proxy_summary(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
         response = dict(row.get("screen_response") or {})
         relation = {
             str(item.get("candidate_id")): str(item.get("relation"))
-            for item in response.get("candidate_relations") or []
+            for item in _relation_rows(response)
         }
         case_top1: list[bool] = []
         case_top2: list[bool] = []
@@ -220,7 +227,7 @@ def _clinical_queue(out: Path, rows: Sequence[Mapping[str, Any]]) -> list[dict[s
                 reasons.add(f"reference_identifiability:{judgment}")
             relation = {
                 str(item.get("candidate_id")): str(item.get("relation"))
-                for item in screen["screen_response"].get("candidate_relations") or []
+                for item in _relation_rows(screen["screen_response"])
             }
             top1 = []
             top2 = []
@@ -246,6 +253,44 @@ def _clinical_queue(out: Path, rows: Sequence[Mapping[str, Any]]) -> list[dict[s
     return queue
 
 
+def _finalize_screen_artifacts(
+    *, out: Path, screen_dir: Path, rows: Sequence[Mapping[str, Any]],
+    model: str, telemetry_path: Path, log_path: Path,
+) -> None:
+    relation_counts = Counter(
+        str(item.get("relation"))
+        for row in rows
+        for item in _relation_rows(dict(row.get("screen_response") or {}))
+    )
+    identifiability_counts = Counter(
+        str(((row.get("screen_response") or {}).get("reference_identifiability") or {}).get("judgment") or "screen_failure")
+        for row in rows
+    )
+    telemetry = read_jsonl(telemetry_path)
+    atomic_json(screen_dir / "telemetry_summary.json", aggregate_telemetry(telemetry))
+    atomic_json(screen_dir / "summary.json", {
+        "experiment_id": "RCR3-semantic-screen",
+        "role": "heterogeneous queue-expansion subcontractor; root owns final adjudication",
+        "model": model,
+        "n_cases": len(rows),
+        "n_success": sum(bool(row["success"]) for row in rows),
+        "n_failure": sum(not bool(row["success"]) for row in rows),
+        "candidate_relation_counts": dict(sorted(relation_counts.items())),
+        "reference_identifiability_counts": dict(sorted(identifiability_counts.items())),
+        "proxy_endpoints": _proxy_summary(rows),
+        "prompt_sha256": sha256_text(PROMPT),
+        "capabilities": dependency_capabilities(),
+        "created_at_utc": datetime.now(timezone.utc).isoformat(),
+    })
+    queue = _clinical_queue(out, rows)
+    existing_log = log_path.read_text(encoding="utf-8") if log_path.is_file() else ""
+    if "completed_at_utc=" not in existing_log:
+        with log_path.open("a", encoding="utf-8") as stream:
+            stream.write(f"completed_at_utc={datetime.now(timezone.utc).isoformat()}\n")
+            stream.write(f"clinical_audit_queue_n={len(queue)}\n")
+    _archive(out)
+
+
 def run_screen(out: Path, model: str, workers: int) -> list[dict[str, Any]]:
     documents = read_jsonl(out / "semantic_screen_inputs.jsonl")
     if len(documents) != 300:
@@ -253,20 +298,22 @@ def run_screen(out: Path, model: str, workers: int) -> list[dict[str, Any]]:
     screen_dir = out / "semantic_screen"
     screen_dir.mkdir(parents=True, exist_ok=True)
     result_path = screen_dir / "screen_results.jsonl"
+    log_path = screen_dir / "run.log"
+    telemetry_path = screen_dir / "telemetry.jsonl"
     if result_path.is_file():
         rows = read_jsonl(result_path)
         if len(rows) != len(documents):
             raise AssertionError("partial semantic screen results require manual audit")
-        _clinical_queue(out, rows)
-        _archive(out)
+        _finalize_screen_artifacts(
+            out=out, screen_dir=screen_dir, rows=rows, model=model,
+            telemetry_path=telemetry_path, log_path=log_path,
+        )
         return rows
-    log_path = screen_dir / "run.log"
     log_path.write_text(
         f"started_at_utc={datetime.now(timezone.utc).isoformat()}\n"
         f"model={model}\nworkers={workers}\njobs={len(documents)}\n",
         encoding="utf-8",
     )
-    telemetry_path = screen_dir / "telemetry.jsonl"
     caller = OnlineJSONCaller(
         out_dir=screen_dir,
         model=model,
@@ -320,36 +367,10 @@ def run_screen(out: Path, model: str, workers: int) -> list[dict[str, Any]]:
                     stream.write(line + "\n")
     rows.sort(key=lambda row: str(row["case_key"]))
     write_jsonl(result_path, rows)
-    relation_counts = Counter(
-        str(item.get("relation"))
-        for row in rows
-        for item in (row.get("screen_response") or {}).get("candidate_relations") or []
+    _finalize_screen_artifacts(
+        out=out, screen_dir=screen_dir, rows=rows, model=model,
+        telemetry_path=telemetry_path, log_path=log_path,
     )
-    identifiability_counts = Counter(
-        str(((row.get("screen_response") or {}).get("reference_identifiability") or {}).get("judgment") or "screen_failure")
-        for row in rows
-    )
-    telemetry = read_jsonl(telemetry_path)
-    atomic_json(screen_dir / "telemetry_summary.json", aggregate_telemetry(telemetry))
-    atomic_json(screen_dir / "summary.json", {
-        "experiment_id": "RCR3-semantic-screen",
-        "role": "heterogeneous queue-expansion subcontractor; root owns final adjudication",
-        "model": model,
-        "n_cases": len(rows),
-        "n_success": sum(bool(row["success"]) for row in rows),
-        "n_failure": sum(not bool(row["success"]) for row in rows),
-        "candidate_relation_counts": dict(sorted(relation_counts.items())),
-        "reference_identifiability_counts": dict(sorted(identifiability_counts.items())),
-        "proxy_endpoints": _proxy_summary(rows),
-        "prompt_sha256": sha256_text(PROMPT),
-        "capabilities": dependency_capabilities(),
-        "created_at_utc": datetime.now(timezone.utc).isoformat(),
-    })
-    queue = _clinical_queue(out, rows)
-    with log_path.open("a", encoding="utf-8") as stream:
-        stream.write(f"completed_at_utc={datetime.now(timezone.utc).isoformat()}\n")
-        stream.write(f"clinical_audit_queue_n={len(queue)}\n")
-    _archive(out)
     return rows
 
 
