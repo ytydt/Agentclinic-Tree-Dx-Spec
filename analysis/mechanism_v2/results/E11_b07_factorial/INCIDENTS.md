@@ -50,3 +50,11 @@ The recovery amendment lowers only the audit-subcontractor concurrency to 8;
 287 immutable cache records are reused, including six schema-invalid records
 that remain failures and force root review. The stop rule used runtime errors,
 not candidate correctness or relation labels.
+
+The compact retrieval component still emitted 1,299–2,810 output tokens per
+finalized call despite a short visible enum JSON because default hidden
+reasoning was active (`reasoning_config=null`). Six calls used 19,118 output
+tokens; concurrent length retries and three timeouts began. Before reviewing any
+retrieval label, the component was stopped and a second amendment disabled
+hidden reasoning (`effort=none`, `exclude=true`). Model, prompt, payload, enum
+schema, 8-worker cap and immutable caches remain unchanged.
