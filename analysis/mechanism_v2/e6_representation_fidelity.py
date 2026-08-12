@@ -781,6 +781,118 @@ def freeze_builder_audit_sample(
     return selected
 
 
+def write_blind_builder_audit_sample(
+    out: Path, sample: Sequence[Mapping[str, Any]]
+) -> None:
+    """Publish the first-pass fidelity audit without diagnostic target labels."""
+    write_jsonl(
+        out / "representation_audit_sample_blind.jsonl",
+        [
+            {key: value for key, value in row.items() if key != "gold"}
+            for row in sample
+        ],
+    )
+
+
+def summarize_construction(
+    out: Path,
+    builder_rows: Sequence[Mapping[str, Any]],
+    manifest_rows: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    successes = [row for row in builder_rows if row["success"]]
+    action_counts = Counter(
+        str(action).split(":", 1)[0]
+        for row in builder_rows
+        for action in row.get("normalization_actions") or []
+    )
+    errors = Counter(str(row["error"]) for row in builder_rows if not row["success"])
+    length_stats: dict[str, Any] = {}
+    for arm in ARMS:
+        records = [
+            row["representations"][arm]
+            for row in manifest_rows
+            if row["builder_success"] and arm in row["representations"]
+        ]
+        length_stats[arm] = {
+            "n": len(records),
+            "original_words_mean": round(
+                sum(record["original_whitespace_words"] for record in records)
+                / len(records), 6
+            ) if records else None,
+            "original_words_min": min(
+                (record["original_whitespace_words"] for record in records),
+                default=None,
+            ),
+            "original_words_max": max(
+                (record["original_whitespace_words"] for record in records),
+                default=None,
+            ),
+            "padding_words_mean": round(
+                sum(record["padding_words"] for record in records) / len(records), 6
+            ) if records else None,
+            "truncated_case_n": sum(record["truncated_words"] > 0 for record in records),
+        }
+    telemetry_path = out / "representations" / "telemetry.jsonl"
+    telemetry_rows = read_jsonl(telemetry_path)
+    summary = {
+        "schema": "E6_representation_construction_summary_v1",
+        "n": len(builder_rows),
+        "success_n": len(successes),
+        "failure_n": len(builder_rows) - len(successes),
+        "raw_online_schema_success_n": sum(
+            bool(row.get("online_schema_success")) for row in builder_rows
+        ),
+        "rescued_by_target_blind_normalization_n": sum(
+            bool(row["success"]) and not bool(row.get("online_schema_success"))
+            for row in builder_rows
+        ),
+        "normalization_applied_n": sum(
+            bool(row.get("normalization_applied")) for row in builder_rows
+        ),
+        "normalization_action_counts": dict(sorted(action_counts.items())),
+        "failure_error_counts": dict(sorted(errors.items())),
+        "family": {
+            family: {
+                "n": sum(row["family"] == family for row in builder_rows),
+                "success_n": sum(
+                    row["family"] == family and row["success"] for row in builder_rows
+                ),
+            }
+            for family in ("DA", "MCR")
+        },
+        "challenge": {
+            flag: {
+                "n": sum(bool(row["challenge"][flag]) for row in builder_rows),
+                "success_n": sum(
+                    bool(row["challenge"][flag]) and row["success"]
+                    for row in builder_rows
+                ),
+            }
+            for flag in ("temporal", "negative", "composite_target")
+        },
+        "matched_representation_lengths": length_stats,
+        "per_case_matched_words_exactly_equal": all(
+            len({
+                row["representations"][arm]["matched_whitespace_words"]
+                for arm in ARMS
+            }) == 1
+            for row in manifest_rows
+            if row["builder_success"]
+        ),
+        "cache_file_n": len(list((out / "representations" / "cache").glob("*.json"))),
+        "telemetry_record_n": len(telemetry_rows),
+        "telemetry_record_shortfall_vs_cache": len(builder_rows) - len(telemetry_rows),
+        "telemetry": aggregate_telemetry(telemetry_rows),
+        "audit_sample_n": len(read_jsonl(out / "representation_audit_sample.jsonl")),
+        "audit_sample_sha256": file_sha256(out / "representation_audit_sample.jsonl"),
+        "blind_audit_sample_sha256": file_sha256(
+            out / "representation_audit_sample_blind.jsonl"
+        ),
+    }
+    atomic_json(out / "construction_summary.json", summary)
+    return summary
+
+
 def selector_result_row(
     job: Mapping[str, Any],
     arm: str,
@@ -1105,8 +1217,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 0
     if args.build_representations:
         rows = run_builder(out, jobs, args.builder_model, workers)
-        build_manifest(out, jobs, rows)
+        manifest = build_manifest(out, jobs, rows)
         audit = freeze_builder_audit_sample(out, jobs, rows)
+        write_blind_builder_audit_sample(out, audit)
+        summarize_construction(out, rows, manifest)
         print(f"representations served={sum(row['success'] for row in rows)}/{len(rows)}")
         print(f"frozen semantic audit cases={len(audit)}")
         return 0
