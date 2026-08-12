@@ -82,6 +82,16 @@ def _decision_codes() -> tuple[str, str]:
     return str(IDENTITY_DECISION_CODES), str(RELATION_DECISION_CODES)
 
 
+def _consensus_sweep_codes() -> str:
+    try:
+        from analysis.mechanism_v2.e2_root_consensus_decisions import (  # type: ignore
+            CONSENSUS_SWEEP_RELATION_CODES,
+        )
+    except ImportError:
+        return ""
+    return str(CONSENSUS_SWEEP_RELATION_CODES)
+
+
 def _load(out: Path) -> tuple[
     list[dict[str, Any]],
     dict[str, dict[str, Any]],
@@ -355,6 +365,151 @@ def build_queues(out: Path) -> dict[str, Any]:
     return summary
 
 
+def build_consensus_sweep(out: Path) -> dict[str, Any]:
+    """Freeze a corrective root sweep over every remaining non-exact relation.
+
+    The original queue remains immutable.  This supplement was triggered when
+    its frozen random calibration missed an obvious consensus-partial error
+    (IgA nephropathy versus tuberculosis).  Consequently, neither reviewer
+    consensus nor a same-side disagreement is allowed to supply an unaudited
+    clinical endpoint in the final E2 analysis.
+    """
+    selection, cards, reviewer_a, reviewer_b = _load(out)
+    root_dir = out / "root_audit"
+    primary_index = read_jsonl(root_dir / "relation_index.jsonl")
+    primary_keys = {
+        (str(row["case_key"]), str(row["candidate_id"]))
+        for row in primary_index
+    }
+    bridge = FrozenExactSynonymBridge(BRIDGE_PATH)
+    pool: list[dict[str, Any]] = []
+    total_relation_n = 0
+    exact_excluded_n = 0
+    for selected in sorted(selection, key=lambda row: str(row["case_key"])):
+        case_key = str(selected["case_key"])
+        ar = _relations(reviewer_a[case_key])
+        br = _relations(reviewer_b[case_key])
+        labels = _candidate_labels(selected)
+        for candidate_id in sorted(labels):
+            total_relation_n += 1
+            key = (case_key, candidate_id)
+            if key in primary_keys:
+                continue
+            label = labels[candidate_id]
+            if bridge.equivalent(label, str(selected["gold"])):
+                exact_excluded_n += 1
+                continue
+            ra_row = ar.get(candidate_id) or {}
+            rb_row = br.get(candidate_id) or {}
+            ra = str(ra_row.get("relation") or "review_failure")
+            rb = str(rb_row.get("relation") or "review_failure")
+            if ra not in RELATIONS or rb not in RELATIONS:
+                raise AssertionError(f"unreviewed reviewer failure escaped primary queue: {key}")
+            if (ra == "complete_equivalent") != (rb == "complete_equivalent"):
+                raise AssertionError(f"complete boundary escaped primary queue: {key}")
+            if (ra in ACCEPTED) != (rb in ACCEPTED):
+                raise AssertionError(f"accepted boundary escaped primary queue: {key}")
+            reason = (
+                f"unreviewed_consensus:{ra}"
+                if ra == rb
+                else "unreviewed_nonendpoint_disagreement"
+            )
+            pool.append(
+                {
+                    "case_key": case_key,
+                    "candidate_id": candidate_id,
+                    "family": selected["family"],
+                    "clinical_record": cards[case_key]["clinical_record"],
+                    "reference_diagnosis": selected["gold"],
+                    "candidate_label": label,
+                    "reviewer_a": ra_row,
+                    "reviewer_b": rb_row,
+                    "reviewer_a_relation": ra,
+                    "reviewer_b_relation": rb,
+                    "sweep_reason": reason,
+                }
+            )
+
+    pool.sort(key=lambda row: (str(row["case_key"]), str(row["candidate_id"])))
+    sweep_cards: list[dict[str, Any]] = []
+    sweep_index: list[dict[str, Any]] = []
+    for index, row in enumerate(pool, 1):
+        record_id = f"S{index:04d}"
+        sweep_cards.append(
+            {
+                "record_id": record_id,
+                "clinical_record": row["clinical_record"],
+                "reference_diagnosis": row["reference_diagnosis"],
+                "candidate_label": row["candidate_label"],
+                "reviewer_a": row["reviewer_a"],
+                "reviewer_b": row["reviewer_b"],
+            }
+        )
+        sweep_index.append(
+            {
+                "record_id": record_id,
+                "case_key": row["case_key"],
+                "candidate_id": row["candidate_id"],
+                "family": row["family"],
+                "reviewer_a_relation": row["reviewer_a_relation"],
+                "reviewer_b_relation": row["reviewer_b_relation"],
+                "sweep_reason": row["sweep_reason"],
+            }
+        )
+
+    write_jsonl(root_dir / "consensus_sweep_cards.jsonl", sweep_cards)
+    write_jsonl(root_dir / "consensus_sweep_index.jsonl", sweep_index)
+    summary = {
+        "schema": "E2_root_consensus_sweep_v1",
+        "total_candidate_relation_n": total_relation_n,
+        "primary_root_queue_excluded_n": len(primary_keys),
+        "frozen_exact_identity_excluded_n": exact_excluded_n,
+        "relation_n": len(sweep_cards),
+        "reviewer_pair_counts": dict(sorted(Counter(
+            f"{row['reviewer_a_relation']}|{row['reviewer_b_relation']}"
+            for row in sweep_index
+        ).items())),
+        "sweep_reason_counts": dict(sorted(Counter(
+            str(row["sweep_reason"]) for row in sweep_index
+        ).items())),
+        "cards_sha256": file_sha256(root_dir / "consensus_sweep_cards.jsonl"),
+        "index_sha256": file_sha256(root_dir / "consensus_sweep_index.jsonl"),
+        "trigger": (
+            "The frozen 30-record consensus-partial calibration missed an "
+            "obvious false partial: reference IgA nephropathy versus candidate "
+            "tuberculosis. This falsified sparse calibration as a sufficient "
+            "basis for reviewer-consensus endpoint assignment."
+        ),
+        "blinding": (
+            "cards omit case key, arm mapping, method family, strict/task outcomes, "
+            "sampling tags, mapper outcomes, sweep reason and reviewer-pair labels; "
+            "those remain in a separate index"
+        ),
+        "created_at_utc": datetime.now(timezone.utc).isoformat(),
+    }
+    if total_relation_n != len(primary_keys) + exact_excluded_n + len(sweep_cards):
+        raise AssertionError("corrective sweep partition does not cover every candidate relation")
+    atomic_json(root_dir / "consensus_sweep_summary.json", summary)
+    (root_dir / "CONSENSUS_SWEEP_PROTOCOL.md").write_text(
+        "# E2 exhaustive consensus-correction protocol\n\n"
+        "This supplement was frozen after a falsifying audit observation: two "
+        "heterogeneous reviewers both called tuberculosis a partial match to "
+        "IgA nephropathy. The original queue and its hashes are unchanged.\n\n"
+        "The root auditor reads `consensus_sweep_cards.jsonl` without its index. "
+        "Every candidate-reference pair not already in the primary root queue "
+        "and not covered by the frozen exact-synonym bridge is reviewed. The "
+        "question is the relation between the candidate label and benchmark "
+        "reference—not whether the candidate is a plausible differential for "
+        "the clinical record. The record is used only to resolve compatible "
+        "specificity, anatomy, etiology, time/state and composite scope.\n\n"
+        "No method identity, arm output, strict/task correctness, mapper status, "
+        "sampling stratum or queue trigger is visible on the cards. Final E2 "
+        "relation endpoints therefore use root review for every non-exact pair.\n",
+        encoding="utf-8",
+    )
+    return summary
+
+
 def print_packet(out: Path, kind: str, start: int, count: int) -> None:
     path = out / "root_audit" / f"{kind}_cards.jsonl"
     rows = read_jsonl(path)
@@ -450,6 +605,34 @@ def build_manual_reviews(out: Path) -> tuple[list[dict[str, Any]], list[dict[str
     return identity_reviews, relation_reviews
 
 
+def build_consensus_sweep_reviews(out: Path) -> list[dict[str, Any]]:
+    root_dir = out / "root_audit"
+    cards = read_jsonl(root_dir / "consensus_sweep_cards.jsonl")
+    index_rows = read_jsonl(root_dir / "consensus_sweep_index.jsonl")
+    codes = _consensus_sweep_codes()
+    if len(codes) != len(cards) or not set(codes).issubset(RELATION_CODE_MAP):
+        raise AssertionError(
+            f"consensus sweep root code coverage mismatch: {len(codes)}/{len(cards)}"
+        )
+    reviews = []
+    for card, index, code in zip(cards, index_rows, codes, strict=True):
+        if card["record_id"] != index["record_id"]:
+            raise AssertionError("consensus sweep card/index order drift")
+        relation = RELATION_CODE_MAP[code]
+        reviews.append(
+            {
+                **index,
+                "reference_diagnosis": card["reference_diagnosis"],
+                "candidate_label": card["candidate_label"],
+                "root_relation": relation,
+                "root_rationale": _generic_relation_rationale(relation),
+                "provenance": "root_manual_consensus_sweep",
+            }
+        )
+    write_jsonl(root_dir / "consensus_sweep_reviews.jsonl", reviews)
+    return reviews
+
+
 def _resolve(
     out: Path,
 ) -> tuple[
@@ -459,11 +642,18 @@ def _resolve(
 ]:
     selection, _cards, reviewer_a, reviewer_b = _load(out)
     identity_reviews, relation_reviews = build_manual_reviews(out)
+    sweep_reviews = build_consensus_sweep_reviews(out)
     manual_identity = {str(row["case_key"]): row for row in identity_reviews}
     manual_relation = {
         (str(row["case_key"]), str(row["candidate_id"])): row
         for row in relation_reviews
     }
+    sweep_relation = {
+        (str(row["case_key"]), str(row["candidate_id"])): row
+        for row in sweep_reviews
+    }
+    if set(manual_relation) & set(sweep_relation):
+        raise AssertionError("primary and supplemental E2 root queues overlap")
     bridge = FrozenExactSynonymBridge(BRIDGE_PATH)
     identities: dict[str, dict[str, Any]] = {}
     relations: dict[tuple[str, str], dict[str, Any]] = {}
@@ -499,23 +689,14 @@ def _resolve(
             if manual_r:
                 relation = str(manual_r["root_relation"])
                 source = "root_manual_blinded"
+            elif key in sweep_relation:
+                relation = str(sweep_relation[key]["root_relation"])
+                source = "root_manual_consensus_sweep"
             elif bridge.equivalent(label, str(selected["gold"])):
                 relation = "complete_equivalent"
                 source = "frozen_exact_identity"
-            elif ra == rb and ra in RELATIONS:
-                relation = ra
-                source = "heterogeneous_reviewer_consensus"
-            elif ra in RELATIONS and rb in RELATIONS:
-                # These are disagreements within the same quantitative
-                # non-endpoint side. Do not fabricate a fine taxonomy winner.
-                if (ra == "complete_equivalent") != (rb == "complete_equivalent"):
-                    raise AssertionError(f"unresolved complete boundary: {key}")
-                if (ra in ACCEPTED) != (rb in ACCEPTED):
-                    raise AssertionError(f"unresolved accepted boundary: {key}")
-                relation = "uncertain"
-                source = "nonendpoint_reviewer_disagreement"
             else:
-                raise AssertionError(f"unresolved reviewer failure: {key}")
+                raise AssertionError(f"relation escaped exhaustive root coverage: {key}")
             relations[key] = {
                 "relation": relation,
                 "source": source,
@@ -540,6 +721,179 @@ def _weighted_rate(rows: Sequence[Mapping[str, Any]], field: str) -> dict[str, A
         "weighted_positive": round(numerator, 6),
         "weighted_rate": round(numerator / denominator, 6) if denominator else None,
     }
+
+
+def _binary_metrics(pairs: Sequence[tuple[bool, bool]]) -> dict[str, Any]:
+    """Return explicit prediction/root confusion metrics.
+
+    The tuple order is ``(prediction, root)``.  Keeping the four cells in the
+    artifact is important here: a high overall accuracy can otherwise hide a
+    low-precision ``complete`` classifier because true negatives dominate the
+    relation universe.
+    """
+    counts = Counter(pairs)
+    tp = counts[(True, True)]
+    fp = counts[(True, False)]
+    fn = counts[(False, True)]
+    tn = counts[(False, False)]
+
+    def divide(numerator: int, denominator: int) -> float | None:
+        return round(numerator / denominator, 6) if denominator else None
+
+    return {
+        "n": len(pairs),
+        "true_positive": tp,
+        "false_positive": fp,
+        "false_negative": fn,
+        "true_negative": tn,
+        "precision": divide(tp, tp + fp),
+        "recall": divide(tp, tp + fn),
+        "specificity": divide(tn, tn + fp),
+        "accuracy": divide(tp + tn, len(pairs)),
+    }
+
+
+def _reviewer_calibration(
+    selection: Sequence[dict[str, Any]],
+    reviewer_a: Mapping[str, dict[str, Any]],
+    reviewer_b: Mapping[str, dict[str, Any]],
+    identities: Mapping[str, dict[str, Any]],
+    relations: Mapping[tuple[str, str], dict[str, Any]],
+    root_dir: Path,
+) -> dict[str, Any]:
+    reviewers: dict[str, Any] = {}
+    for name, reviews in (("reviewer_a", reviewer_a), ("reviewer_b", reviewer_b)):
+        identity_pairs: list[tuple[bool, bool]] = []
+        identity_exact = 0
+        identity_evaluable = 0
+        relation_complete_pairs: list[tuple[bool, bool]] = []
+        relation_accepted_pairs: list[tuple[bool, bool]] = []
+        relation_exact = 0
+        relation_evaluable = 0
+        structured_success = 0
+        for selected in selection:
+            case_key = str(selected["case_key"])
+            review = reviews[case_key]
+            structured_success += int(bool(review.get("success")))
+            predicted_identity = str(_identity(review).get("judgment") or "review_failure")
+            root_identity = str(identities[case_key]["judgment"])
+            if predicted_identity in IDENTIFIABILITY:
+                identity_evaluable += 1
+                identity_exact += int(predicted_identity == root_identity)
+                identity_pairs.append(
+                    (
+                        predicted_identity == "unique_full_reference",
+                        root_identity == "unique_full_reference",
+                    )
+                )
+            predicted_relations = _relations(review)
+            for candidate_id in _candidate_labels(selected):
+                predicted_relation = str(
+                    (predicted_relations.get(candidate_id) or {}).get("relation")
+                    or "review_failure"
+                )
+                root_relation = str(relations[(case_key, candidate_id)]["relation"])
+                if predicted_relation not in RELATIONS:
+                    continue
+                relation_evaluable += 1
+                relation_exact += int(predicted_relation == root_relation)
+                relation_complete_pairs.append(
+                    (
+                        predicted_relation == "complete_equivalent",
+                        root_relation == "complete_equivalent",
+                    )
+                )
+                relation_accepted_pairs.append(
+                    (predicted_relation in ACCEPTED, root_relation in ACCEPTED)
+                )
+        reviewers[name] = {
+            "structured_success_case_n": structured_success,
+            "identity_evaluable_n": identity_evaluable,
+            "identity_fine_exact_n": identity_exact,
+            "identity_fine_exact_rate": round(identity_exact / identity_evaluable, 6),
+            "identity_unique_boundary": _binary_metrics(identity_pairs),
+            "relation_evaluable_n": relation_evaluable,
+            "relation_fine_exact_n": relation_exact,
+            "relation_fine_exact_rate": round(relation_exact / relation_evaluable, 6),
+            "relation_complete_boundary": _binary_metrics(relation_complete_pairs),
+            "relation_accepted_boundary": _binary_metrics(relation_accepted_pairs),
+        }
+
+    identity_reviews = read_jsonl(root_dir / "identity_reviews.jsonl")
+    identity_index = {
+        str(row["record_id"]): row
+        for row in read_jsonl(root_dir / "identity_index.jsonl")
+    }
+    relation_reviews = read_jsonl(root_dir / "relation_reviews.jsonl")
+    relation_index = {
+        str(row["record_id"]): row
+        for row in read_jsonl(root_dir / "relation_index.jsonl")
+    }
+
+    def reason_audit(
+        review_rows: Sequence[dict[str, Any]],
+        index_rows: Mapping[str, dict[str, Any]],
+        reason: str,
+        *,
+        root_field: str,
+        reviewer_a_field: str,
+        reviewer_b_field: str,
+    ) -> dict[str, Any]:
+        rows = [
+            row
+            for row in review_rows
+            if reason in index_rows[str(row["record_id"])]["queue_reasons"]
+        ]
+        return {
+            "n": len(rows),
+            "root_label_counts": dict(sorted(Counter(
+                str(row[root_field]) for row in rows
+            ).items())),
+            "reviewer_a_disagrees_with_root_n": sum(
+                str(row[reviewer_a_field]) != str(row[root_field]) for row in rows
+            ),
+            "reviewer_b_disagrees_with_root_n": sum(
+                str(row[reviewer_b_field]) != str(row[root_field]) for row in rows
+            ),
+        }
+
+    queue_audits = {
+        "identity": {
+            reason: reason_audit(
+                identity_reviews,
+                identity_index,
+                reason,
+                root_field="root_judgment",
+                reviewer_a_field="reviewer_a_judgment",
+                reviewer_b_field="reviewer_b_judgment",
+            )
+            for reason in (
+                "frozen_consensus_identity_calibration",
+                "unique_nonunique_boundary",
+                "reviewer_identity_disagreement",
+                "reviewer_failure",
+            )
+        },
+        "relation": {
+            reason: reason_audit(
+                relation_reviews,
+                relation_index,
+                reason,
+                root_field="root_relation",
+                reviewer_a_field="reviewer_a_relation",
+                reviewer_b_field="reviewer_b_relation",
+            )
+            for reason in (
+                "consensus_complete_nonidentity",
+                "consensus_partial_calibration",
+                "consensus_wrong_calibration",
+                "complete_boundary",
+                "complete_or_partial_boundary",
+                "reviewer_failure",
+            )
+        },
+    }
+    return {"reviewers": reviewers, "root_queue_audits": queue_audits}
 
 
 def _bootstrap_delta(
@@ -574,7 +928,7 @@ def _bootstrap_delta(
 
 
 def analyze(out: Path, repetitions: int) -> dict[str, Any]:
-    selection, _cards, _reviewer_a, _reviewer_b = _load(out)
+    selection, _cards, reviewer_a, reviewer_b = _load(out)
     identities, relations, provenance = _resolve(out)
     arm_rows: dict[str, list[dict[str, Any]]] = defaultdict(list)
     case_rows: list[dict[str, Any]] = []
@@ -697,21 +1051,36 @@ def analyze(out: Path, repetitions: int) -> dict[str, Any]:
             ).items())),
             "unique_full": _weighted_rate(case_rows, "full_reference_identifiable"),
         },
+        "resolved_relation_counts": dict(sorted(Counter(
+            row["relation"] for row in relations.values()
+        ).items())),
         "arms": arm_summary,
         "core_arms_full_800_domain": core_arms,
         "paired_design_weighted_contrasts": contrasts,
         "provenance": provenance,
+        "reviewer_calibration": _reviewer_calibration(
+            selection,
+            reviewer_a,
+            reviewer_b,
+            identities,
+            relations,
+            root_dir,
+        ),
         "manual_coverage": {
             "identity_review_n": len(read_jsonl(root_dir / "identity_reviews.jsonl")),
             "relation_review_n": len(read_jsonl(root_dir / "relation_reviews.jsonl")),
+            "consensus_sweep_review_n": len(read_jsonl(root_dir / "consensus_sweep_reviews.jsonl")),
             "identity_queue_sha256": file_sha256(root_dir / "identity_cards.jsonl"),
             "relation_queue_sha256": file_sha256(root_dir / "relation_cards.jsonl"),
+            "consensus_sweep_cards_sha256": file_sha256(
+                root_dir / "consensus_sweep_cards.jsonl"
+            ),
         },
         "limitations": [
             "The design-weighted target is the existing 800-case mechanism universe, not a new external confirmation population.",
             "Arms absent outside dev400 or the historical APHHM n=300 domain retain their own weighted domain and are not mixed into the full-800 arm ranking.",
-            "Unreviewed exact reviewer agreement retains explicit consensus provenance; calibration samples quantify but do not silently extrapolate corrections.",
-            "Exact reviewer disagreements that cannot change complete or complete+partial endpoints resolve to uncertain rather than a fabricated fine-category winner.",
+            "Every non-exact candidate-reference relation is root reviewed; the frozen exact bridge is the only deterministic relation shortcut.",
+            "The exhaustive supplement was added after sparse calibration was falsified, so its results are corrective rather than preregistered confirmatory evidence.",
         ],
         "created_at_utc": datetime.now(timezone.utc).isoformat(),
     }
@@ -727,6 +1096,7 @@ def analyze(out: Path, repetitions: int) -> dict[str, Any]:
         "E2 root audit complete\n"
         f"identity_review_n={result['manual_coverage']['identity_review_n']}\n"
         f"relation_review_n={result['manual_coverage']['relation_review_n']}\n"
+        f"consensus_sweep_review_n={result['manual_coverage']['consensus_sweep_review_n']}\n"
         f"bootstrap_repetitions={repetitions}\n",
         encoding="utf-8",
     )
@@ -736,6 +1106,7 @@ def analyze(out: Path, repetitions: int) -> dict[str, Any]:
         for name in (
             "identity_reviews.jsonl",
             "relation_reviews.jsonl",
+            "consensus_sweep_reviews.jsonl",
             "resolved_identities.jsonl",
             "resolved_relations.jsonl",
             "analysis.json",
@@ -751,6 +1122,7 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--out", type=Path, default=DEFAULT_OUT)
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("queue")
+    sub.add_parser("sweep")
     packet = sub.add_parser("packet")
     packet.add_argument("--kind", choices=("identity", "relation"), required=True)
     packet.add_argument("--start", type=int, default=0)
@@ -765,6 +1137,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     out = args.out.resolve()
     if args.command == "queue":
         print(json.dumps(build_queues(out), ensure_ascii=False, indent=2))
+        return 0
+    if args.command == "sweep":
+        print(json.dumps(build_consensus_sweep(out), ensure_ascii=False, indent=2))
         return 0
     if args.command == "packet":
         print_packet(out, args.kind, args.start, args.count)

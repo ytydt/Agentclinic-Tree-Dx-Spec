@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from analysis.mechanism_v2.e2_root_audit import (
+    _binary_metrics,
     _bootstrap_delta,
     _weighted_rate,
 )
@@ -38,3 +39,21 @@ def test_stratified_bootstrap_observed_delta() -> None:
     result = _bootstrap_delta(rows, "left", "right", "test", 200)
     assert result["delta"] == 0.5
     assert len(result["ci95"]) == 2
+
+
+def test_binary_metrics_exposes_false_positive_precision() -> None:
+    result = _binary_metrics(
+        [
+            (True, True),
+            (True, False),
+            (False, True),
+            (False, False),
+            (False, False),
+        ]
+    )
+    assert result["true_positive"] == 1
+    assert result["false_positive"] == 1
+    assert result["false_negative"] == 1
+    assert result["true_negative"] == 2
+    assert result["precision"] == 0.5
+    assert result["accuracy"] == 0.6
