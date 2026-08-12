@@ -291,7 +291,8 @@ def run_candidate_screen(out: Path, model: str, workers: int) -> list[dict[str, 
     write_jsonl(component_dir / "case_results.jsonl", rows)
     counts = Counter(
         str(item.get("relation"))
-        for row in rows for item in (row["response"].get("candidate_relations") or [])
+        for row in rows if row["success"]
+        for item in (row["response"].get("candidate_relations") or [])
     )
     atomic_json(component_dir / "summary.json", {
         "component": "candidate_equivalence", "model": model,
@@ -343,12 +344,14 @@ def run_retrieval_screen(out: Path, model: str, workers: int) -> list[dict[str, 
     write_jsonl(component_dir / "case_results.jsonl", rows)
     ref_counts = Counter(
         f"{str(item[0])[:1]}:{REF_CODE.get(str(item[1]), 'invalid')}"
-        for row in rows for item in (row["response"].get("chunks") or [])
+        for row in rows if row["success"]
+        for item in (row["response"].get("chunks") or [])
         if isinstance(item, list) and len(item) == 4
     )
     bundle_counts = Counter(
         f"{item[0]}:{SUPPORT_CODE.get(str(item[1]), 'invalid')}:{PRESSURE_CODE.get(str(item[3]), 'invalid')}:{MISLEADING_CODE.get(str(item[4]), 'invalid')}"
-        for row in rows for item in (row["response"].get("bundles") or [])
+        for row in rows if row["success"]
+        for item in (row["response"].get("bundles") or [])
         if isinstance(item, list) and len(item) == 5
     )
     atomic_json(component_dir / "summary.json", {
