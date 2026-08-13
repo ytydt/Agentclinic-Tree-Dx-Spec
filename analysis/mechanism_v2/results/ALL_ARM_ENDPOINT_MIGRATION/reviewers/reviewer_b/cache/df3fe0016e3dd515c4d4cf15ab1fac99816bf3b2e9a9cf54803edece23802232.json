@@ -1,0 +1,47 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "b62593a845bbf1591f5bf967e73fc08d72ba6c2780d7cf243006d9ff7c3625cc",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "Malakoplakia is the parent entity; the reference specifies 'Cutaneous malakoplakia' to distinguish it from the more common visceral (urinary tract) form. C001 lacks the cutaneous qualifier.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Names the disease entity but omits the cutaneous/skin-specific localization required by the benchmark"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "label": "Calcinosis cutis",
+        "reason": "Although Von Kossa stain is positive (calcium in MG bodies), the histopathology shows histiocytes with MG bodies and E. coli culture, not dystrophic or metastatic calcium deposition characteristic of calcinosis cutis.",
+        "relation": "not_equivalent",
+        "scope_detail": "Entirely different diagnosis; calcium deposition disorder without Michaelis-Gutmann bodies or histiocytic proliferation"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "medium",
+        "reason": "The reference diagnosis is 'Cutaneous malakoplakia,' emphasizing the skin/dermal involvement. 'Malakoplakia of the inguinal region' specifies a body region rather than the cutaneous tissue compartment, and inguinal malakoplakia could involve deeper structures; this is an incompatible scope specification.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Specifies anatomical site (inguinal region) rather than the tissue/organ layer (cutaneous) specified in the benchmark"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "'Malacoplakia' is an accepted alternate spelling of malakoplakia (the same disease), but like C001 it omits the 'cutaneous' specification required by the benchmark reference.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Alternate spelling of the same parent entity but still missing the cutaneous qualifier"
+      }
+    ],
+    "case_quality_flags": [
+      "No candidate provides the complete 'Cutaneous malakoplakia' designation matching the benchmark reference",
+      "C003 and C004 are near-misses differing only in anatomical qualifier vs. tissue-layer qualifier"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

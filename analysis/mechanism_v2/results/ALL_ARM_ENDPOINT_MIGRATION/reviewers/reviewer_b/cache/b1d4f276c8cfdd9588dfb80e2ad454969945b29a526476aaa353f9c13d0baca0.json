@@ -1,0 +1,45 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "65679bcf1a6aa638d988e3735ee78611b73c180c0487eb8692eeb08f21c12445",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "The candidate offers no diagnostic entity to compare against leiomyosarcoma.",
+        "relation": "not_equivalent",
+        "scope_detail": "No diagnosis provided"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "Although the clinical record describes IHC positive for CD117/DOG1 and wild-type GIST features, the reference diagnosis is leiomyosarcoma. GIST and leiomyosarcoma are distinct spindle cell neoplasm subtypes; GIST is not an alias for leiomyosarcoma.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "GIST is a distinct mesenchymal tumor subtype, not leiomyosarcoma"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "Same reasoning as C002; GIST (even with wild-type designation) is a separate diagnostic entity from leiomyosarcoma and cannot be considered equivalent.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "GIST is a distinct mesenchymal tumor subtype, not leiomyosarcoma"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "Leiomyosarcoma is a subtype of sarcoma. 'Sarcoma' captures the correct family but lacks the required specificity (smooth muscle differentiation) to be a complete equivalent.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Sarcoma is the parent category; leiomyosarcoma is a specific subtype"
+      }
+    ],
+    "case_quality_flags": [
+      "Reference diagnosis of leiomyosarcoma is discordant with the IHC profile described (CD117+, DOG1+, Cam5.2+, AE1/AE3+) and NF1 germline mutation, which strongly favor wild-type GIST; leiomyosarcoma typically lacks CD117/DOG1 expression. This may represent a case where the clinical narrative intentionally misleads toward GIST while the reference answer is leiomyosarcoma, or there may be a reference diagnosis error."
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

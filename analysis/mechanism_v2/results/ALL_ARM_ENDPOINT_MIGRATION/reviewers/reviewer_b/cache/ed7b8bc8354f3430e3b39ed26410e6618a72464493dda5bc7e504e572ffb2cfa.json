@@ -1,0 +1,74 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "a02a796caf189c90f0fd1f899a700b1888de449e37984756e26532b69ed4179c",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "The reference diagnosis is MIS-A (post-COVID vaccination inflammatory syndrome) with DAH. C001 attributes the syndrome to ANCA-associated vasculitis, an incompatible etiology, even though DAH is shared. The clinical record shows post-J&J vaccination timing and multisystem inflammation consistent with MIS-A, not ANCA vasculitis.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Asserts ANCA-associated vasculitis (microscopic polyangiitis) as the etiology rather than MIS-A; shares DAH component but attributes it to a different cause and adds glomerulonephritis not specified in reference"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "AIP does not capture the multisystem inflammatory syndrome etiology, the cardiac involvement, or the hemorrhagic alveolar component. Entirely different diagnostic entity.",
+        "relation": "not_equivalent",
+        "scope_detail": "Acute Interstitial Pneumonia is a distinct pulmonary entity unrelated to MIS-A with DAH"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "While Goodpasture can cause DAH, it is a distinct autoimmune entity (anti-GBM antibody mediated) with renal involvement. The reference is MIS-A post-vaccination; no anti-GBM testing is mentioned and the clinical context strongly favors MIS-A.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Goodpasture syndrome is an anti-GBM disease causing pulmonary-renal syndrome; incompatible etiology with MIS-A"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "The severely reduced LVEF (15%), troponin elevation, and diffuse LV hypokinesis indicate myocarditis as a component, but the full diagnosis requires MIS-A framing and DAH. Myocarditis alone is incomplete.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Myocarditis is one component of MIS-A in this case but omits the MIS-A etiology, DAH, and multisystem scope"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "Same reasoning as C001 without the DAH component. Asserts a specific autoimmune vasculitis diagnosis that conflicts with the post-vaccination MIS-A etiology.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Microscopic polyangiitis is an ANCA-associated vasculitis; incompatible etiology with MIS-A"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "high",
+        "reason": "Vaccine-induced myocarditis acknowledges the J&J vaccination trigger and cardiac involvement but does not encompass the full MIS-A syndrome (multisystem inflammation) or the diffuse alveolar hemorrhage component.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures the vaccine-related cardiac component but omits MIS-A systemic framing and DAH"
+      },
+      {
+        "candidate_id": "C007",
+        "confidence": "high",
+        "reason": "Vasculitis is a non-specific parent term that could encompass MIS-A-related vascular inflammation but does not specify the post-COVID vaccination MIS-A etiology or DAH component.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Vasculitis is a broad parent category; lacks MIS-A etiology, DAH specificity, and multisystem composite"
+      },
+      {
+        "candidate_id": "C008",
+        "confidence": "high",
+        "reason": "ARDS does not capture the MIS-A etiology, the cardiac involvement, or the specific hemorrhagic alveolar pathology. The patient's SpO2 was 99% on room air, making ARDS an unlikely primary diagnosis here.",
+        "relation": "not_equivalent",
+        "scope_detail": "ARDS is a respiratory failure syndrome distinct from MIS-A with DAH"
+      }
+    ],
+    "case_quality_flags": [
+      "Reference diagnosis is a composite (MIS-A + DAH); no candidate captures both components with correct MIS-A post-vaccination etiology",
+      "ANCA serology and anti-GBM antibody results not reported, leaving some differential uncertainty, but clinical context strongly supports MIS-A"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

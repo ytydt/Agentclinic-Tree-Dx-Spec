@@ -15,7 +15,7 @@ Supervisor 也不是主要瓶颈。在固定医生输出下，二元可接受 pr
 
 因此 C006 应修正为：**顺序历史确定性地压低 B06 的候选多样性；历史二元可接受 proxy 显示排序收益与召回损失并存，但不能给出 clinical-complete 净效应。闭池 Supervisor 不是多样性下降的来源；其在独立意见存在时的小幅语义转换信号仍需三分类盲审复核。**
 
-> **端点迁移更正。** 旧版报告把二元 `clinically_acceptable` 计数写成了 `clinical-complete*`。冻结裁决没有区分完整等价与兼容部分正确，且 `same_entity`/`acceptable_clinical_variant` 中均含范围或组成成分缺失。下文保留数值血缘，但统一称为 **binary-clinical-acceptable proxy***；E10 的 `clinical-complete`、`compatible-partial`、`complete-or-compatible-partial` 和全量盲法临床率均为 **未测**，这些数值不得进入临床能力排名。
+> **历史端点迁移更正（已被文末 2026-08-13 migration addendum 补全）。** 旧版二元 `clinically_acceptable` 没有区分完整等价与兼容部分正确，下文仍统一称 **binary-clinical-acceptable proxy***。原实验的规范三分类当时未测；文末新增的全臂三 reviewer model-panel census 现已分别给出 complete/partial/union，但不是 human-root，仍不得进入 root-only 临床能力排名。
 
 ## 1. 识别设计
 
@@ -233,3 +233,14 @@ E10 不支持直接把 B06 改成“永远 isolated”或“永远 sequential”
 - 本实验不证明历史在所有分布上净有益；它明确给出了净益与灾难模式同时存在的机制条件和病例证据。
 
 可证伪的下一步不是再跑一次相同 panel，而是在完全冻结 D1/D2/D3 候选和聚合器的重放中，只切换 history 可见性：若顺序条件不再降低 singleton/reference exposure，所谓信息级联机制应被撤回；若加入“保留所有有独有原文证据的 singleton”后 conversion 收益保留且 capture loss 消失，coverage guard 得到支持；若 Supervisor 在真正保留少数意见后仍不优于 RRF，则其语义边际价值应判为未复现。
+
+## Canonical Top-1 migration addendum (2026-08-13)
+
+臂隐藏三 reviewer 模型面板（非 human-root）已把历史 binary-acceptable 与规范关系拆开。
+四臂 ITA clinical-complete 为 isolated-RRF 36/400、isolated-Supervisor 37、
+sequential-RRF 41、sequential-Supervisor 44；四个 primary complete 对比均未通过 Holm。
+但 C∪P 显示两个条件性增益：history 在 RRF 下 +6.0pp（34 gain/10 loss，
+`q=.00155`），Supervisor 在 isolated 下 +4.25pp（22/5，`q=.00454`）；
+history 在 Supervisor 下和 Supervisor 在 sequential 下均未确认。结论因此调整为：history 与
+Supervisor 可改善兼容覆盖/排序转换，却没有确认提高完整诊断对象；“consensus compressor”机制和
+少数意见删除风险保持。旧 binary 表继续作为历史 proxy 校准，不再承担临床主结论。

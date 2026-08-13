@@ -1,0 +1,41 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "118068415040c1dbaa7fddc2fc0e802f281977e7ea5d4a3aa44c8a50fcdaeb88",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "The reference diagnosis is a composite: chemotherapy-induced sinus arrhythmia WITH cardiotoxicity. C001 covers the cardiotoxicity parent but does not specify the sinus arrhythmia component documented on ECG monitoring.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures the cardiotoxicity component but omits the specific arrhythmia subtype (sinus arrhythmia) required by the benchmark reference"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "label": "Atrial Fibrillation",
+        "reason": "The clinical record documents sinus tachycardia and marked sinus arrhythmia on ECG, with frequent atrial premature beats on dynamic ECG — not atrial fibrillation. This is an incompatible arrhythmia subtype.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Asserts an incompatible arrhythmia subtype; ECG showed sinus tachycardia and sinus arrhythmia, not atrial fibrillation"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "label": "Sinus Tachycardia",
+        "reason": "Sinus tachycardia is one ECG finding present in the record but is only a component of the full composite diagnosis. It misses the chemotherapy-induced etiology, the sinus arrhythmia designation, and the cardiotoxicity element.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures only one ECG finding (sinus tachycardia); omits sinus arrhythmia specificity, chemotherapy etiology, and cardiotoxicity component"
+      }
+    ],
+    "case_quality_flags": [
+      "Reference diagnosis uses 'sinus arrhythmia' as the primary arrhythmia label despite ECG also showing sinus tachycardia and atrial premature beats; composite label may reflect dominant or most clinically significant finding",
+      "Dynamic ECG finding of 'short-array chamber tachycardia' is ambiguous and may indicate supraventricular tachycardia rather than ventricular tachycardia"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

@@ -1,0 +1,39 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "da16c84ceb73df725b9fa30fd9d8a44ca79ce546ea7d3fe828f67446bd3434cb",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "The reference diagnosis is specifically cryptococcal osteomyelitis. 'Osteomyelitis' alone captures the anatomical finding (scapula and distal tibia involvement confirmed on MRI) but omits the critical etiologic specification of Cryptococcus, which is the defining component of the benchmark diagnosis.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Osteomyelitis is the anatomical/pathological process but lacks the cryptococcal etiology"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "The clinical narrative explicitly frames the case as one where tuberculosis was presumed but the patient failed 6 months of anti-tubercular therapy, prompting workup for an alternative diagnosis. The reference diagnosis is cryptococcal osteomyelitis, making a tuberculous etiology directly conflicting rather than merely incomplete.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Asserts tuberculous etiology, which is incompatible with the cryptococcal etiology of the reference"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "Pyogenic osteomyelitis implies a bacterial cause, whereas the reference diagnosis specifies Cryptococcus (a fungus). The subacute/chronic presentation, failure of anti-tubercular therapy, and the clinical context pointing toward an unusual pathogen make a pyogenic label etiologically incompatible with the benchmark.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Asserts pyogenic (bacterial) etiology, incompatible with the fungal (cryptococcal) etiology of the reference"
+      }
+    ],
+    "case_quality_flags": [
+      "Diagnosis of cryptococcal osteomyelitis is not confirmed in the record; aspiration results are pending, making this a 'most likely diagnosis' inference based on clinical context (failed TB therapy, multifocal bone involvement in a young patient)",
+      "Absence of HIV/immunosuppression status noted; cryptococcal disease in an apparently immunocompetent host is atypical and warrants flagging"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

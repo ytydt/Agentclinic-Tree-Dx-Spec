@@ -1,0 +1,53 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "1c98dd0f6ea362776344f78d665785ec411584d1391ee2b09e82262e6ff6b04c",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "medium",
+        "reason": "The reference diagnosis is simply 'Kawasaki disease' without a subtype qualifier. This candidate adds 'incomplete,' which is a more specific subtype. The patient actually meets several classic KD criteria (fever ≥5 days, bilateral nonpurulent conjunctivitis, erythematous throat/strawberry tongue, palmar erythema, rash), making the 'incomplete' designation potentially inaccurate and adding a subtype not present in the reference.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Specifies incomplete subtype, which is not required by the reference and may be inaccurate given the clinical features"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "medium",
+        "reason": "Identical reasoning to C001; 'Incomplete Kawasaki disease' adds a subtype qualifier absent from the benchmark reference, and the clinical picture may actually satisfy complete KD criteria.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Same as C001 — specifies incomplete subtype not required by reference"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "MIS-C is a distinct diagnostic entity from Kawasaki disease. While there is clinical overlap and MIS-C can present with KD-like features, the reference diagnosis is Kawasaki disease. MIS-C requires confirmed or probable SARS-CoV-2 infection and typically presents with more severe multisystem involvement; here SARS-CoV-2 PCR is negative and the clinical picture aligns more closely with classic KD. Asserting MIS-C conflicts with the reference.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Different diagnostic entity with overlapping features but distinct criteria and etiology"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "The patient has fever ≥5 days plus bilateral nonpurulent conjunctivitis, oral changes (strawberry tongue, erythematous throat), extremity changes (palmar erythema), and rash — meeting criteria for complete KD. 'Kawasaki disease (complete form)' is a harmless clarifying alias that is fully consistent with the reference diagnosis.",
+        "relation": "complete_equivalent",
+        "scope_detail": "Specifies complete form, consistent with the clinical features and the reference diagnosis"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "MIS-C associated with COVID-19 is a distinct syndrome from Kawasaki disease. The reference is Kawasaki disease. Additionally, SARS-CoV-2 PCR is negative and there is no confirmed COVID-19 exposure documented for the patient herself, making this diagnosis less supported and conflicting with the reference.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Different diagnostic entity with COVID-19 etiology specified; conflicts with reference"
+      }
+    ],
+    "case_quality_flags": [
+      "Clinical overlap between complete KD and MIS-C makes differential diagnosis challenging; SARS-CoV-2 serology not reported, only PCR negative",
+      "Patient meets multiple classic KD criteria, supporting complete rather than incomplete KD classification"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

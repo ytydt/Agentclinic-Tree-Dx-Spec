@@ -1,0 +1,39 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "eb06837642e53fc8d5ff620ba589375267e9207faa44491c332926bf50848894",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "Cystic fibrosis is the predisposing condition, but the reference diagnosis is the specific sinusitis complication caused by Burkholderia cenocepacia; this candidate captures only the parent disease without the infectious/anatomical specificity",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Names the underlying disease but omits the specific infectious complication (Burkholderia cenocepacia-associated paranasal sinusitis) that is the requested final diagnostic object"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "More specific than C001 regarding CF genotype/phenotype, but the reference diagnosis is the sinusitis complication, not CF itself; the infectious etiology and anatomical site are absent",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Adds genotype and phenotype detail to the CF diagnosis but still omits the Burkholderia cenocepacia-associated paranasal sinusitis component entirely"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "Identical reasoning to C002 without the phenotype qualifier; the candidate remains a parent-disease label missing the infectious complication and anatomical site central to the reference diagnosis",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Specifies CF genotype but does not address the Burkholderia cenocepacia-associated paranasal sinusitis that constitutes the requested final diagnostic object"
+      }
+    ],
+    "case_quality_flags": [
+      "Reference diagnosis (Burkholderia cenocepacia-associated paranasal sinusitis) is a specific infectious complication; all candidates address only the underlying CF diagnosis, making complete equivalence impossible for any supplied candidate",
+      "CT confirmation of paranasal sinus inflammatory changes and MALDI-TOF/WGS identification of Burkholderia cenocepacia isolates support the reference diagnosis but are not reflected in any candidate"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

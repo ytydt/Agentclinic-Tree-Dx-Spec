@@ -1,0 +1,89 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "ca5a0502e080a525991c190d34412cf8514aad16bda13459174e5e2011e0816b",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "Pulmonary toxicity due to chemotherapy is a parent category that encompasses the reference diagnosis but lacks the specific drug class (PARP inhibitor) and ILD designation required for complete equivalence.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Broad parent category; does not specify ILD subtype or PARP inhibitor as causative agent"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "Correctly identifies drug-induced ILD/pneumonitis and notes lymphocytic alveolitis (consistent with BAL findings), but attributes causation to unspecified chemotherapy rather than specifically to a PARP inhibitor (maintenance therapy context).",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Specifies ILD/drug-induced pneumonitis with lymphocytic alveolitis but does not identify PARP inhibitor as the causative agent"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "The clinical timeline indicates the ILD episodes occurred during maintenance therapy (after 21 cycles of TC), pointing to the PARP inhibitor rather than TC chemotherapy. Attributing causation to TC is an incompatible etiology.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Attributes ILD to paclitaxel/carboplatin (TC chemotherapy) rather than PARP inhibitor maintenance therapy"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "Cryptogenic organizing pneumonia is a histopathological/radiological pattern that can occur in drug-induced ILD but is not the primary diagnostic label requested; no CT or biopsy evidence specifically supports COP pattern here.",
+        "relation": "manifestation_or_related",
+        "scope_detail": "A specific ILD pattern/subtype rather than the drug-induced ILD diagnosis"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "Pulmonary fibrosis implies a chronic fibrotic process, whereas the clinical picture shows recurrent acute episodes of GGO consistent with drug-induced pneumonitis/ILD, not fibrosis. Also does not specify PARP inhibitor.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Specifies fibrosis as the subtype, which conflicts with the acute/subacute ILD presentation and GGO findings"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "high",
+        "reason": "Same issue as C003: the ILD episodes occurred during maintenance therapy phase, not during TC chemotherapy, making TC the incorrect causative agent.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Attributes ILD to prior TC chemotherapy rather than PARP inhibitor maintenance therapy"
+      },
+      {
+        "candidate_id": "C007",
+        "confidence": "high",
+        "reason": "Eosinophilic pneumonia requires eosinophilic predominance in BAL (typically >25%) or tissue; BAL here shows lymphocytic predominance (71%), making this an unlikely primary diagnosis and not the requested diagnostic entity.",
+        "relation": "manifestation_or_related",
+        "scope_detail": "A specific ILD subtype defined by eosinophilic predominance; BAL shows only 12% eosinophils, not predominant"
+      },
+      {
+        "candidate_id": "C008",
+        "confidence": "high",
+        "reason": "Lymphocytic interstitial pneumonia is a distinct ILD entity/pattern; while BAL lymphocytosis is present, LIP is not the primary diagnostic label and does not capture the drug-induced etiology.",
+        "relation": "manifestation_or_related",
+        "scope_detail": "A specific ILD subtype/pattern rather than the drug-induced ILD diagnosis"
+      },
+      {
+        "candidate_id": "C009",
+        "confidence": "high",
+        "reason": "Drug-induced pneumonitis is compatible with the reference diagnosis and captures the ILD/pneumonitis component, but does not specify the PARP inhibitor as the causative agent.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Correct category (drug-induced pneumonitis) but missing PARP inhibitor specificity"
+      },
+      {
+        "candidate_id": "C010",
+        "confidence": "high",
+        "reason": "Hypersensitivity pneumonitis is a distinct immunological entity caused by inhaled antigens, not drug toxicity. While BAL lymphocytosis and centrilobular nodules can overlap, the clinical context (drug exposure, no antigen identified) and the reference diagnosis point away from HP.",
+        "relation": "not_equivalent",
+        "scope_detail": "Different diagnostic entity requiring antigen sensitization; not drug-induced ILD"
+      }
+    ],
+    "case_quality_flags": [
+      "PARP inhibitor not explicitly named in clinical record but strongly implied by 'maintenance therapy' context after ovarian cancer TC chemotherapy — reviewers must infer drug class from clinical context",
+      "BAL lymphocytosis (71%) supports drug-induced ILD but is not pathognomonic",
+      "Recurrent episodic pattern with rechallenge (two episodes at 15 weeks each) strongly supports drug-induced etiology"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

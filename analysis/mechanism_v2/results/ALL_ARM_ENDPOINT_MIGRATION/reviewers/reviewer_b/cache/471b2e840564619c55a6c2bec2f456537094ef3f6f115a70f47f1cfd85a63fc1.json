@@ -1,0 +1,66 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "72bf96f345feaf61039f7dc419ebef1597dc4bae3e1bae19e127a3b8de3e1e6e",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "Listeria monocytogenes infection is a bacterial infection, so this is a parent category, but the required organism-level specificity is absent",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Names the broad category (bacterial infection) but omits the specific organism (Listeria monocytogenes) and the transplant-recipient context"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "The clinical picture is consistent with sepsis from liver graft infection, but the reference requires identification of L. monocytogenes; organism specificity is missing",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures sepsis and graft involvement but omits Listeria monocytogenes as the causative organism"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "The reference diagnosis is the causative infection (L. monocytogenes in a transplant recipient); sepsis is a downstream complication, not the final diagnostic object",
+        "relation": "manifestation_or_related",
+        "scope_detail": "Sepsis is a systemic manifestation/complication of the Listeria infection rather than the primary diagnostic entity"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "Same reasoning as C003 with added bacterial qualifier; still does not name L. monocytogenes or the transplant setting as required by the reference",
+        "relation": "manifestation_or_related",
+        "scope_detail": "Bacterial sepsis is a complication/manifestation; organism and transplant context both absent"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "Equivalent to C004 in structure; sepsis is the complication, not the primary infection entity; L. monocytogenes specificity absent",
+        "relation": "manifestation_or_related",
+        "scope_detail": "Sepsis due to bacterial infection is a manifestation/complication; organism unspecified"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "high",
+        "reason": "Graft infection is a component of the reference diagnosis but lacks the required organism-level and systemic specificity",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Identifies graft infection component but omits organism (L. monocytogenes) and systemic infection framing"
+      },
+      {
+        "candidate_id": "C007",
+        "confidence": "high",
+        "reason": "Surgical findings showed diffuse liver necrosis without vascular thrombosis or biliary leakage, and positive cultures point to infectious etiology; primary graft dysfunction is an incompatible non-infectious cause",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Attributes fulminant liver failure to primary graft dysfunction (non-infectious etiology) rather than to L. monocytogenes infection"
+      }
+    ],
+    "case_quality_flags": [
+      "Specific organism (Listeria monocytogenes) inferred from culture positivity pattern and clinical context but not explicitly named in the record; reference diagnosis assumes organism identification from cultures not detailed in the narrative"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

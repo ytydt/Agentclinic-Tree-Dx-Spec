@@ -1,0 +1,58 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "ee0c690cdb93743c74027d5eb5a0d0ebcde9ee4f3b637c27067ee4cb5511793a",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "label": "Pancytopenia",
+        "reason": "The CBC shows anemia, thrombocytopenia, and borderline leukopenia, consistent with pancytopenia, but this is a manifestation/complication of the underlying lymphoma, not the diagnosis itself",
+        "relation": "manifestation_or_related",
+        "scope_detail": "Pancytopenia is a laboratory finding/complication present in this case but is not the final diagnostic entity"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "label": "Intravascular large B-cell lymphoma",
+        "reason": "The biopsy shows intravascular atypical cells with CD56 positivity, indicating NK/T-cell lineage, not B-cell lineage; IVLBCL is an incompatible subtype",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Correct intravascular pattern but asserts B-cell lineage; reference specifies NK/T-cell lineage"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "label": "Natural killer/T-cell lymphoma",
+        "reason": "Captures the NK/T-cell lineage confirmed by CD56 staining but omits the defining intravascular growth pattern and nasal-type designation required by the reference diagnosis",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Correct lineage (NK/T-cell) but missing the intravascular qualifier and nasal-type specification"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "label": "Intravascular lymphoma",
+        "reason": "Correctly identifies the intravascular growth pattern seen on biopsy but does not specify the NK/T-cell lineage or nasal-type subtype required by the reference",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Correct intravascular pattern but unspecified lineage; missing NK/T-cell and nasal-type components"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "label": "Extravascular Hematopoietic Neoplasm",
+        "reason": "The biopsy explicitly shows intravascular atypical cells; an extravascular designation is anatomically incompatible with the pathological findings",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Asserts extravascular distribution, which directly contradicts the intravascular pattern demonstrated on biopsy"
+      }
+    ],
+    "case_quality_flags": [
+      "CD56 immunostaining is key discriminator confirming NK/T-cell lineage over B-cell lineage",
+      "Nasal-type designation requires additional clinical/pathological correlation (EBV status, EBER ISH) not explicitly reported in the record"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

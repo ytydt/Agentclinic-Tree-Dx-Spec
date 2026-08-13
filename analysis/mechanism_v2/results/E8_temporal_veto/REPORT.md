@@ -130,3 +130,14 @@ E8 连同异质审计共记录 946 个 semantic calls、1082 个 physical attemp
 这些约束给出可证伪的后续预测：在冻结同一候选池、同一 comparator 随机种子/缓存结果的条件下，仅移除 time/scope/sensitivity 应重新增加对 gold 的错误 hard-veto；仅置换合法行序不应再产生与时间置换同量级的 champion flip；若 soft 合同减少错误 veto 却持续不能提高已暴露 gold 的临床完整转化，则瓶颈应被判定在候选具体度/比较器而非否证层。任一预测不成立，都应收缩而不是扩大 E8 的机制结论。
 
 E8 是开发集机制实验，不是确认性优越性试验。它足以禁止一种危险操作，却不足以冻结 soft ranker 为新最佳算法。
+
+## Canonical Top-1 migration addendum (2026-08-13)
+
+臂隐藏三 reviewer 模型面板重放（非 human-root）未确认 soft 相对 hard 的临床优势：
+clinical-complete +1.82pp（9 gain/5 loss，Holm `q=.77539`），C∪P +2.27pp
+（19/14，`q=.97370`）。legal-order 相对 soft 同样为零结果。invalid-time 臂因
+大量执行失败在 ITA 上明显更差（complete −4.55pp，`q=.03882`；C∪P
+−15.0pp，`q=1.08e-7`），这属于整个处理合同的操作损失，不能单独归因为“模型正确理解了时间”。
+该臂只对 125/220 例可用；在这 125 个共同 served 病例中 complete 为 25→25（2/2），
+C∪P 66→64（3/5），进一步说明显著 ITA 差主要是 eligibility/non-service penalty。
+因此 hard veto 不安全的病例证据保持，soft 仍不能升级为已确认新最佳。

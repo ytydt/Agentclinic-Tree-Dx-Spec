@@ -1,0 +1,82 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "c511d3154c38c2ce00c51331c370180233efbdca6ae96162a34a1e58f9a28240",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "Lymphoma-associated hemophagocytic syndrome describes a complication (HLH) triggered by lymphoma. The reference asks for the primary lymphoma diagnosis. While the clinical picture (hyperferritinemia, cytopenias, elevated LDH) is consistent with HLH as a complication, this label does not name the underlying lymphoma itself.",
+        "relation": "manifestation_or_related",
+        "scope_detail": "Hemophagocytic syndrome is a complication/manifestation associated with lymphoma, not the primary diagnostic entity requested"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "medium",
+        "reason": "NK/T-cell lymphoma nasal type is EBV-driven and typically CD30-negative. The biopsy here shows CD30 positivity and no mention of EBV, making this subtype assignment conflicting rather than equivalent to the reference PTCL.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Extranodal NK/T-cell lymphoma is a specific subtype of peripheral T-cell/NK-cell lymphoma but the IHC profile (CD2+, cytoplasmic CD3+, CD30+, perforin+, TIA-1+; CD4-, CD5-, CD7-, CD8-, TCR-gamma-, ALK-1-) does not fully support NK/T-cell nasal type (which typically requires EBV positivity and lacks CD30); the label conflicts with the immunophenotype"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "The immunohistochemistry profile (cytotoxic markers perforin and TIA-1 positive, T-cell lineage markers, ALK-negative, CD30 positive) in the setting of marrow effacement by high-grade tumor fits PTCL-NOS with cytotoxic phenotype, which is a complete specification of peripheral T-cell non-Hodgkin lymphoma.",
+        "relation": "complete_equivalent",
+        "scope_detail": "PTCL-NOS with cytotoxic phenotype is a subtype of peripheral T-cell non-Hodgkin lymphoma; the IHC (CD2+, cCD3+, CD30+, perforin+, TIA-1+, ALK-1-, TCR-gamma-) and clinical context are fully consistent"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "T-cell lymphoma is a broader parent category that encompasses the reference diagnosis but does not specify peripheral/non-Hodgkin, making it less specific than required.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "T-cell lymphoma is the correct family but lacks the 'peripheral' qualifier and 'non-Hodgkin' specification required by the reference"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "medium",
+        "reason": "Although ALK-negative ALCL is within the PTCL family and CD30 is positive, ALCL is a distinct subtype with specific morphologic requirements (hallmark cells). The biopsy description does not confirm ALCL morphology, and assigning this specific subtype conflicts with the broader PTCL-NOS reference.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "ALK-negative ALCL requires large anaplastic cells with hallmark morphology and strong CD30; while CD30 is positive here, the full ALCL criteria and morphologic description are not confirmed, and this is a distinct WHO entity from PTCL-NOS"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "medium",
+        "reason": "Identical to C005 in substance. ALK-negative ALCL is a specific subtype that may not be supported by the available morphologic data, conflicting with the reference PTCL designation.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Same reasoning as C005; ALK-negative ALCL is a distinct WHO subtype from PTCL-NOS and the reference peripheral T-cell NHL"
+      },
+      {
+        "candidate_id": "C007",
+        "confidence": "medium",
+        "reason": "NK/T-cell lymphoma nasal type requires EBV association (not documented) and is typically CD30-negative. The IHC profile with CD30 positivity and absence of EBV data makes this subtype assignment conflicting.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "NK/T-cell lymphoma nasal type is a specific EBV-associated entity; no EBV data provided and CD30 positivity is atypical for this subtype"
+      },
+      {
+        "candidate_id": "C008",
+        "confidence": "medium",
+        "reason": "This is the Chinese-language equivalent of extranodal NK/T-cell lymphoma nasal type, carrying the same subtype conflict as C002 and C007 regarding EBV status and CD30 positivity.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Chinese label for extranodal NK/T-cell lymphoma nasal type (or aggressive variant); same reasoning as C002/C007"
+      },
+      {
+        "candidate_id": "C009",
+        "confidence": "medium",
+        "reason": "Identical entity to C002 and C007. EBV association not documented, CD30 positivity atypical, making this specific subtype conflicting with the available immunophenotypic data and the reference PTCL diagnosis.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Extranodal NK/T-cell lymphoma nasal type; same reasoning as C002 and C007"
+      }
+    ],
+    "case_quality_flags": [
+      "EBV status not reported, which is critical for distinguishing NK/T-cell lymphoma from PTCL-NOS",
+      "CD30 positivity raises differential of ALK-negative ALCL vs PTCL-NOS; morphologic description of tumor cells not detailed enough to fully resolve",
+      "Quetiapine-induced neutropenia is a potential confounding factor in the clinical presentation"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

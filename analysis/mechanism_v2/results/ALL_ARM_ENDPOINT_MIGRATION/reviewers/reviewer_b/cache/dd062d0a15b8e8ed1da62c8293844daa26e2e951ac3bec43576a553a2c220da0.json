@@ -1,0 +1,45 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "d1dd5a9cf73462f8dcbeff1c706dc29bf9de1ab6d4eb97467799ace6015997b2",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "No genetic testing is documented in the record, so asserting a PKP2 mutation is unsupported. More critically, the label restricts to ARVC (right ventricular only), omitting the biventricular involvement that is a required component of the reference diagnosis.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Specifies a genetic subtype (PKP2 mutation) and restricts to right ventricular involvement only, missing the biventricular scope confirmed by CMR LV hyperenhancement"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "ARVC is the correct parent entity, but the CMR demonstrates LV free-wall hyperenhancement confirming biventricular involvement, which is a required specificity of the reference diagnosis. The label does not capture this.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Correct disease family but missing the biventricular involvement component"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "ARVC (ARVC) is the correct disease but the label omits biventricular involvement documented on CMR, which is a required component of the reference diagnosis.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Same as C002 — correct entity but lacks biventricular scope"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "The label correctly identifies ARVC with VT and RV systolic dysfunction, which are consistent with the record, but explicitly names only right ventricular cardiomyopathy, omitting the LV involvement confirmed by CMR hyperenhancement in basal inferior, midcavity inferior, and inferoseptal LV myocardium.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Adds clinical detail (VT, RV dysfunction) but still restricts to right ventricular cardiomyopathy, missing biventricular scope"
+      }
+    ],
+    "case_quality_flags": [
+      "Reference diagnosis uses updated 'Arrhythmogenic Cardiomyopathy (AC)' nomenclature reflecting biventricular/dominant-left phenotype recognition; all candidates use older ARVC terminology and miss LV involvement"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

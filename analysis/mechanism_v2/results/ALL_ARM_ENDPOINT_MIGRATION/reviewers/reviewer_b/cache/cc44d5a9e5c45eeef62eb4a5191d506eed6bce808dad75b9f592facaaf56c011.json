@@ -1,0 +1,60 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "6a0d227a725a4151826df16c40a0d97f5afab4940ba461039c8d470bd45999f2",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "Captures all required components: spontaneous/non-iatrogenic epidural hemorrhage, underlying vascular malformation (pathologically confirmed), T2-3 location, and resultant spinal cord compression. Cavernous malformation is a compatible subtype of vascular malformation confirmed on pathology. Flaccid paraplegia and postpartum context are consistent with the record.",
+        "relation": "complete_equivalent",
+        "scope_detail": "Identifies epidural hematoma from ruptured vascular malformation at T2-3 with spinal cord compression; specifies cavernous malformation subtype and clinical context"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "Epidural hematoma alone is a parent-level label missing the spinal location, spontaneous qualifier, and the required vascular malformation component that defines the reference diagnosis.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Names the hematoma component but omits spinal/epidural specificity, spontaneous nature, and underlying vascular malformation etiology"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "Explicitly states spinal epidural hematoma, ruptured vascular malformation as etiology, T2-3 anatomy, and spinal cord compression with flaccid paraplegia — matching all components of the reference diagnosis. 'Spontaneous' is implied by the ruptured vascular malformation etiology in a patient without anticoagulation or procedural cause.",
+        "relation": "complete_equivalent",
+        "scope_detail": "Spinal epidural hematoma secondary to ruptured epidural vascular malformation at T2-3 with cord compression; all required components present"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "medium",
+        "reason": "Contains all required components: spinal epidural hematoma, vascular malformation etiology (AVM offered as example, not asserted exclusively), T2-3 location, and acute spinal cord compression. The hedged AVM example does not conflict with the pathologically confirmed vascular malformation.",
+        "relation": "complete_equivalent",
+        "scope_detail": "Spinal epidural hematoma from ruptured vascular malformation at T2-3 with cord compression; AVM qualifier is hedged with 'e.g.'"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "AVM alone is the etiologic component of the reference diagnosis but does not constitute the full diagnostic object, which requires the spinal epidural hematoma and its consequences.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Names only the underlying vascular malformation; omits the hematoma, spinal epidural location, and cord compression"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "medium",
+        "reason": "The reference diagnosis is a spinal epidural hematoma (SSEH) with underlying vascular malformation. C006 inverts the hierarchy, making the vascular malformation the primary diagnosis with hemorrhage as a feature, which conflicts with the reference framing. Additionally, the AVM example may not match the pathologically confirmed malformation type.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Frames the primary diagnosis as the vascular malformation with hemorrhage rather than the hematoma as the primary entity; AVM subtype hedged but foregrounded"
+      }
+    ],
+    "case_quality_flags": [
+      "Pathological examination confirms vascular malformation but does not specify subtype (cavernous vs. AVM); candidates specifying AVM or cavernous malformation carry subtype uncertainty",
+      "Reference diagnosis uses 'spontaneous' qualifier; no procedural or anticoagulation cause identified, supporting spontaneous etiology despite postpartum/post-cesarean context"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

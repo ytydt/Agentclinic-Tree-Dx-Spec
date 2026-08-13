@@ -122,3 +122,17 @@ the requested diagnostic object before selection.
 
 See `MANUAL_AUDIT.md` for the complete 17-case transition audit, the 12-case
 all-wrong flip audit, and the threat-to-inference analysis.
+
+## Canonical Top-1 migration addendum (2026-08-13)
+
+The exhaustive blinded three-reviewer model-panel replay (not human root) gives
+ITA clinical-complete counts of 31/400 for evidence-count, 61 for e7, 65 for
+ledger, and 69 for both Forest and pairwise. Relative to evidence-count,
+Forest improves complete by 9.5 pp (46 gain/8 loss, Holm `q=1.25e-6`) and C∪P
+by 13.5 pp (80/26, `q=9.99e-7`). However, Forest versus e7 is only +2.0 pp
+complete (10/2, raw `p=.03857`, Holm `q=.23145`), and pairwise versus Forest is
+exactly 0 pp complete (6/6, `q=1`). The original Forest−e7 safe-exact contrast
+also does not survive the final coherent family (`q=.12891`). Thus the weak evidence-count selector is
+clinically disfavoured, but the previous claim that Forest is confirmed to beat
+e7 does not survive the coherent canonical family; pairwise still adds no
+demonstrated clinical advantage. The fixed-pool causal scope is unchanged.

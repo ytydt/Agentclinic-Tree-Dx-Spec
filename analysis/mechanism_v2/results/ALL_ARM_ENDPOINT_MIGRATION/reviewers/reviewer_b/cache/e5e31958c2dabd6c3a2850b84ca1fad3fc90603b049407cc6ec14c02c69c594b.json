@@ -1,0 +1,117 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "a58747df3210127f8c53a78b625e9c3aacbe0999f8540b8c7735fcd82a424a12",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "Correctly identifies MPP and plastic bronchitis but misses two required components of the reference: coronary artery dilation and necrotizing pneumonia",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures MPP with plastic bronchitis but omits coronary artery dilation and necrotizing pneumonia"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "The reference does not diagnose Kawasaki disease (only coronary artery dilation as a complication); asserting KD is an incompatible scope addition. Also omits necrotizing pneumonia.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Adds full Kawasaki disease diagnosis which is not established; omits necrotizing pneumonia; includes plastic bronchitis not in reference"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "Parent-level diagnosis without severity qualifier or any complications specified in the reference",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Mycoplasma pneumoniae pneumonia only (Chinese label); missing severity, CAD, and necrotizing pneumonia"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "Even more general than MPP; lacks all required specificity components",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Broader infection label; missing pneumonia specification, severity, CAD, and necrotizing pneumonia"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "Captures two of the three reference components (MPP + CAD) but omits severity qualifier and necrotizing pneumonia",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "MP pneumonia with coronary artery dilation (Chinese label); missing severity and necrotizing pneumonia"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "high",
+        "reason": "Plastic bronchitis is a complication present in the record but is not part of the reference diagnosis; naming it alone is a manifestation-level label",
+        "relation": "manifestation_or_related",
+        "scope_detail": "Plastic bronchitis is a complication/manifestation found in this case but is not the primary diagnosis"
+      },
+      {
+        "candidate_id": "C007",
+        "confidence": "high",
+        "reason": "Diagnosing incomplete KD goes beyond what the reference states (CAD as complication of MPP); incompatible scope assertion",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Asserts incomplete Kawasaki disease as a diagnosis; reference only notes CAD without KD diagnosis; also omits necrotizing pneumonia"
+      },
+      {
+        "candidate_id": "C008",
+        "confidence": "high",
+        "reason": "Similar to C007; adding KD (even incomplete) as a formal diagnosis conflicts with the reference which attributes CAD to MPP without a KD diagnosis",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Asserts incomplete Kawasaki disease as a complication; reference does not diagnose KD; omits necrotizing pneumonia"
+      },
+      {
+        "candidate_id": "C009",
+        "confidence": "high",
+        "reason": "Captures severity and plastic bronchitis but omits coronary artery dilation and necrotizing pneumonia from the reference",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Severe MPP with plastic bronchitis (Chinese label); missing CAD and necrotizing pneumonia"
+      },
+      {
+        "candidate_id": "C010",
+        "confidence": "high",
+        "reason": "Diagnosing KD is incompatible with the reference which lists CAD as a complication without a KD label; also missing necrotizing pneumonia",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Asserts Kawasaki disease diagnosis; reference only notes CAD; omits necrotizing pneumonia"
+      },
+      {
+        "candidate_id": "C011",
+        "confidence": "high",
+        "reason": "Captures severity and plastic bronchitis but omits the two other required components of the reference diagnosis",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Severe MPP with plastic bronchitis; missing CAD and necrotizing pneumonia"
+      },
+      {
+        "candidate_id": "C012",
+        "confidence": "high",
+        "reason": "Reference places MPP as primary with CAD as complication; this candidate inverts the hierarchy and formally diagnoses KD, which is incompatible",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Frames incomplete KD as the primary diagnosis triggered by MPP; inverts the diagnostic hierarchy and asserts KD"
+      },
+      {
+        "candidate_id": "C013",
+        "confidence": "high",
+        "reason": "Captures severity and plastic bronchitis but omits coronary artery dilation and necrotizing pneumonia required by the reference",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Severe MPP with plastic bronchitis; missing CAD and necrotizing pneumonia"
+      },
+      {
+        "candidate_id": "C014",
+        "confidence": "high",
+        "reason": "Minimal label lacking all specificity components of the reference diagnosis",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Basic MPP label only; missing severity, CAD, and necrotizing pneumonia"
+      }
+    ],
+    "case_quality_flags": [
+      "No candidate achieves complete equivalence to the reference; the reference requires three components (severe MPP + CAD + necrotizing pneumonia) that no single candidate fully captures",
+      "Multiple candidates add Kawasaki disease diagnosis not present in the reference, reflecting diagnostic ambiguity around the coronary artery dilation finding",
+      "Necrotizing pneumonia component of the reference is not explicitly supported by imaging description in the record (no CT mention of necrosis/cavitation), which may explain why no candidate includes it"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

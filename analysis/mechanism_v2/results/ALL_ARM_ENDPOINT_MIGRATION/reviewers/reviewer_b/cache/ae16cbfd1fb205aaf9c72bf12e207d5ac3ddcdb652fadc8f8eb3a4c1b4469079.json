@@ -1,0 +1,102 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "1c3ff3fc94bfca5dff9a93ff0d23097b23d5a3e4590bc290978df2fa562b09bd",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "HFrEF is a component of the final diagnosis but the reference requires identification of the arrhythmia-induced mechanism and the specific arrhythmia (paroxysmal ectopic atrial tachycardia) as the cause",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures the heart failure component but omits the arrhythmia etiology (ectopic atrial tachycardia) and the causal relationship (arrhythmia-induced cardiomyopathy)"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "The clinical record shows discrete P waves preceding every QRS, PAC-triggered paroxysmal tachycardia, and P-wave morphology changes — not atrial fibrillation; labeling it AF is an incompatible arrhythmia subtype",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Asserts atrial fibrillation as the arrhythmia, which conflicts with the ECG evidence of organized P waves with 1:1 relationship consistent with ectopic atrial tachycardia"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "ECG shows 1:1 P:QRS with positive P in inferior leads and biphasic in V1, consistent with ectopic atrial tachycardia, not atrial flutter; incompatible arrhythmia subtype",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Atrial flutter implies a macro-reentrant circuit with characteristic flutter waves and typically 2:1 or variable block, not 1:1 P:QRS with discrete P waves"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "The reference diagnosis is arrhythmia-induced (tachycardia-mediated) cardiomyopathy where the arrhythmia is the cause, not a complication; additionally specifies AF rather than ectopic atrial tachycardia",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Frames the cardiomyopathy as primary non-ischemic dilated cardiomyopathy complicated by AF, reversing the causal direction and using the wrong arrhythmia type"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "Treats cardiomyopathy as primary and AF as a comorbidity; reference requires arrhythmia as the etiologic driver and specifies ectopic atrial tachycardia",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Same causal inversion as C004 plus wrong arrhythmia subtype (AF instead of ectopic atrial tachycardia)"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "medium",
+        "reason": "Closer to the reference than AF-based candidates; captures both key elements but lacks the explicit arrhythmia-induced cardiomyopathy construct and paroxysmal ectopic qualifier",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Correctly identifies atrial tachycardia and cardiac dysfunction but does not specify the causal/mechanistic framing (arrhythmia-induced cardiomyopathy) or the paroxysmal ectopic nature"
+      },
+      {
+        "candidate_id": "C007",
+        "confidence": "high",
+        "reason": "ECG evidence clearly shows discrete organized P waves with 1:1 AV conduction; AF is an incompatible arrhythmia subtype",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Asserts atrial fibrillation, which is incompatible with the organized P-wave morphology on ECG"
+      },
+      {
+        "candidate_id": "C008",
+        "confidence": "medium",
+        "reason": "Tachycardia-induced cardiomyopathy is the correct mechanistic category and is essentially synonymous with arrhythmia-induced cardiomyopathy; missing the specific arrhythmia identification (ectopic atrial tachycardia)",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures the tachycardia-induced cardiomyopathy mechanism but does not specify the arrhythmia subtype (paroxysmal ectopic atrial tachycardia)"
+      },
+      {
+        "candidate_id": "C009",
+        "confidence": "high",
+        "reason": "Missing the arrhythmia-induced etiology and the specific causative arrhythmia; too non-specific",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Dilated cardiomyopathy is a morphological descriptor that could encompass arrhythmia-induced cardiomyopathy but omits the etiologic mechanism and the arrhythmia"
+      },
+      {
+        "candidate_id": "C010",
+        "confidence": "high",
+        "reason": "Same issues as C004/C005: causal direction inverted and AF specified instead of ectopic atrial tachycardia",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Frames cardiomyopathy as primary non-ischemic with AF as comorbidity, reversing causality and using wrong arrhythmia type"
+      },
+      {
+        "candidate_id": "C011",
+        "confidence": "medium",
+        "reason": "Although 'paroxysmal atrial arrhythmias' is broader and could include ectopic atrial tachycardia, the primary/secondary framing is inverted relative to the reference diagnosis of arrhythmia-induced cardiomyopathy",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Frames cardiomyopathy as primary non-ischemic dilated with paroxysmal atrial arrhythmias as comorbidity; causal direction inverted"
+      },
+      {
+        "candidate_id": "C012",
+        "confidence": "high",
+        "reason": "AF is the wrong arrhythmia subtype per ECG evidence; also does not frame the relationship as arrhythmia-induced cardiomyopathy",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Specifies atrial fibrillation, which is incompatible with the ECG findings, and does not capture the arrhythmia-induced causal mechanism"
+      }
+    ],
+    "case_quality_flags": [
+      "Reference diagnosis requires both the mechanistic construct (arrhythmia-induced/tachycardia-mediated cardiomyopathy) AND the specific arrhythmia subtype (paroxysmal ectopic atrial tachycardia); candidates specifying only one component are partial",
+      "Multiple candidates incorrectly label the arrhythmia as atrial fibrillation despite clear ECG evidence of organized P waves with 1:1 AV conduction consistent with ectopic atrial tachycardia"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

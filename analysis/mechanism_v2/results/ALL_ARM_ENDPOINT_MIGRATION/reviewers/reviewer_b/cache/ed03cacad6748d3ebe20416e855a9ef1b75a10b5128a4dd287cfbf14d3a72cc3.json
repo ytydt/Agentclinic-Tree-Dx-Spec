@@ -1,0 +1,68 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "d1824bec126c8f1c4458a1878d04d95f5502b0d26e90f0457e22868f23a4425b",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "The clinical record explicitly states ARVD was 'highly suspected' based on ECG and imaging criteria, yet the question asks for the 'most likely diagnosis' and the reference answer is Cardiac Sarcoidosis — a competing diagnosis kept in the differential due to pulmonary nodules. ARVD conflicts with the reference entity.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "ARVD is the leading clinical suspicion documented in the record, but the reference diagnosis is Cardiac Sarcoidosis"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "Same reasoning as C001; ARVD/C is not Cardiac Sarcoidosis regardless of nomenclature variant.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "ARVD/C is the same entity as C001 with a combined nomenclature; still conflicts with the reference Cardiac Sarcoidosis"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "ARVC and Cardiac Sarcoidosis are distinct diagnostic entities; the record places sarcoidosis in the differential precisely because ARVC criteria are met but sarcoidosis cannot be excluded given pulmonary nodules.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "ARVC is the modern term for the same entity; conflicts with reference Cardiac Sarcoidosis"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "Same reasoning as C003.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Identical to C003 without abbreviation; same conflict with reference"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "Adding clinical detail (VT, cardioversion, RV dysfunction) to ARVC does not change the fundamental entity mismatch with Cardiac Sarcoidosis.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "ARVC with detailed complications; still conflicts with reference Cardiac Sarcoidosis"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "high",
+        "reason": "Same reasoning as C005; elaborated ARVC label remains a different diagnostic entity from Cardiac Sarcoidosis.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "ARVC with VT and RV dysfunction; conflicts with reference Cardiac Sarcoidosis"
+      },
+      {
+        "candidate_id": "C007",
+        "confidence": "high",
+        "reason": "Identical to C001 in substance; conflicts with the reference diagnosis.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "ARVD (older terminology); conflicts with reference Cardiac Sarcoidosis"
+      }
+    ],
+    "case_quality_flags": [
+      "Reference diagnosis (Cardiac Sarcoidosis) is the competing differential rather than the primary clinical suspicion documented in the record; all candidates reflect the primary clinical suspicion (ARVD/ARVC), creating a systematic conflict with the reference.",
+      "CMR not performed due to CKD and patient preference, limiting definitive differentiation between ARVC and cardiac sarcoidosis.",
+      "Pulmonary nodules are the key clinical anchor supporting Cardiac Sarcoidosis as the reference answer over ARVC."
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

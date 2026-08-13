@@ -44,6 +44,7 @@ EXPECTED_EXPERIMENT_IDS = (
 FULL_ROOT_CENSUS_ALLOWLIST = frozenset({"E2"})
 
 FULL_ROOT = "full_root_census"
+FULL_BLINDED_PANEL = "full_blinded_model_panel_census_not_root"
 PROXY_ROOT_PRIORITY = "proxy_completed_root_priority"
 TARGETED_ONLY = "targeted_root_audit_only_no_arm_rate"
 NOT_AVAILABLE = "not_available"
@@ -55,6 +56,7 @@ E10_UNION = "not_measured_binary_acceptable_is_not_valid_union"
 ALLOWED_ENDPOINT_STATUSES = frozenset(
     {
         FULL_ROOT,
+        FULL_BLINDED_PANEL,
         PROXY_ROOT_PRIORITY,
         TARGETED_ONLY,
         NOT_AVAILABLE,
@@ -63,6 +65,18 @@ ALLOWED_ENDPOINT_STATUSES = frozenset(
         E10_PARTIAL,
         E10_UNION,
     }
+)
+
+MIGRATION_EXPERIMENT_IDS = frozenset(
+    experiment_id
+    for experiment_id in EXPECTED_EXPERIMENT_IDS
+    if experiment_id not in {"E2", "E7a"}
+)
+MIGRATION_SUMMARY_PATH = Path(
+    "analysis/mechanism_v2/results/ALL_ARM_ENDPOINT_MIGRATION/final/summary.json"
+)
+MIGRATION_REPLAY_PATH = Path(
+    "analysis/mechanism_v2/results/ALL_ARM_ENDPOINT_MIGRATION/final/five_endpoint_replay.jsonl"
 )
 
 
@@ -284,7 +298,7 @@ EXPERIMENT_SPECS: tuple[dict[str, Any], ...] = (
         "coverage_note": "The corrected table is explicitly binary-clinical-acceptable only; complete, compatible-partial and their union are unmeasured. 166 cases were root-reviewed and 234 remain proxy-negative.",
         "report_markers": (
             "端点迁移更正",
-            "均为 **未测**",
+            "全臂三 reviewer model-panel census",
         ),
     },
     {
@@ -810,12 +824,50 @@ def validate_records(
         e7a["complete_or_compatible_partial_status"],
     } != {NOT_APPLICABLE}:
         raise AssertionError("E7a must remain clinical-endpoint N/A without a fresh arm output")
-    if by_id["E10"]["clinical_complete_status"] != E10_MISLABEL:
-        raise AssertionError("E10 binary-acceptable endpoint must remain blocked from complete scoring")
+    if by_id["E10"]["clinical_complete_status"] not in {
+        E10_MISLABEL,
+        FULL_BLINDED_PANEL,
+    }:
+        raise AssertionError(
+            "E10 must retain either its historical binary-only status or the "
+            "new full blinded panel status"
+        )
+
+
+def _migration_contract(root: Path) -> dict[str, Any] | None:
+    summary_path = root / MIGRATION_SUMMARY_PATH
+    replay_path = root / MIGRATION_REPLAY_PATH
+    if not summary_path.is_file() and not replay_path.is_file():
+        return None
+    if not summary_path.is_file() or not replay_path.is_file():
+        raise AssertionError("endpoint migration final artifacts are only partially present")
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    if summary.get("schema_version") != "canonical-endpoint-migration-final-v1":
+        raise AssertionError("unsupported endpoint migration final schema")
+    if int(summary.get("n_arms") or 0) != 79:
+        raise AssertionError("endpoint migration must cover exactly 79 arms")
+    if int(summary.get("n_intention_rows") or 0) != 24076:
+        raise AssertionError("endpoint migration intention ledger drift")
+    if int(summary.get("n_served_rows") or 0) != 23035:
+        raise AssertionError("endpoint migration served ledger drift")
+    if summary.get("clinical_census_status") not in {
+        "full_blinded_model_panel_sensitivity_not_root",
+        "full_blinded_three_model_panel_census_not_root",
+        "full_root_census",
+    }:
+        raise AssertionError("endpoint migration clinical census is incomplete")
+    return {
+        "summary": summary,
+        "summary_path": str(MIGRATION_SUMMARY_PATH),
+        "summary_sha256": _sha256(summary_path),
+        "replay_path": str(MIGRATION_REPLAY_PATH),
+        "replay_sha256": _sha256(replay_path),
+    }
 
 
 def build_payload(root: Path = ROOT) -> dict[str, Any]:
     arm_registry_sources = _validate_arm_registry_sources(root)
+    migration = _migration_contract(root)
     records: list[dict[str, Any]] = []
     for spec in EXPERIMENT_SPECS:
         record = {key: value for key, value in spec.items() if key != "report_markers"}
@@ -823,6 +875,25 @@ def build_payload(root: Path = ROOT) -> dict[str, Any]:
         record["arm_registry_source"] = arm_registry_sources[
             str(record["experiment_id"])
         ]
+        if migration is not None and str(record["experiment_id"]) in MIGRATION_EXPERIMENT_IDS:
+            record.update(
+                {
+                    "clinical_complete_status": FULL_BLINDED_PANEL,
+                    "compatible_partial_status": FULL_BLINDED_PANEL,
+                    "complete_or_compatible_partial_status": FULL_BLINDED_PANEL,
+                    "blind_status": "arm_hidden_three_reviewer_panel_census",
+                    "full_root_census": False,
+                    "conclusion_use": "full_panel_clinical_sensitivity_not_root_capability_leaderboard",
+                    "coverage_note": (
+                        "All intended rows have deterministic failure handling and all served "
+                        "Top-1 relations have blinded three-reviewer panel decisions; "
+                        "unanimous, majority, and unresolved decisions retain explicit "
+                        "model-panel provenance rather than human-root ownership."
+                    ),
+                    "migration_artifact_path": migration["replay_path"],
+                    "migration_artifact_sha256": migration["replay_sha256"],
+                }
+            )
         record["clinical_capability_leaderboard_eligible"] = bool(record["full_root_census"])
         record["leaderboard_ingestion"] = (
             "allowed" if record["full_root_census"] else "prohibited"
@@ -876,17 +947,32 @@ def build_payload(root: Path = ROOT) -> dict[str, Any]:
         == {NOT_APPLICABLE}
         for row in arm_records
     )
-    migration_gap_arm_count = len(arm_records) - full_census_arm_count - not_applicable_arm_count
-    if (full_census_arm_count, migration_gap_arm_count, not_applicable_arm_count) != (9, 79, 3):
+    panel_census_arm_count = sum(
+        row["clinical_complete_status"] == FULL_BLINDED_PANEL for row in arm_records
+    )
+    migration_gap_arm_count = (
+        len(arm_records)
+        - full_census_arm_count
+        - panel_census_arm_count
+        - not_applicable_arm_count
+    )
+    expected_counts = (9, 79, 0, 3) if migration is not None else (9, 0, 79, 3)
+    observed_counts = (
+        full_census_arm_count,
+        panel_census_arm_count,
+        migration_gap_arm_count,
+        not_applicable_arm_count,
+    )
+    if observed_counts != expected_counts:
         raise AssertionError(
-            "arm-level endpoint coverage drift: expected 9 full, 79 gaps, 3 N/A; "
-            f"found {full_census_arm_count}, {migration_gap_arm_count}, {not_applicable_arm_count}"
+            f"arm-level endpoint coverage drift: expected {expected_counts}, found {observed_counts}"
         )
     return {
         "schema_version": "endpoint-coverage-audit-v2",
         "experiment_count": len(records),
         "expected_experiment_ids": list(EXPECTED_EXPERIMENT_IDS),
         "full_root_census_allowlist": sorted(FULL_ROOT_CENSUS_ALLOWLIST),
+        "migration_contract": migration,
         "leaderboard_rule": (
             "Only full_root_census=true records may be ingested into a clinical-capability "
             "leaderboard; proxy/root-priority, targeted, unavailable, and structural-only "
@@ -903,6 +989,7 @@ def build_payload(root: Path = ROOT) -> dict[str, Any]:
         "arm_record_count": len(arm_records),
         "arm_coverage_summary": {
             "full_blinded_root_census_arm_count": full_census_arm_count,
+            "full_blinded_model_panel_census_arm_count": panel_census_arm_count,
             "metric_migration_gap_arm_count": migration_gap_arm_count,
             "structural_not_applicable_arm_count": not_applicable_arm_count,
         },
@@ -934,7 +1021,12 @@ def build_payload(root: Path = ROOT) -> dict[str, Any]:
             "full_root_allowlist_exact": True,
             "non_full_leaderboard_ingestion_prohibited": True,
             "e7a_structural_na_enforced": True,
-            "e10_binary_acceptable_blocked_from_complete": True,
+            "e10_historical_binary_acceptable_blocked_from_canonical": True,
+            "task_replay_complete": bool(
+                migration is None
+                or migration["summary"].get("task_census_status")
+                == "complete_fresh_replay"
+            ),
         },
     }
 
@@ -946,6 +1038,7 @@ def render_json(payload: Mapping[str, Any]) -> str:
 def _short_status(value: str) -> str:
     aliases = {
         FULL_ROOT: "full-root census",
+        FULL_BLINDED_PANEL: "full blinded model-panel census (not root)",
         PROXY_ROOT_PRIORITY: "proxy + root-priority",
         TARGETED_ONLY: "targeted only",
         NOT_AVAILABLE: "not available",
@@ -959,19 +1052,33 @@ def _short_status(value: str) -> str:
 
 def render_report(payload: Mapping[str, Any]) -> str:
     records = list(payload["records"])
+    coverage = payload["arm_coverage_summary"]
+    migration_complete = int(coverage["metric_migration_gap_arm_count"]) == 0
     lines = [
         "# Cross-experiment endpoint coverage audit",
         "",
         "## Decision",
         "",
-        "Only **E2** is a full blinded/root-level clinical census and therefore the only "
-        "experiment eligible for a clinical-capability leaderboard. All other experiments "
-        "are blocked from that ingestion path: they are structural-only, safe-exact "
-        "mechanism studies, targeted root audits, or proxy-completed/root-priority "
-        "sensitivities. E10 is additionally blocked because its frozen binary "
-        "`acceptable` recode does not separate complete from compatible partial.",
-        "Across 91 independently sourced, declared audit arms, 9 E2 arms have the full contract, 79 arms retain "
-        "metric-migration gaps, and 3 E7a structural replay arms are clinically N/A.",
+        (
+            "Only **E2** is a full blinded/human-root-level clinical census and therefore "
+            "the only experiment eligible for the strict clinical-capability leaderboard. "
+            "The 79 migrated arms now have exhaustive blinded model-panel clinical endpoints, "
+            "but remain blocked from that root-only leaderboard."
+            if migration_complete
+            else
+            "Only **E2** is a full blinded/root-level clinical census and therefore the only "
+            "experiment eligible for a clinical-capability leaderboard. All other experiments "
+            "remain blocked pending canonical migration."
+        ),
+        (
+            "Across 91 independently sourced declared arms, 9 E2 arms have the full root "
+            "contract, 79 arms have the complete blinded model-panel contract with zero "
+            "remaining metric-migration gaps, and 3 E7a structural replay arms are clinically N/A."
+            if migration_complete
+            else
+            "Across 91 independently sourced declared arms, 9 E2 arms have the full contract, "
+            "79 arms retain metric-migration gaps, and 3 E7a arms are clinically N/A."
+        ),
         "",
         "Safe-exact remains a valid conservative identity lower bound. Legacy-chain, "
         "Concept, generic `accuracy`, task/mapper, or starred proxy endpoints must not be "
@@ -981,6 +1088,20 @@ def render_report(payload: Mapping[str, Any]) -> str:
         "`strict`, generic accuracy, and `complete*`-style fields remain under their local "
         "contracts. Every downstream consumer must join through `endpoint_coverage_matrix.json` "
         "and enforce its coverage gate before reading those fields.",
+        *(
+            [
+                "The migrated clinical relation contract is complete, but the fresh task "
+                f"namespace is partial: {payload['migration_contract']['summary']['n_task_payloads_successful']:,}/"
+                f"{payload['migration_contract']['summary']['n_task_payloads']:,} unique payloads completed before "
+                "the external API reported insufficient credit. Partial task rows are not used for inference."
+            ]
+            if migration_complete
+            and payload.get("migration_contract", {}).get("summary", {}).get(
+                "task_census_status"
+            )
+            != "complete_fresh_replay"
+            else []
+        ),
         "",
         "## Coverage matrix",
         "",
@@ -1064,11 +1185,12 @@ def render_report(payload: Mapping[str, Any]) -> str:
             "1. The experiment list must contain exactly the 16 registered IDs, once each, in the frozen order.",
             "2. Every canonical ARM_IDS set must exactly equal its independently parsed arm-registry source; the 91-row total is not accepted as self-validation.",
             "3. Direct flattening/ingestion of frozen raw experiment summaries is prohibited; downstream use requires a join through the coverage-gated cross matrix.",
-            "4. The full-root allowlist must equal `{E2}`; adding another experiment requires an explicit audit-contract revision.",
+            "4. The full-root allowlist must equal `{E2}`; model-panel census completion does not silently expand it.",
             "5. Every non-full experiment has `leaderboard_ingestion=prohibited`.",
             "6. E7a remains clinical-endpoint N/A until a fresh selector consumes each counterfactual registry.",
-            "7. E10 remains blocked from complete scoring because the frozen binary acceptable audit does not separate complete, compatible-partial, and not-equivalent.",
-            "8. Source reports must retain the evidence anchors used by this classification; drift aborts generation.",
+            "7. E10's historical binary-acceptable field remains blocked from canonical scoring; only the separate migrated model-panel ledger supplies complete/partial/union status.",
+            "8. An incomplete fresh task namespace cannot be called a closed task migration and cannot support partial-cache inference.",
+            "9. Source reports must retain the evidence anchors used by this classification; drift aborts generation.",
             "",
             "## Reproduction",
             "",

@@ -1,0 +1,75 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "3a71699bfdf86d0cee66df17b962bea5a737af86e5f2763862aa4e24b730bdb8",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "Plasmablastic lymphoma is correct but lacks the staging and high-risk cytogenetic qualifier required by the benchmark reference.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Names the correct entity but omits stage 1 and high-risk features (MYC, BCL6, IGH gains)"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "Immunophenotype (CD138+, CD20-, PAX5-, EBV+) and FISH findings are characteristic of PBL, not NK/T-cell lymphoma. CD56 positivity alone does not override the plasmablastic profile.",
+        "relation": "not_equivalent",
+        "scope_detail": "Different lymphoma entity; NK/T-cell lineage vs plasmablastic B-cell lineage"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "The full immunophenotype and cytogenetics support PBL; framing this as NK-cell lymphoma with CD138 expression is an incompatible subtype assignment.",
+        "relation": "not_equivalent",
+        "scope_detail": "Asserts NK cell lineage with incidental CD138 expression, incompatible with the established PBL diagnosis"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "Same reasoning as C002; the clinical and pathological data do not support NK/T-cell lymphoma.",
+        "relation": "not_equivalent",
+        "scope_detail": "NK/T-cell lymphoma is a different diagnostic entity"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "EBV positivity is captured, which is a relevant component, but staging and high-risk features (MYC/BCL6/IGH gains) are absent.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Adds EBV-positive qualifier but still omits stage 1 and high-risk cytogenetic features"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "high",
+        "reason": "Stage IE (equivalent to stage 1 extranodal) and left nasal cavity localization are captured, but the high-risk features from FISH (MYC, BCL6, IGH gains) are not mentioned.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Includes stage IE and anatomic localization but omits high-risk cytogenetic features"
+      },
+      {
+        "candidate_id": "C007",
+        "confidence": "high",
+        "reason": "Same reasoning as C002 and C004; incompatible with the plasmablastic immunophenotype and cytogenetics.",
+        "relation": "not_equivalent",
+        "scope_detail": "NK/T-cell lymphoma is a different diagnostic entity"
+      },
+      {
+        "candidate_id": "C008",
+        "confidence": "high",
+        "reason": "Correctly identifies PBL localized to the left nasal cavity without metastasis, but does not specify stage 1 or the high-risk cytogenetic profile required by the benchmark.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Includes anatomic localization and absence of metastasis but omits stage designation and high-risk features"
+      }
+    ],
+    "case_quality_flags": [
+      "No candidate achieves complete equivalence; all either omit high-risk cytogenetic features or assign an incorrect lineage.",
+      "HIV-negative PBL with MYC, BCL6, and IGH gains constitutes the high-risk qualifier in the reference diagnosis.",
+      "CD56 positivity in this context is consistent with PBL and should not redirect to NK/T-cell lymphoma given the full immunophenotype."
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

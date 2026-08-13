@@ -1,0 +1,46 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "331ea02811270d38fb513ea7c411a41ba1370f51fa1d892a090b3bf7f11659f8",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "The clinical record confirms a bladder wall mass with surrounding lymphadenopathy (indicating metastatic disease) and isolated normetanephrine elevation consistent with a paraganglioma. C001 captures the secretory nature and tumor class but lacks the required anatomical (bladder) and staging (metastatic) components of the reference diagnosis.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Identifies catecholamine-secreting paraganglioma but omits bladder location and metastatic status"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "Paraganglioma is the correct tumor family, but the reference requires specification of urinary bladder origin and metastatic stage, both supported by the CT finding of a bladder wall mass with lymphadenopathy. C002 is an incomplete parent-level label.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Names the parent tumor class but omits bladder location and metastatic status"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "Pheochromocytoma specifically denotes an adrenal medullary tumor. The CT abdomen demonstrates normal adrenal glands and a contrast-enhancing bladder wall mass, making an extra-adrenal paraganglioma the correct classification. Applying the pheochromocytoma label conflicts with the established anatomy.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Pheochromocytoma implies adrenal origin; CT shows normal adrenal glands and a bladder mass"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "While 'phaeochromocytoma of the bladder' is sometimes used colloquially, current WHO classification distinguishes it from paraganglioma of the bladder (extra-adrenal). More critically, the reference diagnosis specifies metastatic disease (supported by lymphadenopathy on CT), which C004 omits entirely, and the pheochromocytoma label conflicts with the extra-adrenal classification confirmed by normal adrenal imaging.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Phaeochromocytoma of the bladder is a recognized but distinct entity from paraganglioma of the bladder; also omits metastatic status"
+      }
+    ],
+    "case_quality_flags": [
+      "Metastatic status is supported by CT-detected perivesical lymphadenopathy but histopathologic confirmation of metastasis is not explicitly documented in the record",
+      "Normal adrenal glands on CT firmly exclude adrenal pheochromocytoma and support bladder paraganglioma classification"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

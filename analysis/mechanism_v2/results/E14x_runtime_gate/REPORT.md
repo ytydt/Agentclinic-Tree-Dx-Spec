@@ -97,3 +97,15 @@ DA 100 例的 option@1 总数两臂都是 63，但有 9/9 相反方向 flip。18
 后续 Call-4 的可证伪设计必须逐例复用完全相同的上游 skeleton、registry、evidence 与 comparator，只随机/确定性切换是否加入 A1；预注册主要端点应是 root-audited clinical-complete repair/harm 和缺失对象命中，而非 unexplained span 数。若 typed gate 仍主要生成 manifestation/mimic，或新增 complete gain 不超过 interference loss，即使 `safe-exact` 不变也应继续关闭；反之，只有在固定上游下出现可追溯的新对象并稳定转化，才构成重新开启的正证据。
 
 E14x 是开发日志上的回顾性机制实验，不是确认性能试验。它足以拒绝“现有历史结果已经证明第四调用门控有用”，也足以定位失败链条在 gate target、候选类型和 comparator，而不是 registry 存活；它没有证明所有未来的关系感知 Call-4 都无效。
+
+## Canonical Top-1 migration addendum (2026-08-13)
+
+此前的“6 repair/15 harm/13 neutral”是 34 个 triggered champion flips 上的有序相对临床贴切度，
+会把两臂都错但范围进一步退化记为 harm；它不是逐臂 canonical complete/partial/no，故不得再表述为
+canonical 净伤害。全 300 例臂隐藏三 reviewer 模型面板（非 human-root）显示 Adaptive−Lite：
+clinical-complete 49 对 48，8 gain/7 loss（+0.33pp，`p=q=1`）；C∪P 137 对
+133，18/14（+1.33pp，`p=q=.59662`）。在 90 个 triggered 病例中，complete
+12→13（2/1），C∪P 32→38（9/3，未校正 `p=.145996`）；MCR 65 例中
+C∪P 19→25（6/0，探索性未校正 `p=.03125`）。新增结论是“覆盖可能改善而错误质量/范围仍可恶化”的双层机制，
+不是 canonical harm-heavy。部署 gate 仍关闭：历史上 0/300 上游 G1/G2 状态可比、处理非随机、
+无 safe-exact discovery，且成本与 scope harms 未解决；这些限制不会被正向 secondary signal 消除。

@@ -1,0 +1,50 @@
+{
+  "error": "",
+  "model": "google/gemini-2.5-flash",
+  "module": "EndpointMigrationClinical_reviewer_a",
+  "payload_sha256": "ee0c690cdb93743c74027d5eb5a0d0ebcde9ee4f3b637c27067ee4cb5511793a",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "The clinical record shows low white blood cell count, hemoglobin, and platelet count, which collectively indicate pancytopenia. However, this is a laboratory manifestation, not the underlying diagnosis of the patient's condition.",
+        "relation": "manifestation_or_related",
+        "scope_detail": "Pancytopenia is a laboratory finding, not the primary diagnosis."
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "The reference diagnosis specifies 'NK/T-cell lymphoma', while this candidate specifies 'B-cell lymphoma'. The pathology findings mention 'intravascular atypical cells' but do not specify B-cell lineage, and the reference diagnosis points to NK/T-cell. Without further evidence for B-cell, this is conflicting.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Conflicting cell lineage (B-cell vs NK/T-cell)."
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "This candidate correctly identifies 'Natural killer/T-cell lymphoma', which is the core cell type and malignancy. However, it omits the crucial 'Intravascular' localization and the 'nasal type' subtype specified in the reference diagnosis, making it less specific.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Missing 'Intravascular' and 'nasal type' components."
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "This candidate correctly identifies 'Intravascular lymphoma', which is a key feature of the reference diagnosis. However, it lacks the specific 'NK/T-cell' lineage and 'nasal type' subtype, making it a broader, less specific diagnosis.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Missing specific cell lineage (NK/T-cell) and subtype (nasal type)."
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "The reference diagnosis is 'Intravascular NK/T-cell lymphoma', and the pathology explicitly mentions 'intravascular atypical cells'. This candidate specifies 'Extravascular Hematopoietic Neoplasm', which directly contradicts the observed intravascular localization.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Conflicting localization (extravascular vs intravascular)."
+      }
+    ],
+    "case_quality_flags": []
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

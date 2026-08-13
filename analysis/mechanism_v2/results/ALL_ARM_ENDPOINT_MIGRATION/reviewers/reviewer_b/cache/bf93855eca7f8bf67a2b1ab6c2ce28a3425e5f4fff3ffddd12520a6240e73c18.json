@@ -1,0 +1,75 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "1dc5ec35dd2c467a87d5e385bd6b3e89b7af79634eeec63141093583ca7b5afd",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "CT showed no signs of intestinal perforation. Phlegmonous enteritis is a diffuse bacterial infection of the intestinal wall layers without perforation. This candidate asserts a finding directly contradicted by imaging.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Asserts perforation, which CT explicitly excluded; does not capture phlegmonous enteritis"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "Same issue as C001 plus peritonitis component. CT explicitly excluded perforation. The histology and clinical picture fit phlegmonous enteritis, not perforated colon.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Asserts perforation with peritonitis; perforation excluded by CT; phlegmonous enteritis is the specific entity"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "While ESD is the precipitating procedure, perforation was ruled out by CT. The diagnosis is phlegmonous enteritis as a post-ESD complication, not perforation.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Asserts ESD-related perforation; perforation excluded by CT"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "Post-procedure peritonitis is a broader/related term. Phlegmonous enteritis specifically denotes bacterial infection with suppurative infiltration of all intestinal wall layers, which is more precise than peritonitis alone.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures post-procedural peritoneal inflammation but lacks the specific phlegmonous enteritis diagnosis"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "Post-procedural infectious complication is a parent category that encompasses phlegmonous enteritis but does not specify the entity. Missing the defining histological and anatomical specificity.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Very broad category; lacks specificity of phlegmonous enteritis"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "high",
+        "reason": "Similar to C005 but with an added parenthetical that includes perforation, which was excluded. Does not name phlegmonous enteritis as the specific diagnosis.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Broad category with parenthetical that includes perforation (excluded) alongside infection; still lacks phlegmonous enteritis specificity"
+      },
+      {
+        "candidate_id": "C007",
+        "confidence": "medium",
+        "reason": "Typhlitis (neutropenic enterocolitis) occurs in severely neutropenic patients (typically chemotherapy-related). This patient has leukocytopenia from Hashimoto's/thrombocytopenia context but the presentation is post-ESD with E. coli infection and histology consistent with phlegmonous enteritis, not typhlitis.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Typhlitis involves cecum/right colon in neutropenic patients; different etiology and context"
+      },
+      {
+        "candidate_id": "C008",
+        "confidence": "high",
+        "reason": "No diverticula are mentioned in the clinical record or imaging. The etiology is post-ESD bacterial infection of the ascending colon wall, not diverticular disease.",
+        "relation": "not_equivalent",
+        "scope_detail": "Diverticulitis requires diverticula; no mention of diverticula in this case"
+      }
+    ],
+    "case_quality_flags": [
+      "Reference diagnosis 'phlegmonous enteritis' is well-supported by histology (suppurative full-thickness intestinal wall infiltration, bacterial colonies in submucosa), E. coli ascites culture, and post-ESD context",
+      "CT explicitly excluded perforation, making perforation-based candidates conflicting",
+      "Leukocytopenia baseline may have contributed to diagnostic consideration of typhlitis but histology and context favor phlegmonous enteritis"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

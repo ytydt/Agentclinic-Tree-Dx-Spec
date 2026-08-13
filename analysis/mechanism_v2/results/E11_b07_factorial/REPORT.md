@@ -224,3 +224,16 @@ clinical Top-1 relevant-vs-off 的 10 个 loss 中，2 个是 DeepInfra→DeepIn
 9. provider、payload hash、候选删除和 decisive evidence 全部进入病例级 provenance；provider 分布不均时只作敏感性限制，不从结果倒推 provider 优劣。
 
 E11 是开发集机制实验，不是新确认集。它足以否定“query-top 就等于 relevant evidence”和“再 refine 一次可自动兜底”这两个实现假设；它没有否定经 typed need、临床相关性 gate、实体安全聚合和对比排序约束后的 RAG。后续 RCR-3 应把 E11 暴露的诊断粒度损失与少见候选删除设为显式可证伪失败条件：在冻结 draft、selector 与候选 ID 的重放中，typed-relevant bundle 必须提高 case-specific/decisive relation 命中且不降低 complete exposure；coverage-guard refine 必须在不增加 manifestation-over-etiology harm 的情况下减少 rare Top-2 deletion。若任一条件不满足，就不能把改善归因于 RAG/refine 机制。
+
+## Canonical Top-1 migration addendum (2026-08-13)
+
+The exhaustive blinded three-reviewer model-panel replay (not human root)
+withdraws any complete-object benefit: all seven primary clinical-complete
+contrasts have Holm `q=1`. Relevant retrieval without refine is −1.25 pp versus
+off (2 gain/7 loss; unadjusted `p=.17969`) and has exactly 0 pp C∪P (16/16,
+`q=1`). Refine does improve secondary C∪P when retrieval is off (+4.25 pp,
+19/2, `q=.00155`) and with hard-negative context (+3.50 pp, 17/3,
+`q=.01546`), without a complete gain. Thus refine can broaden compatible
+coverage under particular contexts, but neither query-top retrieval nor refine
+is shown to improve complete diagnoses. The old proxy direction is now a
+historical sensitivity rather than the primary endpoint.

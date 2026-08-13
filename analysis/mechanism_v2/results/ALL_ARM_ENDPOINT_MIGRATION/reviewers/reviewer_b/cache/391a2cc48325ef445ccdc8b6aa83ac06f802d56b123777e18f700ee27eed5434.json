@@ -1,0 +1,42 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "e18c4cf5f656da13fa854824f83e52c6c2efa863e9eaab3c7245846fd18ff449",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "label": "Dropped head syndrome",
+        "reason": "The reference diagnosis is a two-part composite: Dropped Head Syndrome as the clinical syndrome AND Isolated Neck Extensor Myopathy as the specific etiology. C001 captures the syndrome component but does not specify INEM, leaving the etiology unresolved.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Names the syndrome but omits the specific etiology (Isolated Neck Extensor Myopathy / INEM) required by the benchmark composite"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "label": "Camptocormia",
+        "reason": "The clinical record describes head and neck flexion deformity (cervical spine), not trunk flexion. Camptocormia involves the thoracolumbar spine and is a differential/related condition rather than the diagnosis in this case.",
+        "relation": "manifestation_or_related",
+        "scope_detail": "Camptocormia is an axial flexion deformity of the trunk, not the neck/head; it is a related but anatomically distinct entity sometimes co-occurring with DHS"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "label": "Cervical Spondylosis",
+        "reason": "The benchmark diagnosis is a myopathic etiology (INEM) causing DHS. Cervical spondylosis implies degenerative bony/disc pathology as the primary diagnosis, which conflicts with the neuromuscular/myopathic etiology specified in the reference.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Cervical spondylosis is a degenerative disc/joint disease, not a myopathy causing dropped head; the mechanism and diagnostic category are incompatible"
+      }
+    ],
+    "case_quality_flags": [
+      "Benchmark requires both syndrome label and specific etiology (INEM); no EMG, muscle biopsy, or MRI muscle findings documented in the record to confirm INEM definitively",
+      "Dementia in history raises possibility of other neurodegenerative causes of DHS not fully excluded"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

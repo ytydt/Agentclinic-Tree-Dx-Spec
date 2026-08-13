@@ -1,0 +1,60 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "e0c05c8403e4a0523c96d67d7f30e97cfbf04637cd5f798b128a762ed87631d1",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "The reference diagnosis is 'Sarcoidosis' (systemic). C001 specifies cardiac sarcoidosis, which is a component/manifestation of systemic sarcoidosis. The CT findings of mediastinal and bilateral hilar lymphadenopathy strongly suggest systemic sarcoidosis beyond just cardiac involvement, so C001 is narrower than the reference.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Specifies cardiac involvement of sarcoidosis, which is compatible and more specific than the reference 'Sarcoidosis', but the reference benchmark is the systemic disease label"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "ARVC does not account for the mediastinal and hilar lymphadenopathy, the AV conduction disease pattern, or the mid-myocardial basal anteroseptal LGE characteristic of sarcoidosis.",
+        "relation": "not_equivalent",
+        "scope_detail": "ARVC is a distinct cardiomyopathy primarily affecting the RV with fatty/fibrous replacement; does not explain mediastinal lymphadenopathy or mid-myocardial LGE pattern"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "Giant cell myocarditis can cause AV block and ventricular dysfunction but does not explain mediastinal/hilar lymphadenopathy, and the overall clinical picture (remote Lyme history, lymphadenopathy, mid-myocardial LGE) is more consistent with sarcoidosis.",
+        "relation": "not_equivalent",
+        "scope_detail": "Giant cell myocarditis is a distinct inflammatory cardiomyopathy without lymphadenopathy and with different histopathology"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "DCM is a non-specific label that does not capture the sarcoid etiology, mediastinal lymphadenopathy, or the characteristic mid-myocardial LGE pattern pointing to sarcoidosis.",
+        "relation": "not_equivalent",
+        "scope_detail": "Dilated cardiomyopathy is a phenotypic description, not the underlying etiology; does not account for lymphadenopathy or conduction disease pattern"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "Like C001, this specifies cardiac sarcoidosis with additional clinical features but remains narrower than the reference 'Sarcoidosis' which encompasses the systemic disease evidenced by mediastinal and hilar lymphadenopathy.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Adds clinical detail (AV block, biventricular dysfunction) but still specifies only cardiac sarcoidosis, missing the systemic disease scope indicated by lymphadenopathy"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "medium",
+        "reason": "By explicitly including mediastinal lymphadenopathy alongside cardiac manifestations, C006 captures both the systemic (lymphadenopathy on CT) and cardiac dimensions of sarcoidosis, making it functionally equivalent to the reference diagnosis of 'Sarcoidosis' in this clinical context.",
+        "relation": "complete_equivalent",
+        "scope_detail": "Specifies cardiac sarcoidosis with key clinical features AND mediastinal lymphadenopathy, effectively capturing systemic sarcoidosis with cardiac involvement"
+      }
+    ],
+    "case_quality_flags": [
+      "Reference diagnosis 'Sarcoidosis' is the systemic label; most candidates specify cardiac sarcoidosis, creating a parent-child ambiguity in equivalence assessment",
+      "C006 is the most complete candidate but technically still labeled 'cardiac sarcoidosis'; equivalence to systemic 'Sarcoidosis' is inferred from inclusion of mediastinal lymphadenopathy"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

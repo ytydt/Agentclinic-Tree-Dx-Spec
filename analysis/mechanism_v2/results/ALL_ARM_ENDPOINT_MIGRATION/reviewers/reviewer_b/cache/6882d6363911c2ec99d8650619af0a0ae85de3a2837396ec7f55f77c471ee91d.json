@@ -1,0 +1,67 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "f84c21ee5700b3cb56fc48c57977b1489477167a33dcfa218b0ae548589a14aa",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "The reference asks for 'Dengue myocarditis' as the most likely diagnosis. C001 includes myocarditis but frames it within a composite severe dengue diagnosis with pulmonary edema, adding scope not present in the benchmark reference.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Contains dengue myocarditis as a component but adds 'severe dengue' parent framing and 'pulmonary edema' as an additional complication, broadening scope beyond the single requested diagnosis"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "The elevated troponin and pro-BNP with ECG changes point to myocarditis as the key diagnosis. C002 attributes findings to plasma leakage, which conflicts with the myocarditis etiology central to the reference.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Attributes the cardiac/pulmonary findings to plasma leakage rather than myocarditis, substituting a different pathophysiological mechanism"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "Pulmonary edema is a downstream consequence of the myocarditis in this case; it does not capture the primary diagnosis of dengue myocarditis.",
+        "relation": "manifestation_or_related",
+        "scope_detail": "Pulmonary edema is a manifestation/complication of dengue myocarditis, not the primary diagnostic entity"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "ARDS is a distinct entity from dengue myocarditis. The elevated troponin, pro-BNP, ECG changes, and dengue PCR positivity support myocarditis rather than ARDS.",
+        "relation": "not_equivalent",
+        "scope_detail": "ARDS is a different clinical syndrome; the imaging and clinical picture here is more consistent with cardiogenic pulmonary edema from myocarditis"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "medium",
+        "reason": "The reference is specifically 'Dengue myocarditis' without the 'severe dengue' qualifier. C005 is closely aligned but adds the broader severe dengue framing, making it a partial parent rather than a complete equivalent.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Includes myocarditis within a 'severe dengue' composite label, adding the parent category not present in the benchmark reference"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "high",
+        "reason": "The reference diagnosis is dengue myocarditis. C006 focuses on pulmonary edema as the defining complication, missing the myocarditis component that is central to the benchmark.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Attributes the primary diagnosis to pulmonary edema within severe dengue, omitting myocarditis as the key mechanism"
+      },
+      {
+        "candidate_id": "C007",
+        "confidence": "high",
+        "reason": "Dengue fever is the broader parent diagnosis. The reference specifically identifies myocarditis as the key complication, which C007 does not capture.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Dengue fever is the parent category; lacks the specific myocarditis complication"
+      }
+    ],
+    "case_quality_flags": [
+      "Reference diagnosis 'Dengue myocarditis' is a specific complication-level diagnosis; several candidates conflate it with broader severe dengue composite labels",
+      "Troponin elevation, pro-BNP elevation, and ECG changes strongly support myocarditis as the primary diagnosis over plasma leakage or ARDS"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

@@ -1,0 +1,74 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "58835cd35065425c74cb0b2dad5cde77347422177cb8b600fea6000eeebed6f1",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "弧菌属败血症 translates to 'Vibrio genus septicemia,' which captures the septicemia component but lacks species-level identification (vulnificus) and omits the HBV-associated cirrhosis component of the reference diagnosis.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Vibrio genus-level septicemia without species specification and without HBV-associated cirrhosis component"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "Specifies Vibrio vulnificus, septicemia, and cirrhosis as the underlying condition. The HBV etiology of cirrhosis is implied by the clinical context (chronic HBV >30 years). This is functionally equivalent to the reference diagnosis.",
+        "relation": "complete_equivalent",
+        "scope_detail": "Vibrio vulnificus bacteremia/septicemia with cirrhosis as underlying condition; cirrhosis etiology not explicitly stated as HBV but context is consistent"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "Vibrio parahaemolyticus is a different species from Vibrio vulnificus; the reference specifies V. vulnificus. This is an incompatible species-level subtype.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Asserts Vibrio parahaemolyticus rather than Vibrio vulnificus"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "Ascites cell count of 200/μL is borderline for SBP, but the primary diagnosis is Vibrio vulnificus septicemia. SBP would be a complication or associated finding rather than the final diagnostic object.",
+        "relation": "manifestation_or_related",
+        "scope_detail": "SBP is a complication/manifestation in cirrhosis with ascites, not the primary septicemia diagnosis"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "Correctly identifies Vibrio vulnificus septicemia but omits the underlying HBV-associated cirrhosis, which is a required component of the composite reference diagnosis.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Vibrio vulnificus septicemia identified but HBV-associated cirrhosis component missing"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "high",
+        "reason": "Reframes the diagnosis as vertebral osteomyelitis rather than septicemia, and attributes it to V. parahaemolyticus rather than V. vulnificus. Both the anatomical focus and species are incompatible with the reference.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Asserts vertebral osteomyelitis/spondylitis as primary diagnosis with Vibrio parahaemolyticus etiology"
+      },
+      {
+        "candidate_id": "C007",
+        "confidence": "high",
+        "reason": "Same reasoning as C004; SBP is a related complication rather than the primary diagnostic entity of Vibrio vulnificus septicemia with HBV cirrhosis.",
+        "relation": "manifestation_or_related",
+        "scope_detail": "SBP is a potential complication in this cirrhotic patient, not the primary septicemia diagnosis"
+      },
+      {
+        "candidate_id": "C008",
+        "confidence": "high",
+        "reason": "Genus-level Vibrio bacteremia lacks species specificity (vulnificus) and omits the HBV-associated cirrhosis component required by the reference diagnosis.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Vibrio species bacteremia without species-level identification and without HBV-associated cirrhosis component"
+      }
+    ],
+    "case_quality_flags": [
+      "Ascites cell count of 200/μL is borderline for SBP diagnosis (threshold typically ≥250 PMN/μL); differential not fully resolved in record",
+      "TCBS green colonies are more consistent with V. parahaemolyticus morphology, but 16S rRNA confirmation and clinical context (cirrhosis, severe septicemia) favor V. vulnificus; species confirmation noted in record"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

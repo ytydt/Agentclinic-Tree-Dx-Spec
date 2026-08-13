@@ -1,0 +1,95 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "579b8f1a2f6b98363fd53f6b19e9bf5a36853b223af0357afb918910ddba41ac",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "The patient had bradycardia (pulse in 20s, HR 49) but this is a manifestation/complication of sepsis rather than the overarching diagnosis. Missing septic shock and renal failure components.",
+        "relation": "manifestation_or_related",
+        "scope_detail": "Bradycardia is a finding/manifestation present in this case but is not the final diagnosis of septic shock with anuric kidney failure"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "Severe sepsis or septic shock matches the primary diagnosis component (hypotension, infection source, altered mental status) but does not include the anuric kidney failure required by the benchmark reference.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures septic shock component but omits anuric kidney failure"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "The patient had a very low but present pulse rate and was not in cardiac arrest. This is a different diagnostic entity from septic shock with renal failure.",
+        "relation": "not_equivalent",
+        "scope_detail": "Cardiac arrest is a different clinical entity; patient had a pulse and was not in arrest"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "Symptomatic bradycardia is a manifestation of the underlying septic process, not the overarching diagnosis. Missing septic shock and renal failure.",
+        "relation": "manifestation_or_related",
+        "scope_detail": "Severe symptomatic bradycardia is a finding present in this case but not the final diagnosis"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "The benchmark diagnosis is septic shock (infectious etiology) with renal failure. Framing this as a cardiac cause with systemic effects inverts the causal direction and is incompatible.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Asserts a cardiac primary etiology which conflicts with the septic etiology of the benchmark"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "high",
+        "reason": "No ECG or imaging evidence of MI is described; the diagnosis is septic shock with renal failure, not MI.",
+        "relation": "not_equivalent",
+        "scope_detail": "Myocardial infarction is a different diagnostic entity not supported by the clinical record"
+      },
+      {
+        "candidate_id": "C007",
+        "confidence": "high",
+        "reason": "Chest radiography showed pulmonary consolidation suggesting pneumonia as the infectious source, but this is only the etiology component. Missing septic shock state and anuric kidney failure.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Pulmonary infection is likely the source of sepsis but is only a component/etiology, not the full diagnosis"
+      },
+      {
+        "candidate_id": "C008",
+        "confidence": "high",
+        "reason": "Sepsis is present but the benchmark requires septic shock (with hemodynamic compromise) and anuric kidney failure as additional required components.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Infection/sepsis captures the infectious component but lacks shock state and anuric kidney failure"
+      },
+      {
+        "candidate_id": "C009",
+        "confidence": "high",
+        "reason": "Captures severity and infectious etiology but does not specify the shock state or the anuric kidney failure required by the benchmark.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Severe infection or sepsis is close but missing shock specification and anuric kidney failure"
+      },
+      {
+        "candidate_id": "C010",
+        "confidence": "high",
+        "reason": "Severe sepsis is a related but less specific diagnosis than septic shock; also missing the anuric kidney failure component of the benchmark.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Severe sepsis is one step below septic shock and omits anuric kidney failure"
+      },
+      {
+        "candidate_id": "C011",
+        "confidence": "high",
+        "reason": "The ECG findings show junctional bradyarrhythmia as a manifestation of the septic process, not the overarching diagnosis of septic shock with renal failure.",
+        "relation": "manifestation_or_related",
+        "scope_detail": "Bradyarrhythmia is a cardiac finding/manifestation, not the final diagnosis"
+      }
+    ],
+    "case_quality_flags": [
+      "No candidate achieves complete equivalence; all miss the anuric kidney failure component of the benchmark reference",
+      "Benchmark reference includes anuric kidney failure but clinical record does not explicitly document renal function tests or urine output, making this component partially unsupported by the supplied record"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

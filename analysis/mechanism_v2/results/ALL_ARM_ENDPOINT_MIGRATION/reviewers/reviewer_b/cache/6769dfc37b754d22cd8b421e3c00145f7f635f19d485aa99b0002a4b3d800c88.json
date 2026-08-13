@@ -1,0 +1,53 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "68885b4c400262156dbaf0db46fff9f1205627c77cb5e9bd46554f369e7b6869",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "medium",
+        "reason": "HIT with thrombosis could be an underlying mechanism, but the reference diagnosis focuses specifically on skin necrosis induced by LMWH at a distance from the injection site. Platelet count is normal (173×10⁹/L), making classic HIT with thrombocytopenia less supported, though antiplatelet IgG antibodies are positive. The candidate captures a related but broader/different framing.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "HIT with thrombosis is a systemic thrombotic complication; the reference specifies skin necrosis at a distance from injection site as the primary diagnostic object"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "medium",
+        "reason": "Identical reasoning to C001; normal platelet count argues against classic HIT with thrombocytopenia, and the reference specifically names skin necrosis distant from injection site rather than systemic thrombosis.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Same as C001 — systemic HIT with thrombosis framing without specifying skin necrosis at distance from injection"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "The clinical record explicitly notes no lesion at the subcutaneous abdominal injection site, with necrotic pretibial/calf lesions in the right lower limb — consistent with heparin-induced skin necrosis at a distance. Positive antiplatelet IgG antibodies support heparin-mediated immune mechanism. This label captures the essential diagnostic entity.",
+        "relation": "complete_equivalent",
+        "scope_detail": "Heparin-induced skin necrosis matches the reference's core diagnostic object; the 'at a distance from injection site' qualifier is implicit given no injection-site lesion is described"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "Calciphylaxis typically occurs in patients with renal failure/hyperparathyroidism with calcium-phosphate deposition. While the patient has mild CKD (GFR 45.8), the temporal association with heparin administration, positive antiplatelet antibodies, and absence of metabolic derangements typical of calciphylaxis make this a different and less supported diagnosis.",
+        "relation": "not_equivalent",
+        "scope_detail": "Misspelling of calciphylaxis; calciphylaxis is a different entity involving calcium deposition in vessel walls"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "Same reasoning as C004; calciphylaxis does not account for the heparin exposure, positive antiplatelet IgG antibodies, and the specific clinical pattern of necrosis distant from injection site.",
+        "relation": "not_equivalent",
+        "scope_detail": "Calciphylaxis is a distinct vascular calcification disorder not supported as the primary diagnosis here"
+      }
+    ],
+    "case_quality_flags": [
+      "Normal platelet count (173×10⁹/L) makes classic HIT with thrombocytopenia less likely, supporting the skin necrosis at distance variant",
+      "C004 appears to be a misspelling of calciphylaxis (C005)"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

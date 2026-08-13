@@ -1,0 +1,39 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "d8c53714dbbd5ee2904b28d0848ed58b52cd7733a618c1c8fbcdb1181295c19f",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "The reference diagnosis is External Cervical Resorption. Asymptomatic Irreversible Pulpitis is a co-diagnosis listed in the record but does not capture the primary requested entity (ECR), making this only a partial component of the full composite.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Names only the pulpal diagnosis; omits the apical status qualifier and the external cervical resorption component entirely"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "medium",
+        "reason": "The reference diagnosis is specifically 'External Cervical Resorption' as the most likely diagnosis. C002 contains ECR but embeds it within a broader composite label where the pulpal diagnosis leads. While ECR is present, the framing does not isolate ECR as the primary diagnostic object requested.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Includes External Cervical Resorption as a component but frames the composite with Asymptomatic Irreversible Pulpitis as the primary label rather than ECR as the standalone reference diagnosis"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "Completely missing the ECR component, which is the reference diagnosis. Only captures the pulpal/apical portion of the composite clinical diagnosis.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Names pulpal and apical status but omits External Cervical Resorption entirely"
+      }
+    ],
+    "case_quality_flags": [
+      "Reference diagnosis 'External Cervical Resorption' is a single-entity answer while the clinical record states a composite diagnosis including Asymptomatic Irreversible Pulpitis; no candidate isolates ECR alone, creating an inherent mismatch between the reference and all candidates",
+      "C002 is the closest match to the full clinical diagnosis documented in the record but still does not match the standalone reference label"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

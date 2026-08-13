@@ -30,7 +30,12 @@ class EndpointCoverageAuditTest(unittest.TestCase):
             payload["arm_coverage_summary"],
             {
                 "full_blinded_root_census_arm_count": 9,
-                "metric_migration_gap_arm_count": 79,
+                "full_blinded_model_panel_census_arm_count": (
+                    79 if payload["migration_contract"] is not None else 0
+                ),
+                "metric_migration_gap_arm_count": (
+                    0 if payload["migration_contract"] is not None else 79
+                ),
                 "structural_not_applicable_arm_count": 3,
             },
         )
@@ -147,7 +152,12 @@ class EndpointCoverageAuditTest(unittest.TestCase):
             },
             {audit.NOT_APPLICABLE},
         )
-        self.assertEqual(by_id["E10"]["clinical_complete_status"], audit.E10_MISLABEL)
+        self.assertEqual(
+            by_id["E10"]["clinical_complete_status"],
+            audit.FULL_BLINDED_PANEL
+            if audit.build_payload()["migration_contract"] is not None
+            else audit.E10_MISLABEL,
+        )
         self.assertEqual(by_id["E10"]["leaderboard_ingestion"], "prohibited")
 
     def test_proxy_and_targeted_audits_cannot_be_promoted(self) -> None:
@@ -158,6 +168,7 @@ class EndpointCoverageAuditTest(unittest.TestCase):
                 audit.PROXY_ROOT_PRIORITY,
                 audit.TARGETED_ONLY,
                 audit.E10_MISLABEL,
+                audit.FULL_BLINDED_PANEL,
             }:
                 self.assertFalse(record["full_root_census"])
                 self.assertNotEqual(

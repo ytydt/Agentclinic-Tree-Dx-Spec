@@ -53,13 +53,19 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
         "grade": "A+D",
         "finding": (
             "Visible answer options enter candidate generation, supply benchmark surfaces, "
-            "and collapse search; clinical-block organization materially moderates the effect."
+            "and collapse search; the migrated model-panel endpoint confirms very large apparent "
+            "complete/C∪P gains that must be interpreted as contamination, while clinical-block "
+            "organization materially moderates the effect."
         ),
         "effect": {
             "hierarchical_fixed_options_minus_clean_safe_exact_top1_pp": 41.0,
             "flat_fixed_options_minus_clean_safe_exact_top1_pp": 40.2,
             "hierarchical_clean_reorder_champion_flips": "133/180",
             "flat_clean_reorder_champion_flips": "165/199",
+            "model_panel_hierarchical_fixed_options_minus_clean_clinical_complete_pp": 42.0,
+            "model_panel_flat_fixed_options_minus_clean_clinical_complete_pp": 39.0,
+            "model_panel_hierarchical_option_shuffle_clinical_complete_pp": -11.0,
+            "model_panel_hierarchical_option_shuffle_clinical_complete_holm_q": 0.01824613098563288,
         },
         "causal_scope": "input-sensitive one-call stages, not the full legacy APHHM runtime",
         "refutes": ["answer options are a harmless display layer", "equal aggregate scores imply equal trajectories"],
@@ -115,8 +121,9 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
         "population": {"cases": 400, "safe_exact_exposed": 62},
         "grade": "A+D",
         "finding": (
-            "Forest-style evidence integration converts an exposed fixed pool better than the e7 contrast selector, "
-            "but exposure is the dominant bottleneck and exhaustive pairwise tournament adds cost without a demonstrated gain."
+            "Forest-style evidence integration and pairwise comparison both outperform the weak evidence-count control "
+            "on migrated model-panel clinical endpoints, but Forest no longer has a multiplicity-confirmed complete "
+            "advantage over e7 and pairwise remains indistinguishable from Forest."
         ),
         "effect": {
             "forest_safe_exact_top1": "41/400",
@@ -124,6 +131,10 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
             "forest_minus_e7_safe_exact_pp": 2.0,
             "discordance_gain_harm": "9/1",
             "mcnemar_p": 0.021484375,
+            "model_panel_forest_minus_evidence_count_clinical_complete_pp": 9.5,
+            "model_panel_forest_minus_evidence_count_clinical_complete_holm_q": 1.2459019476107613e-06,
+            "model_panel_forest_minus_e7_clinical_complete_holm_q": 0.2314453125,
+            "model_panel_pairwise_minus_forest_clinical_complete_pp": 0.0,
         },
         "causal_scope": "selector behavior on one frozen candidate/evidence state, chiefly exposed MCR cases",
         "refutes": ["generation alone explains all method differences", "evidence count or exhaustive tournament is sufficient"],
@@ -137,8 +148,9 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
         "population": {"cases": 200, "common_complete": 162},
         "grade": "A+D",
         "finding": (
-            "Candidate independence is false: plausible siblings and wider pools harm both by direct alternative capture "
-            "and by reordering unchanged candidates; DA and MCR express different interference mechanisms."
+            "Candidate independence is false: every addition arm reduces migrated model-panel complete and C∪P versus "
+            "base4, plausible siblings and wider pools harm by direct capture and reordering, and width8 is also worse "
+            "than width6 for complete."
         ),
         "effect": {
             "sibling_safe_exact_delta_pp": -10.91,
@@ -146,6 +158,10 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
             "width8_safe_exact_delta_pp": -16.46,
             "width8_holm_p": 0.000114,
             "width6_to_width8_safe_exact_delta_pp": -7.93,
+            "model_panel_width8_minus_base4_clinical_complete_pp": -29.5,
+            "model_panel_width8_minus_base4_clinical_complete_holm_q": 3.2953847983741014e-13,
+            "model_panel_width8_minus_width6_clinical_complete_pp": -6.0,
+            "model_panel_width8_minus_width6_clinical_complete_holm_q": 0.022655844688415527,
         },
         "causal_scope": "gold-exposed constructed pools; typed-label construction errors limit relation-specific subarms",
         "refutes": ["more candidates are monotonically safer", "removing a loser cannot change the winner among survivors"],
@@ -160,14 +176,18 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
         "grade": "A+D",
         "finding": (
             "The tested generated graph is a lossy and error-adding representation: relations are new clinical claims, "
-            "not formatting, and its arm-blind external-screen/root-corrected semantic proxy sensitivity is materially "
-            "worse than raw text. This is not a full-root clinical-capability endpoint."
+            "not formatting, and the exhaustive model-panel replay now shows both flat facts and graph below raw text "
+            "for complete and C∪P. This is still not a human-root clinical-capability endpoint."
         ),
         "effect": {
             "graph_minus_raw_proxy_complete_equivalent_sensitivity_pp": -7.63,
             "discordance_raw_only_graph_only": "24/5",
             "mcnemar_p": 0.00055,
             "graphs_with_relation_error": "25/30",
+            "model_panel_graph_minus_raw_clinical_complete_pp": -10.333333333333334,
+            "model_panel_graph_minus_raw_clinical_complete_holm_q": 0.00014131312828186138,
+            "model_panel_flat_minus_raw_clinical_complete_pp": -8.333333333333332,
+            "model_panel_flat_minus_raw_clinical_complete_holm_q": 0.007089625694042105,
         },
         "causal_scope": "the tested generative graph constructor and selector, not all structured representations",
         "refutes": ["typed graph generation is lossless", "explicit time/scope fields are reliable merely because present"],
@@ -182,13 +202,17 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
         "grade": "A+D",
         "finding": (
             "Whitespace-matched sentinel padding inflated prompt tokens catastrophically but did not explain the semantic quality effect; "
-            "tiny nonclinical input changes can still send the generator to different trajectories."
+            "the migrated model-panel replay also finds no complete or C∪P improvement from removing it, while tiny "
+            "nonclinical input changes can still send the generator to different trajectories."
         ),
         "effect": {
             "mean_input_token_reduction_pct": 64.9,
             "proxy_complete_equivalent_sensitivity_delta_pp": 1.57,
             "proxy_complete_equivalent_sensitivity_mcnemar_p": 0.481,
             "champion_flip_pct": 95.29,
+            "model_panel_unpadded_minus_padded_clinical_complete_pp": 1.3333333333333333,
+            "model_panel_unpadded_minus_padded_clinical_complete_holm_q": 0.5715880393981934,
+            "model_panel_unpadded_minus_padded_complete_or_partial_pp": -0.6666666666666666,
         },
         "causal_scope": "tokenization and one representation perturbation; provider/time effects remain a runtime limitation",
         "refutes": ["whitespace word matching equalizes model input", "padding alone explains flat-fact quality"],
@@ -222,8 +246,9 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
         "population": {"cases": 400, "unsafe_fold_cases": 299},
         "grade": "A+D",
         "finding": (
-            "Exact identity is a safety/addressability invariant and restores reference exposure, but it is not a stand-alone top-1 cure; "
-            "generic non-equivalence prose changes champions without useful direction."
+            "Exact identity is a safety/addressability invariant and restores reference exposure; the migrated model-panel "
+            "endpoint additionally shows a complete gain with no C∪P gain, consistent with specificity repair rather than "
+            "new family coverage. Generic/typed prose still adds no confirmed benefit."
         ),
         "effect": {
             "contaminated_selected_concepts_legacy_exact": "160/0",
@@ -231,6 +256,9 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
             "exposure_mcnemar_p": 0.00635,
             "safe_exact_top1_gain_loss": "8/5",
             "safe_exact_mcnemar_p": 0.58105,
+            "model_panel_exact_minus_legacy_clinical_complete_pp": 3.25,
+            "model_panel_exact_minus_legacy_clinical_complete_holm_q": 0.00885009765625,
+            "model_panel_exact_minus_legacy_complete_or_partial_pp": -0.25,
         },
         "causal_scope": "unsafe-fold development cases under a fixed-width selector payload",
         "refutes": ["safe identity repair alone fixes ranking", "undirected non-equivalence text supplies task projection"],
@@ -244,13 +272,16 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
         "population": {"cases": 299, "complete_relation_typing": 290},
         "grade": "A+D",
         "finding": (
-            "The realised directional graph is too inconsistent for deployment; relation wording and even irrelevant graph context act as salience perturbations."
+            "The realised directional graph is too inconsistent for deployment; relation wording and even irrelevant graph "
+            "context act as salience perturbations, and the migrated model-panel endpoints show no confirmed clinical gain."
         ),
         "effect": {
             "directional_minus_exact_safe_exact_pp": -0.67,
             "bounded_minus_directional_safe_exact_pp": 0.0,
             "internal_direction_agreement_pct": 64.82,
             "repeat_pair_consistency_pct": 80.58,
+            "model_panel_directional_minus_exact_clinical_complete_pp": -0.33444816053511706,
+            "model_panel_directional_minus_exact_clinical_complete_holm_q": 1.0,
         },
         "causal_scope": "the implemented LLM relation typer, not an oracle typed ontology",
         "refutes": ["free-form directional annotation is ready for evidence inheritance"],
@@ -265,7 +296,8 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
         "grade": "A+D",
         "finding": (
             "Atemporal absolute veto is clinically unsafe; softening it removes invalid reference vetoes but does not by itself identify a superior ranker, "
-            "and time/order perturbations reveal large near-zero-net trajectory instability."
+            "and migrated model-panel complete/C∪P contrasts do not confirm soft over hard. The invalid-time arm is operationally "
+            "worse in ITA because of failures, which cannot be isolated as correct temporal reasoning."
         ),
         "effect": {
             "hard_reference_vetoes": 9,
@@ -274,6 +306,10 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
             "soft_minus_hard_mcnemar_p": 0.453,
             "legal_order_flip_pct": 24.6,
             "invalid_time_flip_pct": 23.2,
+            "model_panel_soft_minus_hard_clinical_complete_pp": 1.8181818181818181,
+            "model_panel_soft_minus_hard_clinical_complete_holm_q": 0.775390625,
+            "model_panel_invalid_minus_soft_clinical_complete_pp": -4.545454545454546,
+            "model_panel_invalid_minus_soft_clinical_complete_holm_q": 0.038818359375,
         },
         "causal_scope": "fixed pools with a generated negative ledger; builder errors are part of the treatment risk",
         "refutes": ["missing a typical finding safely excludes a diagnosis", "time fields guarantee correct temporal reasoning"],
@@ -287,9 +323,9 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
         "population": {"cases": 400, "root_audit_cases": 70},
         "grade": "A+D",
         "finding": (
-            "Forest views are correlated but retain a small safe-exact coverage increment; a targeted 70-case root queue "
-            "supports mechanism attribution only, not an arm-level clinical rate. Their benefit is not independent voting, "
-            "and duplicate/role perturbations expose selector path dependence."
+            "Forest views are correlated but retain a small complete gain in the exhaustive model-panel replay; the targeted "
+            "70-case root queue remains mechanism-only. Their benefit is not independent voting, and duplicate/role "
+            "perturbations expose selector path dependence."
         ),
         "effect": {
             "real_minus_single_safe_exact_pp": 2.25,
@@ -297,6 +333,10 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
             "safe_exact_real_only_root_reviewed_better_cases": "6/10",
             "targeted_root_review_true_new_capture_to_safe_exact_top1": 3,
             "semantic_cluster_observation_ratio": 0.552,
+            "model_panel_real_minus_single_clinical_complete_pp": 3.25,
+            "model_panel_real_minus_single_clinical_complete_holm_q": 0.013275146484375,
+            "model_panel_real_minus_duplicate_clinical_complete_pp": 3.5,
+            "model_panel_real_minus_duplicate_clinical_complete_holm_q": 0.01030731201171875,
         },
         "causal_scope": "joint effect of extra view content on union plus selection; role/duplicate flips are instability upper bounds",
         "refutes": ["three views are three independent votes", "duplicate evidence should raise confidence"],
@@ -311,8 +351,9 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
         "grade": "A+D",
         "finding": (
             "Sequential history compresses candidate diversity dramatically and improves a frozen binary-acceptable proxy's "
-            "current-sample rank conversion; complete, compatible-partial, their union, and full-root capability are unmeasured. "
-            "The Supervisor is a small proxy rescue when minority opinions exist, not the source of diversity loss."
+            "current-sample rank conversion. The migrated model-panel replay finds no confirmed complete gain, but C∪P improves "
+            "for history under RRF and Supervisor under isolated generation. The Supervisor remains a conditional coverage rescue, "
+            "not the source of diversity loss."
         ),
         "effect": {
             "mean_union_isolated_sequential": "6.82/5.21",
@@ -320,10 +361,15 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
             "rrf_binary_acceptable_proxy_top2_delta_pp": 4.5,
             "supervisor_binary_acceptable_proxy_top2_delta_pp": 3.25,
             "d3_new_concepts_total_sequential": 6,
+            "model_panel_history_rrf_complete_or_partial_pp": 6.0,
+            "model_panel_history_rrf_complete_or_partial_holm_q": 0.0015525236117355234,
+            "model_panel_supervisor_isolated_complete_or_partial_pp": 4.25,
+            "model_panel_supervisor_isolated_complete_or_partial_holm_q": 0.004541158676147461,
+            "model_panel_clinical_complete_holm_survivors": 0,
         },
         "causal_scope": (
-            "homogeneous Llama panel on development cases; unique relation novelty and the three-state clinical endpoint "
-            "contract were not measured"
+            "homogeneous Llama panel on development cases; Top-1 three-state clinical relations are a blinded model-panel "
+            "sensitivity rather than a human-root census, while candidate-registry novelty remains unmigrated"
         ),
         "refutes": ["sequential discussion creates independent expert search", "Supervisor is the primary diversity bottleneck"],
         "report": "analysis/mechanism_v2/results/E10_mac_factorial/REPORT.md",
@@ -337,8 +383,9 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
         "grade": "A+D",
         "finding": (
             "The tested retriever supplies weak topical context rather than case-specific relations; query-top context tends to flatten specificity, "
-            "while generic refine changes many trajectories but has no advantage on the proxy-completed/root-priority "
-            "complete-equivalent sensitivity. This is neither blinded nor a capability endpoint."
+            "while the migrated model-panel replay finds no clinical-complete advantage from retrieval or refine. Refine does "
+            "increase C∪P with retrieval off and under hard-negative context, indicating broad compatible coverage rather than "
+            "complete-object recovery. This is not a human-root capability endpoint."
         ),
         "effect": {
             "relevant_case_specific_chunk_pct": 6.62,
@@ -346,10 +393,16 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
             "relevant_minus_off_holm_q": 0.27,
             "off_refine_proxy_complete_or_compatible_partial_sensitivity_delta_pp": 3.5,
             "off_refine_sensitivity_holm_q": 0.0463,
+            "model_panel_relevant_minus_off_clinical_complete_pp": -1.25,
+            "model_panel_relevant_minus_off_clinical_complete_holm_q": 1.0,
+            "model_panel_refine_off_context_complete_or_partial_pp": 4.25,
+            "model_panel_refine_off_context_complete_or_partial_holm_q": 0.00154876708984375,
+            "model_panel_refine_hard_negative_complete_or_partial_pp": 3.5,
+            "model_panel_refine_hard_negative_complete_or_partial_holm_q": 0.015460968017578125,
         },
         "causal_scope": (
-            "the current lexical bundle contract, not ideal typed RAG; complete+partial is a nonblind, proxy-completed "
-            "secondary sensitivity and cannot support capability ranking"
+            "the current lexical bundle contract, not ideal typed RAG; Top-1 complete/partial is an exhaustive blinded "
+            "model-panel sensitivity and cannot support the human-root capability ranking"
         ),
         "refutes": ["query-top text is clinically relevant evidence", "a generic second-pass refine is a safe fallback"],
         "report": "analysis/mechanism_v2/results/E11_b07_factorial/REPORT.md",
@@ -362,10 +415,9 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
         "population": {"cases": 300, "root_audit_cases": 154},
         "grade": "A+D",
         "finding": (
-            "On frozen candidate pools, an explicit raw-text comparator improves the nonblind root-priority/proxy-completed "
-            "complete-equivalent sensitivity relative to taking the historical first candidate; this is not a full-root ability "
-            "comparison. S1 loses decisive relations, graph does not repair them, width is not monotone, and most apparent "
-            "depth effects are not attributable to new information."
+            "On frozen candidate pools, the migrated model-panel replay withdraws the two old proxy clinical-complete survivors: "
+            "none survives Holm39 for complete. Raw pairwise retains C∪P gains over first at k5/k10 and over S1 at k10. "
+            "Six first arms are structurally identical controls; width and depth remain unconfirmed."
         ),
         "effect": {
             "raw_k5_pairwise_minus_first_proxy_complete_equivalent_sensitivity_pp": 4.67,
@@ -373,6 +425,13 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
             "raw_k10_pairwise_minus_first_proxy_complete_equivalent_sensitivity_pp": 5.0,
             "raw_k10_pairwise_holm_q": 0.02842,
             "safe_exact_exposure_gain_k5_to_k10": 2,
+            "model_panel_factorial39_clinical_complete_holm_survivors": 0,
+            "model_panel_raw_k5_pairwise_minus_first_complete_or_partial_pp": 9.666666666666666,
+            "model_panel_raw_k5_pairwise_minus_first_complete_or_partial_holm_q": 0.0192996720020261,
+            "model_panel_raw_k10_pairwise_minus_first_complete_or_partial_pp": 12.333333333333334,
+            "model_panel_raw_k10_pairwise_minus_first_complete_or_partial_holm_q": 0.00017453376913001406,
+            "model_panel_raw_minus_s1_k10_pairwise_complete_or_partial_pp": 8.666666666666668,
+            "model_panel_raw_minus_s1_k10_pairwise_complete_or_partial_holm_q": 0.011622832060936616,
         },
         "causal_scope": "frozen historical e7 candidate pools; raw includes occasional author diagnostic assertions",
         "refutes": ["historical candidate order is a sufficient selector", "S1 or generated graph is a safe sole representation", "extra selector samples measure call-depth value"],
@@ -387,13 +446,22 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
         "grade": "C+D",
         "finding": (
             "The realised unexplained-span/low-margin fourth-call gate adds many surviving entities but no safe-exact reference discovery; "
-            "its clinical flips are harm-heavy and the historical upstream states are not causally exchangeable."
+            "the old 6-repair/15-harm result is an ordinal relative-closeness audit rather than a canonical binary endpoint. "
+            "The exhaustive model-panel replay is near-null overall and suggests exploratory triggered MCR C∪P coverage gain, "
+            "while historical upstream states remain nonexchangeable."
         ),
         "effect": {
             "new_entities": 135,
             "safe_exact_reference_discoveries": 0,
             "root_repairs_harms_neutral": "6/15/13",
             "identical_upstream_pairs": "0/300",
+            "model_panel_adaptive_minus_lite_clinical_complete_pp": 0.3333333333333333,
+            "model_panel_adaptive_minus_lite_clinical_complete_mcnemar_p": 1.0,
+            "model_panel_adaptive_minus_lite_complete_or_partial_pp": 1.3333333333333333,
+            "model_panel_triggered90_complete_or_partial_gain_loss": "9/3",
+            "model_panel_triggered90_complete_or_partial_mcnemar_p": 0.14599609375,
+            "model_panel_triggered_MCR65_complete_or_partial_gain_loss": "6/0",
+            "model_panel_triggered_MCR65_complete_or_partial_unadjusted_p": 0.03125,
         },
         "causal_scope": "deployment decision on the current gate; no causal coefficient for an ideal relation-aware Call-4",
         "refutes": ["unexplained span count is an adequate call target", "more surviving novelty implies utility"],
@@ -408,8 +476,8 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
         "grade": "A+D",
         "finding": (
             "The default RCR-3 implementation fails its fidelity, exposure, reliability, and conversion criteria; "
-            "safe identity survives, but generated structure plus fixed frontier and self-calibrated completeness lose to the "
-            "simpler Lite path. Its root-priority/proxy-completed equivalence sensitivity is not a blinded capability endpoint."
+            "safe identity survives, but the migrated model-panel C∪P endpoint confirms RCR3 below Lite and Compact4 below both. "
+            "No complete contrast survives Holm, and this remains a model-panel sensitivity rather than a human-root endpoint."
         ),
         "effect": {
             "proxy_complete_equivalent_sensitivity_top1_lite_rcr_compact4": "29/20/18",
@@ -419,6 +487,11 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
             "material_span_drops": "at least 69/119",
             "wrong_or_unsupported_relations": "20/60",
             "root_reviewed_full_equivalence_among_self_reported_complete": "9/66",
+            "model_panel_lite_rcr_compact4_clinical_complete_counts": "22/13/13 of 300",
+            "model_panel_rcr_minus_lite_complete_or_partial_pp": -7.333333333333333,
+            "model_panel_rcr_minus_lite_complete_or_partial_holm_q": 0.02462283158179103,
+            "model_panel_compact4_minus_rcr_complete_or_partial_pp": -14.0,
+            "model_panel_compact4_minus_rcr_complete_or_partial_holm_q": 0.00011083958931402502,
         },
         "causal_scope": "the realised generated skeleton/typed-candidate/frontier implementation on a development relation challenge set",
         "refutes": ["current RCR-3 is the default three-call replacement", "generated relation fields and self-reported completeness are trustworthy"],
@@ -1202,12 +1275,19 @@ def validate_evidence(
             invalid_effect_keys = []
             for raw_key in row.get("effect", {}):
                 key = str(raw_key).lower()
-                if "clinical_complete" in key or "clinical_capability" in key:
+                if (
+                    "clinical_complete" in key or "clinical_capability" in key
+                ) and "model_panel" not in key:
                     invalid_effect_keys.append(str(raw_key))
                     continue
                 if ("complete" in key or "clinical" in key) and not any(
                     qualifier in key
-                    for qualifier in ("proxy", "root_reviewed", "targeted_root_review")
+                    for qualifier in (
+                        "proxy",
+                        "root_reviewed",
+                        "targeted_root_review",
+                        "model_panel",
+                    )
                 ):
                     invalid_effect_keys.append(str(raw_key))
                     continue
@@ -1219,6 +1299,7 @@ def validate_evidence(
                         "targeted_root_review",
                         "root_reviewed",
                         "binary_acceptable",
+                        "model_panel",
                     )
                 ):
                     invalid_effect_keys.append(str(raw_key))
@@ -1227,7 +1308,11 @@ def validate_evidence(
                     f"non-census evidence uses unqualified endpoint effect names for {experiment}: "
                     f"{invalid_effect_keys}"
                 )
-        if experiment == "E10":
+        if (
+            experiment == "E10"
+            and coverage.get("clinical_complete_status")
+            != endpoint_coverage_audit.FULL_BLINDED_PANEL
+        ):
             e10_keys = [str(key).lower() for key in row.get("effect", {})]
             invalid_e10 = [
                 key for key in e10_keys if any(token in key for token in ("clinical", "complete", "partial"))
@@ -1281,15 +1366,39 @@ def validate_closure(
         }
         == {endpoint_coverage_audit.NOT_APPLICABLE}
     ]
+    panel_census = [
+        str(record["experiment_id"])
+        for record in coverage_records
+        if record.get("clinical_complete_status")
+        == endpoint_coverage_audit.FULL_BLINDED_PANEL
+    ]
     migration_gaps = [
         str(record["experiment_id"])
         for record in coverage_records
-        if str(record["experiment_id"]) not in set(full_root) | set(not_applicable)
+        if str(record["experiment_id"])
+        not in set(full_root) | set(panel_census) | set(not_applicable)
     ]
-    if full_root != ["E2"] or not_applicable != ["E7a"] or len(migration_gaps) != 14:
+    migration_present = endpoint_coverage.get("migration_contract") is not None
+    task_census_status = (
+        str(
+            endpoint_coverage["migration_contract"]["summary"].get(
+                "task_census_status"
+            )
+        )
+        if migration_present
+        else "not_started"
+    )
+    task_closed = task_census_status == "complete_fresh_replay"
+    expected_panel = sorted(endpoint_coverage_audit.MIGRATION_EXPERIMENT_IDS) if migration_present else []
+    if (
+        full_root != ["E2"]
+        or not_applicable != ["E7a"]
+        or sorted(panel_census) != expected_panel
+        or len(migration_gaps) != (0 if migration_present else 14)
+    ):
         raise ValueError(
-            "metric-migration closure drift: expected E2 full census, E7a N/A, and 14 gaps; "
-            f"found full={full_root}, n/a={not_applicable}, gaps={migration_gaps}"
+            "metric-migration closure drift: "
+            f"full={full_root}, panel={panel_census}, n/a={not_applicable}, gaps={migration_gaps}"
         )
     return {
         "schema_version": "cross-experiment-closure-v2",
@@ -1306,17 +1415,27 @@ def validate_closure(
             ),
         },
         "metric_migration": {
-            "closed": False,
+            "closed": len(migration_gaps) == 0 and task_closed,
+            "clinical_relation_closed": len(migration_gaps) == 0,
+            "task_closed": task_closed,
+            "task_census_status": task_census_status,
             "full_root_census_count": len(full_root),
             "full_root_census_experiments": full_root,
+            "full_blinded_model_panel_count": len(panel_census),
+            "full_blinded_model_panel_experiments": panel_census,
             "not_applicable_count": len(not_applicable),
             "not_applicable_experiments": not_applicable,
             "gap_count": len(migration_gaps),
             "gap_experiments": migration_gaps,
             "interpretation": (
-                "Only E2 has the full blinded/root census needed for clinical-capability interpretation. "
-                "E7a has no fresh arm output and is N/A. The other 14 experiments retain explicit metric-migration gaps; "
-                "their proxy-completed or targeted audits remain mechanism/sensitivity evidence only."
+                "All 79 target arms have exhaustive blinded three-reviewer model-panel clinical "
+                "relations with ITA failure accounting. The fresh task namespace is only partially "
+                "complete after external API credit exhaustion. E2 remains the only human-root "
+                "census and E7a remains structural N/A."
+                if migration_present
+                else
+                "Only E2 has the full blinded/root census. E7a is N/A and the other "
+                "14 experiments retain explicit metric-migration gaps."
             ),
         },
     }
@@ -1393,14 +1512,20 @@ def build(repo_root: Path, out: Path) -> dict[str, Any]:
     ]
     for claim in claims:
         if claim.get("claim_id") == "C015":
+            migration_present = endpoint_coverage.get("migration_contract") is not None
             claim["claim"] = (
                 "Safe-exact, legacy-chain, deprecated experiment-local strict fields, family-specific task, clinical-complete, "
                 "compatible-partial, complete-or-compatible-partial coverage, binary-acceptable proxy, root-priority/proxy "
                 "sensitivities, and reference-identifiability are distinct; no "
                 "unscoped strict or Concept field is an ability endpoint. Clinical-complete supports diagnostic-capability "
                 "interpretation only under a full blinded/root census; the complete-or-compatible-partial union remains a "
-                "secondary coverage sensitivity. Currently E2 alone has the full contract; E7a is N/A and the other 14 "
-                "experiments retain metric-migration gaps."
+                "secondary coverage sensitivity. E2 alone is human-root-owned; the other 79 target arms now have an "
+                "exhaustive blinded three-reviewer model-panel clinical census, while their fresh task replay remains "
+                "partial after external API credit exhaustion; E7a remains structural N/A."
+                if migration_present
+                else
+                "Safe-exact, legacy-chain, task and clinical relations remain distinct. E2 alone has the full "
+                "root contract; E7a is N/A and the other 14 experiments retain migration gaps."
             )
             claim["dependencies"] = list(endpoint_coverage_audit.EXPECTED_EXPERIMENT_IDS)
             claim["endpoint_coverage_contract"] = {
@@ -1410,7 +1535,12 @@ def build(repo_root: Path, out: Path) -> dict[str, Any]:
                 "secondary_coverage_endpoint": "complete_or_compatible_partial",
                 "deprecated_unscoped_fields": ["strict", "Concept"],
                 "not_applicable": ["E7a"],
-                "metric_migration_gap_count": 14,
+                "full_blinded_model_panel_experiments": (
+                    sorted(endpoint_coverage_audit.MIGRATION_EXPERIMENT_IDS)
+                    if migration_present
+                    else []
+                ),
+                "metric_migration_gap_count": 0 if migration_present else 14,
             }
     claim_ids = [str(row["claim_id"]) for row in claims]
     if len(claim_ids) != len(set(claim_ids)):
@@ -1440,6 +1570,10 @@ def build(repo_root: Path, out: Path) -> dict[str, Any]:
         ],
         "metric_migration_gap_experiment_count": closure["metric_migration"]["gap_count"],
         "metric_migration_gap_experiments": closure["metric_migration"]["gap_experiments"],
+        "metric_migration_overall_closed": closure["metric_migration"]["closed"],
+        "metric_migration_clinical_relation_closed": closure["metric_migration"][
+            "clinical_relation_closed"
+        ],
         "metric_migration_full_root_census_experiments": closure["metric_migration"][
             "full_root_census_experiments"
         ],
@@ -1448,6 +1582,12 @@ def build(repo_root: Path, out: Path) -> dict[str, Any]:
         ],
         "endpoint_coverage_experiment_count": endpoint_coverage["experiment_count"],
         "endpoint_coverage_arm_record_count": endpoint_coverage["arm_record_count"],
+        "metric_migration_model_panel_experiments": closure["metric_migration"][
+            "full_blinded_model_panel_experiments"
+        ],
+        "metric_migration_task_census_status": endpoint_coverage["migration_contract"][
+            "summary"
+        ]["task_census_status"],
         "e2_full800_cases": e2_snapshot["coverage"]["cases"],
         "e2_case_arm_rows": e2_snapshot["coverage"]["case_arm_rows"],
         "e2_unique_full_references": 455,
@@ -1470,8 +1610,8 @@ def build(repo_root: Path, out: Path) -> dict[str, Any]:
         "default_system_decision": "retain Lite-like two independent proposals plus one frozen-pool comparator",
         "rejected_default": "current RCR-3 and current fourth-call gate",
         "network_finding": (
-            "managed environment routing reached OpenRouter and the actual Google provider without region/IP rejection; "
-            "bare direct DNS did not work, so no repository VPN is needed but the environment proxy remains required"
+            "managed environment routing reached the configured providers for the three complete clinical reviewers; "
+            "the subsequent task/arbitration phase stopped on an explicit external API insufficient-credit response"
         ),
         "register_sha256": sha256(register_path),
     }
@@ -1497,7 +1637,8 @@ def build(repo_root: Path, out: Path) -> dict[str, Any]:
         "endpoint_coverage_join_validation=passed",
         "cross_reference_validation=passed",
         "scientific_execution_closure_validation=passed",
-        "metric_migration_closure_validation=open_14_gaps",
+        f"metric_migration_clinical_closure_validation={'closed_79_model_panel_arms' if endpoint_coverage.get('migration_contract') else 'open_79_arms'}",
+        f"metric_migration_task_closure_validation={closure['metric_migration']['task_census_status']}",
     ]
     (out / "run.log").write_text("\n".join(log_lines) + "\n", encoding="utf-8")
 

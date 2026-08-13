@@ -1,0 +1,53 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "64f7aa767b0241a7c3e9bab79f6f94b082290c31c3b5b3a2fb778834bf74f780",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "medium",
+        "reason": "While LYG Grade 3 shares histologic overlap with DLBCL and some classify it as an EBV+ large B-cell lymphoma, the reference specifically identifies Lymphomatoid Granulomatosis as the diagnostic entity. DLBCL asserts a different, incompatible subtype classification without the defining LYG features (angiocentric, angiodestructive, EBV-driven granulomatous pattern).",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "DLBCL is a distinct entity; LYG Grade 3 is EBV+ angiocentric/angiodestructive B-cell lymphoproliferative disorder that can resemble DLBCL but is classified separately"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "medium",
+        "reason": "Adding 'non-Hodgkin lymphoma' does not resolve the subtype conflict; the reference diagnosis is LYG Grade 3, not DLBCL, and the two are distinct WHO-classified entities.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Same as C001 with added non-Hodgkin qualifier; still asserts DLBCL rather than LYG"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "LYG is a subtype of lymphoma, so 'Lymphoma' is a compatible parent but lacks all required specificity (LYG, Grade 3, EBV+).",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Generic lymphoma is the parent category; missing LYG-specific subtype, grade, and EBV association"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "medium",
+        "reason": "Identical reasoning to C001; DLBCL is a separate WHO entity from LYG Grade 3 despite histologic similarities at high grade.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "DLBCL without further qualification; same subtype conflict as C001"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "Lymphomatoid Granulomatosis matches the reference entity but omits the required Grade 3 designation and EBV+ B-cell lymphoma characterization, which are integral components of the full reference diagnosis.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Correct entity (LYG) but missing Grade 3 and EBV+ B-cell lymphoma specification"
+      }
+    ],
+    "case_quality_flags": [
+      "LYG Grade 3 and DLBCL have recognized histologic overlap; WHO classification treats them as distinct but related entities, introducing inherent ambiguity in candidate scoring",
+      "No explicit EBV (EBER) in situ hybridization result documented in the clinical record, though reference diagnosis asserts EBV+ status"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

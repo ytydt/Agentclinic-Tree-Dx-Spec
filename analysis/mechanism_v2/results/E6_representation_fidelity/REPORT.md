@@ -117,3 +117,13 @@ E6 支持的是“受约束关系骨架”，而不是自由生成图：
 - `representations/` 与 `arms/`：全部构造、选择器原始缓存、telemetry 与日志。
 
 结论适用于当前开发样本、当前生成式构造器和 DeepSeek selector，不应外推为所有图表示或所有模型的普遍定律。
+
+## Canonical Top-1 migration addendum (2026-08-13)
+
+79 臂统一重放为每个 served Top-1 补齐了臂隐藏的三 reviewer 模型面板关系（不是 human-root）。
+ITA clinical-complete 为 raw 83/300（27.7%）、flat 58/300（19.3%）、graph
+52/300（17.3%）；graph 相对 raw 为 −10.33pp（13 gain/44 loss，Holm
+`q=.000141`），flat 相对 raw 为 −8.33pp（22/47，`q=.00709`）。C∪P
+对应为 163/119/116，raw 对两种 derived representation 的优势同样通过校正。
+graph 与 flat 之间无确认差异。故“当前生成表示有损、raw 必须可回看”的结论得到规范端点支持，
+但不能外推为所有结构表示均有害；旧 external-screen/root-priority proxy 只保留作校准对照。

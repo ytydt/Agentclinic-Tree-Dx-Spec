@@ -1,0 +1,81 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "56690ebbb77b957c335be3a0dece23d025449beed4cc54750a2edf387c16ba31",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "The clinical picture (RV dilatation, elevated PAP, RBBB, normal coronaries) points to PE, not ACS. This candidate misidentifies the entity.",
+        "relation": "not_equivalent",
+        "scope_detail": "Frames diagnosis as ACS with normal coronaries rather than pulmonary embolism"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "medium",
+        "reason": "The reference is simply 'pulmonary embolism.' This candidate is compatible but adds specificity (submassive, RV strain, pulmonary hypertension) not required by the benchmark. It is a child/subtype rather than a complete equivalent to the plain reference.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Adds submassive subtype and specific complications beyond the reference"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "Normal coronary arteries on angiography and RV findings exclude ACS as the final diagnosis.",
+        "relation": "not_equivalent",
+        "scope_detail": "Acute coronary syndrome is a different diagnostic entity"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "Echo shows RV dilatation and elevated PAP, not LV apical ballooning; normal coronaries alone do not establish Takotsubo.",
+        "relation": "not_equivalent",
+        "scope_detail": "Takotsubo cardiomyopathy is a different entity affecting the left ventricle"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "medium",
+        "reason": "Clinically well-supported but exceeds the specificity of the benchmark 'pulmonary embolism'; treated as a more specific child diagnosis.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Adds RV dysfunction and pulmonary hypertension beyond the plain reference"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "high",
+        "reason": "Same reasoning as C004; RV findings and elevated PAP are inconsistent with Takotsubo.",
+        "relation": "not_equivalent",
+        "scope_detail": "Tako-Tsubo Cardiomyopathy is a different entity"
+      },
+      {
+        "candidate_id": "C007",
+        "confidence": "medium",
+        "reason": "Correctly identifies acute PE but adds a complication component not present in the benchmark label; more specific than required.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Adds RV dysfunction qualifier beyond the plain reference"
+      },
+      {
+        "candidate_id": "C008",
+        "confidence": "high",
+        "reason": "Coronary angiography showed normal arteries, ruling out STEMI; the ST changes were a PE mimic.",
+        "relation": "not_equivalent",
+        "scope_detail": "STEMI is a different diagnostic entity"
+      },
+      {
+        "candidate_id": "C009",
+        "confidence": "medium",
+        "reason": "Patient is hemodynamically borderline (BP 100/65) with RV dysfunction but no cardiac arrest or refractory shock; 'massive PE' implies hemodynamic collapse, which is not clearly established. This asserts an incompatible severity subtype.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Labels PE as massive, which conflicts with the clinical data suggesting submassive"
+      }
+    ],
+    "case_quality_flags": [
+      "Reference diagnosis 'pulmonary embolism' is intentionally non-specific; candidates adding clinically supported subtypes (submassive, RV dysfunction) are more specific than the benchmark rather than equivalent",
+      "ECG changes (ST elevation V2-V3, new RBBB) are classic PE mimics of STEMI, supporting the diagnosis"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

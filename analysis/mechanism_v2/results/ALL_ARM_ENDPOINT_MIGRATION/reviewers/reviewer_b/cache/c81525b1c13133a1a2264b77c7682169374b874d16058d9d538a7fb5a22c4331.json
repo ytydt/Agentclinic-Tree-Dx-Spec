@@ -1,0 +1,67 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "b4c0cb2eb087e05791e3460abfdd481bef5016a2657d6a0b8118b01dd33815bf",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "The IHC profile (CD117-, DOG1-) explicitly excludes GIST; the tumor is a sarcomatoid carcinoma, a completely different entity",
+        "relation": "not_equivalent",
+        "scope_detail": "GIST is a specific mesenchymal tumor; IHC here is CD117-negative, DOG1-negative, ruling it out"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "medium",
+        "reason": "Sarcomatoid carcinoma is a distinct subtype with spindle-cell/sarcoma-like differentiation; 'undifferentiated carcinoma' is a related but non-equivalent category and omits site and stage",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Undifferentiated carcinoma is a related but broader/different category; lacks sarcomatoid specification, anatomic site, and staging"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "Sigmoid cancer is the parent category; it lacks the sarcomatoid carcinoma subtype specification and all staging components",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Correct anatomic site but missing histologic subtype (sarcomatoid), staging, and pTNM details"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "Sigmoid colon cancer is the parent category; omits sarcomatoid histology and pT4a pN2a M0 Stage 3c components",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Correct anatomic site but missing histologic subtype and staging"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "Sigmoid sarcoma asserts a pure mesenchymal neoplasm, which conflicts with the carcinoma (epithelial) component of sarcomatoid carcinoma; also lacks staging",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Sarcoma implies pure mesenchymal origin; the reference is sarcomatoid carcinoma (epithelial with sarcoma-like differentiation)"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "high",
+        "reason": "Adenocarcinoma is an incompatible histologic subtype; the IHC profile and sarcomatoid morphology exclude glandular differentiation",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Adenocarcinoma implies glandular differentiation; IHC (CDX2-, keratin-, CAM5.2-) and vimentin+ pattern is inconsistent with adenocarcinoma"
+      },
+      {
+        "candidate_id": "C007",
+        "confidence": "high",
+        "reason": "Sarcomatoid carcinoma of the colon captures the histologic entity and general site but omits the sigmoid specification and the complete pTNM staging required by the reference",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Correct histologic subtype and organ (colon) but missing specific sigmoid localization and full staging (pT4a pN2a M0, Stage 3c)"
+      }
+    ],
+    "case_quality_flags": [
+      "Rare histologic entity (sarcomatoid carcinoma of colon) with comprehensive IHC panel supporting diagnosis",
+      "Reference includes full pTNM staging (pT4a pN2a M0, Stage 3c) which no candidate fully replicates"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

@@ -1,0 +1,53 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "70dcd4918676c58177b3a732a6e60ba2bb0167c254dfb1a5da72896e9db47445",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "ST-elevation myocardial infarction is the underlying event confirmed by ECG and angiography, but the reference diagnosis requires the subacute LVFWR complication (evidenced by contrast in myocardium and pericardial effusion on CTA). STEMI alone is only one component of the composite.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Identifies the STEMI component but omits the free wall rupture complication"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "Pericardial effusion and hemodynamic collapse are consistent with tamponade as a consequence of free wall rupture, but the reference diagnosis is the rupture itself complicating AMI. Tamponade is the resulting complication, not the requested final diagnosis.",
+        "relation": "manifestation_or_related",
+        "scope_detail": "Cardiac tamponade is a downstream complication/manifestation of LVFWR, not the primary diagnostic object"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "Myocardial infarction is confirmed but the critical distinguishing feature—subacute left ventricular free wall rupture—is absent, leaving the diagnosis incomplete relative to the reference.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Names the parent AMI but omits the subacute LVFWR complication entirely"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "The shock in this case is caused by subacute LVFWR with pericardial effusion (obstructive/hemorrhagic), not primary cardiogenic shock. This candidate misattributes the mechanism and omits the rupture, making it an incomplete and partially conflicting characterization.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures AMI with hemodynamic compromise but attributes shock to cardiogenic mechanism rather than free wall rupture/tamponade"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "Acute coronary syndrome is the broad umbrella term that includes STEMI but does not specify the confirmed myocardial infarction or the subacute free wall rupture complication central to the reference diagnosis.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Broad parent category; lacks AMI specificity and entirely omits LVFWR complication"
+      }
+    ],
+    "case_quality_flags": [
+      "Reference diagnosis is a composite requiring both the AMI and the subacute LVFWR complication; no candidate captures both components",
+      "CTA finding of contrast in myocardium is the key imaging clue for subacute LVFWR that all candidates fail to incorporate"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

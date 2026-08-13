@@ -12,7 +12,7 @@ E9 支持一个有限但重要的结论：Forest 的三视图不是三张独立�
 
 旧版根代理对全部 11 个 real↔single `safe-exact` 胜负病例做过二元机制重分类，得到 6 个方向性 gain、1 个 harm、4 个 `scope_or_surface`。端点迁移复核发现，最后一类混合了真同义与缺部位、亚型、病因或复合成分的部分正确；旧判断还会用 vignette 补全输出没有说出的限定。因此 **6/1/4 不是新规范的 clinical-complete 重编码，不能给出临床净效应**。可保留的是富集队列中 3 条有病例证据支持的新候选捕获轨迹；它们不是 400 例发生率，也不把 `safe-exact +2.25 pp` 升级为临床收益。
 
-> **端点迁移更正。** E9 没有逐臂 `clinical-complete / compatible-partial / no` 三分类，也没有 complete-or-partial 或全量盲法临床率。70 例旧根审只支持机制归因；其余 330 例临床未审。下文保留 `scope_or_surface_artifact` 与 6/1/4 仅作历史血缘，禁止进入临床能力排名。
+> **历史端点更正（已被文末 2026-08-13 migration addendum 补全）。** 原 E9 没有逐臂 `clinical-complete / compatible-partial / no` 三分类，也没有 complete-or-partial；70 例旧根审只支持机制归因，其余 330 例当时临床未审。文末新增的是独立的全臂三 reviewer model-panel census，不是 human-root；下文 `scope_or_surface_artifact` 与 6/1/4 仍只作历史血缘。
 
 两个更干净的干预没有显示稳定方向：
 
@@ -159,3 +159,14 @@ DeepSeek 经多个 OpenRouter provider 路由，没有形成 Groq 单点。当�
 下一轮的可证伪门槛是：先把三视图压成相同的去重命题集合并复用同一冻结 comparator；若 role rotation 或精确复制仍改变 champion，则角色/表示路径敏感性成立，若 flip 消失则 E9 的新鲜调用方差解释更强。另应预注册 union-only 临床 complete capture 与 shared-exposure conversion 两个分开的终点；若 union 只增加错拼接而不增加前者，就应撤销多视图 union 的默认收益叙事。
 
 E9 是开发集机制实验，不是确认性性能试验。它足以否定“独立三票”和“重复即置信度”，也识别了多视图存在少量可追溯的候选覆盖轨迹；它没有测得全队列 clinical-complete/compatible-partial，更没有证明当前三视图 selector 已是稳定最优实现。
+
+## Canonical Top-1 migration addendum (2026-08-13)
+
+上句“没有测得全队列”已由本次迁移取代：臂隐藏三 reviewer 模型面板（非 human-root）
+现已覆盖全 ITA。real views 的 clinical-complete 为 61/400，single 为 48/400，
+duplicate 为 47/400；real−single 为 +3.25pp（16 gain/3 loss，Holm
+`q=.01328`），real−duplicate 为 +3.50pp（17/3，`q=.01031`）。C∪P
+real−single 为 +4.0pp，但在四重 family 下刚未通过（27/11，`q=.05541`）。
+role rotation 相对 real 仍无净差。故“real views 有小幅 complete 增益”成为新增发现；
+旧 6/1/4 仍只属于 70 例富集机制队列，不能解释这项全臂效应来自 capture 还是 selection，
+也不能把相关视图称为独立投票。

@@ -1,0 +1,67 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "5de6c25acc95dc9ee053868206452316e02c1493630c02ed2b4a01d037190327",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "The reference diagnosis requires recognition that this is Richter's transformation from CLL to DLBCL. C001 captures the DLBCL component and staging but does not acknowledge the underlying CLL or the transformation event, which is the defining diagnostic element.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Identifies DLBCL with systemic involvement but omits the Richter's transformation context (prior CLL history and transformation)"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "MCL is CD5+/CD20+ but the 9-year history of elevated WBC and lymphadenopathy consistent with CLL, plus large atypical lymphocytes on biopsy, points to Richter's transformation to DLBCL, not MCL. Assigning MCL is an incompatible subtype.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Mantle cell lymphoma is a different B-cell lymphoma subtype; CD5+/CD20+ can occur in MCL but clonal IgH rearrangement and clinical history favor CLL-to-DLBCL transformation"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "The histology demonstrates large atypical lymphocytes (not small lymphocytes), consistent with transformation to DLBCL rather than SLL with cutaneous involvement. This candidate misses the transformation and assigns the wrong grade.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "SLL/CLL without transformation; the biopsy shows large atypical lymphocytes indicating high-grade transformation, not indolent SLL"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "DLBCL is the transformed component of the reference diagnosis, but the critical context of Richter's transformation (prior CLL) is absent, making this incomplete.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Names DLBCL but omits Richter's transformation from CLL, staging, and site specificity"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "The designation 'primary cutaneous' conflicts with documented systemic lymphadenopathy on PET-CT and the prior CLL history. This is a secondary/systemic process representing Richter's transformation, not a primary cutaneous entity.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Primary cutaneous DLBCL implies no systemic disease; PET-CT shows FDG-avid abdominal/peripancreatic nodes indicating systemic involvement"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "high",
+        "reason": "MCL does not fit the clinical history of longstanding CLL-like presentation with transformation to large-cell morphology. CD5+/CD20+ immunophenotype alone is insufficient to assign MCL over Richter's transformation.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Mantle cell lymphoma is an incompatible subtype; same reasoning as C002"
+      },
+      {
+        "candidate_id": "C007",
+        "confidence": "high",
+        "reason": "Same reasoning as C002 and C006; MCL is an incorrect subtype assignment given the clinical and pathological context.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Mantle cell lymphoma without further qualification; incompatible subtype"
+      }
+    ],
+    "case_quality_flags": [
+      "No candidate achieves complete equivalence; all miss the Richter's transformation composite (CLL-to-DLBCL) which is the defining element of the reference diagnosis",
+      "CD5+/CD20+ immunophenotype creates differential ambiguity between CLL-derived DLBCL and MCL, but clinical history strongly favors Richter's transformation"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

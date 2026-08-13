@@ -220,3 +220,15 @@ first 是稳定低成本负控制，但把 proposal order 偷换成诊断排序�
 9. 预注册失败条件：若 RCR-3 不能提高 complete exposure→Top-1 conversion，或新增候选造成的 loss 不少于 gain，或 relation skeleton 的关键关系错误仍接近 E6，则关系保留机制被否证。
 
 E12 已经回答了“现有 e7 哪一段值得保留”：保留多候选覆盖和一次显式 comparator；停止以 S1 为唯一输入、停止无证据填宽、停止把额外独立 selector 抽样称为调用深度收益。RCR-3 的价值必须来自关系忠实、类型化候选、范围安全和可追溯对比，而不是把现有流水线简单再调用一次。后续应直接检验三条反事实：遮蔽作者诊断句后 raw comparator 的 complete conversion 若消失，原 raw 优势应归为结论句泄漏；在同一缓存 comparator 下累计 pool 若不再呈现 depth gain，历史“调用深度”效应应撤回；程序化 span/relation 保真若不能同时降低 decisive-evidence drop 与 manifestation-over-etiology 错排，则新 graph 仍被否证。
+
+## Canonical Top-1 migration addendum (2026-08-13)
+
+臂隐藏三 reviewer 模型面板（非 human-root）改变了主要临床解读。39-test family 中
+**clinical-complete 无任何 Holm survivor**；旧 proxy 下 raw-k5/k10 pairwise 的两个
+complete survivor 因此撤回为规范完整率证据。新增的 survivor 都属于 secondary C∪P：
+raw pairwise−first 在 k5 为 +9.67pp（48 gain/19 loss，`q=.01930`）、k10
+为 +12.33pp（51/14，`q=.000175`），且 raw−S1 在 k10 pairwise 为
++8.67pp（38/12，`q=.01162`）。这说明 comparator/原文主要提高兼容覆盖，而非已确认的
+完整对象。六个 `first` 控制实际共享同一逐例 Top-1 向量，不是六份独立支持；k5→k10、
+graph−S1 和 depth1→2→3 均无规范确认收益。pairwise 可因成本/schema 保留为工程候选，
+不能再以 clinical-complete superiority 为默认理由。

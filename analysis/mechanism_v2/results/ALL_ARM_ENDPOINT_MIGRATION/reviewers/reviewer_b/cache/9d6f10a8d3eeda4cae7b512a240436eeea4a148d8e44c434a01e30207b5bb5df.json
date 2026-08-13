@@ -1,0 +1,89 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "71620c07733eb34a85444b57c0db9eb120c19670908b024db9914bf25d9cd48a",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "The biopsy showed large B-cell morphology (DLBCL) with CD5+ non-GCB phenotype. CLL/SLL is a small lymphocytic neoplasm and is a different entity. The candidate incorrectly maps the CD5+ finding to CLL/SLL rather than CD5+ DLBCL.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Asserts CLL/SLL subtype rather than DLBCL; CD5+ large B-cell lymphoma is distinct from CLL/SLL"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "DLBCL is the correct broad diagnosis confirmed by biopsy, but the reference requires CD5+ subtype and cavernous sinus syndrome as the presenting manifestation. This candidate omits both.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Correct parent entity (DLBCL) but missing CD5+ specificity and cavernous sinus syndrome presentation"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "Cavernous sinus lymphoma is a component of the diagnosis but does not specify DLBCL, CD5+ status, or the full composite picture required by the reference.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures anatomic site (cavernous sinus) and lymphoma but lacks DLBCL subtype, CD5+ marker, and systemic scope"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "medium",
+        "reason": "This candidate identifies DLBCL non-germinal center (activated B-cell) type with right cavernous sinus involvement and systemic disease (pleura, mediastinal/mesenteric nodes). CD5+ is not explicitly stated but the non-GCB subtype and full anatomic scope match the reference diagnosis closely. The CD5+ marker is a key feature of the reference; however, the non-GCB designation and complete anatomic description make this the closest equivalent among all candidates. The omission of explicit CD5+ is a minor gap but the overall diagnostic object is functionally equivalent.",
+        "relation": "complete_equivalent",
+        "scope_detail": "Specifies DLBCL non-GCB (ABC) type with CD5− implicit but non-GCB aligns; includes cavernous sinus and systemic sites"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "Biopsy confirmed B-cell lymphoma; inflammatory pseudotumor is a different, non-malignant diagnostic entity incompatible with the pathology findings.",
+        "relation": "not_equivalent",
+        "scope_detail": "Inflammatory pseudotumor is a non-neoplastic/reactive entity"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "high",
+        "reason": "Lymphomatous invasion of the cavernous sinus is a component/manifestation of the diagnosis but lacks the required subtype and composite scope.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Describes the anatomic manifestation (cavernous sinus invasion by lymphoma) without specifying DLBCL, CD5+, or systemic disease"
+      },
+      {
+        "candidate_id": "C007",
+        "confidence": "high",
+        "reason": "FISH was negative for t(11;14)/CCND1-IGH, which rules out mantle cell lymphoma. This candidate asserts an incompatible subtype directly contradicted by the molecular data.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Asserts mantle cell lymphoma, which is excluded by FISH (negative t(11;14)/CCND1-IGH)"
+      },
+      {
+        "candidate_id": "C008",
+        "confidence": "high",
+        "reason": "Biopsy of pleural thickening showed CD5+ non-GCB B-cell lymphoma, not metastatic prostate adenocarcinoma. CSF cytology was negative for malignant cells. This is a different diagnostic entity.",
+        "relation": "not_equivalent",
+        "scope_detail": "Metastatic prostate cancer is a different malignancy"
+      },
+      {
+        "candidate_id": "C009",
+        "confidence": "high",
+        "reason": "Tolosa-Hunt is a diagnosis of exclusion for painful ophthalmoplegia due to nonspecific inflammation. Biopsy-confirmed DLBCL excludes this entity entirely.",
+        "relation": "not_equivalent",
+        "scope_detail": "Tolosa-Hunt Syndrome is an idiopathic inflammatory condition of the cavernous sinus"
+      },
+      {
+        "candidate_id": "C010",
+        "confidence": "high",
+        "reason": "Same as C007: FISH negativity for CCND1-IGH rearrangement rules out MCL. This candidate asserts an incompatible subtype.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Asserts mantle cell lymphoma, excluded by negative FISH for t(11;14)/CCND1-IGH"
+      }
+    ],
+    "case_quality_flags": [
+      "CD5+ DLBCL is a rare but recognized subtype; CD5 positivity is a key distinguishing feature from CLL/SLL and MCL",
+      "FISH panel effectively excludes MCL (t(11;14)), Burkitt (Myc), follicular (t(14;18)), and double-hit lymphoma",
+      "C004 is the closest complete equivalent but omits explicit CD5+ designation; rated medium confidence accordingly"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

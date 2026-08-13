@@ -1,0 +1,67 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "d621d351f88392e2da2e762b14e9cde1f9a4c9d365a07a43ace5027a7f65c3f0",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "The reference requires Poncet's Disease (reactive/sterile polyarthritis) as a distinct component alongside tuberculous lymphadenitis. C001 subsumes arthritis under direct TB involvement and misses the Poncet's distinction and hepatomegaly.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Identifies disseminated TB with multiple organ involvement but frames arthritis as direct TB arthritis rather than Poncet's reactive arthritis; also omits hepatic involvement present in the record"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "Does not capture the reactive/sterile nature of the polyarthritis (Poncet's Disease), which is a required component of the reference diagnosis.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Adds hepatic involvement over C001 but still frames arthritis as direct TB articular disease rather than Poncet's reactive arthritis"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "Sarcoidosis is excluded by positive ZN staining for AFB, suppurative granulomas with necrosis, and the overall clinical-pathological picture consistent with TB.",
+        "relation": "not_equivalent",
+        "scope_detail": "Entirely different granulomatous disease; no AFB, no necrosis expected"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "medium",
+        "reason": "C004 is broader than the reference (adds pulmonary, cutaneous, hepatic TB explicitly) and while it includes Poncet's, the reference benchmark is specifically 'Poncet's Disease with tuberculous lymphadenitis.' C004 is a superset that includes the reference components but reframes the primary label. However, it does contain all required components of the reference. This is borderline; the reference focuses on Poncet's + lymphadenitis as the named diagnosis, while C004 names disseminated TB as primary with Poncet's as a feature — making it a partial parent rather than complete equivalent.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures Poncet's disease and disseminated TB with hepatic involvement but the reference diagnosis is specifically Poncet's Disease with tuberculous lymphadenitis, not a full disseminated TB composite"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "medium",
+        "reason": "Includes the key Poncet's Disease component and tuberculous lymphadenitis, aligning closely with the reference, but omits hepatomegaly/hepatic TB. The reference itself ('Poncet's Disease with tuberculous lymphadenitis') does not explicitly require hepatic TB, so this is close to the reference scope. However, it adds pulmonary and cutaneous TB not named in the reference label, making it a broader composite. Still, the core reference components (Poncet's + lymphadenitis) are present.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures Poncet's disease and TB lymphadenitis/pulmonary/cutaneous but omits hepatic involvement documented in the record"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "high",
+        "reason": "Extrapulmonary TB is a broad parent category that lacks the specific Poncet's Disease reactive arthritis component and tuberculous lymphadenitis required by the reference.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Parent category without Poncet's Disease specificity or lymphadenitis"
+      },
+      {
+        "candidate_id": "C007",
+        "confidence": "high",
+        "reason": "Tuberculosis alone provides no information about Poncet's Disease, lymphadenitis, or any other required component of the reference diagnosis.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Broadest parent category; no specificity"
+      }
+    ],
+    "case_quality_flags": [
+      "Reference diagnosis 'Poncet's Disease with tuberculous lymphadenitis' is narrower than the full clinical picture (hepatomegaly, pulmonary infiltrates, skin lesions also present), creating ambiguity about whether candidates capturing the full disseminated picture with Poncet's should be considered equivalent or superset",
+      "C005 most closely matches the reference label components (Poncet's + lymphadenitis) while adding pulmonary/cutaneous TB; borderline partial vs complete equivalent depending on whether the reference intends to name only the highlighted features"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

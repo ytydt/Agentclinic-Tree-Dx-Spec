@@ -1,0 +1,81 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "368be226af0012f8116f056047f443d90435d7970bcb9fd5fad82e84fe4db165",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "The reference requires schizophrenia as the specific psychiatric etiology and CIPO (chronic intestinal pseudo-obstruction) as the bowel diagnosis. C001 uses 'chronic psychiatric disorder' (non-specific) and 'paralytic ileus' (acute, not chronic pseudo-obstruction), missing both required specificities.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures catatonia and paralytic ileus but attributes catatonia to generic psychiatric exacerbation rather than specifically schizophrenia, and labels the bowel condition as paralytic ileus rather than CIPO"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "Ogilvie's syndrome is an acute colonic pseudo-obstruction, whereas CIPO is a chronic condition. The reference specifies schizophrenia as the psychiatric diagnosis and CIPO as the bowel diagnosis. C002 inverts the causal hierarchy (electrolytes driving catatonia) and uses an incompatible bowel subtype.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures catatonia and bowel pseudo-obstruction component but misattributes etiology of catatonia to electrolytes and labels bowel condition as Ogilvie's syndrome with electrolyte cause rather than CIPO in schizophrenia"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "Catatonic schizophrenia matches the psychiatric half of the reference diagnosis but the composite reference also requires CIPO as a co-diagnosis. C003 is a component, not the full composite.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures the schizophrenia with catatonic features component but entirely omits the CIPO component"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "Missing the specific psychiatric etiology (schizophrenia) and uses an acute bowel term (paralytic ileus) rather than the chronic pseudo-obstruction (CIPO) required by the reference.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures both catatonia and bowel components but lacks schizophrenia specificity and uses 'paralytic ileus' instead of CIPO"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "Catatonia alone is a single component of the composite reference diagnosis; schizophrenia and CIPO are both absent.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Only the catatonia component; missing schizophrenia etiology and CIPO entirely"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "high",
+        "reason": "The reference specifies schizophrenia (a primary psychiatric disorder) as the cause of catatonia. 'Catatonic disorder due to another medical condition' implies a general medical etiology, which conflicts with the schizophrenia attribution. CIPO is also absent.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Attributes catatonia to a medical condition rather than to schizophrenia, and omits CIPO"
+      },
+      {
+        "candidate_id": "C007",
+        "confidence": "high",
+        "reason": "Hypokalemic paralysis addresses only the electrolyte abnormality noted in labs; it does not capture the psychiatric diagnosis (schizophrenia with catatonia) or CIPO, and represents a differential/complication rather than the primary composite diagnosis.",
+        "relation": "manifestation_or_related",
+        "scope_detail": "Electrolyte-driven paralysis is a finding/complication, not the primary diagnosis"
+      },
+      {
+        "candidate_id": "C008",
+        "confidence": "high",
+        "reason": "Paralytic ileus is one component of the composite and uses an acute rather than chronic designation; the psychiatric half (schizophrenia with catatonia) is completely missing.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Only the bowel component and uses acute term rather than CIPO; psychiatric diagnosis entirely absent"
+      },
+      {
+        "candidate_id": "C009",
+        "confidence": "high",
+        "reason": "Catatonia due to schizophrenia matches the psychiatric component of the reference composite diagnosis but the CIPO component is entirely absent, making this an incomplete match.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures schizophrenia with catatonia but omits CIPO"
+      }
+    ],
+    "case_quality_flags": [
+      "Reference diagnosis is a composite of two distinct conditions (schizophrenia with catatonic features + CIPO); no candidate fully captures both components with correct specificity",
+      "Distinction between acute paralytic ileus and chronic intestinal pseudo-obstruction (CIPO) is clinically important and differentiates several candidates"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

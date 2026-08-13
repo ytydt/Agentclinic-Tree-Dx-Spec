@@ -101,3 +101,11 @@ Gemini 原始结果给出完整等价 46→47（+0.39 pp）。根代理改判后
 - `semantic_manual_adjudication.jsonl`、`manual_audit_manifest.json`：63 例人工裁决与冻结覆盖。
 
 E6x 是开发集上的机制反事实，不是模型稳定性的独立重复确认；provider/time 混杂被明确保留为限制，而非事后以技术降方差实验消除。
+
+## Canonical Top-1 migration addendum (2026-08-13)
+
+臂隐藏三 reviewer 模型面板重放（非 human-root）显示：unpadded 相对 padded 的
+clinical-complete 为 62/300 对 58/300，配对 +1.33pp（16 gain/12 loss，
+`q=.57159`）；C∪P 为 117/300 对 119/300，−0.67pp（19/21，
+`q=.87463`）。因此去 padding 的巨大 token/成本收益仍成立，但没有规范临床质量增益；
+“padding 不是 flat 质量损失的单因”这一结论保持不变。

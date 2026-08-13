@@ -1,0 +1,53 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "1cd415af16500d835f6e667df0f0948959821a6923a2c8c59c0fb6b2e34b63f1",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "The ECG and intracardiac recordings show progressive HV interval prolongation (75ms to 277ms) before non-conduction, which is the hallmark of Wenckebach/Mobitz I physiology occurring in the His-Purkinje system. Mobitz II implies fixed PR intervals with sudden block, an incompatible subtype.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Mobitz Type II second-degree AV block is a related but distinct subtype; the reference specifies infrahisian Mobitz Type I (Wenckebach) with progressive HV prolongation before block, not fixed PR with sudden non-conduction"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "The prolonged HV intervals and RBBB confirm His-Purkinje system disease, but this label does not specify the second-degree AV block subtype (Wenckebach/Mobitz I) occurring at the infrahisian level, which is the complete diagnostic object.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "His-Purkinje Disease is the anatomical substrate/parent category but lacks the specific rhythm diagnosis (infrahisian Mobitz I / Wenckebach) required by the reference"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "The clinical and electrophysiological findings point to infrahisian conduction disease with progressive HV prolongation and dropped beats, not sinus node dysfunction. Sick Sinus Syndrome is a different diagnostic entity.",
+        "relation": "not_equivalent",
+        "scope_detail": "Sick Sinus Syndrome involves sinus node dysfunction; the record shows normal sinus rhythm at 72 bpm with AV conduction abnormality at the His-Purkinje level"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "The record shows some P waves conducting to ventricles with progressive HV prolongation before block, consistent with second-degree (not complete/third-degree) AV block. Complete heart block is an incompatible stage.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Complete heart block implies no AV conduction; the reference is second-degree (some P waves conduct) with Wenckebach pattern"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "Progressive HV interval prolongation (75ms → 277ms) before non-conduction is definitional Wenckebach/Mobitz I physiology, not Mobitz II. This candidate asserts an incompatible subtype despite correctly identifying the infrahisian/His-Purkinje location implicitly.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Same as C001 — Mobitz II is an incompatible subtype; the reference specifies Mobitz I (Wenckebach) at the infrahisian level"
+      }
+    ],
+    "case_quality_flags": [
+      "Reference diagnosis is a rare and nuanced entity: infrahisian Wenckebach (Mobitz I occurring within the His-Purkinje system rather than at the AV node), which is clinically important as it carries a worse prognosis than nodal Wenckebach and may mimic Mobitz II on surface ECG.",
+      "No candidate correctly identifies infrahisian Mobitz I / Wenckebach phenomenon."
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

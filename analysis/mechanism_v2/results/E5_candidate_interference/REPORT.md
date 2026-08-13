@@ -248,3 +248,19 @@ typed, safely deduplicated candidates; preserve the requested diagnostic
 object; aggregate evidence without list-position dependence; and perform an
 explicit scope-aware comparison before final selection. `MANUAL_AUDIT.md`
 contains the case-level dissections and complete review accounting.
+
+## Canonical Top-1 migration addendum (2026-08-13)
+
+The exhaustive blinded three-reviewer model-panel replay (not human root)
+confirms candidate interference on the current clinical endpoints. Base4 is
+148/200 (74.0%) clinical-complete and 167/200 (83.5%) C∪P. Every addition arm
+is lower after Holm correction: complete deltas range from −10.5 pp for a
+synonym (17 gain/38 loss, `q=.01291`) to −29.5 pp for width8 (5/64,
+`q=3.30e-13`); C∪P ranges from −9.0 to −26.0 pp. Width8 is also 6.0 pp below
+width6 for complete (6/18, `q=.02266`). Removing the non-gold candidate is
++5.0 pp complete but not confirmed (23/13, `q=.13250`). The conclusion that
+membership and width are causally active is strengthened; no historical
+construction label is being substituted for the migrated clinical relation.
+These ITA effects combine candidate treatment with differential service
+(addition arms serve only 164–166/200); common-served mechanism analyses must
+therefore be used before attributing the entire delta to membership alone.

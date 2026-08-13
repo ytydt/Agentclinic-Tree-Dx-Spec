@@ -1,0 +1,60 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "0b91914a7f114055421713f8037864bbda5c73bf5e745d6a7134886c55cf687d",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "Spondylodiscitis is the correct anatomical entity and matches the MRI findings at L4-L5, but lacks the 'pyogenic' (bacterial) etiology qualifier required by the reference diagnosis. The term is otherwise compatible.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Spondylodiscitis without pyogenic/bacterial qualifier"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "medium",
+        "reason": "The label is a disjunction that includes discitis/osteomyelitis (compatible with pyogenic spondylodiscitis) but also includes spinal epidural abscess as an alternative. The MRI findings and clinical picture best fit spondylodiscitis rather than epidural abscess, and the pyogenic qualifier is absent. Partial match at best.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Disjunctive label covering spinal epidural abscess OR discitis/osteomyelitis; no pyogenic qualifier"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "medium",
+        "reason": "Discitis/osteomyelitis due to Enterobacter cloacae is functionally equivalent to pyogenic spondylodiscitis; Enterobacter cloacae is a pyogenic bacterium confirmed by blood cultures, MRI shows L4-L5 disc and vertebral involvement, and the label captures both the anatomical entity and the bacterial (pyogenic) cause. The disjunctive framing includes the correct entity.",
+        "relation": "complete_equivalent",
+        "scope_detail": "Discitis/osteomyelitis (spondylodiscitis) due to Enterobacter cloacae — pyogenic etiology explicitly specified"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "The MRI findings (T1 decrease, T2/STIR increase at L4-L5 disc and endplates) are characteristic of spondylodiscitis, not epidural abscess. Epidural abscess is a distinct entity involving the epidural space and is not supported as the primary diagnosis by the imaging description.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Spinal epidural abscess — different anatomical compartment from disc/vertebral body"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "Same reasoning as C004; epidural abscess refers to infection in the epidural space, whereas the clinical and MRI evidence points to disc/vertebral body involvement (spondylodiscitis).",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Epidural abscess — different anatomical compartment"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "high",
+        "reason": "Discitis is a component of spondylodiscitis but does not capture the vertebral osteomyelitis component implied by the reference term, nor the pyogenic etiology. It is a partial/component match.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Discitis alone — component of spondylodiscitis but narrower scope and no pyogenic qualifier"
+      }
+    ],
+    "case_quality_flags": [
+      "C003 label is disjunctive (epidural abscess OR discitis/osteomyelitis); the discitis/osteomyelitis arm with Enterobacter cloacae is complete_equivalent, but the epidural abscess arm is conflicting — rated complete_equivalent based on the most applicable arm with medium confidence",
+      "MRI description supports disc and endplate signal changes consistent with spondylodiscitis; no explicit epidural collection described, making epidural abscess candidates conflicting"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

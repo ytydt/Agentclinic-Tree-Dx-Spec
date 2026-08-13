@@ -2,51 +2,52 @@
 
 ## Decision
 
-Only **E2** is a full blinded/root-level clinical census and therefore the only experiment eligible for a clinical-capability leaderboard. All other experiments are blocked from that ingestion path: they are structural-only, safe-exact mechanism studies, targeted root audits, or proxy-completed/root-priority sensitivities. E10 is additionally blocked because its frozen binary `acceptable` recode does not separate complete from compatible partial.
-Across 91 independently sourced, declared audit arms, 9 E2 arms have the full contract, 79 arms retain metric-migration gaps, and 3 E7a structural replay arms are clinically N/A.
+Only **E2** is a full blinded/human-root-level clinical census and therefore the only experiment eligible for the strict clinical-capability leaderboard. The 79 migrated arms now have exhaustive blinded model-panel clinical endpoints, but remain blocked from that root-only leaderboard.
+Across 91 independently sourced declared arms, 9 E2 arms have the full root contract, 79 arms have the complete blinded model-panel contract with zero remaining metric-migration gaps, and 3 E7a structural replay arms are clinically N/A.
 
 Safe-exact remains a valid conservative identity lower bound. Legacy-chain, Concept, generic `accuracy`, task/mapper, or starred proxy endpoints must not be promoted to clinical-complete capability by an aggregation script.
 Frozen raw summaries are provenance only—not a cross-experiment table that may be flattened or ingested directly. In particular, E1/E4/E5/E6/E6x/E8 historical `strict`, generic accuracy, and `complete*`-style fields remain under their local contracts. Every downstream consumer must join through `endpoint_coverage_matrix.json` and enforce its coverage gate before reading those fields.
+The migrated clinical relation contract is complete, but the fresh task namespace is partial: 3,337/5,832 unique payloads completed before the external API reported insufficient credit. Partial task rows are not used for inference.
 
 ## Coverage matrix
 
 | Experiment | Arms | Intended cases/arm | Clinical complete | Compatible partial | Complete or compatible partial | Full root census | Leaderboard | Conclusion use |
 |---|---:|---:|---|---|---|---|---|---|
-| E1 | 8 | 200 | targeted only | not available | not available | no | prohibited | `safe_exact_input_contamination_mechanism_only` |
+| E1 | 8 | 200 | full blinded model-panel census (not root) | full blinded model-panel census (not root) | full blinded model-panel census (not root) | no | prohibited | `full_panel_clinical_sensitivity_not_root_capability_leaderboard` |
 | E2 | 9 | 800 | full-root census | full-root census | full-root census | yes | allowed | `clinical_capability_leaderboard` |
-| E4 | 5 | 400 | targeted only | not available | not available | no | prohibited | `safe_exact_fixed_pool_selector_mechanism_only` |
-| E5 | 9 | 200 | targeted only | targeted only | not available | no | prohibited | `safe_exact_candidate_interference_mechanism_only` |
-| E6 | 3 | 300 | proxy + root-priority | proxy + root-priority | proxy + root-priority | no | prohibited | `semantic_proxy_sensitivity_not_capability_leaderboard` |
-| E6x | 2 | 300 | proxy + root-priority | proxy + root-priority | proxy + root-priority | no | prohibited | `semantic_proxy_sensitivity_not_capability_leaderboard` |
+| E4 | 5 | 400 | full blinded model-panel census (not root) | full blinded model-panel census (not root) | full blinded model-panel census (not root) | no | prohibited | `full_panel_clinical_sensitivity_not_root_capability_leaderboard` |
+| E5 | 9 | 200 | full blinded model-panel census (not root) | full blinded model-panel census (not root) | full blinded model-panel census (not root) | no | prohibited | `full_panel_clinical_sensitivity_not_root_capability_leaderboard` |
+| E6 | 3 | 300 | full blinded model-panel census (not root) | full blinded model-panel census (not root) | full blinded model-panel census (not root) | no | prohibited | `full_panel_clinical_sensitivity_not_root_capability_leaderboard` |
+| E6x | 2 | 300 | full blinded model-panel census (not root) | full blinded model-panel census (not root) | full blinded model-panel census (not root) | no | prohibited | `full_panel_clinical_sensitivity_not_root_capability_leaderboard` |
 | E7a | 3 | 800 | N/A (no fresh output) | N/A (no fresh output) | N/A (no fresh output) | no | prohibited | `structural_registry_identity_only` |
-| E7b | 3 | 400 | targeted only | not available | not available | no | prohibited | `identity_addressability_and_safe_exact_mechanism_only` |
-| E7c | 4 | 299 | targeted only | not available | not available | no | prohibited | `safe_exact_and_relation_fidelity_mechanism_only` |
-| E8 | 4 | 220 | targeted only | targeted only | not available | no | prohibited | `veto_safety_mechanism_only` |
-| E9 | 4 | 400 | not available | not available | not available | no | prohibited | `view_capture_and_instability_mechanism_only` |
-| E10 | 4 | 400 | not measured (binary acceptable only) | not measured / not separately coded | not measured (binary acceptable is not union) | no | prohibited | `binary_acceptable_sensitivity_only_no_clinical_endpoint_no_leaderboard` |
-| E11 | 8 | 400 | proxy + root-priority | proxy + root-priority | proxy + root-priority | no | prohibited | `root_priority_proxy_sensitivity_not_capability_leaderboard` |
-| E12 | 20 | 300 | proxy + root-priority | proxy + root-priority | proxy + root-priority | no | prohibited | `root_priority_proxy_sensitivity_not_capability_leaderboard` |
-| E14x | 2 | 300 | targeted only | targeted only | not available | no | prohibited | `retrospective_gate_mechanism_only_no_causal_leaderboard` |
-| RCR3 | 3 | 300 | proxy + root-priority | proxy + root-priority | proxy + root-priority | no | prohibited | `root_priority_proxy_sensitivity_not_capability_leaderboard` |
+| E7b | 3 | 400 | full blinded model-panel census (not root) | full blinded model-panel census (not root) | full blinded model-panel census (not root) | no | prohibited | `full_panel_clinical_sensitivity_not_root_capability_leaderboard` |
+| E7c | 4 | 299 | full blinded model-panel census (not root) | full blinded model-panel census (not root) | full blinded model-panel census (not root) | no | prohibited | `full_panel_clinical_sensitivity_not_root_capability_leaderboard` |
+| E8 | 4 | 220 | full blinded model-panel census (not root) | full blinded model-panel census (not root) | full blinded model-panel census (not root) | no | prohibited | `full_panel_clinical_sensitivity_not_root_capability_leaderboard` |
+| E9 | 4 | 400 | full blinded model-panel census (not root) | full blinded model-panel census (not root) | full blinded model-panel census (not root) | no | prohibited | `full_panel_clinical_sensitivity_not_root_capability_leaderboard` |
+| E10 | 4 | 400 | full blinded model-panel census (not root) | full blinded model-panel census (not root) | full blinded model-panel census (not root) | no | prohibited | `full_panel_clinical_sensitivity_not_root_capability_leaderboard` |
+| E11 | 8 | 400 | full blinded model-panel census (not root) | full blinded model-panel census (not root) | full blinded model-panel census (not root) | no | prohibited | `full_panel_clinical_sensitivity_not_root_capability_leaderboard` |
+| E12 | 20 | 300 | full blinded model-panel census (not root) | full blinded model-panel census (not root) | full blinded model-panel census (not root) | no | prohibited | `full_panel_clinical_sensitivity_not_root_capability_leaderboard` |
+| E14x | 2 | 300 | full blinded model-panel census (not root) | full blinded model-panel census (not root) | full blinded model-panel census (not root) | no | prohibited | `full_panel_clinical_sensitivity_not_root_capability_leaderboard` |
+| RCR3 | 3 | 300 | full blinded model-panel census (not root) | full blinded model-panel census (not root) | full blinded model-panel census (not root) | no | prohibited | `full_panel_clinical_sensitivity_not_root_capability_leaderboard` |
 
 ## Coverage boundaries
 
-- **E1** — Clinical review covers 4 fixed-format harms plus 18 mechanism transitions, not all eight arms. Blindness grade: `targeted_mechanism_review_not_full_blind_census`.
+- **E1** — All intended rows have deterministic failure handling and all served Top-1 relations have blinded three-reviewer panel decisions; unanimous, majority, and unresolved decisions retain explicit model-panel provenance rather than human-root ownership. Blindness grade: `arm_hidden_three_reviewer_panel_census`.
 - **E2** — All 7,200 case-arm rows have mutually exclusive clinical-complete and compatible-partial decisions; complete-or-compatible-partial is secondary coverage. Blindness grade: `arm_endpoint_hidden_root_relation_census`.
-- **E4** — All 17 safe-exact correctness discordances and 12 sampled all-miss flips were reviewed; the remaining outputs are not clinically censused. Blindness grade: `selector_blinded_targeted_transition_review`.
-- **E5** — The 339 judgments cover construction labels, injected champions, and sampled transitions; they are not 1,800 case-arm clinical outcomes. Blindness grade: `targeted_nonblind_relation_and_transition_review`.
-- **E6** — 801 served outputs are proxy-completed; 262 rows received root review and 539 remain external-screen-only. Blindness grade: `arm_blind_external_screen_with_targeted_root_correction`.
-- **E6x** — All 513 served outputs have proxy labels, but only 126 judgments in 63 cases received root review. Blindness grade: `arm_blind_external_screen_with_targeted_root_correction`.
+- **E4** — All intended rows have deterministic failure handling and all served Top-1 relations have blinded three-reviewer panel decisions; unanimous, majority, and unresolved decisions retain explicit model-panel provenance rather than human-root ownership. Blindness grade: `arm_hidden_three_reviewer_panel_census`.
+- **E5** — All intended rows have deterministic failure handling and all served Top-1 relations have blinded three-reviewer panel decisions; unanimous, majority, and unresolved decisions retain explicit model-panel provenance rather than human-root ownership. Blindness grade: `arm_hidden_three_reviewer_panel_census`.
+- **E6** — All intended rows have deterministic failure handling and all served Top-1 relations have blinded three-reviewer panel decisions; unanimous, majority, and unresolved decisions retain explicit model-panel provenance rather than human-root ownership. Blindness grade: `arm_hidden_three_reviewer_panel_census`.
+- **E6x** — All intended rows have deterministic failure handling and all served Top-1 relations have blinded three-reviewer panel decisions; unanimous, majority, and unresolved decisions retain explicit model-panel provenance rather than human-root ownership. Blindness grade: `arm_hidden_three_reviewer_panel_census`.
 - **E7a** — No fresh selector consumes the counterfactual registry, so clinical arm outcomes are undefined rather than missing. Blindness grade: `not_applicable_structural_offline_replay`.
-- **E7b** — The clinical queue contains 40 priority cases; 360 cases lack exhaustive clinical equivalence adjudication. Blindness grade: `selector_blinded_targeted_priority_review`.
-- **E7c** — All 84 discordant cases were mechanism-reviewed, but the remaining 215 cases have no full clinical classification. Blindness grade: `selector_blinded_discordance_enriched_root_review`.
-- **E8** — Root review covers 30 mechanism-enriched cases; 190 cases have no complete/compatible-partial/no judgment. Blindness grade: `selector_blinded_mechanism_enriched_root_review`.
-- **E9** — The frozen root queue has 70 cases, but its legacy binary scope/surface labels do not implement the canonical complete/compatible-partial/no partition; 330 cases remain clinically unadjudicated. Blindness grade: `selector_blinded_mechanism_enriched_root_review`.
-- **E10** — The corrected table is explicitly binary-clinical-acceptable only; complete, compatible-partial and their union are unmeasured. 166 cases were root-reviewed and 234 remain proxy-negative. Blindness grade: `nonblind_root_priority_binary_screen_review`.
-- **E11** — Root review covers 624 of 6,400 arm-rank occurrences; 5,776 occurrences retain heterogeneous proxy labels. Blindness grade: `nonblind_endpoint_critical_root_overrides_with_proxy_completion`.
-- **E12** — Root review covers 385 of 3,191 candidate relations in 154 cases; 2,806 relations remain heterogeneous proxy. Blindness grade: `nonblind_arm_visible_endpoint_critical_root_overrides_with_proxy_completion`.
-- **E14x** — The primary comparison has two historical arms over 300 cases; 56 cases were root-reviewed and no proxy completion was performed. Blindness grade: `retrospective_mechanism_enriched_root_review`.
-- **RCR3** — 375 high-impact relations were root-reviewed; 3,151 noncritical relations retain heterogeneous proxy and 7 screen failures are fail-closed. Blindness grade: `nonblind_arm_visible_endpoint_critical_root_overrides_with_proxy_completion`.
+- **E7b** — All intended rows have deterministic failure handling and all served Top-1 relations have blinded three-reviewer panel decisions; unanimous, majority, and unresolved decisions retain explicit model-panel provenance rather than human-root ownership. Blindness grade: `arm_hidden_three_reviewer_panel_census`.
+- **E7c** — All intended rows have deterministic failure handling and all served Top-1 relations have blinded three-reviewer panel decisions; unanimous, majority, and unresolved decisions retain explicit model-panel provenance rather than human-root ownership. Blindness grade: `arm_hidden_three_reviewer_panel_census`.
+- **E8** — All intended rows have deterministic failure handling and all served Top-1 relations have blinded three-reviewer panel decisions; unanimous, majority, and unresolved decisions retain explicit model-panel provenance rather than human-root ownership. Blindness grade: `arm_hidden_three_reviewer_panel_census`.
+- **E9** — All intended rows have deterministic failure handling and all served Top-1 relations have blinded three-reviewer panel decisions; unanimous, majority, and unresolved decisions retain explicit model-panel provenance rather than human-root ownership. Blindness grade: `arm_hidden_three_reviewer_panel_census`.
+- **E10** — All intended rows have deterministic failure handling and all served Top-1 relations have blinded three-reviewer panel decisions; unanimous, majority, and unresolved decisions retain explicit model-panel provenance rather than human-root ownership. Blindness grade: `arm_hidden_three_reviewer_panel_census`.
+- **E11** — All intended rows have deterministic failure handling and all served Top-1 relations have blinded three-reviewer panel decisions; unanimous, majority, and unresolved decisions retain explicit model-panel provenance rather than human-root ownership. Blindness grade: `arm_hidden_three_reviewer_panel_census`.
+- **E12** — All intended rows have deterministic failure handling and all served Top-1 relations have blinded three-reviewer panel decisions; unanimous, majority, and unresolved decisions retain explicit model-panel provenance rather than human-root ownership. Blindness grade: `arm_hidden_three_reviewer_panel_census`.
+- **E14x** — All intended rows have deterministic failure handling and all served Top-1 relations have blinded three-reviewer panel decisions; unanimous, majority, and unresolved decisions retain explicit model-panel provenance rather than human-root ownership. Blindness grade: `arm_hidden_three_reviewer_panel_census`.
+- **RCR3** — All intended rows have deterministic failure handling and all served Top-1 relations have blinded three-reviewer panel decisions; unanimous, majority, and unresolved decisions retain explicit model-panel provenance rather than human-root ownership. Blindness grade: `arm_hidden_three_reviewer_panel_census`.
 
 ## Raw-field ingestion risks
 
@@ -97,11 +98,12 @@ The canonical arm ordering is checked against one independently stored machine s
 1. The experiment list must contain exactly the 16 registered IDs, once each, in the frozen order.
 2. Every canonical ARM_IDS set must exactly equal its independently parsed arm-registry source; the 91-row total is not accepted as self-validation.
 3. Direct flattening/ingestion of frozen raw experiment summaries is prohibited; downstream use requires a join through the coverage-gated cross matrix.
-4. The full-root allowlist must equal `{E2}`; adding another experiment requires an explicit audit-contract revision.
+4. The full-root allowlist must equal `{E2}`; model-panel census completion does not silently expand it.
 5. Every non-full experiment has `leaderboard_ingestion=prohibited`.
 6. E7a remains clinical-endpoint N/A until a fresh selector consumes each counterfactual registry.
-7. E10 remains blocked from complete scoring because the frozen binary acceptable audit does not separate complete, compatible-partial, and not-equivalent.
-8. Source reports must retain the evidence anchors used by this classification; drift aborts generation.
+7. E10's historical binary-acceptable field remains blocked from canonical scoring; only the separate migrated model-panel ledger supplies complete/partial/union status.
+8. An incomplete fresh task namespace cannot be called a closed task migration and cannot support partial-cache inference.
+9. Source reports must retain the evidence anchors used by this classification; drift aborts generation.
 
 ## Reproduction
 

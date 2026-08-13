@@ -1,0 +1,81 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "211f7e9049a2b002e939f4cb7f02da4d67ac4c29cb3abdecc4685a3399351822",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "medium",
+        "reason": "The reference does not specify psoriasiform morphology; adding that subtype narrows the diagnosis beyond what the record confirms, though the drug class and both components (blepharitis + ectropion) are present",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Specifies psoriasiform subtype not stated in reference; includes ectropion and TNF-α inhibitor class causation, but adds unconfirmed histologic subtype qualifier"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "The patient was on both infliximab and adalimumab; the reference implicates both TNF-α inhibitors. This candidate is incomplete in drug scope and missing ectropion",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Names only infliximab (one of two implicated agents) and omits ectropion component"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "The reference attributes the reaction to both infliximab and adalimumab (TNF-α inhibitor class); restricting to adalimumab alone is incomplete in drug scope",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Names only adalimumab (one of two implicated agents); includes ectropion but omits infliximab"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "medium",
+        "reason": "Captures drug class (TNF-α inhibitors), the eyelid inflammatory component, and ectropion; 'eyelid dermatitis' is a reasonable wording variant for blepharitis in this context and does not assert an incompatible subtype",
+        "relation": "complete_equivalent",
+        "scope_detail": "TNF-α inhibitor class causation, eyelid inflammation (blepharitis equivalent), and ectropion all present; 'dermatitis' is a compatible alias for the scaly/erythematous eyelid findings"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "The clinical record and image caption explicitly link the blepharitis/ectropion to TNF-α inhibitor therapy (resolving after discontinuation), not to Crohn disease activity directly",
+        "relation": "not_equivalent",
+        "scope_detail": "Attributes ocular findings to Crohn disease itself rather than to the TNF-α inhibitor drugs"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "medium",
+        "reason": "Paradoxical psoriasis is a specific mechanistic subtype requiring histologic or clinical psoriasis confirmation; the record describes scaly erythematous eyelids but does not confirm psoriasis diagnosis, making this an unconfirmed narrower subtype",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Specifies paradoxical psoriasis subtype not confirmed in the record; includes blepharitis and ectropion with TNF-α inhibitor causation"
+      },
+      {
+        "candidate_id": "C007",
+        "confidence": "high",
+        "reason": "Missing both the drug-induced etiology (TNF-α inhibitors) and the ectropion component that are required by the reference",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Generic blepharitis without drug causation or ectropion component"
+      },
+      {
+        "candidate_id": "C008",
+        "confidence": "high",
+        "reason": "Captures drug causation and blepharitis but omits ectropion and does not specify TNF-α inhibitor class",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Drug-induced blepharitis present but missing ectropion component and TNF-α inhibitor class specificity"
+      },
+      {
+        "candidate_id": "C009",
+        "confidence": "high",
+        "reason": "Incomplete in drug scope (adalimumab only vs. both TNF-α inhibitors) and uses a vague anatomic/pathologic descriptor that does not capture the specific blepharitis and ectropion components",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Names only adalimumab; 'ocular inflammation' is broader and less specific than blepharitis + ectropion; misses infliximab"
+      }
+    ],
+    "case_quality_flags": [
+      "Reference diagnosis implicates both infliximab and adalimumab as a class effect; candidates naming only one agent are systematically incomplete",
+      "Psoriasiform/paradoxical psoriasis subtype not histologically confirmed in the record; candidates asserting this subtype exceed available evidence"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

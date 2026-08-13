@@ -1,0 +1,82 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "1340f2a83fff4b1bfbe2ffa20ef4db41480f6f5cceffde4aea54a3441848a327",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "Names the same diagnostic entity (AIN) and adds a compatible, non-conflicting etiology (sildenafil) consistent with the clinical record; all core components of the reference are present",
+        "relation": "complete_equivalent",
+        "scope_detail": "Acute interstitial nephritis with etiology specified as sildenafil; the reference is 'acute interstitial nephritis' without mandatory etiology specification"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "Allergic/hypersensitivity interstitial nephritis is the standard synonym for drug-induced AIN; eosinophilia in the record supports this framing; maps to the same diagnostic object as the reference",
+        "relation": "complete_equivalent",
+        "scope_detail": "Allergic interstitial nephritis is a well-accepted alias for drug-induced AIN; sildenafil etiology is compatible"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "The reference diagnosis is AIN; labeling the condition as 'sildenafil-induced nephrotic syndrome' shifts the primary diagnostic entity to a glomerular syndrome, conflicting with the interstitial nephritis diagnosis",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Frames the primary diagnosis as nephrotic syndrome rather than AIN; nephrotic syndrome is a manifestation/complication here, not the primary renal pathology"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "The reference is simply AIN; asserting superimposed membranous nephropathy introduces an unconfirmed additional diagnosis that conflicts with the scope of the reference and is not supported by the available clinical data",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Adds membranous nephropathy as a co-diagnosis without biopsy evidence; expands scope beyond the reference"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "The reference is AIN; nephrotic syndrome describes the clinical syndrome (edema, proteinuria, hypoalbuminemia) rather than the underlying renal lesion",
+        "relation": "manifestation_or_related",
+        "scope_detail": "Nephrotic syndrome is a clinical manifestation present in this case but is not the primary renal pathological diagnosis"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "high",
+        "reason": "Core diagnosis is AIN (drug-induced), consistent with the reference; additional descriptors (nephrotic-range proteinuria, sildenafil) are compatible with the clinical record and do not conflict with the reference entity",
+        "relation": "complete_equivalent",
+        "scope_detail": "Drug-induced AIN with nephrotic-range proteinuria and sildenafil etiology; all components align with the reference and add compatible detail"
+      },
+      {
+        "candidate_id": "C007",
+        "confidence": "high",
+        "reason": "Membranous nephropathy is a glomerular disease; the reference is interstitial nephritis. No biopsy data supports membranous nephropathy, and the clinical picture (drug exposure, eosinophilia, acute rise in creatinine) favors AIN",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Asserts primary membranous nephropathy as the diagnosis, which is a different glomerular entity from AIN"
+      },
+      {
+        "candidate_id": "C008",
+        "confidence": "high",
+        "reason": "MCD is a different pathological entity; while it can cause nephrotic syndrome, it does not correspond to the reference diagnosis of AIN and is not supported by the clinical features (eosinophilia, drug exposure, sediment pattern)",
+        "relation": "not_equivalent",
+        "scope_detail": "Minimal change disease is a distinct glomerular podocytopathy unrelated to AIN"
+      },
+      {
+        "candidate_id": "C009",
+        "confidence": "high",
+        "reason": "Membranous nephropathy is a different renal pathological diagnosis; the reference is AIN, and the clinical evidence does not support membranous nephropathy as the primary diagnosis",
+        "relation": "not_equivalent",
+        "scope_detail": "Membranous nephropathy is a distinct glomerular entity from AIN"
+      }
+    ],
+    "case_quality_flags": [
+      "Nephrotic-range proteinuria in AIN is atypical and may suggest concurrent glomerular pathology; biopsy would be definitive but is not available in this record",
+      "Eosinophilia (5.6%) supports drug-induced/allergic AIN",
+      "Temporal relationship between sildenafil and symptom onset is the primary diagnostic anchor"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

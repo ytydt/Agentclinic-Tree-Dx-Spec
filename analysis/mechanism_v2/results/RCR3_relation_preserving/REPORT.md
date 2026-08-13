@@ -227,3 +227,18 @@ requested-object hard gate、非支配 frontier、selector completeness calibrat
 
 RCR-3 已完成其可证伪目的：它把一个听起来合理的“关系保留三调用”方案拆成可检查部件，并证明当前
 实现的关系、覆盖和校准不足以抵消额外结构与 schema 脆弱性。
+
+## Canonical Top-1 migration addendum (2026-08-13)
+
+The exhaustive blinded three-reviewer model-panel replay (not human root)
+replaces the 29/20/18 proxy counts as the main Top-1 sensitivity. ITA
+clinical-complete is Lite3 22/300, RCR3 13/300, Compact4 13/300. The Lite→RCR
+complete loss is −3.0 pp (3 gain/12 loss) but does not survive Holm
+(`q=.10547`). Secondary C∪P is 130/300, 108/300, and 66/300: RCR3−Lite is
+−7.33 pp (33/55, `q=.02462`), Compact4−RCR3 is −14.0 pp (32/74,
+`q=.000111`), and Compact4−Lite is −21.33 pp (9/73, `q=4.13e-13`). Thus no
+complete-object benefit is established and compatible coverage is materially
+worse, strengthening the deployment rejection. The independent span,
+relation, frontier, reliability, and failure evidence remains necessary for
+mechanism attribution; this Top-1 migration does not canonicalize the full
+candidate registries.

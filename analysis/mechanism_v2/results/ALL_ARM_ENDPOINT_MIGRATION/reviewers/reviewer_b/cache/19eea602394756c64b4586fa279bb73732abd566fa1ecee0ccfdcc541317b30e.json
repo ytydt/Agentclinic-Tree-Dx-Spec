@@ -1,0 +1,59 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "3182f8500e9aecd9381177e6ee66fa7cfa16df231a65b3eecaeb59e67b9d7c32",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "Cholangitis is the broad parent entity; it lacks both the sclerosing subtype and the chemotherapy causation required by the reference diagnosis",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Names the parent category (cholangitis) without specifying sclerosing morphology or chemotherapy etiology"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "medium",
+        "reason": "The reference diagnosis is chemotherapy-induced sclerosing cholangitis without singling out one agent; attributing causation solely to paclitaxel narrows the etiology in a way that conflicts with the composite chemotherapy attribution in the reference",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Attributes etiology specifically to paclitaxel rather than chemotherapy as a class/combination"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "Captures the sclerosing cholangitis subtype and chemotherapy causation; 'associated' versus 'induced' is a clinically acceptable alias in this context",
+        "relation": "complete_equivalent",
+        "scope_detail": "'Chemotherapy-associated' vs 'chemotherapy-induced' is a harmless wording variant; sclerosing cholangitis subtype and chemotherapy etiology are both present"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "Chemotherapy-induced cholangitis is compatible with the etiology but does not capture the defining sclerosing morphology (strictures, irregular wall contours, biliary fibrosis pattern) central to the reference diagnosis",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Specifies chemotherapy etiology but omits the sclerosing subtype of cholangitis"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "Identical label to the reference: chemotherapy-induced sclerosing cholangitis, with both required components (chemotherapy etiology and sclerosing cholangitis subtype)",
+        "relation": "complete_equivalent",
+        "scope_detail": "Exact lexical match to the reference diagnosis"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "high",
+        "reason": "The markedly elevated ALP and γ-GTP reflect cholestasis, but the reference diagnosis is a specific structural entity (sclerosing cholangitis); drug-induced cholestasis is a related manifestation/differential rather than the same diagnostic object",
+        "relation": "manifestation_or_related",
+        "scope_detail": "Drug-induced cholestasis is a biochemical/functional manifestation rather than the structural biliary diagnosis"
+      }
+    ],
+    "case_quality_flags": [
+      "Dual-agent chemotherapy (paclitaxel + cisplatin + bevacizumab) makes single-agent attribution uncertain; C002 penalized accordingly"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

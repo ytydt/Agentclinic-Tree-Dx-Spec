@@ -1,0 +1,95 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "55a8c51476504876e0e07a6cfa761d60b4e0b947816f1e96e3b8f745bb8bf216",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "The reference diagnosis is a composite: anastrozole-associated uveitis WITH cystoid macular edema. C001 names only the uveitis portion, missing the CME component explicitly documented on OCT and FA.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures anastrozole-induced uveitis but omits the cystoid macular edema component required by the reference"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "Iritis is a component/manifestation of the full diagnosis but lacks the drug etiology and the macular edema component.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Names only the anterior segment inflammation (iritis), omitting etiology (anastrozole) and CME"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "The reference requires both uveitis and CME linked to anastrozole. C003 names only the CME side of the composite, missing the uveitis.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures CME secondary to anastrozole but omits the uveitis component"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "Equivalent to C003 in scope; the uveitis component of the reference diagnosis is absent.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Same as C003 — CME related to anastrozole without the uveitis component"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "No heterochromia is documented, the KPs are fine (not stellate), and the drug history strongly points to anastrozole-associated disease rather than Fuchs.",
+        "relation": "not_equivalent",
+        "scope_detail": "Fuchs heterochromic iridocyclitis is a distinct clinical entity with characteristic heterochromia and stellate KPs"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "high",
+        "reason": "Captures the drug etiology (anastrozole), the uveitis, and the CME. Adding 'bilateral' is supported by bilateral KPs and bilateral CME on FA and is not incompatible with the reference.",
+        "relation": "complete_equivalent",
+        "scope_detail": "Anastrozole-induced bilateral uveitis with CME — all components present; 'bilateral' is consistent with bilateral KPs and bilateral CME on FA"
+      },
+      {
+        "candidate_id": "C007",
+        "confidence": "high",
+        "reason": "CT chest is unremarkable, vasculitis/rheumatologic workup normal, and the temporal association with anastrozole makes sarcoidosis unlikely and a different diagnostic entity.",
+        "relation": "not_equivalent",
+        "scope_detail": "Sarcoidosis is a distinct systemic granulomatous disease"
+      },
+      {
+        "candidate_id": "C008",
+        "confidence": "high",
+        "reason": "No hyphema or elevated IOP is documented; the clinical picture is drug-induced uveitis with CME, not UGH syndrome.",
+        "relation": "not_equivalent",
+        "scope_detail": "UGH syndrome involves IOL-related mechanical trauma causing uveitis, glaucoma, and hyphema"
+      },
+      {
+        "candidate_id": "C009",
+        "confidence": "high",
+        "reason": "CME in the context of uveitis is a manifestation; the label omits the drug etiology and the uveitis diagnosis itself.",
+        "relation": "manifestation_or_related",
+        "scope_detail": "Uveitic macular edema is a complication/manifestation of uveitis, not the full diagnostic entity"
+      },
+      {
+        "candidate_id": "C010",
+        "confidence": "high",
+        "reason": "Calling it 'idiopathic' directly conflicts with the drug-induced etiology central to the reference diagnosis, even though CME is included.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Labels the uveitis as idiopathic recurrent anterior uveitis, conflicting with the anastrozole etiology"
+      },
+      {
+        "candidate_id": "C011",
+        "confidence": "high",
+        "reason": "Restricts to right eye only (bilateral disease documented) and omits the anastrozole etiology, making it an incomplete and partially conflicting scope.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Limits to right eye recurrent anterior uveitis with CME, omitting drug etiology and bilateral involvement"
+      }
+    ],
+    "case_quality_flags": [
+      "Bilateral CME on FA supports bilateral disease scope in C006",
+      "Anastrozole temporal association is the key etiologic anchor distinguishing drug-induced from idiopathic uveitis"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

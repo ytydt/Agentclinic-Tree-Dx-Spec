@@ -1,0 +1,60 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "9b615936dee4dcf1a9723aaf9019aad137733ddce7f418c972462eda4404bb76",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "Pulmonary Hypertension is the broad parent class; it omits the idiopathic/PAH subtype and the PFO finding required by the reference",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Names only the parent category without specifying idiopathic etiology or PFO component"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "The reference diagnosis is IPAH (no underlying congenital heart disease causing the PAH); the PFO is incidental/secondary. Framing it as congenital heart disease with shunt reversal misattributes causality and conflicts with the idiopathic designation",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Implies a congenital structural defect as the primary cause of shunt reversal, which conflicts with the IPAH etiology"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "Eisenmenger Syndrome is defined by PAH caused by a congenital shunt lesion with subsequent reversal; here the PAH is idiopathic and the PFO is a secondary finding, making this an incompatible subtype",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Eisenmenger Syndrome requires a congenital cardiac defect as the primary driver; IPAH with incidental PFO is a different entity"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "Pulmonary Arterial Hypertension captures the correct hemodynamic group but does not specify the idiopathic subtype or include the PFO, both required by the reference",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Correct group (PAH) but missing idiopathic specification and PFO component"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "The label specifies IPAH, PFO, and the right-to-left shunt direction, fully covering all required components of the reference diagnosis; language difference is a harmless alias",
+        "relation": "complete_equivalent",
+        "scope_detail": "Chinese label translates directly to 'Idiopathic Pulmonary Arterial Hypertension (IPAH) with patent foramen ovale right-to-left shunt', matching all components"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "high",
+        "reason": "Same reasoning as C003; Eisenmenger Syndrome is an incompatible subtype because the reference diagnosis is idiopathic PAH with an incidental PFO, not PAH secondary to a congenital defect",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Eisenmenger Syndrome implies congenital-defect-driven PAH with shunt reversal, incompatible with IPAH etiology"
+      }
+    ],
+    "case_quality_flags": [
+      "PFO in this case appears incidental/secondary to IPAH rather than causative; distinction from Eisenmenger Syndrome is clinically important and well-supported by the record",
+      "Pulmonary artery pressure (60/39 mmHg) is below aortic pressure, consistent with IPAH rather than classic Eisenmenger physiology"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

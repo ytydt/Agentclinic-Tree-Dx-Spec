@@ -1,0 +1,59 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "14b312e350c49a968570516b920071a36b41da964716973909e4598b5f7da1e9",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "Identical label to the benchmark reference; no additional specificity required by the reference.",
+        "relation": "complete_equivalent",
+        "scope_detail": "Exact match to reference diagnosis 'Liposarcoma'"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "medium",
+        "reason": "The reference is simply 'Liposarcoma' without subtype specification; asserting 'well-differentiated' adds unconfirmed specificity that may conflict with the clinical picture (recurrent bleeding, large size, prior apparent lipoma misdiagnosis could suggest dedifferentiated or other subtype).",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Specifies well-differentiated subtype and gastric location, which are not confirmed by the reference"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "medium",
+        "reason": "The reference does not specify a subtype; 'dedifferentiated' is an incompatible subtype assertion relative to the unqualified benchmark.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Asserts dedifferentiated subtype not specified in reference"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "The tumour is clearly gastric per the clinical record; adding 'gastric' is a clinically consistent alias that does not alter the core diagnosis.",
+        "relation": "complete_equivalent",
+        "scope_detail": "Gastric location is consistent with the clinical record; 'Gastric liposarcoma' is a harmless anatomical qualifier on the same diagnostic entity"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "Harmless language alias; semantically identical to the reference diagnosis.",
+        "relation": "complete_equivalent",
+        "scope_detail": "Chinese term 脂肪肉瘤 is the direct translation of 'Liposarcoma'"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "medium",
+        "reason": "While the clinical history mentions a prior lipoma diagnosis, the reference diagnosis is liposarcoma (a distinct malignant entity); 'lipoma with malignant transformation' implies a different pathogenetic framing and is not equivalent to the benchmark.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Frames the entity as a lipoma undergoing malignant transformation rather than a primary liposarcoma"
+      }
+    ],
+    "case_quality_flags": [
+      "Prior histopathology reportedly confirmed lipoma, raising question of misdiagnosis vs. true malignant transformation; subtype of liposarcoma cannot be determined from the record alone."
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

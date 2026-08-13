@@ -1,0 +1,40 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "6f228060aec84b36cec84b266acf88d2b9e9002f775ce18ba4d9a732c772284f",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "The reference diagnosis is a composite: inflammation-induced ocular neuropathy within the context of SARS-CoV-2–induced panuveitis. This candidate names only the optic neuritis/neuropathy component with COVID-19 etiology, missing the panuveitis scope (anterior chamber inflammation, vitreous inflammation, retinal vasculitis all documented in the record).",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures the optic nerve inflammation component and COVID-19 etiology but omits the panuveitis (anterior uveitis, vitritis, retinal vasculitis) that constitutes the full composite diagnosis"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "label": "COVID-19 associated optic neuritis",
+        "reason": "Same reasoning as C001 — the panuveitis component (anterior uveitis, vitritis, retinal vasculitis with fluorescein leakage from venules) is not captured, making this a partial representation of the full reference diagnosis.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Identical in substance to C001; captures optic nerve inflammation with COVID-19 etiology but omits the panuveitis composite"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "Closer in etiology labeling to the reference (SARS-CoV-2 rather than generic COVID-19) and correctly identifies the optic neuropathy/neuritis component, but the reference explicitly frames the ocular neuropathy as secondary to panuveitis — the broader inflammatory ocular syndrome is absent from this candidate.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Uses SARS-CoV-2 terminology (matching the reference more precisely) but still omits the panuveitis composite"
+      }
+    ],
+    "case_quality_flags": [
+      "Reference diagnosis uses 'ocular neuropathy' rather than 'optic neuritis,' reflecting progression to atrophy; all candidates use 'optic neuritis,' which is a partial but not complete terminological match",
+      "Panuveitis is a critical composite component of the reference that all candidates omit"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

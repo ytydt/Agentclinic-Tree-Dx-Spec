@@ -1,0 +1,95 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "74a37d7594a1818cd84719353de2603d689e6a1994fd5af4bfc08a88b8319bf8",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "Captures the ITP diagnosis but omits the 'acute' onset/state component required by the benchmark reference 'Acute immune thrombocytopenia (ITP)'.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Immune thrombocytopenia without the 'acute' temporal qualifier specified in the reference"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "medium",
+        "reason": "While HCV is present in the record, the reference diagnosis is Acute ITP (primary/unqualified), not HCV-ITP as a distinct etiologic subtype. Adding HCV etiology changes the diagnostic subtype scope.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Specifies HCV as the explicit etiology, whereas the reference is 'Acute ITP' without an etiologic qualifier; also lacks 'acute'"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "Cirrhosis is a documented comorbidity contributing to the clinical context but is not the requested diagnosis of Acute ITP.",
+        "relation": "manifestation_or_related",
+        "scope_detail": "Cirrhosis is a background comorbidity, not the final diagnosis of thrombocytopenia"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "Thrombocytopenia is the parent category; it lacks both the immune (ITP) mechanism and the 'acute' temporal specification.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Generic thrombocytopenia without immune mechanism or acute qualifier"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "Translates to 'Immune thrombocytopenia (ITP)' — equivalent to C001/C007 but missing the 'acute' component of the reference.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Chinese-language label for ITP without 'acute' qualifier"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "medium",
+        "reason": "Labeling ITP as 'secondary to hepatitis C' introduces an etiologic subtype not present in the reference diagnosis, altering the diagnostic scope.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Designates ITP as secondary to hepatitis C, conflicting with the reference's unqualified Acute ITP"
+      },
+      {
+        "candidate_id": "C007",
+        "confidence": "high",
+        "reason": "Correctly identifies ITP but omits the 'acute' onset descriptor that is part of the benchmark reference.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "ITP without the 'acute' temporal/state qualifier"
+      },
+      {
+        "candidate_id": "C008",
+        "confidence": "medium",
+        "reason": "Similar to C002/C006, attributing ITP specifically to hepatitis C creates a distinct etiologic subtype that conflicts with the unqualified 'Acute ITP' reference.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Specifies hepatitis C association as an etiologic qualifier not present in the reference"
+      },
+      {
+        "candidate_id": "C009",
+        "confidence": "high",
+        "reason": "Splenic sequestration is a different pathophysiologic mechanism from immune-mediated platelet destruction (ITP); the bone marrow biopsy and clinical course support ITP, not sequestration.",
+        "relation": "not_equivalent",
+        "scope_detail": "Mechanical/sequestration mechanism rather than immune-mediated destruction"
+      },
+      {
+        "candidate_id": "C010",
+        "confidence": "high",
+        "reason": "TTP involves ADAMTS13 deficiency and microangiopathic hemolytic anemia; the record shows normal PT/aPTT, negative heparin antibody, and findings consistent with ITP, not TTP.",
+        "relation": "not_equivalent",
+        "scope_detail": "TTP is a distinct thrombotic microangiopathy with different pathophysiology and clinical features"
+      },
+      {
+        "candidate_id": "C011",
+        "confidence": "high",
+        "reason": "Hypersplenism due to cirrhosis is a different mechanism; the clinical workup (bone marrow biopsy, splenic embolization response) and the profound thrombocytopenia (2,000/µL) point to ITP rather than hypersplenism alone.",
+        "relation": "not_equivalent",
+        "scope_detail": "Hypersplenism is a mechanical cause of thrombocytopenia distinct from immune-mediated ITP"
+      }
+    ],
+    "case_quality_flags": [
+      "Reference diagnosis 'Acute ITP' uses 'acute' qualifier but the clinical record does not explicitly state onset duration; the acute designation may reflect the abrupt severe drop from 115,000 to 2,000/µL perioperatively",
+      "HCV etiology is clinically plausible but the reference does not incorporate it as a subtype, creating ambiguity for HCV-associated ITP candidates"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

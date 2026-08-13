@@ -208,3 +208,14 @@ prices and no authoritative billed amount was returned.
    subtype relations, component completeness and mapper rescue (E2).
 5. Audit internal concept membership and evidence transfer even when the final
    displayed label is unchanged.
+
+## Canonical Top-1 migration addendum (2026-08-13)
+
+The exhaustive blinded three-reviewer model-panel replay (not human root) adds
+a specificity finding that safe-exact alone could not show. Exact identity is
+64/400 clinical-complete versus 51/400 under legacy substring: +3.25 pp
+(16 gain/3 loss, Holm `q=.00885`). C∪P is essentially unchanged, 226/400 versus
+227/400 (19/20, `q=1`). The repair therefore mainly converts broad/partial
+objects into complete ones rather than increasing family coverage. Typed versus
+exact remains null for complete (+0.5 pp, 3/1, `q=.625`) and C∪P (−0.5 pp,
+8/10, `q=1`). Exact identity remains a safety invariant, not a sufficient ranker.

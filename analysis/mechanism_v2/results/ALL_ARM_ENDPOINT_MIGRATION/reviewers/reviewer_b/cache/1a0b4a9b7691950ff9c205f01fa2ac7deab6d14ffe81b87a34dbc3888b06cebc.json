@@ -1,0 +1,60 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "a0369590a364a4126a3bdb66f156e868ba738c566e37dfe37e9fc244abc42395",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "The clinical record describes a lesion with mucosal fenestration and surface exposure, consistent with a peripheral (extraosseous) odontoma. 'Odontoma' alone does not specify the peripheral location, which is the key distinguishing feature of the reference diagnosis.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Odontoma is the parent category; lacks the 'peripheral' (extraosseous/soft tissue) qualifier that distinguishes this case from central odontoma"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "medium",
+        "reason": "Compound odontoma addresses the histological subtype but omits the peripheral/extraosseous qualifier. The reference diagnosis 'Peripheral odontoma' emphasizes location over internal subtype; the record does not provide histological detail to confirm compound morphology.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Compound odontoma is a subtype of odontoma but specifies the internal morphology (tooth-like denticles) rather than the peripheral location"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "medium",
+        "reason": "Same reasoning as C002: specifies histological subtype without the peripheral location component. The radiographic appearance of a discrete radiopaque mass could suggest complex type, but the peripheral qualifier is still absent.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Complex odontoma is a subtype specifying disorganized calcified mass morphology but lacks the peripheral qualifier"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "Cemento-ossifying fibroma is a fibro-osseous lesion, not an odontogenic tumor. While it can present as a calcified mass, it has different histopathological features and is not compatible with the reference diagnosis of peripheral odontoma.",
+        "relation": "not_equivalent",
+        "scope_detail": "Cemento-ossifying fibroma is a distinct fibro-osseous lesion of different histogenesis and histology"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "The clinical record explicitly states that maxillary exostosis was the initial diagnostic hypothesis that prompted biopsy. The histopathological analysis would distinguish this from an odontoma. This is an incompatible entity.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Maxillary exostosis is a reactive bony outgrowth, not an odontogenic lesion; explicitly mentioned as the initial (incorrect) hypothesis in the record"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "high",
+        "reason": "Osteoma is composed of mature bone without odontogenic components. It does not contain dental hard tissues (enamel, dentin, cementum) and is a distinct entity from peripheral odontoma.",
+        "relation": "not_equivalent",
+        "scope_detail": "Osteoma is a benign bone-forming tumor of non-odontogenic origin"
+      }
+    ],
+    "case_quality_flags": [
+      "Reference diagnosis 'Peripheral odontoma' is a rare extraosseous variant; the clinical clue of mucosal fenestration with exposed mineralized structure is the key distinguishing feature from central odontoma subtypes",
+      "Histopathological subtype (compound vs complex) not determinable from the supplied record; candidates C002 and C003 cannot be fully evaluated without biopsy results"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

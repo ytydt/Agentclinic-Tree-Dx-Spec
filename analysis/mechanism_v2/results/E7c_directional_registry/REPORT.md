@@ -181,3 +181,13 @@ selector it needs deterministic safeguards:
 E7c therefore supplies a useful negative mechanism result: safe identity is
 necessary, but adding unconstrained LLM-typed relations after identity repair is
 not sufficient and can reintroduce a new form of aggregation error.
+
+## Canonical Top-1 migration addendum (2026-08-13)
+
+The exhaustive blinded three-reviewer model-panel replay (not human root)
+finds no Holm-confirmed clinical advantage for directional, bounded, or generic
+relations over the exact control. ITA clinical-complete is 51/299 exact,
+50/299 directional, 49/299 bounded, and 49/299 generic; all complete and C∪P
+paired contrasts have `q>=.625`. This preserves the negative implementation
+conclusion while narrowing it correctly: the tested relation typer is unstable
+and unhelpful, not proof that an oracle typed ontology cannot help.

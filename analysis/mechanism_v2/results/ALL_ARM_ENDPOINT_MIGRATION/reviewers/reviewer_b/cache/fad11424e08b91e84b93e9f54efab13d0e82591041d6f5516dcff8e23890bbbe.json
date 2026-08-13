@@ -1,0 +1,67 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "b4086e6bbb2e9a3e28c28219018aa01544107cdb3de201c1a6f24ead7571dc49",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "The reference diagnosis is gastric schwannoma. GIST is the main radiological differential raised in the record but is a distinct mesenchymal tumor requiring different IHC (CD117/DOG1 vs. S100). The clinical features (calcification on FNA, no vascularity on EUS, peritumoral lymph nodes typical of schwannoma) point away from GIST.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "GIST vs. gastric schwannoma — both spindle cell tumors of muscularis propria but distinct entities"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "Same entity conflict as C001, further compounded by asserting malignant nodal metastasis, which is not supported by the reference diagnosis of benign gastric schwannoma.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Specifies GIST with malignant nodal involvement — incompatible entity and added malignant staging"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "The mass arises from the gastric fundus muscularis propria, not the retroperitoneum, and the reference is schwannoma, not leiomyosarcoma.",
+        "relation": "not_equivalent",
+        "scope_detail": "Retroperitoneal leiomyosarcoma — wrong location, wrong entity"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "Correct anatomical localization (gastric fundus) but asserts GIST with high-risk features, which conflicts with the reference diagnosis of gastric schwannoma. Peritumoral lymphadenopathy in schwannoma is a known benign feature, not metastasis.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "GIST gastric fundus high-risk with lymph node enlargement — wrong entity despite correct anatomical site"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "Paraganglioma is a distinct neuroendocrine neoplasm with different histology, immunoprofile, and clinical behavior; not equivalent to gastric schwannoma.",
+        "relation": "not_equivalent",
+        "scope_detail": "Paraganglioma — unrelated neuroendocrine tumor"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "high",
+        "reason": "Same fundamental entity conflict as C001; GIST and schwannoma are distinct spindle cell tumors despite overlapping imaging features.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Generic GIST label — wrong entity"
+      },
+      {
+        "candidate_id": "C007",
+        "confidence": "high",
+        "reason": "Asserts GIST with possible lymph node metastasis; conflicts with reference diagnosis of gastric schwannoma. Also introduces small intestine as a possible site, which is not supported by the record.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "GIST stomach/small intestine with possible nodal metastasis — wrong entity and ambiguous site"
+      }
+    ],
+    "case_quality_flags": [
+      "EUS-FNA was non-diagnostic (spindle cells, calcification, no definitive typing); reference diagnosis of schwannoma likely established post-operatively by histology/IHC (S100 positivity) not documented in the supplied record",
+      "Peritumoral lymphadenopathy on CT is a recognized feature of gastric schwannoma and should not be conflated with malignant nodal metastasis"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

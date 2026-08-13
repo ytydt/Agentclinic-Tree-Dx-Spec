@@ -1,0 +1,74 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "4c2b12c7b26944737df5eb4e9f8a5b13ea1505e86ff4c4a7953a22a74e4cee81",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "The reference diagnosis specifies Klebsiella oxytoca as the causative organism. K. pneumoniae is a distinct species. Additionally, the metastatic complications (septic pulmonary embolism, hepatic vein thrombosis, spondylodiscitis, retroperitoneal abscess) are entirely absent.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Specifies K. pneumoniae rather than K. oxytoca; omits metastatic complications"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "Captures the invasive/metastatic syndrome concept but attributes it to K. pneumoniae rather than K. oxytoca as confirmed by cultures in the reference. Species-level conflict is a required specificity component.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Specifies K. pneumoniae (wrong species) but includes metastatic spread concept"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "Wrong species (K. pneumoniae vs. K. oxytoca) and missing hepatic vein thrombosis as an explicit complication component required by the reference.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Specifies K. pneumoniae (wrong species); lists septic emboli to lungs, iliopsoas, and disc but omits hepatic vein thrombosis as a named component"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "Nocardiosis is caused by Nocardia spp. and is unrelated to the gram-negative bacillus (Klebsiella oxytoca) identified in cultures. Entirely different diagnostic entity.",
+        "relation": "not_equivalent",
+        "scope_detail": "Completely different organism and disease entity"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "Psoas abscess (retroperitoneal abscess) is one of the four metastatic complications listed in the reference but does not capture the primary diagnosis (pyogenic liver abscess) or the other complications.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Only one complication of the full syndrome"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "high",
+        "reason": "Pyogenic liver abscess is the primary component of the reference diagnosis but lacks the causative organism (K. oxytoca) and all four metastatic complications required by the full reference.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Correct primary diagnosis but missing organism identity and all metastatic complications"
+      },
+      {
+        "candidate_id": "C007",
+        "confidence": "high",
+        "reason": "Wrong species and missing two of the four required metastatic complications (hepatic vein thrombosis and retroperitoneal/iliopsoas abscess).",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Specifies K. pneumoniae (wrong species); includes pulmonary emboli and spondylodiscitis but omits hepatic vein thrombosis and retroperitoneal abscess"
+      },
+      {
+        "candidate_id": "C008",
+        "confidence": "high",
+        "reason": "This candidate captures pyogenic liver abscess, septic pulmonary emboli, spondylodiscitis, and hepatic vein thrombosis—four of the required components—but attributes the syndrome to K. pneumoniae rather than K. oxytoca. The species distinction is a required specificity element per the reference, and the retroperitoneal/iliopsoas abscess is not explicitly listed.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Most complete candidate but specifies K. pneumoniae rather than K. oxytoca; retroperitoneal abscess not explicitly named"
+      }
+    ],
+    "case_quality_flags": [
+      "Reference specifies K. oxytoca, which is an uncommon cause of invasive Klebsiella liver abscess syndrome typically associated with K. pneumoniae; species identification is critical for complete equivalence",
+      "No candidate correctly identifies K. oxytoca as the causative organism"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

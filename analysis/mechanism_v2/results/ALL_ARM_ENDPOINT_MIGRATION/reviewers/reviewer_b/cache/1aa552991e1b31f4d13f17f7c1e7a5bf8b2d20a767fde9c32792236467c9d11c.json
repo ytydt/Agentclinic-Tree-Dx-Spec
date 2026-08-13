@@ -1,0 +1,74 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "cd78bbb0a4fb347954863952bd9278b5ee23606ada0f11fbf1dc6cb1d7dac0ff",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "medium",
+        "reason": "GPA is a child entity of ANCA-associated vasculitis and fits the clinical picture, but the reference asks for the parent category 'ANCA-associated vasculitis' without requiring GPA specificity. GPA alone is a narrower claim that adds specificity not confirmed by the record.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "GPA is a specific subtype of ANCA-associated vasculitis; more specific than the reference but missing the pulmonary-renal syndrome component explicitly"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "medium",
+        "reason": "Same reasoning as C001 but with added pulmonary-renal syndrome detail. The reference is 'ANCA-associated vasculitis' broadly; GPA is a subtype not definitively confirmed over MPA by the record alone.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "GPA with pulmonary-renal syndrome is more specific than the reference benchmark"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "The clinical picture of pulmonary-renal syndrome with cavitary lesions, leukocytosis, and AKI in the context of negative cultures and post-COVID presentation points to ANCA-associated vasculitis, not MRSA necrotizing pneumonia with sepsis-induced AKI.",
+        "relation": "not_equivalent",
+        "scope_detail": "Infectious etiology incompatible with the vasculitic/autoimmune diagnosis"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "Goodpasture syndrome involves anti-GBM antibodies and is a separate pulmonary-renal syndrome entity, not a subtype of ANCA-associated vasculitis. The reference specifically points to ANCA-associated vasculitis.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Goodpasture syndrome is anti-GBM disease, a distinct entity from ANCA-associated vasculitis"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "ANCA-associated vasculitis is the verbatim reference diagnosis. The clinical features (cavitary pulmonary consolidations, pulmonary-renal syndrome, hemoptysis, AKI, post-COVID context, negative infectious workup) are consistent.",
+        "relation": "complete_equivalent",
+        "scope_detail": "Exact match to the reference diagnosis"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "medium",
+        "reason": "This candidate specifies GPA (a subtype) with cavitary lesions and RPGN, which is more granular than the reference 'ANCA-associated vasculitis.' GPA specificity is not confirmed over MPA by the available record.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "GPA with detailed pulmonary-renal components is more specific than the reference"
+      },
+      {
+        "candidate_id": "C007",
+        "confidence": "medium",
+        "reason": "Microscopic polyangiitis is a child entity of ANCA-associated vasculitis. It is compatible but more specific than the reference, and cavitary lesions are less typical of MPA than GPA.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "MPA is another specific subtype of ANCA-associated vasculitis"
+      },
+      {
+        "candidate_id": "C008",
+        "confidence": "high",
+        "reason": "Anti-GBM disease is a separate autoimmune pulmonary-renal syndrome mediated by anti-GBM antibodies, not ANCA. It conflicts with the reference diagnosis category.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Anti-GBM disease is a distinct entity from ANCA-associated vasculitis"
+      }
+    ],
+    "case_quality_flags": [
+      "Reference diagnosis 'ANCA-associated vasculitis' is a parent category; GPA vs MPA subtype cannot be definitively distinguished from the supplied record without ANCA serology results",
+      "Cavitary pulmonary lesions favor GPA over MPA, but serology results referenced in 'Table 2' are not provided in the record"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

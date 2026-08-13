@@ -1,0 +1,59 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "c66513be6dd036afa1085a3d324d9a9b7c6a2fd19b781a9e51b131a86b29ae35",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "Thyroid storm requires a specific severity threshold not met here; this is a more severe subtype/complication rather than the underlying etiology (Graves disease)",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Thyroid storm is a life-threatening complication of thyrotoxicosis; patient does not meet criteria (temp 36.7°C, no CNS crisis, no multi-organ failure)"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "Thyrotoxicosis correctly describes the clinical state but omits the specific autoimmune etiology (Graves disease) indicated by diffuse goitre, lid lag, and markedly suppressed TSH",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Thyrotoxicosis is the parent syndrome; Graves disease is the specific etiology required by the reference"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "Thyrotoxicosis due to Graves' disease is a complete equivalent of Graves disease as the final diagnostic object; the etiology and clinical state are fully captured",
+        "relation": "complete_equivalent",
+        "scope_detail": "Explicitly names both the syndrome (thyrotoxicosis) and the etiology (Graves disease), fully matching the reference"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "Hyperthyroidism is less specific than thyrotoxicosis and does not identify the autoimmune etiology supported by diffuse goitre and lid lag",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Hyperthyroidism is a broader parent category; missing the specific Graves disease etiology"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "Patient's vital signs and clinical state do not meet thyroid storm/thyrotoxic crisis criteria; this label asserts an incompatible severity subtype",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Thyrotoxic crisis is synonymous with thyroid storm, a severity-defined complication not supported by the clinical findings"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "high",
+        "reason": "While the Graves disease etiology is correct, the thyroid storm designation is not supported by the clinical data (normal temperature, no multi-organ dysfunction); the severity component conflicts with the reference diagnosis",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Correctly identifies Graves disease as etiology but incorrectly asserts thyroid storm severity"
+      }
+    ],
+    "case_quality_flags": [
+      "Reference diagnosis 'Graves disease' is the etiologic label; candidates combining etiology with severity (thyroid storm) are penalized for unsupported severity assertion"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

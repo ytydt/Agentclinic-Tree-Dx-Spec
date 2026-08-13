@@ -1,0 +1,95 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "7b92eafd188a7252dc3f6cbcc828804e7ca5be00d694b054dca663a17bc0c380",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "The reference diagnosis is trifascicular block; hypertensive heart disease is a contributing background condition, not the final conduction system diagnosis",
+        "relation": "manifestation_or_related",
+        "scope_detail": "Hypertensive heart disease is the underlying etiology/association (evidenced by LVH on echo) but is not the primary conduction diagnosis requested"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "Atrioventricular block alone does not capture RBBB with alternating LAFB/LPFB; it is a parent/component category missing required specificity",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "AV block is a component of trifascicular block (first-degree PR prolongation) but the label is generic and omits the fascicular block specifics"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "The ECGs show first-degree AV block with alternating fascicular blocks (trifascicular block), not documented complete heart block; this candidate overstates the degree of block and shifts the primary diagnosis",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Asserts intermittent complete (third-degree) heart block as the primary diagnosis rather than trifascicular block; adds 'paroxysmal AV block' framing not established by the ECG findings"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "medium",
+        "reason": "The reference asks for the most likely diagnosis as trifascicular block; this candidate adds unconfirmed complete heart block and Stokes-Adams attack as the primary framing, expanding scope beyond what the ECG evidence establishes",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Contains the trifascicular block components but frames the primary diagnosis as syncope due to intermittent complete heart block (Stokes-Adams), which is a complication/consequence rather than the requested primary conduction diagnosis"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "Too generic; does not specify the fascicular anatomy or alternating pattern that defines trifascicular block",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Cardiac conduction disorder is a broad parent category lacking all required specificity (RBBB, alternating LAFB/LPFB)"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "high",
+        "reason": "Entirely non-specific; does not capture any of the required components of trifascicular block",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Cardiac arrhythmia is an even broader parent category"
+      },
+      {
+        "candidate_id": "C007",
+        "confidence": "high",
+        "reason": "The ECG shows alternating LAFB and LPFB with RBBB and PR prolongation, constituting trifascicular block; bifascicular block is an incomplete characterization",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Bifascicular block (RBBB + one fascicular block) is a component of trifascicular block but omits the alternating fascicular block and first-degree AV block that define trifascicular block"
+      },
+      {
+        "candidate_id": "C008",
+        "confidence": "high",
+        "reason": "The ECG findings of RBBB with alternating fascicular blocks and PR prolongation point to trifascicular block, not vasovagal etiology; no vagal prodrome pattern is dominant here",
+        "relation": "not_equivalent",
+        "scope_detail": "Vasovagal syncope is a different mechanism of syncope unrelated to conduction system disease"
+      },
+      {
+        "candidate_id": "C009",
+        "confidence": "high",
+        "reason": "The ECGs demonstrate trifascicular block (risk factor for complete heart block) but not confirmed complete heart block; this candidate conflates the risk state with the complication",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Asserts intermittent complete (third-degree) AV block with Stokes-Adams as the primary diagnosis; complete heart block was not documented on either ECG"
+      },
+      {
+        "candidate_id": "C010",
+        "confidence": "high",
+        "reason": "Same limitation as C007 with added syncope context; still does not fully characterize the trifascicular block",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Bifascicular block with syncope captures the clinical presentation but remains incomplete (missing alternating fascicular pattern and first-degree AV block that define trifascicular block)"
+      },
+      {
+        "candidate_id": "C011",
+        "confidence": "medium",
+        "reason": "The reference diagnosis is trifascicular block itself; this candidate elevates an unconfirmed complication (complete heart block/Stokes-Adams) to the primary diagnosis while demoting trifascicular block to a secondary role",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Frames the diagnosis as syncope due to intermittent complete heart block secondary to trifascicular block; trifascicular block is mentioned but as a secondary etiology rather than the primary diagnosis, and complete heart block is unconfirmed"
+      }
+    ],
+    "case_quality_flags": [
+      "Reference diagnosis is the ECG-based conduction finding (trifascicular block); several candidates conflate this with its potential complication (complete heart block/Stokes-Adams), creating scope ambiguity",
+      "Complete heart block was not documented on either ECG; candidates asserting it as confirmed overstep the evidence"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

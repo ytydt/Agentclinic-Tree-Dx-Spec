@@ -148,3 +148,16 @@ reasoning, preserve the requested diagnostic object explicitly, and evaluate
 clinical completeness separately from exact label agreement.
 
 See `MANUAL_AUDIT.md` for the case-level decomposition and limitations.
+
+## Canonical Top-1 migration addendum (2026-08-13)
+
+The exhaustive 79-arm replay now supplies a blinded three-reviewer **model-panel**
+clinical relation for every served Top-1; it is not human-root truth. In the
+200-case ITA, exposing options raises clinical-complete by 39.0 pp for flat
+fixed input (87 gain/9 loss, Holm `q=2.55e-16`) and 42.0 pp for hierarchical
+fixed input (90/6, `q=2.00e-19`); C∪P rises 27.0 pp in both. This strengthens,
+rather than rehabilitates, the contamination conclusion: option-bearing arms
+are not clean architecture comparisons. Shuffling option blocks additionally
+harms hierarchical clinical-complete by 11.0 pp (17/39, `q=.01825`). Historical
+safe-exact and the targeted 22-transition audit remain mechanism evidence only.
+The fresh task replay is incomplete and is not used for inference.

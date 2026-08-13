@@ -1,0 +1,74 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "f31e607555243f7326fe6499f551e5953bf4c6c094f5feae5157591198024789",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "The reference diagnosis is specifically 'ST-segment elevation due to myocardial metastasis from squamous cell carcinoma of the lung.' C001 describes the anatomical and clinical findings (LV mass, pericardial effusion, tamponade) but omits the ECG phenomenon (STE) as the final diagnostic object and the squamous cell carcinoma subtype.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures myocardial and pericardial metastasis with tamponade but does not specify ST-segment elevation as the diagnostic object, nor squamous cell carcinoma histology"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "Similar to C001, C002 accurately describes the metastatic pattern and cardiac tamponade but does not frame the diagnosis as ST-segment elevation caused by myocardial metastasis, and does not specify squamous cell carcinoma.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Detailed anatomical description of metastatic involvement but missing STE as the diagnostic endpoint and squamous cell carcinoma histology"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "C003 is a condensed version of the same concept as C001/C002; it lacks the ECG-based diagnostic framing and histological specificity required by the reference.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "High-level label capturing myocardial metastasis and tamponade but missing STE as the diagnostic object and squamous cell carcinoma subtype"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "The reference asks for the cause of ST-segment elevation, not cardiac tamponade. C004 inverts the diagnostic hierarchy and omits squamous cell carcinoma.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Frames cardiac tamponade as the primary diagnosis with myocardial metastasis as context; missing STE as the diagnostic object and squamous cell carcinoma histology"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "C005 is a generic parent term that encompasses the reference but provides none of the required specificity (STE, lung origin, squamous cell carcinoma).",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Extremely broad parent category; missing STE, primary tumor type, and all specificity"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "high",
+        "reason": "The reference diagnosis is grounded in myocardial metastasis causing ST-segment elevation. C006 focuses on pericardial metastasis, which is a different anatomical compartment and does not explain the STE mechanism.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Specifies pericardial rather than myocardial metastasis as the primary anatomical site; the reference centers on myocardial metastasis causing STE"
+      },
+      {
+        "candidate_id": "C007",
+        "confidence": "high",
+        "reason": "C007 is the closest non-reference candidate, correctly identifying myocardial metastasis from lung cancer, but still does not frame the diagnosis as ST-segment elevation nor specify squamous cell carcinoma subtype.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures myocardial metastasis from lung cancer with pericardial effusion/tamponade but missing STE as the diagnostic object and squamous cell carcinoma histology"
+      },
+      {
+        "candidate_id": "C008",
+        "confidence": "high",
+        "reason": "The reference diagnosis is ST-segment elevation due to myocardial metastasis. Cardiac tamponade is a concurrent complication documented in the case but is not the final diagnostic answer requested.",
+        "relation": "manifestation_or_related",
+        "scope_detail": "Cardiac tamponade is a complication/manifestation present in this case but is not the requested diagnostic object"
+      }
+    ],
+    "case_quality_flags": [
+      "Reference diagnosis specifies squamous cell carcinoma histology, but the clinical record does not explicitly state the lung cancer subtype; this creates a gap between the record and the reference that affects all candidates.",
+      "The reference frames the diagnosis as an ECG phenomenon (STE) caused by myocardial metastasis, which is an unusual diagnostic framing; no candidate fully captures this composite."
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}
