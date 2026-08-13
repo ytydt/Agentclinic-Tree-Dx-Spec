@@ -1,0 +1,61 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "c43f473c944120d232162fad8e9c2af1e3c995a2645ed3253f3a2bfc85897322",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "The reference specifically classifies this as 'near-fatal asthma' based on prior ICU admission with mechanical ventilation >10 days, SpO2 83%, pH 7.137, PCO2 74.7, and current life-threatening presentation. C001 labels it 'acute severe' rather than 'near-fatal', missing the critical severity tier. It does capture type II respiratory failure component.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures acute severe asthma with hypercapnic respiratory failure but omits the 'near-fatal' severity designation that is central to the reference diagnosis"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "Similar to C001, this candidate correctly identifies the asthma severity class and hypercapnic respiratory failure but does not invoke the 'near-fatal' category. The pH 7.137 confirms respiratory acidosis which is also not explicitly named. Missing the defining near-fatal component.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures severe persistent asthma with acute hypercapnic respiratory failure but omits 'near-fatal' designation and respiratory acidosis specification"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "COPD is a distinct obstructive lung disease. The clinical record supports asthma: young age (30), reversible airflow obstruction (FEV1 improvement 24%, 250 mL on bronchodilator), eosinophilia, no smoking history mentioned, and chest CT showing no major abnormalities. COPD does not fit the reference diagnosis.",
+        "relation": "not_equivalent",
+        "scope_detail": "Entirely different diagnostic entity"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "C004 correctly names type II respiratory failure and hypercapnic respiratory acidosis, matching the reference's complication components. However, it uses 'acute severe' rather than 'near-fatal' severity, missing the defining classification. The eosinophilic qualifier (eosinophil 7.2%) is an addition not present in the reference. Near-fatal is the critical missing element.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Includes type II respiratory failure and respiratory acidosis but labels severity as 'acute severe' rather than 'near-fatal'; adds eosinophilic subtype not in reference"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "Status asthmaticus describes prolonged severe asthma not responding to treatment, which overlaps with near-fatal asthma but is a different severity tier. It also omits the type II respiratory failure and respiratory acidosis components that are explicitly required by the reference diagnosis.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Status asthmaticus is a related but less specific severity category; omits type II respiratory failure and respiratory acidosis components"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "high",
+        "reason": "C006 is the most complete candidate, explicitly naming type II respiratory failure, hypercapnic respiratory acidosis, and hypoxemia. However, it still does not invoke the 'near-fatal' severity classification that is the defining feature of the reference diagnosis, supported by prior ICU/mechanical ventilation history and current critical presentation.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures severe persistent asthma, acute exacerbation, type II respiratory failure, and respiratory acidosis but omits 'near-fatal' designation"
+      }
+    ],
+    "case_quality_flags": [
+      "No candidate achieves complete equivalence due to universal omission of the 'near-fatal asthma' severity designation",
+      "Near-fatal asthma is a clinically distinct and guideline-defined category supported by prior ICU admission with mechanical ventilation and current critical gas exchange parameters",
+      "Eosinophilia (7.2%) noted in record but not incorporated into reference diagnosis"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

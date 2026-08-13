@@ -1,0 +1,46 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "3b8aa3f07643d59f3f91343ce1ef4f0ba4a467a49ee5fd112a2c4bb96ae2731f",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "The diagnosis is an acute MI with specific ECG patterns (de Winter/Wellens) and proximal LAD stenosis; hypertensive heart disease does not capture this acute ischemic event",
+        "relation": "not_equivalent",
+        "scope_detail": "Hypertensive heart disease is a different diagnostic entity; while hypertension is present, the clinical picture is dominated by acute coronary occlusion/stenosis with ECG patterns and troponin elevation"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "Acute MI is the parent category but omits the critical proximal LAD stenosis etiology and the characteristic ECG pattern sequence that defines the full reference diagnosis",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Correctly identifies acute MI but lacks the etiology (proximal LAD stenosis), the specific ECG pattern evolution (de Winter to Wellens), and the composite diagnostic specificity"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "Correctly identifies the NSTEMI subtype and proximal LAD etiology but does not include the specific ECG characterization (de Winter evolving to Wellens) that is central to the reference diagnosis",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures NSTEMI and proximal LAD stenosis but omits the defining ECG pattern evolution (de Winter pattern evolving to Wellens syndrome), which is a required component of the reference diagnosis"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "Same as C002 — identifies the correct broad category but lacks all required specificity components of the reference diagnosis",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Generic acute MI label; missing proximal LAD stenosis etiology and the specific ECG pattern evolution (de Winter to Wellens)"
+      }
+    ],
+    "case_quality_flags": [
+      "Reference diagnosis is a composite requiring: (1) acute MI, (2) proximal LAD stenosis as etiology, (3) de Winter ECG pattern, and (4) evolution to Wellens syndrome — no candidate captures all four components",
+      "ECG findings are consistent with de Winter pattern on first ECG and Wellens pattern (biphasic T waves V2-V4) on second ECG, supporting the reference diagnosis"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

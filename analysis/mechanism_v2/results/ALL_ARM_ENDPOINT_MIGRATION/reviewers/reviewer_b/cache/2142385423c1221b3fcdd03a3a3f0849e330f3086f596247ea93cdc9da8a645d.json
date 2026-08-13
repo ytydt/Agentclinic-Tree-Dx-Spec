@@ -1,0 +1,60 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "ba141ddcd5c0688b387bf33994d55d912ee8e2856383eba41b3a6ff3012f485f",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "The clinical record explicitly concludes steroid-refractory ICI-induced pneumonitis after two failed methylprednisolone courses; C001 captures the parent entity but lacks the steroid-refractory and grade specifications",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Correctly identifies ICI-induced pneumonitis but omits the steroid-refractory qualifier and grade 3 severity established in the record"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "The reference diagnosis is immune-related pneumonitis; C002 is a fully specified version consistent with the record's final diagnosis, adding clinically documented details (grade 3, steroid-refractory, underlying mesothelioma) without contradicting the reference",
+        "relation": "complete_equivalent",
+        "scope_detail": "Includes steroid-refractory qualifier, grade 3 severity, ICI-induced pneumonitis, and underlying malignancy context; all components present"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "Adds the specific ICI agents documented in the record; this is a harmless alias/elaboration of the reference diagnosis with no conflicting elements",
+        "relation": "complete_equivalent",
+        "scope_detail": "Same as C002 with additional specification of the immunotherapy regimen (ipilimumab/nivolumab); all required components present"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "Captures the final diagnosis as stated in the record (steroid-refractory, grade 3, ICI-induced pneumonitis); omission of mesothelioma context does not make it incomplete relative to the reference 'immune-related pneumonitis'",
+        "relation": "complete_equivalent",
+        "scope_detail": "Steroid-refractory ICI-induced pneumonitis grade 3 without underlying disease context; core diagnostic object fully specified"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "label": "Pulmonary infiltrates",
+        "reason": "Pulmonary infiltrates are the imaging manifestation that prompted investigation; they are not the final diagnostic entity",
+        "relation": "manifestation_or_related",
+        "scope_detail": "Describes the radiologic finding rather than the final etiologic diagnosis"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "high",
+        "reason": "Matches the record's final stated diagnosis; grade 3 is additional detail not required by the reference 'immune-related pneumonitis'",
+        "relation": "complete_equivalent",
+        "scope_detail": "Steroid-refractory ICI-induced pneumonitis without grade specification; core diagnostic object present"
+      }
+    ],
+    "case_quality_flags": [
+      "Reference diagnosis 'immune-related pneumonitis' is less specific than the record's final conclusion of steroid-refractory grade 3 ICI-induced pneumonitis; more detailed candidates are still complete equivalents as they subsume the reference without contradiction"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

@@ -1,0 +1,39 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "330fc16e8acbfd7c467ea58a568577398d0a37807feb6126ce29fd645dbf61c3",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "The clinical record confirms severe AKI (creatinine 10.2 from baseline 1.1), but the primary diagnosis requested is euglycemic DKA. AKI is a complication or contributing factor, not the final diagnostic object.",
+        "relation": "manifestation_or_related",
+        "scope_detail": "AKI is a complication/manifestation present in this case but is not the primary diagnosis of euglycemic DKA"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "The reference diagnosis specifically requires 'euglycemic' DKA. The glucose here is only 185 mg/dL, which is the defining feature distinguishing euglycemic DKA from classic DKA. Labeling it simply 'Diabetic Ketoacidosis' omits this critical subtype specification.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "DKA is the parent category; missing the 'euglycemic' qualifier which is essential given glucose of 185 mg/dL (not meeting classic hyperglycemic threshold >250 mg/dL)"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "medium",
+        "reason": "Empagliflozin (an SGLT2 inhibitor started one month prior) is the precipitating cause of euglycemic DKA in this case, and this candidate correctly identifies the mechanism. However, it is framed as a drug-induced ketoacidosis rather than the complete diagnostic label 'euglycemic diabetic ketoacidosis,' missing the euglycemic DKA composite designation.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures the SGLT2-inhibitor etiology and ketoacidosis but does not explicitly name the euglycemic DKA entity; also frames it as a drug-induced condition rather than the full diagnostic label"
+      }
+    ],
+    "case_quality_flags": [
+      "Euglycemic DKA defined by markedly elevated beta-hydroxybutyrate (31.5 mmol/L), high anion gap metabolic acidosis, and near-normal glucose (185 mg/dL) in setting of SGLT2 inhibitor use",
+      "Troponin elevation pattern (213/223/193 ng/L) is non-rising, suggesting chronic elevation rather than acute MI"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

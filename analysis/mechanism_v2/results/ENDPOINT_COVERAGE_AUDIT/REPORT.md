@@ -7,7 +7,7 @@ Across 91 independently sourced declared arms, 9 E2 arms have the full root cont
 
 Safe-exact remains a valid conservative identity lower bound. Legacy-chain, Concept, generic `accuracy`, task/mapper, or starred proxy endpoints must not be promoted to clinical-complete capability by an aggregation script.
 Frozen raw summaries are provenance only—not a cross-experiment table that may be flattened or ingested directly. In particular, E1/E4/E5/E6/E6x/E8 historical `strict`, generic accuracy, and `complete*`-style fields remain under their local contracts. Every downstream consumer must join through `endpoint_coverage_matrix.json` and enforce its coverage gate before reading those fields.
-The migrated clinical relation contract is complete, but the fresh task namespace is partial: 3,337/5,832 unique payloads completed before the external API reported insufficient credit. Partial task rows are not used for inference.
+The fresh task namespace is also complete: 5,839/5,839 unique payloads are evaluable. DA mapper and MCR judge remain separate task endpoints.
 
 ## Coverage matrix
 

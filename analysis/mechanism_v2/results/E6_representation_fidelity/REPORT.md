@@ -120,10 +120,19 @@ E6 支持的是“受约束关系骨架”，而不是自由生成图：
 
 ## Canonical Top-1 migration addendum (2026-08-13)
 
-79 臂统一重放为每个 served Top-1 补齐了臂隐藏的三 reviewer 模型面板关系（不是 human-root）。
-ITA clinical-complete 为 raw 83/300（27.7%）、flat 58/300（19.3%）、graph
-52/300（17.3%）；graph 相对 raw 为 −10.33pp（13 gain/44 loss，Holm
-`q=.000141`），flat 相对 raw 为 −8.33pp（22/47，`q=.00709`）。C∪P
-对应为 163/119/116，raw 对两种 derived representation 的优势同样通过校正。
-graph 与 flat 之间无确认差异。故“当前生成表示有损、raw 必须可回看”的结论得到规范端点支持，
-但不能外推为所有结构表示均有害；旧 external-screen/root-priority proxy 只保留作校准对照。
+79 臂统一重放为每个 served Top-1 补齐了臂隐藏的三 reviewer 模型面板关系；
+该面板是临床敏感性，不是 human-root。最终 ITA clinical-complete 为 raw
+81/300（27.0%）、flat 58/300（19.3%）、graph 51/300（17.0%）；flat−raw
+为 −7.67 pp（23 gain/46 loss，`q=.01524`），graph−raw 为 −10.0 pp
+（13/43，`q=.000220`）。ITA C∪P 为 163/118/115，相应为 −15.0
+pp（`q=5.04e-6`）与 −16.0 pp（`q=1.76e-7`）。这些是表示处理连同
+schema/service 可靠性的端到端处理效应。
+
+共同 served 分析收缩了“临床完整性必然下降”的强度：flat−raw
+为 −3.21 pp（`n=249`，22/30，`q=.5299`），graph−raw 为 −6.00 pp
+（`n=250`，11/26，`q=.06022`），均未通过 Holm 校正。但 C∪P 损失仍然
+存在：flat−raw −8.84 pp（`q=.01430`），graph−raw −10.0 pp
+（`q=.001409`）。graph−flat 在 complete 与 C∪P 上都没有确认差异。
+因而最稳妥的更新是：当前生成表示对兼容覆盖的损害在成功轨迹内仍可见，
+而完整对象损失的显著性部分依赖 service path。这仍支持 raw 可回看和
+关系层不得替换原轨迹，但不支持“任何结构表示必然降低 complete”的普遍命题。

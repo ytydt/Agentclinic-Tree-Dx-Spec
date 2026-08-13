@@ -1,0 +1,60 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "3abdb42be429277fbbb544ee584a9286770051dd629299ff162ac9ab51dcbaee",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "CRBSI is consistent with the clinical picture and likely mechanism, but the reference diagnosis requires identification of the specific pathogen Kalamiella piersonii; organism-level specificity is missing",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Identifies the infection source (tunneled catheter) and bloodstream involvement but does not specify the causative organism (Kalamiella piersonii)"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "Gram-negative bacteremia is the parent category of Kalamiella piersonii bacteremia; all required components of the reference diagnosis (specific organism) are absent",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Correctly identifies gram-negative bacteremia but lacks organism-level specificity required by the reference diagnosis"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "Sepsis describes the host response syndrome rather than the microbiological diagnosis of Kalamiella piersonii bacteremia; it is a related complication, not the requested final diagnostic object",
+        "relation": "manifestation_or_related",
+        "scope_detail": "Sepsis is a systemic response/complication that may result from bacteremia but is not the same diagnostic entity as bacteremia caused by a specific organism"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "Like C003, this frames the diagnosis as a systemic syndrome rather than the microbiological entity; also lacks organism-level specificity",
+        "relation": "manifestation_or_related",
+        "scope_detail": "Gram-negative sepsis combines organism class with systemic response but is still not equivalent to the specific bacteremia diagnosis requested"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "The clinical question asks for the most likely diagnosis explaining the acute presentation with positive blood cultures; heart failure is a background condition, not the infectious diagnosis",
+        "relation": "manifestation_or_related",
+        "scope_detail": "Heart failure is a pre-existing comorbidity and may be exacerbated by the infection but is not the primary diagnosis requested"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "high",
+        "reason": "Same reasoning as C004; frames the condition as a sepsis syndrome rather than the specific microbiological diagnosis of Kalamiella piersonii bacteremia, and lacks organism-level specificity",
+        "relation": "manifestation_or_related",
+        "scope_detail": "Gram-negative bacillary sepsis combines organism morphology class with systemic response syndrome but does not constitute the specific bacteremia diagnosis"
+      }
+    ],
+    "case_quality_flags": [
+      "Reference diagnosis specifies a rare/novel organism (Kalamiella piersonii) that no candidate identifies at species level; all candidates are at best parent-category or syndrome-level diagnoses",
+      "Differential between CRBSI (C001) and gram-negative bacteremia (C002) is nuanced; both are partial parents missing organism specificity"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

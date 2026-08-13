@@ -133,11 +133,23 @@ E8 是开发集机制实验，不是确认性优越性试验。它足以禁止�
 
 ## Canonical Top-1 migration addendum (2026-08-13)
 
-臂隐藏三 reviewer 模型面板重放（非 human-root）未确认 soft 相对 hard 的临床优势：
-clinical-complete +1.82pp（9 gain/5 loss，Holm `q=.77539`），C∪P +2.27pp
-（19/14，`q=.97370`）。legal-order 相对 soft 同样为零结果。invalid-time 臂因
-大量执行失败在 ITA 上明显更差（complete −4.55pp，`q=.03882`；C∪P
-−15.0pp，`q=1.08e-7`），这属于整个处理合同的操作损失，不能单独归因为“模型正确理解了时间”。
-该臂只对 125/220 例可用；在这 125 个共同 served 病例中 complete 为 25→25（2/2），
-C∪P 66→64（3/5），进一步说明显著 ITA 差主要是 eligibility/non-service penalty。
-因此 hard veto 不安全的病例证据保持，soft 仍不能升级为已确认新最佳。
+臂隐藏三 reviewer 模型面板重放是临床敏感性，非 human-root。本次还修正了
+Top-1 可评价性与整份响应 schema 成功的混淆：11 行的冻结 champion
+本身合法，仅 runner-up 或 veto event-id 字段失败，因而在明示白名单下
+恢复为 Top-1 served（hard 9 行、legal-order 1 行、soft 1 行）。它们的
+`source_full_response_success=false`、原错误和辅助字段不可用性全部保留；
+这是 Top-1 salvage，不是将 full-response failure 改写为成功。
+
+更正后 hard、soft 与 legal-order 均 served 193/220，invalid-time 仍为
+125/220。ITA 未确认 soft 相对 hard 的临床优势：clinical-complete
++1.82 pp（9 gain/5 loss，Holm `q=.8479`），C∪P +1.82 pp（19/15，
+`q=1`）；legal-order 相对 soft 同样为零结果。invalid-time 相对 soft
+在 ITA 上为 complete −4.55 pp（2/12，`q=.03882`）和 C∪P −15.45 pp
+（3/37，`q=5.84e-8`）。
+
+共同 served `n=125` 时，complete 是 25→25（2/2，`q=1`），C∪P
+是 67→64（3/6，−2.40 pp，`q=1`）。算术路径分解显示，complete
+的全部 ITA 净损失都在 soft-only-service 路径；C∪P 的 −15.45 pp 中
+有 −14.09 pp 来自该路径。因此 invalid-time 的显著差主要是处理合同的
+eligibility/service 失效，不是“模型正确理解错时”的证据。hard veto
+不安全的病例证据保持，soft 仍不能升级为已确认新最佳。

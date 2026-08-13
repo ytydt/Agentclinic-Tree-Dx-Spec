@@ -232,13 +232,27 @@ RCR-3 已完成其可证伪目的：它把一个听起来合理的“关系保�
 
 The exhaustive blinded three-reviewer model-panel replay (not human root)
 replaces the 29/20/18 proxy counts as the main Top-1 sensitivity. ITA
-clinical-complete is Lite3 22/300, RCR3 13/300, Compact4 13/300. The Lite→RCR
-complete loss is −3.0 pp (3 gain/12 loss) but does not survive Holm
-(`q=.10547`). Secondary C∪P is 130/300, 108/300, and 66/300: RCR3−Lite is
-−7.33 pp (33/55, `q=.02462`), Compact4−RCR3 is −14.0 pp (32/74,
-`q=.000111`), and Compact4−Lite is −21.33 pp (9/73, `q=4.13e-13`). Thus no
-complete-object benefit is established and compatible coverage is materially
-worse, strengthening the deployment rejection. The independent span,
-relation, frontier, reliability, and failure evidence remains necessary for
-mechanism attribution; this Top-1 migration does not canonicalize the full
-candidate registries.
+clinical-complete is Lite3 22/300, RCR3 13/300, and Compact4 13/300. The
+Lite→RCR loss is −3.0 pp (3 gain/12 loss) and does not survive Holm
+(`q=.10547`). C∪P is 130/300, 109/300, and 67/300: RCR3−Lite is −7.0 pp
+(33/54, `q=.03142`), Compact4−RCR3 is −14.0 pp (33/75,
+`q=.000131`), and Compact4−Lite is −21.0 pp (9/72, `q=7.37e-13`).
+
+The common-served replay changes the mechanism attribution. Lite and RCR
+share 259 served cases; clinical-complete is 8.49%→5.02% (−3.47 pp,
+3/12, `q=.10547`), while C∪P is 42.47%→42.08% (−0.39 pp, 33/34,
+`q=1`). Their service rates are 98.67% versus 87.33% (−11.33 pp,
+`q=1.95e-8`), and the arithmetic decomposition assigns 20 positive C∪P
+outcomes to Lite-only-service cases. The third-generator comparison is even
+clearer: Compact4−Lite is −21.0 pp C∪P in ITA but only −1.72 pp among
+174 common-served cases (`q=1`), alongside a −40.33 pp service-rate deficit.
+
+Thus RCR still establishes no complete-object benefit and remains rejected as
+the deployment default, but the migrated ITA compatible-coverage loss is
+primarily an interface/schema-reliability failure, not evidence that its
+successfully served trajectories are intrinsically much worse. Reliability is
+a real end-to-end system property; it should not be silently re-described as
+conditional clinical quality. The independent span, relation, frontier, and
+case-level failure evidence remains necessary for mechanism attribution. The
+model panel is not root, and this Top-1 migration does not canonicalize the
+full candidate registries.

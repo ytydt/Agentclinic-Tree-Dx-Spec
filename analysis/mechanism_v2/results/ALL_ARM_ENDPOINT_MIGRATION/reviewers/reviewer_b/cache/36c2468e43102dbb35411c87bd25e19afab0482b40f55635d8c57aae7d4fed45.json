@@ -1,0 +1,53 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "6cda7039c907822f02a385b2b74c7b750c6745df99036b7c2598ff51a6b8df27",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "The clinical record shows HR 120, BP 162/85, temp 36.7°C, and psychiatric/behavioral symptoms but no fever, no altered consciousness, no vomiting/diarrhea, and no organ decompensation sufficient for thyroid storm. Labeling this as thyroid storm overstates severity and conflicts with the clinical picture.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Thyroid storm is a life-threatening extreme of thyrotoxicosis; this patient has severe hyperthyroidism but does not meet criteria for thyroid storm (no fever, no CNS crisis, no multi-organ failure)"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "The suppressed TSH, elevated fT4/fT3, diffuse smooth goitre, and lid lag confirm thyrotoxicosis, but the reference requires identification of Graves disease as the cause. Thyrotoxicosis alone is a parent/component without the required etiologic specificity.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Thyrotoxicosis is the parent category; it lacks the specific etiology (Graves disease) required by the reference diagnosis"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "Diffuse smooth goitre, lid lag, suppressed TSH with markedly elevated fT4/fT3, and the clinical presentation are classic for Graves disease. This candidate captures the complete diagnostic object including etiology, making it equivalent to the reference.",
+        "relation": "complete_equivalent",
+        "scope_detail": "Names both the syndrome (thyrotoxicosis) and the specific etiology (Graves disease), fully matching the reference"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "Thyrotoxic crisis/thyroid storm requires a more severe clinical state than documented here. The patient's temperature, hemodynamic status, and neurological state do not meet thyroid storm criteria, making this an incompatible severity subtype.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Thyrotoxic crisis is synonymous with thyroid storm; same reasoning as C001 applies"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "While the Graves disease etiology is correct, appending 'thyroid storm' asserts a severity subtype incompatible with the documented clinical findings (afebrile, no organ failure, no delirium/coma). This conflicts with the reference diagnosis of Graves disease without storm.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Correctly identifies Graves disease as etiology but incorrectly asserts thyroid storm severity, which is not supported by the clinical record"
+      }
+    ],
+    "case_quality_flags": [
+      "Reference diagnosis 'Graves disease' is the etiologic label; candidates conflating it with thyroid storm severity should be penalized for scope conflict",
+      "No confirmatory antibody (TRAb/TSI) or radioiodine uptake data provided, but clinical and biochemical picture is highly consistent with Graves disease"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

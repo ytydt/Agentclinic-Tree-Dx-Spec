@@ -1,0 +1,88 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "2ba5eac5d9db598d77132d670cc9212b5b83299ac2b91968b16456aac6f1883c",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "BPDCN is a distinct neoplasm from AML; while both can present with leukemia cutis and CNS involvement, assigning AML as the subtype is an incompatible classification. Additionally, the clinical record describes ptosis, not CN III palsy.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Specifies AML as the leukemia subtype, but the reference diagnosis is BPDCN; also misidentifies ptosis as CN III palsy rather than ptosis alone"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "BPDCN is not AML; the candidate correctly captures leptomeningeal involvement and leukemia cutis but assigns the wrong leukemia subtype.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Specifies AML, which is an incompatible subtype relative to BPDCN"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "Same subtype conflict as C002; BPDCN ≠ AML.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Specifies AML as the primary entity"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "Incorrect leukemia subtype and missing required components (polyradiculopathy, leukemia cutis).",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Specifies AML without CNS or skin components"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "Captures the CNS manifestation (cauda equina syndrome) and leukemia family but does not specify BPDCN, missing required subtype specificity.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Generic leukemia with CNS/cauda equina involvement; lacks specific BPDCN subtype"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "high",
+        "reason": "Leptomeningeal disease is a manifestation/complication rather than the primary diagnostic entity (BPDCN with polyradiculopathy).",
+        "relation": "manifestation_or_related",
+        "scope_detail": "Describes only the CNS manifestation without the primary neoplasm"
+      },
+      {
+        "candidate_id": "C007",
+        "confidence": "high",
+        "reason": "Captures the leukemia-CNS involvement relationship but omits the required BPDCN subtype designation.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Generic leukemia with CNS involvement; lacks BPDCN specificity"
+      },
+      {
+        "candidate_id": "C008",
+        "confidence": "high",
+        "reason": "POEMS syndrome is a plasma cell dyscrasia with polyneuropathy, organomegaly, endocrinopathy, M-protein, and skin changes; it does not match the CSF blast findings, leukemia cutis, or BPDCN diagnosis.",
+        "relation": "not_equivalent",
+        "scope_detail": "Entirely different diagnostic entity"
+      },
+      {
+        "candidate_id": "C009",
+        "confidence": "high",
+        "reason": "Leptomeningeal metastasis is a manifestation/complication; does not identify BPDCN as the primary entity.",
+        "relation": "manifestation_or_related",
+        "scope_detail": "Describes CNS spread without specifying the primary neoplasm"
+      },
+      {
+        "candidate_id": "C010",
+        "confidence": "high",
+        "reason": "The most detailed candidate but still assigns AML rather than BPDCN, which is an incompatible subtype classification.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Specifies AML as the leukemia subtype; otherwise captures leptomeningeal/nerve root infiltration and leukemia cutis well"
+      }
+    ],
+    "case_quality_flags": [
+      "No candidate correctly identifies BPDCN as the primary neoplasm; all leukemia-specific candidates default to AML",
+      "BPDCN is a rare and diagnostically challenging entity that requires immunophenotyping (CD123+, CD4+, CD56+) not explicitly reported in the record, though the clinical constellation (leukemia cutis, CSF blasts, polyradiculopathy) is characteristic"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

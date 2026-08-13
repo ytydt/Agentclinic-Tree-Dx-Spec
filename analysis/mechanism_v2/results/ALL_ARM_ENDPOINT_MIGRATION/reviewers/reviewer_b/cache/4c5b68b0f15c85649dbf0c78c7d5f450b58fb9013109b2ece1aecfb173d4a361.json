@@ -1,0 +1,109 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "be538b3f3b0c6ca657303c3d2a809ae7e8c0c46b4721ec5b7759546ef763f125",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "Coronary angiography showed no acute occlusions and the clinical picture (COPD, 2-day dyspnea, hypoxemia) supports COPD exacerbation rather than PE; candidate omits RBBB and substitutes an incompatible etiology",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Asserts PE as etiology; reference specifies COPD exacerbation/hypoxemia as cause and RBBB as the ECG finding"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "ECG shows classic RBBB morphology (rsR' in V1, wide S in I/V6, prolonged r-to-peak-R' time), not RVH/strain; PE etiology conflicts with reference",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "RVH/strain pattern is a different ECG entity from RBBB; etiology includes PE which conflicts with reference"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "Brugada syndrome requires a coved ST-elevation pattern in V1-V2; the ECG here shows RBBB morphology in the context of acute illness, not a primary channelopathy",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Brugada pattern is a distinct channelopathy; reference is RBBB with hypoxemic cardiac arrest"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "Coronary angiography showed no acute occlusions, ruling out ACS as the primary diagnosis; reference attributes arrest to hypoxemia from COPD exacerbation",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "ACS implies ischemic coronary etiology; coronary angiography excluded acute occlusion"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "Correctly identifies COPD exacerbation leading to respiratory failure as the underlying cause of cardiac arrest but does not include the RBBB diagnosis that is a required component of the reference",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures the COPD exacerbation/respiratory failure component but omits the RBBB ECG finding"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "high",
+        "reason": "COPD exacerbation is the etiologic component of the reference but the candidate lacks the RBBB ECG finding and the cardiac arrest context",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Identifies COPD exacerbation but omits RBBB and cardiac arrest components"
+      },
+      {
+        "candidate_id": "C007",
+        "confidence": "high",
+        "reason": "Substitutes PE for COPD exacerbation as the cause of PEA arrest and omits RBBB; PE etiology is not supported given clinical history and negative coronary angiography context",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Specifies PE with obstructive shock as etiology; reference specifies COPD exacerbation/hypoxemia"
+      },
+      {
+        "candidate_id": "C008",
+        "confidence": "high",
+        "reason": "Cor pulmonale may be a background finding in severe COPD but is not the acute diagnosis; reference focuses on RBBB with cardiac arrest from acute COPD exacerbation/hypoxemia",
+        "relation": "manifestation_or_related",
+        "scope_detail": "Cor pulmonale is a chronic complication of COPD, not the acute diagnosis requested"
+      },
+      {
+        "candidate_id": "C009",
+        "confidence": "high",
+        "reason": "Correctly identifies the respiratory etiology component but does not include the RBBB ECG diagnosis that is central to the reference",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures COPD with acute respiratory failure but omits RBBB"
+      },
+      {
+        "candidate_id": "C010",
+        "confidence": "high",
+        "reason": "Initial rhythm was pulseless electrical activity, not ventricular tachycardia; ECG shows RBBB morphology in sinus rhythm, not VT",
+        "relation": "not_equivalent",
+        "scope_detail": "Ventricular tachycardia is a different arrhythmia; initial rhythm was PEA"
+      },
+      {
+        "candidate_id": "C011",
+        "confidence": "high",
+        "reason": "PE etiology conflicts with the clinical history of COPD exacerbation and 2-day dyspnea; RBBB is omitted; PE is not supported as the primary diagnosis",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Asserts PE as cause of PEA arrest; reference specifies COPD exacerbation/hypoxemia and RBBB"
+      },
+      {
+        "candidate_id": "C012",
+        "confidence": "high",
+        "reason": "Same conflict as C011; PE substituted for COPD exacerbation as etiology and RBBB is absent",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Asserts massive PE causing PEA; reference specifies COPD exacerbation/hypoxemia and RBBB"
+      },
+      {
+        "candidate_id": "C013",
+        "confidence": "high",
+        "reason": "PE etiology is incompatible with the reference; RBBB component is missing",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Asserts PE as cause of cardiac arrest; reference specifies COPD exacerbation/hypoxemia and RBBB"
+      }
+    ],
+    "case_quality_flags": [
+      "Multiple candidates assert pulmonary embolism as etiology despite clinical history strongly favoring COPD exacerbation/hypoxemia and no supporting PE evidence in the record",
+      "No candidate achieves complete equivalence with the composite reference (RBBB + cardiac arrest due to hypoxemia from COPD exacerbation)"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

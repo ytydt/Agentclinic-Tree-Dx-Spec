@@ -848,8 +848,12 @@ def _migration_contract(root: Path) -> dict[str, Any] | None:
         raise AssertionError("endpoint migration must cover exactly 79 arms")
     if int(summary.get("n_intention_rows") or 0) != 24076:
         raise AssertionError("endpoint migration intention ledger drift")
-    if int(summary.get("n_served_rows") or 0) != 23035:
+    if int(summary.get("n_served_rows") or 0) != 23046:
         raise AssertionError("endpoint migration served ledger drift")
+    if int(summary.get("n_task_payloads") or 0) != 5839:
+        raise AssertionError("endpoint migration task registry drift")
+    if summary.get("task_census_status") != "complete_fresh_replay":
+        raise AssertionError("endpoint migration fresh task census is incomplete")
     if summary.get("clinical_census_status") not in {
         "full_blinded_model_panel_sensitivity_not_root",
         "full_blinded_three_model_panel_census_not_root",
@@ -1090,10 +1094,24 @@ def render_report(payload: Mapping[str, Any]) -> str:
         "and enforce its coverage gate before reading those fields.",
         *(
             [
+                "The fresh task namespace is also complete: "
+                f"{payload['migration_contract']['summary']['n_task_payloads_successful']:,}/"
+                f"{payload['migration_contract']['summary']['n_task_payloads']:,} unique payloads are evaluable. "
+                "DA mapper and MCR judge remain separate task endpoints."
+            ]
+            if migration_complete
+            and payload.get("migration_contract", {}).get("summary", {}).get(
+                "task_census_status"
+            )
+            == "complete_fresh_replay"
+            else []
+        ),
+        *(
+            [
                 "The migrated clinical relation contract is complete, but the fresh task "
                 f"namespace is partial: {payload['migration_contract']['summary']['n_task_payloads_successful']:,}/"
-                f"{payload['migration_contract']['summary']['n_task_payloads']:,} unique payloads completed before "
-                "the external API reported insufficient credit. Partial task rows are not used for inference."
+                f"{payload['migration_contract']['summary']['n_task_payloads']:,} unique payloads are evaluable. "
+                "Partial task rows are not used for inference."
             ]
             if migration_complete
             and payload.get("migration_contract", {}).get("summary", {}).get(

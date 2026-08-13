@@ -5,6 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from analysis.mechanism_v2 import endpoint_coverage_audit
 from analysis.mechanism_v2.cross_experiment_synthesis import (
     BASELINE_PROFILES,
     CLOSURE_ITEMS,
@@ -20,8 +21,12 @@ from analysis.mechanism_v2.cross_experiment_synthesis import (
 
 
 class CrossExperimentSynthesisTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.endpoint_coverage = endpoint_coverage_audit.build_payload(REPO_ROOT)
+
     def test_all_curated_source_anchors_resolve(self) -> None:
-        rows = validate_evidence(REPO_ROOT, EVIDENCE)
+        rows = validate_evidence(REPO_ROOT, EVIDENCE, self.endpoint_coverage)
         self.assertEqual(len(rows), 16)
         self.assertEqual(len({row["experiment"] for row in rows}), len(rows))
         self.assertTrue(all(len(row["source_sha256"]) == 64 for row in rows))
@@ -46,13 +51,18 @@ class CrossExperimentSynthesisTests(unittest.TestCase):
         self.assertLessEqual(references, evidence_ids)
 
     def test_closure_has_no_eligible_pending_item(self) -> None:
-        result = validate_closure(CLOSURE_ITEMS)
-        self.assertEqual(result["eligible_remaining_count"], 0)
-        self.assertEqual(result["eligible_remaining"], [])
+        result = validate_closure(CLOSURE_ITEMS, self.endpoint_coverage)
+        execution = result["scientific_execution"]
+        self.assertEqual(execution["eligible_remaining_count"], 0)
+        self.assertEqual(execution["eligible_remaining"], [])
+        self.assertTrue(result["metric_migration"]["closed"])
 
     def test_closure_rejects_silent_pending_status(self) -> None:
         with self.assertRaisesRegex(ValueError, "invalid closure statuses"):
-            validate_closure([{"item": "unreported arm", "status": "pending"}])
+            validate_closure(
+                [{"item": "unreported arm", "status": "pending"}],
+                self.endpoint_coverage,
+            )
 
     def test_e2_full800_snapshot_is_complete_and_inferentially_guarded(self) -> None:
         snapshot = build_e2_full800_snapshot(REPO_ROOT)

@@ -35,6 +35,7 @@ REGISTER = "analysis/mechanism_v2/EXPERIMENT_REGISTER.md"
 FINAL_REPORT = "analysis/mechanism_v2/CROSS_EXPERIMENT_ROOT_CRITICAL_SYNTHESIS.md"
 CLAIM_LEDGER = "analysis/mechanism_v2/claim_ledger.jsonl"
 E2_UNIFIED = "analysis/mechanism_v2/results/E2_blinded_clinical_adjudication/unified_800"
+MIGRATION_ROOT = "analysis/mechanism_v2/results/ALL_ARM_ENDPOINT_MIGRATION"
 
 GRADE_DEFINITIONS = {
     "A": "pre-frozen paired or factorial intervention with case-level ITA accounting",
@@ -66,6 +67,8 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
             "model_panel_flat_fixed_options_minus_clean_clinical_complete_pp": 39.0,
             "model_panel_hierarchical_option_shuffle_clinical_complete_pp": -11.0,
             "model_panel_hierarchical_option_shuffle_clinical_complete_holm_q": 0.01824613098563288,
+            "model_panel_hierarchical_option_shuffle_clinical_complete_common_served_pp": -7.18562874251497,
+            "model_panel_hierarchical_option_shuffle_clinical_complete_common_served_holm_q": 0.2304506916552782,
         },
         "causal_scope": "input-sensitive one-call stages, not the full legacy APHHM runtime",
         "refutes": ["answer options are a harmless display layer", "equal aggregate scores imply equal trajectories"],
@@ -148,9 +151,10 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
         "population": {"cases": 200, "common_complete": 162},
         "grade": "A+D",
         "finding": (
-            "Candidate independence is false: every addition arm reduces migrated model-panel complete and C∪P versus "
-            "base4, plausible siblings and wider pools harm by direct capture and reordering, and width8 is also worse "
-            "than width6 for complete."
+            "Candidate independence is false, but ITA feasibility and candidate-membership interference must be separated. "
+            "Every addition arm is lower than base4 in ITA because candidate treatment and differential service are bundled; "
+            "among cases served by both arms, genuine width expansion and sibling additions remain harmful, while synonyms "
+            "improve C∪P and components are approximately null. Width is therefore a topology-dependent treatment, not a law."
         ),
         "effect": {
             "sibling_safe_exact_delta_pp": -10.91,
@@ -158,12 +162,24 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
             "width8_safe_exact_delta_pp": -16.46,
             "width8_holm_p": 0.000114,
             "width6_to_width8_safe_exact_delta_pp": -7.93,
-            "model_panel_width8_minus_base4_clinical_complete_pp": -29.5,
-            "model_panel_width8_minus_base4_clinical_complete_holm_q": 3.2953847983741014e-13,
-            "model_panel_width8_minus_width6_clinical_complete_pp": -6.0,
-            "model_panel_width8_minus_width6_clinical_complete_holm_q": 0.022655844688415527,
+            "model_panel_width8_minus_base4_clinical_complete_ita_pp": -30.0,
+            "model_panel_width8_minus_base4_clinical_complete_ita_holm_q": 1.7722822721107784e-13,
+            "model_panel_width8_minus_base4_clinical_complete_common_served_pp": -17.682926829268293,
+            "model_panel_width8_minus_base4_clinical_complete_common_served_width_family_holm_q": 7.289723725989461e-06,
+            "model_panel_width8_minus_width6_clinical_complete_common_served_pp": -6.707317073170732,
+            "model_panel_width8_minus_width6_clinical_complete_common_served_holm_q": 0.03468966484069824,
+            "model_panel_all_nine_common_served_width4_to_width8_pp_per_added_candidate": -4.4753086419753085,
+            "model_panel_all_nine_common_served_DA_width4_to_width8_pp_per_added_candidate": -2.873563218390803,
+            "model_panel_all_nine_common_served_MCR_width4_to_width8_pp_per_added_candidate": -6.33333333333333,
+            "model_panel_sibling_common_served_clinical_complete_pp": -11.515151515151516,
+            "model_panel_synonym_common_served_clinical_complete_pp": 4.848484848484849,
+            "model_panel_synonym_common_served_complete_or_partial_pp": 6.666666666666667,
+            "model_panel_component_common_served_clinical_complete_pp": 0.6024096385542169,
         },
-        "causal_scope": "gold-exposed constructed pools; typed-label construction errors limit relation-specific subarms",
+        "causal_scope": (
+            "gold-exposed constructed pools; common-served estimates isolate the realised membership path only descriptively, "
+            "service is post-treatment, and typed-label construction errors limit relation-specific subarms"
+        ),
         "refutes": ["more candidates are monotonically safer", "removing a loser cannot change the winner among survivors"],
         "report": "analysis/mechanism_v2/results/E5_candidate_interference/REPORT.md",
         "anchors": ["−10.91pp", "−16.46pp", "Candidate-set context is itself causally active"],
@@ -176,18 +192,27 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
         "grade": "A+D",
         "finding": (
             "The tested generated graph is a lossy and error-adding representation: relations are new clinical claims, "
-            "not formatting, and the exhaustive model-panel replay now shows both flat facts and graph below raw text "
-            "for complete and C∪P. This is still not a human-root clinical-capability endpoint."
+            "not formatting. ITA puts both flat facts and graph below raw text for complete and C∪P, but common-served "
+            "analysis attenuates the complete deficit below Holm significance while preserving the C∪P deficit. The "
+            "robust mechanism is loss of compatible coverage plus service cost, not a confirmed complete-only coefficient."
         ),
         "effect": {
             "graph_minus_raw_proxy_complete_equivalent_sensitivity_pp": -7.63,
             "discordance_raw_only_graph_only": "24/5",
             "mcnemar_p": 0.00055,
             "graphs_with_relation_error": "25/30",
-            "model_panel_graph_minus_raw_clinical_complete_pp": -10.333333333333334,
-            "model_panel_graph_minus_raw_clinical_complete_holm_q": 0.00014131312828186138,
-            "model_panel_flat_minus_raw_clinical_complete_pp": -8.333333333333332,
-            "model_panel_flat_minus_raw_clinical_complete_holm_q": 0.007089625694042105,
+            "model_panel_graph_minus_raw_clinical_complete_ita_pp": -10.0,
+            "model_panel_graph_minus_raw_clinical_complete_ita_holm_q": 0.00021999655190846346,
+            "model_panel_flat_minus_raw_clinical_complete_ita_pp": -7.666666666666666,
+            "model_panel_flat_minus_raw_clinical_complete_ita_holm_q": 0.015241043710051394,
+            "model_panel_graph_minus_raw_clinical_complete_common_served_pp": -6.0,
+            "model_panel_graph_minus_raw_clinical_complete_common_served_holm_q": 0.060221555759198964,
+            "model_panel_flat_minus_raw_clinical_complete_common_served_pp": -3.21285140562249,
+            "model_panel_flat_minus_raw_clinical_complete_common_served_holm_q": 0.52986179292202,
+            "model_panel_graph_minus_raw_complete_or_partial_common_served_pp": -10.0,
+            "model_panel_graph_minus_raw_complete_or_partial_common_served_holm_q": 0.0014092719540244047,
+            "model_panel_flat_minus_raw_complete_or_partial_common_served_pp": -8.835341365461848,
+            "model_panel_flat_minus_raw_complete_or_partial_common_served_holm_q": 0.014297467666326134,
         },
         "causal_scope": "the tested generative graph constructor and selector, not all structured representations",
         "refutes": ["typed graph generation is lossless", "explicit time/scope fields are reliable merely because present"],
@@ -258,7 +283,7 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
             "safe_exact_mcnemar_p": 0.58105,
             "model_panel_exact_minus_legacy_clinical_complete_pp": 3.25,
             "model_panel_exact_minus_legacy_clinical_complete_holm_q": 0.00885009765625,
-            "model_panel_exact_minus_legacy_complete_or_partial_pp": -0.25,
+            "model_panel_exact_minus_legacy_complete_or_partial_pp": -0.5,
         },
         "causal_scope": "unsafe-fold development cases under a fixed-width selector payload",
         "refutes": ["safe identity repair alone fixes ranking", "undirected non-equivalence text supplies task projection"],
@@ -292,7 +317,7 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
         "experiment": "E8",
         "stage": "negative_evidence_and_time",
         "design": "hard versus time/scope soft veto plus legal-order and invalid-time perturbations",
-        "population": {"cases": 220, "hard_soft_common": 183, "invalid_time": 125},
+        "population": {"cases": 220, "hard_soft_common_served": 193, "invalid_time_common_served": 125},
         "grade": "A+D",
         "finding": (
             "Atemporal absolute veto is clinically unsafe; softening it removes invalid reference vetoes but does not by itself identify a superior ranker, "
@@ -310,6 +335,9 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
             "model_panel_soft_minus_hard_clinical_complete_holm_q": 0.775390625,
             "model_panel_invalid_minus_soft_clinical_complete_pp": -4.545454545454546,
             "model_panel_invalid_minus_soft_clinical_complete_holm_q": 0.038818359375,
+            "model_panel_invalid_minus_soft_clinical_complete_common_served_pp": 0.0,
+            "model_panel_invalid_minus_soft_complete_or_partial_common_served_pp": -2.4,
+            "source_rows_with_valid_model_panel_top1_recovered_despite_full_response_failure": 11,
         },
         "causal_scope": "fixed pools with a generated negative ledger; builder errors are part of the treatment risk",
         "refutes": ["missing a typical finding safely excludes a diagnosis", "time fields guarantee correct temporal reasoning"],
@@ -476,8 +504,9 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
         "grade": "A+D",
         "finding": (
             "The default RCR-3 implementation fails its fidelity, exposure, reliability, and conversion criteria; "
-            "safe identity survives, but the migrated model-panel C∪P endpoint confirms RCR3 below Lite and Compact4 below both. "
-            "No complete contrast survives Holm, and this remains a model-panel sensitivity rather than a human-root endpoint."
+            "safe identity survives, but its ITA C∪P deficits versus Lite and Compact4's deficits are dominated by service/schema "
+            "reliability. The corresponding common-served C∪P differences are near zero. No complete contrast survives Holm, "
+            "so deployment rejection is an end-to-end interface/fidelity decision rather than proof of inferior successful trajectories."
         ),
         "effect": {
             "proxy_complete_equivalent_sensitivity_top1_lite_rcr_compact4": "29/20/18",
@@ -488,10 +517,15 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
             "wrong_or_unsupported_relations": "20/60",
             "root_reviewed_full_equivalence_among_self_reported_complete": "9/66",
             "model_panel_lite_rcr_compact4_clinical_complete_counts": "22/13/13 of 300",
-            "model_panel_rcr_minus_lite_complete_or_partial_pp": -7.333333333333333,
-            "model_panel_rcr_minus_lite_complete_or_partial_holm_q": 0.02462283158179103,
-            "model_panel_compact4_minus_rcr_complete_or_partial_pp": -14.0,
-            "model_panel_compact4_minus_rcr_complete_or_partial_holm_q": 0.00011083958931402502,
+            "model_panel_rcr_minus_lite_complete_or_partial_ita_pp": -7.0,
+            "model_panel_rcr_minus_lite_complete_or_partial_ita_holm_q": 0.0314181102338461,
+            "model_panel_compact4_minus_rcr_complete_or_partial_ita_pp": -14.0,
+            "model_panel_compact4_minus_rcr_complete_or_partial_ita_holm_q": 0.0001310074158496009,
+            "model_panel_third_generator_minus_lite_complete_or_partial_ita_pp": -21.0,
+            "model_panel_third_generator_minus_lite_complete_or_partial_ita_holm_q": 7.367231650043769e-13,
+            "model_panel_rcr_minus_lite_complete_or_partial_common_served_pp": -0.3861003861003861,
+            "model_panel_compact4_minus_rcr_complete_or_partial_common_served_pp": -1.3245033112582782,
+            "model_panel_third_generator_minus_lite_complete_or_partial_common_served_pp": -1.7241379310344827,
         },
         "causal_scope": "the realised generated skeleton/typed-candidate/frontier implementation on a development relation challenge set",
         "refutes": ["current RCR-3 is the default three-call replacement", "generated relation fields and self-reported completeness are trustworthy"],
@@ -884,6 +918,266 @@ def read_json(path: Path) -> Any:
     if not path.is_file():
         raise FileNotFoundError(path)
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def build_endpoint_migration_snapshot(repo_root: Path) -> dict[str, Any]:
+    """Fail closed on the final 79-arm migration and its sensitivity replay."""
+
+    root = repo_root / MIGRATION_ROOT
+    final = read_json(root / "final/summary.json")
+    panel = read_json(root / "panel/summary.json")
+    task = read_json(root / "task_evaluator/summary.json")
+    sensitivity = read_json(root / "sensitivity/summary.json")
+    calibration = read_json(root / "sensitivity/panel_aggregate_calibration.json")
+    agreement = read_json(root / "sensitivity/novel_reviewer_agreement.json")
+    legacy = read_json(root / "sensitivity/legacy_clinical_calibration.json")
+    contrasts = read_json(root / "final/paired_contrasts.json")["records"]
+    common_served = read_json(root / "sensitivity/common_served_paired_contrasts.json")["records"]
+    e5_split = read_json(root / "sensitivity/e5_family_split.json")["records"]
+
+    expected_final = {
+        "n_arms": 79,
+        "n_intention_rows": 24076,
+        "n_served_rows": 23046,
+        "n_clinical_relations": 5351,
+        "n_task_payloads": 5839,
+        "n_task_payloads_successful": 5839,
+        "n_task_payloads_not_evaluable": 0,
+        "task_census_status": "complete_fresh_replay",
+    }
+    drift = {
+        key: {"expected": value, "observed": final.get(key)}
+        for key, value in expected_final.items()
+        if final.get(key) != value
+    }
+    if drift:
+        raise ValueError(f"79-arm endpoint-migration final summary drifted: {drift}")
+    if task.get("n_unique_tasks") != 5839 or task.get("n_success") != 5839 or task.get("n_failure") != 0:
+        raise ValueError("fresh task namespace is not the required 5,839/5,839 complete replay")
+    if (
+        panel.get("n_novel_relations") != 3407
+        or panel.get("n_sentinel_relations") != 1173
+        or panel.get("n_unresolved") != 152
+        or sensitivity.get("n_served_rows") != 23046
+    ):
+        raise ValueError("panel or sensitivity census drifted from the corrected final replay")
+
+    sentinel_per_card: dict[str, int] = {}
+    with (root / "design/sentinel_truth.jsonl").open(encoding="utf-8") as handle:
+        for line in handle:
+            if not line.strip():
+                continue
+            blind_candidate_id = str(json.loads(line)["blind_candidate_id"])
+            blind_case_id = blind_candidate_id.split("-", 1)[0]
+            sentinel_per_card[blind_case_id] = sentinel_per_card.get(blind_case_id, 0) + 1
+    sentinel_card_distribution = {
+        "zero": 628 - len(sentinel_per_card),
+        "one": sum(value == 1 for value in sentinel_per_card.values()),
+        "two": sum(value == 2 for value in sentinel_per_card.values()),
+        "more_than_two": sum(value > 2 for value in sentinel_per_card.values()),
+    }
+    if sentinel_card_distribution != {"zero": 11, "one": 61, "two": 556, "more_than_two": 0}:
+        raise ValueError(f"corrected sentinel allocation drifted: {sentinel_card_distribution}")
+
+    task_survivors = [
+        row
+        for row in contrasts
+        if row.get("endpoint") == "task" and float(row.get("holm_adjusted_p", 1.0)) < 0.05
+    ]
+    if len(task_survivors) != 26 or {row.get("scope") for row in task_survivors} - {"DA", "MCR"}:
+        raise ValueError("task Holm survivors must be exactly 26 family-specific DA/MCR contrasts")
+    if any(row.get("endpoint") == "task" and row.get("scope") == "ALL" for row in contrasts):
+        raise ValueError("pooled ALL task contrast is prohibited")
+    common_served_task_survivors = [
+        row
+        for row in common_served
+        if row.get("endpoint") == "task" and float(row.get("holm_adjusted_p", 1.0)) < 0.05
+    ]
+    if (
+        len(common_served_task_survivors) != 15
+        or sum(row.get("scope") == "DA" for row in common_served_task_survivors) != 4
+        or sum(row.get("scope") == "MCR" for row in common_served_task_survivors) != 11
+    ):
+        raise ValueError("common-served task Holm survivors must be 15: DA=4 and MCR=11")
+
+    def unique_record(rows: Sequence[Mapping[str, Any]], **filters: Any) -> Mapping[str, Any]:
+        matches = [row for row in rows if all(row.get(key) == value for key, value in filters.items())]
+        if len(matches) != 1:
+            raise ValueError(f"expected one migration record for {filters}, found {len(matches)}")
+        return matches[0]
+
+    e5_width8 = unique_record(
+        e5_split,
+        experiment_id="E5",
+        label="nested_width8_vs_base4",
+        estimand="common_served_case_paired",
+        scope="ALL",
+        endpoint="clinical_complete",
+    )
+    e5_sibling = unique_record(
+        e5_split,
+        experiment_id="E5",
+        label="add_sibling5_vs_base4",
+        estimand="common_served_case_paired",
+        scope="ALL",
+        endpoint="clinical_complete",
+    )
+    e5_synonym_c = unique_record(
+        e5_split,
+        experiment_id="E5",
+        label="add_synonym5_vs_base4",
+        estimand="common_served_case_paired",
+        scope="ALL",
+        endpoint="clinical_complete",
+    )
+    e5_synonym_union = unique_record(
+        e5_split,
+        experiment_id="E5",
+        label="add_synonym5_vs_base4",
+        estimand="common_served_case_paired",
+        scope="ALL",
+        endpoint="complete_or_compatible_partial",
+    )
+    e5_component = unique_record(
+        e5_split,
+        experiment_id="E5",
+        label="add_component5_vs_base4",
+        estimand="common_served_case_paired",
+        scope="ALL",
+        endpoint="clinical_complete",
+    )
+
+    replay_rows: list[dict[str, Any]] = []
+    with (root / "final/five_endpoint_replay.jsonl").open(encoding="utf-8") as handle:
+        for line in handle:
+            if line.strip():
+                replay_rows.append(json.loads(line))
+    recovered_top1 = sum(bool(row.get("source_top1_recovery")) for row in replay_rows)
+    if recovered_top1 != 11:
+        raise ValueError(f"expected 11 formally recovered E8 Top-1 rows, found {recovered_top1}")
+
+    e5_by_case: dict[str, dict[str, dict[str, Any]]] = {}
+    for row in replay_rows:
+        if row.get("experiment_id") == "E5":
+            e5_by_case.setdefault(str(row["case_key"]), {})[str(row["arm_id"])] = row
+    joint_rates: dict[str, dict[str, Any]] = {}
+    for scope in ("ALL", "DA", "MCR"):
+        joint = [
+            arms
+            for arms in e5_by_case.values()
+            if len(arms) == 9
+            and all(bool(row.get("served")) for row in arms.values())
+            and (
+                scope == "ALL"
+                or str(next(iter(arms.values()))["benchmark_family"]) == scope
+            )
+        ]
+        base_n = sum(bool(arms["base4"]["clinical_complete"]) for arms in joint)
+        width8_n = sum(bool(arms["nested_width8"]["clinical_complete"]) for arms in joint)
+        joint_rates[scope] = {
+            "n": len(joint),
+            "base4_complete_n": base_n,
+            "width8_complete_n": width8_n,
+            "width4_to_width8_delta_pp": 100.0 * (width8_n - base_n) / len(joint),
+            "delta_pp_per_added_candidate": 25.0 * (width8_n - base_n) / len(joint),
+        }
+    if {scope: row["n"] for scope, row in joint_rates.items()} != {"ALL": 162, "DA": 87, "MCR": 75}:
+        raise ValueError(f"E5 all-nine common-served census drifted: {joint_rates}")
+
+    def common_delta(experiment: str, label: str, endpoint: str) -> dict[str, Any]:
+        row = unique_record(
+            common_served,
+            experiment_id=experiment,
+            label=label,
+            scope="ALL",
+            endpoint=endpoint,
+        )
+        return {
+            "n": row["n"],
+            "delta_pp": 100.0 * float(row["delta_right_minus_left"]),
+            "holm_q": row["holm_adjusted_p"],
+        }
+
+    legacy_occurrence = {
+        str(row["target_endpoint"]): row
+        for row in legacy["records"]
+        if row.get("unit") == "case_arm_occurrence" and row.get("group") == "ALL"
+    }
+    if set(legacy_occurrence) != {"clinical_complete", "complete_or_compatible_partial"}:
+        raise ValueError("legacy-chain occurrence calibration is incomplete")
+
+    aggregate = calibration["strata"]["all"]
+    fleiss = agreement["fleiss"]
+    return {
+        "schema_version": "cross-synthesis-endpoint-migration-snapshot-v1",
+        "coverage": {
+            "arms": final["n_arms"],
+            "intention_rows": final["n_intention_rows"],
+            "served_rows": final["n_served_rows"],
+            "unserved_rows": final["n_intention_rows"] - final["n_served_rows"],
+            "unique_clinical_relations": final["n_clinical_relations"],
+            "novel_relations": panel["n_novel_relations"],
+            "sentinel_relations": panel["n_sentinel_relations"],
+            "sentinel_card_distribution": sentinel_card_distribution,
+            "unresolved_novel_relations": panel["n_unresolved"],
+            "source_top1_recovered": recovered_top1,
+        },
+        "task": {
+            "status": final["task_census_status"],
+            "payloads": final["n_task_payloads"],
+            "successful": final["n_task_payloads_successful"],
+            "not_evaluable": final["n_task_payloads_not_evaluable"],
+            "holm_survivors_total": len(task_survivors),
+            "holm_survivors_DA": sum(row["scope"] == "DA" for row in task_survivors),
+            "holm_survivors_MCR": sum(row["scope"] == "MCR" for row in task_survivors),
+            "common_served_holm_survivors_total": len(common_served_task_survivors),
+            "common_served_holm_survivors_DA": sum(
+                row["scope"] == "DA" for row in common_served_task_survivors
+            ),
+            "common_served_holm_survivors_MCR": sum(
+                row["scope"] == "MCR" for row in common_served_task_survivors
+            ),
+            "pooled_ALL_estimand": "prohibited",
+        },
+        "panel_calibration": {
+            "fine_label_accuracy": aggregate["fine_label_accuracy"],
+            "clinical_complete": aggregate["clinical_complete_boundary"],
+            "complete_or_compatible_partial": aggregate["complete_or_compatible_partial_boundary"],
+            "novel_fleiss_kappa": {
+                "fine_relation": fleiss["fine_relation"]["fleiss_kappa"],
+                "clinical_complete": fleiss["clinical_complete"]["fleiss_kappa"],
+                "complete_or_compatible_partial": fleiss["complete_or_compatible_partial"]["fleiss_kappa"],
+            },
+        },
+        "e5": {
+            "all_nine_common_served": joint_rates,
+            "pairwise_width8_minus_base4_complete_pp": 100.0 * float(e5_width8["delta_right_minus_left"]),
+            "sibling_complete_pp": 100.0 * float(e5_sibling["delta_right_minus_left"]),
+            "synonym_complete_pp": 100.0 * float(e5_synonym_c["delta_right_minus_left"]),
+            "synonym_union_pp": 100.0 * float(e5_synonym_union["delta_right_minus_left"]),
+            "component_complete_pp": 100.0 * float(e5_component["delta_right_minus_left"]),
+        },
+        "common_served": {
+            "E6_flat_vs_raw_complete": common_delta("E6", "flat_vs_raw", "clinical_complete"),
+            "E6_graph_vs_raw_complete": common_delta("E6", "graph_vs_raw", "clinical_complete"),
+            "E6_flat_vs_raw_union": common_delta("E6", "flat_vs_raw", "complete_or_compatible_partial"),
+            "E6_graph_vs_raw_union": common_delta("E6", "graph_vs_raw", "complete_or_compatible_partial"),
+            "RCR3_rcr_vs_lite_union": common_delta("RCR3", "rcr3_vs_lite3_same_3call_budget", "complete_or_compatible_partial"),
+            "RCR3_third_generator_vs_lite_union": common_delta("RCR3", "third_generator_marginal_utility", "complete_or_compatible_partial"),
+        },
+        "legacy_chain_occurrence_calibration": {
+            endpoint: {
+                "n": row["n"],
+                "precision": row["precision"],
+                "recall": row["sensitivity"],
+            }
+            for endpoint, row in legacy_occurrence.items()
+        },
+        "interpretation": (
+            "E2 remains the only full human-root capability census; all novel 79-arm labels are "
+            "calibrated blinded-model-panel sensitivities."
+        ),
+    }
 
 
 def build_e2_full800_snapshot(repo_root: Path) -> dict[str, Any]:
@@ -1429,9 +1723,9 @@ def validate_closure(
             "gap_experiments": migration_gaps,
             "interpretation": (
                 "All 79 target arms have exhaustive blinded three-reviewer model-panel clinical "
-                "relations with ITA failure accounting. The fresh task namespace is only partially "
-                "complete after external API credit exhaustion. E2 remains the only human-root "
-                "census and E7a remains structural N/A."
+                "relations with ITA failure accounting, and the fresh family-specific task namespace "
+                "is complete at 5,839/5,839 payloads. DA mapper and MCR semantic-judge estimates remain "
+                "separate and may not be pooled. E2 remains the only human-root census and E7a remains structural N/A."
                 if migration_present
                 else
                 "Only E2 has the full blinded/root census. E7a is N/A and the other "
@@ -1465,6 +1759,7 @@ def build(repo_root: Path, out: Path) -> dict[str, Any]:
     started = datetime.now(timezone.utc).isoformat()
     endpoint_coverage = endpoint_coverage_audit.build_payload(repo_root)
     e2_snapshot = build_e2_full800_snapshot(repo_root)
+    migration_snapshot = build_endpoint_migration_snapshot(repo_root)
     validated = validate_evidence(repo_root, EVIDENCE, endpoint_coverage)
     closure = validate_closure(CLOSURE_ITEMS, endpoint_coverage)
     register_path = repo_root / REGISTER
@@ -1495,6 +1790,7 @@ def build(repo_root: Path, out: Path) -> dict[str, Any]:
     write_json(out / "closure_matrix.json", closure)
     write_json(out / "endpoint_coverage_matrix.json", endpoint_coverage)
     write_json(out / "e2_full800_snapshot.json", e2_snapshot)
+    write_json(out / "endpoint_migration_snapshot.json", migration_snapshot)
 
     experiments = {str(row["experiment"]) for row in validated}
     stage_references = {item for stage in MECHANISM_CHAIN for item in stage["evidence"]}
@@ -1520,8 +1816,8 @@ def build(repo_root: Path, out: Path) -> dict[str, Any]:
                 "unscoped strict or Concept field is an ability endpoint. Clinical-complete supports diagnostic-capability "
                 "interpretation only under a full blinded/root census; the complete-or-compatible-partial union remains a "
                 "secondary coverage sensitivity. E2 alone is human-root-owned; the other 79 target arms now have an "
-                "exhaustive blinded three-reviewer model-panel clinical census, while their fresh task replay remains "
-                "partial after external API credit exhaustion; E7a remains structural N/A."
+                "exhaustive blinded three-reviewer model-panel clinical census and a complete 5,839/5,839 fresh task replay; "
+                "DA mapper and MCR semantic-judge task estimands remain separate and may not be pooled. E7a remains structural N/A."
                 if migration_present
                 else
                 "Safe-exact, legacy-chain, task and clinical relations remain distinct. E2 alone has the full "
@@ -1588,6 +1884,13 @@ def build(repo_root: Path, out: Path) -> dict[str, Any]:
         "metric_migration_task_census_status": endpoint_coverage["migration_contract"][
             "summary"
         ]["task_census_status"],
+        "metric_migration_intention_rows": migration_snapshot["coverage"]["intention_rows"],
+        "metric_migration_served_rows": migration_snapshot["coverage"]["served_rows"],
+        "metric_migration_unserved_rows": migration_snapshot["coverage"]["unserved_rows"],
+        "metric_migration_novel_relations": migration_snapshot["coverage"]["novel_relations"],
+        "metric_migration_sentinel_relations": migration_snapshot["coverage"]["sentinel_relations"],
+        "metric_migration_task_payloads_successful": migration_snapshot["task"]["successful"],
+        "metric_migration_task_family_specific_holm_survivors": migration_snapshot["task"]["holm_survivors_total"],
         "e2_full800_cases": e2_snapshot["coverage"]["cases"],
         "e2_case_arm_rows": e2_snapshot["coverage"]["case_arm_rows"],
         "e2_unique_full_references": 455,
@@ -1611,7 +1914,8 @@ def build(repo_root: Path, out: Path) -> dict[str, Any]:
         "rejected_default": "current RCR-3 and current fourth-call gate",
         "network_finding": (
             "managed environment routing reached the configured providers for the three complete clinical reviewers; "
-            "the subsequent task/arbitration phase stopped on an explicit external API insufficient-credit response"
+            "after the transient insufficient-credit response was resolved, the fresh task replay resumed and completed "
+            "all 5,839 family-specific payloads without imputation"
         ),
         "register_sha256": sha256(register_path),
     }
@@ -1632,6 +1936,7 @@ def build(repo_root: Path, out: Path) -> dict[str, Any]:
         f"endpoint_coverage_experiments={endpoint_coverage['experiment_count']}",
         f"endpoint_coverage_arm_records={endpoint_coverage['arm_record_count']}",
         "e2_full800_validation=passed",
+        "endpoint_migration_snapshot_validation=passed",
         "e2_endpoint_contract=safe_exact,legacy_chain,clinical_complete,compatible_partial,complete_or_compatible_partial,task",
         "source_anchor_validation=passed",
         "endpoint_coverage_join_validation=passed",
@@ -1651,6 +1956,7 @@ def build(repo_root: Path, out: Path) -> dict[str, Any]:
         out / "closure_matrix.json",
         out / "endpoint_coverage_matrix.json",
         out / "e2_full800_snapshot.json",
+        out / "endpoint_migration_snapshot.json",
         out / "claim_ledger_final.jsonl",
         out / "synthesis_summary.json",
         out / "run.log",

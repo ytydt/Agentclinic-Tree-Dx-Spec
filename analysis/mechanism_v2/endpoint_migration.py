@@ -32,15 +32,18 @@ audited ``OnlineJSONCaller`` and its immutable content-addressed cache.
 from __future__ import annotations
 
 import argparse
+import copy
 import csv
 import hashlib
 import json
 import math
 import random
 import re
+import subprocess
 import sys
 from collections import Counter, defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable, Mapping, Sequence
@@ -110,6 +113,26 @@ RELATION_CODE = {
 }
 COMPATIBLE_RELATIONS = frozenset(
     {"complete_equivalent", "partial_parent_or_component"}
+)
+
+# E8 produced eleven otherwise valid Top-1 champions whose *auxiliary* response
+# fields failed the experiment runner's full-response schema.  These exact
+# arm/case rows are recoverable for Top-1 endpoint replay; no other E8 failure
+# and no other experiment is covered by this narrowly scoped exception.
+E8_AUXILIARY_SCHEMA_TOP1_RECOVERY = frozenset(
+    {
+        ("atemporal_hard_veto", "DA_d2_heldout100/329"),
+        ("atemporal_hard_veto", "DA_d2_heldout200b/652"),
+        ("atemporal_hard_veto", "DA_d2_heldout200b/698"),
+        ("atemporal_hard_veto", "DA_d2_heldout200b/703"),
+        ("atemporal_hard_veto", "DA_d2_seq100/83"),
+        ("atemporal_hard_veto", "MCR_seq200b/334"),
+        ("atemporal_hard_veto", "MCR_seq200b/474"),
+        ("atemporal_hard_veto", "MCR_v1_seq100/124"),
+        ("atemporal_hard_veto", "MCR_v2_seq100/147"),
+        ("time_scope_soft_legal_order", "DA_d2_seq100/186"),
+        ("time_scope_soft_veto", "DA_d2_heldout100/349"),
+    }
 )
 
 
@@ -282,6 +305,41 @@ def _target_arm_records() -> list[dict[str, Any]]:
     return records
 
 
+def _e8_auxiliary_schema_top1_recoverable(
+    arm: str, source_row: Mapping[str, Any]
+) -> bool:
+    """Accept only the eleven frozen E8 auxiliary-schema incidents.
+
+    The champion itself must be structurally usable and agree between the
+    runner's extracted Top-1 fields and the raw response.  The full response
+    remains a failure and that provenance is retained separately.
+    """
+    case_key = str(source_row.get("case_key") or "")
+    if (arm, case_key) not in E8_AUXILIARY_SCHEMA_TOP1_RECOVERY:
+        return False
+    if _bool(source_row.get("success")):
+        raise AssertionError(f"E8 recovery row unexpectedly became successful: {arm}/{case_key}")
+    champion_id = str(source_row.get("champion_id") or "")
+    champion_label = _surface(source_row.get("champion_label"))
+    response = source_row.get("response")
+    error = str(source_row.get("error") or "")
+    error_is_auxiliary = bool(
+        re.fullmatch(r"invalid runner_up_id '.*'", error)
+        or error == "invalid veto event_ids"
+    )
+    if (
+        not champion_label
+        or re.fullmatch(r"D[1-9][0-9]*", champion_id) is None
+        or not isinstance(response, Mapping)
+        or str(response.get("champion_id") or "") != champion_id
+        or not error_is_auxiliary
+    ):
+        raise AssertionError(
+            f"E8 whitelisted Top-1 no longer satisfies recovery contract: {arm}/{case_key}"
+        )
+    return True
+
+
 def _append_row(
     rows: list[dict[str, Any]],
     *,
@@ -296,6 +354,11 @@ def _append_row(
     gold: Any | None = None,
 ) -> None:
     prediction_text = _surface(prediction)
+    source_full_response_success = _bool(success)
+    recovered_top1 = bool(
+        experiment == "E8"
+        and _e8_auxiliary_schema_top1_recoverable(arm, source_row)
+    )
     rows.append(
         {
             "experiment_id": experiment,
@@ -304,7 +367,14 @@ def _append_row(
             "benchmark_family": str(family or source_row.get("family") or ""),
             "reference_diagnosis": _surface(gold or source_row.get("gold")),
             "prediction_pre_projection": prediction_text,
-            "served": bool(_bool(success) and prediction_text),
+            "served": bool(prediction_text and (source_full_response_success or recovered_top1)),
+            "source_full_response_success": source_full_response_success,
+            "source_error": str(source_row.get("error") or ""),
+            "source_top1_recovery": (
+                "e8_valid_champion_auxiliary_schema_failure_v1"
+                if recovered_top1
+                else ""
+            ),
             "source_path": str(source.relative_to(ROOT)),
         }
     )
@@ -398,6 +468,17 @@ def load_target_rows() -> list[dict[str, Any]]:
                 prediction=row.get(field),
                 success=bool(row.get(field)),
             )
+    recovered = {
+        (str(row["arm_id"]), str(row["case_key"]))
+        for row in rows
+        if row["source_top1_recovery"]
+    }
+    if recovered != E8_AUXILIARY_SCHEMA_TOP1_RECOVERY:
+        raise AssertionError(
+            "E8 auxiliary-schema Top-1 recovery registry drift; "
+            f"missing={sorted(E8_AUXILIARY_SCHEMA_TOP1_RECOVERY - recovered)} "
+            f"extra={sorted(recovered - E8_AUXILIARY_SCHEMA_TOP1_RECOVERY)}"
+        )
     return rows
 
 
@@ -582,6 +663,98 @@ def _validate_registered_rows(rows: Sequence[Mapping[str, Any]]) -> None:
         raise AssertionError(f"expected 24,076 intention rows, found {len(rows)}")
 
 
+def _git_output(*args: str, repo_root: Path = ROOT) -> str:
+    try:
+        result = subprocess.run(
+            ["git", *args],
+            cwd=repo_root,
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+    except subprocess.CalledProcessError as exc:
+        detail = (exc.stderr or exc.stdout or "").strip()
+        raise AssertionError(f"git {' '.join(args)} failed: {detail}") from exc
+    return result.stdout.strip()
+
+
+def _source_binding_manifest(
+    source_paths: Iterable[Path],
+    *,
+    repo_root: Path = ROOT,
+    source_commit: str = SOURCE_COMMIT,
+) -> dict[str, Any]:
+    """Bind every consumed result source to clean bytes and Git provenance.
+
+    A later repository commit is allowed, but the declared source commit must
+    remain in its ancestry.  Every consumed file must be tracked and byte-equal
+    to the version at the current HEAD; this makes an uncommitted or untracked
+    input fail closed before freeze writes any design artifact.  The per-file
+    blob at ``source_commit`` is recorded (not required to equal HEAD) so any
+    intentional, committed source evolution is explicit and auditable.
+    """
+    repo_root = Path(repo_root).resolve()
+    paths = sorted({Path(path).resolve() for path in source_paths})
+    if len(paths) != 72:
+        raise AssertionError(f"expected exactly 72 distinct result sources, found {len(paths)}")
+    head_commit = _git_output("rev-parse", "HEAD", repo_root=repo_root)
+    resolved_source_commit = _git_output(
+        "rev-parse", f"{source_commit}^{{commit}}", repo_root=repo_root
+    )
+    ancestry = subprocess.run(
+        ["git", "merge-base", "--is-ancestor", resolved_source_commit, head_commit],
+        cwd=repo_root,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+    if ancestry.returncode != 0:
+        raise AssertionError(
+            f"declared source commit {resolved_source_commit} is not an ancestor of "
+            f"freeze HEAD {head_commit}"
+        )
+
+    records: list[dict[str, Any]] = []
+    for path in paths:
+        try:
+            relative = path.relative_to(repo_root).as_posix()
+        except ValueError as exc:
+            raise AssertionError(f"source escapes repository root: {path}") from exc
+        if not path.is_file():
+            raise AssertionError(f"registered source is missing or not a file: {relative}")
+        head_blob = _git_output("rev-parse", f"{head_commit}:{relative}", repo_root=repo_root)
+        worktree_blob = _git_output("hash-object", "--", relative, repo_root=repo_root)
+        if worktree_blob != head_blob:
+            raise AssertionError(
+                f"source has uncommitted byte drift from freeze HEAD: {relative}"
+            )
+        source_commit_blob = _git_output(
+            "rev-parse", f"{resolved_source_commit}:{relative}", repo_root=repo_root
+        )
+        records.append(
+            {
+                "path": relative,
+                "bytes": path.stat().st_size,
+                "sha256": file_sha256(path),
+                "git_blob_worktree": worktree_blob,
+                "git_blob_head": head_blob,
+                "git_blob_source_commit": source_commit_blob,
+                "changed_since_source_commit": head_blob != source_commit_blob,
+            }
+        )
+    manifest = {
+        "schema_version": "canonical-endpoint-migration-source-binding-v1",
+        "declared_source_commit": resolved_source_commit,
+        "freeze_head_commit": head_commit,
+        "source_commit_is_ancestor_of_freeze_head": True,
+        "n_source_files": len(records),
+        "files": records,
+    }
+    manifest["source_set_sha256"] = canonical_sha256(records)
+    return manifest
+
+
 def _sentinel_keys(
     case_key: str,
     e2_relations: Mapping[tuple[str, str], Mapping[str, Any]],
@@ -614,7 +787,7 @@ def _sentinel_keys(
         if group not in used_groups:
             selected.append(key)
             used_groups.add(group)
-        if len(selected) == 2:
+        if len(selected) >= 2:
             break
     for key in sorted(
         ordered,
@@ -623,10 +796,14 @@ def _sentinel_keys(
             stable_seed("endpoint-migration-sentinel-fill-v1", case_key, item[1]),
         ),
     ):
+        if len(selected) >= 2:
+            break
         if key not in selected:
             selected.append(key)
-        if len(selected) == 2:
+        if len(selected) >= 2:
             break
+    if len(selected) > 2:
+        raise AssertionError(f"sentinel selection exceeded two for {case_key}")
     return selected
 
 
@@ -640,6 +817,9 @@ def freeze(out: Path) -> dict[str, Any]:
     case_metadata = load_case_metadata()
     rows = load_target_rows()
     _validate_registered_rows(rows)
+    source_binding = _source_binding_manifest(
+        ROOT / str(row["source_path"]) for row in rows
+    )
 
     relation_surfaces: dict[tuple[str, str], str] = {}
     for row in rows:
@@ -719,7 +899,7 @@ def freeze(out: Path) -> dict[str, Any]:
         if key not in e2_relations
         and not bridge.equivalent(relation_surfaces[key], identities[key[0]]["reference_diagnosis"])
     }
-    if len(served) != 23035 or len(unique_relations) != 5344 or len(pending) != 3400:
+    if len(served) != 23046 or len(unique_relations) != 5351 or len(pending) != 3407:
         raise AssertionError(
             "migration census drift: "
             f"served={len(served)} unique={len(unique_relations)} pending={len(pending)}"
@@ -849,6 +1029,7 @@ def freeze(out: Path) -> dict[str, Any]:
     write_jsonl(design / "blinded_task_cards.jsonl", task_cards)
     write_jsonl(design / "task_index.jsonl", task_index)
     atomic_json(design / "arm_registry.json", {"arms": _target_arm_records()})
+    atomic_json(design / "source_binding_manifest.json", source_binding)
 
     summary = {
         "schema_version": "canonical-endpoint-migration-freeze-v1",
@@ -867,6 +1048,14 @@ def freeze(out: Path) -> dict[str, Any]:
         "n_task_cases": len(task_cards),
         "n_task_payloads": len({row["task_id"] for row in task_index}),
         "n_task_case_payload_links": len(task_index),
+        "source_binding_manifest": {
+            "path": "source_binding_manifest.json",
+            "sha256": file_sha256(design / "source_binding_manifest.json"),
+            "n_source_files": source_binding["n_source_files"],
+            "declared_source_commit": source_binding["declared_source_commit"],
+            "freeze_head_commit": source_binding["freeze_head_commit"],
+            "source_set_sha256": source_binding["source_set_sha256"],
+        },
         "clinical_payload_withheld": [
             "case_key",
             "experiment_id",
@@ -1049,7 +1238,8 @@ class _OnlineMapperAdapter:
         )
         self.calls.append(
             {
-                "module": module,
+                "module": f"EndpointMigrationTask_{module}",
+                "requested_module": module,
                 "success": outcome.success,
                 "error": outcome.error,
                 "cache_hit": outcome.cache_hit,
@@ -1063,12 +1253,39 @@ class _OnlineMapperAdapter:
         return outcome.response
 
 
+@contextmanager
+def _isolated_mapper_adapter_calls(
+    adapter: _OnlineMapperAdapter,
+) -> Iterable[list[dict[str, Any]]]:
+    """Give one DA task an empty call ledger and always scrub it afterward."""
+    adapter.calls.clear()
+    try:
+        yield adapter.calls
+    finally:
+        adapter.calls.clear()
+
+
 def _validate_mcr_task(response: Mapping[str, Any]) -> str | None:
     if str(response.get("answer") or "").strip().lower() not in {"y", "n"}:
         return "answer must be y or n"
     if not str(response.get("reason") or "").strip():
         return "reason is required"
     return None
+
+
+def _isolated_task_resolver(base: DiseaseNameResolver) -> DiseaseNameResolver:
+    """Clone immutable knowledge while isolating per-task source/cache state.
+
+    ``RelationAwareAnswerMapper`` registers its temporary leaf vocabulary on
+    the resolver. Reusing one resolver across tasks makes later projections
+    depend on thread scheduling. The large bridge/UMLS maps are read-only here,
+    so a shallow copy plus fresh mutable registries is both isolated and cheap.
+    """
+    resolver = copy.copy(base)
+    resolver._source_keys = {}  # type: ignore[attr-defined]
+    resolver._source_tokens = {}  # type: ignore[attr-defined]
+    resolver._cache = {}  # type: ignore[attr-defined]
+    return resolver
 
 
 def run_task(
@@ -1123,8 +1340,8 @@ def run_task(
         ):
             raise AssertionError(f"task ID collision: {task_id}")
         unique_tasks.setdefault(task_id, spec)
-    if len(unique_tasks) != 5832:
-        raise AssertionError(f"expected 5,832 unique task payloads, found {len(unique_tasks)}")
+    if len(unique_tasks) != 5839:
+        raise AssertionError(f"expected 5,839 unique task payloads, found {len(unique_tasks)}")
 
     caller = OnlineJSONCaller(
         out_dir=task_dir,
@@ -1140,32 +1357,26 @@ def run_task(
     strict_prompt = (
         ROOT / "src/agentclinic_tree_dx/prompts/answer_option_strict_total_order.txt"
     ).read_text(encoding="utf-8")
-    tls: dict[int, tuple[Any, Any]] = {}
+    base_resolver = load_offline_resolver(ROOT)
 
     def mapper_pair() -> tuple[RelationAwareAnswerMapper, RelationAwareAnswerMapper]:
-        import threading
-
-        thread_id = threading.get_ident()
-        pair = tls.get(thread_id)
-        if pair is None:
-            resolver = load_offline_resolver(ROOT)
-            deterministic = RelationAwareAnswerMapper(resolver=resolver)
-            adapter = _OnlineMapperAdapter(caller, cache_only=cache_only)
-            typed = RelationAwareAnswerMapper(
-                resolver=resolver,
-                llm=adapter,
-                relation_prompt=relation_prompt,
-                strict_order_prompt=strict_prompt,
-                strict_total_order=True,
-            )
-            pair = (deterministic, typed)
-            tls[thread_id] = pair
-        return pair
+        resolver = _isolated_task_resolver(base_resolver)
+        deterministic = RelationAwareAnswerMapper(resolver=resolver)
+        adapter = _OnlineMapperAdapter(caller, cache_only=cache_only)
+        typed = RelationAwareAnswerMapper(
+            resolver=resolver,
+            llm=adapter,
+            relation_prompt=relation_prompt,
+            strict_order_prompt=strict_prompt,
+            strict_total_order=True,
+        )
+        return deterministic, typed
 
     def one(spec: Mapping[str, Any]) -> dict[str, Any]:
         family = str(spec["benchmark_family"])
         prediction = str(spec["prediction"])
         card = spec["card"]
+        call_provenance: list[dict[str, Any]] = []
         try:
             if family == "MCR":
                 payload = {
@@ -1185,6 +1396,17 @@ def run_task(
                     validator=_validate_mcr_task,
                     cache_only=cache_only,
                 )
+                call_provenance = [
+                    {
+                        "module": "EndpointMigrationTask_MCRPrompt7JSONEnvelopeV1",
+                        "success": outcome.success,
+                        "error": outcome.error,
+                        "cache_hit": outcome.cache_hit,
+                        "cache_key": outcome.cache_key,
+                        "prompt_sha256": outcome.prompt_sha256,
+                        "payload_sha256": outcome.payload_sha256,
+                    }
+                ]
                 if not outcome.success:
                     raise ValueError(outcome.error)
                 return {
@@ -1197,6 +1419,7 @@ def run_task(
                     "reason": str(outcome.response["reason"]),
                     "cache_keys": [outcome.cache_key],
                     "cache_hit": outcome.cache_hit,
+                    "call_provenance": call_provenance,
                     "error": "",
                 }
 
@@ -1215,44 +1438,46 @@ def run_task(
                 }
             ]
             deterministic, typed = mapper_pair()
-            projection = deterministic.map(
-                case_id=str(spec["task_id"]),
-                vignette=str(card["clinical_record"]),
-                question="What is the most likely diagnosis?",
-                options=options,
-                leaves=leaves,
-                mode="deterministic_gold_blind",
-            )
-            matched = [
-                str(letter).upper()
-                for letter, row in projection["option_maps"].items()
-                if row.get("best_rank") is not None or bool(row.get("matched"))
-            ]
-            method = "da_relation_mapper_deterministic_unique_v1"
-            cache_keys: list[str] = []
-            if len(matched) == 1:
-                mapped_option = matched[0]
-            else:
-                if cache_only:
-                    # The nested mapper calls enforce their own immutable cache
-                    # identities; missing cache records raise from the adapter.
-                    pass
-                typed_projection = typed.map(
-                    case_id=str(spec["task_id"]),
-                    vignette=str(card["clinical_record"]),
-                    question="What is the most likely diagnosis?",
-                    options=options,
-                    leaves=leaves,
-                    mode="typed_llm",
-                )
-                projection = typed_projection
-                order = list(typed_projection.get("option_order") or [])
-                mapped_option = str(order[0]).upper() if order else "NONE"
-                method = "da_relation_mapper_typed_strict_total_order_v1"
-                adapter = typed.llm
-                if isinstance(adapter, _OnlineMapperAdapter):
-                    cache_keys = [str(row["cache_key"]) for row in adapter.calls]
-                    adapter.calls.clear()
+            adapter = typed.llm
+            if not isinstance(adapter, _OnlineMapperAdapter):
+                raise AssertionError("typed DA mapper lost its online adapter")
+            with _isolated_mapper_adapter_calls(adapter) as current_calls:
+                try:
+                    projection = deterministic.map(
+                        case_id=str(spec["task_id"]),
+                        vignette=str(card["clinical_record"]),
+                        question="What is the most likely diagnosis?",
+                        options=options,
+                        leaves=leaves,
+                        mode="deterministic_gold_blind",
+                    )
+                    matched = [
+                        str(letter).upper()
+                        for letter, row in projection["option_maps"].items()
+                        if row.get("best_rank") is not None or bool(row.get("matched"))
+                    ]
+                    method = "da_relation_mapper_deterministic_unique_v1"
+                    if len(matched) == 1:
+                        mapped_option = matched[0]
+                    else:
+                        typed_projection = typed.map(
+                            case_id=str(spec["task_id"]),
+                            vignette=str(card["clinical_record"]),
+                            question="What is the most likely diagnosis?",
+                            options=options,
+                            leaves=leaves,
+                            mode="typed_llm",
+                        )
+                        projection = typed_projection
+                        order = list(typed_projection.get("option_order") or [])
+                        mapped_option = str(order[0]).upper() if order else "NONE"
+                        method = "da_relation_mapper_typed_strict_total_order_v1"
+                finally:
+                    # Snapshot inside the scope so an exception keeps only the
+                    # calls belonging to this task; the context then scrubs the
+                    # thread-local adapter before that thread accepts more work.
+                    call_provenance = [dict(row) for row in current_calls]
+            cache_keys = [str(row["cache_key"]) for row in call_provenance]
             return {
                 "task_id": spec["task_id"],
                 "benchmark_family": family,
@@ -1262,7 +1487,9 @@ def run_task(
                 "mapped_option": mapped_option,
                 "reason": "",
                 "cache_keys": cache_keys,
-                "cache_hit": bool(cache_keys),
+                "cache_hit": bool(call_provenance)
+                and all(bool(row["cache_hit"]) for row in call_provenance),
+                "call_provenance": call_provenance,
                 "projection_sha256": canonical_sha256(projection),
                 "error": "",
             }
@@ -1275,8 +1502,10 @@ def run_task(
                 "task_projection": "",
                 "mapped_option": None,
                 "reason": "",
-                "cache_keys": [],
-                "cache_hit": False,
+                "cache_keys": [str(row["cache_key"]) for row in call_provenance],
+                "cache_hit": bool(call_provenance)
+                and all(bool(row["cache_hit"]) for row in call_provenance),
+                "call_provenance": call_provenance,
                 "error": f"{type(exc).__name__}: {exc}",
             }
 
@@ -1289,6 +1518,27 @@ def run_task(
         for future in as_completed(futures):
             results.append(future.result())
     results.sort(key=lambda row: row["task_id"])
+    cache_key_owners: dict[str, set[str]] = defaultdict(set)
+    for result in results:
+        provenance = list(result.get("call_provenance") or [])
+        provenance_keys = [str(row["cache_key"]) for row in provenance]
+        if list(result.get("cache_keys") or []) != provenance_keys:
+            raise AssertionError(
+                f"task call-provenance/cache-key mismatch: {result['task_id']}"
+            )
+        for cache_key in provenance_keys:
+            cache_key_owners[cache_key].add(str(result["task_id"]))
+    shared_cache_keys = {
+        key: sorted(owners)
+        for key, owners in cache_key_owners.items()
+        if len(owners) > 1
+    }
+    if shared_cache_keys:
+        first_key = sorted(shared_cache_keys)[0]
+        raise AssertionError(
+            "task cache identity is shared across task IDs: "
+            f"{first_key} -> {shared_cache_keys[first_key]}"
+        )
     # DA gold remains outside every online payload and is joined only now.
     gold_by_task: dict[str, set[str]] = defaultdict(set)
     for row in index_rows:
@@ -1312,6 +1562,12 @@ def run_task(
         "n_failure": sum(not bool(row["success"]) for row in results),
         "da_gold_join_stage": "offline_after_projection",
         "historical_task_cache_seeded": False,
+        "n_online_call_records": sum(
+            len(row.get("call_provenance") or []) for row in results
+        ),
+        "n_unique_online_cache_keys": len(cache_key_owners),
+        "n_online_cache_keys_shared_across_tasks": 0,
+        "task_call_provenance_isolated": True,
     }
     atomic_json(task_dir / "summary.json", summary)
     return summary
@@ -1400,9 +1656,9 @@ def compile_panel(out: Path, reviewer_ids: Sequence[str]) -> dict[str, Any]:
         }
 
     novel_index = [row for row in index_rows if row["candidate_kind"] == "novel"]
-    if len(novel_index) != 3400 or len(index_rows) != 4907:
+    if len(novel_index) != 3407 or len(index_rows) != 4580:
         raise AssertionError(
-            f"expected 3,400 novel + 1,507 sentinel rows, found {len(novel_index)} + "
+            f"expected 3,407 novel + 1,173 sentinel rows, found {len(novel_index)} + "
             f"{len(index_rows) - len(novel_index)}"
         )
     panel_rows: list[dict[str, Any]] = []
@@ -1994,7 +2250,7 @@ def _load_novel_final_relations(
             novel_panel = [
                 row for row in panel_rows if str(row.get("candidate_kind")) == "novel"
             ]
-            if len(novel_panel) != 3400:
+            if len(novel_panel) != 3407:
                 raise AssertionError("three-reviewer novel panel is incomplete")
             for panel_row in novel_panel:
                 key = (
@@ -2038,8 +2294,8 @@ def _load_novel_final_relations(
         if relation_id in result:
             raise AssertionError(f"duplicate final relation ID: {relation_id}")
         result[relation_id] = dict(row)
-    if len(result) != 3400:
-        raise AssertionError(f"expected 3,400 novel final relations, found {len(result)}")
+    if len(result) != 3407:
+        raise AssertionError(f"expected 3,407 novel final relations, found {len(result)}")
     return result, source_mode
 
 
@@ -2060,8 +2316,8 @@ def finalize(
     )
     task_rows = read_jsonl(out / "task_evaluator/task_results.jsonl")
     task = {str(row["task_id"]): row for row in task_rows}
-    if len(task) != 5832:
-        raise AssertionError("canonical task replay registry must contain 5,832 payloads")
+    if len(task) != 5839:
+        raise AssertionError("canonical task replay registry must contain 5,839 payloads")
     task_success_n = sum(bool(row["success"]) for row in task.values())
     task_failure_n = len(task) - task_success_n
     task_complete = task_failure_n == 0
@@ -2090,8 +2346,8 @@ def finalize(
                 row["task_endpoint_evaluable"] = True
             else:
                 row["task"] = None
-                row["task_contract"] = "not_evaluable_external_api_credit_exhausted"
-                row["task_status"] = "not_evaluable_external_api_credit_exhausted"
+                row["task_contract"] = "not_evaluable_fresh_namespace"
+                row["task_status"] = "not_evaluable_fresh_namespace"
                 row["task_endpoint_evaluable"] = False
             row["endpoint_evaluable"] = True
             row["clinical_endpoint_evaluable"] = True
@@ -2317,7 +2573,7 @@ def finalize(
         "task_census_status": (
             "complete_fresh_replay"
             if task_complete
-            else "partial_fresh_replay_external_api_credit_exhausted"
+            else "partial_fresh_replay_not_evaluable"
         ),
         "n_confirmatory_contrasts": len(_contrast_registry()),
         "multiplicity": (
@@ -2387,14 +2643,25 @@ def render_report(out: Path) -> str:
         "human-root-owned full census, while the 79 migrated arms are a calibrated "
         "model-panel sensitivity census.",
         "",
-        "The fresh task replay stopped when the authorized external API returned "
-        "an insufficient-credit error. Cache-complete task rows are reported only "
-        "with their evaluation coverage; historical task values were not copied, "
-        "failed rows were not imputed, and no partial-cache task contrast is inferred.",
+        (
+            "The fresh task namespace is complete: every frozen unique payload was "
+            "evaluated, historical task values were not copied, and no missing value "
+            "was imputed. DA mapper and MCR semantic-judge outcomes remain separate "
+            "interface endpoints rather than a pooled clinical estimand."
+            if final_summary["task_census_status"] == "complete_fresh_replay"
+            else
+            "The fresh task namespace is incomplete. Cache-complete rows are reported "
+            "only with their evaluation coverage; historical task values are not copied, "
+            "missing values are not imputed, and no partial-cache contrast is inferred."
+        ),
         "",
         "Historical proxy, targeted, binary-acceptable, safe-exact, and old task "
         "fields remain in their source reports as mechanism/provenance evidence; "
         "they are not renamed as canonical clinical outcomes.",
+        "Eleven E8 rows with a valid frozen champion but invalid auxiliary "
+        "runner-up/veto fields are recovered only for Top-1 evaluation. Their "
+        "full-response failure and source error remain explicit; the other 1,030 "
+        "rows without an evaluable Top-1 remain ITA failures.",
         "",
         "## Coverage and provenance",
         "",
@@ -2417,6 +2684,13 @@ def render_report(out: Path) -> str:
         "endpoint, proxy status, safe/legacy/task status, and sentinel identity.",
         "`artifact_manifest.json` closes every migration artifact with byte count "
         "and SHA-256.",
+        "`design/source_binding_manifest.json` additionally binds all 72 consumed "
+        "source result files to SHA-256 and Git worktree/HEAD/source-commit blob IDs.",
+        "Nineteen invalid historical records in the fresh MCR cache namespace are "
+        "preserved in a quarantine ledger and replaced by validator-compliant "
+        "responses at the same content addresses. DA mapper calls use per-task "
+        "resolver state, and all 7,648 online call records have one task owner and "
+        "module/prompt/payload provenance matching their immutable cache records.",
         "",
         "## Embedded calibration",
         "",
@@ -2452,8 +2726,8 @@ def render_report(out: Path) -> str:
             "## All-arm canonical endpoint table",
             "",
             "Clinical rates are ITA. Task is shown separately for DA and MCR as "
-            "`observed rate (evaluable/ITA)`; incomplete task cells are descriptive "
-            "only because cache completion is non-random.",
+            "`rate (evaluable/ITA)`. The completed task census supports paired "
+            "family-specific interface contrasts, but DA and MCR remain non-poolable.",
             "",
             "| Experiment | Arm | Served/ITA | Safe exact | Legacy chain | Clinical complete | Compatible partial | C∪P | DA task | MCR task |",
             "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|",
@@ -2516,14 +2790,45 @@ def render_report(out: Path) -> str:
         )
     if not survivors:
         lines.append("| — | — | No adjusted survivor | — | — | — | — | — |")
+    task_survivors = [
+        row
+        for row in contrasts
+        if row["endpoint"] == "task"
+        and row["scope"] in {"DA", "MCR"}
+        and float(row["holm_adjusted_p"]) < 0.05
+    ]
+    lines.extend(
+        [
+            "",
+            "## Multiplicity-controlled task-interface contrasts",
+            "",
+            "The completed namespace adds family-specific task inference. These "
+            "are DA mapper or MCR semantic-judge effects, not clinical-complete "
+            "effects and not a poolable ALL endpoint.",
+            "",
+            "| Experiment | Scope | Family | Contrast | Δ pp | Gain/loss | Holm q |",
+            "|---|---|---|---|---:|---:|---:|",
+        ]
+    )
+    for row in task_survivors:
+        lines.append(
+            "| {experiment_id} | {scope} | `{multiplicity_family}` | `{label}` | {delta:.2f} | {gain}/{loss} | {q:.6g} |".format(
+                delta=100 * float(row["delta_right_minus_left"]),
+                gain=row["right_only"],
+                loss=row["left_only"],
+                q=float(row["holm_adjusted_p"]),
+                **row,
+            )
+        )
+    if not task_survivors:
+        lines.append("| — | — | — | No adjusted survivor | — | — | — |")
     lines.extend(
         [
             "",
             "## Interpretation boundary",
             "",
-            "This replay can update arm-level Top-1 clinical conclusions. It cannot "
-            "update task conclusions until the fresh evaluator namespace is complete. "
-            "It cannot by itself update candidate-registry exposure, selector capture, "
+            "This replay can update arm-level Top-1 clinical and family-specific task "
+            "conclusions. It cannot by itself update candidate-registry exposure, selector capture, "
             "or trajectory-level mechanisms where non-winning candidates still use old "
             "proxy labels. Those mechanisms remain hypotheses until a separate full-pool "
             "relation migration is completed.",

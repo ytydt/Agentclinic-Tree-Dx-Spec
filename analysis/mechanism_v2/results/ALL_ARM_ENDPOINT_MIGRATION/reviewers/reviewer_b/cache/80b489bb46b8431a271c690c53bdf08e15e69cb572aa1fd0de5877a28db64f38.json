@@ -1,0 +1,89 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "f3d6dc85910314346acca0edf13ea456bd7408a9d5366ccd9908c1c7f94a604e",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "Missing 'severe' designation and the ECMO component that are both required by the reference benchmark",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures COVID-19 pneumonia with ARDS in pregnancy but omits severity qualifier 'severe' and V-V ECMO support requirement"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "Asserts a different primary diagnosis; the clinical picture (respiratory failure, ECMO, COVID context) points to COVID-19 pneumonia with ARDS, not PE as the primary entity",
+        "relation": "not_equivalent",
+        "scope_detail": "Pulmonary thromboembolism is a different primary diagnosis; elevated D-dimer and ECMO clot are present but the primary entity is COVID-19 pneumonia/ARDS"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "Missing severity qualifier, pregnancy context, and ECMO requirement relative to the full reference",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures COVID-19 pneumonia with ARDS but omits 'severe', pregnancy context, and V-V ECMO support"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "medium",
+        "reason": "Expands scope beyond the reference by asserting PE and circuit thrombosis as primary diagnostic components; the tubular clot on the cannula is a procedural finding, not a confirmed PE diagnosis in the reference",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Adds pulmonary embolism and ECMO circuit thrombosis as primary composite components not asserted in the reference; also omits pregnancy and 'severe'"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "Highly underspecified relative to the reference; captures only the infectious etiology",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Parent-level diagnosis only; missing pneumonia, ARDS, severity, pregnancy, and ECMO"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "high",
+        "reason": "Pregnancy is a required component of the reference diagnosis and is absent; otherwise closely aligned including severity and ECMO",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures severe COVID-19 pneumonia with ARDS and ECMO but omits pregnancy context; adds hypercoagulable state detail not in reference label"
+      },
+      {
+        "candidate_id": "C007",
+        "confidence": "medium",
+        "reason": "Asserts PE and placental insufficiency as primary diagnostic components, expanding scope beyond the reference in ways not supported as required elements",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Adds pulmonary embolism and placental insufficiency as primary composite components not present in the reference; includes pregnancy and severity"
+      },
+      {
+        "candidate_id": "C008",
+        "confidence": "medium",
+        "reason": "Contains all core required elements of the reference (severe, COVID-19 pneumonia, ARDS, V-V ECMO); pregnancy omission is a minor gap but the label otherwise fully aligns with the reference benchmark",
+        "relation": "complete_equivalent",
+        "scope_detail": "Matches all required components: severe COVID-19 pneumonia, ARDS, V-V ECMO; pregnancy is implicit in the clinical record context but not explicitly stated"
+      },
+      {
+        "candidate_id": "C009",
+        "confidence": "high",
+        "reason": "Entirely different diagnostic entity; no clinical or laboratory evidence specifically supports TTP over COVID-19 as the primary diagnosis",
+        "relation": "not_equivalent",
+        "scope_detail": "TTP is a different hematologic entity; thrombocytopenia here is in the context of COVID-19"
+      },
+      {
+        "candidate_id": "C010",
+        "confidence": "high",
+        "reason": "Missing severity qualifier, pregnancy context, and ECMO requirement relative to the full reference",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures COVID-19 pneumonia with ARDS but omits 'severe', pregnancy, and V-V ECMO"
+      }
+    ],
+    "case_quality_flags": [
+      "C008 omits explicit pregnancy mention but otherwise matches reference; rated complete_equivalent with medium confidence given this gap",
+      "Tubular clot on ECMO cannula is a procedural complication finding; candidates asserting PE as a primary composite component (C004, C007) may be overreaching beyond the reference scope",
+      "Reference diagnosis does not explicitly include pregnancy in the label beyond 'in pregnancy'; candidates missing this context are penalized as partial"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

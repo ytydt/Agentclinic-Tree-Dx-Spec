@@ -1,0 +1,89 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "bd7d544667c24eff1e32ff4493d967801e0161eca0fdb7baf845d08258d2eb63",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "The coronary angiography shows patent vessels with diffusely slow flow, not extrinsic compression; mechanism is incompatible. Also lacks Type A thymoma specificity and MINOCA designation.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures thymic epithelial malignancy + ACS component but specifies extrinsic coronary compression as mechanism (conflicting with MINOCA/slow-flow) and does not specify Type A thymoma vs carcinoma"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "Does not specify thymoma type, does not capture MINOCA, and cardiac compression is not supported by the angiographic findings.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Only captures a vague cardiac compression concept; missing MINOCA, Type A thymoma specificity, and the cardiac mechanism"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "Incomplete — omits the primary thymic diagnosis and the non-obstructive coronary qualifier that defines MINOCA.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures only the myocardial infarction component without the thymic/thymoma component or MINOCA qualifier"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "Bilateral reticular opacities and blunted costophrenic angles suggest pulmonary edema as a finding, but this is a manifestation rather than the primary diagnostic entity.",
+        "relation": "manifestation_or_related",
+        "scope_detail": "Pulmonary edema is a manifestation/complication, not the final composite diagnosis"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "Thymoma alone is a partial match; lacks WHO Type A histologic subtype specification and the concurrent MINOCA diagnosis.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures thymoma (parent) but missing Type A subtype and the MINOCA component"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "high",
+        "reason": "Biopsy shows ovoid-to-spindle cells consistent with Type A thymoma, not thymic carcinoma; no neuromuscular symptoms support Myasthenia Gravis; MINOCA is absent.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Asserts thymic carcinoma and paraneoplastic Myasthenia Gravis — both components conflict with the reference"
+      },
+      {
+        "candidate_id": "C007",
+        "confidence": "medium",
+        "reason": "Mechanism (slow flow) is compatible with MINOCA, but thymic carcinoma subtype conflicts with Type A thymoma from biopsy. Closer than most but still missing the correct subtype.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures thymic epithelial malignancy + coronary slow flow + myocardial injury but specifies thymic carcinoma (conflicting subtype) and does not use MINOCA terminology"
+      },
+      {
+        "candidate_id": "C008",
+        "confidence": "high",
+        "reason": "Type 2 MI implies supply-demand mismatch with obstructive or non-obstructive cause; MINOCA is a distinct entity. Subtype is also incorrect (carcinoma vs thymoma).",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures thymic carcinoma + type 2 MI but wrong subtype (carcinoma vs Type A thymoma) and type 2 MI differs from MINOCA"
+      },
+      {
+        "candidate_id": "C009",
+        "confidence": "high",
+        "reason": "No biopsy or imaging evidence supports lymphangitic carcinomatosis; this is a different diagnosis entirely.",
+        "relation": "not_equivalent",
+        "scope_detail": "Lymphangitic carcinomatosis is a different pathological entity"
+      },
+      {
+        "candidate_id": "C010",
+        "confidence": "high",
+        "reason": "Biopsy morphology (ovoid-to-spindle cells) is characteristic of Type A thymoma, not thymic carcinoma; MINOCA component is absent.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Specifies thymic carcinoma (malignant) rather than Type A thymoma, and omits MINOCA"
+      }
+    ],
+    "case_quality_flags": [
+      "Reference diagnosis specifies 'Type A thymoma' based on biopsy morphology (ovoid-to-spindle cells); several candidates incorrectly classify as thymic carcinoma",
+      "MINOCA is a specific composite entity requiring both non-obstructive coronaries and myocardial infarction criteria; slow coronary flow as mechanism is compatible but must be distinguished from type 2 MI",
+      "Composite reference diagnosis (Type A thymoma + MINOCA) requires both components for complete equivalence — no candidate achieves this"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

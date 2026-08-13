@@ -251,16 +251,34 @@ contains the case-level dissections and complete review accounting.
 
 ## Canonical Top-1 migration addendum (2026-08-13)
 
-The exhaustive blinded three-reviewer model-panel replay (not human root)
-confirms candidate interference on the current clinical endpoints. Base4 is
-148/200 (74.0%) clinical-complete and 167/200 (83.5%) C∪P. Every addition arm
-is lower after Holm correction: complete deltas range from −10.5 pp for a
-synonym (17 gain/38 loss, `q=.01291`) to −29.5 pp for width8 (5/64,
-`q=3.30e-13`); C∪P ranges from −9.0 to −26.0 pp. Width8 is also 6.0 pp below
-width6 for complete (6/18, `q=.02266`). Removing the non-gold candidate is
-+5.0 pp complete but not confirmed (23/13, `q=.13250`). The conclusion that
-membership and width are causally active is strengthened; no historical
-construction label is being substituted for the migrated clinical relation.
-These ITA effects combine candidate treatment with differential service
-(addition arms serve only 164–166/200); common-served mechanism analyses must
-therefore be used before attributing the entire delta to membership alone.
+The exhaustive arm-hidden three-reviewer model-panel replay is a clinical
+**sensitivity**, not a human-root census. Under the final frozen replay, base4
+is 149/200 (74.5%) clinical-complete and 168/200 (84.0%) C∪P. All seven
+addition/expansion arms are lower in ITA: complete deltas range from −11.0 pp
+for the synonym arm to −30.0 pp for width8, and C∪P deltas range from −9.5
+to −26.5 pp. These ITA effects estimate the complete treatment contract,
+however: the addition arms serve only 164–166/200, whereas base4 serves
+200/200. They therefore combine candidate membership with technical
+feasibility and cannot all be attributed to selector interference.
+
+The prespecified sensitivity separates the five typed width-5 additions, the
+three genuine width-ladder contrasts, and one-item pruning into different
+Holm families. On cases served by both arms, typed additions are heterogeneous:
+component +0.60 pp complete (12 gain/11 loss, `q=1`), parent −6.63 pp
+(9/20, `q=.2457`), sibling −11.52 pp (6/25, `q=.00439`), synonym **+4.85
+pp** (17/9, `q=.5059`), and unrelated −3.01 pp (10/15, `q=.8487`). The
+synonym reversal is stronger on C∪P: +6.67 pp (13/2, `q=.02954`). Thus its
+−11.0 pp ITA complete result is a service-path artifact superimposed on a
+non-negative successful-trajectory effect, not evidence that a true synonym
+intrinsically harms selection.
+
+Generic expansion remains harmful after conditioning on service: width4→6
+is −10.84 pp complete (`n=166`, 6/24, `q=.00286`), width4→8 is −17.68
+pp (`n=164`, 5/34, `q=7.29e-6`), and width6→8 is −6.71 pp (`n=164`,
+6/17, `q=.03469`). These correspond to −5.42, −4.42, and −3.35 pp per
+added candidate, respectively; width4→8 is −11.24 pp in DA but −25.33 pp
+in MCR. Removing one non-gold candidate is +4.50 pp complete (22/13) but is
+not confirmed (`q=.1755`). The migration therefore strengthens a local,
+topology- and benchmark-dependent candidate-interference mechanism while
+rejecting both an all-additions-are-harmful reading and a deterministic,
+universal linear width law.

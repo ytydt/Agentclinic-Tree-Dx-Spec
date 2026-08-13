@@ -1,0 +1,74 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "da106b10e027a9726998e5d3b5914c784db15f131ca2438352b56bf3e2c83279",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "The reference diagnosis is masquerading bundle-branch block with progression to advanced AV block. Cardiac amyloidosis is a distinct diagnostic entity not supported as the primary diagnosis by the ECG pattern described (MBBB features: prolonged PR, wide QRS, notched monophasic R in V1, absent S in I/aVL, left axis deviation).",
+        "relation": "not_equivalent",
+        "scope_detail": "Cardiac amyloidosis is a separate infiltrative cardiomyopathy, not the conduction disorder described"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "High-grade AV block is the progression component of the reference diagnosis but the label does not include the MBBB characterization, which is the defining electrophysiological pattern that makes this diagnosis specific.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures the AV block component but omits the masquerading bundle-branch block (MBBB) specificity"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "This candidate correctly identifies intermittent complete AV block causing syncope and notes conduction system disease and severe LV dysfunction, which aligns with the clinical picture. However, it does not name the masquerading bundle-branch block pattern, which is the key specific diagnosis in the reference.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures intermittent complete AV block and LV dysfunction context but omits the MBBB designation"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "High-grade AV block alone is only one component of the reference diagnosis; the MBBB characterization is absent.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Same as C002 — captures AV block component only"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "The ECG shows notched monophasic R in V1 and absent S in I/aVL with left axis deviation — this is the masquerading BBB pattern (RBBB + left anterior fascicular block mimicking LBBB), not true LBBB. Labeling it LBBB conflicts with the specific conduction diagnosis.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "LBBB is an incompatible ECG interpretation; the ECG pattern described is MBBB (right bundle branch block morphology with left axis deviation), not classic LBBB"
+      },
+      {
+        "candidate_id": "C006",
+        "confidence": "high",
+        "reason": "While ischemic cardiomyopathy with HFrEF is consistent with the echocardiographic findings (EF 28%, inferior wall akinesia), the conduction diagnosis is wrong (LBBB vs. MBBB) and the critical AV block progression is absent.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures ischemic cardiomyopathy and HFrEF context but misidentifies conduction abnormality as LBBB and omits MBBB/AV block"
+      },
+      {
+        "candidate_id": "C007",
+        "confidence": "high",
+        "reason": "This candidate correctly identifies intermittent complete AV block (high-grade) with syncope, which is the progression component of the reference. However, the masquerading bundle-branch block — the specific ECG pattern that defines the full diagnosis — is not named.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures intermittent complete heart block with syncope but omits the MBBB designation"
+      },
+      {
+        "candidate_id": "C008",
+        "confidence": "high",
+        "reason": "This candidate adds the etiological context (post aortic valve replacement conduction system disease) and the AV block with syncope, which is clinically accurate. However, it still does not name the masquerading bundle-branch block pattern that is the defining feature of the reference diagnosis.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures complete/high-grade AV block with syncope and post-AVR etiology but omits MBBB specificity"
+      }
+    ],
+    "case_quality_flags": [
+      "Reference diagnosis is a specific and uncommon ECG pattern (masquerading BBB) — no candidate achieves complete equivalence by naming both MBBB and progression to advanced AV block",
+      "ECG features (notched monophasic R in V1, absent S in I/aVL, left axis deviation, prolonged PR and QRS) are classic for MBBB, distinguishing it from true LBBB"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

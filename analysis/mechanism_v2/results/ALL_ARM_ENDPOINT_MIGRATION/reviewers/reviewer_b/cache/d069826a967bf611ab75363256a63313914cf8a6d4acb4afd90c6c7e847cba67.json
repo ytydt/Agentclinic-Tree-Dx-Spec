@@ -1,0 +1,39 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "EndpointMigrationClinical_reviewer_b",
+  "payload_sha256": "6d90b920da85ed56131f30786e02cd4271e18c527b5abd3ab2a4b8cc0d5a86d1",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "The imaging and pathology point to IPMN (cystic lesions in pancreatic head with pancreatic duct-vascular connection) rather than pancreatic adenocarcinoma. Additionally, the full PPP syndrome triad (pancreatitis, panniculitis, polyarthritis) and the pancreatic-venous fistula are not captured. Labeling it as 'cancer' is an incompatible subtype.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Captures panniculitis component and pancreatic pathology but misidentifies the pancreatic lesion as cancer rather than IPMN, and omits the polyarthritis and pancreatitis components of PPP syndrome, and the pancreatic-venous fistula mechanism"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "The cystic pancreatic head lesions with ductal-vascular connection are consistent with IPMN, not pancreatic adenocarcinoma. This candidate misses the PPP syndrome triad and the underlying fistula mechanism that defines the reference diagnosis.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Identifies only the pancreatic pathology with an incorrect subtype (cancer vs. IPMN) and omits panniculitis, polyarthritis, pancreatitis, and the fistula mechanism entirely"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "Pancreatic panniculitis is a recognized manifestation/component of PPP syndrome and is supported by the biopsy showing fat necrosis with ghost cells. However, it does not encompass the full PPP syndrome diagnosis, the specific IPMN etiology, or the pancreatic-venous fistula mechanism required by the reference.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures one component of the PPP triad (panniculitis) and implies pancreatic etiology, but omits polyarthritis, pancreatitis, the IPMN subtype, and the pancreatic-venous fistula"
+      }
+    ],
+    "case_quality_flags": [
+      "Reference diagnosis is a rare composite syndrome (PPP) with a specific mechanistic etiology (pancreatic-venous fistula secondary to IPMN); none of the candidates fully capture this complexity",
+      "EUS finding of portal vein/SMV mass likely represents thrombus or fistulous involvement rather than a separate neoplasm, supporting the fistula mechanism"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

@@ -17,15 +17,15 @@
 当前开发机制证据支持以下系统决策：
 
 1. **默认仍用 Lite-like 三调用**：两次相互独立、读取完整原文的 proposal，加一次冻结候选池 comparator。它不是已确认的普遍最佳，而是在当前 RCR-3 未通过预注册门槛后最安全的对照路径。
-2. **当前 RCR-3 不上线**。迁移后的 model-panel clinical-complete 为 Lite/RCR3/Compact4 = 22/13/13（complete 对比无 Holm survivor），C∪P 为 130/108/66；RCR3−Lite −7.33pp、`q=.02462`，Compact4 更差。这不是 human-root 能力率。部署否决另有独立证据：`safe-exact` frontier exposure 低 7.00pp，Holm `q=.000311`；至少 69/119 个 span drop 是物质性证据，20/60 条分层 relation 错误或无支持，selector 自报 complete 的冠军只有 9/66 被根审计确认完整。
+2. **当前 RCR-3 不上线，但否决理由从“成功轨迹更差”收窄为“端到端合同不可靠”**。迁移后的 model-panel clinical-complete 为 Lite/RCR3/Compact4 = 22/13/13（complete 对比无 Holm survivor），C∪P 为 130/109/67；ITA 中 RCR3−Lite −7.00pp、`q=.03142`，但共同服务病例只差 −0.39pp、`q=1`；Compact4 相对 Lite 的 −21.00pp ITA 也缩为共同服务 −1.72pp。部署否决仍有独立证据：`safe-exact` frontier exposure 低 7.00pp，Holm `q=.000311`；至少 69/119 个 span drop 是物质性证据，20/60 条分层 relation 错误或无支持，selector 自报 complete 的冠军只有 9/66 被根审计确认完整。
 3. **当前第四调用 gate 关闭**。`unexplained_spans + low margin` 检测到的是“当前生成文本未解释什么”，不是“缺失哪个诊断对象或决定性关系”。E14x 足以否定现有 gate 的部署证据，不足以否定未来受约束的 Call-4。
 4. **exact/frozen-synonym identity 是硬安全约束**，但不是准确率插件。E7b 消除了 160 个被选概念的身份污染并恢复 reference exposure，却没有形成显著 Top-1 增益；安全身份之后仍要解决宽度压力、关系方向与 requested-object projection。
 5. **raw 原文必须始终可回看**。S1 摘要和当前生成图都不能作为唯一事实源；结构字段是新增临床命题，不是免费格式。原文中的作者诊断性断言又必须单独标记，不能把其保留效应冒充独立医学推理。
-6. **候选池应小而可分，但不能固定填满某个 k**。E5 证明 sibling/宽池会直接捕获和重排共享候选；E12 又证明 k=5→10 每增加 750 个 exposure 才带来一个 `safe-exact` reference exposure。有效宽度由新增候选的独有证据和对象类型决定，不由槽位数决定。
+6. **候选池应小而可分，但不能固定填满某个 k**。E5 在共同服务病例中仍显示 width4→8 complete −17.68pp（约 −4.42pp/新增候选），但 sibling −11.52pp、synonym +4.85pp（C∪P +6.67pp）、component 约 0，且 DA/MCR 的九臂共同服务斜率为 −2.87/−6.33pp/候选。E12 又证明 k=5→10 每增加 750 个 exposure 才带来一个 `safe-exact` reference exposure。有效宽度由新增候选的独有证据、对象类型与拓扑决定，不由槽位数决定。
 7. **时间/范围只允许软约束，RAG 只允许 typed admission**。E8 的 9 个 hard reference veto 经根审计无一成立；E11 的“relevant” chunk 只有 6.62% case-specific。没有通过关系、对象和范围门控的上下文，安全行为是不用，而不是强制注入。
-8. **真实诊断能力只允许由全量盲法根级 `clinical-complete` 排名**。`safe-exact` 是冻结保守下界，`legacy-chain` 只诊断历史 resolver，`compatible-partial` 记录对象压平，`task` 必须按 DA mapper 与 MCR calibrated judge 分开解释。当前只有 E2 满足 human-root 准入合同。79 个迁移臂的 23,035 个 served Top-1 均有 clinical-complete/compatible-partial/union 模型面板关系，可更新敏感性和机制结论，却不能进入 root-only capability leaderboard。
+8. **真实诊断能力只允许由全量盲法根级 `clinical-complete` 排名**。`safe-exact` 是冻结保守下界，`legacy-chain` 只诊断历史 resolver，`compatible-partial` 记录对象压平，`task` 必须按 DA mapper 与 MCR calibrated judge 分开解释。当前只有 E2 满足 human-root 准入合同。79 个迁移臂的 23,046 个 served Top-1 均有 clinical-complete/compatible-partial/union 模型面板关系，可更新敏感性和机制结论，却不能进入 root-only capability leaderboard。
 
-在用户明确排除重复多运行、确认集扩容和 provider/retry 统一之后，冻结 crosswalk 中可执行且有科学识别价值的实验已经全部完成。形式化 E14 router 依赖被排除的 E13 latent multi-run labels，不能被诚实地标记为“待跑一个普通臂”；当前真实 gate 已由 E14x 直接检验并关闭。因此 **scientific execution remaining = 0**。本次又把 **79 个实验臂的 clinical metric-migration gap 降到 0**；E7a 三臂仍为结构 replay、临床端点 N/A。fresh task 新命名空间因外部 API 余额耗尽只完成 3,337/5,832，不以历史冲突值插补，也不作 partial-cache 推断。
+在用户明确排除重复多运行、确认集扩容和 provider/retry 统一之后，冻结 crosswalk 中可执行且有科学识别价值的实验已经全部完成。形式化 E14 router 依赖被排除的 E13 latent multi-run labels，不能被诚实地标记为“待跑一个普通臂”；当前真实 gate 已由 E14x 直接检验并关闭。因此 **scientific execution remaining = 0**。本次又把 **79 个实验臂的 clinical metric-migration gap 降到 0**；E7a 三臂仍为结构 replay、临床端点 N/A。补充充值后重试成功，fresh task 新命名空间现已完成 **5,839/5,839**，无失败、无历史值插补；26 个 Holm survivor 必须保留为 DA 7 个与 MCR 19 个 family-specific 对比，禁止汇成 pooled `ALL task`。
 
 ### 0.1 新指标覆盖核查
 
@@ -37,7 +37,9 @@
 | 臂隐藏三 reviewer model-panel complete/compatible-partial/union census | E1、E4–E6x、E7b–E12、E14x、RCR3 | 79 | 否；完整模型面板敏感性，不是 human-root |
 | 无 fresh selector output | E7a | 3 | N/A |
 
-因此，91 臂中 9 个 E2 臂有 human-root 合同，79 臂已有完整模型面板临床合同且 migration gap=0，另 3 臂结构上不适用。模型面板中 1,693 个关系直接复用 E2 root、251 个由 frozen-safe identity 确定、3,400 个由三 reviewer 臂盲评审；149 个三方分裂保持 `U`。完整逐臂记录见 `results/ENDPOINT_COVERAGE_AUDIT/endpoint_coverage_matrix.json`。
+因此，91 臂中 9 个 E2 臂有 human-root 合同，79 臂已有完整模型面板临床合同且 migration gap=0，另 3 臂结构上不适用。最终 5,351 个 unique case–prediction relation 中，1,693 个直接复用 E2 root、251 个由 frozen-safe identity 确定、3,407 个由三 reviewer 臂盲评审；1,899 个新关系 unanimous、1,356 个 majority、152 个三方分裂保持 `U`。修复 sentinel 选择上限后，628 张卡严格分为 556×2、61×1、11×0，共 1,173 个隐藏 E2 sentinel；不再有一张卡超过两个 sentinel。完整逐臂记录见 `results/ENDPOINT_COVERAGE_AUDIT/endpoint_coverage_matrix.json`。
+
+聚合面板在这 1,173 个 sentinel 上的 fine-label accuracy 为 70.93%，complete boundary accuracy/precision/recall 为 97.70%/84.06%/78.38%，C∪P 为 91.90%/87.74%/93.37%。对 3,407 个新关系，三 reviewer 的 Fleiss κ 为 fine `.597`、complete `.740`、C∪P `.794`。这比旧 sentinel 分配更严格地校准了二元边界，也再次说明 majority 不是 human root。
 
 ## 1. 证据等级与推断纪律
 
@@ -65,19 +67,19 @@
 | 任务簇 | 状态 | 最终识别结果 |
 |---|---|---|
 | E0/E3 runtime、payload、cost、claim ledger | implemented | 每个 stage、物理 attempt、provider、缓存与 endpoint 进入可追责账本 |
-| E1 输入污染 | complete | options 进入生成；固定格式下 H/F Top-1 分别 +41.0/+40.2pp，但这是标签供给与搜索塌缩，不是独立推理增益 |
+| E1 输入污染 | complete + migrated | options 进入生成；固定格式下 H/F Top-1 分别 +41.0/+40.2pp，是标签供给与搜索塌缩；H options shuffle 的 complete ITA −11.0pp、`q=.0182`，共同服务则 −7.19pp、`q=.230`，不能把接口失败和排序轨迹混写 |
 | E2 完整性与可辨识性 | complete + full-800 replay | 455/800 unique-full；7,200 case-arm 的 complete/compatible-partial/union 无缺失；overall/DA clinical-complete 无 coherent Holm survivor，MCR 的 Collapse3c–IMPC `q=.045615`；family interaction `q=.228489`；DA/MCR task 不可合并 |
 | E4 selector crossover | complete + migrated | model-panel 中 Forest/e7/pairwise 都优于 evidence-count；Forest−e7 complete 仅 raw `p=.0386`、Holm `q=.231`，pairwise−Forest 净 0 |
-| E5 IIA/width | complete + migrated | 所有 add/width 臂的 model-panel complete 与 C∪P 都低于 base4；width8 complete −29.5pp，`q=3.30e-13` |
-| E6/E6x representation | complete + migrated | model-panel graph−raw complete −10.33pp、`q=.000141`；flat−raw −8.33pp、`q=.00709`；unpadded−padded 无临床差异 |
+| E5 IIA/width | complete + migrated | ITA 中所有 add/width 臂均低于 base4，但含 34–36 个 differential failure；common-served width8−base4 complete −17.68pp、width8−width6 −6.71pp，sibling −11.52pp，synonym +4.85pp/C∪P +6.67pp，component 约 0 |
+| E6/E6x representation | complete + migrated | ITA graph−raw complete/C∪P −10.0/−16.0pp；common-served complete 缩为 −6.0pp、`q=.0602`，C∪P 仍 −10.0pp、`q=.00141`；flat 同样只在 common-served C∪P 保留确认 deficit；unpadded−padded 无临床差异 |
 | E7a/b/c identity/relation | complete + migrated | exact identity 相对 legacy complete +3.25pp、`q=.00885`，但 C∪P 净 0；typed/directional/bounded 无确认收益 |
-| E8 temporal veto | complete + migrated | 9/9 hard gold veto 无效；model-panel soft−hard complete/C∪P 均未确认；invalid-time ITA 因失败显著更差 |
+| E8 temporal veto | complete + migrated | 9/9 hard gold veto 无效；从 full-response failure 中正式恢复 11 个有效 Top-1 后，invalid-time ITA 仍显著更差，但共同服务 complete 为 0pp、C∪P −2.4pp 且均 `q=1`，损失来自接口服务路径 |
 | E9 Forest views | complete + migrated | model-panel real−single complete +3.25pp、`q=.01328`；real−duplicate +3.50pp、`q=.01031`；旧 6/1/4 仍仅是富集机制重编码 |
 | E10 B06 | complete + migrated | complete 四对比均 null；C∪P 在 history×RRF +6.0pp、`q=.00155`，isolated Supervisor +4.25pp、`q=.00454` |
 | E11 B07 | complete + migrated | complete 七对比全 null；refine 在 off 与 hard-negative 条件下提高 C∪P，而非完整对象 |
 | E12 e7 | complete + migrated | clinical-complete Holm39 survivor=0；survivor 转移到 raw pairwise 的 C∪P，六个 first 臂是同一逐例结构控制 |
 | E14x current gate | complete exploratory + migrated | 全 300 例 complete/C∪P 近零；triggered MCR65 C∪P 6/0、未校正 `p=.03125` 仅探索性；旧 6/15 是序数贴切度而非 canonical 净伤害 |
-| RCR-3 / Compact4 | complete + migrated | complete 无 Holm survivor；C∪P RCR−Lite −7.33pp、`q=.02462`，Compact4 更差；部署否决加强 |
+| RCR-3 / Compact4 | complete + migrated | complete 无 Holm survivor；C∪P ITA RCR−Lite −7.00pp、`q=.03142`，第三 generator−Lite −21.00pp；共同服务仅 −0.39/−1.72pp 且 `q=1`，部署否决主要由 schema/service、span 与 relation fidelity 支撑 |
 | E13 多运行、provider-normalized programme | excluded | 属用户明确排除的重复/降方差程序 |
 | formal E14 router after E13 | prerequisite excluded | 不使用不存在的 latent labels 伪造 router；实际 gate 已由 E14x 处理 |
 | new confirmation cohort | excluded | 用户明确排除扩容确认集 |
@@ -108,7 +110,7 @@ E2 又证明 benchmark reference 本身不是统一难度对象：800 例中 455
 
 ### 3.2 表示不是容器，而是临床断言层
 
-E6 的图节点可逐字引用原文，边仍然可以错。风险因素被写成病例内因果，早期阴性 CT 与后续阳性 MRI 被写成矛盾，确认检查被写成病程进展，失败治疗先被写成 `responds_to` 再靠另一条 `contradicts` 修补。30 个根审计 graph 中 25 个至少有一个关系语义错误；在臂盲外部筛查、定向根纠错并由 proxy 补全的 sensitivity 中，graph 相对 raw 净差 −7.63pp（24 raw-only/5 graph-only，`p=.00055`）。这不是 E2 级全量临床率。
+E6 的图节点可逐字引用原文，边仍然可以错。风险因素被写成病例内因果，早期阴性 CT 与后续阳性 MRI 被写成矛盾，确认检查被写成病程进展，失败治疗先被写成 `responds_to` 再靠另一条 `contradicts` 修补。30 个根审计 graph 中 25 个至少有一个关系语义错误；在臂盲外部筛查、定向根纠错并由 proxy 补全的旧 sensitivity 中，graph 相对 raw 净差 −7.63pp（24 raw-only/5 graph-only，`p=.00055`）。新全量 model-panel ITA 为 graph−raw complete −10.0pp、C∪P −16.0pp；但共同服务后 complete 缩为 −6.0pp、`q=.0602`，C∪P 仍 −10.0pp、`q=.00141`。flat−raw 也由 ITA complete −7.67pp 缩为共同服务 −3.21pp、`q=.530`，而 C∪P 仍 −8.84pp、`q=.0143`。因此确定的是“表示+服务损害兼容覆盖”，不是“成功服务时 complete 必然下降”的单一路径；这些仍不是 E2 级 human-root 临床率。
 
 E6x 排除了一个容易但错误的解释：flat 的 `[LENGTH_CONTROL_PAD]` 约等于 8 tokenizer token，去掉后 prompt token 平均下降 64.9%，同口径 complete-proxy 仅 +1.57pp、`p=.481`。因此 padding 是严重成本混杂，却不能解释关系损失。更值得警惕的是 95.29% champion flip：温度 0 并没有把模型变成同一确定函数，非临床 sentinel、provider 路径或早期 token 分叉都能重写完整候选轨迹。
 
@@ -124,7 +126,11 @@ E9 把 Forest 的三视图拆成四种状态。real views 比 balanced single an
 
 E10 则给出一个重要反例，迫使旧主张升级：sequential history 将 union 6.82 压到 5.21、pairwise Jaccard .689 拉到 .954，D3 在 400 例只新增 6 个 concept。历史二元 `same_entity + acceptable_clinical_variant` 只能称 binary-acceptable proxy。新模型面板中所有 clinical-complete 主对比均为 Holm-null，但 C∪P 在 history×RRF 下 +6.0pp（34/10，`q=.00155`），isolated Supervisor 相对 RRF +4.25pp（22/5，`q=.00454`）。因此可写“条件性兼容覆盖/排序转换”，不可写“完整对象提升”；history 压缩候选并传播排名、也可能永久删除正确少数意见的结构机制保持。它是一种 consensus compressor，不是三位独立专家。
 
-E5 与 E12 共同否定固定宽度神话。E5 在每个 base pool 都暴露 gold 的条件下加入 sibling，使 Top-1 −10.91pp；width8 −16.46pp。MCR 主要由新增 plausible disease 直接夺冠，DA 主要由新成员改变共享近邻候选排序。E12 的历史池中 k5→k10 增加 1,500 个 exposure，只增加 2 个 `safe-exact` reference exposure；raw pointwise 反而 −1.67pp，pairwise +0.33pp。两者并不矛盾：E5 估计候选成员本身的干扰，E12 估计一批低 marginal-yield historical proposals 的端到端变化。结论不是 `k=5`，而是候选只有在带来独有、可引用 discriminator 时才进入主比较；其余保留在 coverage ledger。
+E5 与 E12 共同否定固定宽度神话，但 E5 必须先拆成两个 estimand。ITA 中 base4 served 200/200，width6/8 仅 166/164，因此 width8−base4 complete −30.0pp 同时包含 candidate membership 与 36 个 differential failure；“每个 addition 都有害”只是一条端到端 feasibility+membership 结论。对两臂共同服务病例，width4→6 为 −10.84pp（6/24，width-family `q=.00286`），width4→8 为 −17.68pp（5/34，`q=7.29e-6`），width6→8 为 −6.71pp（6/17，`q=.03469`）。在九臂全部服务的 162 例上，72.84%→54.94%，相当于 −4.48pp/新增候选；这个量级局部复现 APHHM 旧约 −4.6pp/slot 的描述性斜率，却不是通用系数。
+
+异质性本身是更重要的新发现。九臂共同服务中 DA width4→8 为 −2.87pp/候选，MCR 为 −6.33pp/候选；typed common-served complete 中 sibling −11.52pp，synonym +4.85pp（其 C∪P +6.67pp、`q=.02954`），component +0.60pp，unrelated −3.01pp，parent −6.63pp。也就是说 raw width 只是 candidate topology、类型与 benchmark mechanism 的代理；MCR 更多是新增 plausible disease 直接夺冠，DA 更多是共享近邻重排。
+
+E12 的历史池中 k5→k10 增加 1,500 个 exposure，只增加 2 个 `safe-exact` reference exposure；raw pointwise 反而 −1.67pp，pairwise +0.33pp。E5 识别 reference 已暴露时的局部成员干扰，E12 识别低 marginal-yield historical proposals 的端到端变化，两者并不矛盾。结论不是 `k=5`，而是候选只有在带来独有、可引用 discriminator 时才进入主比较；其余保留在 coverage ledger。
 
 ### 3.4 身份安全与关系安全是两个问题
 
@@ -136,7 +142,7 @@ E7a 在 800 例中找到 299 例 unsafe substring fold、1,199 个 unsafe pair�
 
 ### 3.5 阴性、时间与检索：更多结构可能等于更多伪证据
 
-E8 的 hard selector 对暴露 reference 作 9 次绝对 veto。根审计：8 次临床 overreach，1 次由 builder 将阳性 CT 反写成“无异常”，0 次成立。soft 删除这些 veto，但全共同成功病例只 18→21，`p=.453`。soft 解决的是错误排除，并不能生成缺失候选、恢复复合对象或纠正 subtype identity。合法 ledger 行顺序产生 24.6% champion flip，非法 time/episode 置换产生 23.2%，两者净准确都约 0。这说明模型确实“响应”字段，却没有被识别出方向正确的时间推理。
+E8 的 hard selector 对暴露 reference 作 9 次绝对 veto。根审计：8 次临床 overreach，1 次由 builder 将阳性 CT 反写成“无异常”，0 次成立。soft 删除这些 veto，但旧共同成功病例只 18→21，`p=.453`。迁移核查又发现 11 行虽 full-response schema 失败，却有合法、非空的 Top-1；本轮把 Top-1 evaluability 与完整事件/veto schema 成功正式分离，恢复这些冠军，同时在 provenance 保留源失败。恢复后 invalid−soft 的 complete ITA 为 −4.55pp、`q=.0388`，C∪P −15.45pp、`q=5.84e-8`；共同服务则为 0/−2.4pp、均 `q=1`。所以 invalid arm 的显著损失是接口服务路径，不是错误时间推理的独立系数。soft 解决的是错误排除，并不能生成缺失候选、恢复复合对象或纠正 subtype identity。合法 ledger 行顺序产生 24.6% champion flip，非法 time/episode 置换产生 23.2%，两者净准确都约 0。这说明模型确实“响应”字段，却没有被识别出方向正确的时间推理。
 
 E11 把同一风险扩展到外部上下文。所谓 relevant bundle 的 1,950 chunks 中只有 129 个 case-specific；71.64% 无病例适配。hard-negative 又混入同病/亚型支持，不能当干净安慰剂。新模型面板中 relevant−off clinical-complete −1.25pp（2/7，Holm `q=1`），C∪P 恰为 0pp（16/16，`q=1`）；七个 complete 主对比全部为 null。generic refine 仅在 secondary C∪P 的 off 条件下 +4.25pp（19/2，`q=.00155`）、hard-negative 下 +3.50pp（17/3，`q=.01546`），没有 complete 增益。它提示的是兼容疾病族软着陆，同时仍会跨四个上下文一致删除 mucormycosis 等 rare-but-plausible candidate。
 
@@ -184,6 +190,10 @@ E2 full-800 replay 先把五个经常被混写的端点固定为不同对象：
 
 `task` 又不能跨 family 读成同一能力。DA option mapper 的 task 为 55.25%–63.75%，但相对 complete 的 PPV 仅 3.62%–6.48%，大量把 parent/component/manifestation 投成目标选项；MCR cached calibrated judge 的 task 为 24.25%–29.25%，PPV 80.19%–88.50%、sensitivity 91.84%–96.77%、specificity 93.25%–95.75%，可作内部自动评估但仍需根级校准。把二者平均得到的 40.12%–46.12% 只能描述 benchmark interface，不能称为真实诊断准确率。
 
+79 臂 fresh task replay 现在也已闭环：2,975 个 DA mapper payload 与 2,864 个 MCR semantic-judge payload，共 5,839/5,839 成功。各实验预冻结 family 内 Holm 后，ITA 有 26 个 task survivor（DA 7、MCR 19）；改用两臂都成功服务的 post-treatment sensitivity 后是 15 个（DA 4、MCR 11）。这不是互相冲突的计数，也不是可相加的“能力胜利”：二者 estimand 不同，两个 benchmark family 的 gold、evaluator 和错误含义也不同，代码根本不生成 `scope=ALL, endpoint=task` 的对比。此前 3,337 个 cache-complete 行只作 provenance 的限制已解除；禁止 pooling 的测量边界没有解除。
+
+`legacy-chain` 的全臂校准进一步解释为何旧端点不能代替新端点。在 23,046 个 served case-arm occurrence 上，它对 clinical-complete 的 PPV/recall 为 56.48%/74.47%，对 C∪P 则为 98.72%/48.90%。也就是说它几乎不把明显不相容对象叫作“命中”，却只覆盖约一半的完整或兼容输出，并把相当一部分 partial 当 complete；它是稀疏 compatible-coverage marker，不是完整诊断准确率。
+
 配对推断也必须落在病例而非 7,200 case-arm 行。Collapse3c→Multistance complete 为 122→121（22/21，−0.125pp，未校正 95% CI [−1.75,+1.50]）；→Forest 122→107（37/22，−1.875pp [−3.75,0]）；→IMPC 122→98（49/25，−3.00pp [−5.00,−0.875]，raw `p=.00708`，overall coherent Holm `q=.070843`）。e7→v0 为 113→103，B06→e7 为 105→113，B07→B06 为 101→105。最终统计合同分别冻结 ALL、DA、MCR 三个相干 10 对比家族：ALL 与 DA 无 survivor；MCR 中 Collapse3c 相对 IMPC 高 5.50pp（未校正 CI [1.75,9.25]，`q=.045615`）。混合 30-row 的同一对比 `q=.136846` 仅作保守敏感性；DA–MCR family interaction 经十对比 Holm 后 `q=.228489`，因此这是 MCR 家族内证据，不是跨 benchmark 或全系统胜者证明。
 
 E14x 提供更直接的 mapper placebo：18 个 DA option flip 中 8 个 champion 文本完全相同；错误的 Adult-onset Still disease 和 ARVC 还能映到 gold option。option@1 不能为 gate 或候选生成提供正反馈。任何系统报告都必须保存 pre-mapper diagnosis、object relation、clinical completeness 和 task projection 的完整 transition。
@@ -204,6 +214,17 @@ E2 不只重算分数，还把每个预定义配对拆成四个互斥的 complet
 这改写了系统差异的含义。IMPC 不是“不会诊断”：它有六对比中最多的 19 个 object rescue；但同时有最多的 32 个 catastrophic substitution。Forest 既能把 HTRA1 错误遗传对象纠正，也会把已完整的游离壁破裂压成 MI parent。B06/B07 也不是简单的 specific/broad 二分：B06 能保住 H3N2，却会把 May–Thurner 压成 DVT。净 accuracy 是两条方向相反机制的代数和，只有 transition 才告诉下一版该保留什么、阻断什么。
 
 identifiability 还是效应修饰符。e7→v0 在 unique-full 455 例为 −2.64pp，在 nonunique 345 例反为 +0.58pp；B06→e7 分别为 +2.42pp 与 −0.87pp。更保守的 parent 输出在模糊 reference 上可能少犯过特异错误，却在证据充分病例中压掉决定性 scope；更积极的 specificity 恰好相反。分层点估计与 percentile CI 是未校正描述量；正式的 slice-fixed case bootstrap 对每个 ALL/DA/MCR 十交互家族做 Holm 后无 survivor（最小 `q` 分别 `.154492/1/.586471`）。因此它们是需要复验的机制方向，不是确认性亚组优越性，但已经足以否定“一个总体均值就是固定系统能力”的粗糙解释。
+
+### 3.9 迁移后的 endpoint transition 形成四类，而不是一条 accuracy 轴
+
+把每个配对的 C、P 与非兼容状态转移保留下来后，确认效应可归为四种工程类型：
+
+1. **specificity restorer**：E7b exact−legacy complete +3.25pp、`q=.00885`，15 个 gain 是 P→C，而 C∪P 净 −0.50pp；E9 real−single complete +3.25pp、`q=.01328`，其中 8 个 P→C。它们主要把已有正确 family 收紧成完整对象，而不是普遍扩 coverage。
+2. **compatible soft landing**：E10 history×RRF 的 34 个 C∪P gain 中 29 个落在 P；isolated Supervisor 22 个 gain 中 21 个为 P；E11 off-refine 的 19 个 gain 中 16 个为 P；E12 raw-k10 pairwise 的 51 个 gain 中 40 个为 P。它们改善 secondary coverage，但不能据此声称 complete reasoning。
+3. **selector rescue against a weak control**：E4 Forest 相对 evidence-count 的 81 个 C∪P gain 为 51P/30C，且有 16 个 P→C；可确认的是 evidence integration 胜过弱计数器，Forest−e7 complete 仍 `q=.231`，不能升级为 universal selector winner。
+4. **destructive interference**：E5 的宽池在共同服务中同时降低 C 与 C∪P；E6 的 derived representation 在共同服务中 complete 证据减弱，但 C∪P deficit 仍确认。前者是候选拓扑干扰，后者是表示丢失，不能压成同一个“selector coefficient”。
+
+这套类型学直接导向两层状态：coverage ledger 负责不丢候选，evidence-qualified main frontier 只接纳有独有 discriminator 的对象；comparator 先保护 complete，再把 P 明确报告为软着陆，而不是把二者合并成一次“正确”。
 
 ## 4. 跨实验同案深解剖
 
@@ -290,6 +311,8 @@ E2 的九臂 full-800 总表是测量基座，而不是胜负榜：临床主推�
 
 可保留的假说是：大状态可能让低先验、强病理/IHC 候选存活更久。不能保留的是它与 clean arms 的架构胜负，因为历史 runtime 曾让 answer options 进入 input-sensitive stages。E1 证明这种泄漏能直接改变生成与 token 轨迹，但 E1 不是 full APHHM rerun，故不能把 +40pp 微管线效应量直接减回历史分数。legacy APHHM 目前只适合作内部污染运行解剖，不适合作 clean superiority baseline。
 
+`APHHM_C_PILOT200_REPORT.md` 的旧拟合 DA `conv≈0.74−0.047×width`、MCR `0.82−0.045×width` 仍可保留为 14 个相关历史臂、legacy-chain 条件分母上的描述性 OLS；E5 的九臂 joint-common-served model-panel complete 恰好给出 −4.48pp/新增候选的局部量级复现。但结论不能靠“微调系数”维持为确定律或 selector ceiling：E5 的 DA/MCR 为 −2.87/−6.33pp，synonym 与 component 不沿同一负斜率；E4 在同宽度同池上仅换 evidence integration 就带来 evidence-count→Forest +9.50pp complete；E9 增加真实独有视图反而 +3.25pp、`q=.01328`。因此成立的是“flat、untyped、fixed-k fill 会诱发候选干扰”，不成立的是“coverage 与 conversion 数学上不可兼得”或“必须越过 selector 范式才能改进”。应修改的是状态/admission 范式：safe identity、typed requested object、evidence-qualified main frontier、residual coverage ledger 与一次冻结 comparator；主动取证只是缺失 discriminator 时的一条路径，不是逻辑上唯一出路。
+
 ### 5.2 Collapse3c、MultiStance、Lite
 
 - **Collapse3c**：clinical-complete 122/800（15.25%）最高，优势是保留病因、解剖、stage、time 和 composite；但仍发生生成 miss 与错误替换，且与 Multistance 只有 1 例净差。它是 specificity-retention 参考，不是全局赢家。
@@ -320,7 +343,7 @@ B07 在 E2 full-800 中 compatible-partial 35.25% 为最高、clinical-complete 
 
 ### 5.7 RCR-3 与 Compact4
 
-RCR-3 的优点是把 desired architecture 写成可证伪合同：span、typed candidate、requested object、time/scope comparator。其失败也因此能被定位，而不是只得到“分数低”。新全臂模型面板 C∪P 明确低于 Lite，complete 则无 Holm survivor；不上线结论同时依靠 safe-exact exposure、schema/view failure、span loss 与 relation fidelity。Compact4 的 125 个总失败主要来自第三 view contract；共同成功 174 例相对 Lite 的安全下界近零边际。调用数扩张没有显示可用价值。
+RCR-3 的优点是把 desired architecture 写成可证伪合同：span、typed candidate、requested object、time/scope comparator。其失败也因此能被定位，而不是只得到“分数低”。新全臂模型面板 complete 无 Holm survivor；C∪P 的 ITA 明确低于 Lite，但共同服务后 RCR−Lite 只 −0.39pp、Compact4−RCR −1.32pp、第三 generator−Lite −1.72pp，均未确认。所以上线否决同时且主要依靠 safe-exact exposure、schema/view failure、span loss 与 relation fidelity；不能再写成“成功返回时 RCR clinical relation 明显更差”。Compact4 的 125 个总失败主要来自第三 view contract，调用数扩张没有显示可用的端到端价值。
 
 可保留：safe identity、typed composite proposal、原文 provenance 意图、一次 fixed comparator。必须重做：offset span、relation ontology、引用闭包、requested-object hard gate、non-dominated frontier、selector completeness calibration。
 
@@ -329,7 +352,10 @@ RCR-3 的优点是把 desired architecture 写成可证伪合同：span、typed 
 | 表面矛盾 | 实际解释 |
 |---|---|
 | Forest E4 赢 e7，但 E2 没有 universal winner | E4 只识别已暴露固定池上的 selector；E2 衡量历史全链且 clinical-complete 与 safe-exact/legacy-chain 排名不同 |
-| E5 宽度显著有害，E12 k5→10 近零 | E5 gold 已暴露且干预 candidate membership；E12 新增历史候选 reference yield 极低，并混合 pool topology；共同结论都是 fixed fill 不安全 |
+| E5 ITA 每个 addition 都有害，但 common-served synonym 正、component 近零 | ITA 混合 34–36 个 differential failure；成功服务时效应由 candidate type/topology 决定，只有 genuine width ladder 与 sibling 稳健为负 |
+| E5 局部约 −4.48pp/候选，E12 k5→10 近零 | E5 base pool 已暴露 reference 并冻结 membership；E12 新增历史候选 reference yield 极低且混合 pool topology；共同结论是 fixed fill 不安全，不是 universal width coefficient |
+| E6 ITA complete 显著，common-served complete 不显著 | 表示处理同时改变 schema/service；共同服务后 C∪P deficit 仍确认，故关系丢失成立但 complete-only 系数需收窄 |
+| RCR3 ITA C∪P 差，common-served 近零 | 端到端否决主要来自接口/schema、span 与 relation fidelity；不能把部署可靠性差偷换成成功轨迹能力差 |
 | B06 history 压缩多样性，旧 E10 Top-2 proxy 却上升 | history 删除召回同时强化幸存候选的 rank；结构机制成立，但二元 acceptable 不能证明 complete conversion |
 | soft veto 没有显著赢，hard veto 仍应禁用 | hard 的 9 个 gold veto 全无效是安全性结论；soft ranker 净益是另一个需要候选与权重共同满足的问题 |
 | relevant RAG 的 complete-proxy 变差，broad-proxy 略正 | 非盲敏感性提示上下文可能把具体对象压成正确 family；方向是假说，不是发生率 |
@@ -345,7 +371,7 @@ RCR-3 的优点是把 desired architecture 写成可证伪合同：span、typed 
 |---|---|---|
 | relation fidelity 优于 E6 | 20/60 edge 错误/无支持，另 11/60 浅共现 | 关系是自由生成命题，缺 deterministic signature 与 span closure |
 | 不降低 exposure | raw −6pp、frontier −7pp；3 个 reference raw→frontier loss | skeleton 调用替代 proposal、span drop 降分、固定 priority 截断 |
-| complete exposure→Top-1 提高 | model-panel complete Lite/RCR3 22/13，无 Holm survivor；C∪P 130/108、`q=.02462` | requested-object 只是字段；manifestation/etiology/subtype 混排 |
+| complete exposure→Top-1 提高 | model-panel complete Lite/RCR3 22/13，无 Holm survivor；C∪P ITA 130/109、`q=.03142`，共同服务仅 −0.39pp、`q=1` | requested-object 只是字段；manifestation/etiology/subtype 混排，且 schema/service 承担大部分端到端损失 |
 | typed candidate gain > interference | Top-1 6 gain/15 loss | 新候选不受 unique evidence、type gate 和 counterfactual contrast 约束 |
 | 三调用优于简单三调用 | ITA 与 common-success 均无正净益 | 同预算但 schema 更长、token 更高、失败更多，且牺牲一个 independent proposal |
 | 第三独立 generator 有边际价值 | Compact4 common-success 近零，ITA 显著受 failure 拖累 | 第三 view 常只给一个候选或违反 view/type contract |
@@ -402,10 +428,10 @@ RCR 的少量 rescue 仍有价值：RVO+CME 的 composite、sacrococcygeal terat
 1. **没有确认集外推。** 800 例已被多轮分析和算法开发使用；所有优劣都是开发机制证据。
 2. **没有 E13 潜在正确率。** 单次 trajectory flip 可能混入服务端/provider 方差；本文只对成组、方向一致且有中间状态证据的机制作强解释。
 3. **provider 未随机固定。** 同 provider loss 证明它不是全部解释，但不能把每个 arm 差值全归于 prompt/module。
-4. **root 与 model-panel 责任不同。** E2 是 800/800 identity census 与 3,103 relation 的 human-root exhaustive partition。79 臂迁移则复用 1,693 个 E2 root relation、确定性补 251 个 safe identity，并对 3,400 个新 relation 做三 reviewer 臂隐藏模型面板；其发生率完整，但 truth ownership 不是 root。源报告旧定向、proxy 与二元 acceptable 只作历史/机制校准。
-5. **external reviewer 有相关偏差。** 1,507 个隐藏 E2 sentinel 上，三 reviewer 的 fine-label accuracy 仅 68.35%/72.59%/74.65%，complete boundary accuracy 为 96.62%/97.54%/98.08%。因此 unanimous/majority 仍只能叫 model proxy；149 个三方分裂保留 `U`，不强行变成 clinical truth，也不扩展 root-only leaderboard。
+4. **root 与 model-panel 责任不同。** E2 是 800/800 identity census 与 3,103 relation 的 human-root exhaustive partition。79 臂迁移则复用 1,693 个 E2 root relation、确定性补 251 个 safe identity，并对 3,407 个新 relation 做三 reviewer 臂隐藏模型面板；其发生率完整，但 truth ownership 不是 root。源报告旧定向、proxy 与二元 acceptable 只作历史/机制校准。
+5. **external reviewer 有相关偏差。** 修正后的 1,173 个隐藏 E2 sentinel（每卡至多 2 个）上，三 reviewer 的 fine-label accuracy 为 65.98%/70.08%/74.00%，complete boundary accuracy 为 96.25%/97.53%/98.21%；聚合面板为 70.93%/97.70%。因此 unanimous/majority 仍只能叫 model proxy；152 个新关系三方分裂保留 `U`，不强行变成 clinical truth，也不扩展 root-only leaderboard。
 6. **DA/MCR 不能合并成一个机制系数。** DA 常见 composite/scope 和共享候选重排；MCR 更常是 distinct disease capture。相同 pp 可以来自完全不同的轨迹。
-7. **多重比较必须保留。** E2 的 clinical primary family 是每个 scope 相干的 10 对比 Holm；30-test endpoint-wide family 只作审计。MCR 有一个 family-local survivor，但 DA–MCR interaction 未确认，所以不存在 universal winner。迁移按 experiment × 预注册 contrast family × scope × endpoint 分别 Holm；E12 的旧 complete survivor 已消失，新增 survivor 属 C∪P secondary，不能借用到 complete。不能把未校正病例故事升级成 universal ranking。
+7. **多重比较必须保留。** E2 的 clinical primary family 是每个 scope 相干的 10 对比 Holm；30-test endpoint-wide family 只作审计。MCR 有一个 family-local survivor，但 DA–MCR interaction 未确认，所以不存在 universal winner。迁移按 experiment × 预注册 contrast family × scope × endpoint 分别 Holm；E12 的旧 complete survivor 已消失，新增 survivor 属 C∪P secondary，不能借用到 complete。task 的 26 个 survivor 是 ITA、family-specific 的 DA/MCR cells；common-served sensitivity 为 15 个（DA 4/MCR 11），采用另一 estimand，二者不可互称或相加。不能把未校正病例故事升级成 universal ranking。
 8. **raw 表示含潜在作者结论。** raw 胜 S1/graph 是保真结论，不足以证明纯症状推理能力。
 
 ## 11. 当前可以写与不能写
