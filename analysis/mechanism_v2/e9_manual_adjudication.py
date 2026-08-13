@@ -37,7 +37,7 @@ def _j(
     note: str,
 ) -> dict[str, str]:
     return {
-        "strict_reference_equivalence": equivalence,
+        "legacy_binary_reference_equivalence": equivalence,
         "additional_view_content": content,
         "role_label_mechanism": role,
         "repetition_mechanism": repetition,
@@ -48,7 +48,7 @@ def _j(
 
 
 # Values follow the vocabulary frozen in manual_audit_selection.json.  A
-# ``scope_or_surface_artifact`` means the strict bridge, not the clinical
+# ``scope_or_surface_artifact`` means the safe-exact bridge, not the clinical
 # trajectory, is responsible for the apparent reference disagreement.
 MANUAL: dict[str, dict[str, str]] = {
     "DA_d2_heldout100/257": _j(
@@ -405,7 +405,9 @@ MANUAL: dict[str, dict[str, str]] = {
 
 
 VALID = {
-    "strict_reference_equivalence": {"yes", "scope_or_surface_artifact", "no", "not_exposed"},
+    "legacy_binary_reference_equivalence": {
+        "yes", "scope_or_surface_artifact", "no", "not_exposed"
+    },
     "additional_view_content": {"decisive", "useful_nondecisive", "redundant", "distracting", "not_applicable"},
     "role_label_mechanism": {"explicit_role_weighting", "narrative_only", "no_evidence", "indeterminate"},
     "repetition_mechanism": {"explicit_vote_or_repetition_weight", "noticed_and_discounted", "no_evidence", "indeterminate"},
@@ -414,9 +416,9 @@ VALID = {
 }
 
 
-# Manual clinical adjudication of every *strict outcome* discordance.  These
-# tables separate benchmark-string movement from movement in the clinical
-# diagnosis and are deliberately limited to the frozen all-discordance sets.
+# Frozen legacy mechanism reclassification of every safe-exact outcome
+# discordance. ``scope_or_surface`` mixes complete synonyms and compatible
+# partial answers, so this table is not a clinical-complete adjudication.
 CONTRAST_EFFECTS: dict[str, dict[str, str]] = {
     "real_vs_single": {
         "DA_d2_heldout100/261": "neutral_scope_or_surface",
@@ -490,7 +492,7 @@ def run(out: Path) -> dict[str, Any]:
                 arm: row.get("champion_label") if row.get("success") else None
                 for arm, row in conditions.items()
             },
-            "strict_gold_top1": {
+            "safe_exact_gold_top1": {
                 arm: bool(row.get("gold_top1")) if row.get("success") else None
                 for arm, row in conditions.items()
             },
@@ -510,8 +512,10 @@ def run(out: Path) -> dict[str, Any]:
             for field in VALID
         },
         "critical_findings": {
-            "strict_scope_or_surface_artifact_n": sum(
-                row["strict_reference_equivalence"] == "scope_or_surface_artifact" for row in rows
+            "safe_exact_bridge_scope_or_surface_artifact_n": sum(
+                row["legacy_binary_reference_equivalence"]
+                == "scope_or_surface_artifact"
+                for row in rows
             ),
             "true_capture_gain_n": sum(row["trajectory_mechanism"] == "capture_gain" for row in rows),
             "selection_harm_n": sum(row["trajectory_mechanism"] == "selection_harm" for row in rows),
@@ -520,13 +524,20 @@ def run(out: Path) -> dict[str, Any]:
             "semantic_not_served_n": sum(row["semantic_cluster_fidelity"] == "not_served" for row in rows),
             "semantic_major_error_n": sum(row["semantic_cluster_fidelity"] == "major_errors" for row in rows),
         },
-        "strict_discordance_clinical_adjudication": {
+        "safe_exact_discordance_legacy_mechanism_reclassification": {
             contrast: {
                 "n": len(effects),
                 "effect_counts": dict(sorted(Counter(effects.values()).items())),
                 "cases": effects,
             }
             for contrast, effects in CONTRAST_EFFECTS.items()
+        },
+        "endpoint_migration_contract": {
+            "clinical_complete_measured": False,
+            "compatible_partial_measured": False,
+            "complete_or_compatible_partial_measured": False,
+            "ability_ranking_allowed": False,
+            "scope_or_surface_is_not_a_complete_category": True,
         },
         "root_agent_final_responsibility": True,
         "external_semantic_auditor_used_as_subcontractor_only": True,
@@ -548,7 +559,8 @@ def run(out: Path) -> dict[str, Any]:
             f"completed_at_utc={datetime.now(timezone.utc).isoformat()}",
             "phase=E9 root-agent view/repetition/role/semantic trajectory audit",
             f"manual_cases={len(rows)}",
-            f"scope_or_surface_artifacts={summary['critical_findings']['strict_scope_or_surface_artifact_n']}",
+            "scope_or_surface_artifacts="
+            f"{summary['critical_findings']['safe_exact_bridge_scope_or_surface_artifact_n']}",
             f"capture_gains={summary['critical_findings']['true_capture_gain_n']}",
             f"semantic_not_served={summary['critical_findings']['semantic_not_served_n']}",
         ]) + "\n",

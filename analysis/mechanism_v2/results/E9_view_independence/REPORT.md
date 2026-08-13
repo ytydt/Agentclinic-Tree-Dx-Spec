@@ -10,7 +10,9 @@ E9 支持一个有限但重要的结论：Forest 的三视图不是三张独立�
 - 9 个 real-only 暴露病例中，real 将 6 个推到 `safe-exact` top-1；
 - 因而 `safe-exact` 净增 9 由“新增可达候选”和“共同候选上的重新排序”共同产生，不是单一的 recall 故事。
 
-但根代理对全部 11 个 real↔single `safe-exact` 胜负病例逐例复核后，10 个 real-only 中只有 6 个是真实临床收益：3 个来自新候选捕获，3 个来自已有候选上的选择/重复效应；另 4 个只是疾病范围、部位、亚型或同义表面的 benchmark 口径收益。single 的 1 个独赢则是真实误伤。换言之，`safe-exact` 净胜 `+9` 经这组完整 discordance 的临床重编码后变成 6 gain、1 harm、4 neutral；不能把 `+2.25 pp` 原样解释为临床净收益。
+旧版根代理对全部 11 个 real↔single `safe-exact` 胜负病例做过二元机制重分类，得到 6 个方向性 gain、1 个 harm、4 个 `scope_or_surface`。端点迁移复核发现，最后一类混合了真同义与缺部位、亚型、病因或复合成分的部分正确；旧判断还会用 vignette 补全输出没有说出的限定。因此 **6/1/4 不是新规范的 clinical-complete 重编码，不能给出临床净效应**。可保留的是富集队列中 3 条有病例证据支持的新候选捕获轨迹；它们不是 400 例发生率，也不把 `safe-exact +2.25 pp` 升级为临床收益。
+
+> **端点迁移更正。** E9 没有逐臂 `clinical-complete / compatible-partial / no` 三分类，也没有 complete-or-partial 或全量盲法临床率。70 例旧根审只支持机制归因；其余 330 例临床未审。下文保留 `scope_or_surface_artifact` 与 6/1/4 仅作历史血缘，禁止进入临床能力排名。
 
 两个更干净的干预没有显示稳定方向：
 
@@ -57,11 +59,11 @@ selector 看不到 gold、选项、历史 champion、来源模型、旧 rank/sco
 
 三个视图的 `safe-exact` reference 捕获为 syndrome 40、mechanism 42、modality 38；union 48，冻结 anchor 39。九个 union-only reference 按唯一来源分成 mechanism 5、syndrome 3、modality 1。
 
-根代理审查全部九例后得到：
+根代理对全部九例的旧机制审查得到：
 
 - 真正捕获并转成正确 top-1 3 例：Brucellosis、HHRH、Livedoid vasculopathy；
 - 真正捕获但未转化 2 例：Ischemic colitis、Polymyalgia rheumatica；
-- 主要是 scope/surface 口径 4 例：Cutaneous malakoplakia、adrenal/general myelolipoma、Sarcoidosis/cardiac sarcoidosis、gastric/general lipoma。
+- 旧标签为 scope/surface 的 4 例：Cutaneous malakoplakia、adrenal/general myelolipoma、Sarcoidosis/cardiac sarcoidosis、gastric/general lipoma。迁移审计后这些不得自动算 clinical neutral：真同义、完整亚型和 compatible-partial 必须分开。
 
 三个成功捕获的共同模式不是“多数同意”，而是某一视图引入了别处没有的诊断对象或决定性关系：
 
@@ -87,7 +89,7 @@ selector 看不到 gold、选项、历史 champion、来源模型、旧 rank/sco
 
 ## 角色名：改变叙事吸引域，没有识别出稳定权重
 
-角色轮换造成 58/400 个 champion label flip，却只产生 4 个 `safe-exact` 正确性 discordance。根审计的临床重编码为 real better 2、rotated better 1、同义口径 neutral 1：
+角色轮换造成 58/400 个 champion label flip，却只产生 4 个 `safe-exact` 正确性 discordance。旧机制重分类为 real better 2、rotated better 1、`scope_or_surface` 1；它不是 complete/compatible-partial 三分类：
 
 - Warthin tumor 与 LAM 在真实角色下更好；
 - cone-rod dystrophy 在轮换角色后反而被救回；
@@ -101,7 +103,7 @@ selector 看不到 gold、选项、历史 champion、来源模型、旧 rank/sco
 
 single 与 duplicate 的 registry 和事实完全相同，后者只是把 anchor 内容放到三个 role block。仍有 51/399 个 champion flip，说明“提示中已写重复不是多票”不足以消除表示路径依赖。
 
-六个 `safe-exact` outcome discordance 经临床重编码后为：
+六个 `safe-exact` outcome discordance 经旧二元机制重分类后为：
 
 - duplicate better 3：visceral leishmaniasis、Sturge-Weber、LAM；
 - single better 2：syphilitic aortitis、Warthin tumor；
@@ -129,9 +131,9 @@ single 与 duplicate 的 registry 和事实完全相同，后者只是把 anchor
 
 每例读取 clean vignette、三个历史视图、anchor、四个 fresh selector trace 和合法时的完整语义 partition。`manual_audit.jsonl` 保存最终判断和逐例 clinical note；Gemini 只承担 target-blind proposition clustering 分包，未承担最终审计。
 
-70 例中有 17 例被判为 `safe-exact` reference 的 scope/surface artifact，另有 6 例临床不等价；这再次表明 `safe-exact` 端点需要保留，但不能取代病例级机制判断。轨迹主标签为 capture gain 5、selection harm 3、repetition instability 15、label instability 18、interface failure 1、stable 27、other 1。因为队列故意富集 flip/failure，这些计数只能描述机制谱，不是总体发生率。
+70 例中旧审计有 17 例标成 `scope_or_surface_artifact`、另有 6 例不等价；迁移复核确认 17 例并非一个可直接映射到 complete 的同质类别，其中混有 compatible-partial。它说明 `safe-exact` 需要病例机制解释，却不能取代标准三分类。轨迹主标签为 capture gain 5、selection harm 3、repetition instability 15、label instability 18、interface failure 1、stable 27、other 1；这些只描述富集队列的机制谱，不是总体发生率或临床率。
 
-这 70 例是机制富集人工队列，不是 400 例完整临床标注。其余 330 例没有 complete/partial/no 根裁决；Gemini 的 387 例输出只做命题 partition/重叠估计，并不是 candidate-reference 临床 proxy。因此未入队的 `safe-exact` 阴性病例保持“临床未审”，不能在任何全队列临床准确率中自动算作 proxy-negative，也不能用这 70 例的 6/1/4 重编码外推总体临床净效应。
+这 70 例是机制富集人工队列，不是 400 例完整临床标注。其余 330 例没有 complete/compatible-partial/no 根裁决；Gemini 的 387 例输出只做命题 partition/重叠估计，并不是 candidate-reference 临床 proxy。因此未入队的 `safe-exact` 阴性病例保持“临床未审”，不能在任何全队列临床准确率中自动算作 proxy-negative，也不能用旧 6/1/4 重分类外推总体临床净效应。
 
 ## 运行、依赖与可复核性
 
@@ -156,4 +158,4 @@ DeepSeek 经多个 OpenRouter provider 路由，没有形成 Groq 单点。当�
 
 下一轮的可证伪门槛是：先把三视图压成相同的去重命题集合并复用同一冻结 comparator；若 role rotation 或精确复制仍改变 champion，则角色/表示路径敏感性成立，若 flip 消失则 E9 的新鲜调用方差解释更强。另应预注册 union-only 临床 complete capture 与 shared-exposure conversion 两个分开的终点；若 union 只增加错拼接而不增加前者，就应撤销多视图 union 的默认收益叙事。
 
-E9 是开发集机制实验，不是确认性性能试验。它足以否定“独立三票”和“重复即置信度”，也识别了多视图确有的候选覆盖价值；它没有证明当前三视图 selector 已是稳定最优实现。
+E9 是开发集机制实验，不是确认性性能试验。它足以否定“独立三票”和“重复即置信度”，也识别了多视图存在少量可追溯的候选覆盖轨迹；它没有测得全队列 clinical-complete/compatible-partial，更没有证明当前三视图 selector 已是稳定最优实现。

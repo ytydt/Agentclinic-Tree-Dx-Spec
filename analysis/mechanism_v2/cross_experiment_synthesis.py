@@ -15,6 +15,8 @@ import hashlib
 import io
 import json
 import math
+import re
+import sys
 import tarfile
 from datetime import datetime, timezone
 from pathlib import Path
@@ -22,6 +24,12 @@ from typing import Any, Iterable, Mapping, Sequence
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
+if __package__ in {None, ""}:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from analysis.mechanism_v2 import endpoint_coverage_audit  # noqa: E402
+
+
 DEFAULT_OUT = REPO_ROOT / "analysis/mechanism_v2/results/CROSS_EXPERIMENT_ROOT_SYNTHESIS"
 REGISTER = "analysis/mechanism_v2/EXPERIMENT_REGISTER.md"
 FINAL_REPORT = "analysis/mechanism_v2/CROSS_EXPERIMENT_ROOT_CRITICAL_SYNTHESIS.md"
@@ -48,8 +56,8 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
             "and collapse search; clinical-block organization materially moderates the effect."
         ),
         "effect": {
-            "hierarchical_fixed_options_minus_clean_top1_pp": 41.0,
-            "flat_fixed_options_minus_clean_top1_pp": 40.2,
+            "hierarchical_fixed_options_minus_clean_safe_exact_top1_pp": 41.0,
+            "flat_fixed_options_minus_clean_safe_exact_top1_pp": 40.2,
             "hierarchical_clean_reorder_champion_flips": "133/180",
             "flat_clean_reorder_champion_flips": "165/199",
         },
@@ -61,12 +69,13 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
     {
         "experiment": "E2",
         "stage": "endpoint_and_identifiability",
-        "design": "method-blind full-800 root census followed by a unified five-endpoint replay of all frozen outputs",
+        "design": "method-blind full-800 root census followed by a canonical complete/compatible-partial/union replay of all frozen outputs",
         "population": {"cases": 800, "DA": 400, "MCR": 400, "case_arm_rows": 7200},
         "grade": "B+D",
         "finding": (
             "Safe-exact is a deterministic lower bound, legacy-chain is a historical diagnostic, clinical-complete is the "
-            "primary ability endpoint, partial is a scope-loss state, and task is a family-specific interface. Only 455/800 "
+            "primary ability endpoint, compatible-partial is a scope-loss state, its union with complete is secondary coverage, "
+            "and task is a family-specific interface. Only 455/800 "
             "references are uniquely identifiable. No overall clinical-complete contrast survives its coherent Holm family; "
             "the MCR Collapse3c-versus-IMPC contrast does, but its DA-versus-MCR interaction is not multiplicity-confirmed."
         ),
@@ -79,8 +88,8 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
             "safe_exact_range_pct": "7.12-8.62",
             "legacy_chain_range_pct": "19.38-26.62",
             "clinical_complete_range_pct": "12.25-15.25",
-            "partial_range_pct": "29.88-35.25",
-            "task_range_pct": "40.12-46.12",
+            "compatible_partial_range_pct": "29.88-35.25",
+            "family_specific_task_interface_range_pct": "40.12-46.12",
             "clinical_complete_leader": "collapse3c 122/800 (15.25%)",
             "clinical_complete_runner_up": "multistance 121/800 (15.12%)",
             "overall_coherent_holm_survivors": 0,
@@ -110,9 +119,9 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
             "but exposure is the dominant bottleneck and exhaustive pairwise tournament adds cost without a demonstrated gain."
         ),
         "effect": {
-            "forest_top1": "41/400",
-            "e7_top1": "33/400",
-            "forest_minus_e7_pp": 2.0,
+            "forest_safe_exact_top1": "41/400",
+            "e7_safe_exact_top1": "33/400",
+            "forest_minus_e7_safe_exact_pp": 2.0,
             "discordance_gain_harm": "9/1",
             "mcnemar_p": 0.021484375,
         },
@@ -132,11 +141,11 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
             "and by reordering unchanged candidates; DA and MCR express different interference mechanisms."
         ),
         "effect": {
-            "sibling_delta_pp": -10.91,
+            "sibling_safe_exact_delta_pp": -10.91,
             "sibling_holm_p": 0.01472,
-            "width8_delta_pp": -16.46,
+            "width8_safe_exact_delta_pp": -16.46,
             "width8_holm_p": 0.000114,
-            "width6_to_width8_delta_pp": -7.93,
+            "width6_to_width8_safe_exact_delta_pp": -7.93,
         },
         "causal_scope": "gold-exposed constructed pools; typed-label construction errors limit relation-specific subarms",
         "refutes": ["more candidates are monotonically safer", "removing a loser cannot change the winner among survivors"],
@@ -151,10 +160,11 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
         "grade": "A+D",
         "finding": (
             "The tested generated graph is a lossy and error-adding representation: relations are new clinical claims, "
-            "not formatting, and its clinical-complete endpoint is materially worse than raw text."
+            "not formatting, and its arm-blind external-screen/root-corrected semantic proxy sensitivity is materially "
+            "worse than raw text. This is not a full-root clinical-capability endpoint."
         ),
         "effect": {
-            "graph_minus_raw_complete_pp": -7.63,
+            "graph_minus_raw_proxy_complete_equivalent_sensitivity_pp": -7.63,
             "discordance_raw_only_graph_only": "24/5",
             "mcnemar_p": 0.00055,
             "graphs_with_relation_error": "25/30",
@@ -176,8 +186,8 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
         ),
         "effect": {
             "mean_input_token_reduction_pct": 64.9,
-            "complete_delta_pp": 1.57,
-            "complete_mcnemar_p": 0.481,
+            "proxy_complete_equivalent_sensitivity_delta_pp": 1.57,
+            "proxy_complete_equivalent_sensitivity_mcnemar_p": 0.481,
             "champion_flip_pct": 95.29,
         },
         "causal_scope": "tokenization and one representation perturbation; provider/time effects remain a runtime limitation",
@@ -237,8 +247,8 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
             "The realised directional graph is too inconsistent for deployment; relation wording and even irrelevant graph context act as salience perturbations."
         ),
         "effect": {
-            "directional_minus_exact_pp": -0.67,
-            "bounded_minus_directional_pp": 0.0,
+            "directional_minus_exact_safe_exact_pp": -0.67,
+            "bounded_minus_directional_safe_exact_pp": 0.0,
             "internal_direction_agreement_pct": 64.82,
             "repeat_pair_consistency_pct": 80.58,
         },
@@ -260,7 +270,7 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
         "effect": {
             "hard_reference_vetoes": 9,
             "manually_valid_hard_reference_vetoes": 0,
-            "soft_minus_hard_top1_pp": 1.64,
+            "soft_minus_hard_safe_exact_top1_pp": 1.64,
             "soft_minus_hard_mcnemar_p": 0.453,
             "legal_order_flip_pct": 24.6,
             "invalid_time_flip_pct": 23.2,
@@ -277,20 +287,21 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
         "population": {"cases": 400, "root_audit_cases": 70},
         "grade": "A+D",
         "finding": (
-            "Forest views are correlated but retain a small real coverage increment; their benefit is not independent voting, "
+            "Forest views are correlated but retain a small safe-exact coverage increment; a targeted 70-case root queue "
+            "supports mechanism attribution only, not an arm-level clinical rate. Their benefit is not independent voting, "
             "and duplicate/role perturbations expose selector path dependence."
         ),
         "effect": {
             "real_minus_single_safe_exact_pp": 2.25,
             "real_minus_single_mcnemar_p": 0.0117,
-            "safe_exact_real_only_clinical_gains": "6/10",
-            "true_new_capture_to_top1": 3,
+            "safe_exact_real_only_root_reviewed_better_cases": "6/10",
+            "targeted_root_review_true_new_capture_to_safe_exact_top1": 3,
             "semantic_cluster_observation_ratio": 0.552,
         },
         "causal_scope": "joint effect of extra view content on union plus selection; role/duplicate flips are instability upper bounds",
         "refutes": ["three views are three independent votes", "duplicate evidence should raise confidence"],
         "report": "analysis/mechanism_v2/results/E9_view_independence/REPORT.md",
-        "anchors": ["10 个 real-only 中只有 6 个", "cluster/observation 比为 0.552"],
+        "anchors": ["6/1/4 不是新规范的 clinical-complete 重编码", "cluster/observation 比为 0.552"],
     },
     {
         "experiment": "E10",
@@ -299,17 +310,21 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
         "population": {"cases": 400, "root_audit_cases": 166},
         "grade": "A+D",
         "finding": (
-            "Sequential history compresses candidate diversity dramatically but improves current-sample rank conversion; "
-            "the Supervisor is a small semantic rescue when minority opinions exist, not the source of diversity loss."
+            "Sequential history compresses candidate diversity dramatically and improves a frozen binary-acceptable proxy's "
+            "current-sample rank conversion; complete, compatible-partial, their union, and full-root capability are unmeasured. "
+            "The Supervisor is a small proxy rescue when minority opinions exist, not the source of diversity loss."
         ),
         "effect": {
             "mean_union_isolated_sequential": "6.82/5.21",
             "pairwise_jaccard_isolated_sequential": "0.689/0.954",
-            "rrf_clinical_top2_delta_pp": 4.5,
-            "supervisor_clinical_top2_delta_pp": 3.25,
+            "rrf_binary_acceptable_proxy_top2_delta_pp": 4.5,
+            "supervisor_binary_acceptable_proxy_top2_delta_pp": 3.25,
             "d3_new_concepts_total_sequential": 6,
         },
-        "causal_scope": "homogeneous Llama panel on development cases; unique relation novelty was not measured",
+        "causal_scope": (
+            "homogeneous Llama panel on development cases; unique relation novelty and the three-state clinical endpoint "
+            "contract were not measured"
+        ),
         "refutes": ["sequential discussion creates independent expert search", "Supervisor is the primary diversity bottleneck"],
         "report": "analysis/mechanism_v2/results/E10_mac_factorial/REPORT.md",
         "anchors": ["6.82 降到 5.21", "0.689 升到 0.954", "合计只新增 6 个概念"],
@@ -322,16 +337,20 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
         "grade": "A+D",
         "finding": (
             "The tested retriever supplies weak topical context rather than case-specific relations; query-top context tends to flatten specificity, "
-            "while generic refine changes many trajectories but has no primary complete-endpoint advantage."
+            "while generic refine changes many trajectories but has no advantage on the proxy-completed/root-priority "
+            "complete-equivalent sensitivity. This is neither blinded nor a capability endpoint."
         ),
         "effect": {
             "relevant_case_specific_chunk_pct": 6.62,
-            "relevant_minus_off_clinical_complete_top1_pp": -2.0,
+            "relevant_minus_off_proxy_complete_equivalent_sensitivity_top1_pp": -2.0,
             "relevant_minus_off_holm_q": 0.27,
-            "off_refine_complete_or_partial_delta_pp": 3.5,
+            "off_refine_proxy_complete_or_compatible_partial_sensitivity_delta_pp": 3.5,
             "off_refine_sensitivity_holm_q": 0.0463,
         },
-        "causal_scope": "the current lexical bundle contract, not ideal typed RAG; complete+partial refine is secondary",
+        "causal_scope": (
+            "the current lexical bundle contract, not ideal typed RAG; complete+partial is a nonblind, proxy-completed "
+            "secondary sensitivity and cannot support capability ranking"
+        ),
         "refutes": ["query-top text is clinically relevant evidence", "a generic second-pass refine is a safe fallback"],
         "report": "analysis/mechanism_v2/results/E11_b07_factorial/REPORT.md",
         "anchors": ["6.62%", "`q=.2700`", "rare-but-plausible Top-2"],
@@ -343,13 +362,15 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
         "population": {"cases": 300, "root_audit_cases": 154},
         "grade": "A+D",
         "finding": (
-            "On frozen candidate pools, an explicit raw-text comparator beats blindly taking the historical first candidate; "
-            "S1 loses decisive relations, graph does not repair them, width is not monotone, and most apparent depth effects are not attributable to new information."
+            "On frozen candidate pools, an explicit raw-text comparator improves the nonblind root-priority/proxy-completed "
+            "complete-equivalent sensitivity relative to taking the historical first candidate; this is not a full-root ability "
+            "comparison. S1 loses decisive relations, graph does not repair them, width is not monotone, and most apparent "
+            "depth effects are not attributable to new information."
         ),
         "effect": {
-            "raw_k5_pairwise_minus_first_complete_pp": 4.67,
+            "raw_k5_pairwise_minus_first_proxy_complete_equivalent_sensitivity_pp": 4.67,
             "raw_k5_pairwise_holm_q": 0.04987,
-            "raw_k10_pairwise_minus_first_complete_pp": 5.0,
+            "raw_k10_pairwise_minus_first_proxy_complete_equivalent_sensitivity_pp": 5.0,
             "raw_k10_pairwise_holm_q": 0.02842,
             "safe_exact_exposure_gain_k5_to_k10": 2,
         },
@@ -387,16 +408,17 @@ EVIDENCE: tuple[dict[str, Any], ...] = (
         "grade": "A+D",
         "finding": (
             "The default RCR-3 implementation fails its fidelity, exposure, reliability, and conversion criteria; "
-            "safe identity survives, but generated structure plus fixed frontier and self-calibrated completeness lose to the simpler Lite path."
+            "safe identity survives, but generated structure plus fixed frontier and self-calibrated completeness lose to the "
+            "simpler Lite path. Its root-priority/proxy-completed equivalence sensitivity is not a blinded capability endpoint."
         ),
         "effect": {
-            "complete_top1_lite_rcr_compact4": "29/20/18",
-            "complete_top2_lite_rcr_compact4": "42/31/26",
-            "rcr_minus_lite_frontier_exposure_pp": -7.0,
+            "proxy_complete_equivalent_sensitivity_top1_lite_rcr_compact4": "29/20/18",
+            "proxy_complete_equivalent_sensitivity_top2_lite_rcr_compact4": "42/31/26",
+            "rcr_minus_lite_safe_exact_frontier_exposure_pp": -7.0,
             "frontier_exposure_holm_q": 0.000311,
             "material_span_drops": "at least 69/119",
             "wrong_or_unsupported_relations": "20/60",
-            "self_complete_root_complete": "9/66",
+            "root_reviewed_full_equivalence_among_self_reported_complete": "9/66",
         },
         "causal_scope": "the realised generated skeleton/typed-candidate/frontier implementation on a development relation challenge set",
         "refutes": ["current RCR-3 is the default three-call replacement", "generated relation fields and self-reported completeness are trustworthy"],
@@ -504,7 +526,7 @@ BASELINE_PROFILES: tuple[dict[str, Any], ...] = (
     },
     {
         "system": "Forest",
-        "strength": "best fixed-pool evidence integration in E4, useful residual view capture, and the highest complete-or-partial coverage in E2 (48.25%)",
+        "strength": "best fixed-pool evidence integration in E4, useful residual view capture, and the highest complete-or-compatible-partial coverage in E2 (48.25%)",
         "weakness": "its high legacy-chain rate (26.62%) does not imply clinical completeness (13.38%); stable-parent preference, repeated views, and unsafe substring identity compress scope",
         "best_supported_use": "evidence-integration comparator pattern after exact identity repair",
         "evidence": ["E2", "E4", "E7a", "E7b", "E9"],
@@ -796,7 +818,7 @@ def build_e2_full800_snapshot(repo_root: Path) -> dict[str, Any]:
 
     The cross-experiment ledger used to transcribe an outcome-enriched subset
     analysis.  This loader deliberately fails closed unless the new
-    9-arm x 800-case five-endpoint replay is complete.  It emits the complete
+    9-arm x 800-case canonical endpoint replay is complete.  It emits the complete
     leaderboard plus the clinical paired/transition anatomy needed to audit the
     prose without treating 7,200 repeated case-arm rows as independent cases.
     """
@@ -827,20 +849,66 @@ def build_e2_full800_snapshot(repo_root: Path) -> dict[str, Any]:
 
     manifest = payload["manifest"]
     validation = payload["validation"]
-    endpoints = ["safe_exact", "legacy_chain", "clinical_complete", "partial", "task"]
+    legacy_endpoints = [
+        "safe_exact",
+        "legacy_chain",
+        "clinical_complete",
+        "partial",
+        "task",
+    ]
+    canonical_endpoints = [
+        "safe_exact",
+        "legacy_chain",
+        "clinical_complete",
+        "compatible_partial",
+        "complete_or_compatible_partial",
+        "task",
+    ]
     arms = ["collapse3c", "multistance", "lite", "forest", "impc", "e7", "v0", "B06", "B07"]
     if manifest.get("cases_n") != 800 or manifest.get("arm_case_rows_n") != 7200:
         raise ValueError("E2 unified replay is not the required 800-case/7,200-row census")
-    if manifest.get("arms") != arms or manifest.get("endpoint_columns") != endpoints:
-        raise ValueError("E2 arm order or five-endpoint contract drifted")
+    source_endpoints = tuple(manifest.get("endpoint_columns") or ())
+    if manifest.get("arms") != arms or source_endpoints not in {
+        tuple(legacy_endpoints),
+        tuple(canonical_endpoints),
+    }:
+        raise ValueError("E2 arm order or canonical endpoint contract drifted")
     if validation.get("cases_n") != 800 or validation.get("case_arm_rows_n") != 7200:
         raise ValueError("E2 validation counts disagree with the manifest")
-    if validation.get("clinical_missing_n") != 0 or validation.get("complete_partial_overlap_n") != 0:
+    overlap_n = validation.get(
+        "clinical_complete_compatible_partial_overlap_n",
+        validation.get("complete_partial_overlap_n"),
+    )
+    union_mismatch_n = validation.get("complete_or_compatible_partial_mismatch_n", 0)
+    if (
+        validation.get("clinical_missing_n") != 0
+        or overlap_n != 0
+        or union_mismatch_n != 0
+    ):
         raise ValueError("E2 clinical endpoint replay has missing or overlapping labels")
     if any(validation.get("arm_counts", {}).get(arm) != 800 for arm in arms):
         raise ValueError("E2 has incomplete arm coverage")
 
-    leaderboard = payload["leaderboard"]
+    leaderboard = []
+    for source_row in payload["leaderboard"]:
+        row = dict(source_row)
+        for suffix in ("n", "rate", "wilson95"):
+            legacy_key = f"partial_{suffix}"
+            canonical_key = f"compatible_partial_{suffix}"
+            if legacy_key in row and canonical_key not in row:
+                row[canonical_key] = row.pop(legacy_key)
+        for suffix in ("n", "rate", "wilson95"):
+            legacy_key = f"complete_or_partial_{suffix}"
+            canonical_key = f"complete_or_compatible_partial_{suffix}"
+            if legacy_key in row and canonical_key not in row:
+                row[canonical_key] = row.pop(legacy_key)
+        if row.get("complete_or_compatible_partial_n") != (
+            row.get("clinical_complete_n", 0) + row.get("compatible_partial_n", 0)
+        ):
+            raise ValueError(
+                "E2 leaderboard union does not equal clinical-complete plus compatible-partial"
+            )
+        leaderboard.append(row)
     expected_cells = {(scope, arm) for scope in ("ALL", "DA", "MCR") for arm in arms}
     observed_cells = {(row["scope"], row["arm"]) for row in leaderboard}
     if observed_cells != expected_cells or len(leaderboard) != 27:
@@ -965,7 +1033,7 @@ def build_e2_full800_snapshot(repo_root: Path) -> dict[str, Any]:
         )
 
     return {
-        "schema_version": "cross-synthesis-e2-full800-v1",
+        "schema_version": "cross-synthesis-e2-full800-v2",
         "coverage": {
             "cases": 800,
             "DA": 400,
@@ -979,12 +1047,20 @@ def build_e2_full800_snapshot(repo_root: Path) -> dict[str, Any]:
             "clinical_missing": 0,
             "inference_unit": "case; the nine arm rows per case are correlated",
         },
-        "endpoint_contract": manifest["endpoint_contract"],
+        "source_endpoint_schema_version": manifest.get("schema_version"),
+        "endpoint_contract": {
+            "columns": canonical_endpoints,
+            "clinical_capability_endpoint": "clinical_complete",
+            "secondary_coverage_endpoint": "complete_or_compatible_partial",
+            "diagnostic_only_endpoints": ["safe_exact", "legacy_chain", "task"],
+            "deprecated_source_aliases_are_normalized": True,
+        },
         "endpoint_definitions": {
             "safe_exact": "exact or frozen safe synonym; deterministic conservative lower bound",
             "legacy_chain": "historical substring/resolver chain; diagnostic compatibility only",
             "clinical_complete": "root-audited complete clinical object; primary true diagnostic ability",
-            "partial": "root-audited parent/component or otherwise incomplete but clinically related object",
+            "compatible_partial": "root-audited parent/component or otherwise incomplete but clinically related object",
+            "complete_or_compatible_partial": "clinical-complete OR compatible-partial; secondary coverage sensitivity, not complete ability",
             "task": "DA option mapper or MCR cached calibrated semantic judge; never pool as one homogeneous estimand",
         },
         "identifiability_census": identities,
@@ -1011,12 +1087,43 @@ def build_e2_full800_snapshot(repo_root: Path) -> dict[str, Any]:
         ],
         "interpretation_guard": (
             "clinical-complete is the primary ability endpoint; safe-exact is a lower bound, legacy-chain is historical-only, "
-            "partial is not complete, and combined task mixes two different benchmark interfaces"
+            "compatible-partial and its union with complete are not complete ability, and combined task mixes two different benchmark interfaces"
         ),
     }
 
 
-def validate_evidence(repo_root: Path, evidence: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
+def validate_evidence(
+    repo_root: Path,
+    evidence: Sequence[Mapping[str, Any]],
+    endpoint_coverage: Mapping[str, Any],
+) -> list[dict[str, Any]]:
+    if endpoint_coverage.get("schema_version") != "endpoint-coverage-audit-v2":
+        raise ValueError("unsupported endpoint coverage matrix schema")
+    coverage_records = list(endpoint_coverage.get("records", []))
+    coverage_ids = [str(record.get("experiment_id")) for record in coverage_records]
+    expected_ids = list(endpoint_coverage_audit.EXPECTED_EXPERIMENT_IDS)
+    if coverage_ids != expected_ids or len(coverage_ids) != len(set(coverage_ids)):
+        raise ValueError("endpoint coverage records do not match the frozen experiment registry")
+    coverage_by_id = {str(record["experiment_id"]): dict(record) for record in coverage_records}
+    arms_by_experiment: dict[str, list[dict[str, Any]]] = {
+        experiment: [] for experiment in coverage_ids
+    }
+    for raw_arm in endpoint_coverage.get("arm_records", []):
+        arm = dict(raw_arm)
+        experiment = str(arm.get("experiment_id"))
+        if experiment not in arms_by_experiment:
+            raise ValueError(f"endpoint coverage contains an arm for unknown experiment: {experiment}")
+        arms_by_experiment[experiment].append(arm)
+    if sum(len(rows) for rows in arms_by_experiment.values()) != endpoint_coverage.get("arm_record_count"):
+        raise ValueError("endpoint coverage arm count disagrees with its arm records")
+
+    evidence_ids = [str(row.get("experiment")) for row in evidence]
+    if evidence_ids != expected_ids:
+        raise ValueError(
+            "cross-experiment evidence must be a one-to-one ordered join with endpoint coverage: "
+            f"expected {expected_ids!r}, found {evidence_ids!r}"
+        )
+
     seen: set[str] = set()
     validated: list[dict[str, Any]] = []
     for raw in evidence:
@@ -1036,11 +1143,113 @@ def validate_evidence(repo_root: Path, evidence: Sequence[Mapping[str, Any]]) ->
         if missing:
             raise ValueError(f"source anchor drift for {experiment}: {missing}")
         row["source_sha256"] = sha256(report)
+        coverage = coverage_by_id[experiment]
+        if str(row["report"]) != str(coverage["report_path"]):
+            raise ValueError(f"evidence/coverage report-path mismatch for {experiment}")
+        if row["source_sha256"] != coverage["source_report_sha256"]:
+            raise ValueError(f"evidence/coverage source hash mismatch for {experiment}")
+        experiment_arms = arms_by_experiment[experiment]
+        if len(experiment_arms) != int(coverage["arm_count"]):
+            raise ValueError(f"evidence/coverage arm-count mismatch for {experiment}")
+        arm_ids = [str(arm["arm_id"]) for arm in experiment_arms]
+        if len(arm_ids) != len(set(arm_ids)):
+            raise ValueError(f"duplicate endpoint coverage arms for {experiment}")
+
+        # Never allow historically overloaded endpoint names to return through
+        # a new effect field.  ``strict`` meant legacy-chain in E2 but
+        # safe-exact elsewhere; ``Concept`` and bare ``task``/``accuracy`` are
+        # likewise uninterpretable without an explicit interface or provenance
+        # qualifier.  This guard applies even to the E2 census.
+        reserved_name_violations: list[str] = []
+        for raw_key in row.get("effect", {}):
+            key = str(raw_key).lower()
+            tokens = {token for token in re.split(r"[^a-z0-9]+", key) if token}
+            if tokens.intersection({"strict", "concept"}):
+                reserved_name_violations.append(str(raw_key))
+                continue
+            if "task" in tokens and not tokens.intersection(
+                {"family", "interface", "mapper", "projection", "legacy"}
+            ):
+                reserved_name_violations.append(str(raw_key))
+                continue
+            if "accuracy" in tokens and not tokens.intersection(
+                {
+                    "safe",
+                    "exact",
+                    "proxy",
+                    "mapper",
+                    "interface",
+                    "projection",
+                    "legacy",
+                    "binary",
+                    "acceptable",
+                    "root",
+                    "reviewed",
+                    "targeted",
+                }
+            ):
+                reserved_name_violations.append(str(raw_key))
+        if reserved_name_violations:
+            raise ValueError(
+                f"evidence uses unqualified endpoint effect names for {experiment}: "
+                f"{reserved_name_violations}"
+            )
+
+        # Machine-readable names must disclose proxy/targeted provenance.  A
+        # downstream consumer must never infer full-root capability from a bare
+        # ``complete`` or ``clinical`` effect key on a non-census experiment.
+        if not bool(coverage["full_root_census"]):
+            invalid_effect_keys = []
+            for raw_key in row.get("effect", {}):
+                key = str(raw_key).lower()
+                if "clinical_complete" in key or "clinical_capability" in key:
+                    invalid_effect_keys.append(str(raw_key))
+                    continue
+                if ("complete" in key or "clinical" in key) and not any(
+                    qualifier in key
+                    for qualifier in ("proxy", "root_reviewed", "targeted_root_review")
+                ):
+                    invalid_effect_keys.append(str(raw_key))
+                    continue
+                if ("top1" in key or "top2" in key) and not any(
+                    qualifier in key
+                    for qualifier in (
+                        "safe_exact",
+                        "proxy",
+                        "targeted_root_review",
+                        "root_reviewed",
+                        "binary_acceptable",
+                    )
+                ):
+                    invalid_effect_keys.append(str(raw_key))
+            if invalid_effect_keys:
+                raise ValueError(
+                    f"non-census evidence uses unqualified endpoint effect names for {experiment}: "
+                    f"{invalid_effect_keys}"
+                )
+        if experiment == "E10":
+            e10_keys = [str(key).lower() for key in row.get("effect", {})]
+            invalid_e10 = [
+                key for key in e10_keys if any(token in key for token in ("clinical", "complete", "partial"))
+            ]
+            if invalid_e10:
+                raise ValueError(
+                    "E10 binary acceptable sensitivity cannot be named as a clinical-complete/partial endpoint: "
+                    f"{invalid_e10}"
+                )
+
+        row["endpoint_coverage_contract"] = {
+            "coverage_matrix_schema_version": endpoint_coverage["schema_version"],
+            **coverage,
+            "arm_ids": arm_ids,
+        }
         validated.append(row)
     return validated
 
 
-def validate_closure(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+def validate_closure(
+    rows: Sequence[Mapping[str, Any]], endpoint_coverage: Mapping[str, Any]
+) -> dict[str, Any]:
     allowed = {
         "implemented",
         "complete",
@@ -1056,15 +1265,60 @@ def validate_closure(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
         for row in rows
         if row.get("status") not in {"implemented", "complete", "complete_new_gap", "excluded_by_request", "blocked_by_excluded_prerequisite"}
     ]
+    coverage_records = list(endpoint_coverage.get("records", []))
+    full_root = [
+        str(record["experiment_id"])
+        for record in coverage_records
+        if bool(record.get("full_root_census"))
+    ]
+    not_applicable = [
+        str(record["experiment_id"])
+        for record in coverage_records
+        if {
+            record.get("clinical_complete_status"),
+            record.get("compatible_partial_status"),
+            record.get("complete_or_compatible_partial_status"),
+        }
+        == {endpoint_coverage_audit.NOT_APPLICABLE}
+    ]
+    migration_gaps = [
+        str(record["experiment_id"])
+        for record in coverage_records
+        if str(record["experiment_id"]) not in set(full_root) | set(not_applicable)
+    ]
+    if full_root != ["E2"] or not_applicable != ["E7a"] or len(migration_gaps) != 14:
+        raise ValueError(
+            "metric-migration closure drift: expected E2 full census, E7a N/A, and 14 gaps; "
+            f"found full={full_root}, n/a={not_applicable}, gaps={migration_gaps}"
+        )
     return {
-        "items": [dict(row) for row in rows],
-        "eligible_remaining_count": len(unresolved),
-        "eligible_remaining": unresolved,
-        "interpretation": (
-            "No scientifically eligible experiment remains under the authorised scope. "
-            "The formal E14 router is not marked pending because its required E13 latent labels were explicitly excluded; "
-            "E14x directly tested and disabled the realised gate."
-        ),
+        "schema_version": "cross-experiment-closure-v2",
+        "scientific_execution": {
+            "items": [dict(row) for row in rows],
+            "eligible_remaining_count": len(unresolved),
+            "eligible_remaining": unresolved,
+            "closed": len(unresolved) == 0,
+            "interpretation": (
+                "No scientifically eligible experiment remains under the authorised execution scope. "
+                "This statement concerns execution only and does not imply endpoint migration completeness. "
+                "The formal E14 router is not marked pending because its required E13 latent labels were explicitly excluded; "
+                "E14x directly tested and disabled the realised gate."
+            ),
+        },
+        "metric_migration": {
+            "closed": False,
+            "full_root_census_count": len(full_root),
+            "full_root_census_experiments": full_root,
+            "not_applicable_count": len(not_applicable),
+            "not_applicable_experiments": not_applicable,
+            "gap_count": len(migration_gaps),
+            "gap_experiments": migration_gaps,
+            "interpretation": (
+                "Only E2 has the full blinded/root census needed for clinical-capability interpretation. "
+                "E7a has no fresh arm output and is N/A. The other 14 experiments retain explicit metric-migration gaps; "
+                "their proxy-completed or targeted audits remain mechanism/sensitivity evidence only."
+            ),
+        },
     }
 
 
@@ -1090,9 +1344,10 @@ def deterministic_tar_gz(archive: Path, files: Sequence[Path], base: Path) -> No
 
 def build(repo_root: Path, out: Path) -> dict[str, Any]:
     started = datetime.now(timezone.utc).isoformat()
+    endpoint_coverage = endpoint_coverage_audit.build_payload(repo_root)
     e2_snapshot = build_e2_full800_snapshot(repo_root)
-    validated = validate_evidence(repo_root, EVIDENCE)
-    closure = validate_closure(CLOSURE_ITEMS)
+    validated = validate_evidence(repo_root, EVIDENCE, endpoint_coverage)
+    closure = validate_closure(CLOSURE_ITEMS, endpoint_coverage)
     register_path = repo_root / REGISTER
     if not register_path.is_file():
         raise FileNotFoundError(register_path)
@@ -1109,7 +1364,7 @@ def build(repo_root: Path, out: Path) -> dict[str, Any]:
 
     out.mkdir(parents=True, exist_ok=True)
     evidence_payload = {
-        "schema_version": "cross-experiment-evidence-v1",
+        "schema_version": "cross-experiment-evidence-v2",
         "grade_definitions": GRADE_DEFINITIONS,
         "records": validated,
     }
@@ -1119,6 +1374,7 @@ def build(repo_root: Path, out: Path) -> dict[str, Any]:
     write_json(out / "baseline_profiles.json", {"profiles": list(BASELINE_PROFILES)})
     write_json(out / "trajectory_motifs.json", {"motifs": list(TRAJECTORY_MOTIFS)})
     write_json(out / "closure_matrix.json", closure)
+    write_json(out / "endpoint_coverage_matrix.json", endpoint_coverage)
     write_json(out / "e2_full800_snapshot.json", e2_snapshot)
 
     experiments = {str(row["experiment"]) for row in validated}
@@ -1138,9 +1394,24 @@ def build(repo_root: Path, out: Path) -> dict[str, Any]:
     for claim in claims:
         if claim.get("claim_id") == "C015":
             claim["claim"] = (
-                "Safe-exact (historical field strict), legacy-chain, family-specific task, clinical-complete, partial, "
-                "and reference-identifiability are different endpoints; clinical-complete is the primary ability measure."
+                "Safe-exact, legacy-chain, deprecated experiment-local strict fields, family-specific task, clinical-complete, "
+                "compatible-partial, complete-or-compatible-partial coverage, binary-acceptable proxy, root-priority/proxy "
+                "sensitivities, and reference-identifiability are distinct; no "
+                "unscoped strict or Concept field is an ability endpoint. Clinical-complete supports diagnostic-capability "
+                "interpretation only under a full blinded/root census; the complete-or-compatible-partial union remains a "
+                "secondary coverage sensitivity. Currently E2 alone has the full contract; E7a is N/A and the other 14 "
+                "experiments retain metric-migration gaps."
             )
+            claim["dependencies"] = list(endpoint_coverage_audit.EXPECTED_EXPERIMENT_IDS)
+            claim["endpoint_coverage_contract"] = {
+                "artifact": "endpoint_coverage_matrix.json",
+                "clinical_capability_allowlist": ["E2"],
+                "clinical_capability_endpoint": "clinical_complete",
+                "secondary_coverage_endpoint": "complete_or_compatible_partial",
+                "deprecated_unscoped_fields": ["strict", "Concept"],
+                "not_applicable": ["E7a"],
+                "metric_migration_gap_count": 14,
+            }
     claim_ids = [str(row["claim_id"]) for row in claims]
     if len(claim_ids) != len(set(claim_ids)):
         raise ValueError("duplicate final claim ids")
@@ -1157,14 +1428,26 @@ def build(repo_root: Path, out: Path) -> dict[str, Any]:
     write_jsonl(out / "claim_ledger_final.jsonl", claims)
 
     summary = {
-        "schema_version": "cross-experiment-root-synthesis-v1",
+        "schema_version": "cross-experiment-root-synthesis-v2",
         "generated_at_utc": started,
         "evidence_record_count": len(validated),
         "mechanism_stage_count": len(MECHANISM_CHAIN),
         "baseline_profile_count": len(BASELINE_PROFILES),
         "cross_case_motif_count": len(TRAJECTORY_MOTIFS),
         "final_claim_count": len(claims),
-        "eligible_remaining_experiments": closure["eligible_remaining_count"],
+        "scientific_execution_remaining_experiments": closure["scientific_execution"][
+            "eligible_remaining_count"
+        ],
+        "metric_migration_gap_experiment_count": closure["metric_migration"]["gap_count"],
+        "metric_migration_gap_experiments": closure["metric_migration"]["gap_experiments"],
+        "metric_migration_full_root_census_experiments": closure["metric_migration"][
+            "full_root_census_experiments"
+        ],
+        "metric_migration_not_applicable_experiments": closure["metric_migration"][
+            "not_applicable_experiments"
+        ],
+        "endpoint_coverage_experiment_count": endpoint_coverage["experiment_count"],
+        "endpoint_coverage_arm_record_count": endpoint_coverage["arm_record_count"],
         "e2_full800_cases": e2_snapshot["coverage"]["cases"],
         "e2_case_arm_rows": e2_snapshot["coverage"]["case_arm_rows"],
         "e2_unique_full_references": 455,
@@ -1180,7 +1463,10 @@ def build(repo_root: Path, out: Path) -> dict[str, Any]:
             "DA": 1.0,
             "MCR": 0.5864706764661767,
         },
-        "primary_diagnostic_endpoint": "clinical_complete",
+        "primary_diagnostic_endpoint": (
+            "clinical_complete; capability interpretation allowed only for full_root_census experiments"
+        ),
+        "clinical_capability_leaderboard_eligible_experiments": ["E2"],
         "default_system_decision": "retain Lite-like two independent proposals plus one frozen-pool comparator",
         "rejected_default": "current RCR-3 and current fourth-call gate",
         "network_finding": (
@@ -1199,12 +1485,19 @@ def build(repo_root: Path, out: Path) -> dict[str, Any]:
         f"baseline_profiles={len(BASELINE_PROFILES)}",
         f"trajectory_motifs={len(TRAJECTORY_MOTIFS)}",
         f"final_claims={len(claims)}",
-        f"eligible_remaining={closure['eligible_remaining_count']}",
+        f"scientific_execution_remaining={closure['scientific_execution']['eligible_remaining_count']}",
+        f"metric_migration_gap_count={closure['metric_migration']['gap_count']}",
+        "metric_migration_full_root=E2",
+        "metric_migration_not_applicable=E7a",
+        f"endpoint_coverage_experiments={endpoint_coverage['experiment_count']}",
+        f"endpoint_coverage_arm_records={endpoint_coverage['arm_record_count']}",
         "e2_full800_validation=passed",
-        "e2_endpoint_contract=safe_exact,legacy_chain,clinical_complete,partial,task",
+        "e2_endpoint_contract=safe_exact,legacy_chain,clinical_complete,compatible_partial,complete_or_compatible_partial,task",
         "source_anchor_validation=passed",
+        "endpoint_coverage_join_validation=passed",
         "cross_reference_validation=passed",
-        "closure_validation=passed",
+        "scientific_execution_closure_validation=passed",
+        "metric_migration_closure_validation=open_14_gaps",
     ]
     (out / "run.log").write_text("\n".join(log_lines) + "\n", encoding="utf-8")
 
@@ -1215,6 +1508,7 @@ def build(repo_root: Path, out: Path) -> dict[str, Any]:
         out / "baseline_profiles.json",
         out / "trajectory_motifs.json",
         out / "closure_matrix.json",
+        out / "endpoint_coverage_matrix.json",
         out / "e2_full800_snapshot.json",
         out / "claim_ledger_final.jsonl",
         out / "synthesis_summary.json",
@@ -1224,7 +1518,7 @@ def build(repo_root: Path, out: Path) -> dict[str, Any]:
     if report.is_file():
         artifact_files.append(report)
     manifest = {
-        "schema_version": "cross-experiment-manifest-v1",
+        "schema_version": "cross-experiment-manifest-v2",
         "files": [
             {
                 "path": str(path.relative_to(repo_root)),

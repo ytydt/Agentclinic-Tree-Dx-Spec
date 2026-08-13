@@ -211,6 +211,38 @@ def telemetry_summary(out: Path) -> dict[str, Any]:
     }
 
 
+def migrate_safe_exact_endpoint(groups: Mapping[str, Any]) -> dict[str, Any]:
+    """Give every active safe-exact metric a self-describing key path.
+
+    The frozen E9 runner called this endpoint ``accuracy`` under a historical
+    ``strict`` source field.  Neither term is safe in a final artifact because
+    downstream flattening can discard the parent context.  The source JSON is
+    retained as provenance; this function creates the only ingestible view.
+    """
+    key_map = {
+        "accuracy_intention": "safe_exact_rate_intention",
+        "accuracy_served": "safe_exact_rate_served",
+        "accuracy_delta_right_minus_left": "safe_exact_delta_right_minus_left",
+        "gold_exposure_rate_served": "safe_exact_reference_exposure_rate_served",
+        "exposure_to_top1": "safe_exact_exposure_to_top1_conversion",
+    }
+
+    def migrate(node: Any) -> Any:
+        if isinstance(node, Mapping):
+            return {
+                key_map.get(str(key), str(key)): migrate(value)
+                for key, value in node.items()
+            }
+        if isinstance(node, list):
+            return [migrate(value) for value in node]
+        return node
+
+    migrated = migrate(groups)
+    if not isinstance(migrated, dict):
+        raise TypeError("E9 safe-exact groups must be an object")
+    return migrated
+
+
 def analysis(out: Path, *, repetitions: int = 10_000) -> dict[str, Any]:
     rows = read_jsonl(out / "case_conditions.jsonl")
     construction = read_jsonl(out / "construction_ledger.jsonl")
@@ -226,16 +258,22 @@ def analysis(out: Path, *, repetitions: int = 10_000) -> dict[str, Any]:
             for left, right in CONTRASTS
         }
     result = {
-        "schema": "E9_final_analysis_v1",
+        "schema": "E9_final_analysis_v2",
         "experiment_id": "E9",
         "n_cases": base["n_cases"],
-        "strict_endpoint": base["groups"],
+        "safe_exact_endpoint": migrate_safe_exact_endpoint(base["groups"]),
+        "safe_exact_endpoint_provenance": {
+            "historical_source_alias": "strict",
+            "historical_generic_metric_name": "accuracy",
+            "active_metric": "safe_exact",
+            "clinical_capability_interpretation_allowed": False,
+        },
         "offline_capture": base["offline_capture"],
         "construction": construction_summary(construction),
         "capture_and_selection_decomposition": capture_decomposition(rows),
         "paired_case_bootstrap_delta_95ci": bootstrap,
         "semantic_overlap": semantic_summary(semantic_rows),
-        "manual_clinical_recode": {
+        "manual_legacy_mechanism_reclassification": {
             name: {
                 "n": len(effects),
                 "effect_counts": dict(sorted(Counter(effects.values()).items())),
@@ -243,10 +281,17 @@ def analysis(out: Path, *, repetitions: int = 10_000) -> dict[str, Any]:
             }
             for name, effects in CONTRAST_EFFECTS.items()
         },
+        "endpoint_migration_contract": {
+            "clinical_complete_measured": False,
+            "compatible_partial_measured": False,
+            "complete_or_compatible_partial_measured": False,
+            "full_blinded_root_census": False,
+            "ability_ranking_allowed": False,
+        },
         "telemetry": telemetry_summary(out),
         "interpretation_guards": [
             "Development/mechanism sample; no confirmation-performance claim.",
-            "Strict reference matching and root clinical equivalence are reported separately.",
+            "Safe-exact is a conservative lower bound; the legacy root scope/surface labels are not a complete/partial clinical endpoint.",
             "Fresh stochastic calls mean flips under label/repetition interventions diagnose perturbation sensitivity but cannot all be assigned uniquely to the intervention.",
             "Semantic clustering is a heterogeneous-LLM subcontractor output and is checked by root manual audit.",
             "Per-call telemetry gaps make token, attempt, provider and latency totals lower bounds.",

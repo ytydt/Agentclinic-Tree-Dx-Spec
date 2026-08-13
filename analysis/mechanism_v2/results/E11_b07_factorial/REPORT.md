@@ -37,7 +37,7 @@ refine-off 直接生成 Top-2；refine-on 看到同一病例、同一知识 bund
 
 `safe-exact` 是 mapper 前保守身份下界，不是临床完全等价或 task/mapper 正确率；本报告没有把 E2 的 full-800 审计数值移植到 E11。
 
-DeepSeek v4 flash 只承担候选关系与检索证据的队列扩展分包。根审计逐候选覆盖全部 17 个 `safe-exact` Top-1/Top-2 discordance 病例、全部 clinical-complete `relevant↔off` Top-1/Top-2 discordance，以及 7 个 candidate-screen 失败病例；去重后为 32 条深轨迹、39 个候选审计病例、624 个 arm-rank occurrence。其余 5,776/6,400 个 occurrence 没有人工 candidate-by-candidate 裁决，保留异质 proxy；其中 proxy-negative 也只是未审负类，不是人工 gold。故带星号临床端点是“根覆盖端点关键分歧 + proxy 补全全表”，不能当作 400 例全人工临床标注。
+DeepSeek v4 flash 只承担候选关系与检索证据的队列扩展分包。根审计逐候选覆盖全部 17 个 `safe-exact` Top-1/Top-2 discordance 病例、全部 clinical-complete `relevant↔off` Top-1/Top-2 discordance，以及 7 个 candidate-screen 失败病例；去重后为 32 条深轨迹、39 个候选审计病例、624 个 arm-rank occurrence。根队列按端点分歧构造并含臂/输出上下文，**不是盲审**。其余 5,776/6,400 个 occurrence 没有人工 candidate-by-candidate 裁决，保留异质 proxy；其中 proxy-negative 也只是未审负类，不是人工 gold。故带星号临床端点是“非盲根覆盖端点关键分歧 + proxy 补全全表”，不能当作 400 例全人工或盲法临床标注。
 
 代码设有硬断言：当前 6,400 个 arm×rank occurrence 必须全部解析；7 个 candidate-screen 失败必须全部有根 override；所有 clinical-complete `relevant↔off` discordance 必须在 deep-review 集合中。根判断与有效 proxy 在 16 个候选关系上分歧，其中包括把 cryptococcosis 当作 cutaneous histoplasmosis 的可接受变体，以及把 severe sepsis 当作“septic shock with anuric kidney failure”的完整等价。报告以下关于关键翻转的判断以根审计为准。
 
@@ -197,7 +197,7 @@ clinical Top-1 relevant-vs-off 的 10 个 loss 中，2 个是 DeepInfra→DeepIn
 
 ### B07 orchestrator / draft
 
-优点是冻结后能为八臂提供相同上游状态，使检索与 refine 的病例配对可复核；无检索 draft 在完整临床端点上仍是本实验最佳单臂。弱点是绝对 reference 暴露和具体诊断率低，容易产生同疾病族但范围不完整的候选，给后续检索/排序留下很低的上限。
+优点是冻结后能为八臂提供相同上游状态，使检索与 refine 的病例配对可复核；无检索 draft 在本实验**非盲 root-priority/proxy-completed complete-equivalent sensitivity** 上仍是点估计最佳单臂。该读数不是盲法 clinical-complete 能力率。弱点是绝对 reference 暴露和具体诊断率低，容易产生同疾病族但范围不完整的候选，给后续检索/排序留下很低的上限。
 
 ### 当前 retriever
 

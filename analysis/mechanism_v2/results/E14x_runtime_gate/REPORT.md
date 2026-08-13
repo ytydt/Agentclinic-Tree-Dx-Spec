@@ -16,7 +16,7 @@ E14x 在读取病例级 outcome join 前冻结了回顾性分析合同，随后�
 
 逐病例计算 G1、G2、post-G state 的 canonical JSON hash，并预先规定只有 G1/G2 完全一致时才可能作近似 treatment-like 解读。实际为 0/300，故全部 paired accuracy、bootstrap CI、McNemar p 和 gate signal scan 都降级为探索性描述。没有为了制造相同上游而重复调用：这遵守了本轮排除“重复多次运行/纯降方差控制”的约束。
 
-概念命中由 `FrozenExactSynonymBridge` 的 exact/frozen-safe-synonym 比较实现，统一展示为 **`safe-exact`（历史结果字段 `strict`）**。它是 mapper 前保守身份下界，不是 clinical-complete 或 DA task/mapper 正确率；E14x 没有移植 E2 full-800 的任何审计数值。
+概念命中由 `FrozenExactSynonymBridge` 的 exact/frozen-safe-synonym 比较实现，统一展示为 **`safe-exact`（历史结果字段 `strict`）**。它是 mapper 前保守身份下界，不是 clinical-complete 或 DA task/mapper 正确率；E14x 没有移植 E2 full-800 的任何审计数值。当前 `analysis_summary.json` 已在产物边界把历史 `strict` 别名迁移为 `safe_exact`，并把 `da_option_projection` 的对应计数独立改为 `*_task_*`；旧 pre-manual/permissive 文件只作 frozen provenance，不得由下游直接摄取。
 
 端点沿完整漏斗分解：触发与 call 成本 → A1 新实体 → registry 存活 → frontier 暴露 → 新实体夺冠 → `safe-exact` reference → DA mapper。全部 9 个 `safe-exact` flip、11 个 A1 新实体夺冠、18 个 DA option flip，以及后来补入的全部 34 个 triggered champion flip，都进入根代理人工队列；类别重叠后为 56/300 个唯一病例逐案审计。没有外部 LLM 参与这些临床判定，也没有 proxy 补全临床端点；其余 244 例没有 complete/partial/no 根裁决，未入队的 `safe-exact` 阴性只能记作“临床未审”，不能当作人工或 proxy-negative gold。因此 6 repair/15 harm/13 neutral 仅描述 34 个 triggered-flip 富集子集，不是 300 例临床发生率。
 

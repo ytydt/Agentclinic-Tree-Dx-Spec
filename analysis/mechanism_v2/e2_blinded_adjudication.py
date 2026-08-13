@@ -124,6 +124,62 @@ RELATIONS = frozenset(
         "uncertain",
     }
 )
+
+# Canonical E2 endpoint names supported by the compatibility reader.
+# Historical artifacts remain readable, but the aliases below are input-only
+# and must never be emitted into a newly generated row or used as ranking labels.
+ACTIVE_ENDPOINT_FIELDS = frozenset(
+    {
+        "legacy_chain",
+        "clinical_complete",
+        "compatible_partial",
+        "complete_or_compatible_partial",
+        "task",
+    }
+)
+DEPRECATED_ENDPOINT_READ_ALIASES: dict[str, tuple[str, ...]] = {
+    "legacy_chain": ("strict_chain", "strict_chain_correct"),
+    "clinical_complete": ("complete",),
+    "compatible_partial": ("partial",),
+    "complete_or_compatible_partial": ("accepted", "complete_or_partial"),
+}
+
+
+def read_endpoint_bool(row: Mapping[str, Any], endpoint: str) -> bool:
+    """Read a canonical E2 endpoint, accepting explicit deprecated aliases.
+
+    Aliases are deliberately read-only. Conflicting canonical/legacy values
+    fail closed so a partially migrated artifact cannot silently change an
+    endpoint during regeneration.
+    """
+    if endpoint not in ACTIVE_ENDPOINT_FIELDS:
+        raise KeyError(f"unknown active E2 endpoint: {endpoint}")
+    names = (endpoint, *DEPRECATED_ENDPOINT_READ_ALIASES.get(endpoint, ()))
+    present = [(name, row[name]) for name in names if name in row]
+    if not present:
+        raise KeyError(f"missing E2 endpoint {endpoint}; checked {names}")
+
+    decoded: list[tuple[str, bool]] = []
+    for name, value in present:
+        if isinstance(value, bool):
+            decoded.append((name, value))
+            continue
+        if value in (0, 1):
+            decoded.append((name, bool(value)))
+            continue
+        text = str(value).strip().lower()
+        if text in {"true", "yes", "1"}:
+            decoded.append((name, True))
+        elif text in {"false", "no", "0"}:
+            decoded.append((name, False))
+        else:
+            raise ValueError(f"invalid boolean endpoint {name}={value!r}")
+    values = {value for _name, value in decoded}
+    if len(values) != 1:
+        raise ValueError(f"conflicting E2 endpoint aliases for {endpoint}: {decoded}")
+    return decoded[0][1]
+
+
 IDENTIFIABILITY = frozenset(
     {
         "unique_full_reference",
@@ -282,13 +338,13 @@ def derive_case_tags(
 
     tags: list[str] = []
     if mapper_rescue_arms:
-        tags.append("task_correct_chain_wrong")
+        tags.append("task_correct_legacy_chain_wrong")
     if mapper_harm_arms:
-        tags.append("chain_correct_task_wrong")
+        tags.append("legacy_chain_correct_task_wrong")
     if stable_exclusive:
         tags.append("stable_exclusive")
     if all_method_failure:
-        tags.append("all_method_strict_failure")
+        tags.append("all_method_legacy_chain_failure")
     if composite:
         tags.append("composite_or_subtype_reference")
     if not tags:
@@ -469,11 +525,14 @@ def make_candidate_registry(
         key = normalize_label(label)
         if not key or key not in by_key:
             continue
+        legacy_chain = _bool_cell(row.get("chain_correct"))
+        if legacy_chain is None:
+            raise ValueError(f"missing historical chain_correct for {case_key}/{row['arm']}")
         arm_map[str(row["arm"])] = {
             "candidate_id": by_key[key],
             "surface_label": label,
             "method_family": str(row.get("family") or ""),
-            "strict_chain_correct": _bool_cell(row.get("chain_correct")),
+            "legacy_chain": legacy_chain,
             "task_correct": _bool_cell(row.get("scored_correct")),
             "legacy_mapper_rescue": _bool_cell(row.get("mapper_rescue")),
         }
@@ -523,7 +582,7 @@ def _load_case_universe() -> tuple[list[dict[str, Any]], dict[str, str]]:
                 "gold_option": str(case.get("gold_option") or ""),
                 "candidate_registry": registry,
                 "arm_map": arm_map,
-                "strict_n_arms_correct": int(float(chain.get("n_arms_correct") or 0)),
+                "legacy_chain_n_arms_correct": int(float(chain.get("n_arms_correct") or 0)),
                 "difficulty": float(chain.get("difficulty") or 0.0),
                 **tags,
             }
@@ -644,7 +703,7 @@ def _preregistration(summary: Mapping[str, Any], cards_hash: str) -> str:
 
 ## 抽样与可推断范围
 
-主分层依次为 mapper harm、stable exclusive、mapper rescue、all-method strict failure、
+主分层依次为 mapper harm、stable exclusive、mapper rescue、all-method legacy-chain failure、
 composite/subtype、background。mapper-harm 与 stable-exclusive 单元全纳；其余在
 `family × slice × primary_stratum` 单元内按冻结哈希抽样。每例保存 `N/n` 权重。
 加权估计可回推此 800 例机制总体；未经权重的比例只能描述审计样本。稳定分歧只在
@@ -652,7 +711,8 @@ composite/subtype、background。mapper-harm 与 stable-exclusive 单元全纳�
 
 ## 独立的三个端点
 
-1. **Strict/chain：** 原审计的精确或冻结同义桥命中，只作严格字符串端点。
+1. **Legacy-chain：** 历史 substring/resolver `chain_correct` 投影，仅作血缘与接口诊断，
+   不进入临床能力排序。
 2. **Clinical completeness：** pre-mapper 输出由盲审分为 complete、parent/component
    partial、conflicting scope、manifestation/related、wrong、uncertain。
 3. **Task projection：** `scored_correct` 独立于临床关系；DA 的 mapper rescue/harm
@@ -666,20 +726,20 @@ unsupported specificity、insufficient、uncertain。不能因候选与 referenc
 
 每例纳入 `r5_dual` 中所有可用终端 champion，按规范化后的**精确表面**去重；不做模糊
 或临床合并。候选以冻结随机顺序编号。API 载荷只含病例正文、reference、候选 ID/文本；
-不含数据集名、臂名、方法族、strict/task 标记、mapper 状态、分层标签或分数。
+不含数据集名、臂名、方法族、legacy-chain/task 标记、mapper 状态、分层标签或分数。
 
 ## 根级裁决范围
 
 根审计至少覆盖：两审阅员全部 identifiability 分歧、全部候选 complete-vs-wrong/partial
-端点分歧、任一方法的 strict/task/clinical 三口径冲突、所有审阅失败，以及按家族冻结的
+端点分歧、任一方法的 legacy-chain/task/clinical 三口径冲突、所有审阅失败，以及按家族冻结的
 一致阴性样本。根审计不得用方法声誉覆盖病例证据；查看臂映射只允许在关系裁决冻结之后。
 
 ## 否证条件与报告约束
 
-- 若 clinical-complete 不能显著重排 strict 的主要臂序，则“差异主要由标签粒度造成”被削弱。
+- legacy-chain 只作历史血缘展示，不得参与临床能力排序或支持能力结论。
 - 若重排只发生在 reference 非唯一/不支持全特异度病例，不得称为算法诊断能力改善。
 - mapper rescue 若主要落在 clinical partial/wrong，说明任务投影在制造界面成功；若主要为
-  complete，说明 strict bridge 漏掉临床同义。
+  complete，说明 legacy-chain 投影漏掉临床同义。
 - stable-exclusive 若经 clinical/identifiability 裁决消失，专长证据进一步被否证；若保留，
   才进入病例机制解剖，仍不自动代表题型专长。
 - 所有模型失败留在 ITA 分母并单列；不得丢弃失败后只分析可服务病例。
@@ -715,7 +775,10 @@ def freeze_design(out: Path) -> dict[str, Any]:
         prompt_hashes={"clinical_reviewer": sha256_text(PROMPT)},
         input_hash=json_sha256(source_hashes),
         selection_freeze=SELECTION_FREEZE,
-        endpoint_contract="strict + clinical completeness + task projection; identifiability separate",
+        endpoint_contract=(
+            "legacy_chain diagnostic only + clinical_complete + compatible_partial + "
+            "complete_or_compatible_partial; task and identifiability separate"
+        ),
         excluded_variance_controls=list(summary["excluded_variance_controls"]),
     ).write(design / "manifest.json")
     return summary

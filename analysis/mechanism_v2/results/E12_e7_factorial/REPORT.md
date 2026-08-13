@@ -2,12 +2,12 @@
 
 ## 判定
 
-E12 最可靠的正结论不是“更多候选”或“更多调用”有效，而是：在冻结候选池上，**让比较器读取完整原始病例并做显式候选比较，确实优于直接沿用历史首候选**。在 300 个配对病例、39 个预注册主比较的临床完整等价 Top-1 端点上，只有两个比较通过 Holm 校正：
+E12 最可靠的正结论不是“更多候选”或“更多调用”有效，而是：在冻结候选池上，**完整原文比较器相对直接沿用历史首候选呈现稳定的排序信号**。在 300 个配对病例、39 个预注册比较的 root-priority/proxy-completed `clinical-complete*` secondary endpoint 上，只有两个比较通过 Holm 校正：
 
 - raw、k=5、pairwise 相对 first：51/300→65/300，`+4.67 pp`，16 gain/2 loss，McNemar `p=.00131`，Holm `q=.04987`；
 - raw、k=10、pairwise 相对 first：51/300→66/300，`+5.00 pp`，17/2，`p=.000729`，`q=.02842`。
 
-这里及下文的临床完整等价记为 `clinical-complete*`：全部 45 个现有 primary discordance 病例进入根复核，但绝对计数仍由 385 条 root relation 覆盖关键队列、2,806 条异质 proxy 补全非关键关系。它不是 300 例全候选人工标注；精确覆盖与未审 proxy-negative 边界见“端点与根审计”。
+这里及下文的临床完整等价记为 `clinical-complete*`：全部 45 个现有 endpoint discordance 病例进入根复核，但绝对计数仍由 385 条 root relation 覆盖关键队列、2,806 条异质 proxy 补全非关键关系。它不是 300 例全候选人工标注，也**不是盲审率**：实际 root queue 直接包含 `arm_outcomes`、gold、`gold_top1` 和 queue reason。预注册中 `after blinded/root audit` 的措辞没有被实际执行，属于端点合同偏差；精确覆盖与未审 proxy-negative 边界见“端点与根审计”。
 
 这证明候选顺序不是充分排序器，病例证据可以把更完整的病因、亚型或实体从候选池中提到第一。但它**没有证明 pairwise 优于 pointwise**：raw k=5 两者同为 65/300，raw k=10 为 60/300 对 66/300，后一个 `+2.00 pp` 只有 8/2 discordance，39 重校正后 `q=1`。pairwise 的强结论是“胜过不比较”，不是“已经胜过所有单次比较方式”。
 
@@ -44,8 +44,8 @@ E12 最可靠的正结论不是“更多候选”或“更多调用”有效，�
 三个端点有意分层：
 
 1. `safe-exact`（历史结果字段 `strict`）：exact 或冻结 safe-synonym，预注册 primary；
-2. `clinical complete*`：与 reference 是病例要求层级上的完整同一实体；
-3. `complete+partial*`：允许疾病族、表现或复合诊断的一部分正确，只作范围敏感性分析。
+2. `clinical complete*`：非盲 root-priority override + 异质 proxy 补全的 secondary sensitivity；
+3. `complete+partial*`：在同一非盲/proxy 合同下允许疾病族、表现或复合诊断的一部分正确，只作范围敏感性分析。
 
 `safe-exact` 是 mapper 前保守身份下界，不是临床完全等价或 task/mapper 正确率；本报告没有把 E2 full-800 的审计数值移植到 E12。
 
@@ -60,7 +60,7 @@ Gemini 2.5 Flash 只用于异质候选关系 screen 和扩展审计队列，300/
 - 把 diabetic amyotrophy 当成肾癌；
 - 把复合 reference 的单个表现或病因组件当作完整答案。
 
-最终 385 条根关系为 53 complete、116 partial、216 not-equivalent；其余 2,806 条关系没有人工逐候选复核，保留 heterogeneous proxy，其中 proxy-negative 不是人工确认的临床阴性。下文带星号临床端点以 root override 覆盖关键队列、以 proxy 补全其余关系；30 例阴性抽样未发现新增 complete，但不能把它升级为 300 例全量人工 gold。病例机制解读以根审计队列为主。
+最终 385 条非盲根关系为 53 complete、116 partial、216 not-equivalent；其余 2,806 条关系没有人工逐候选复核，保留 heterogeneous proxy，其中 proxy-negative 不是人工确认的临床阴性。下文带星号临床端点以 arm-visible root override 覆盖关键队列、以 proxy 补全其余关系；30 例阴性抽样未发现新增 complete，但不能把它升级为 300 例全量人工 gold 或盲法 clinical rate。病例机制解读以根审计队列为主。
 
 ## 二十个条件的端点全景
 
@@ -95,7 +95,7 @@ first 的九个表征/宽度组合输出完全相同，是设计正确的负控�
 
 ## 39 个预注册比较：哪些结果能说、哪些不能说
 
-clinical-complete Top-1 的两个 Holm survivor 都是 raw pairwise 对 first；其余 37 个比较均未通过 `alpha=.05`。raw pointwise 对 first 的 k5 比较同为 `+4.67 pp`，但 17 gain/3 loss，Holm `q=.09534`；k10 为 `+3.00 pp`，14/5，`q=1`。不能因为 pairwise 的 q 刚过阈值，就把 pointwise 描述成无效；两者的绝对表现高度接近，discordance 结构不同。
+非盲 root-priority/proxy-completed `clinical-complete*` Top-1 的两个 Holm survivor 都是 raw pairwise 对 first；其余 37 个比较均未通过 `alpha=.05`。这是该 secondary proxy 合同内的统计结果，不是全量盲法 clinical-complete 确认。raw pointwise 对 first 的 k5 比较同为 `+4.67 pp`，但 17 gain/3 loss，Holm `q=.09534`；k10 为 `+3.00 pp`，14/5，`q=1`。不能因为 pairwise 的 q 刚过阈值，就把 pointwise 描述成无效；两者的绝对表现高度接近，discordance 结构不同。
 
 complete+partial 端点中，raw 相对 S1 的 k10 pointwise/pairwise 都是 `+7.67 pp`，未校正 `p=.00219/.00140`，Holm `q=.08104/.05470`；仍没有通过 .05。唯一通过该敏感性 family 校正的是 graph k10 pointwise 相对 first 的 Top-2 **下降** `−9.67 pp`（Holm `q=.02034`）。这与 graph 在较宽候选池上易受表现/相关实体吸引一致，但该端点不是 primary，不能单独升级成“graph 必然有害”的确认性结论。
 

@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
-"""Root-owned clinical and mechanism adjudication for E10."""
+"""Root-owned binary-acceptability and mechanism adjudication for E10.
+
+The historical E10 audit asked a binary ``clinically acceptable`` question.
+It did not distinguish full clinical equivalence from compatible-but-partial
+answers.  The output names in this module therefore deliberately avoid
+``clinical_complete``: those categories cannot be recovered from the frozen
+binary judgments without a new, blinded three-way adjudication.
+"""
 from __future__ import annotations
 
 import argparse
@@ -74,13 +81,13 @@ CRITICAL_ADJUDICATIONS: dict[str, dict[str, str]] = {
         "note": "Independent doctors decomposed myopericarditis into myocarditis/pericarditis; history preserved Doctor A's composite label, though RRF still favored common distractors.",
     },
     "MCR_seq200b/260": {
-        "history_mechanism": "surface_specificity_loss_without_clinical_loss",
-        "clinical_direction": "clinically_equivalent_strict_artifact",
+        "history_mechanism": "surface_specificity_loss_without_binary_acceptable_loss",
+        "clinical_direction": "binary_acceptable_equivalence_safe_exact_artifact",
         "note": "Sequential history removed the exact surface 'syphilitic aortitis' but retained the equivalent 'aortitis due to syphilis'; the strict exposure loss is lexical.",
     },
     "MCR_seq200b/285": {
         "history_mechanism": "orthographic_identity_artifact",
-        "clinical_direction": "clinically_equivalent_strict_artifact",
+        "clinical_direction": "binary_acceptable_equivalence_safe_exact_artifact",
         "note": "Isolated Top-1 'Pyknodysostosis' is the same disease as reference spelling 'Pycnodysostosis'; the apparent sequential Top-1 rescue is not clinical.",
     },
     "MCR_seq200b/294": {
@@ -119,9 +126,9 @@ CRITICAL_ADJUDICATIONS: dict[str, dict[str, str]] = {
         "note": "D1 already ranked the radiographically specific resorption first; independent D2/D3 over-weighted pulpitis, while history restored D1's ranking.",
     },
     "MCR_seq200b/418": {
-        "history_mechanism": "subtype_substitution_strict_artifact",
-        "clinical_direction": "sequential_better_clinically",
-        "note": "Sequential lists use the clinically correct specific label cardiac sarcoidosis, which the strict reference surface misses; isolated supervisor also retained generic sarcoidosis.",
+        "history_mechanism": "subtype_substitution_safe_exact_artifact",
+        "clinical_direction": "sequential_more_specific_under_binary_acceptable_proxy",
+        "note": "Sequential lists use the more specific label cardiac sarcoidosis, which the safe-exact reference surface misses; isolated supervisor also retained generic sarcoidosis.",
     },
     "MCR_seq200b/423": {
         "history_mechanism": "unique_independent_candidate_erased",
@@ -135,7 +142,7 @@ CRITICAL_ADJUDICATIONS: dict[str, dict[str, str]] = {
     },
     "MCR_seq200b/441": {
         "history_mechanism": "specific_subtype_identity_fragmentation",
-        "clinical_direction": "clinically_equivalent_strict_artifact",
+        "clinical_direction": "binary_acceptable_equivalence_safe_exact_artifact",
         "note": "The isolated supervisor selected two surface variants of a more specific dengue hemorrhagic encephalitic phenotype; strict scoring calls this a loss and also exposes duplicate-concept selection.",
     },
     "MCR_seq200b/455": {
@@ -241,11 +248,20 @@ def adjudicate(out: Path) -> list[dict[str, Any]]:
             accepted = isolated_accept if arm.startswith("isolated") else sequential_accept
             labels = [normalize_label(label) for label in row["strict"][arm]["top2_labels"]]
             arm_hits[arm] = {
-                "clinical_top1": bool(labels and labels[0] in accepted),
-                "clinical_top2": any(label in accepted for label in labels[:2]),
+                "acceptable_proxy_top1": bool(labels and labels[0] in accepted),
+                "acceptable_proxy_top2": any(label in accepted for label in labels[:2]),
             }
         reasons = list(row["queue_reasons"])
-        critical = CRITICAL_ADJUDICATIONS.get(str(row["case_key"]))
+        internal_critical = CRITICAL_ADJUDICATIONS.get(str(row["case_key"]))
+        critical = (
+            {
+                "history_mechanism": internal_critical["history_mechanism"],
+                "legacy_binary_mechanism_label": internal_critical["clinical_direction"],
+                "note": internal_critical["note"],
+            }
+            if internal_critical is not None
+            else None
+        )
         if "frozen_negative_screen_audit" in reasons:
             root_note = "Root reviewed every candidate surface against the reference and vignette; no hidden acceptable equivalent was found."
         else:
@@ -266,11 +282,11 @@ def adjudicate(out: Path) -> list[dict[str, Any]]:
                 "reviewer": "root_manual_final_responsibility",
                 "candidate_adjudications": decisions,
                 "screen_acceptance_disagreements": disagreements,
-                "clinical_union_exposed": {
+                "acceptable_proxy_union_exposed": {
                     "isolated": bool(isolated_accept),
                     "sequential": bool(sequential_accept),
                 },
-                "arm_clinical_hits": arm_hits,
+                "arm_acceptable_proxy_hits": arm_hits,
                 "critical_mechanism": critical,
                 "root_note": root_note,
             }
@@ -327,11 +343,11 @@ def analyze(out: Path, manual: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
         }
         for endpoint in ("gold_top1", "gold_top2")
     }
-    clinical_values: dict[str, dict[str, dict[str, bool]]] = {
+    acceptable_proxy_values: dict[str, dict[str, dict[str, bool]]] = {
         endpoint: {arm: {} for arm in ARMS}
-        for endpoint in ("clinical_top1", "clinical_top2")
+        for endpoint in ("acceptable_proxy_top1", "acceptable_proxy_top2")
     }
-    clinical_exposure: dict[str, dict[str, bool]] = {
+    acceptable_proxy_exposure: dict[str, dict[str, bool]] = {
         history: {} for history in HISTORIES
     }
     for key in case_keys:
@@ -339,37 +355,42 @@ def analyze(out: Path, manual: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
         for history in HISTORIES:
             value = bool(arm_rows[f"{history}_rrf"][key]["gold_union_exposed"])
             if audit is not None:
-                value = value or bool(audit["clinical_union_exposed"][history])
-            clinical_exposure[history][key] = value
+                value = value or bool(audit["acceptable_proxy_union_exposed"][history])
+            acceptable_proxy_exposure[history][key] = value
         for arm in ARMS:
-            for clinical_endpoint, strict_endpoint in (
-                ("clinical_top1", "gold_top1"), ("clinical_top2", "gold_top2")
+            for acceptable_endpoint, strict_endpoint in (
+                ("acceptable_proxy_top1", "gold_top1"),
+                ("acceptable_proxy_top2", "gold_top2"),
             ):
                 value = bool(arm_rows[arm][key][strict_endpoint])
                 if audit is not None:
-                    value = value or bool(audit["arm_clinical_hits"][arm][clinical_endpoint])
-                clinical_values[clinical_endpoint][arm][key] = value
+                    value = value or bool(
+                        audit["arm_acceptable_proxy_hits"][arm][acceptable_endpoint]
+                    )
+                acceptable_proxy_values[acceptable_endpoint][arm][key] = value
 
-    clinical_mediation: list[dict[str, Any]] = []
+    acceptable_proxy_mediation: list[dict[str, Any]] = []
     for aggregator_name in ("rrf", "supervisor"):
-        for endpoint in ("clinical_top1", "clinical_top2"):
-            left = clinical_values[endpoint][f"isolated_{aggregator_name}"]
-            right = clinical_values[endpoint][f"sequential_{aggregator_name}"]
+        for endpoint in ("acceptable_proxy_top1", "acceptable_proxy_top2"):
+            left = acceptable_proxy_values[endpoint][f"isolated_{aggregator_name}"]
+            right = acceptable_proxy_values[endpoint][f"sequential_{aggregator_name}"]
             classes = Counter()
             for key in case_keys:
                 if right[key] and not left[key]:
                     classes[
                         "sequential_capture_gain"
-                        if clinical_exposure["sequential"][key] and not clinical_exposure["isolated"][key]
+                        if acceptable_proxy_exposure["sequential"][key]
+                        and not acceptable_proxy_exposure["isolated"][key]
                         else "sequential_rank_conversion_gain"
                     ] += 1
                 elif left[key] and not right[key]:
                     classes[
                         "sequential_capture_loss"
-                        if clinical_exposure["isolated"][key] and not clinical_exposure["sequential"][key]
+                        if acceptable_proxy_exposure["isolated"][key]
+                        and not acceptable_proxy_exposure["sequential"][key]
                         else "sequential_rank_conversion_loss"
                     ] += 1
-            clinical_mediation.append(
+            acceptable_proxy_mediation.append(
                 {
                     "aggregator": aggregator_name,
                     "endpoint": endpoint,
@@ -384,7 +405,7 @@ def analyze(out: Path, manual: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
         ("isolated_rrf", "isolated_supervisor"),
         ("sequential_rrf", "sequential_supervisor"),
     )
-    for endpoint, values in {**strict_values, **clinical_values}.items():
+    for endpoint, values in {**strict_values, **acceptable_proxy_values}.items():
         for left, right in contrast_pairs:
             paired_contrasts.append(
                 {"endpoint": endpoint, "left": left, "right": right, **_paired_from_values(values[left], values[right])}
@@ -439,86 +460,97 @@ def analyze(out: Path, manual: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
         any(bool(item["clinically_acceptable"]) for item in row["candidate_adjudications"].values())
         for row in negative_rows
     )
-    family_clinical: dict[str, Any] = {}
+    family_acceptable_proxy: dict[str, Any] = {}
     for family in ("DA", "MCR"):
         family_keys = [
             key for key in case_keys
             if arm_rows[ARMS[0]][key]["family"] == family
         ]
-        family_clinical[family] = {
+        family_acceptable_proxy[family] = {
             "n_cases": len(family_keys),
             "arm_counts": {
                 arm: {
-                    endpoint: sum(clinical_values[endpoint][arm][key] for key in family_keys)
-                    for endpoint in ("clinical_top1", "clinical_top2")
+                    endpoint: sum(
+                        acceptable_proxy_values[endpoint][arm][key]
+                        for key in family_keys
+                    )
+                    for endpoint in ("acceptable_proxy_top1", "acceptable_proxy_top2")
                 }
                 for arm in ARMS
             },
             "history_net_wins": {
                 f"{aggregator_name}_{endpoint}": {
                     "isolated_only": sum(
-                        clinical_values[endpoint][f"isolated_{aggregator_name}"][key]
-                        and not clinical_values[endpoint][f"sequential_{aggregator_name}"][key]
+                        acceptable_proxy_values[endpoint][f"isolated_{aggregator_name}"][key]
+                        and not acceptable_proxy_values[endpoint][f"sequential_{aggregator_name}"][key]
                         for key in family_keys
                     ),
                     "sequential_only": sum(
-                        clinical_values[endpoint][f"sequential_{aggregator_name}"][key]
-                        and not clinical_values[endpoint][f"isolated_{aggregator_name}"][key]
+                        acceptable_proxy_values[endpoint][f"sequential_{aggregator_name}"][key]
+                        and not acceptable_proxy_values[endpoint][f"isolated_{aggregator_name}"][key]
                         for key in family_keys
                     ),
                 }
                 for aggregator_name in ("rrf", "supervisor")
-                for endpoint in ("clinical_top1", "clinical_top2")
+                for endpoint in ("acceptable_proxy_top1", "acceptable_proxy_top2")
             },
         }
     summary = {
         "experiment_id": "E10",
         "n_cases": len(case_keys),
-        "strict_arm_counts": {
+        "safe_exact_arm_counts": {
             arm: {
                 "top1_n": sum(strict_values["gold_top1"][arm].values()),
                 "top2_n": sum(strict_values["gold_top2"][arm].values()),
             }
             for arm in ARMS
         },
-        "screen_assisted_root_clinical_counts": {
+        "screen_assisted_root_binary_acceptable_proxy_counts": {
             arm: {
-                "top1_n": sum(clinical_values["clinical_top1"][arm].values()),
-                "top2_n": sum(clinical_values["clinical_top2"][arm].values()),
+                "top1_n": sum(acceptable_proxy_values["acceptable_proxy_top1"][arm].values()),
+                "top2_n": sum(acceptable_proxy_values["acceptable_proxy_top2"][arm].values()),
             }
             for arm in ARMS
         },
-        "screen_assisted_root_clinical_exposure": {
+        "screen_assisted_root_binary_acceptable_proxy_exposure": {
             history: {
-                "exposed_n": sum(clinical_exposure[history].values()),
+                "exposed_n": sum(acceptable_proxy_exposure[history].values()),
                 "rrf_exposure_to_top1": (
-                    sum(clinical_values["clinical_top1"][f"{history}_rrf"].values())
-                    / sum(clinical_exposure[history].values())
+                    sum(acceptable_proxy_values["acceptable_proxy_top1"][f"{history}_rrf"].values())
+                    / sum(acceptable_proxy_exposure[history].values())
                 ),
                 "rrf_exposure_to_top2": (
-                    sum(clinical_values["clinical_top2"][f"{history}_rrf"].values())
-                    / sum(clinical_exposure[history].values())
+                    sum(acceptable_proxy_values["acceptable_proxy_top2"][f"{history}_rrf"].values())
+                    / sum(acceptable_proxy_exposure[history].values())
                 ),
                 "supervisor_exposure_to_top1": (
-                    sum(clinical_values["clinical_top1"][f"{history}_supervisor"].values())
-                    / sum(clinical_exposure[history].values())
+                    sum(acceptable_proxy_values["acceptable_proxy_top1"][f"{history}_supervisor"].values())
+                    / sum(acceptable_proxy_exposure[history].values())
                 ),
                 "supervisor_exposure_to_top2": (
-                    sum(clinical_values["clinical_top2"][f"{history}_supervisor"].values())
-                    / sum(clinical_exposure[history].values())
+                    sum(acceptable_proxy_values["acceptable_proxy_top2"][f"{history}_supervisor"].values())
+                    / sum(acceptable_proxy_exposure[history].values())
                 ),
             }
             for history in HISTORIES
         },
-        "clinical_history_effect_mediation": clinical_mediation,
-        "family_stratified_clinical": family_clinical,
-        "clinical_recode_scope": {
+        "binary_acceptable_proxy_history_effect_mediation": acceptable_proxy_mediation,
+        "family_stratified_binary_acceptable_proxy": family_acceptable_proxy,
+        "binary_acceptable_proxy_scope": {
             "root_reviewed_cases": len(manual),
-            "all_strict_exposures_included": True,
+            "all_safe_exact_exposures_included": True,
             "all_screen_positive_or_uncertain_included": True,
             "screen_negative_root_sample_n": len(negative_rows),
             "screen_negative_root_sample_misses": negative_misses,
             "unreviewed_screen_negative_cases_are_not_upgraded": True,
+            "clinical_complete_measured": False,
+            "compatible_partial_measured": False,
+            "complete_or_compatible_partial_measured": False,
+            "ability_ranking_allowed": False,
+            "reason": (
+                "Frozen judgments are binary clinically-acceptable decisions and mix "
+                "complete, compatible-partial and scope variants."
+            ),
         },
         "semantic_screen_calibration": {
             "candidate_acceptance_disagreements": screen_disagreements,
@@ -528,9 +560,9 @@ def analyze(out: Path, manual: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
         "generation_mechanisms": generation,
         "sequential_minus_isolated_union_size_distribution": dict(sorted(union_delta.items())),
         "aggregation_mechanisms": aggregator,
-        "critical_manual_mechanism_counts": {
+        "legacy_binary_manual_mechanism_counts": {
             "history_mechanism": dict(sorted(Counter(row["history_mechanism"] for row in CRITICAL_ADJUDICATIONS.values()).items())),
-            "clinical_direction": dict(sorted(Counter(row["clinical_direction"] for row in CRITICAL_ADJUDICATIONS.values()).items())),
+            "legacy_binary_mechanism_label": dict(sorted(Counter(row["clinical_direction"] for row in CRITICAL_ADJUDICATIONS.values()).items())),
         },
         "created_at_utc": datetime.now(timezone.utc).isoformat(),
     }
@@ -588,7 +620,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     summary = analyze(out, manual)
     if args.package:
         print(package(out))
-    print(json.dumps({"manual": len(manual), "clinical": summary["screen_assisted_root_clinical_counts"]}, sort_keys=True))
+    print(json.dumps({
+        "manual": len(manual),
+        "binary_acceptable_proxy": summary[
+            "screen_assisted_root_binary_acceptable_proxy_counts"
+        ],
+    }, sort_keys=True))
     return 0
 
 

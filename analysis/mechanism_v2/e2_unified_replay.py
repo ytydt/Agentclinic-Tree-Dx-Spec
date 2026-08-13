@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the exhaustive 800-case five-endpoint E2 replay.
+"""Build the exhaustive 800-case canonical-endpoint E2 replay.
 
 This module corrects two measurement errors in the historical analysis:
 
@@ -9,7 +9,7 @@ This module corrects two measurement errors in the historical analysis:
   and design-weighted it to the 800-case mechanism universe.  It was not an
   exhaustive 800-case clinical census.
 
-The replay therefore keeps five non-interchangeable binary columns:
+The replay therefore keeps six non-interchangeable binary columns:
 
 ``safe_exact``
     Exact or frozen-safe-synonym equivalence, recomputed from the champion.
@@ -18,9 +18,13 @@ The replay therefore keeps five non-interchangeable binary columns:
     for backward compatibility and interface diagnosis.
 ``clinical_complete``
     Root-owned complete clinical equivalence to the requested reference.
-``partial``
+``compatible_partial``
     Root-owned compatible parent/component/underspecified relation.  This is
-    partial-only, not ``complete OR partial``.
+    partial-only, not ``clinical_complete OR compatible_partial``.
+``complete_or_compatible_partial``
+    Root-owned union of the two mutually exclusive clinically compatible
+    relation classes; a secondary coverage endpoint, never a synonym for
+    clinical completeness.
 ``task``
     The frozen benchmark interface outcome.  DA uses the option mapper; MCR
     uses the cached official semantic diagnostic judge.
@@ -61,6 +65,7 @@ from analysis.mechanism_v2.e2_blinded_adjudication import (  # noqa: E402
     _bool_cell,
     _load_case_universe,
     key_for,
+    read_endpoint_bool,
     read_table,
 )
 from analysis.mechanism_v2.online_runner import read_jsonl, write_jsonl  # noqa: E402
@@ -385,7 +390,7 @@ def _arm_rows(universe: Sequence[Mapping[str, Any]], out: Path) -> list[dict[str
                 raise AssertionError(f"safe identity contradicted by root relation: {case_key}/{arm}")
             rows.append(
                 {
-                    "schema_version": "e2-unified-five-endpoint-v1",
+                    "schema_version": "e2-unified-clinical-endpoint-v2",
                     "case_key": case_key,
                     "benchmark_family": str(case["family"]),
                     "slice_id": str(case["slice_id"]),
@@ -411,9 +416,11 @@ def _arm_rows(universe: Sequence[Mapping[str, Any]], out: Path) -> list[dict[str
                     "safe_exact_match_kind": _safe_match_kind(
                         str(mapping["surface_label"]), str(case["gold"]), bridge
                     ),
-                    "legacy_chain": bool(mapping["strict_chain_correct"]),
+                    "legacy_chain": read_endpoint_bool(mapping, "legacy_chain"),
                     "clinical_complete": relation == "complete_equivalent",
-                    "partial": relation == "partial_parent_or_component",
+                    "compatible_partial": relation == "partial_parent_or_component",
+                    "complete_or_compatible_partial": relation
+                    in {"complete_equivalent", "partial_parent_or_component"},
                     "task": bool(mapping["task_correct"]),
                     "task_contract": (
                         "da_option_mapper" if case["family"] == "DA" else "mcr_cached_semantic_judge"
@@ -475,15 +482,26 @@ def _validate_source_contract(
     contradictions = sum(
         bool(row["safe_exact"]) and not bool(row["clinical_complete"]) for row in rows
     )
-    overlaps = sum(bool(row["clinical_complete"]) and bool(row["partial"]) for row in rows)
-    if contradictions or overlaps:
-        raise AssertionError(f"endpoint contract contradiction={contradictions} overlap={overlaps}")
+    overlaps = sum(
+        bool(row["clinical_complete"]) and bool(row["compatible_partial"])
+        for row in rows
+    )
+    union_mismatches = sum(
+        bool(row["complete_or_compatible_partial"])
+        != (bool(row["clinical_complete"]) or bool(row["compatible_partial"]))
+        for row in rows
+    )
+    if contradictions or overlaps or union_mismatches:
+        raise AssertionError(
+            "endpoint contract "
+            f"contradiction={contradictions} overlap={overlaps} union={union_mismatches}"
+        )
 
     safe_legacy = Counter(
         (bool(row["safe_exact"]), bool(row["legacy_chain"])) for row in rows
     )
     return {
-        "schema_version": "e2-unified-five-endpoint-v1",
+        "schema_version": "e2-unified-clinical-endpoint-v2",
         "cases_n": len(universe),
         "case_arm_rows_n": len(rows),
         "arm_counts": dict(sorted(arm_counts.items())),
@@ -500,7 +518,8 @@ def _validate_source_contract(
         "matrix_legacy_chain_mismatches_n": matrix_chain_mismatches,
         "matrix_task_mismatches_n": matrix_task_mismatches,
         "safe_exact_root_contradictions_n": contradictions,
-        "complete_partial_overlap_n": overlaps,
+        "clinical_complete_compatible_partial_overlap_n": overlaps,
+        "complete_or_compatible_partial_mismatch_n": union_mismatches,
         "safe_exact_by_legacy_chain": {
             f"safe_{int(safe)}_legacy_{int(legacy)}": safe_legacy[(safe, legacy)]
             for safe in (False, True)
@@ -1091,7 +1110,9 @@ def _rank_stability(rows: Sequence[Mapping[str, Any]], repetitions: int = 10000)
         by_slice: dict[str, list[str]] = defaultdict(list)
         for key in family_keys:
             by_slice[case_meta[key][1]].append(key)
-        for endpoint in ("clinical_complete", "safe_exact", "legacy_chain", "task"):
+        # Only clinical_complete enters capability rank stability.
+        # legacy_chain remains available in diagnostic calibration only.
+        for endpoint in ("clinical_complete",):
             rng = np.random.default_rng(stable_seed(EXPERIMENT_ID, "rank", family, endpoint))
             totals = np.zeros((repetitions, len(CORE_ARMS)), dtype=float)
             for slice_id, keys in sorted(by_slice.items()):
@@ -1136,7 +1157,14 @@ def build_replay(out: Path = DEFAULT_OUT) -> dict[str, Any]:
     validation = _validate_source_contract(universe, rows, out)
     atomic_json(out / "validation_summary.json", validation)
 
-    endpoints = ("safe_exact", "legacy_chain", "clinical_complete", "partial", "task")
+    endpoints = (
+        "safe_exact",
+        "legacy_chain",
+        "clinical_complete",
+        "compatible_partial",
+        "complete_or_compatible_partial",
+        "task",
+    )
     leaderboard: list[dict[str, Any]] = []
     for arm in CORE_ARMS:
         arm_rows = [row for row in rows if row["arm_id"] == arm]
@@ -1148,8 +1176,6 @@ def build_replay(out: Path = DEFAULT_OUT) -> dict[str, Any]:
                 item[f"{endpoint}_n"] = k
                 item[f"{endpoint}_rate"] = k / len(scoped)
                 item[f"{endpoint}_wilson95"] = _wilson(k, len(scoped))
-            item["complete_or_partial_n"] = item["clinical_complete_n"] + item["partial_n"]
-            item["complete_or_partial_rate"] = item["complete_or_partial_n"] / len(scoped)
             leaderboard.append(item)
     atomic_json(out / "leaderboard.json", leaderboard)
     _write_csv(out / "leaderboard.csv", leaderboard)
@@ -1344,22 +1370,45 @@ def build_replay(out: Path = DEFAULT_OUT) -> dict[str, Any]:
     _write_csv(out / "rank_stability.csv", rank_stability)
 
     endpoint_contract = {
-        "schema_version": "e2-unified-five-endpoint-v1",
+        "schema_version": "e2-unified-clinical-endpoint-v2",
         "primary_endpoint": "clinical_complete",
         "columns": {
             "safe_exact": "exact or frozen-safe-synonym identity; deterministic conservative lower bound",
             "legacy_chain": "historical bidirectional-substring/resolver chain_correct; diagnostic compatibility only",
             "clinical_complete": "root-adjudicated complete equivalence to the full requested reference object",
-            "partial": "root-adjudicated compatible parent/component/underspecified object; mutually exclusive with complete",
+            "compatible_partial": "root-adjudicated compatible parent/component/underspecified object; mutually exclusive with clinical_complete",
+            "complete_or_compatible_partial": "clinical_complete OR compatible_partial; secondary coverage sensitivity only",
             "task": "family-specific interface success: DA option mapper or MCR cached semantic diagnostic judge",
         },
-        "derived_endpoint": {
-            "complete_or_partial": "clinical_complete OR partial; secondary coverage sensitivity only"
+        "endpoint_roles": {
+            "clinical_capability_ranking": [
+                "clinical_complete",
+            ],
+            "compatible_partial_role": "mutually exclusive descriptive relation state; not a capability ranking endpoint",
+            "secondary_coverage_sensitivity": ["complete_or_compatible_partial"],
+            "diagnostic_only_not_capability_ranking": [
+                "safe_exact",
+                "legacy_chain",
+                "task",
+            ],
         },
+        "deprecated_read_aliases": {
+            "strict_chain": "legacy_chain",
+            "strict_chain_correct": "legacy_chain",
+            "complete": "clinical_complete",
+            "partial": "compatible_partial",
+            "accepted": "complete_or_compatible_partial",
+            "complete_or_partial": "complete_or_compatible_partial",
+        },
+        "deprecated_aliases_are_emitted": False,
+        "checked_in_v1_provenance": (
+            "canonical-valid historical artifact; partial and complete_or_partial are "
+            "accepted only as explicit read aliases during v2 regeneration"
+        ),
         "mandatory_stratifier": "reference_identifiability",
         "forbidden_interpretations": [
             "legacy_chain as strict or concept accuracy",
-            "partial as complete diagnosis",
+            "compatible_partial as complete diagnosis",
             "combined DA+MCR task as a homogeneous clinical estimand",
             "safe-exact as an unbiased absolute capability estimate",
         ],
@@ -1373,13 +1422,26 @@ def build_replay(out: Path = DEFAULT_OUT) -> dict[str, Any]:
         "families": {"DA": 400, "MCR": 400},
         "arms": list(CORE_ARMS),
         "arm_case_rows_n": len(rows),
-        "endpoint_columns": list(endpoints),
+        "endpoint_columns": [
+            "safe_exact",
+            "legacy_chain",
+            "clinical_complete",
+            "compatible_partial",
+            "complete_or_compatible_partial",
+            "task",
+        ],
         "endpoint_contract": {
             "primary_true_diagnostic_ability": "clinical_complete",
-            "secondary_utility": "clinical_complete OR partial",
+            "secondary_utility": "complete_or_compatible_partial",
             "deterministic_lower_bound": "safe_exact",
             "legacy_diagnostic_only": "legacy_chain",
             "family_specific_interface": "task (DA option mapper; MCR cached semantic judge)",
+            "clinical_capability_ranking_endpoints": [
+                "clinical_complete",
+            ],
+            "secondary_coverage_sensitivity": "complete_or_compatible_partial",
+            "deprecated_aliases_are_read_only": True,
+            "checked_in_v1_is_canonical_valid_provenance": True,
         },
         "statistical_inference": {
             "clinical_coherent_holm_families": expected_clinical_families,

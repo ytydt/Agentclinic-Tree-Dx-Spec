@@ -233,7 +233,7 @@ def build_case_row(
     if not upstream_identical:
         mechanism = "upstream_mismatch"
     elif lite_hit == adaptive_hit:
-        mechanism = "no_strict_flip"
+        mechanism = "no_safe_exact_flip"
     elif a1_reference_discovery:
         mechanism = "new_reference_discovery"
     elif a1_champion:
@@ -252,9 +252,9 @@ def build_case_row(
         "gold": gold,
         "lite_champion": lite_champion,
         "adaptive_champion": adaptive_champion,
-        "lite_strict_hit": lite_hit,
-        "adaptive_strict_hit": adaptive_hit,
-        "strict_delta": int(adaptive_hit) - int(lite_hit),
+        "lite_safe_exact_hit": lite_hit,
+        "adaptive_safe_exact_hit": adaptive_hit,
+        "safe_exact_delta": int(adaptive_hit) - int(lite_hit),
         "champion_flip": bridge.canonical_key(lite_champion) != bridge.canonical_key(adaptive_champion),
         "lite_calls": int(lite.get("llm_calls") or 0),
         "adaptive_calls": int(adaptive.get("llm_calls") or 0),
@@ -301,7 +301,7 @@ def build_case_row(
         ),
         "a1_new_champion": a1_champion,
         "reference_exposed_final": any_equivalent(frontier_labels, gold, bridge),
-        "strict_flip_mechanism": mechanism,
+        "safe_exact_flip_mechanism": mechanism,
         "lite_option_top1": lite_option,
         "adaptive_option_top1": adaptive_option,
         "option_delta": (
@@ -369,18 +369,18 @@ def load_comparison(
 
 
 def paired_summary(rows: Sequence[Mapping[str, Any]], *, repetitions: int, seed_key: str) -> dict[str, Any]:
-    left = [bool(row["lite_strict_hit"]) for row in rows]
-    right = [bool(row["adaptive_strict_hit"]) for row in rows]
+    left = [bool(row["lite_safe_exact_hit"]) for row in rows]
+    right = [bool(row["adaptive_safe_exact_hit"]) for row in rows]
     left_only = sum(a and not b for a, b in zip(left, right))
     right_only = sum(not a and b for a, b in zip(left, right))
     deltas = [int(b) - int(a) for a, b in zip(left, right)]
     n = len(rows)
     return {
         "n": n,
-        "lite_strict_n": sum(left),
-        "adaptive_strict_n": sum(right),
-        "lite_strict_rate": round(sum(left) / n, 6) if n else None,
-        "adaptive_strict_rate": round(sum(right) / n, 6) if n else None,
+        "lite_safe_exact_n": sum(left),
+        "adaptive_safe_exact_n": sum(right),
+        "lite_safe_exact_rate": round(sum(left) / n, 6) if n else None,
+        "adaptive_safe_exact_rate": round(sum(right) / n, 6) if n else None,
         "adaptive_minus_lite": round(sum(deltas) / n, 6) if n else None,
         "lite_only": left_only,
         "adaptive_only": right_only,
@@ -393,12 +393,19 @@ def paired_summary(rows: Sequence[Mapping[str, Any]], *, repetitions: int, seed_
 def option_summary(rows: Sequence[Mapping[str, Any]], *, repetitions: int) -> dict[str, Any]:
     eligible = [row for row in rows if row.get("lite_option_top1") is not None and row.get("adaptive_option_top1") is not None]
     converted = [
-        {**row, "lite_strict_hit": bool(row["lite_option_top1"]), "adaptive_strict_hit": bool(row["adaptive_option_top1"])}
+        {
+            **row,
+            "lite_safe_exact_hit": bool(row["lite_option_top1"]),
+            "adaptive_safe_exact_hit": bool(row["adaptive_option_top1"]),
+        }
         for row in eligible
     ]
     result = paired_summary(converted, repetitions=repetitions, seed_key="DA-option")
+    for arm in ("lite", "adaptive"):
+        result[f"{arm}_task_n"] = result.pop(f"{arm}_safe_exact_n")
+        result[f"{arm}_task_rate"] = result.pop(f"{arm}_safe_exact_rate")
     result["endpoint"] = "historical shared mapper option_top1"
-    result["not_pooled_with_concept_strict"] = True
+    result["not_pooled_with_safe_exact_or_clinical_endpoints"] = True
     return result
 
 
@@ -414,9 +421,11 @@ def _describe(values: Sequence[float]) -> dict[str, float | None]:
 def signal_summary(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
     triggered = [row for row in rows if row["triggered"]]
     groups = {
-        "repair": [row for row in triggered if row["strict_delta"] > 0],
-        "harm": [row for row in triggered if row["strict_delta"] < 0],
-        "no_strict_change": [row for row in triggered if row["strict_delta"] == 0],
+        "repair": [row for row in triggered if row["safe_exact_delta"] > 0],
+        "harm": [row for row in triggered if row["safe_exact_delta"] < 0],
+        "no_safe_exact_change": [
+            row for row in triggered if row["safe_exact_delta"] == 0
+        ],
     }
     numeric = ("unexplained_n", "generator_jaccard", "top_margin", "contradiction_mass")
     output: dict[str, Any] = {}
@@ -444,8 +453,8 @@ def signal_summary(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
                 ]
                 if len(selected) < 10:
                     continue
-                gains = sum(row["strict_delta"] > 0 for row in selected)
-                harms = sum(row["strict_delta"] < 0 for row in selected)
+                gains = sum(row["safe_exact_delta"] > 0 for row in selected)
+                harms = sum(row["safe_exact_delta"] < 0 for row in selected)
                 candidates.append({
                     "direction": direction,
                     "threshold": threshold,
@@ -498,7 +507,7 @@ def analysis_summary(rows: Sequence[Mapping[str, Any]], attrition: Sequence[Mapp
             "added_calls": sum(int(row["adaptive_calls"]) - int(row["lite_calls"]) for row in rows),
             "trigger_by_dataset": dict(sorted(Counter(str(row["dataset"]) for row in trigger_rows).items())),
         },
-        "strict_concept": {
+        "safe_exact": {
             "by_dataset": by_dataset,
             "by_stratum": {
                 name: paired_summary(subset, repetitions=repetitions, seed_key=f"stratum:{name}")
@@ -516,10 +525,24 @@ def analysis_summary(rows: Sequence[Mapping[str, Any]], attrition: Sequence[Mapp
             "frontier_trace_available_case_n": sum(bool(row["frontier_trace_present"]) for row in trigger_rows),
             "a1_new_exposed_frontier_case_n": sum(row["a1_new_exposed_frontier"] is True for row in trigger_rows),
             "a1_new_champion_case_n": sum(bool(row["a1_new_champion"]) for row in trigger_rows),
-            "a1_reference_to_strict_champion_case_n": sum(bool(row["a1_reference_discovery"] and row["adaptive_strict_hit"]) for row in trigger_rows),
+            "a1_reference_to_safe_exact_champion_case_n": sum(
+                bool(
+                    row["a1_reference_discovery"]
+                    and row["adaptive_safe_exact_hit"]
+                )
+                for row in trigger_rows
+            ),
             "pre_gate_reference_capture_case_n": sum(bool(row["upstream_reference_capture"]) for row in trigger_rows),
         },
-        "strict_flip_mechanisms": dict(sorted(Counter(str(row["strict_flip_mechanism"]) for row in rows if row["strict_delta"]).items())),
+        "safe_exact_flip_mechanisms": dict(
+            sorted(
+                Counter(
+                    str(row["safe_exact_flip_mechanism"])
+                    for row in rows
+                    if row["safe_exact_delta"]
+                ).items()
+            )
+        ),
         "pre_gate_signal_outcomes": signal_summary(rows),
         "interpretation_limits": [
             "Historical treatment was not randomized and selector calls may differ stochastically.",
@@ -533,7 +556,7 @@ def analysis_summary(rows: Sequence[Mapping[str, Any]], attrition: Sequence[Mapp
 def manual_queue(rows: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
     selected = [
         row for row in rows
-        if row["strict_delta"] != 0
+        if row["safe_exact_delta"] != 0
         or bool(row["a1_new_champion"])
         or bool(row["triggered"] and row["champion_flip"])
         or row.get("option_delta") not in (None, 0)
@@ -541,8 +564,8 @@ def manual_queue(rows: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
     output: list[dict[str, Any]] = []
     for row in selected:
         reasons: list[str] = []
-        if row["strict_delta"] != 0:
-            reasons.append("strict_concept_flip")
+        if row["safe_exact_delta"] != 0:
+            reasons.append("safe_exact_flip")
         if row["a1_new_champion"]:
             reasons.append("a1_new_label_became_champion")
         if row["triggered"] and row["champion_flip"]:
@@ -562,8 +585,8 @@ def manual_queue(rows: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
             "a1_reference_discovery": row["a1_reference_discovery"],
             "lite_champion": row["lite_champion"],
             "adaptive_champion": row["adaptive_champion"],
-            "lite_strict_hit": row["lite_strict_hit"],
-            "adaptive_strict_hit": row["adaptive_strict_hit"],
+            "lite_safe_exact_hit": row["lite_safe_exact_hit"],
+            "adaptive_safe_exact_hit": row["adaptive_safe_exact_hit"],
             "lite_option_top1": row["lite_option_top1"],
             "adaptive_option_top1": row["adaptive_option_top1"],
             "upstream_identical": row["upstream_identical"],
@@ -572,7 +595,7 @@ def manual_queue(rows: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
             "lite_selector": row["lite_selector"],
             "adaptive_selector": row["adaptive_selector"],
             "adaptive_frontier": row["adaptive_frontier"],
-            "provisional_mechanism": row["strict_flip_mechanism"],
+            "provisional_mechanism": row["safe_exact_flip_mechanism"],
             "manual_fields": {
                 "clinical_lite_equivalence": "yes|partial_or_scope|no",
                 "clinical_adaptive_equivalence": "yes|partial_or_scope|no",
@@ -637,7 +660,7 @@ def main() -> None:
         "n_paired": result["n_paired"],
         "trigger_n": result["gate_cost"]["trigger_n"],
         "upstream_identical_n": result["comparability"]["upstream_g1_g2_identical_n"],
-        "strict_all": result["strict_concept"]["by_stratum"]["all"],
+        "safe_exact_all": result["safe_exact"]["by_stratum"]["all"],
     }, ensure_ascii=False, indent=2))
 
 

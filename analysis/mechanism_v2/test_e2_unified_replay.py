@@ -103,7 +103,29 @@ def test_freeze_has_no_arm_or_endpoint_provenance(tmp_path: Path):
     assert summary["candidate_relations_n"] == 1430
     cards = replay.read_jsonl(tmp_path / "root_audit/cards.jsonl")
     assert len(cards) == 400
-    forbidden = {"case_key", "family", "slice", "arm", "legacy_chain", "task"}
+    forbidden = {
+        "case_key",
+        "family",
+        "slice",
+        "arm",
+        "safe_exact",
+        "legacy_chain",
+        "clinical_complete",
+        "compatible_partial",
+        "complete_or_compatible_partial",
+        "task",
+        "strict_chain",
+        "strict_chain_correct",
+        "strict",
+        "complete",
+        "partial",
+        "accepted",
+        "complete_or_partial",
+    }
     assert not (forbidden & set(cards[0]))
-    assert all(not (forbidden | {"safe_exact"}) & set(candidate) for row in cards for candidate in row["candidate_registry"])
+    assert all(
+        not forbidden & set(candidate)
+        for row in cards
+        for candidate in row["candidate_registry"]
+    )
     assert sum(len(row["candidate_registry"]) for row in cards) == 1371

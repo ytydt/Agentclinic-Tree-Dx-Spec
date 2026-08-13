@@ -15,7 +15,8 @@
 | 端点 | 定义与用途 |
 |------|------------|
 | **clinical-complete（主指标）** | 经 root adjudication 判定与题目所要求的**完整诊断对象**临床等价；用于衡量真实诊断能力 |
-| partial（次指标） | 临床兼容的父类、组成部分或欠特异对象；有诊断效用，但不算完整答对 |
+| compatible-partial（次指标） | 临床兼容的父类、组成部分或欠特异对象；有诊断效用，但不算完整答对 |
+| complete-or-compatible-partial（覆盖敏感性） | complete 与 compatible-partial 的并集；只描述覆盖，禁止作为完整能力排名 |
 | safe-exact（保守下界） | exact 或冻结的安全同义词命中；高特异、低敏感，不能单独代表临床能力 |
 | task（接口指标） | DA 为 option mapper；MCR 为缓存的 semantic judge。两族判分合约不同，必须分开报告，不合并为总分 |
 | historical legacy-chain（历史血缘） | 旧报告的 `Concept` 字段。它是方法依赖的历史命中合约，**既不是 strict，也不是共同的临床估计量** |
@@ -52,9 +53,12 @@
 
 ## 2. 七个重叠臂的统一五端点回放
 
+这里的七臂是 E2 九个 full-800 census 臂中与历史 MOSAIC 主表重叠的子集；
+完整九臂的 canonical 表在机器产物中。该审计合同不能移植给 E2 之外的实验臂。
+
 ### 2.1 DA400
 
-| 方法 | safe-exact | unified legacy-chain | clinical-complete | partial | task |
+| 方法 | safe-exact | unified legacy-chain | clinical-complete | compatible-partial | task |
 |------|-----------:|---------------------:|------------------:|--------:|-----:|
 | Lite | 0.0125 | 0.2575 | **0.0400** | **0.5375** | 0.6025 |
 | Forest | 0.0050 | 0.2800 | 0.0350 | 0.5325 | **0.6375** |
@@ -66,7 +70,7 @@
 
 ### 2.2 MCR400
 
-| 方法 | safe-exact | unified legacy-chain | clinical-complete | partial | task |
+| 方法 | safe-exact | unified legacy-chain | clinical-complete | compatible-partial | task |
 |------|-----------:|---------------------:|------------------:|--------:|-----:|
 | Lite | 0.1450 | 0.2175 | 0.2250 | 0.1375 | 0.2550 |
 | Forest | **0.1600** | 0.2525 | 0.2325 | 0.1650 | 0.2650 |
@@ -76,12 +80,12 @@
 | e7 | 0.1375 | 0.2025 | **0.2450** | 0.1100 | 0.2625 |
 | v0 | 0.1475 | 0.2125 | 0.2350 | 0.1425 | 0.2500 |
 
-I1 只有历史 task（DA `0.5450`；MCR `0.2250`）与 historical legacy-chain（两族均 `0.2025`）。其 safe-exact、clinical-complete、partial 为 **null（未进行穷尽 root adjudication）**，不是 0，也不能据此认定临床阴性。
+I1 只有历史 task（DA `0.5450`；MCR `0.2250`）与 historical legacy-chain（两族均 `0.2025`）。其 safe-exact、clinical-complete、compatible-partial 为 **null（未进行穷尽 root adjudication）**，不是 0，也不能据此认定临床阴性。
 
 ### 2.3 临床与接口读数为何分家
 
 - DA 的 task 为 option mapper：一个父类、组成部分或较宽的临床对象可能仍映射到正确选项。因此 DA task 为 `0.5525–0.6375`，而 clinical-complete 仅 `0.0225–0.0400`；这主要暴露“候选到选项”的接口放大，不是模型已完整说出诊断对象。
-- DA 的 partial 高达 `0.4750–0.5375`，说明不少轨迹到达了正确临床邻域，却停在父类/组成部分/欠特异层级。改进靶点应是对象完整性和最终投影，而不只是继续提高 mapper 命中。
+- DA 的 compatible-partial 高达 `0.4750–0.5375`，说明不少轨迹到达了正确临床邻域，却停在父类/组成部分/欠特异层级。改进靶点应是对象完整性和最终投影，而不只是继续提高 mapper 命中。
 - MCR 的 task（`0.2425–0.2750`）更接近 clinical-complete（`0.2125–0.2450`），但它仍来自另一个语义 judge，不能与 DA task 合并，也不能替代 root adjudication。
 - 点估计排序不稳定：DA clinical-complete 由 Lite 最高，MCR 则由 e7 最高；MAC 的历史 legacy-chain 领先并未转化为 DA clinical-complete 领先。这正是旧 `Concept` 过强结论必须撤回的原因。
 
@@ -136,14 +140,14 @@ I1 只有历史 task（DA `0.5450`；MCR `0.2250`）与 historical legacy-chain�
 | Forest | 4.03 | 0.416 | 0 | 0 |
 | IMPC | 4.00 | 0.481 | 0 | 0 |
 
-三臂均远低于历史 MAC echo（Jaccard≈0.97），说明其候选生成更具分歧且未观察到 exact duplication/history leak；但“更分歧”只是结构性质，并不自动推出 clinical-complete 更高。Forest/IMPC 的额外调用可能扩展候选覆盖，DA mapper 可从中获益；若最终 champion 仍欠特异或只保留组成部分，临床完整命中不会同步提高。当前 DA 的高 partial、低 clinical-complete 正与这一瓶颈一致。
+三臂均远低于历史 MAC echo（Jaccard≈0.97），说明其候选生成更具分歧且未观察到 exact duplication/history leak；但“更分歧”只是结构性质，并不自动推出 clinical-complete 更高。Forest/IMPC 的额外调用可能扩展候选覆盖，DA mapper 可从中获益；若最终 champion 仍欠特异或只保留组成部分，临床完整命中不会同步提高。当前 DA 的高 compatible-partial、低 clinical-complete 正与这一瓶颈一致。
 
 ---
 
 ## 5. 纠正后的跨臂结论
 
 1. **真实诊断能力以 clinical-complete 为主。** 七个重叠臂没有经多重校正支持的临床胜者；不能再从旧 `Concept` 写出 Forest 优于 e7/Lite，或 MAC 优于 Forest。
-2. **Forest 的强项是 DA 接口表现而非已证实的临床完整性。** 它的 DA task 为 `0.6375`，但 clinical-complete 为 `0.0350`，大量收益位于 partial→option 的映射通道。
+2. **Forest 的强项是 DA 接口表现而非已证实的临床完整性。** 它的 DA task 为 `0.6375`，但 clinical-complete 为 `0.0350`，大量收益位于 compatible-partial→option 的映射通道。
 3. **Lite 是预算锚点。** 其 DA clinical-complete 点估计最高（`0.0400`），MCR 为 `0.2250`；现有证据支持保留 3-call 对照，但不支持宣称其临床更优。
 4. **IMPC 是机制隔离臂。** 它有最高的 MOSAIC 内 G 间 Jaccard（`0.481`），却未形成 clinical-complete 优势，提示增加候选视角的边际价值受最终对象聚合/特异化约束。
 5. **MAC/B07 的旧优势主要需按 stage-hit 合约解读。** 统一 champion 回放后其 legacy-chain 明显回落；MAC 的 MCR clinical-complete `0.2400` 有竞争力，但 DA 仅 `0.0225`，不存在跨族一致统治。

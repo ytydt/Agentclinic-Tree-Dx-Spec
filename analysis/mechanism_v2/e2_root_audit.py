@@ -33,6 +33,7 @@ from analysis.mechanism_v2.e2_blinded_adjudication import (  # noqa: E402
     DEFAULT_OUT,
     IDENTIFIABILITY,
     RELATIONS,
+    read_endpoint_bool,
 )
 from analysis.mechanism_v2.online_runner import read_jsonl, write_jsonl  # noqa: E402
 from analysis.mechanism_v2.runtime_contract import (  # noqa: E402
@@ -42,7 +43,19 @@ from analysis.mechanism_v2.runtime_contract import (  # noqa: E402
 
 
 BRIDGE_PATH = ROOT / "data/knowledge_raw/disease_name_bridge.json"
-ACCEPTED = frozenset({"complete_equivalent", "partial_parent_or_component"})
+COMPLETE_OR_COMPATIBLE_PARTIAL_RELATIONS = frozenset(
+    {"complete_equivalent", "partial_parent_or_component"}
+)
+ROOT_ANALYSIS_ENDPOINTS = (
+    "legacy_chain",
+    "task",
+    "clinical_complete",
+    "compatible_partial",
+    "complete_or_compatible_partial",
+)
+DEPRECATED_QUEUE_REASON_READ_ALIASES = {
+    "complete_or_compatible_partial_boundary": ("complete_or_partial_boundary",),
+}
 NONUNIQUE_IDENTIFIABILITY = frozenset(
     {
         "family_only_not_full_specificity",
@@ -214,8 +227,10 @@ def build_queues(out: Path) -> dict[str, Any]:
                 reasons.append("reviewer_failure")
             if (ra == "complete_equivalent") != (rb == "complete_equivalent"):
                 reasons.append("complete_boundary")
-            if (ra in ACCEPTED) != (rb in ACCEPTED):
-                reasons.append("complete_or_partial_boundary")
+            if (ra in COMPLETE_OR_COMPATIBLE_PARTIAL_RELATIONS) != (
+                rb in COMPLETE_OR_COMPATIBLE_PARTIAL_RELATIONS
+            ):
+                reasons.append("complete_or_compatible_partial_boundary")
             if ra == rb == "complete_equivalent" and not safe_identity:
                 reasons.append("consensus_complete_nonidentity")
             relation_pool.append(
@@ -355,7 +370,7 @@ def build_queues(out: Path) -> dict[str, Any]:
         "relation_cards_sha256": file_sha256(root_dir / "relation_cards.jsonl"),
         "bridge_sha256": bridge.sha256,
         "blinding": (
-            "manual cards omit case key, arm mapping, method family, strict/task outcomes, "
+            "manual cards omit case key, arm mapping, method family, legacy-chain/task outcomes, "
             "sampling tags and queue reasons; those remain in separate index files"
         ),
         "created_at_utc": datetime.now(timezone.utc).isoformat(),
@@ -365,11 +380,11 @@ def build_queues(out: Path) -> dict[str, Any]:
         "# E2 root audit protocol\n\n"
         "The root auditor reads `identity_cards.jsonl` and `relation_cards.jsonl` "
         "without the index files. Decisions are frozen as compact codes before "
-        "arm provenance, strict correctness, mapper outcomes, sampling strata or "
+        "arm provenance, legacy-chain outcomes, mapper outcomes, sampling strata or "
         "queue reasons are joined. Safe frozen exact identity may be accepted "
         "deterministically; substring containment is never identity.\n\n"
         "Every reviewer identity disagreement/failure, every complete or "
-        "complete+partial boundary disagreement, every non-identity consensus "
+        "complete-or-compatible-partial boundary disagreement, every non-identity consensus "
         "complete, and frozen consensus calibration samples are reviewed. "
         "Unreviewed exact reviewer agreement keeps explicit consensus provenance; "
         "unreviewed non-endpoint disagreements resolve to uncertain.\n",
@@ -420,8 +435,12 @@ def build_consensus_sweep(out: Path) -> dict[str, Any]:
                 raise AssertionError(f"unreviewed reviewer failure escaped primary queue: {key}")
             if (ra == "complete_equivalent") != (rb == "complete_equivalent"):
                 raise AssertionError(f"complete boundary escaped primary queue: {key}")
-            if (ra in ACCEPTED) != (rb in ACCEPTED):
-                raise AssertionError(f"accepted boundary escaped primary queue: {key}")
+            if (ra in COMPLETE_OR_COMPATIBLE_PARTIAL_RELATIONS) != (
+                rb in COMPLETE_OR_COMPATIBLE_PARTIAL_RELATIONS
+            ):
+                raise AssertionError(
+                    f"complete-or-compatible-partial boundary escaped primary queue: {key}"
+                )
             reason = (
                 f"unreviewed_consensus:{ra}"
                 if ra == rb
@@ -494,7 +513,7 @@ def build_consensus_sweep(out: Path) -> dict[str, Any]:
             "basis for reviewer-consensus endpoint assignment."
         ),
         "blinding": (
-            "cards omit case key, arm mapping, method family, strict/task outcomes, "
+            "cards omit case key, arm mapping, method family, legacy-chain/task outcomes, "
             "sampling tags, mapper outcomes, sweep reason and reviewer-pair labels; "
             "those remain in a separate index"
         ),
@@ -515,7 +534,7 @@ def build_consensus_sweep(out: Path) -> dict[str, Any]:
         "reference—not whether the candidate is a plausible differential for "
         "the clinical record. The record is used only to resolve compatible "
         "specificity, anatomy, etiology, time/state and composite scope.\n\n"
-        "No method identity, arm output, strict/task correctness, mapper status, "
+        "No method identity, arm output, legacy-chain/task outcome, mapper status, "
         "sampling stratum or queue trigger is visible on the cards. Final E2 "
         "relation endpoints therefore use root review for every non-exact pair.\n",
         encoding="utf-8",
@@ -650,10 +669,16 @@ def build_consensus_sweep_reviews(out: Path) -> list[dict[str, Any]]:
     if not set(flip_mechanisms).issubset(card_ids):
         raise AssertionError("endpoint flip mechanism references a non-frozen sweep card")
     for review in reviews:
-        original_accepted = str(review["reviewer_a_relation"]) in ACCEPTED
-        root_accepted = str(review["root_relation"]) in ACCEPTED
+        original_union = (
+            str(review["reviewer_a_relation"])
+            in COMPLETE_OR_COMPATIBLE_PARTIAL_RELATIONS
+        )
+        root_union = (
+            str(review["root_relation"])
+            in COMPLETE_OR_COMPATIBLE_PARTIAL_RELATIONS
+        )
         tagged = bool(review["endpoint_flip_mechanism"])
-        if tagged != (original_accepted != root_accepted):
+        if tagged != (original_union != root_union):
             raise AssertionError(
                 f"endpoint flip mechanism coverage mismatch: {review['record_id']}"
             )
@@ -806,7 +831,7 @@ def _reviewer_calibration(
         identity_exact = 0
         identity_evaluable = 0
         relation_complete_pairs: list[tuple[bool, bool]] = []
-        relation_accepted_pairs: list[tuple[bool, bool]] = []
+        relation_union_pairs: list[tuple[bool, bool]] = []
         relation_exact = 0
         relation_evaluable = 0
         structured_success = 0
@@ -842,8 +867,11 @@ def _reviewer_calibration(
                         root_relation == "complete_equivalent",
                     )
                 )
-                relation_accepted_pairs.append(
-                    (predicted_relation in ACCEPTED, root_relation in ACCEPTED)
+                relation_union_pairs.append(
+                    (
+                        predicted_relation in COMPLETE_OR_COMPATIBLE_PARTIAL_RELATIONS,
+                        root_relation in COMPLETE_OR_COMPATIBLE_PARTIAL_RELATIONS,
+                    )
                 )
         reviewers[name] = {
             "structured_success_case_n": structured_success,
@@ -855,7 +883,9 @@ def _reviewer_calibration(
             "relation_fine_exact_n": relation_exact,
             "relation_fine_exact_rate": round(relation_exact / relation_evaluable, 6),
             "relation_complete_boundary": _binary_metrics(relation_complete_pairs),
-            "relation_accepted_boundary": _binary_metrics(relation_accepted_pairs),
+            "relation_complete_or_compatible_partial_boundary": _binary_metrics(
+                relation_union_pairs
+            ),
         }
 
     identity_reviews = read_jsonl(root_dir / "identity_reviews.jsonl")
@@ -878,10 +908,15 @@ def _reviewer_calibration(
         reviewer_a_field: str,
         reviewer_b_field: str,
     ) -> dict[str, Any]:
+        accepted_reason_names = {
+            reason,
+            *DEPRECATED_QUEUE_REASON_READ_ALIASES.get(reason, ()),
+        }
         rows = [
             row
             for row in review_rows
-            if reason in index_rows[str(row["record_id"])]["queue_reasons"]
+            if accepted_reason_names
+            & set(index_rows[str(row["record_id"])]["queue_reasons"])
         ]
         return {
             "n": len(rows),
@@ -927,7 +962,7 @@ def _reviewer_calibration(
                 "consensus_partial_calibration",
                 "consensus_wrong_calibration",
                 "complete_boundary",
-                "complete_or_partial_boundary",
+                "complete_or_compatible_partial_boundary",
                 "reviewer_failure",
             )
         },
@@ -940,22 +975,30 @@ def _reviewer_calibration(
     sweep_root_counts = Counter(str(row["root_relation"]) for row in sweep_reviews)
     original_endpoint_pairs = [
         (
-            str(row["reviewer_a_relation"]) in ACCEPTED,
-            str(row["root_relation"]) in ACCEPTED,
+            str(row["reviewer_a_relation"])
+            in COMPLETE_OR_COMPATIBLE_PARTIAL_RELATIONS,
+            str(row["root_relation"])
+            in COMPLETE_OR_COMPATIBLE_PARTIAL_RELATIONS,
         )
         for row in sweep_reviews
     ]
     correction_counts = Counter()
     correction_by_family: dict[str, Counter[str]] = defaultdict(Counter)
     for row in sweep_reviews:
-        original_accepted = str(row["reviewer_a_relation"]) in ACCEPTED
-        root_accepted = str(row["root_relation"]) in ACCEPTED
+        original_union = (
+            str(row["reviewer_a_relation"])
+            in COMPLETE_OR_COMPATIBLE_PARTIAL_RELATIONS
+        )
+        root_union = (
+            str(row["root_relation"])
+            in COMPLETE_OR_COMPATIBLE_PARTIAL_RELATIONS
+        )
         direction = (
-            "accepted_to_nonaccepted"
-            if original_accepted and not root_accepted
+            "complete_or_compatible_partial_to_other"
+            if original_union and not root_union
             else (
-                "nonaccepted_to_accepted"
-                if not original_accepted and root_accepted
+                "other_to_complete_or_compatible_partial"
+                if not original_union and root_union
                 else "endpoint_unchanged"
             )
         )
@@ -1066,10 +1109,13 @@ def analyze(out: Path, repetitions: int) -> dict[str, Any]:
                     "primary_stratum": selected["primary_stratum"],
                     "weight": selected["analysis_weight"],
                     "full_reference_identifiable": identity["full_reference_identifiable"],
-                    "strict": bool(mapping["strict_chain_correct"]),
+                    "legacy_chain": read_endpoint_bool(mapping, "legacy_chain"),
                     "task": bool(mapping["task_correct"]),
-                    "complete": relation == "complete_equivalent",
-                    "accepted": relation in ACCEPTED,
+                    "clinical_complete": relation == "complete_equivalent",
+                    "compatible_partial": relation == "partial_parent_or_component",
+                    "complete_or_compatible_partial": (
+                        relation in COMPLETE_OR_COMPATIBLE_PARTIAL_RELATIONS
+                    ),
                     "relation": relation,
                     "candidate_label": mapping["surface_label"],
                 }
@@ -1079,14 +1125,14 @@ def analyze(out: Path, repetitions: int) -> dict[str, Any]:
     for arm, rows in sorted(arm_rows.items()):
         summary = {
             endpoint: _weighted_rate(rows, endpoint)
-            for endpoint in ("strict", "task", "complete", "accepted")
+            for endpoint in ROOT_ANALYSIS_ENDPOINTS
         }
         summary["by_family"] = {
             family: {
                 endpoint: _weighted_rate(
                     [row for row in rows if row["family"] == family], endpoint
                 )
-                for endpoint in ("strict", "task", "complete", "accepted")
+                for endpoint in ROOT_ANALYSIS_ENDPOINTS
             }
             for family in ("DA", "MCR")
         }
@@ -1100,16 +1146,19 @@ def analyze(out: Path, repetitions: int) -> dict[str, Any]:
                     ],
                     endpoint,
                 )
-                for endpoint in ("strict", "task", "complete", "accepted")
+                for endpoint in ROOT_ANALYSIS_ENDPOINTS
             }
             for state, expected in (("unique_full", True), ("not_unique_full", False))
         }
         summary["task_vs_clinical"] = dict(sorted(Counter(
-            f"task_{int(row['task'])}|complete_{int(row['complete'])}|accepted_{int(row['accepted'])}"
+            f"task_{int(row['task'])}|clinical_complete_{int(row['clinical_complete'])}|"
+            f"complete_or_compatible_partial_{int(row['complete_or_compatible_partial'])}"
             for row in rows
         ).items()))
-        summary["strict_vs_clinical"] = dict(sorted(Counter(
-            f"strict_{int(row['strict'])}|complete_{int(row['complete'])}|accepted_{int(row['accepted'])}"
+        summary["legacy_chain_vs_clinical"] = dict(sorted(Counter(
+            f"legacy_chain_{int(row['legacy_chain'])}|"
+            f"clinical_complete_{int(row['clinical_complete'])}|"
+            f"complete_or_compatible_partial_{int(row['complete_or_compatible_partial'])}"
             for row in rows
         ).items()))
         arm_summary[arm] = summary
@@ -1133,8 +1182,16 @@ def analyze(out: Path, repetitions: int) -> dict[str, Any]:
             other = right_by_key.get(str(row["case_key"]))
             if other is None:
                 continue
-            paired.append({**row, **{f"right_{key}": other[key] for key in ("strict", "task", "complete", "accepted")}})
-        for endpoint in ("strict", "task", "complete", "accepted"):
+            paired.append(
+                {
+                    **row,
+                    **{
+                        f"right_{key}": other[key]
+                        for key in ROOT_ANALYSIS_ENDPOINTS
+                    },
+                }
+            )
+        for endpoint in ROOT_ANALYSIS_ENDPOINTS:
             contrasts.append(
                 {
                     "left": left,
@@ -1154,6 +1211,17 @@ def analyze(out: Path, repetitions: int) -> dict[str, Any]:
     root_dir = out / "root_audit"
     result = {
         "experiment_id": "E2-root",
+        "schema_version": "e2-root-clinical-endpoint-v2",
+        "endpoint_contract": {
+            "active": list(ROOT_ANALYSIS_ENDPOINTS),
+            "clinical_capability_ranking": [
+                "clinical_complete",
+            ],
+            "compatible_partial_role": "mutually exclusive descriptive relation state; not a capability ranking endpoint",
+            "secondary_coverage_sensitivity": ["complete_or_compatible_partial"],
+            "legacy_chain_role": "historical diagnostic only; prohibited from capability ranking",
+            "deprecated_read_aliases_are_emitted": False,
+        },
         "sample_n": len(selection),
         "weighted_population_n": sum(float(row["analysis_weight"]) for row in selection),
         "reference_identifiability": {

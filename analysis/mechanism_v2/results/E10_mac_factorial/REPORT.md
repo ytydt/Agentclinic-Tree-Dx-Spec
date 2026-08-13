@@ -4,16 +4,18 @@
 
 E10 不支持“MAC 的主要问题是 Supervisor 把本来多样的医生意见压坏了”。真正的主导机制是 **Doctor B/C 读取前文后发生高强度共识压缩**：平均 canonical union 从 6.82 降到 5.21，医生两两 Jaccard 从 0.689 升到 0.954；D2、D3 每例新增概念分别从 1.225、0.613 降到 0.213、0.015。400 例中 276 例的顺序 union 更窄，只有 14 例更宽。D3 在 400 例上合计只新增 6 个概念，已近乎不是独立诊断者。
 
-但“多样性下降”不等同于“总分下降”。本开发样本里，顺序历史以牺牲临床 reference exposure（121→109）换来更高的 exposed-candidate 转换：RRF exposure→Top-2 从 61.2% 升到 84.4%，Supervisor 从 66.9% 升到 86.2%。在“根审计优先、未审筛查阴性保持阴性”的临床重编码下，顺序相对独立的 Top-2 净效应为：
+但“多样性下降”不等同于“总分下降”。本开发样本里，顺序历史在历史**二元可接受 proxy**中以 exposure 121→109 换来更高的 exposed-candidate 转换：RRF exposure→Top-2 从 61.2% 升到 84.4%，Supervisor 从 66.9% 升到 86.2%。在“根审计优先、未审筛查阴性保持阴性”的二元重编码下，顺序相对独立的 Top-2 净效应为：
 
 - RRF：74→92/400，+4.50pp，95% paired bootstrap CI [2.00, 7.25]pp，5/23 反向/正向病例，exact McNemar `p=0.00091`；
 - Supervisor：81→94/400，+3.25pp，CI [1.00, 5.50]pp，5/18，`p=0.0106`。
 
-这不是新候选捕获收益。RRF 的 23 个顺序 Top-2 正向分歧全部来自 **rank conversion**，没有一个来自顺序条件独有的 reference capture；Supervisor 的 18 个正向分歧也只有 1 个 capture gain、17 个 rank-conversion gain。顺序历史在这里做对的是“把已有正确候选推前”，不是“让后续医生独立发现更多”。
+这不是新候选捕获收益。按该二元 proxy，RRF 的 23 个顺序 Top-2 正向分歧全部来自 **rank conversion**，没有一个来自顺序条件独有的 reference capture；Supervisor 的 18 个正向分歧也只有 1 个 capture gain、17 个 rank-conversion gain。顺序历史在这里做的是“把已有可接受候选推前”，不是“让后续医生独立发现更多”。
 
-Supervisor 也不是主要瓶颈。在固定医生输出下，临床重编码的 Supervisor 相对 RRF：独立条件 Top-1 +2.00pp（1/9，`p=0.0215`）、Top-2 +1.75pp（3/10，`p=0.0923`）；顺序条件只剩 Top-1 +0.75pp、Top-2 +0.50pp。独立条件下 Supervisor 有 18 次把仅一名医生支持的候选提到 Top-1，而 RRF 只有 1 次；顺序条件两者分别为 1 和 0。也就是说 Supervisor 在真正存在少数意见时能利用 vignette 做语义救援；历史先把少数意见消灭后，它只能在同质共识中微调。
+Supervisor 也不是主要瓶颈。在固定医生输出下，二元可接受 proxy 的 Supervisor 相对 RRF：独立条件 Top-1 +2.00pp（1/9，`p=0.0215`）、Top-2 +1.75pp（3/10，`p=0.0923`）；顺序条件只剩 Top-1 +0.75pp、Top-2 +0.50pp。独立条件下 Supervisor 有 18 次把仅一名医生支持的候选提到 Top-1，而 RRF 只有 1 次；顺序条件两者分别为 1 和 0。它提示 Supervisor 在存在少数意见时可能利用 vignette 做宽口径语义转换；该口径没有证明完整临床等价。
 
-因此 C006 应修正为：**顺序历史确定性地压低 B06 的候选多样性；该压缩在当前样本上以排序收益超过召回损失，但留下明确、可复现的长尾候选擦除。闭池 Supervisor 不是多样性下降的来源，且在独立意见存在时有小幅语义转换价值。**
+因此 C006 应修正为：**顺序历史确定性地压低 B06 的候选多样性；历史二元可接受 proxy 显示排序收益与召回损失并存，但不能给出 clinical-complete 净效应。闭池 Supervisor 不是多样性下降的来源；其在独立意见存在时的小幅语义转换信号仍需三分类盲审复核。**
+
+> **端点迁移更正。** 旧版报告把二元 `clinically_acceptable` 计数写成了 `clinical-complete*`。冻结裁决没有区分完整等价与兼容部分正确，且 `same_entity`/`acceptable_clinical_variant` 中均含范围或组成成分缺失。下文保留数值血缘，但统一称为 **binary-clinical-acceptable proxy***；E10 的 `clinical-complete`、`compatible-partial`、`complete-or-compatible-partial` 和全量盲法临床率均为 **未测**，这些数值不得进入临床能力排名。
 
 ## 1. 识别设计
 
@@ -42,7 +44,7 @@ Doctor A 的 raw JSON、cache identity 和候选列表在两种 history 条件�
 - 1 个筛查失败病例；
 - 按 family 和 SHA 冻结的 20+20 个筛查阴性病例。
 
-最终责任由根审计承担，但覆盖必须精确限定：根代理审计 166/400 例，包括全部 125 个筛查阳性/不确定病例、1 个筛查失败、全部 `safe-exact` 暴露/端点关键病例，以及按 family+SHA 冻结的 40 个筛查阴性病例（类别重叠）。40 个阴性抽样中未发现漏掉的可接受等价项；根审计对 5 条唯一 surface 规则作了显式覆盖，并在 8 个候选位置与筛查器的二元接受决定不同。其余 234 例是**未人工复核的异质筛查阴性**，在敏感性计数中保守保持阴性，而不是人工 gold。故下文 `clinical-complete*` 是 screen-assisted/root-priority 重编码，不是 400 例全面盲法临床标注。
+最终责任由根审计承担，但覆盖必须精确限定：根代理审计 166/400 例，包括全部 125 个筛查阳性/不确定病例、1 个筛查失败、全部 `safe-exact` 暴露/端点关键病例，以及按 family+SHA 冻结的 40 个筛查阴性病例（类别重叠）。40 个阴性抽样中未发现漏掉的二元可接受项；根审计对 5 条唯一 surface 规则作了显式覆盖，并在 8 个候选位置与筛查器的二元接受决定不同。其余 234 例是**未人工复核的异质筛查阴性**，在敏感性计数中保守保持阴性，而不是人工 gold。更根本的合同缺口是：根审本身也只写入 `same_entity / acceptable_clinical_variant / not_acceptable` 的二元接受决定，没有新规范要求的 complete/compatible-partial/no 三分类。故下文 binary-clinical-acceptable proxy* 既不是 400 例全面盲法标注，也不能改名为 complete 或 complete-or-compatible-partial。
 
 ## 2. 运行完整性
 
@@ -54,9 +56,9 @@ Doctor A 的 raw JSON、cache identity 和候选列表在两种 history 条件�
 - 两个 Supervisor 臂均 400/400 有效、无候选越界；两个 RRF 臂均 400/400 可计算。无效医生不插补，病例按 ITA 保留。
 - 异族筛查 399/400 通过完整性校验；失败例与少量超时/截断事件见 `INCIDENTS.md`，不影响四个主臂。
 
-## 3. 结果：`safe-exact` 与临床重编码必须分开看
+## 3. 结果：`safe-exact` 与二元可接受 proxy 必须分开看
 
-| history | aggregator | safe-exact Top-1 | safe-exact Top-2 | clinical-complete* Top-1 | clinical-complete* Top-2 |
+| history | aggregator | safe-exact Top-1 | safe-exact Top-2 | binary-clinical-acceptable proxy* Top-1 | binary-clinical-acceptable proxy* Top-2 |
 |---|---:|---:|---:|---:|---:|
 | isolated | RRF | 21/400 (5.25%) | 30/400 (7.50%) | 55/400 (13.75%) | 74/400 (18.50%) |
 | isolated | Supervisor | 22/400 (5.50%) | 30/400 (7.50%) | 63/400 (15.75%) | 81/400 (20.25%) |
@@ -65,9 +67,9 @@ Doctor A 的 raw JSON、cache identity 和候选列表在两种 history 条件�
 
 `safe-exact` 端点下，history 对 RRF 的 Top-1 为 +1.25pp（CI [0, 2.75]pp，1/6，`p=0.125`），Top-2 +1.50pp（CI [0, 3.00]pp，2/8，`p=0.109`）；对 Supervisor 的 Top-1 +1.00pp（CI [-0.50, 2.50]pp，3/7，`p=0.344`），Top-2 +2.25pp（CI [0.50, 4.25]pp，3/12，`p=0.0352`）。只有最后一个越过传统 0.05 阈值。
 
-临床重编码把多个 `safe-exact` 假阴性恢复，例如 `Pyknodysostosis/Pycnodysostosis`、`cardiac sarcoidosis/sarcoidosis`、更具体的 dengue hemorrhagic encephalitic phenotype。history 对 RRF 的 Top-1 为 +3.00pp（CI [1.00, 5.25]pp，3/15，`p=0.00754`），对 Supervisor +1.75pp（CI [-0.25, 3.75]pp，5/12，`p=0.143`）。这显示表面字符串会低估真实排序变化，也显示带 proxy-negative 的临床敏感性重编码不能替代 `safe-exact` 主端点：两套定义回答的是不同问题。
+二元重编码恢复了若干 `safe-exact` 假阴性，也混入了范围/组成不完整答案。例如 `Pyknodysostosis/Pycnodysostosis` 是拼写等价，而 `sarcoidosis/cardiac sarcoidosis` 和更具体的 dengue phenotype 是否完整则取决于 reference 所要求对象。history 对 RRF 的 Top-1 为 +3.00pp（CI [1.00, 5.25]pp，3/15，`p=0.00754`），对 Supervisor +1.75pp（CI [-0.25, 3.75]pp，5/12，`p=0.143`）；这些只是 binary-acceptable proxy 的变化，不能解释为 clinical-complete 变化。
 
-family 分层方向一致但幅度不同。临床 Top-2 的顺序 history 净胜负：DA 上 RRF 0/11、Supervisor 2/7；MCR 上 RRF 5/12、Supervisor 3/11。没有证据表明总效应只由一个 benchmark family 驱动。
+family 分层方向一致但幅度不同。二元 proxy Top-2 的顺序 history 净胜负：DA 上 RRF 0/11、Supervisor 2/7；MCR 上 RRF 5/12、Supervisor 3/11。没有证据表明这个宽口径信号只由一个 benchmark family 驱动。
 
 ## 4. 生成机制：不是协作扩展，而是共识压缩
 
@@ -86,9 +88,9 @@ union 的病例级变化为：顺序更窄 276/400，相同 110/400，更宽 14/
 
 ## 5. 为什么低召回仍能提高总分：capture–conversion 分解
 
-`safe-exact` reference exposure 从 isolated 52 降到 sequential 46；`safe-exact` exposure→Top-2 却从 57.7% 升到 RRF 78.3%、Supervisor 84.8%。临床重编码也呈同一结构：
+`safe-exact` reference exposure 从 isolated 52 降到 sequential 46；`safe-exact` exposure→Top-2 却从 57.7% 升到 RRF 78.3%、Supervisor 84.8%。二元可接受 proxy 也呈同一结构：
 
-| history | clinical exposure | RRF exposure→T1/T2 | Supervisor exposure→T1/T2 |
+| history | binary-acceptable proxy exposure | RRF exposure→T1/T2 | Supervisor exposure→T1/T2 |
 |---|---:|---:|---:|
 | isolated | 121/400 | 45.5% / 61.2% | 52.1% / 66.9% |
 | sequential | 109/400 | 61.5% / 84.4% | 64.2% / 86.2% |
@@ -105,13 +107,13 @@ union 的病例级变化为：顺序更窄 276/400，相同 110/400，更宽 14/
 
 在 isolated 固定医生输出上，Supervisor 改变 ordered Top-2 116/400、Top-1 60/400；在 sequential 上分别只有 81/400 和 34/400。原因不是 Supervisor 变保守，而是输入候选和排名已经高度同质。
 
-RRF 的优点是确定性、完全可审计、对同一候选的跨医生重复有稳定奖励；缺点是看不到 vignette，只能把重复当信号，因此会系统偏爱常见、宽泛、跨医生易复现的表现层标签。Supervisor 能读取 vignette，并在 isolated 条件下把单医生候选提到 Top-1 达 18 次，解释了临床 Top-1 的 +2.00pp。它的缺点有三类：
+RRF 的优点是确定性、完全可审计、对同一候选的跨医生重复有稳定奖励；缺点是看不到 vignette，只能把重复当信号，因此会系统偏爱常见、宽泛、跨医生易复现的表现层标签。Supervisor 能读取 vignette，并在 isolated 条件下把单医生候选提到 Top-1 达 18 次，与 binary-acceptable proxy Top-1 的 +2.00pp 同向。它的缺点有三类：
 
 1. 症状/并发症偏好：`MCR_seq200b/326` 中 sequential RRF 将 Brucellosis 排第一，而 Supervisor 选 spondylodiscitis/epidural abscess；
 2. 同义身份碎裂：`MCR_seq200b/441` 中 isolated Supervisor 把两个更具体但等价的 dengue encephalitic surface 同时塞进 Top-2；
 3. 无法复活池外候选：schwannoma、uterine inversion、TEN、chronic subdural hematoma 一旦被顺序 D2/D3 擦除，闭池 Supervisor 没有恢复通路。
 
-Supervisor 在 sequential 条件相对 RRF 的临床 Top-2 仅 +0.50pp（4/6，CI [-1.00, 2.00]pp，`p=0.754`），不能支持“再加一次聚合调用必然有价值”。它的边际价值取决于上游是否保留真正的少数意见。
+Supervisor 在 sequential 条件相对 RRF 的 binary-acceptable proxy Top-2 仅 +0.50pp（4/6，CI [-1.00, 2.00]pp，`p=0.754`），不能支持“再加一次聚合调用必然有价值”。它的边际价值取决于上游是否保留真正的少数意见。
 
 ## 7. 逐轨迹深解剖
 
@@ -147,11 +149,11 @@ Supervisor 在 sequential 条件相对 RRF 的临床 Top-2 仅 +0.50pp（4/6，C
 
 **`MCR_seq200b/260`**：顺序条件删除 exact surface `syphilitic aortitis`，但保留 `aortitis due to syphilis`；`safe-exact` exposure loss 不是临床 loss。
 
-**`MCR_seq200b/418`**：顺序候选 `cardiac sarcoidosis` 比 generic reference `sarcoidosis` 更贴病例；`safe-exact` 端点把它当错，临床端点反而认为顺序更具体。
+**`MCR_seq200b/418`**：顺序候选 `cardiac sarcoidosis` 比 generic reference `sarcoidosis` 更贴病例；`safe-exact` 端点把它当错，旧二元 acceptable proxy 则接受这个更具体的输出。
 
 **`MCR_seq200b/441`**：`acute hemorrhagic leukoencephalitis due to Dengue` 是更具体的 dengue encephalitic phenotype；`safe-exact` 端点制造 Supervisor harm，同时暴露 registry 没有合并两个临床同义 surface 的缺陷。
 
-这些不是可以随意“宽松打分”的理由，而是要求同时保留 `safe-exact`、临床关系和身份错误三条 ledger。只报告任意一条都会把 mapper/ontology 界面问题误归因于 reasoning。
+这些不是可以随意“宽松打分”的理由，而是证明旧二元裁决必须拆成 clinical-complete、compatible-partial 与 no 三条 ledger。当前 E10 还没有这三条，因此只能保留病例机制，不能报告完整临床率。
 
 ## 8. 25 个 `safe-exact` 关键病例的机制分类
 
@@ -189,11 +191,11 @@ Supervisor 在 sequential 条件相对 RRF 的临床 Top-2 仅 +0.50pp（4/6，C
 
 ### Isolated homogeneous panel
 
-优势是保留独立少数候选，clinical exposure 121/400，高于 sequential 的 109；schwannoma、uterine inversion、TEN、chronic subdural hematoma 等长尾发现只能在这里出现。劣势是同模型/同模板本身已经高度相关，且未协调的 surface/specificity 会分裂投票；正确候选常被各自放在低位，RRF conversion 只有 61.2%。
+优势是保留独立少数候选，binary-acceptable proxy exposure 121/400，高于 sequential 的 109；schwannoma、uterine inversion、TEN、chronic subdural hematoma 等长尾发现只能在这里出现。劣势是同模型/同模板本身已经高度相关，且未协调的 surface/specificity 会分裂投票；可接受候选常被各自放在低位，RRF proxy conversion 只有 61.2%。
 
 ### Sequential homogeneous panel
 
-优势是对 D1 或 D2 已发现的正确候选进行 rank propagation，显著提高 conversion；当前样本的临床净效应为正。劣势是 D3 几乎不提供增量信息，错误锚点和错误后续共识会删除长尾候选。它更像“同一诊断器的三步自洽化”，不是三个独立专家。
+优势是对 D1 或 D2 已发现的候选进行 rank propagation，并提高 binary-acceptable proxy conversion；clinical-complete 净效应未知。劣势是 D3 几乎不提供增量信息，错误锚点和错误后续共识会删除长尾候选。它更像“同一诊断器的三步自洽化”，不是三个独立专家。
 
 ### Deterministic RRF
 
@@ -201,7 +203,7 @@ Supervisor 在 sequential 条件相对 RRF 的临床 Top-2 仅 +0.50pp（4/6，C
 
 ### Closed-pool Supervisor
 
-优势是在有真正少数意见的 isolated 条件能利用 vignette 做语义选择，尤其提高 clinical Top-1；它比 RRF 更可能选择单医生支持候选。劣势是第四次调用的边际收益小、受身份碎裂影响，并可能偏好具体但错误的机制或临床表现。更关键的是，它不能恢复 generation 阶段已删除的候选。
+优势是在有真正少数意见的 isolated 条件能利用 vignette 做语义选择，尤其提高 binary-acceptable proxy Top-1；它比 RRF 更可能选择单医生支持候选。劣势是第四次调用的边际收益小、受身份碎裂影响，并可能偏好具体但错误的机制或临床表现。更关键的是，它不能恢复 generation 阶段已删除的候选。
 
 ## 10. 设计含义与下一步接口
 
@@ -220,7 +222,7 @@ E10 不支持直接把 B06 改成“永远 isolated”或“永远 sequential”
 1. 这是冻结开发集，不是新确认集；按用户约束未重复运行、未扩容确认集、未统一 retry/provider。
 2. D2/D3 是不同语义调用，虽然温度 0、病例成对且 provider balanced，history 效应仍包含不可消除的单次 provider/model 随机性；Doctor A 和聚合器共享设计已尽量压缩这一混杂。
 3. prompt 基于历史 B06，但增加了“不把重复当独立证据”和闭池约束；结论针对受控机制，不等价于历史开放式 Supervisor 的精确重放。观察到的强回声是在已经抑制重复的 prompt 下发生，故方向并非由鼓励附和的措辞造成。
-4. 临床重编码采用异族模型做队列扩展而非裁判；166 例根审计和 40 个阴性抽样降低但不能消除剩余 234 个 proxy-negative 的漏检。`safe-exact` 端点仍是预注册主结果，临床表是敏感性而非全量人工 gold。
+4. 二元可接受重编码采用异族模型做队列扩展而非裁判；166 例根审计和 40 个阴性抽样降低但不能消除剩余 234 个 proxy-negative 的漏检。更重要的是，冻结根审没有 complete/compatible-partial 分层。`safe-exact` 仍是预注册主结果，二元表只是旧敏感性血缘，不是临床能力表。
 5. “新 concept”不等于“新关系证据”。E10 证明候选新颖性不是获益必要条件，但没有直接测量 D2/D3 commentary 是否加入独特、正确的关系证据；该问题留给 RCR-3 的关系 fidelity ledger。
 
 ## 12. 最终裁决

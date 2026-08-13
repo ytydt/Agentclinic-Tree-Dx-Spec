@@ -107,7 +107,7 @@ OpenAI GPT-4.1 mini 作为与 Gemini builder、DeepSeek selector 均不同的第
 
 因此代理输出完整保留用于追责，但报告只使用 `manual_audit.jsonl` 的最终分层。不同模型族降低了同族偏差，却没有消除任务定义偏差。
 
-人工覆盖必须按队列理解，而不是按 220 例总体理解：根代理逐案审计 30 例，覆盖全部 9 个 reference hard-veto、hard↔soft/合法顺序/错时的 accuracy discordance、若干 champion flip 与 4 个冻结 stable control；选择原因可重叠。外部代理抽到 29 例、成功 25 例，只是分包初读，30 例最终标签全部由根代理负责。其余 190/220 例未做临床 complete/partial/no 逐案裁决；未入队的 `safe-exact` 阴性或 flip-neutral 病例不能被称为人工确认的临床阴性，本报告也不据此给出全 220 例临床准确率。
+人工覆盖必须按队列理解，而不是按 220 例总体理解：根代理逐案审计 30 例，覆盖全部 9 个 reference hard-veto、hard↔soft/合法顺序/错时的 accuracy discordance、若干 champion flip 与 4 个冻结 stable control；选择原因可重叠。外部代理抽到 29 例、成功 25 例，只是分包初读，30 例最终标签全部由根代理负责。其余 190/220 例未做临床 complete/compatible-partial/no 逐案裁决；未入队的 `safe-exact` 阴性或 flip-neutral 病例不能被称为人工确认的临床阴性，本报告也不据此给出全 220 例临床准确率。
 
 ## 运行可用性与环境适配
 

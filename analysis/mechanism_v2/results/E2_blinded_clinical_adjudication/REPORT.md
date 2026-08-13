@@ -17,7 +17,7 @@ case-arm 输出统一重放五列：
    排名偏移；
 3. `clinical-complete`：12.25%–15.25%，是本研究衡量“完整诊断对象是否
    正确”的主端点；
-4. `partial`：29.88%–35.25%，表示兼容父类、组成部分或欠特异对象，不能
+4. `compatible-partial`：29.88%–35.25%，表示兼容父类、组成部分或欠特异对象，不能
    报作诊断正确；
 5. `task`：40.12%–46.12%，但 DA 是 option mapper，MCR 是缓存语义 judge，
    二者必须分层解释。
@@ -41,10 +41,10 @@ DA task mapper 的 PPV 仅 5.12%，衡量的是接口/选项命中，不是完�
 | safe-exact | 规范化 exact 或冻结的安全同义词；禁用 substring/fuzzy | 高精度保守下界、回归测试 | 无偏的绝对能力估计 |
 | legacy-chain | 历史双向 substring/resolver `chain_correct` | 复现旧结果、诊断旧排名为何变化 | strict、concept accuracy 或完整临床正确 |
 | clinical-complete | 根审确认输出与 reference 所要求的完整诊断对象临床完全等价 | **能力主端点** | 在 reference 本身不可由病例唯一支持时，自动等同“真实世界真相” |
-| partial | 兼容父类、组成部分或欠特异对象；与 complete 互斥 | 覆盖/软着陆机制 | 完整正确、半个正确分数 |
+| compatible-partial | 兼容父类、组成部分或欠特异对象；与 complete 互斥 | 覆盖/软着陆机制 | 完整正确、半个正确分数 |
 | task | DA option mapper；MCR 缓存语义 judge | 家族内接口成功；MCR 可作校准 proxy | 合并 DA+MCR 后的同质能力端点 |
 
-`complete-or-partial` 仅作为次要 coverage sensitivity，并非第六个主端点。
+`complete-or-compatible-partial` 仅作为次要 coverage sensitivity，并非第六个主端点。
 所有 clinical-complete 解释必须同时报告 `reference-identifiability`：病例是否
 唯一支持 reference 的全部病因、解剖、时间、阶段与复合组件。
 
@@ -67,9 +67,9 @@ cards，并由三个互斥批次独立人工盲审：
 | **合计人工关系** | **400** | **1,371** | 全部非确定性安全 exact 关系 |
 
 另有 59 个确定性 safe-exact 关系按冻结规则直接标为 complete；故补充 registry
-共有 1,430 个关系。根审随后逐项复核全部 `uncertain`、低置信、complete/partial
+共有 1,430 个关系。根审随后逐项复核全部 `uncertain`、低置信、complete/compatible-partial
 边界和同义语义对，记录 1 个 identity 与 14 个 relation override 及理由。一个
-关系仍明确保留为 `uncertain`，没有被强行塞入 complete 或 partial。
+关系仍明确保留为 `uncertain`，没有被强行塞入 complete 或 compatible-partial。
 
 最终 800 例的 reference identity 分布为：
 
@@ -93,17 +93,22 @@ B06、B07。验证结果：
 
 - 800 个唯一 case，DA/MCR 各 400；
 - 7,200 个唯一 case-arm 行，每臂恰好 800；
-- `clinical-complete` / `partial` 缺失 0，重叠 0；
+- `clinical-complete` / `compatible-partial` 缺失 0，重叠 0；
 - safe-exact 阳性却被根审判为 non-complete 的矛盾 0；
 - 与冻结 matrix 的 legacy-chain 与 task 不一致均为 0；
 - 旧 400 例的 1,673 关系与新增 400 例的 1,430 关系均保留血缘；
 - 原始历史 leaderboard 不改字节，迁移结果写入独立 v2 artifact。
 
+`unified_800/` 下已冻结的 v1 机器文件仍保留只读血缘别名
+`partial` / `complete_or_partial`；它们不得直接进入新汇总。当前可摄取视图会
+fail-closed 地迁移为 `compatible_partial` /
+`complete_or_compatible_partial`，并校验并集等于两互斥状态之和。
+
 ## 4. 全 800 例五端点结果
 
 ### 4.1 Overall
 
-| Arm | safe-exact | legacy-chain | clinical-complete | partial | task | complete-or-partial |
+| Arm | safe-exact | legacy-chain | clinical-complete | compatible-partial | task | complete-or-compatible-partial |
 |---|---:|---:|---:|---:|---:|---:|
 | Collapse3c | 8.50% | 21.12% | **15.25%** | 32.88% | **46.12%** | 48.12% |
 | Multistance | **8.62%** | 22.62% | 15.12% | 32.50% | 45.00% | 47.62% |
@@ -119,12 +124,12 @@ B06、B07。验证结果：
 实验大多报告 safe-exact，而历史强基线常被标为 `Concept/Strict` 的数实际是
 legacy-chain 或 stage-specific chain。对同一批输出换回统一定义后，所有系统的
 safe-exact 都只有 7%–9%，并非 E 臂独有崩溃；真正的临床完全等价为
-12%–15%，partial 又占约 30%–35%。反差主要来自端点混用，其次才是模型的对象
+12%–15%，compatible-partial 又占约 30%–35%。反差主要来自端点混用，其次才是模型的对象
 完整性不足。
 
 ### 4.2 DiagnosisArena（DA）
 
-| Arm | safe-exact | legacy-chain | clinical-complete | partial | task | complete-or-partial |
+| Arm | safe-exact | legacy-chain | clinical-complete | compatible-partial | task | complete-or-compatible-partial |
 |---|---:|---:|---:|---:|---:|---:|
 | Collapse3c | 0.75% | 20.00% | 3.75% | 52.75% | 63.00% | 56.50% |
 | Multistance | 0.75% | 23.25% | **4.25%** | 52.50% | 61.75% | 56.75% |
@@ -139,12 +144,12 @@ safe-exact 都只有 7%–9%，并非 E 臂独有崩溃；真正的临床完全�
 DA 的 reference 可唯一识别率反而更高（71.25%），但 complete 只有
 2.25%–4.25%。这不是“病例不可判定”造成的：主要失败位于**输出粒度**。DA
 reference 经常要求长复合对象、病因、部位、阶段或并发组件；系统往往只输出
-parent、一个 component 或临床相关 manifestation。因而 DA 的 partial 超过
+parent、一个 component 或临床相关 manifestation。因而 DA 的 compatible-partial 超过
 47%，而 option mapper 又把大量宽泛/相关对象映射成正确选项。
 
 ### 4.3 MedCaseReasoning（MCR）
 
-| Arm | safe-exact | legacy-chain | clinical-complete | partial | task | complete-or-partial |
+| Arm | safe-exact | legacy-chain | clinical-complete | compatible-partial | task | complete-or-compatible-partial |
 |---|---:|---:|---:|---:|---:|---:|
 | Collapse3c | 16.25% | 22.25% | **26.75%** | 13.00% | **29.25%** | 39.75% |
 | Multistance | **16.50%** | 22.00% | 26.00% | 12.50% | 28.25% | 38.50% |
@@ -182,7 +187,7 @@ mapper”式反常，只是旧 legacy-chain 会夸大 Forest/IMPC 等稳定 pare
   契约确定性进入 complete、并对矛盾 fail-fast 的**结构性保证**，不是一次独立的
   100% 精度验证；它在 DA 漏掉近八成 complete，适合做保守下界，不适合单独
   衡量能力；
-- legacy-chain 在 MCR 尚可，却在 DA 把大量 partial 当正确，跨 benchmark 不
+- legacy-chain 在 MCR 尚可，却在 DA 把大量 compatible-partial 当正确，跨 benchmark 不
   稳定；
 - MCR task judge 同时具备较高 PPV/recall，是内部自动评估的优先 proxy；
 - DA task mapper 几乎是高召回、极低精度的接口通过器，只能描述“能否映射到
@@ -322,7 +327,7 @@ colitis、把 organizing pneumonia 换成 Pneumocystis pneumonia。它的机制�
 选择特异对象，而非单调安全改进。
 
 B06→E7 同时出现 36 个 specificity/object rescue 与 28 个
-compression/catastrophic loss，净增仅 8 个 complete。B06 的 partial 为 35.00%，
+compression/catastrophic loss，净增仅 8 个 complete。B06 的 compatible-partial 为 35.00%，
 明显高于 E7 的 29.88%，说明 B06 更常“软着陆”在正确 family；E7 用一部分软着陆
 换取完整 specificity，也承担更长的错对象尾部。B07→B06 的两类流量几乎相消，
 解释了二者 complete 只差 0.50pp、但具体病例并不稳定一致。
@@ -357,11 +362,11 @@ stage-specific 四个差异是预期且已明示：B07 DA 26.25%→21.25%、MCR
   高分选为默认骨干。
 - **E7**：相对 v0 的收益在点估计上集中于 reference 明确病例，具备
   specificity rescue；但交互未获乘数校正确认，且代价是更激进的错对象尾部。
-- **B06/B07**：partial/coverage 较高，适合作为保留 family 的安全候选源；若直接
+- **B06/B07**：compatible-partial/coverage 较高，适合作为保留 family 的安全候选源；若直接
   作为 champion，欠特异与 stage/champion 端点错位会夸大表现。
 
 因此默认评估顺序为：以 `clinical-complete × reference-identifiability` 做能力
-主分析；MCR 开发循环采用校准 task judge；safe-exact 做冻结回归下界；partial
+主分析；MCR 开发循环采用校准 task judge；safe-exact 做冻结回归下界；compatible-partial
 单独报告对象压平；legacy-chain 仅用于历史兼容和误差诊断。
 
 ## 11. 局限与可证伪条件
@@ -373,14 +378,16 @@ stage-specific 四个差异是预期且已明示：B07 DA 26.25%→21.25%、MCR
 3. 九臂来自同一开发宇宙，bootstrap rank 不代表外部泛化；新增模型需在同一冻结
    800 例合同下重放。
 4. MCR task judge 的高校准不能外推到 DA mapper，也不能外推到未审的开放域输出。
-5. 任一新模块若声称提升能力，必须同时证明：complete 增加不是 partial/mapper
+5. 任一新模块若声称提升能力，必须同时证明：complete 增加不是 compatible-partial/mapper
    重编码；unique-full 病例收益不被 catastrophic tail 抵消；配对 contrast 在预先
    冻结的 multiplicity family 中仍成立。
 
 ## 12. 可复现产物
 
-- `unified_800/five_endpoint_replay.jsonl`：7,200 行统一五端点 replay；
-- `unified_800/leaderboard.json` / `.csv`：ALL、DA、MCR 五端点表；
+- `unified_800/five_endpoint_replay.jsonl`：7,200 行冻结 v1 replay；其中旧
+  `partial` 字段只允许作为 `compatible_partial` 的只读输入别名；
+- `unified_800/leaderboard.json` / `.csv`：冻结 v1 ALL、DA、MCR 表；当前汇总
+  必须通过 canonical alias migration；
 - `unified_800/endpoint_calibration.json`：proxy 对 clinical-complete 的校准；
 - `unified_800/paired_contrasts.json` / `.csv`：paired McNemar、Holm 与分层 bootstrap；
 - `unified_800/relation_transition_matrices.json`：关系转移与机制计数；
@@ -390,5 +397,8 @@ stage-specific 四个差异是预期且已明示：B07 DA 26.25%→21.25%、MCR
   交互的 case-bootstrap 推断、命名家族与 Holm；
 - `unified_800/rank_stability.json`：10,000 次分层 case bootstrap 排名；
 - `unified_800/root_audit/`：blind cards、三批草稿、根复核、override 与最终决定；
-- `analysis/backbone_v1/mosaic_eval/leaderboard_400_v2.json`：历史命名迁移；
+- `analysis/backbone_v1/mosaic_eval/leaderboard_400_v2.json`：兼容旧文件名的
+  canonical-endpoint-v3 机器视图；
+- `analysis/mechanism_v2/results/CROSS_EXPERIMENT_ROOT_SYNTHESIS/e2_full800_snapshot.json`：
+  供跨实验摄取的 canonical active snapshot；
 - `analysis/mechanism_v2/e2_unified_replay.py`：统一重放和统计实现。

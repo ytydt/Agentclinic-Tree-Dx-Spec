@@ -3,8 +3,8 @@
 ## 摘要
 
 在冻结的 300 例 E6/E12 relation-challenge 开发集上，默认三调用 RCR-3 **没有优于同预算 Lite**。
-根审计优先、异质 proxy 补全的临床完整 Top-1 为 Lite 29/300、RCR-3 20/300、Compact4 18/300；Top-2 为 42、31、26。
-RCR-3 相对 Lite 的完整 Top-1 差 −3.00pp（6 gain/15 loss，Holm q=.1567），Top-2 差 −3.67pp
+非盲 root-priority、异质 proxy 补全的 complete-equivalent sensitivity Top-1 为 Lite 29/300、RCR-3 20/300、Compact4 18/300；Top-2 为 42、31、26。
+RCR-3 相对 Lite 的这项 sensitivity Top-1 差 −3.00pp（6 gain/15 loss，Holm q=.1567），Top-2 差 −3.67pp
 （8/19，q=.1045）。方向稳定为负，但在三个预注册臂间比较校正后不显著。
 
 更宽松的 complete+partial sensitivity 中，RCR-3 的 ITA Top-1/Top-2 分别低 8.67pp 和 9.33pp
@@ -91,7 +91,7 @@ response fail-closed。代理给出的完整 Top-1/Top-2 是：Lite 41/58、RCR 
 
 代理的 104 个 selected-complete 中，根审计只保留 69 个，25 个降为 partial，10 个改为 not-equivalent。
 全部 375 个高影响关系有 107 个三分类分歧。30 个代理阴性病例、106 个被选关系没有发现额外 root-
-complete，说明本次 root correction 主要纠正 false positive，而不是只向一个方向压低某个臂。其余 3,151 条非关键关系保留 heterogeneous proxy，另 7 条 screen failure 按 fail-closed 处理；它们都没有人工逐候选复核，proxy-negative 也不是人工 gold。因此下文临床表是 root-priority/proxy-completed 端点，而非 300 例全候选人工审计。
+complete，说明本次 root correction 主要纠正 false positive，而不是只向一个方向压低某个臂。root queue 含 `arm_outcomes`、reference 与 endpoint-critical reasons，审计者可见臂和结果，故**不是盲审**。其余 3,151 条非关键关系保留 heterogeneous proxy，另 7 条 screen failure 按 fail-closed 处理；它们都没有人工逐候选复核，proxy-negative 也不是人工 gold。因此下文临床表是非盲 root-priority/proxy-completed 端点，而非 300 例全候选人工审计或盲法临床率。
 
 典型代理错误包括：
 
@@ -107,9 +107,9 @@ complete，说明本次 root correction 主要纠正 false positive，而不是�
 
 最后一点是 E2 的必要性：relation 与 identifiability 必须分栏，不能在一个“equivalence”判断里混合。
 
-## 根审计优先的临床端点（其余关系由 proxy 补全）
+## 非盲 root-priority/proxy-completed sensitivity
 
-### 完整等价（clinical-complete*）
+### complete-equivalent proxy sensitivity（不是盲法 clinical-complete）
 
 | 臂 | Top-1 | Top-2 | DA Top-1/2 | MCR Top-1/2 |
 |---|---:|---:|---:|---:|

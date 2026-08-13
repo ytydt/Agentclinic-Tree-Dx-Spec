@@ -3,7 +3,7 @@
 
 This is deliberately offline.  It joins the frozen selection only after root
 decisions have been written, reconstructs the superseded sparse-consensus
-counterfactual, and records every arm's strict -> task -> clinical trajectory.
+counterfactual, and records every arm's legacy-chain -> task -> clinical trajectory.
 """
 from __future__ import annotations
 
@@ -20,8 +20,13 @@ from typing import Any, Mapping, Sequence
 if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-from analysis.mechanism_v2.e2_blinded_adjudication import DEFAULT_OUT  # noqa: E402
-from analysis.mechanism_v2.e2_root_audit import ACCEPTED  # noqa: E402
+from analysis.mechanism_v2.e2_blinded_adjudication import (  # noqa: E402
+    DEFAULT_OUT,
+    read_endpoint_bool,
+)
+from analysis.mechanism_v2.e2_root_audit import (  # noqa: E402
+    COMPLETE_OR_COMPATIBLE_PARTIAL_RELATIONS,
+)
 from analysis.mechanism_v2.common import file_sha256  # noqa: E402
 from analysis.mechanism_v2.online_runner import read_jsonl, write_jsonl  # noqa: E402
 from analysis.mechanism_v2.runtime_contract import atomic_json, stable_seed  # noqa: E402
@@ -51,7 +56,16 @@ CONTRASTS = (
     ("B06", "forest", "forest_vs_B06"),
     ("collapse3c", "forest", "forest_vs_collapse3c"),
 )
-ENDPOINTS = ("strict", "task", "complete", "accepted")
+ENDPOINTS = (
+    "legacy_chain",
+    "task",
+    "clinical_complete",
+    "compatible_partial",
+    "complete_or_compatible_partial",
+)
+CLINICAL_CAPABILITY_ENDPOINTS = (
+    "clinical_complete",
+)
 
 
 def exact_mcnemar(left_only: int, right_only: int) -> float:
@@ -170,11 +184,16 @@ def build_case_rows(out: Path) -> tuple[list[dict[str, Any]], dict[str, list[dic
                 "full_reference_identifiable": bool(
                     identities[case_key]["full_reference_identifiable"]
                 ),
-                "strict": bool(mapping["strict_chain_correct"]),
+                "legacy_chain": read_endpoint_bool(mapping, "legacy_chain"),
                 "task": bool(mapping["task_correct"]),
-                "complete": relation == "complete_equivalent",
-                "accepted": relation in ACCEPTED,
-                "sparse_accepted": sparse_relation in ACCEPTED,
+                "clinical_complete": relation == "complete_equivalent",
+                "compatible_partial": relation == "partial_parent_or_component",
+                "complete_or_compatible_partial": (
+                    relation in COMPLETE_OR_COMPATIBLE_PARTIAL_RELATIONS
+                ),
+                "sparse_complete_or_compatible_partial": (
+                    sparse_relation in COMPLETE_OR_COMPATIBLE_PARTIAL_RELATIONS
+                ),
                 "relation": relation,
                 "sparse_relation": sparse_relation,
                 "candidate_id": candidate_id,
@@ -189,11 +208,12 @@ def build_case_rows(out: Path) -> tuple[list[dict[str, Any]], dict[str, list[dic
                         "candidate_label",
                         "relation",
                         "sparse_relation",
-                        "strict",
+                        "legacy_chain",
                         "task",
-                        "complete",
-                        "accepted",
-                        "sparse_accepted",
+                        "clinical_complete",
+                        "compatible_partial",
+                        "complete_or_compatible_partial",
+                        "sparse_complete_or_compatible_partial",
                     )
                 }
         trajectories.append(
@@ -213,15 +233,20 @@ def build_case_rows(out: Path) -> tuple[list[dict[str, Any]], dict[str, list[dic
 
 def _projection_summary(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
     rates = {endpoint: weighted_rate(rows, endpoint) for endpoint in ENDPOINTS}
-    sparse_rate = weighted_rate(rows, "sparse_accepted")
+    sparse_rate = weighted_rate(rows, "sparse_complete_or_compatible_partial")
     correction = Counter()
     weighted_correction = Counter()
     for row in rows:
-        before, after = bool(row["sparse_accepted"]), bool(row["accepted"])
+        before = bool(row["sparse_complete_or_compatible_partial"])
+        after = bool(row["complete_or_compatible_partial"])
         direction = (
-            "accepted_to_nonaccepted"
+            "complete_or_compatible_partial_to_other"
             if before and not after
-            else "nonaccepted_to_accepted" if not before and after else "unchanged"
+            else (
+                "other_to_complete_or_compatible_partial"
+                if not before and after
+                else "unchanged"
+            )
         )
         correction[direction] += 1
         weighted_correction[direction] += float(row["weight"])
@@ -230,19 +255,39 @@ def _projection_summary(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
         "population_weight": round(sum(float(row["weight"]) for row in rows), 6),
         "weighted_rates": {key: round(value, 6) if value is not None else None for key, value in rates.items()},
         "within_arm_deltas": {
-            "task_minus_strict": round(float(rates["task"]) - float(rates["strict"]), 6),
-            "complete_minus_strict": round(float(rates["complete"]) - float(rates["strict"]), 6),
-            "accepted_minus_task": round(float(rates["accepted"]) - float(rates["task"]), 6),
-            "accepted_minus_strict": round(float(rates["accepted"]) - float(rates["strict"]), 6),
+            "task_minus_legacy_chain": round(
+                float(rates["task"]) - float(rates["legacy_chain"]), 6
+            ),
+            "clinical_complete_minus_legacy_chain": round(
+                float(rates["clinical_complete"]) - float(rates["legacy_chain"]), 6
+            ),
+            "complete_or_compatible_partial_minus_task": round(
+                float(rates["complete_or_compatible_partial"]) - float(rates["task"]), 6
+            ),
+            "complete_or_compatible_partial_minus_legacy_chain": round(
+                float(rates["complete_or_compatible_partial"])
+                - float(rates["legacy_chain"]),
+                6,
+            ),
         },
-        "task_vs_complete": weighted_cross_tab(rows, "task", "complete"),
-        "task_vs_accepted": weighted_cross_tab(rows, "task", "accepted"),
-        "strict_vs_complete": weighted_cross_tab(rows, "strict", "complete"),
-        "strict_vs_accepted": weighted_cross_tab(rows, "strict", "accepted"),
+        "task_vs_clinical_complete": weighted_cross_tab(
+            rows, "task", "clinical_complete"
+        ),
+        "task_vs_complete_or_compatible_partial": weighted_cross_tab(
+            rows, "task", "complete_or_compatible_partial"
+        ),
+        "legacy_chain_vs_clinical_complete": weighted_cross_tab(
+            rows, "legacy_chain", "clinical_complete"
+        ),
+        "legacy_chain_vs_complete_or_compatible_partial": weighted_cross_tab(
+            rows, "legacy_chain", "complete_or_compatible_partial"
+        ),
         "relation_counts_sample": dict(sorted(Counter(str(row["relation"]) for row in rows).items())),
         "sparse_consensus_counterfactual": {
-            "weighted_accepted_rate": round(float(sparse_rate), 6),
-            "corrected_minus_sparse": round(float(rates["accepted"]) - float(sparse_rate), 6),
+            "weighted_complete_or_compatible_partial_rate": round(float(sparse_rate), 6),
+            "corrected_minus_sparse": round(
+                float(rates["complete_or_compatible_partial"]) - float(sparse_rate), 6
+            ),
             "correction_counts_sample": dict(sorted(correction.items())),
             "correction_weights": {
                 key: round(value, 6) for key, value in sorted(weighted_correction.items())
@@ -333,14 +378,32 @@ def analyze(out: Path, repetitions: int) -> dict[str, Any]:
     diversity = Counter()
     diversity_by_identifiability: dict[str, Counter[str]] = defaultdict(Counter)
     for trajectory in trajectories:
-        accepted = [bool(row["accepted"]) for row in trajectory["arms"].values()]
-        state = "all_accepted" if all(accepted) else "all_nonaccepted" if not any(accepted) else "mixed"
+        compatible = [
+            bool(row["complete_or_compatible_partial"])
+            for row in trajectory["arms"].values()
+        ]
+        state = (
+            "all_complete_or_compatible_partial"
+            if all(compatible)
+            else "all_other"
+            if not any(compatible)
+            else "mixed"
+        )
         diversity[state] += 1
         identity = "unique_full" if trajectory["reference_identifiability"] == "unique_full_reference" else "not_unique_full"
         diversity_by_identifiability[identity][state] += 1
 
     result = {
         "experiment_id": "E2-mechanism",
+        "schema_version": "e2-mechanism-clinical-endpoint-v2",
+        "endpoint_contract": {
+            "active": list(ENDPOINTS),
+            "clinical_capability_ranking": list(CLINICAL_CAPABILITY_ENDPOINTS),
+            "compatible_partial_role": "mutually exclusive descriptive relation state; not a capability ranking endpoint",
+            "secondary_coverage_sensitivity": ["complete_or_compatible_partial"],
+            "legacy_chain_role": "historical diagnostic only; prohibited from capability ranking",
+            "deprecated_read_aliases_are_emitted": False,
+        },
         "sample_n": len(trajectories),
         "bootstrap_repetitions": repetitions,
         "reference_identifiability": {
@@ -366,7 +429,7 @@ def analyze(out: Path, repetitions: int) -> dict[str, Any]:
                 ],
                 key=lambda row: (-float(row["weighted_rate"]), str(row["arm"])),
             )
-            for endpoint in ENDPOINTS
+            for endpoint in CLINICAL_CAPABILITY_ENDPOINTS
         },
         "predefined_paired_contrasts": _contrast_rows(arm_rows, repetitions),
         "case_level_clinical_diversity": {
@@ -379,7 +442,8 @@ def analyze(out: Path, repetitions: int) -> dict[str, Any]:
         "interpretation_contract": [
             "The sparse-consensus counterfactual is diagnostic sensitivity analysis, not a randomized treatment arm.",
             "All contrast deltas are right minus left; Holm families span 30 preregistered contrast/scope rows per endpoint.",
-            "Clinical complete and accepted are candidate-reference endpoints; identifiability is a separate case-level property.",
+            "clinical_complete is the sole clinical capability ranking endpoint; complete_or_compatible_partial is secondary coverage sensitivity only.",
+            "legacy_chain and task remain diagnostic projections and are prohibited from clinical capability ranking.",
             "The weighted target is the existing 800-case mechanism universe, not external confirmation.",
         ],
     }
