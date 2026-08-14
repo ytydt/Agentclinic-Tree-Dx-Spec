@@ -209,6 +209,23 @@ retrieval service and must be frozen after the architecture commit.
 
 ## 9. Interpretation rule
 
+### 9.1 Execution-model freeze for C1--C4
+
+> Amendment frozen 2026-08-14 after C0 review began but before any C1--C4
+> case-bearing call or arm outcome was observed.
+
+- Outcome-blind construction, requested-object parsing, modifier binding and
+  active-policy calibration use `google/gemini-2.5-flash`.
+- The two independent offline gate reviewers use
+  `anthropic/claude-sonnet-4.6` and `openai/gpt-5.6`.
+- Every admitted diagnostic comparator arm uses the same frozen
+  `google/gemini-2.5-flash` comparator at temperature 0. Treatment content may
+  differ as specified above, but the prompt must not expose an arm identifier.
+- All calls are non-RAG, fail-closed, use at most 50 workers per run and retain
+  provider/model, prompt hash, payload hash, cache identity and service/schema
+  telemetry. A gate that fails is not retried with a different scientific
+  model or threshold.
+
 No local success establishes a universal `−4.5 pp/candidate` law, mathematical
 recall–conversion incompatibility, universal selector superiority or external
 deployment benefit. A failed architecture gate does not invalidate E5's local
