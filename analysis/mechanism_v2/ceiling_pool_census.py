@@ -1118,21 +1118,42 @@ def run_reviewer(
     return summary
 
 
-def flatten_reviews(rows: Sequence[Mapping[str, Any]]) -> dict[tuple[str, str], str]:
+def flatten_reviews(
+    rows: Sequence[Mapping[str, Any]],
+    expected: set[tuple[str, str]] | None = None,
+) -> dict[tuple[str, str], str]:
+    """Project review responses onto the frozen relation universe.
+
+    A card-level schema/service failure is never deleted or silently retried.
+    With an ``expected`` universe, valid individual judgments are retained and
+    every missing, duplicate or invalid judgment is deterministically mapped
+    to ``uncertain``.  The original card remains failed in its immutable
+    reviewer artifact and telemetry.
+    """
     flattened: dict[tuple[str, str], str] = {}
     for row in rows:
-        if not bool(row.get("success")):
+        if not bool(row.get("success")) and expected is None:
             raise RuntimeError(f"review failure for {row.get('blind_card_id')}: {row.get('error')}")
         card_id = str(row["blind_card_id"])
         relations = (row.get("review") or {}).get("candidate_relations") or []
         for relation in relations:
             key = (card_id, str(relation.get("candidate_id") or ""))
             value = str(relation.get("relation") or "")
-            if value not in RELATIONS:
-                raise ValueError(f"invalid relation at {key}: {value}")
+            if expected is not None and key not in expected:
+                continue
             if key in flattened:
-                raise ValueError(f"duplicate review relation: {key}")
+                if expected is None:
+                    raise ValueError(f"duplicate review relation: {key}")
+                flattened[key] = "uncertain"
+                continue
+            if value not in RELATIONS:
+                if expected is None:
+                    raise ValueError(f"invalid relation at {key}: {value}")
+                value = "uncertain"
             flattened[key] = value
+    if expected is not None:
+        for key in expected:
+            flattened.setdefault(key, "uncertain")
     return flattened
 
 
@@ -1186,9 +1207,11 @@ def compile_ab(out: Path) -> dict[str, Any]:
     out = Path(out)
     index_path = out / "design/blinded_relation_index.jsonl"
     index = read_jsonl(index_path)
-    left = flatten_reviews(read_jsonl(out / "reviewers/reviewer_a/reviews.jsonl"))
-    right = flatten_reviews(read_jsonl(out / "reviewers/reviewer_b/reviews.jsonl"))
     expected = {(str(row["blind_card_id"]), str(row["candidate_id"])) for row in index}
+    left_rows = read_jsonl(out / "reviewers/reviewer_a/reviews.jsonl")
+    right_rows = read_jsonl(out / "reviewers/reviewer_b/reviews.jsonl")
+    left = flatten_reviews(left_rows, expected)
+    right = flatten_reviews(right_rows, expected)
     if set(left) != expected or set(right) != expected:
         raise RuntimeError("A/B review coverage does not match frozen relation index")
     universe_by_id = {
@@ -1250,6 +1273,10 @@ def compile_ab(out: Path) -> dict[str, Any]:
         "n_disagreement": sum(not bool(row["agreement"]) for row in decisions),
         "fine_label_agreement_by_stratum": fine_strata,
         "complete_boundary_agreement_by_stratum": complete_strata,
+        "failed_cards_fail_closed_to_uncertain": {
+            "reviewer_a": sum(not bool(row.get("success")) for row in left_rows),
+            "reviewer_b": sum(not bool(row.get("success")) for row in right_rows),
+        },
         "reviewer_c_contract": "third model independently reviews the identical full blinded universe",
         "artifact_sha256": {
             "panel/ab_decisions.jsonl": file_sha256(decisions_path),
@@ -1263,11 +1290,12 @@ def compile_final(out: Path) -> dict[str, Any]:
     out = Path(out)
     ab_path = out / "panel/ab_decisions.jsonl"
     ab = read_jsonl(ab_path)
-    c = flatten_reviews(read_jsonl(out / "reviewers/reviewer_c/reviews.jsonl"))
     expected_c = {
         (str(row["blind_card_id"]), str(row["candidate_id"]))
         for row in ab
     }
+    c_rows = read_jsonl(out / "reviewers/reviewer_c/reviews.jsonl")
+    c = flatten_reviews(c_rows, expected_c)
     if set(c) != expected_c:
         raise RuntimeError("reviewer C coverage must equal the complete frozen relation universe")
     universe = {
@@ -1397,6 +1425,10 @@ def compile_final(out: Path) -> dict[str, Any]:
         "n_post_panel_frozen_overrides": sum(bool(row["post_panel_frozen_override"]) for row in final),
         "n_three_model_majority": sum(row["model_panel_status"] == "three_model_majority" for row in final),
         "n_three_way_split_to_uncertain": sum(row["model_panel_status"] == "three_way_split_mapped_to_uncertain" for row in final),
+        "failed_cards_fail_closed_to_uncertain": {
+            **dict(ab_summary.get("failed_cards_fail_closed_to_uncertain") or {}),
+            "reviewer_c": sum(not bool(row.get("success")) for row in c_rows),
+        },
         "hidden_sentinel_calibration": calibration,
         "reliability_gate": {
             "pass": gate_pass,

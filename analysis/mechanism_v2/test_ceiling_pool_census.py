@@ -12,6 +12,7 @@ from analysis.mechanism_v2.ceiling_pool_census import (
     classify_e5_delivery,
     compile_ab,
     compile_final,
+    flatten_reviews,
     gwet_ac1,
     old14_frontier_adapter,
 )
@@ -152,6 +153,28 @@ def _review(card_id: str, values: dict[str, str]) -> dict:
                 for candidate_id, relation in values.items()
             ]
         },
+    }
+
+
+def test_failed_review_card_keeps_valid_items_and_maps_invalid_or_missing_to_uncertain():
+    expected = {("RC1", "C001"), ("RC1", "C002"), ("RC1", "C003")}
+    rows = [
+        {
+            "blind_card_id": "RC1",
+            "success": False,
+            "error": "candidate_relations must cover every candidate exactly once",
+            "review": {
+                "candidate_relations": [
+                    {"candidate_id": "C001", "relation": COMPLETE},
+                    {"candidate_id": "C002", "relation": "invalid_label"},
+                ]
+            },
+        }
+    ]
+    assert flatten_reviews(rows, expected) == {
+        ("RC1", "C001"): COMPLETE,
+        ("RC1", "C002"): "uncertain",
+        ("RC1", "C003"): "uncertain",
     }
 
 

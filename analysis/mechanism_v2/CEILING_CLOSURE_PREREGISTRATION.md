@@ -226,6 +226,19 @@ retrieval service and must be frozen after the architecture commit.
   telemetry. A gate that fails is not retried with a different scientific
   model or threshold.
 
+### 9.2 Fail-closed projection of reviewer schema failures
+
+> Operational clarification frozen after reviewer A's card-level failure
+> statuses were observed, but before A/B agreement, reviewer B/C summaries or
+> any three-model panel result was compiled.
+
+A failed review card is not deleted and is not resubmitted under a different
+scientific cache identity. Individually well-formed candidate judgments in the
+returned body remain usable; every missing, duplicate, out-of-universe or
+invalid relation judgment is mapped to `uncertain`. The card-level failure and
+telemetry remain visible. This preserves the full frozen denominator and can
+only make the reliability/U gate harder than complete-case deletion.
+
 No local success establishes a universal `−4.5 pp/candidate` law, mathematical
 recall–conversion incompatibility, universal selector superiority or external
 deployment benefit. A failed architecture gate does not invalidate E5's local
