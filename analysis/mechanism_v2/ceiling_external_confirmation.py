@@ -813,20 +813,36 @@ def _git_state(repo_root: Path, architecture_commit: str | None) -> dict[str, An
         dirty = bool(run("status", "--porcelain"))
     except (OSError, subprocess.CalledProcessError) as exc:
         return {"passed": False, "reason": f"git_state_unavailable:{type(exc).__name__}"}
-    requested = architecture_commit or head
+    requested_input = architecture_commit or head
+    try:
+        requested = run("rev-parse", requested_input)
+    except (OSError, subprocess.CalledProcessError):
+        requested = requested_input
     passed = not dirty and requested == head
     reasons = []
     if dirty:
         reasons.append("worktree_not_clean")
     if requested != head:
         reasons.append("architecture_commit_not_head")
-    return {"passed": passed, "head": head, "architecture_commit": requested, "dirty": dirty, "reasons": reasons}
+    return {
+        "passed": passed,
+        "head": head,
+        "architecture_commit": requested,
+        "architecture_commit_input": requested_input,
+        "dirty": dirty,
+        "reasons": reasons,
+    }
 
 
 def _execution_reference(hit: Mapping[str, Any]) -> bool:
     paths = [str(hit.get("path") or "")] + [str(path) for path in hit.get("paths") or []]
     for value in paths:
         parts = Path(value).parts
+        # This audit necessarily records the pinned test path/hash.  Its own
+        # reports are provenance evidence, not evidence that a diagnostic arm
+        # opened or executed the split.
+        if "CEILING_EXTERNAL_CONFIRMATION" in parts:
+            continue
         if "logs" in parts or "runs" in parts or "results" in parts:
             return True
     return False

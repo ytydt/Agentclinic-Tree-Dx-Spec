@@ -7,6 +7,8 @@ import pytest
 from analysis.mechanism_v2.ceiling_external_confirmation import (
     CaseRecord,
     ExposureRecord,
+    _execution_reference,
+    _git_state,
     audit_case_overlap,
     build_freeze,
     inspect_pinned_artifact,
@@ -16,6 +18,26 @@ from analysis.mechanism_v2.ceiling_external_confirmation import (
     read_gate_result,
     scan_git_history,
 )
+
+
+def test_audit_output_is_not_misclassified_as_split_execution():
+    assert not _execution_reference({
+        "path": "analysis/mechanism_v2/results/CEILING_EXTERNAL_CONFIRMATION/scope_audit.json"
+    })
+    assert _execution_reference({"path": "analysis/mechanism_v2/results/E99/run.jsonl"})
+
+
+def test_git_state_resolves_short_architecture_commit(tmp_path: Path):
+    subprocess.run(["git", "init", "-q"], cwd=tmp_path, check=True)
+    subprocess.run(["git", "config", "user.email", "audit@example.invalid"], cwd=tmp_path, check=True)
+    subprocess.run(["git", "config", "user.name", "Audit Test"], cwd=tmp_path, check=True)
+    (tmp_path / "x").write_text("x", encoding="utf-8")
+    subprocess.run(["git", "add", "x"], cwd=tmp_path, check=True)
+    subprocess.run(["git", "commit", "-qm", "x"], cwd=tmp_path, check=True)
+    head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=tmp_path, text=True).strip()
+    state = _git_state(tmp_path, head[:9])
+    assert state["architecture_commit"] == head
+    assert state["passed"] is True
 
 
 def test_scope_loader_is_outcome_ungated(tmp_path: Path):
