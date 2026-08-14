@@ -2,6 +2,7 @@
 
 > 把 R5 的占比计数升级为机制级解剖：噪声门控的胜集几何 → 题目协变量与轨迹内部决策变量 → 配对归因树 → 生成器×selector 交叉换装等五个因果探针。  
 > 日期：2026-08-10。病例基底：R4/R5 的 800 例。每个分析小节强制包含：数字 / 机制解读 / 批判性审查 / 下一步实验建议 / 对算法计划的推论。
+> 数据边界：路径名中的 `heldout200b` / `mcr_200b` 是历史切片标识；两者均为 **reserved internal development slices**，不是外部 holdout、独立确认集或外推样本。
 
 ---
 
@@ -62,7 +63,7 @@ R5 的冠军一致率 0.75–0.81 意味着：**单次运行的「A 对 B 错」
 
 ### 1.3 批判性审查
 
-- **无法验证：** stable_win 只在有 r2 的 dev 400 上定义；200b 无复制，holdout 上的「专属题」仍可能是噪声。
+- **无法验证（当时状态）：** stable_win 只在有 r2 的 dev 400 上定义；reserved internal development 200b 当时无复制，该内部保留切片上的「专属题」仍可能是噪声。
 - **无法解释的反例：** forest vs e7 的 forest_only=85（rate 0.106）贴着地板——可能有一小撮真专属题，但本轮统计上不能宣称可分辨。
 - **混淆：** chain 口径下 B06/B07 的 mapper_rescue 不进入胜集；若用 scored，几何会大变（R5 已证明）。
 - **替代解释：**「能力差」与「专长差」被 exclusive-rate 混在一起；Rasch 残差才是专长候选，但 140 旗标未做人工核实。
@@ -70,7 +71,7 @@ R5 的冠军一致率 0.75–0.81 意味着：**单次运行的「A 对 B 错」
 ### 1.4 下一步实验/分析建议
 
 1. 对 Rasch 残差旗标做 50 例人工审阅，看是否集中于某模态（pathology/genetics）。  
-2. 给 200b 也跑一对 forest/collapse3c 复制，把地板外推到 holdout。  
+2. 给 reserved internal development 200b 也跑一对 forest/collapse3c 复制，在内部保留切片上复核噪声地板。
 3. 用 **stable_win** 重做全部下游归因（当前归因仍用单次 primary）。
 
 ### 1.5 对算法计划的推论
@@ -644,7 +645,7 @@ chain 0.113（dev400）；`score_gap` 均值 2.92；`gold_veto_rate` 0.78；池�
 |---|---|---|---|
 | §0 | 解剖 frontier←registry（unique_budget/stance） | 离线 | **完成** |
 | §1.4 | Rasch 旗标扩至 ~50 + 模态 | 离线审查 | **完成** |
-| §1.4 | 200b forest/c3c 复制 | 大规模 | **登记** |
+| §1.4 | reserved internal development 200b forest/c3c 复制 | 大规模 | **登记** |
 | §2.4 | 外部疾病频率替换 prevalence | 需外部表 | **阻塞**（无本地 Orphanet/ICD） |
 | §2.4 | specialty×800 | 大规模 | **登记** |
 | §2.4 | stable exclusive 成对协变量模型 | 离线 | **完成** |
@@ -782,7 +783,7 @@ stable silent_drop 子集（DA seq100，n=15，collapse3c 池重跑 selector）�
 
 1. ~~`compact_forest_v0` 800 + r2~~ → **§15.1**  
 2. ~~near-dedup collapse3c/multistance 800~~ → **§15.2**（结论：无监督全对合并有害）  
-3. ~~200b forest/collapse3c 复制~~ → **§15.3**  
+3. ~~reserved internal development 200b forest/collapse3c 复制~~ → **§15.3**
 4. ~~specialty×800 + Q6~~ → **§15.4**  
 5. 独立双人拒绝标注 — 仍可选，非算法关键路径。
 
@@ -860,9 +861,9 @@ compact vs forest：exclusive either **0.040** ≪ 0.113；compact vs collapse3c
 
 ---
 
-### 15.3 200b forest / collapse3c 复制 → 外推噪声地板
+### 15.3 200b forest / collapse3c 复制 → 内部保留开发切片的噪声地板复核
 
-在 `d2_heldout200b` + `mcr_200b`（n=400）上补齐 `mosaic_forest_r2` / `aphhm_c_collapse3c_r2`（此前仅 400 有 r2）。
+在 `d2_heldout200b` + `mcr_200b`（n=400；均为 reserved internal development slices）上补齐 `mosaic_forest_r2` / `aphhm_c_collapse3c_r2`（此前仅另一组 400 个开发病例有 r2）。
 
 | 复制对 | n | exclusive either | a_excl | Jaccard |
 |---|---:|---:|---:|---:|
@@ -871,9 +872,9 @@ compact vs forest：exclusive either **0.040** ≪ 0.113；compact vs collapse3c
 | forest vs r2（全重叠 800） | 800 | 0.063 | 0.036 | 0.79 |
 | collapse3c vs r2（800） | 800 | 0.045 | 0.021 | 0.81 |
 
-**解读：** 200b 上的复制噪声 **低于** R6 聚合地板 0.113（该地板被 aphhm_c_v1 等高噪臂抬高）。用 0.113 解释跨臂 exclusive 仍然保守安全；若只比较 forest/collapse3c，可采用 ~0.05–0.06 的更紧地板——**即便如此，§1 的跨臂 exclusive 仍多数不过门**。
+**解读：** reserved internal development 200b 上的复制噪声 **低于** R6 聚合地板 0.113（该地板被 aphhm_c_v1 等高噪臂抬高）。用 0.113 解释跨臂 exclusive 仍然保守安全；若只比较 forest/collapse3c，可采用 ~0.05–0.06 的更紧地板——**即便如此，§1 的跨臂 exclusive 仍多数不过门**。
 
-**算法推论：** holdout200b 不改变「能力水位而非题型专长」的主结论。
+**算法推论：** reserved internal development 200b 的内部复核不改变「能力水位而非题型专长」的主结论；它不提供外部确认或外推证据。
 
 ---
 
@@ -899,7 +900,7 @@ compact vs forest：exclusive either **0.040** ≪ 0.113；compact vs collapse3c
 
 **可写**
 1. compact_forest（forest 池 + APHHM selector）在 **800** 上达到 forest 水位并显著高于 collapse3c。  
-2. 200b 复制噪声 ≈0.04–0.06，支持把 0.113 当作保守上界。  
+2. reserved internal development 200b 的复制噪声 ≈0.04–0.06，支持在当前开发集内把 0.113 当作保守上界。
 3. 无监督近邻全合并在 800 上 **伤害** collapse3c/multistance。  
 4. Specialty 条件化后仍无过门的臂专长。
 
@@ -974,7 +975,7 @@ compact vs forest：exclusive either **0.040** ≪ 0.113；compact vs collapse3c
 | v1 vs v1_x3ev | 23 | 9 | 0.040 | 0.029 |
 | v0 vs v0_x3ev | 9 | 8 | 0.021 | 0.011 |
 
-按切片：v1 在 **DA** 上贴近 forest（seq100 0.31、heldout200b 0.28）；缺口主要在 **MCR**（mcr_v1 0.21 vs forest 0.31；mcr_200b 0.195 vs 0.245）。
+按内部开发切片：v1 在 **DA** 上贴近 forest（seq100 0.31、`heldout200b` 0.28；后者为 legacy-named reserved internal development slice）；缺口主要在 **MCR**（mcr_v1 0.21 vs forest 0.31；`mcr_200b` 0.195 vs 0.245，同为内部保留开发切片）。
 
 ### 16.4 可写 / 不可写
 
@@ -1061,7 +1062,7 @@ MCR 精确池只差 ~2pp，但 forest⊤v1⊥ 的漏召回样本多为**稀有�
 
 MCR 池召回：v11_facts gold_in_pool **0.417**（v1 0.343；avg registry ~9.3 vs ~4.5）。
 
-切片：mcr_v1 0.30≈forest 0.31；mcr_200b 0.225≈v0；mcr_v2 仍弱（0.19）。DA 整体不掉（heldout200b 0.29=forest）。
+内部开发切片：mcr_v1 0.30≈forest 0.31；`mcr_200b` 0.225≈v0；mcr_v2 仍弱（0.19）。DA 整体不掉（legacy-named `heldout200b` 0.29=forest）。两个 200b 切片均不构成外部确认。
 
 ### 17.5 v1 复制（DA seq100）
 
@@ -1094,4 +1095,3 @@ MCR 池召回：v11_facts gold_in_pool **0.417**（v1 0.343；avg registry ~9.3 
 ### 17.8 一句话
 
 **用 1 次廉价 KeyFacts 锚定后，3-call 内生池在 800 上超过 v0、逼近 forest；证明 §16 的残差主要是池召回，而且补得动。**
-

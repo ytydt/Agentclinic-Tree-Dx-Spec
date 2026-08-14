@@ -25,7 +25,7 @@
 7. **时间/范围只允许软约束，RAG 只允许 typed admission**。E8 的 9 个 hard reference veto 经根审计无一成立；E11 的“relevant” chunk 只有 6.62% case-specific。没有通过关系、对象和范围门控的上下文，安全行为是不用，而不是强制注入。
 8. **真实诊断能力只允许由全量盲法根级 `clinical-complete` 排名**。`safe-exact` 是冻结保守下界，`legacy-chain` 只诊断历史 resolver，`compatible-partial` 记录对象压平，`task` 必须按 DA mapper 与 MCR calibrated judge 分开解释。当前只有 E2 满足 human-root 准入合同。79 个迁移臂的 23,046 个 served Top-1 均有 clinical-complete/compatible-partial/union 模型面板关系，可更新敏感性和机制结论，却不能进入 root-only capability leaderboard。
 
-在用户明确排除重复多运行、确认集扩容和 provider/retry 统一之后，冻结 crosswalk 中可执行且有科学识别价值的实验已经全部完成。形式化 E14 router 依赖被排除的 E13 latent multi-run labels，不能被诚实地标记为“待跑一个普通臂”；当前真实 gate 已由 E14x 直接检验并关闭。因此 **scientific execution remaining = 0**。本次又把 **79 个实验臂的 clinical metric-migration gap 降到 0**；E7a 三臂仍为结构 replay、临床端点 N/A。补充充值后重试成功，fresh task 新命名空间现已完成 **5,839/5,839**，无失败、无历史值插补；26 个 Holm survivor 必须保留为 DA 7 个与 MCR 19 个 family-specific 对比，禁止汇成 pooled `ALL task`。
+此前“冻结 crosswalk 内已无剩余科学执行”的判断只适用于当时明确排除重复多运行、确认范围和 provider/retry 统一的旧执行边界；它不再等于当前项目状态。2026-08-14 冻结的 [`CEILING_CLOSURE_PREREGISTRATION.md`](CEILING_CLOSURE_PREREGISTRATION.md) 已重新打开 Chapter 12 的 ceiling-closure 工作：C0–C4 的测量/机制闭环仍待按门执行，C5 的范围、污染与功效审计也仍开放，而确认臂是否执行受该预注册 §8 的 scope amendment 约束；旧的“科学执行零剩余”结论已失效。形式化 E14 router 仍依赖未执行的 E13 latent multi-run labels；这项 prerequisite 限制没有改变。历史 **79 个实验臂的 clinical metric-migration gap 已降到 0**；E7a 三臂仍为结构 replay、临床端点 N/A。补充充值后重试成功，fresh task 新命名空间现已完成 **5,839/5,839**，无失败、无历史值插补；26 个 Holm survivor 必须保留为 DA 7 个与 MCR 19 个 family-specific 对比，禁止汇成 pooled `ALL task`。
 
 ### 0.1 新指标覆盖核查
 
@@ -82,7 +82,7 @@
 | RCR-3 / Compact4 | complete + migrated | complete 无 Holm survivor；C∪P ITA RCR−Lite −7.00pp、`q=.03142`，第三 generator−Lite −21.00pp；共同服务仅 −0.39/−1.72pp 且 `q=1`，部署否决主要由 schema/service、span 与 relation fidelity 支撑 |
 | E13 多运行、provider-normalized programme | excluded | 属用户明确排除的重复/降方差程序 |
 | formal E14 router after E13 | prerequisite excluded | 不使用不存在的 latent labels 伪造 router；实际 gate 已由 E14x 处理 |
-| new confirmation cohort | excluded | 用户明确排除扩容确认集 |
+| ceiling-closure confirmation gate | reopened under frozen preregistration | C5 的范围、污染与功效审计仍开放；确认臂执行受 `CEILING_CLOSURE_PREREGISTRATION.md` §8 scope amendment 约束，不沿用旧的 blanket exclusion |
 
 两份源审计都未预先写出的实质缺口也没有被漏掉：E6x 处理 tokenizer sentinel 混杂；E7c 检验方向图和 bounded inheritance；E14x 检验真实 runtime gate；E2 从旧的结局富集 400 例扩展为 800/800 identity census、关系全 partition 和规范端点 replay；RCR-3 又增加 relation、span-drop、frontier 和 selector self-calibration 的独立根审计。
 
