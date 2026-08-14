@@ -16,6 +16,7 @@ from analysis.mechanism_v2.ceiling_breakthrough_experiments import (
     _assert_prompt_blind,
     _factor_payloads,
     _job,
+    _write_freeze,
     analyse,
     compile_run,
     freeze_active,
@@ -34,6 +35,19 @@ def test_local_blinding_rejects_historical_e5_audit_fields() -> None:
         _assert_blind({"candidates": [{"candidate_id": "B1", "audit_is_gold": True}]})
     with pytest.raises(AssertionError, match="post-treatment"):
         _assert_blind({"historical_champions": {"old": "answer"}})
+
+
+def test_freeze_accepts_a_relative_user_supplied_source_path(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    source = tmp_path / "typing.jsonl"
+    source.write_text("{}\n", encoding="utf-8")
+    monkeypatch.chdir(tmp_path)
+    manifest = _write_freeze(
+        tmp_path / "freeze",
+        "toy",
+        [{"case_key": "toy/1"}],
+        [Path("typing.jsonl")],
+    )
+    assert manifest["source_artifacts"][0]["sha256"]
 
 
 def test_every_compiled_selector_prompt_hides_arm_and_historical_outcome() -> None:

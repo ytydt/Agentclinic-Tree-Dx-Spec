@@ -184,14 +184,20 @@ def _write_freeze(out: Path, component: str, rows: list[dict[str, Any]], sources
     for row in rows:
         _assert_blind(row)
     write_jsonl(out / "cases.jsonl", rows)
+    source_artifacts: list[dict[str, str]] = []
+    for source in sources:
+        source_path = Path(source).resolve()
+        try:
+            display_path = str(source_path.relative_to(ROOT))
+        except ValueError:
+            display_path = str(source_path)
+        source_artifacts.append({"path": display_path, "sha256": file_sha256(source_path)})
     manifest = {
         "schema": SCHEMA,
         "kind": "freeze",
         "component": component,
         "source_commit": source_commit(),
-        "source_artifacts": [
-            {"path": str(path.relative_to(ROOT)), "sha256": file_sha256(path)} for path in sources
-        ],
+        "source_artifacts": source_artifacts,
         "case_n": len(rows),
         "family_n": dict(sorted(Counter(str(r.get("family")) for r in rows).items())),
         "cases_sha256": canonical_sha256(rows),
