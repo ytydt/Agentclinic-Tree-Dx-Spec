@@ -37,9 +37,13 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Iterable, Mapping, Sequence
 
+_ROOT_FOR_IMPORT = Path(__file__).resolve().parents[2]
 if __package__ in {None, ""}:
-    _ROOT_FOR_IMPORT = Path(__file__).resolve().parents[2]
     sys.path.insert(0, str(_ROOT_FOR_IMPORT))
+# The repository uses a src/ layout.  OnlineJSONCaller imports the production
+# client lazily inside worker threads, so direct-script execution must make the
+# package root available before those threads start.
+sys.path.insert(0, str(_ROOT_FOR_IMPORT / "src"))
 
 from analysis.mechanism_v2.common import ROOT, file_sha256, source_commit  # noqa: E402
 from analysis.mechanism_v2.online_runner import (  # noqa: E402
