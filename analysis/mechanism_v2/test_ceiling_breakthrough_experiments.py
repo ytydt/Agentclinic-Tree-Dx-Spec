@@ -7,11 +7,15 @@ import pytest
 
 from analysis.mechanism_v2.ceiling_breakthrough_experiments import (
     ACTIVE_ARMS,
+    ALL_ARM_IDS,
     BRIDGE,
+    PROMPTS,
     RELATION_EXPECTED_CASES,
     RELATION_EXPECTED_EDGES,
     _assert_blind,
+    _assert_prompt_blind,
     _factor_payloads,
+    _job,
     analyse,
     compile_run,
     freeze_active,
@@ -30,6 +34,32 @@ def test_local_blinding_rejects_historical_e5_audit_fields() -> None:
         _assert_blind({"candidates": [{"candidate_id": "B1", "audit_is_gold": True}]})
     with pytest.raises(AssertionError, match="post-treatment"):
         _assert_blind({"historical_champions": {"old": "answer"}})
+
+
+def test_every_compiled_selector_prompt_hides_arm_and_historical_outcome() -> None:
+    prompt_rows = [
+        (component, arm, prompt)
+        for component in ("admission", "factorization", "active_post", "relation")
+        for arm, prompt in PROMPTS[component].items()
+    ]
+    prompt_rows.append(("active", "typed_policy", PROMPTS["active_policy"]))
+    for component, arm, prompt in prompt_rows:
+        job = _job(
+            component,
+            arm,
+            {"case_key": "toy/1", "family": "DA"},
+            prompt,
+            {"case_key": "toy/1", "vignette": "finding", "candidates": [{"candidate_id": "D1", "label": "A"}]},
+        )
+        normalized = " ".join(job["prompt"].lower().split())
+        assert "arm=" not in normalized and "arm =" not in normalized
+        assert not any(
+            arm_id.lower() in normalized or arm_id.lower().replace("_", " ") in normalized
+            for arm_id in ALL_ARM_IDS
+        )
+        assert not any(marker in normalized for marker in ("gold", "historical champion", "previous champion", "observed outcome"))
+    with pytest.raises(AssertionError, match="prompt leaks"):
+        _assert_prompt_blind("arm=fixed_k; the historical champion was X")
 
 
 def test_active_freeze_is_e5_base4_balanced_and_builder_cannot_see_candidates(tmp_path: Path) -> None:

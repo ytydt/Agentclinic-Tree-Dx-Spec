@@ -83,6 +83,24 @@ MODIFIER_AXES = (
     "composite_components",
 )
 ACTION_STATUSES = frozenset({"performed", "not_available", "not_performed"})
+ALL_ARM_IDS = ADMISSION_ARMS + FACTORIZATION_ARMS + ACTIVE_ARMS + RELATION_ARMS + ("typed_policy",)
+FORBIDDEN_PROMPT_MARKERS = frozenset(
+    {
+        "arm=",
+        "arm =",
+        "gold",
+        "ground truth",
+        "reference diagnosis",
+        "historical champion",
+        "previous champion",
+        "observed outcome",
+        "correct answer",
+        "audit_is_gold",
+        "source_option",
+        *(arm.lower() for arm in ALL_ARM_IDS),
+        *(arm.lower().replace("_", " ") for arm in ALL_ARM_IDS),
+    }
+)
 
 # Stronger than the generic online-runner list because historical E4/E5 rows
 # contain additional audit-only and post-treatment fields.
@@ -115,11 +133,14 @@ Return strict JSON: {"champion_id":"...","runner_up_id":"... or empty","margin":
 
 PROMPTS = {
     "admission": {
-        arm: f"Admission experiment arm={arm}. Compare only main_frontier; residual_ledger is coverage-only.\n{COMMON_SELECTOR_CONTRACT}"
+        # The four membership treatments use a byte-identical comparator.
+        # Neither the treatment name nor the admission rule is disclosed.
+        arm: "Compare only the supplied main candidate frontier. The residual ledger preserves coverage and must not participate in this first-pass decision.\n"
+        + COMMON_SELECTOR_CONTRACT
         for arm in ADMISSION_ARMS
     },
     "factorization": {
-        "flat": "Compare the supplied flat labels.\n" + COMMON_SELECTOR_CONTRACT,
+        "flat": "Compare the supplied candidate labels.\n" + COMMON_SELECTOR_CONTRACT,
         "exact_identity": "Aggregate only confirmed exact/frozen synonyms before comparing.\n" + COMMON_SELECTOR_CONTRACT,
         "factorized_lattice": "First choose a core entity, then select an existing member whose explicit modifiers are supported. Never fill a missing modifier.\n" + COMMON_SELECTOR_CONTRACT,
         "structure_sham": "Read the supplied singleton structured records, then compare candidates.\n" + COMMON_SELECTOR_CONTRACT,
@@ -130,11 +151,16 @@ the one missing discriminator type, and select exactly one available action.  Do
 result. Return strict JSON: {"top_pair":["ID","ID"],"need_type":"...","action_id":"A#",
 "expected_result_and_odds_shift":"brief","abstain":false}.""",
     "active_post": {
-        arm: f"Active-evidence arm={arm}. Use only evidence explicitly released in this payload.\n{COMMON_SELECTOR_CONTRACT}"
+        # The evidence release itself is the treatment; all post-release
+        # comparators receive exactly the same instruction.
+        arm: "Use only patient evidence explicitly present or released in this payload.\n"
+        + COMMON_SELECTOR_CONTRACT
         for arm in ACTIVE_ARMS
     },
     "relation": {
-        arm: f"Relation-substrate arm={arm}. Relations are taxonomy background, never patient observations or votes.\n{COMMON_SELECTOR_CONTRACT}"
+        # Edge semantics/availability vary in the payload, never in an arm tag.
+        arm: "Any supplied relations are taxonomy background, never patient observations or votes.\n"
+        + COMMON_SELECTOR_CONTRACT
         for arm in RELATION_ARMS
     },
 }
@@ -187,6 +213,14 @@ def _assert_blind(value: Any, path: str = "payload") -> None:
     elif isinstance(value, (list, tuple)):
         for index, child in enumerate(value):
             _assert_blind(child, f"{path}[{index}]")
+
+
+def _assert_prompt_blind(prompt: str) -> None:
+    """Fail closed if a selector instruction discloses treatment or outcome."""
+    normalized = " ".join(str(prompt).lower().split())
+    for marker in sorted(FORBIDDEN_PROMPT_MARKERS, key=lambda value: (-len(value), value)):
+        if marker and marker in normalized:
+            raise AssertionError(f"selector prompt leaks treatment/outcome marker: {marker!r}")
 
 
 def _e4_vignettes(path: Path = E4_JOINED) -> dict[str, str]:
@@ -832,6 +866,7 @@ def compile_run(component: str, freeze_dir: Path, gate_path: Path, out: Path, *,
 
 def _job(component: str, arm: str, case: Mapping[str, Any], prompt: str, payload: Mapping[str, Any], *, stage: str = "selector") -> dict[str, Any]:
     _assert_blind(payload)
+    _assert_prompt_blind(prompt)
     return {
         "schema": SCHEMA, "component": component, "stage": stage,
         "case_key": case["case_key"], "family": case["family"], "arm": arm,
