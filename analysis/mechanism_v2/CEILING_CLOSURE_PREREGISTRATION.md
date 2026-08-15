@@ -62,8 +62,9 @@ The census includes every recoverable candidate occurrence from:
 
 The pre-call inventory is 19,599 unique `(case_key, normalized label)`
 relations across 800 development cases. Existing E2 root decisions cover 2,601
-of these and the frozen exact bridge covers a further 344; 16,781 require new
-panel review. Occurrences remain separate so one semantic relation can be
+of these. The frozen exact bridge identifies 344 relations in total, of which
+127 overlap the E2 set, so its net further coverage is 217 and 16,781 require
+new panel review. Occurrences remain separate so one semantic relation can be
 projected back to every arm, pool layer and payload hash without pretending
 that evidence fidelity is reusable.
 
@@ -81,7 +82,8 @@ run independently:
 
 - A: `google/gemini-2.5-flash`;
 - B: `anthropic/claude-sonnet-4.6`;
-- C: `openai/gpt-5.6`.
+- C: `openai/gpt-5.6-sol` (the exact model ID returned by the pre-case-bearing
+  provider identity probe for the originally named `openai/gpt-5.6` alias).
 
 Every candidate is judged C/P/X/M/N/U plus object/scope detail. E2 relations
 embedded in the universe are hidden sentinels; existing root truth overrides
@@ -170,8 +172,10 @@ literal, exact-offset candidate-specific support span. Inverse normalization,
 duplicate collapse, cycle/contradictory-direction rejection and citation
 closure are mandatory; every unsupported item is unknown/quarantined.
 
-The frozen strict inventory is 96/400 eligible cases (DA 53, MCR 43), 124
-edges and 19 safe-exact-exposed cases. Whitespace-normalized containment is a
+The frozen raw inventory is 96/400 eligible cases (DA 53, MCR 43) and 124
+candidate-ID edges. Mandatory same-case directed concept-pair collapse removes
+two semantic duplicates, yielding the strict primary inventory of 122 edges
+and 19 safe-exact-exposed cases. Whitespace-normalized containment is a
 construction sensitivity, not the primary set. Online entry requires mapping
 precision and direction fidelity at least 95%, citation closure at least 98%
 and U at most 5%. If entered, arms are no-edge, validated edge,
@@ -217,7 +221,7 @@ retrieval service and must be frozen after the architecture commit.
 - Outcome-blind construction, requested-object parsing, modifier binding and
   active-policy calibration use `google/gemini-2.5-flash`.
 - The two independent offline gate reviewers use
-  `anthropic/claude-sonnet-4.6` and `openai/gpt-5.6`.
+  `anthropic/claude-sonnet-4.6` and `openai/gpt-5.6-sol`.
 - Every admitted diagnostic comparator arm uses the same frozen
   `google/gemini-2.5-flash` comparator at temperature 0. Treatment content may
   differ as specified above, but the prompt must not expose an arm identifier.
@@ -238,6 +242,23 @@ returned body remain usable; every missing, duplicate, out-of-universe or
 invalid relation judgment is mapped to `uncertain`. The card-level failure and
 telemetry remain visible. This preserves the full frozen denominator and can
 only make the reliability/U gate harder than complete-case deletion.
+
+### 9.3 Non-outcome amendments and correction ledger
+
+These corrections do not change a scientific endpoint, threshold, case,
+candidate, arm or panel response:
+
+- The C0 arithmetic correction (`344 total - 127 E2 overlap = 217 net further`)
+  was made after C0 review began. It fixes the prose/accounting inconsistency;
+  the frozen 19,599-card universe, 16,781 panel-review set and every cache
+  identity were already constructed with the correct set subtraction.
+- The C4 `raw 124 -> duplicate collapse 2 -> strict 122` correction was made by
+  the deterministic pre-call validator before C4 reviewers saw a case. It
+  enforces the already-frozen duplicate-collapse rule rather than changing the
+  eligible source set.
+- The exact `openai/gpt-5.6-sol` identifier was bound before formal C0-C4 use;
+  the provider probe showed that the shorter alias resolves to that model.
+  Formal manifests retain the exact requested and returned identity.
 
 No local success establishes a universal `−4.5 pp/candidate` law, mathematical
 recall–conversion incompatibility, universal selector superiority or external

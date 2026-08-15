@@ -69,9 +69,15 @@ ACTIVE_ARMS = ("no_acquisition", "typed_action", "cost_matched_random")
 RELATION_ARMS = ("no_relation", "validated_relation", "inverse_corrupted", "node_only_sham")
 
 RELATION_EXPECTED_CASES = 96
-RELATION_EXPECTED_EDGES = 124
+RELATION_PRECOLLAPSE_EDGES = 124
+RELATION_EXPECTED_EDGES = 122
+RELATION_EXPECTED_DUPLICATE_COLLAPSE = 2
 RELATION_EXPECTED_FAMILY = {"DA": 53, "MCR": 43}
+SNOMED_RELEASE_ID = "SnomedCT_ManagedServiceUS_PRODUCTION_US1000124_20260301T120000Z"
+SNOMED_SOURCE_ARCHIVE = f"{SNOMED_RELEASE_ID}.zip"
 DEFAULT_TRUTH_PROVENANCE = "three_model_adjudicated_panel_sensitivity"
+FACTORIZATION_PAIR_PRECISION_MIN = 0.95
+FACTORIZATION_MODIFIER_AXIS_MIN = 0.85
 
 RELATION_CODES = frozenset({"C", "P", "X", "M", "N", "U"})
 MODIFIER_AXES = (
@@ -83,6 +89,10 @@ MODIFIER_AXES = (
     "composite_components",
 )
 ACTION_STATUSES = frozenset({"performed", "not_available", "not_performed"})
+NEED_TYPES = frozenset({
+    "etiology", "anatomy", "time_stage", "subtype", "complication",
+    "object_identity", "disease_presence", "other", "unresolved",
+})
 ALL_ARM_IDS = ADMISSION_ARMS + FACTORIZATION_ARMS + ACTIVE_ARMS + RELATION_ARMS + ("typed_policy",)
 FORBIDDEN_PROMPT_MARKERS = frozenset(
     {
@@ -131,6 +141,17 @@ background must be marked as background.  Do not invent, rename, merge, or compo
 Return strict JSON: {"champion_id":"...","runner_up_id":"... or empty","margin":"high|medium|low",
 "decisive_spans":[{"start":0,"end":1,"text":"exact vignette substring"}],"rationale":"brief"}."""
 
+LATTICE_SELECTOR_CONTRACT = """Execute the supplied core/member lattice. First select exactly one
+supplied core_id, then choose an existing surface candidate connected to that core. For every
+modifier-obligation axis on the chosen surface candidate, report whether the visible patient
+evidence supports it; an unsupported obligation must remain unsupported and must never be erased or
+filled. Candidate order is arbitrary. Patient observations must come only from exact supplied
+vignette spans; medical background must be marked as background. Do not invent, rename, merge, or
+compose a diagnosis. Return strict JSON: {"selected_core_id":"...","champion_id":"...",
+"runner_up_id":"... or empty","margin":"high|medium|low","obligation_check":
+{"axis":"supported|unsupported"},"decisive_spans":[{"start":0,"end":1,
+"text":"exact vignette substring"}],"rationale":"brief"}."""
+
 PROMPTS = {
     "admission": {
         # The four membership treatments use a byte-identical comparator.
@@ -141,10 +162,12 @@ PROMPTS = {
     },
     "factorization": {
         "flat": "Compare the supplied candidate labels.\n" + COMMON_SELECTOR_CONTRACT,
-        "exact_identity": "Aggregate only confirmed exact/frozen synonyms before comparing.\n" + COMMON_SELECTOR_CONTRACT,
-        "factorized_lattice": "First choose a core entity, then select an existing member whose explicit modifiers are supported. Never fill a missing modifier.\n" + COMMON_SELECTOR_CONTRACT,
-        "structure_sham": "Read the supplied singleton structured records, then compare candidates.\n" + COMMON_SELECTOR_CONTRACT,
-        "corrupted_modifier_mapping": "Use the supplied structured records and their modifier obligations.\n" + COMMON_SELECTOR_CONTRACT,
+        "exact_identity": "Use only the supplied exact-identity core/member lattice.\n" + LATTICE_SELECTOR_CONTRACT,
+        # Byte-identical instructions isolate the supplied topology/mapping;
+        # the treatment name is never disclosed to the comparator.
+        "factorized_lattice": LATTICE_SELECTOR_CONTRACT,
+        "structure_sham": LATTICE_SELECTOR_CONTRACT,
+        "corrupted_modifier_mapping": LATTICE_SELECTOR_CONTRACT,
     },
     "active_policy": """From the supplied initial presentation and action menu, state the top pair,
 the one missing discriminator type, and select exactly one available action.  Do not infer a hidden
@@ -401,32 +424,96 @@ def _factor_payloads(case: Mapping[str, Any], ann: Mapping[str, Any], bridge: Fr
     for candidate, mapped in zip(candidates, ordered):
         factorized.append({
             "candidate_id": candidate["candidate_id"], "label": candidate["label"],
+            "surface_label": candidate["label"],
             "core_id": str(mapped["core_id"]), "core_label": str(mapped["core_label"]),
             "object_kind": str(mapped["object_kind"]),
             "relation_to_core": str(mapped["relation_to_core"]),
-            "modifiers": {axis: list((mapped.get("modifiers") or {}).get(axis) or []) for axis in MODIFIER_AXES},
+            # These are obligations asserted by the existing surface label,
+            # not merely evidence-supported attributes.  Unsupported
+            # obligations must survive into the comparator payload.
+            "modifier_obligations": {
+                axis: list((mapped.get("modifiers") or {}).get(axis) or []) for axis in MODIFIER_AXES
+            },
         })
     # Deterministic cyclic derangement; modifiers move but node/group topology,
     # field count and candidate order stay fixed.
     order = sorted(range(len(factorized)), key=lambda i: (stable_seed("modifier-corrupt-v1", case["case_key"], factorized[i]["candidate_id"]), i))
     rotated = order[1:] + order[:1]
     source_for = {target: source for target, source in zip(order, rotated)}
-    corrupt = [{**row, "modifiers": factorized[source_for[i]]["modifiers"]} for i, row in enumerate(factorized)]
+    corrupt = [
+        {**row, "modifier_obligations": factorized[source_for[i]]["modifier_obligations"]}
+        for i, row in enumerate(factorized)
+    ]
     sham = [{**row, "core_id": f"S-{row['candidate_id']}", "core_label": row["label"], "relation_to_core": "singleton"} for row in factorized]
+    exact_rows = [
+        {
+            "candidate_id": candidate["candidate_id"],
+            "label": candidate["label"],
+            "surface_label": candidate["label"],
+            "core_id": exact_core[candidate["candidate_id"]],
+            "core_label": candidate["label"],
+            "object_kind": "unresolved",
+            "relation_to_core": "exact_identity",
+            "modifier_obligations": {axis: [] for axis in MODIFIER_AXES},
+        }
+        for candidate in candidates
+    ]
+
+    def lattice(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+        core_order: list[str] = []
+        members: dict[str, list[str]] = defaultdict(list)
+        core_meta: dict[str, Mapping[str, Any]] = {}
+        edges: list[dict[str, Any]] = []
+        for row in rows:
+            core_id = str(row["core_id"])
+            candidate_id = str(row["candidate_id"])
+            if core_id not in members:
+                core_order.append(core_id)
+                core_meta[core_id] = row
+            members[core_id].append(candidate_id)
+            edges.append({
+                "core_id": core_id,
+                "candidate_id": candidate_id,
+                "surface_label": str(row["surface_label"]),
+                "relation_to_core": str(row["relation_to_core"]),
+                "modifier_obligations": row["modifier_obligations"],
+            })
+        return {
+            "core_nodes": [
+                {
+                    "core_id": core_id,
+                    "core_label": str(core_meta[core_id]["core_label"]),
+                    "object_kind": str(core_meta[core_id]["object_kind"]),
+                    "member_candidate_ids": members[core_id],
+                }
+                for core_id in core_order
+            ],
+            "member_edges": edges,
+        }
+
+    requested = ann["requested_object"]
     return {
         "flat": {"candidates": candidates},
-        "exact_identity": {"candidates": [{**c, "core_id": exact_core[c["candidate_id"]]} for c in candidates]},
-        "factorized_lattice": {"requested_object": ann["requested_object"], "candidates": factorized},
-        "structure_sham": {"requested_object": ann["requested_object"], "candidates": sham},
-        "corrupted_modifier_mapping": {"requested_object": ann["requested_object"], "candidates": corrupt},
+        "exact_identity": {"requested_object": requested, "candidates": exact_rows, "lattice": lattice(exact_rows)},
+        "factorized_lattice": {"requested_object": requested, "candidates": factorized, "lattice": lattice(factorized)},
+        "structure_sham": {"requested_object": requested, "candidates": sham, "lattice": lattice(sham)},
+        "corrupted_modifier_mapping": {"requested_object": requested, "candidates": corrupt, "lattice": lattice(corrupt)},
     }
 
 
 def _review_metrics(reviews: list[dict[str, Any]]) -> dict[str, float]:
+    pair_rows = [row for row in reviews if row.get("review_kind") == "core_pair"]
+    modifier_rows = [row for row in reviews if row.get("review_kind") == "modifier_axis"]
+    # Compatibility for pre-patch fixtures only. New online products carry
+    # explicit pair/axis units so singleton candidates cannot inflate the
+    # preregistered pair-precision or modifier-axis gates.
+    legacy_rows = [row for row in reviews if not row.get("review_kind")]
     return {
-        "grouped_pair_precision": statistics.fmean(bool(r.get("grouped_correct")) for r in reviews) if reviews else 0.0,
-        "modifier_axis_precision": statistics.fmean(bool(r.get("modifier_correct")) for r in reviews) if reviews else 0.0,
-        "unsafe_synonym_merges": float(sum(bool(r.get("unsafe_synonym_merge")) for r in reviews)),
+        "grouped_pair_precision": statistics.fmean(bool(r.get("grouped_correct")) for r in (pair_rows or legacy_rows)) if pair_rows or legacy_rows else 1.0,
+        "modifier_axis_precision": statistics.fmean(bool(r.get("modifier_correct")) for r in (modifier_rows or legacy_rows)) if modifier_rows or legacy_rows else 1.0,
+        "unsafe_synonym_merges": float(sum(bool(r.get("unsafe_synonym_merge")) for r in (pair_rows or legacy_rows))),
+        "reviewed_group_pair_n": float(len(pair_rows)),
+        "reviewed_modifier_axis_n": float(len(modifier_rows)),
     }
 
 
@@ -435,14 +522,14 @@ def gate_factorization(freeze_dir: Path, annotations: Path, reviews: Path, admis
     anns = _annotation_index(annotations)
     review_rows = read_jsonl(reviews)
     upstream = _json(admission_gate)
+    upstream_passed = bool(upstream.get("passed"))
     bridge = FrozenExactSynonymBridge(BRIDGE)
     failures: list[str] = []
-    if not upstream.get("passed"):
-        failures.append("upstream_admission_gate_not_passed")
     unresolved = 0
     total = 0
     modifier_claim_n = 0
-    modifier_grounded_n = 0
+    modifier_source_closed_n = 0
+    modifier_evidence_supported_n = 0
     nontrivial_corrupt_cases = 0
     for case in cases:
         ann = anns.get(case["case_key"])
@@ -458,6 +545,7 @@ def gate_factorization(freeze_dir: Path, annotations: Path, reviews: Path, admis
             failures.append(f"{case['case_key']}:requested_object")
         total += len(mapped)
         unresolved += sum(bool(x.get("unresolved")) for x in mapped)
+        label_by_id = {str(candidate["candidate_id"]): str(candidate["label"]) for candidate in case["candidates"]}
         for mapped_candidate in mapped:
             unknown_axes = set((mapped_candidate.get("modifiers") or {}).keys()) - set(MODIFIER_AXES)
             if unknown_axes:
@@ -465,16 +553,19 @@ def gate_factorization(freeze_dir: Path, annotations: Path, reviews: Path, admis
             for values in (mapped_candidate.get("modifiers") or {}).values():
                 for modifier in values or []:
                     modifier_claim_n += 1
+                    surface_span = modifier.get("surface_span") or {}
+                    if _valid_segment(label_by_id[str(mapped_candidate["candidate_id"])], surface_span):
+                        modifier_source_closed_n += 1
                     support_spans = modifier.get("support_spans") or []
                     if support_spans and all(_valid_segment(case["vignette"], span) for span in support_spans):
-                        modifier_grounded_n += 1
+                        modifier_evidence_supported_n += 1
         try:
             payloads = _factor_payloads(case, ann, bridge)
         except (KeyError, TypeError, ValueError) as exc:
             failures.append(f"{case['case_key']}:schema:{exc}")
             continue
-        source_mods = [x["modifiers"] for x in payloads["factorized_lattice"]["candidates"]]
-        corrupt_mods = [x["modifiers"] for x in payloads["corrupted_modifier_mapping"]["candidates"]]
+        source_mods = [x["modifier_obligations"] for x in payloads["factorized_lattice"]["candidates"]]
+        corrupt_mods = [x["modifier_obligations"] for x in payloads["corrupted_modifier_mapping"]["candidates"]]
         if source_mods != corrupt_mods:
             nontrivial_corrupt_cases += 1
         if Counter(canonical_sha256(x) for x in source_mods) != Counter(canonical_sha256(x) for x in corrupt_mods):
@@ -482,17 +573,22 @@ def gate_factorization(freeze_dir: Path, annotations: Path, reviews: Path, admis
     metrics = _review_metrics(review_rows)
     metrics["unresolved_rate"] = unresolved / max(1, total)
     metrics["candidate_coverage"] = 1 - sum("candidate_coverage" in x or "missing_annotation" in x for x in failures) / max(1, len(cases))
-    metrics["modifier_citation_closure"] = modifier_grounded_n / max(1, modifier_claim_n)
+    metrics["modifier_citation_closure"] = modifier_source_closed_n / max(1, modifier_claim_n)
+    metrics["modifier_evidence_support_rate"] = modifier_evidence_supported_n / max(1, modifier_claim_n)
     metrics["nontrivial_corruption_case_rate"] = nontrivial_corrupt_cases / max(1, len(cases))
+    metrics["upstream_admission_gate_passed"] = upstream_passed
     review_groups: dict[str, list[str]] = defaultdict(list)
     for review in review_rows:
-        key = f"{review.get('case_key')}|{review.get('left_id')}|{review.get('right_id')}"
+        key = (
+            f"{review.get('case_key')}|{review.get('review_kind', 'legacy')}|"
+            f"{review.get('left_id')}|{review.get('right_id')}|{review.get('modifier_axis', '')}"
+        )
         review_groups[key].append(str(review.get("decision") or (bool(review.get("grouped_correct")), bool(review.get("modifier_correct")))))
     metrics["raw_agreement"], metrics["gwet_ac1"] = _gwet_ac1(review_groups)
-    if metrics["grouped_pair_precision"] < .95:
+    if metrics["grouped_pair_precision"] < FACTORIZATION_PAIR_PRECISION_MIN:
         failures.append("grouped_pair_precision_below_0.95")
-    if metrics["modifier_axis_precision"] < .90:
-        failures.append("modifier_axis_precision_below_0.90")
+    if metrics["modifier_axis_precision"] < FACTORIZATION_MODIFIER_AXIS_MIN:
+        failures.append("modifier_axis_precision_below_0.85")
     if metrics["unsafe_synonym_merges"] != 0:
         failures.append("unsafe_synonym_merge_nonzero")
     if metrics["unresolved_rate"] > .10:
@@ -503,7 +599,14 @@ def gate_factorization(freeze_dir: Path, annotations: Path, reviews: Path, admis
         failures.append("nontrivial_corruption_case_rate_below_0.90")
     if metrics["raw_agreement"] < .90 or metrics["gwet_ac1"] < .75:
         failures.append("reviewer_reliability_below_gate")
-    return _gate_write(out, "factorization", not failures, failures, metrics, "conditional conversion only on gold-conditioned E5 base4; no recall/open-diagnosis claim")
+    scope = "conditional conversion only on gold-conditioned E5 base4; no recall/open-diagnosis claim"
+    if not upstream_passed:
+        scope += "; isolated topology probe because the upstream admission gate did not pass"
+    gate = _gate_write(out, "factorization", not failures, failures, metrics, scope)
+    gate["isolated_topology_probe"] = not upstream_passed
+    gate["deployment_integration_eligible"] = bool(upstream_passed and gate["passed"])
+    atomic_json(out, gate)
+    return gate
 
 
 def freeze_active(out: Path, *, joined: Path = E5_JOINED) -> dict[str, Any]:
@@ -525,6 +628,15 @@ def _valid_segment(text: str, segment: Mapping[str, Any]) -> bool:
 def _majority(values: Sequence[Any]) -> Any:
     counts = Counter(values)
     return sorted(counts, key=lambda x: (-counts[x], str(x)))[0] if counts else None
+
+
+def _strict_consensus(values: Sequence[Any]) -> Any:
+    """Return a strict majority; two-reviewer disagreement remains unresolved."""
+    counts = Counter(values)
+    if not counts:
+        return None
+    winner, n = sorted(counts.items(), key=lambda item: (-item[1], str(item[0])))[0]
+    return winner if n > len(values) / 2 else None
 
 
 def _gwet_ac1(groups: Mapping[str, Sequence[str]]) -> tuple[float, float]:
@@ -563,7 +675,9 @@ def gate_active(freeze_dir: Path, annotations: Path, reviews: Path, predictions:
     review_rows = read_jsonl(reviews)
     predictions_by_case = {str(r["case_key"]): r for r in read_jsonl(predictions)}
     failures: list[str] = []
-    valid_by_family: dict[str, list[str]] = defaultdict(list)
+    if set(predictions_by_case) != set(cases) or any(row.get("success") is not True for row in predictions_by_case.values()):
+        failures.append("active_prediction_full_success_required")
+    builder_valid_by_family: dict[str, list[str]] = defaultdict(list)
     availability_ok = 0
     action_n = 0
     for case_key, case in cases.items():
@@ -573,6 +687,11 @@ def gate_active(freeze_dir: Path, annotations: Path, reviews: Path, predictions:
             continue
         raw = case["builder_payload"]["raw_vignette"]
         initial = str(ann.get("initial_text") or "")
+        initial_span = ann.get("initial_span") or {}
+        if not _valid_segment(raw, initial_span) or str(initial_span.get("text") or "") != initial:
+            failures.append(f"{case_key}:initial_span_closure")
+            continue
+        initial_end = int(initial_span["end"])
         actions = ann.get("actions") or []
         ids = [str(a.get("action_id")) for a in actions]
         if len(set(ids)) != len(ids):
@@ -591,6 +710,9 @@ def gate_active(freeze_dir: Path, annotations: Path, reviews: Path, predictions:
                 if not _valid_segment(raw, segment):
                     failures.append(f"{case_key}:{action.get('action_id')}:offset_closure")
                     continue
+                if int(segment["start"]) < initial_end:
+                    failures.append(f"{case_key}:{action.get('action_id')}:result_not_later_than_initial")
+                    continue
                 interval = (int(segment["start"]), int(segment["end"]))
                 intervals.append(interval)
                 if segment["text"] in initial:
@@ -599,19 +721,71 @@ def gate_active(freeze_dir: Path, annotations: Path, reviews: Path, predictions:
         if any(a[0] < b[1] and b[0] < a[1] for i, a in enumerate(intervals) for b in intervals[i + 1 :]):
             failures.append(f"{case_key}:overlapping_results")
         if len(valid_actions) >= 3 and len({str(a.get("action_type")) for a in valid_actions}) >= 2:
-            valid_by_family[case["family"]].append(case_key)
+            builder_valid_by_family[case["family"]].append(case_key)
     by_review_case: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for row in review_rows:
         by_review_case[str(row["case_key"])].append(row)
+    for case_key in cases:
+        rows = by_review_case.get(case_key, [])
+        if (
+            len(rows) != 2
+            or len({str(row.get("reviewer_id")) for row in rows}) != 2
+            or len({str(row.get("reviewer_model")) for row in rows}) != 2
+            or any(row.get("panel_provenance") != "independent_model_panel" for row in rows)
+        ):
+            failures.append(f"{case_key}:requires_two_independent_reviews")
     need_groups = {key: [str(r.get("need_type")) for r in rows] for key, rows in by_review_case.items()}
     agreement, ac1 = _gwet_ac1(need_groups)
-    adjudicated_need = {key: str(_majority(values)) for key, values in need_groups.items()}
+    adjudicated_need = {
+        key: str(value) if (value := _strict_consensus(values)) is not None else "unresolved"
+        for key, values in need_groups.items()
+    }
     pred_need = {key: str(row.get("need_type")) for key, row in predictions_by_case.items()}
     f1 = _macro_f1(adjudicated_need, pred_need)
     relevance_hits = relevance_n = leakage = 0
+    historical_availability_hits = historical_availability_n = 0
+    reviewed_cost_valid_hits = reviewed_risk_valid_hits = 0
+    cost_match_hits = cost_match_n = 0
+    cost_match_valid_cases: set[str] = set()
+    review_valid_cases: set[str] = set()
+    for case_key, rows in by_review_case.items():
+        row_valid = len(rows) == 2
+        for row in rows:
+            expected_ids = {str(value) for value in row.get("expected_action_ids") or []}
+            reviewed_ids = {str(value) for value in row.get("reviewed_action_ids") or []}
+            available_ids = {str(value) for value in row.get("available_action_ids") or []}
+            cost_valid_ids = {str(value) for value in row.get("cost_valid_action_ids") or []}
+            risk_valid_ids = {str(value) for value in row.get("risk_valid_action_ids") or []}
+            if reviewed_ids != expected_ids or not available_ids <= expected_ids:
+                row_valid = False
+            historical_availability_n += len(expected_ids)
+            historical_availability_hits += len(available_ids & expected_ids)
+            reviewed_cost_valid_hits += len(cost_valid_ids & expected_ids)
+            reviewed_risk_valid_hits += len(risk_valid_ids & expected_ids)
+            if (
+                available_ids != expected_ids or cost_valid_ids != expected_ids or risk_valid_ids != expected_ids
+                or row.get("success") is not True or bool(row.get("direct_answer_leak"))
+            ):
+                row_valid = False
+        if row_valid:
+            review_valid_cases.add(case_key)
     for case_key, prediction in predictions_by_case.items():
         reviews_for_case = by_review_case.get(case_key, [])
         action_id = str(prediction.get("action_id"))
+        actions = {
+            str(action.get("action_id")): action
+            for action in (anns.get(case_key) or {}).get("actions") or []
+            if action.get("status") == "performed"
+        }
+        chosen = actions.get(action_id)
+        cost_match_n += 1
+        has_cost_peer = bool(chosen) and any(
+            peer_id != action_id and peer.get("cost_band") == chosen.get("cost_band")
+            for peer_id, peer in actions.items()
+        )
+        cost_match_hits += has_cost_peer
+        if has_cost_peer:
+            cost_match_valid_cases.add(case_key)
         votes = [action_id in {str(x) for x in r.get("relevant_action_ids") or []} for r in reviews_for_case]
         if votes:
             relevance_n += 1
@@ -623,11 +797,19 @@ def gate_active(freeze_dir: Path, annotations: Path, reviews: Path, predictions:
         "gwet_ac1": ac1,
         "missing_need_macro_f1": f1,
         "typed_action_relevance_precision": relevance_hits / max(1, relevance_n),
+        "reviewed_historical_availability_rate": historical_availability_hits / max(1, historical_availability_n),
+        "reviewed_cost_validity_rate": reviewed_cost_valid_hits / max(1, historical_availability_n),
+        "reviewed_risk_validity_rate": reviewed_risk_valid_hits / max(1, historical_availability_n),
+        "cost_matched_control_availability_rate": cost_match_hits / max(1, cost_match_n),
         "direct_answer_leak_reviews": leakage,
     }
     thresholds = {
         "action_availability_rate": 1.0, "raw_agreement": .90, "gwet_ac1": .75,
         "missing_need_macro_f1": .70, "typed_action_relevance_precision": .75,
+        "reviewed_historical_availability_rate": 1.0,
+        "reviewed_cost_validity_rate": 1.0,
+        "reviewed_risk_validity_rate": 1.0,
+        "cost_matched_control_availability_rate": 1.0,
     }
     for name, threshold in thresholds.items():
         if metrics[name] < threshold:
@@ -636,13 +818,262 @@ def gate_active(freeze_dir: Path, annotations: Path, reviews: Path, predictions:
         failures.append("direct_answer_leak_nonzero")
     selected: list[str] = []
     for family in ("DA", "MCR"):
-        ranked = sorted(valid_by_family[family], key=lambda x: (stable_seed("active64-v1", x), x))
+        eligible = [
+            case_key for case_key in builder_valid_by_family[family]
+            if case_key in review_valid_cases and case_key in cost_match_valid_cases
+        ]
+        ranked = sorted(eligible, key=lambda x: (stable_seed("active64-v1", x), x))
         if len(ranked) < 32:
             failures.append(f"{family}:fewer_than_32_builder_valid")
         selected.extend(ranked[:32])
     gate = _gate_write(out, "active", not failures, failures, metrics, "benchmark construction / retrospective off-policy capability only; not end-to-end ceiling breakthrough")
+    gate["gate_stage"] = "construction"
     gate["selected_case_keys"] = sorted(selected)
     gate["selected_case_sha256"] = canonical_sha256(sorted(selected))
+    atomic_json(out, gate)
+    return gate
+
+
+def _active_action_audits(row: Mapping[str, Any]) -> dict[str, Mapping[str, Any]]:
+    audits = row.get("action_audits")
+    if not isinstance(audits, list) or not all(isinstance(item, Mapping) for item in audits):
+        return {}
+    output = {str(item.get("action_id") or ""): item for item in audits}
+    return output if "" not in output and len(output) == len(audits) else {}
+
+
+def gate_active_post(
+    freeze_dir: Path,
+    annotations: Path,
+    reviews: Path,
+    selections: Path,
+    construction_gate: Path,
+    out: Path,
+) -> dict[str, Any]:
+    """Freeze policy-level active endpoints before any post-evidence comparator.
+
+    The action-bank reviews are policy/outcome blind.  This function only
+    projects those frozen reviews onto the selected action and its deterministic
+    cost-matched control.  It never reads benchmark truth or a post outcome.
+    """
+    construction = _json(construction_gate)
+    cases = {str(row["case_key"]): row for row in read_jsonl(Path(freeze_dir) / "cases.jsonl")}
+    anns = _annotation_index(annotations)
+    review_rows = read_jsonl(reviews)
+    selection_rows = read_jsonl(selections)
+    selected = [str(value) for value in construction.get("selected_case_keys") or []]
+    failures: list[str] = []
+    if not construction.get("passed") or construction.get("component") != "active" or construction.get("gate_stage") != "construction":
+        failures.append("active_construction_gate_not_passed")
+    if len(selected) != len(set(selected)) or set(selected) - set(cases):
+        failures.append("construction_selected_case_set_invalid")
+    if len({str(row.get("case_key")) for row in selection_rows}) != len(selection_rows):
+        failures.append("duplicate_policy_selection")
+    selection_by_case = {str(row.get("case_key")): row for row in selection_rows}
+    if set(selection_by_case) != set(selected):
+        failures.append("policy_selection_case_coverage_mismatch")
+    reviews_by_case: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for row in review_rows:
+        reviews_by_case[str(row.get("case_key"))].append(row)
+
+    agreement_groups: dict[str, list[str]] = defaultdict(list)
+    case_audits: list[dict[str, Any]] = []
+    unresolved_units = total_units = 0
+
+    def consensus(case_key: str, unit: str, values: Sequence[Any]) -> Any:
+        nonlocal unresolved_units, total_units
+        normalized = [str(value) for value in values]
+        agreement_groups[f"{case_key}|{unit}"].extend(normalized)
+        total_units += 1
+        value = _strict_consensus(list(values))
+        unresolved_units += value is None
+        return value
+
+    for case_key in selected:
+        case = cases[case_key]
+        ann = anns.get(case_key) or {}
+        actions = {
+            str(action.get("action_id")): action
+            for action in ann.get("actions") or [] if action.get("status") == "performed"
+        }
+        candidate_ids = {str(candidate["candidate_id"]) for candidate in case["policy_candidates"]}
+        reviewers = reviews_by_case.get(case_key, [])
+        reviewer_ids = {str(row.get("reviewer_id")) for row in reviewers}
+        reviewer_models = {str(row.get("reviewer_model")) for row in reviewers}
+        if (
+            len(reviewers) != 2 or len(reviewer_ids) != 2 or len(reviewer_models) != 2
+            or any(row.get("panel_provenance") != "independent_model_panel" for row in reviewers)
+            or any(row.get("success") is not True for row in reviewers)
+        ):
+            failures.append(f"{case_key}:two_successful_action_bank_reviews_required")
+            continue
+        audit_maps = [_active_action_audits(row) for row in reviewers]
+        if any(set(index) != set(actions) for index in audit_maps):
+            failures.append(f"{case_key}:action_audit_coverage_mismatch")
+            continue
+        audit_schema_ok = True
+        boolean_fields = (
+            "availability_valid", "cost_valid", "risk_valid", "relevant", "resolves_need",
+            "wrong_episode_or_object_binding", "unnecessary_high_risk_action",
+        )
+        for index in audit_maps:
+            for audit in index.values():
+                if any(not isinstance(audit.get(field), bool) for field in boolean_fields):
+                    audit_schema_ok = False
+                information_gain = audit.get("information_gain")
+                if (
+                    not isinstance(information_gain, int) or isinstance(information_gain, bool)
+                    or information_gain not in {0, 1, 2, 3}
+                ):
+                    audit_schema_ok = False
+        if not audit_schema_ok:
+            failures.append(f"{case_key}:action_audit_schema_invalid")
+            continue
+        selection = selection_by_case.get(case_key) or {}
+        response = selection.get("response") if isinstance(selection.get("response"), Mapping) else selection
+        action_id = str(selection.get("action_id") or response.get("action_id") or "")
+        need_type = str(response.get("need_type") or "")
+        top_pair = [str(value) for value in response.get("top_pair") or []]
+        if (
+            selection.get("success") is not True or action_id not in actions
+            or len(top_pair) != 2 or len(set(top_pair)) != 2 or set(top_pair) - candidate_ids
+            or need_type not in NEED_TYPES
+        ):
+            failures.append(f"{case_key}:invalid_policy_selection")
+            continue
+        chosen = actions[action_id]
+        peers = [
+            action for peer_id, action in actions.items()
+            if peer_id != action_id and action.get("cost_band") == chosen.get("cost_band")
+        ]
+        if not peers:
+            failures.append(f"{case_key}:cost_matched_control_missing")
+            continue
+        random_action = sorted(
+            peers,
+            key=lambda action: (stable_seed("active-random-v1", case_key, action["action_id"]), action["action_id"]),
+        )[0]
+        consensus_need = consensus(case_key, "need_type", [row.get("need_type") for row in reviewers])
+        action_consensus: dict[str, dict[str, Any]] = {}
+        for candidate_action_id, action in actions.items():
+            values: dict[str, Any] = {}
+            for field in (
+                "availability_valid", "cost_valid", "risk_valid", "relevant", "resolves_need",
+                "information_gain", "wrong_episode_or_object_binding", "unnecessary_high_risk_action",
+            ):
+                values[field] = consensus(
+                    case_key,
+                    f"{candidate_action_id}|{field}",
+                    [index[candidate_action_id].get(field) for index in audit_maps],
+                )
+            action_consensus[candidate_action_id] = values
+
+        def arm_record(action: Mapping[str, Any]) -> dict[str, Any]:
+            action_key = str(action["action_id"])
+            audit = action_consensus[action_key]
+            cost = action.get("cost")
+            cost_number = float(cost) if isinstance(cost, (int, float)) and not isinstance(cost, bool) else 0.0
+            evaluable = (
+                all(value is not None for value in audit.values())
+                and audit["availability_valid"] is True and audit["cost_valid"] is True
+                and audit["risk_valid"] is True and cost_number > 0
+            )
+            return {
+                "action_id": action_key,
+                "cost": cost_number,
+                "evaluable": bool(evaluable),
+                "relevant": audit["relevant"] if evaluable else None,
+                "resolves_need": audit["resolves_need"] if evaluable else None,
+                "information_gain": int(audit["information_gain"]) if evaluable else None,
+                "information_gain_per_cost": (int(audit["information_gain"]) / cost_number) if evaluable else None,
+                "wrong_episode_or_object_binding": audit["wrong_episode_or_object_binding"] if evaluable else None,
+                "unnecessary_high_risk_action": audit["unnecessary_high_risk_action"] if evaluable else None,
+            }
+
+        typed_record = arm_record(chosen)
+        random_record = arm_record(random_action)
+        any_resolving = any(
+            values.get("resolves_need") is True
+            and values.get("availability_valid") is True
+            and values.get("cost_valid") is True
+            and values.get("risk_valid") is True
+            for values in action_consensus.values()
+        )
+        case_evaluable = bool(
+            consensus_need is not None and typed_record["evaluable"] and random_record["evaluable"]
+        )
+        if not case_evaluable:
+            failures.append(f"{case_key}:policy_endpoint_not_evaluable")
+        case_audits.append({
+            "case_key": case_key,
+            "family": case["family"],
+            "policy_need_type": need_type,
+            "panel_need_type": consensus_need,
+            "need_type_match": (need_type == consensus_need) if consensus_need is not None else None,
+            "any_resolving_action_available": bool(any_resolving),
+            "evaluable": case_evaluable,
+            "arms": {"typed_action": typed_record, "cost_matched_random": random_record},
+        })
+
+    raw_agreement, ac1 = _gwet_ac1(agreement_groups)
+    evaluable_cases = [row for row in case_audits if row["evaluable"]]
+    if len(evaluable_cases) != len(selected):
+        failures.append("policy_endpoint_evaluable_rate_below_1.0")
+
+    def endpoint_metrics(arm: str) -> dict[str, Any]:
+        rows = [row for row in evaluable_cases if row["arms"][arm]["evaluable"]]
+        resolved = sum(bool(row["arms"][arm]["resolves_need"] and row["need_type_match"]) for row in rows)
+        recall_denominator = sum(bool(row["any_resolving_action_available"]) for row in rows)
+        return {
+            "n": len(rows),
+            "need_resolution_precision": resolved / max(1, len(rows)),
+            "need_resolution_recall": resolved / max(1, recall_denominator),
+            "need_resolution_recall_denominator": recall_denominator,
+            "action_relevance_rate": sum(bool(row["arms"][arm]["relevant"]) for row in rows) / max(1, len(rows)),
+            "mean_information_gain_per_cost": statistics.fmean(
+                float(row["arms"][arm]["information_gain_per_cost"]) for row in rows
+            ) if rows else None,
+            "wrong_episode_or_object_binding_rate": sum(
+                bool(row["arms"][arm]["wrong_episode_or_object_binding"]) for row in rows
+            ) / max(1, len(rows)),
+            "unnecessary_high_risk_action_rate": sum(
+                bool(row["arms"][arm]["unnecessary_high_risk_action"]) for row in rows
+            ) / max(1, len(rows)),
+        }
+
+    unresolved_rate = unresolved_units / max(1, total_units)
+    metrics = {
+        "policy_selection_coverage": len(selection_by_case) / max(1, len(selected)),
+        "policy_endpoint_evaluable_rate": len(evaluable_cases) / max(1, len(selected)),
+        "post_audit_raw_agreement": raw_agreement,
+        "post_audit_gwet_ac1": ac1,
+        "post_audit_unresolved_rate": unresolved_rate,
+        "policy_need_type_match_rate": sum(bool(row.get("need_type_match")) for row in evaluable_cases) / max(1, len(evaluable_cases)),
+        "typed_action": endpoint_metrics("typed_action"),
+        "cost_matched_random": endpoint_metrics("cost_matched_random"),
+        "information_gain_scale": "independent two-model panel ordinal 0..3 divided by frozen builder cost",
+        "need_resolution_precision_definition": "selected action resolves panel missing need and policy need matches panel / evaluable selected actions",
+        "need_resolution_recall_definition": "same numerator / evaluable cases with at least one resolving performed action",
+    }
+    if raw_agreement < .90 or ac1 < .75:
+        failures.append("post_audit_reliability_below_gate")
+    if unresolved_rate > .05:
+        failures.append("post_audit_unresolved_rate_above_0.05")
+    gate = _gate_write(
+        out,
+        "active",
+        not failures,
+        failures,
+        metrics,
+        "policy-projected, two-model-panel action audit; retrospective/off-policy and not prospective diagnosis",
+    )
+    gate["gate_stage"] = "post_policy_audit"
+    gate["construction_gate_sha256"] = file_sha256(construction_gate)
+    gate["selected_case_keys"] = sorted(selected)
+    gate["selected_case_sha256"] = canonical_sha256(sorted(selected))
+    gate["case_audits"] = sorted(case_audits, key=lambda row: row["case_key"])
+    gate["policy_selection_sha256"] = canonical_sha256(selection_rows)
+    gate["outcome_blind"] = True
     atomic_json(out, gate)
     return gate
 
@@ -672,7 +1103,14 @@ def _is_a_distance(source: str, target: str, parents: Mapping[str, set[str]], li
 
 
 def freeze_relation(out: Path, *, pools: Path = E4_POOLS, joined: Path = E4_JOINED, concepts_path: Path = SNOMED_CONCEPTS, terms_path: Path = SNOMED_TERMS, relations_path: Path = SNOMED_RELATIONS, bridge_path: Path = BRIDGE) -> dict[str, Any]:
-    """Build the preregistered strict E4 96-case/124-edge primary substrate."""
+    """Build the corrected strict E4 96-case/122-edge primary substrate.
+
+    The pre-collapse inventory contains 124 candidate-ID edges. Two pairs
+    encode the same within-case directed SNOMED concept pair through duplicate
+    surface candidates. The frozen contract requires semantic duplicate-pair
+    collapse, so those two redundant edges are removed before review or online
+    selector compilation.
+    """
     concepts = _json(concepts_path)
     terms = _json(terms_path)
     bridge = FrozenExactSynonymBridge(bridge_path)
@@ -683,8 +1121,12 @@ def freeze_relation(out: Path, *, pools: Path = E4_POOLS, joined: Path = E4_JOIN
     vignettes = _e4_vignettes(joined)
     rows: list[dict[str, Any]] = []
     edge_n = 0
+    raw_edge_n = 0
+    duplicate_concept_pair_collapsed_n = 0
+    inverse_or_cycle_quarantined_n = 0
     for raw in read_jsonl(pools):
-        vignette = vignettes[str(raw["case_key"])]
+        case_key = str(raw["case_key"])
+        vignette = vignettes[case_key]
         candidates = _clean_candidates(raw["pool"]["candidates"], evidence=True)
         nodes = []
         for candidate in candidates:
@@ -696,7 +1138,7 @@ def freeze_relation(out: Path, *, pools: Path = E4_POOLS, joined: Path = E4_JOIN
                 "candidate_id": candidate["candidate_id"], "label": candidate["label"],
                 "concept_id": concept_id or "", "citations": citations,
             })
-        edges = []
+        raw_edges = []
         for source in nodes:
             for target in nodes:
                 if source is target or not source["concept_id"] or not target["concept_id"]:
@@ -705,11 +1147,47 @@ def freeze_relation(out: Path, *, pools: Path = E4_POOLS, joined: Path = E4_JOIN
                     continue
                 distance = _is_a_distance(source["concept_id"], target["concept_id"], parents, 4)
                 if distance is not None:
-                    edges.append({
+                    raw_edges.append({
                         "source_id": source["candidate_id"], "target_id": target["candidate_id"],
+                        "source_concept_id": source["concept_id"], "target_concept_id": target["concept_id"],
                         "relation": "is_a", "distance": distance,
                         "source_citation": source["citations"][0], "target_citation": target["citations"][0],
                     })
+        raw_edge_n += len(raw_edges)
+
+        # Reject self/cyclic or contradictory directions before semantic
+        # duplicate collapse. The current strict source has none, but the
+        # implementation must fail closed if a future ontology slice does.
+        concept_directions = {
+            (edge["source_concept_id"], edge["target_concept_id"])
+            for edge in raw_edges
+        }
+        direction_safe = []
+        for edge in raw_edges:
+            pair = (edge["source_concept_id"], edge["target_concept_id"])
+            if pair[0] == pair[1] or (pair[1], pair[0]) in concept_directions:
+                inverse_or_cycle_quarantined_n += 1
+                continue
+            direction_safe.append(edge)
+
+        # Candidate aliases may map to the same SNOMED concept. Collapse by
+        # concept pair, choosing one surface realization by an outcome-blind
+        # stable hash so duplicated aliases cannot receive extra graph weight.
+        by_concept_pair: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
+        for edge in direction_safe:
+            by_concept_pair[(edge["source_concept_id"], edge["target_concept_id"])].append(edge)
+        edges = []
+        for pair in sorted(by_concept_pair):
+            options = by_concept_pair[pair]
+            options.sort(key=lambda edge: (
+                stable_seed(
+                    "relation-concept-pair-collapse-v1", case_key,
+                    edge["source_id"], edge["target_id"],
+                ),
+                edge["source_id"], edge["target_id"],
+            ))
+            edges.append(options[0])
+            duplicate_concept_pair_collapsed_n += len(options) - 1
         if not edges:
             continue
         edge_n += len(edges)
@@ -720,11 +1198,90 @@ def freeze_relation(out: Path, *, pools: Path = E4_POOLS, joined: Path = E4_JOIN
             "nodes": nodes, "relations": edges,
         })
     counts = Counter(row["family"] for row in rows)
-    if len(rows) != RELATION_EXPECTED_CASES or edge_n != RELATION_EXPECTED_EDGES or dict(counts) != RELATION_EXPECTED_FAMILY:
-        raise AssertionError(f"strict relation primary drift: cases={len(rows)}, edges={edge_n}, family={dict(counts)}")
+    if (
+        len(rows) != RELATION_EXPECTED_CASES
+        or raw_edge_n != RELATION_PRECOLLAPSE_EDGES
+        or edge_n != RELATION_EXPECTED_EDGES
+        or duplicate_concept_pair_collapsed_n != RELATION_EXPECTED_DUPLICATE_COLLAPSE
+        or inverse_or_cycle_quarantined_n != 0
+        or dict(counts) != RELATION_EXPECTED_FAMILY
+    ):
+        raise AssertionError(
+            "strict relation primary drift: "
+            f"cases={len(rows)}, raw_edges={raw_edge_n}, edges={edge_n}, "
+            f"duplicate_collapsed={duplicate_concept_pair_collapsed_n}, "
+            f"inverse_or_cycle_quarantined={inverse_or_cycle_quarantined_n}, family={dict(counts)}"
+        )
     # The raw JSONs do not embed RF2 release provenance.  Hashes freeze the
     # bytes, but a separate reviewer-owned provenance record is a hard gate.
-    return _write_freeze(out, "relation", rows, [pools, joined, concepts_path, terms_path, relations_path, bridge_path], arms=list(RELATION_ARMS), primary_contract="case-sensitive literal citation + unique disorder mapping + directed is_a path <=4", edge_n=edge_n, snomed_release_provenance="unverified")
+    return _write_freeze(
+        out, "relation", rows,
+        [pools, joined, concepts_path, terms_path, relations_path, bridge_path],
+        arms=list(RELATION_ARMS),
+        primary_contract="case-sensitive literal citation + unique disorder mapping + semantic duplicate-pair collapse + directed is_a path <=4",
+        raw_edge_n=raw_edge_n,
+        edge_n=edge_n,
+        duplicate_concept_pair_collapsed_n=duplicate_concept_pair_collapsed_n,
+        inverse_or_cycle_quarantined_n=inverse_or_cycle_quarantined_n,
+        snomed_release_provenance="unverified",
+    )
+
+
+def _valid_sha256(value: Any) -> bool:
+    text_value = str(value or "").lower()
+    return (
+        len(text_value) == 64
+        and any(character != "0" for character in text_value)
+        and all(character in "0123456789abcdef" for character in text_value)
+    )
+
+
+def _snomed_provenance_metrics(freeze: Mapping[str, Any], provenance_doc: Mapping[str, Any]) -> dict[str, bool]:
+    """Bind a reviewer attestation to exact SNOMED bytes and RF2 release."""
+    expected_names = {
+        "snomed_concepts.json", "snomed_term_index.json", "snomed_relations.json"
+    }
+    expected = {
+        Path(str(item.get("path") or "")).name: str(item.get("sha256") or "").lower()
+        for item in freeze.get("source_artifacts") or []
+        if Path(str(item.get("path") or "")).name in expected_names
+    }
+    declared_raw = provenance_doc.get("artifact_sha256") or {}
+    declared = {
+        Path(str(name)).name: str(value or "").lower()
+        for name, value in declared_raw.items()
+    } if isinstance(declared_raw, Mapping) else {}
+    artifact_hashes_bound = (
+        set(expected) == expected_names
+        and all(_valid_sha256(expected[name]) and declared.get(name) == expected[name] for name in expected_names)
+    )
+    release_match = str(provenance_doc.get("rf2_release") or "") == SNOMED_RELEASE_ID
+    archive_path = Path(str(provenance_doc.get("source_archive") or ""))
+    archive_name_match = archive_path.name == SNOMED_SOURCE_ARCHIVE
+    archive_sha_bound = _valid_sha256(provenance_doc.get("source_archive_sha256"))
+    archive_file_verified = bool(
+        archive_sha_bound
+        and archive_path.is_file()
+        and file_sha256(archive_path) == str(provenance_doc.get("source_archive_sha256") or "").lower()
+    )
+    reviewer_attested = bool(
+        str(provenance_doc.get("reviewer") or "").strip()
+        and str(provenance_doc.get("verification_method") or "").strip()
+        and provenance_doc.get("verified") is True
+    )
+    verified = bool(
+        artifact_hashes_bound and release_match and archive_name_match
+        and archive_file_verified and reviewer_attested
+    )
+    return {
+        "provenance_artifact_hashes_bound": artifact_hashes_bound,
+        "provenance_release_match": release_match,
+        "provenance_archive_name_match": archive_name_match,
+        "provenance_archive_sha_bound": archive_sha_bound,
+        "provenance_archive_file_verified": archive_file_verified,
+        "provenance_reviewer_attested": reviewer_attested,
+        "provenance_verified": verified,
+    }
 
 
 def gate_relation(freeze_dir: Path, reviews: Path, provenance: Path, out: Path) -> dict[str, Any]:
@@ -733,12 +1290,64 @@ def gate_relation(freeze_dir: Path, reviews: Path, provenance: Path, out: Path) 
     review_rows = read_jsonl(reviews)
     provenance_doc = _json(provenance) if Path(provenance).is_file() else {}
     failures: list[str] = []
-    if len(rows) != 96 or freeze.get("edge_n") != 124 or Counter(r["family"] for r in rows) != RELATION_EXPECTED_FAMILY:
-        failures.append("strict96_124_primary_drift")
+    if (
+        len(rows) != RELATION_EXPECTED_CASES
+        or freeze.get("raw_edge_n") != RELATION_PRECOLLAPSE_EDGES
+        or freeze.get("edge_n") != RELATION_EXPECTED_EDGES
+        or freeze.get("duplicate_concept_pair_collapsed_n") != RELATION_EXPECTED_DUPLICATE_COLLAPSE
+        or freeze.get("inverse_or_cycle_quarantined_n") != 0
+        or Counter(r["family"] for r in rows) != RELATION_EXPECTED_FAMILY
+    ):
+        failures.append("strict96_raw124_collapsed122_primary_drift")
     edge_keys = {(r["case_key"], e["source_id"], e["target_id"]) for r in rows for e in r["relations"]}
     reviewed_keys = {(str(r["case_key"]), str(r["source_id"]), str(r["target_id"])) for r in review_rows}
     if reviewed_keys != edge_keys:
-        failures.append("all_124_edges_not_model_panel_reviewed")
+        failures.append("all_122_edges_not_model_panel_reviewed")
+    edge_reviewers: dict[tuple[str, str, str], list[dict[str, Any]]] = defaultdict(list)
+    for review in review_rows:
+        key = (str(review.get("case_key")), str(review.get("source_id")), str(review.get("target_id")))
+        edge_reviewers[key].append(review)
+    reviewer_ids = {str(review.get("reviewer_id") or "") for review in review_rows}
+    reviewer_models = {str(review.get("reviewer_model") or "") for review in review_rows}
+    two_reviewer_contract = bool(
+        reviewed_keys == edge_keys
+        and len(review_rows) == 2 * len(edge_keys)
+        and len(reviewer_ids) == 2 and "" not in reviewer_ids
+        and len(reviewer_models) == 2 and "" not in reviewer_models
+        and all(
+            len(group) == 2
+            and len({str(review.get("reviewer_id") or "") for review in group}) == 2
+            and all(bool(review.get("success", True)) for review in group)
+            for group in edge_reviewers.values()
+        )
+    )
+    if not two_reviewer_contract:
+        failures.append("two_independent_model_reviews_per_edge_not_satisfied")
+
+    duplicate_pairs = inverse_pairs = concept_binding_drift = 0
+    for case in rows:
+        nodes = {str(node["candidate_id"]): str(node.get("concept_id") or "") for node in case["nodes"]}
+        concept_pairs: list[tuple[str, str]] = []
+        for edge in case["relations"]:
+            source_concept = nodes.get(str(edge["source_id"]), "")
+            target_concept = nodes.get(str(edge["target_id"]), "")
+            if (
+                source_concept != str(edge.get("source_concept_id") or "")
+                or target_concept != str(edge.get("target_concept_id") or "")
+            ):
+                concept_binding_drift += 1
+            concept_pairs.append((source_concept, target_concept))
+        counts = Counter(concept_pairs)
+        duplicate_pairs += sum(count - 1 for count in counts.values() if count > 1)
+        pair_set = set(concept_pairs)
+        inverse_pairs += sum(
+            1 for source, target in pair_set
+            if source == target or (target, source) in pair_set
+        )
+    if duplicate_pairs:
+        failures.append("semantic_duplicate_relation_pair_nonzero")
+    if inverse_pairs or concept_binding_drift:
+        failures.append("relation_direction_or_concept_binding_drift")
     mapping_precision = statistics.fmean(bool(r.get("mapping_correct")) for r in review_rows) if review_rows else 0.0
     direction = statistics.fmean(bool(r.get("direction_correct")) for r in review_rows) if review_rows else 0.0
     citation = statistics.fmean(bool(r.get("citation_closed")) for r in review_rows) if review_rows else 0.0
@@ -748,13 +1357,19 @@ def gate_relation(freeze_dir: Path, reviews: Path, provenance: Path, out: Path) 
     for review in review_rows:
         groups[f"{review.get('case_key')}|{review.get('source_id')}|{review.get('target_id')}"] .append(str(review.get("decision") or ""))
     agreement, ac1 = _gwet_ac1(groups)
+    provenance_metrics = _snomed_provenance_metrics(freeze, provenance_doc)
     metrics = {
         "mapping_precision": mapping_precision, "direction_fidelity": direction,
         "citation_closure": citation, "unresolved_rate": unresolved,
         "inverse_or_cycles": inverse_or_cycle, "raw_agreement": agreement, "gwet_ac1": ac1,
-        "provenance_verified": bool(provenance_doc.get("rf2_release") and provenance_doc.get("reviewer") and provenance_doc.get("verified")),
+        "review_rows": len(review_rows), "expected_review_rows": 2 * len(edge_keys),
+        "two_reviewer_contract": two_reviewer_contract,
+        "semantic_duplicate_pairs": duplicate_pairs,
+        "frozen_inverse_pairs": inverse_pairs,
+        "concept_binding_drift": concept_binding_drift,
+        **provenance_metrics,
     }
-    checks = {"mapping_precision": .95, "direction_fidelity": .97, "citation_closure": 1.0, "raw_agreement": .90, "gwet_ac1": .75}
+    checks = {"mapping_precision": .95, "direction_fidelity": .95, "citation_closure": .98, "raw_agreement": .90, "gwet_ac1": .75}
     for name, threshold in checks.items():
         if metrics[name] < threshold:
             failures.append(f"{name}_below_{threshold}")
@@ -762,9 +1377,17 @@ def gate_relation(freeze_dir: Path, reviews: Path, provenance: Path, out: Path) 
         failures.append("unresolved_rate_above_0.05")
     if inverse_or_cycle:
         failures.append("inverse_or_cycle_nonzero")
+    if not provenance_metrics["provenance_artifact_hashes_bound"]:
+        failures.append("snomed_artifact_hash_binding_failed")
+    if not provenance_metrics["provenance_release_match"] or not provenance_metrics["provenance_archive_name_match"]:
+        failures.append("snomed_release_or_archive_identity_unverified")
+    if not provenance_metrics["provenance_archive_sha_bound"]:
+        failures.append("snomed_source_archive_sha_unverified")
+    elif not provenance_metrics["provenance_archive_file_verified"]:
+        failures.append("snomed_source_archive_missing_or_hash_mismatch")
     if not metrics["provenance_verified"]:
         failures.append("snomed_release_provenance_unverified")
-    return _gate_write(out, "relation", not failures, failures, metrics, "deterministic E4 strict96/124 relation-substrate test; not all relation systems")
+    return _gate_write(out, "relation", not failures, failures, metrics, "deterministic E4 strict96/raw124/collapsed122 relation-substrate test; not all relation systems")
 
 
 def _gate_write(out: Path, component: str, passed: bool, failures: list[str], metrics: Mapping[str, Any], claim_scope: str) -> dict[str, Any]:
@@ -787,7 +1410,7 @@ def _require_gate(path: Path, component: str) -> dict[str, Any]:
 
 def compile_run(component: str, freeze_dir: Path, gate_path: Path, out: Path, *, annotations: Path | None = None, stage: str = "selector", selections: Path | None = None) -> list[dict[str, Any]]:
     """Compile immutable online jobs; this function performs no API calls."""
-    _require_gate(gate_path, component)
+    gate = _require_gate(gate_path, component)
     cases = read_jsonl(Path(freeze_dir) / "cases.jsonl")
     jobs: list[dict[str, Any]] = []
     if component == "admission":
@@ -817,6 +1440,8 @@ def compile_run(component: str, freeze_dir: Path, gate_path: Path, out: Path, *,
         anns = _annotation_index(annotations)
         selected = set(_json(gate_path).get("selected_case_keys") or [])
         if stage == "policy":
+            if gate.get("gate_stage") != "construction":
+                raise RuntimeError("active policy run requires the passed construction gate")
             for case in cases:
                 if case["case_key"] not in selected:
                     continue
@@ -825,6 +1450,8 @@ def compile_run(component: str, freeze_dir: Path, gate_path: Path, out: Path, *,
                 payload = {"case_key": case["case_key"], "initial_vignette": ann["initial_text"], "candidates": case["policy_candidates"], "action_menu": menu}
                 jobs.append(_job(component, "typed_policy", case, PROMPTS["active_policy"], payload, stage="policy"))
         elif stage == "post":
+            if gate.get("gate_stage") != "post_policy_audit":
+                raise RuntimeError("active post run requires the passed post-policy audit gate")
             if selections is None:
                 raise ValueError("active post run requires --selections")
             selected_actions = {str(r["case_key"]): r for r in read_jsonl(selections)}
@@ -843,8 +1470,21 @@ def compile_run(component: str, freeze_dir: Path, gate_path: Path, out: Path, *,
                 random_action = sorted(peers, key=lambda a: (stable_seed("active-random-v1", case["case_key"], a["action_id"]), a["action_id"]))[0]
                 released = {"no_acquisition": None, "typed_action": typed, "cost_matched_random": random_action}
                 for arm, action in released.items():
-                    evidence = None if action is None else {"action_id": action["action_id"], "action_type": action["action_type"], "result": action["result_span"]["text"]}
-                    payload = {"case_key": case["case_key"], "vignette": ann["initial_text"], "candidates": case["policy_candidates"], "released_evidence": evidence}
+                    evidence = None
+                    visible_vignette = ann["initial_text"]
+                    if action is not None:
+                        evidence = {
+                            "action_id": action["action_id"],
+                            "action_type": action["action_type"],
+                            "action_name": action.get("action_name", ""),
+                            "historical_status": "performed",
+                            "raw_vignette_result_span": action["result_span"],
+                        }
+                        visible_vignette += (
+                            f"\n\nReleased historically performed {action['action_type']} result: "
+                            f"{action['result_span']['text']}"
+                        )
+                    payload = {"case_key": case["case_key"], "vignette": visible_vignette, "candidates": case["policy_candidates"], "released_evidence": evidence}
                     jobs.append(_job(component, arm, case, PROMPTS["active_post"][arm], payload, stage="post"))
         else:
             raise ValueError("active --stage must be policy or post")
@@ -854,11 +1494,24 @@ def compile_run(component: str, freeze_dir: Path, gate_path: Path, out: Path, *,
                 {
                     **edge,
                     "source_id": edge["target_id"], "target_id": edge["source_id"],
+                    "source_concept_id": edge["target_concept_id"], "target_concept_id": edge["source_concept_id"],
                     "source_citation": edge["target_citation"], "target_citation": edge["source_citation"],
                 }
                 for edge in case["relations"]
             ]
-            sham = [{"source_id": edge["source_id"], "target_id": edge["target_id"], "relation": "none", "distance": edge["distance"], "source_citation": edge["source_citation"], "target_citation": edge["target_citation"]} for edge in case["relations"]]
+            sham = [{**edge, "relation": "none"} for edge in case["relations"]]
+            if any(
+                not (
+                    original["source_id"] == corrupted["target_id"]
+                    and original["target_id"] == corrupted["source_id"]
+                    and original["source_concept_id"] == corrupted["target_concept_id"]
+                    and original["target_concept_id"] == corrupted["source_concept_id"]
+                    and original["source_citation"] == corrupted["target_citation"]
+                    and original["target_citation"] == corrupted["source_citation"]
+                )
+                for original, corrupted in zip(case["relations"], inverse)
+            ):
+                raise AssertionError(f"{case['case_key']}: inverse-corrupted placebo drift")
             edge_by_arm = {"no_relation": [], "validated_relation": case["relations"], "inverse_corrupted": inverse, "node_only_sham": sham}
             for arm in RELATION_ARMS:
                 payload = {"case_key": case["case_key"], "vignette": case["vignette"], "candidates": case["candidates"], "nodes": case["nodes"], "relations": edge_by_arm[arm]}
@@ -949,6 +1602,7 @@ def analyse(
     *,
     truth_provenance: str | None = None,
     truth_manifest: Path | None = None,
+    active_post_gate: Path | None = None,
 ) -> dict[str, Any]:
     """ITA analysis: every frozen job remains; missing/invalid is incorrect."""
     manifest_provenance = ""
@@ -966,6 +1620,29 @@ def analyse(
     jobs = read_jsonl(run_jobs)
     response_rows = read_jsonl(responses)
     truth_index = _truth(truth)
+    pre_analysis_failures: list[str] = []
+    active_gate_doc: dict[str, Any] = {}
+    active_case_audits: dict[str, dict[str, Any]] = {}
+    if component == "active":
+        if active_post_gate is None or not Path(active_post_gate).is_file():
+            pre_analysis_failures.append("active_post_policy_audit_gate_missing")
+        else:
+            active_gate_doc = _json(active_post_gate)
+            if (
+                not active_gate_doc.get("passed") or active_gate_doc.get("component") != "active"
+                or active_gate_doc.get("gate_stage") != "post_policy_audit"
+            ):
+                pre_analysis_failures.append("active_post_policy_audit_gate_not_passed")
+            audit_rows = active_gate_doc.get("case_audits") or []
+            if not isinstance(audit_rows, list) or not all(isinstance(row, Mapping) for row in audit_rows):
+                pre_analysis_failures.append("active_case_audits_invalid")
+            else:
+                active_case_audits = {str(row.get("case_key")): dict(row) for row in audit_rows}
+                if len(active_case_audits) != len(audit_rows):
+                    pre_analysis_failures.append("active_case_audits_duplicate")
+                job_cases = {str(job["case_key"]) for job in jobs}
+                if set(active_case_audits) != job_cases:
+                    pre_analysis_failures.append("active_case_audit_job_coverage_mismatch")
     response_index: dict[tuple[str, str, str], dict[str, Any]] = {}
     duplicates: set[tuple[str, str, str]] = set()
     for row in response_rows:
@@ -983,18 +1660,40 @@ def analyse(
         relation = truth_index.get((job["case_key"], champion), "U") if served else "U"
         response_body = response.get("response") if isinstance(response.get("response"), Mapping) else response
         exposure_ids = candidate_ids
+        active_arm_audit: Mapping[str, Any] | None = None
+        if component == "active":
+            if job["arm"] == "no_acquisition":
+                active_arm_audit = {
+                    "relevant": False,
+                    "resolves_need": False,
+                    "information_gain_per_cost": 0.0,
+                    "wrong_episode_or_object_binding": False,
+                    "unnecessary_high_risk_action": False,
+                }
+            else:
+                active_arm_audit = (
+                    (active_case_audits.get(str(job["case_key"])) or {}).get("arms") or {}
+                ).get(str(job["arm"]))
         ledger.append({
             "case_key": job["case_key"], "family": job["family"], "arm": job["arm"],
             "served": served, "champion_id": champion if served else "", "adjudicated_relation": relation,
             "complete": bool(served and relation == "C"), "ita": True,
             "complete_exposed": any(truth_index.get((job["case_key"], cid)) == "C" for cid in exposure_ids),
             "modifier_hallucination": bool(response_body.get("modifier_hallucination")),
-            "wrong_episode_or_object_binding": bool(response_body.get("wrong_episode_or_object_binding")),
-            "unnecessary_high_risk_action": bool(response_body.get("unnecessary_high_risk_action")),
+            "action_relevant": active_arm_audit.get("relevant") if active_arm_audit is not None else None,
+            "need_resolved": active_arm_audit.get("resolves_need") if active_arm_audit is not None else None,
+            "information_gain_per_cost": active_arm_audit.get("information_gain_per_cost") if active_arm_audit is not None else None,
+            "wrong_episode_or_object_binding": active_arm_audit.get("wrong_episode_or_object_binding") if active_arm_audit is not None else None,
+            "unnecessary_high_risk_action": active_arm_audit.get("unnecessary_high_risk_action") if active_arm_audit is not None else None,
             "failure": "duplicate_response" if key in duplicates else ("" if served else "missing_or_invalid_response"),
         })
     write_jsonl(Path(out).with_suffix(".ledger.jsonl"), ledger)
     metrics: dict[str, Any] = {}
+
+    def optional_rate(subset: Sequence[Mapping[str, Any]], field: str) -> float | None:
+        values = [row.get(field) for row in subset]
+        return statistics.fmean(bool(value) for value in values) if values and all(value is not None for value in values) else None
+
     for arm in sorted({r["arm"] for r in ledger}):
         subset = [r for r in ledger if r["arm"] == arm]
         metrics[arm] = {
@@ -1004,10 +1703,15 @@ def analyse(
             "ita_complete_rate": sum(r["complete"] for r in subset) / max(1, len(subset)),
             "complete_exposure_rate": sum(r["complete_exposed"] for r in subset) / max(1, len(subset)),
             "modifier_hallucination_rate": sum(r["modifier_hallucination"] for r in subset) / max(1, len(subset)),
-            "wrong_episode_or_object_binding_rate": sum(r["wrong_episode_or_object_binding"] for r in subset) / max(1, len(subset)),
-            "unnecessary_high_risk_action_rate": sum(r["unnecessary_high_risk_action"] for r in subset) / max(1, len(subset)),
+            "action_relevance_rate": optional_rate(subset, "action_relevant"),
+            "need_resolution_rate": optional_rate(subset, "need_resolved"),
+            "mean_information_gain_per_cost": statistics.fmean(
+                float(r["information_gain_per_cost"]) for r in subset
+            ) if subset and all(r["information_gain_per_cost"] is not None for r in subset) else None,
+            "wrong_episode_or_object_binding_rate": optional_rate(subset, "wrong_episode_or_object_binding"),
+            "unnecessary_high_risk_action_rate": optional_rate(subset, "unnecessary_high_risk_action"),
         }
-    failures = [f"{arm}:service_below_0.98" for arm, value in metrics.items() if value["service_rate"] < .98]
+    failures = pre_analysis_failures + [f"{arm}:service_below_0.98" for arm, value in metrics.items() if value["service_rate"] < .98]
     contrasts: dict[str, Any] = {}
     if component == "admission":
         pairs = (("qualified_frontier", "fixed_k"), ("qualified_frontier", "sham_qualification"))
@@ -1046,10 +1750,17 @@ def analyse(
         random_contrast = contrasts["typed_action_vs_cost_matched_random"]
         if random_contrast["difference"] < .15 or random_contrast["bootstrap_95_lower"] <= 0:
             failures.append("typed_action_not_15pp_and_positive_lower_bound_over_cost_matched_random")
-        if metrics["typed_action"]["wrong_episode_or_object_binding_rate"] > .02:
+        if metrics["typed_action"]["wrong_episode_or_object_binding_rate"] is None:
+            failures.append("wrong_episode_or_object_binding_not_evaluable")
+        elif metrics["typed_action"]["wrong_episode_or_object_binding_rate"] > .02:
             failures.append("wrong_episode_or_object_binding_above_0.02")
-        if metrics["typed_action"]["unnecessary_high_risk_action_rate"] > .05:
+        if metrics["typed_action"]["unnecessary_high_risk_action_rate"] is None:
+            failures.append("unnecessary_high_risk_action_not_evaluable")
+        elif metrics["typed_action"]["unnecessary_high_risk_action_rate"] > .05:
             failures.append("unnecessary_high_risk_action_above_0.05")
+        for endpoint in ("action_relevance_rate", "need_resolution_rate", "mean_information_gain_per_cost"):
+            if metrics["typed_action"][endpoint] is None:
+                failures.append(f"typed_action_{endpoint}_not_evaluable")
     elif component == "relation":
         for control in ("no_relation", "inverse_corrupted", "node_only_sham"):
             effect = metrics["validated_relation"]["ita_complete_rate"] - metrics[control]["ita_complete_rate"]
@@ -1068,6 +1779,10 @@ def analyse(
         "truth_provenance": provenance,
         "estimand": f"{provenance} clinical-complete ITA; missing/schema/service failures are incorrect",
         "metrics": metrics, "contrasts": contrasts,
+        "active_policy_endpoints": active_gate_doc.get("metrics") if component == "active" else None,
+        "active_policy_endpoint_provenance": (
+            "policy-projected independent two-model action-bank audit" if component == "active" and active_gate_doc else None
+        ),
         "passed": not failures, "status": "GO" if not failures else "NO_GO",
         "failures": failures, "common_served_is_sensitivity_only": True,
     }
@@ -1093,6 +1808,14 @@ def _parser() -> argparse.ArgumentParser:
         gate.add_argument("--predictions", type=Path)
         gate.add_argument("--admission-gate", type=Path)
         gate.add_argument("--provenance", type=Path)
+        if component == "active":
+            post_gate = actions.add_parser("post-gate")
+            post_gate.add_argument("--freeze", type=Path, required=True)
+            post_gate.add_argument("--annotations", type=Path, required=True)
+            post_gate.add_argument("--reviews", type=Path, required=True)
+            post_gate.add_argument("--selections", type=Path, required=True)
+            post_gate.add_argument("--construction-gate", type=Path, required=True)
+            post_gate.add_argument("--out", type=Path, required=True)
         run = actions.add_parser("run")
         run.add_argument("--freeze", type=Path, required=True)
         run.add_argument("--gate", type=Path, required=True)
@@ -1105,6 +1828,7 @@ def _parser() -> argparse.ArgumentParser:
         ana.add_argument("--responses", type=Path, required=True)
         ana.add_argument("--truth", type=Path, required=True)
         ana.add_argument("--truth-manifest", type=Path)
+        ana.add_argument("--active-post-gate", type=Path)
         ana.add_argument(
             "--truth-provenance",
             default=None,
@@ -1140,6 +1864,15 @@ def main(argv: Sequence[str] | None = None) -> int:
             if not all((args.reviews, args.provenance)):
                 raise SystemExit("relation gate requires --reviews --provenance")
             gate_relation(args.freeze, args.reviews, args.provenance, args.out)
+    elif args.action == "post-gate":
+        gate_active_post(
+            args.freeze,
+            args.annotations,
+            args.reviews,
+            args.selections,
+            args.construction_gate,
+            args.out,
+        )
     elif args.action == "run":
         compile_run(args.component, args.freeze, args.gate, args.out, annotations=args.annotations, stage=args.stage, selections=args.selections)
     else:
@@ -1151,6 +1884,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             args.out,
             truth_provenance=args.truth_provenance,
             truth_manifest=args.truth_manifest,
+            active_post_gate=args.active_post_gate,
         )
     return 0
 

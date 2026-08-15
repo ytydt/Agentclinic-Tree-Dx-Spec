@@ -4,6 +4,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from analysis.mechanism_v2.ceiling_pool_census import (
     COMPLETE,
@@ -13,9 +14,16 @@ from analysis.mechanism_v2.ceiling_pool_census import (
     compile_ab,
     compile_final,
     flatten_reviews,
+    e12_surface_candidates,
+    exact_mcnemar,
     gwet_ac1,
+    holm_adjust,
     old14_frontier_adapter,
+    paired_binary_contrast,
+    recover_reviewer,
+    _review_cache_key,
 )
+from analysis.mechanism_v2.common import file_sha256
 from analysis.mechanism_v2.online_runner import read_jsonl, write_jsonl
 
 
@@ -94,6 +102,37 @@ def test_e12_graph_unavailable_has_no_actual_opportunity_and_first_is_determinis
     assert first["actual_payload"] is True
     assert first["actual_payload_kind"] == "deterministic_control"
     assert first["sent"] is False
+
+
+def test_e12_actual_payload_order_distinguishes_online_from_deterministic_control():
+    row = {
+        "candidates": [
+            {"candidate_id": "D9", "label": "priority first"},
+            {"candidate_id": "D2", "label": "payload first"},
+        ]
+    }
+    online = {
+        "actual_payload": True,
+        "actual_payload_kind": "online_request",
+    }
+    deterministic = {
+        "actual_payload": True,
+        "actual_payload_kind": "deterministic_control",
+    }
+    unavailable = {"actual_payload": False, "actual_payload_kind": "none"}
+    assert [
+        candidate["candidate_id"]
+        for candidate in e12_surface_candidates(row, online, "actual_payload")
+    ] == ["D2", "D9"]
+    assert [
+        candidate["candidate_id"]
+        for candidate in e12_surface_candidates(row, deterministic, "actual_payload")
+    ] == ["D9", "D2"]
+    assert e12_surface_candidates(row, unavailable, "actual_payload") == []
+    assert [
+        candidate["candidate_id"]
+        for candidate in e12_surface_candidates(row, online, "effective_frontier")
+    ] == ["D9", "D2"]
 
 
 def test_relation_cards_are_case_normalized_arm_blind_deterministic_and_chunked():
@@ -276,6 +315,149 @@ def test_gwet_ac1_contract():
     assert -1.0 <= value <= 1.0
 
 
+def test_paired_inference_is_exact_deterministic_and_holm_scoped():
+    pairs = [(True, False)] * 3 + [(False, True)] + [(True, True)] * 2
+    first = paired_binary_contrast(pairs, label="fixture", bootstrap_repetitions=200)
+    second = paired_binary_contrast(pairs, label="fixture", bootstrap_repetitions=200)
+    assert first == second
+    assert first["left_only"] == 3
+    assert first["right_only"] == 1
+    assert first["delta_right_minus_left"] == -2 / 6
+    assert first["exact_mcnemar_p"] == exact_mcnemar(3, 1)
+    adjusted = holm_adjust(
+        [
+            {"family": "A", "contrast_id": "one", "exact_mcnemar_p": 0.01},
+            {"family": "A", "contrast_id": "two", "exact_mcnemar_p": 0.04},
+            {"family": "B", "contrast_id": "three", "exact_mcnemar_p": 0.03},
+        ],
+        group_fields=("family",),
+    )
+    by_id = {row["contrast_id"]: row for row in adjusted}
+    assert by_id["one"]["holm_adjusted_p"] == 0.02
+    assert by_id["two"]["holm_adjusted_p"] == 0.04
+    assert by_id["three"]["holm_adjusted_p"] == 0.03
+    assert by_id["three"]["holm_family_size"] == 1
+
+
+def test_reviewer_recovery_quarantines_invalid_raw_cache_and_rebuilds_artifacts():
+    temporary = tempfile.TemporaryDirectory()
+    out = Path(temporary.name) / "recovery-fixture"
+    card = {
+        "blind_card_id": "RC1",
+        "clinical_record": "record",
+        "reference_diagnosis": "reference",
+        "candidate_registry": [{"candidate_id": "C001", "label": "candidate"}],
+    }
+    cards_path = out / "design/blinded_relation_cards.jsonl"
+    write_jsonl(cards_path, [card])
+    (out / "design/freeze_summary.json").write_text(
+        json.dumps(
+            {
+                "artifact_sha256": {
+                    "design/blinded_relation_cards.jsonl": file_sha256(cards_path)
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    reviewer_id = "reviewer_a"
+    model = "fixture/model"
+    payload = {
+        "blind_card_id": "RC1",
+        "clinical_record": "record",
+        "reference_diagnosis": "reference",
+        "candidate_registry": [{"candidate_id": "C001", "label": "candidate"}],
+    }
+    cache_key, prompt_hash, payload_hash = _review_cache_key(
+        reviewer_id, model, payload
+    )
+    directory = out / "reviewers" / reviewer_id
+    reviews_path = directory / "reviews.jsonl"
+    write_jsonl(
+        reviews_path,
+        [
+            {
+                "blind_card_id": "RC1",
+                "reviewer_id": reviewer_id,
+                "model": model,
+                "success": False,
+                "error": "candidate_relations must cover every candidate exactly once",
+                "review": {"candidate_relations": []},
+                "cache_hit": False,
+                "cache_key": cache_key,
+                "prompt_sha256": prompt_hash,
+                "payload_sha256": payload_hash,
+            }
+        ],
+    )
+    (directory / "review_summary.json").write_text(
+        json.dumps(
+            {
+                "reviewer_id": reviewer_id,
+                "model": model,
+                "cards_sha256": file_sha256(cards_path),
+                "n_cards": 1,
+                "n_success": 0,
+                "n_failure": 1,
+                "artifact_sha256": {"reviews.jsonl": file_sha256(reviews_path)},
+            }
+        ),
+        encoding="utf-8",
+    )
+    cache_path = directory / "cache" / f"{cache_key}.json"
+    cache_path.parent.mkdir(parents=True, exist_ok=True)
+    cache_path.write_text(
+        json.dumps(
+            {
+                "schema": "mechanism_v2_online_call_v1",
+                "model": model,
+                "module": f"CeilingPoolCensus_{reviewer_id}",
+                "prompt_sha256": prompt_hash,
+                "payload_sha256": payload_hash,
+                "temperature": 0.0,
+                "success": False,
+                "error": "candidate_relations must cover every candidate exactly once",
+                "response": {"candidate_relations": []},
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    class _FakeClient:
+        def call_module(self, module, prompt, call_payload):
+            assert module == f"CeilingPoolCensus_{reviewer_id}"
+            assert call_payload == payload
+            return {
+                "candidate_relations": [
+                    {
+                        "candidate_id": "C001",
+                        "relation": COMPLETE,
+                        "reason": "fixture",
+                        "confidence": "high",
+                    }
+                ]
+            }
+
+    with patch(
+        "analysis.mechanism_v2.online_runner.OnlineJSONCaller._client",
+        return_value=_FakeClient(),
+    ):
+        rebuilt = recover_reviewer(
+            out, reviewer_id, model, max_attempts=2
+        )
+    assert rebuilt["n_success"] == 1
+    assert rebuilt["n_failure"] == 0
+    assert rebuilt["recovery"]["n_recovered"] == 1
+    assert read_jsonl(reviews_path)[0]["recovered_from_validator_invalid_cache"] is True
+    quarantine = directory / "quarantine"
+    assert len(list(quarantine.glob("*.invalid.json"))) == 1
+    assert read_jsonl(quarantine / "invalid_cache_ledger.jsonl")[0][
+        "validation_error"
+    ]
+    assert json.loads(cache_path.read_text(encoding="utf-8"))["success"] is True
+    temporary.cleanup()
+
+
 class CeilingPoolCensusTests(unittest.TestCase):
     def test_old14_adapter(self):
         test_old14_frontier_adapter_has_explicit_schema_priority_and_no_output_fallback()
@@ -286,6 +468,9 @@ class CeilingPoolCensusTests(unittest.TestCase):
     def test_e12_delivery(self):
         test_e12_graph_unavailable_has_no_actual_opportunity_and_first_is_deterministic()
 
+    def test_e12_payload_order(self):
+        test_e12_actual_payload_order_distinguishes_online_from_deterministic_control()
+
     def test_blind_cards(self):
         test_relation_cards_are_case_normalized_arm_blind_deterministic_and_chunked()
 
@@ -294,6 +479,12 @@ class CeilingPoolCensusTests(unittest.TestCase):
 
     def test_gwet(self):
         test_gwet_ac1_contract()
+
+    def test_paired_inference(self):
+        test_paired_inference_is_exact_deterministic_and_holm_scoped()
+
+    def test_reviewer_recovery(self):
+        test_reviewer_recovery_quarantines_invalid_raw_cache_and_rebuilds_artifacts()
 
 
 if __name__ == "__main__":

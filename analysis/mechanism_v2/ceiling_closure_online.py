@@ -34,6 +34,7 @@ import tarfile
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from itertools import combinations
 from pathlib import Path
 from typing import Any, Callable, Iterable, Mapping, Sequence
 
@@ -155,12 +156,18 @@ related diseases. object_kind must be one of: {', '.join(OBJECT_KINDS)}. Return 
 "object_kind":"...","relation_to_core":"identity|qualified_form|component|other",
 "unresolved":false}}]}}. Cover each ID once."""
 
-MODIFIER_BINDER_PROMPT = f"""You are an outcome-blind modifier binder. Bind only modifiers explicitly
-supported by exact substrings of the supplied vignette. Never infer a missing modifier and never
-rank candidates. Axes are: {', '.join(MODIFIER_AXES)}. Return strict JSON:
+MODIFIER_BINDER_PROMPT = f"""You are an outcome-blind modifier-obligation binder. Separate what an
+existing surface diagnosis label asserts from whether the patient vignette supports it. For each
+candidate, extract every modifier obligation explicitly asserted in surface_label. Every obligation
+must cite one exact surface_span into that label. Then attach zero or more exact support_spans from
+the supplied vignette; keep an empty support_spans list when the asserted obligation is unsupported.
+Never erase an unsupported obligation, infer a new obligation, rank candidates, or synthesize an
+answer. Axes are: {', '.join(MODIFIER_AXES)}. Return strict JSON:
 {{"candidates":[{{"candidate_id":"ID","unresolved":false,"modifiers":{{"axis":[{{"value":"...",
-"support_spans":[{{"start":0,"end":1,"text":"exact substring"}}]}}]}}}}]}}.
-Cover every ID exactly once; omit unsupported claims by using empty arrays."""
+"surface_span":{{"start":0,"end":1,"text":"exact label substring"}},"support_spans":
+[{{"start":0,"end":1,"text":"exact vignette substring"}}]}}]}}}}]}}.
+Cover every ID exactly once; use empty axis arrays only when the surface label asserts no such
+obligation."""
 
 FACTOR_REVIEW_PROMPT = """You are one member of an independent model-panel quality review. You are
 not a human or root adjudicator. Review every candidate's proposed core grouping and modifier
@@ -183,10 +190,15 @@ raw_vignette. Return strict JSON:
 ACTIVE_REVIEW_PROMPT = f"""You are one member of an independent model-panel benchmark audit, not a
 human or root adjudicator. Audit every proposed action for historical availability and direct-answer
 leakage. Given the initial presentation and supplied candidate set, state the single most important
-missing discriminator type using one of: {', '.join(NEED_TYPES)}. Mark which performed actions are
-relevant to that need. Return strict JSON:
+missing discriminator type using one of: {', '.join(NEED_TYPES)}. For every historically performed
+action, independently audit whether its cost/risk metadata are usable, whether it is relevant to and
+actually resolves that missing need, its ordinal information gain (0 none, 1 low, 2 moderate, 3 high),
+whether its result is bound to the wrong patient episode/object, and whether it is an unnecessary
+high-risk action. Do not see or infer which action a policy will later select. Return strict JSON:
 {{"need_type":"...","direct_answer_leak":false,"action_reviews":[{{"action_id":"A1",
-"availability_valid":true,"relevant":true}}]}}. Cover every action exactly once."""
+"availability_valid":true,"cost_valid":true,"risk_valid":true,"relevant":true,
+"resolves_need":true,"information_gain":3,"wrong_episode_or_object_binding":false,
+"unnecessary_high_risk_action":false}}]}}. Cover every action exactly once."""
 
 ACTIVE_POLICY_PROMPT = f"""You are an outcome-blind typed evidence policy. From the initial
 presentation and the supplied candidate/action IDs, state two distinct leading candidate IDs, one
@@ -338,7 +350,7 @@ def _factorizer_validator(expected_ids: set[str]) -> Validator:
     return validate
 
 
-def _modifier_validator(expected_ids: set[str], vignette: str) -> Validator:
+def _modifier_validator(expected_ids: set[str], vignette: str, surface_labels: Mapping[str, str]) -> Validator:
     def validate(response: Mapping[str, Any]) -> str | None:
         error = _response_key_safety(response)
         if error:
@@ -358,8 +370,10 @@ def _modifier_validator(expected_ids: set[str], vignette: str) -> Validator:
                 for claim in values:
                     if not isinstance(claim, Mapping) or not str(claim.get("value") or ""):
                         return "invalid modifier claim"
+                    if not _valid_span(str(surface_labels.get(str(row.get("candidate_id"))) or ""), claim.get("surface_span")):
+                        return "modifier obligation lacks exact surface-label offset"
                     spans = claim.get("support_spans")
-                    if not isinstance(spans, list) or not spans or not all(_valid_span(vignette, span) for span in spans):
+                    if not isinstance(spans, list) or not all(_valid_span(vignette, span) for span in spans):
                         return "modifier claim lacks exact-offset support"
         return None
     return validate
@@ -412,6 +426,8 @@ def _active_builder_validator(raw: str) -> Validator:
             if not _valid_span(raw, span):
                 return "action result is not an exact span"
             interval = (int(span["start"]), int(span["end"]))
+            if interval[0] < initial_interval[1]:
+                return "action result is not later than initial presentation"
             if interval[0] < initial_interval[1] and initial_interval[0] < interval[1]:
                 return "action result overlaps initial presentation"
             intervals.append(interval)
@@ -421,7 +437,9 @@ def _active_builder_validator(raw: str) -> Validator:
     return validate
 
 
-def _active_review_validator(action_ids: set[str]) -> Validator:
+def _active_review_validator(actions_by_id: Mapping[str, Mapping[str, Any]]) -> Validator:
+    action_ids = set(actions_by_id)
+
     def validate(response: Mapping[str, Any]) -> str | None:
         error = _response_key_safety(response)
         if error:
@@ -434,8 +452,17 @@ def _active_review_validator(action_ids: set[str]) -> Validator:
         if error:
             return error
         for row in rows.values():
-            if not isinstance(row.get("availability_valid"), bool) or not isinstance(row.get("relevant"), bool):
-                return "availability_valid/relevant must be boolean"
+            for key in (
+                "availability_valid", "cost_valid", "risk_valid", "relevant", "resolves_need",
+                "wrong_episode_or_object_binding", "unnecessary_high_risk_action",
+            ):
+                if not isinstance(row.get(key), bool):
+                    return f"{key} must be boolean"
+            information_gain = row.get("information_gain")
+            if not isinstance(information_gain, int) or isinstance(information_gain, bool) or information_gain not in {0, 1, 2, 3}:
+                return "information_gain must be an integer from 0 to 3"
+            if row.get("resolves_need") and (not row.get("relevant") or information_gain == 0):
+                return "a resolving action must be relevant and informative"
         return None
     return validate
 
@@ -489,6 +516,40 @@ def _selector_validator(payload: Mapping[str, Any]) -> Validator:
     if len(candidate_ids) != len(candidate_rows) or not candidate_ids:
         raise AssertionError("selector candidate IDs are empty or duplicated")
     vignette = str(payload.get("vignette") or payload.get("initial_vignette") or "")
+    lattice = payload.get("lattice")
+    lattice_core_ids: set[str] = set()
+    lattice_edge_by_candidate: dict[str, Mapping[str, Any]] = {}
+    if lattice is not None:
+        if not isinstance(lattice, Mapping):
+            raise AssertionError("lattice must be an object")
+        core_nodes = lattice.get("core_nodes")
+        member_edges = lattice.get("member_edges")
+        if not isinstance(core_nodes, list) or not isinstance(member_edges, list):
+            raise AssertionError("lattice requires core_nodes and member_edges")
+        lattice_core_ids = {str(row.get("core_id") or "") for row in core_nodes if isinstance(row, Mapping)}
+        if len(lattice_core_ids) != len(core_nodes) or "" in lattice_core_ids:
+            raise AssertionError("lattice core IDs are empty or duplicated")
+        for edge in member_edges:
+            if not isinstance(edge, Mapping):
+                raise AssertionError("lattice member edge must be an object")
+            candidate_id = str(edge.get("candidate_id") or "")
+            core_id = str(edge.get("core_id") or "")
+            if candidate_id in lattice_edge_by_candidate or candidate_id not in candidate_ids or core_id not in lattice_core_ids:
+                raise AssertionError("invalid lattice member edge")
+            obligations = edge.get("modifier_obligations")
+            if not isinstance(obligations, Mapping) or set(map(str, obligations)) - set(MODIFIER_AXES):
+                raise AssertionError("invalid lattice modifier obligations")
+            lattice_edge_by_candidate[candidate_id] = edge
+        if set(lattice_edge_by_candidate) != candidate_ids:
+            raise AssertionError("lattice must cover every surface candidate exactly once")
+        for node in core_nodes:
+            members = [str(value) for value in node.get("member_candidate_ids") or []]
+            expected_members = sorted(
+                candidate_id for candidate_id, edge in lattice_edge_by_candidate.items()
+                if str(edge["core_id"]) == str(node["core_id"])
+            )
+            if sorted(members) != expected_members or len(members) != len(set(members)):
+                raise AssertionError("lattice core/member adjacency mismatch")
 
     def validate(response: Mapping[str, Any]) -> str | None:
         error = _response_key_safety(response)
@@ -502,6 +563,19 @@ def _selector_validator(payload: Mapping[str, Any]) -> Validator:
             return "invalid runner_up_id"
         if str(response.get("margin")) not in MARGINS:
             return "invalid margin"
+        if lattice is not None:
+            selected_core = str(response.get("selected_core_id") or "")
+            if selected_core not in lattice_core_ids:
+                return "selected_core_id is not a supplied core"
+            if champion in lattice_edge_by_candidate and str(lattice_edge_by_candidate[champion]["core_id"]) != selected_core:
+                return "champion is not a member of selected_core_id"
+            obligations = lattice_edge_by_candidate.get(champion, {}).get("modifier_obligations") or {}
+            expected_axes = {str(axis) for axis, values in obligations.items() if values}
+            check = response.get("obligation_check")
+            if not isinstance(check, Mapping) or set(map(str, check)) != expected_axes:
+                return "obligation_check does not cover chosen surface obligations"
+            if any(str(value) not in {"supported", "unsupported"} for value in check.values()):
+                return "invalid obligation_check status"
         spans = response.get("decisive_spans")
         if not isinstance(spans, list) or not spans or not all(_valid_span(vignette, span) for span in spans):
             return "decisive_spans must contain exact vignette offsets"
@@ -753,10 +827,15 @@ def run_factorization_annotations(
         if not factor["success"]:
             continue
         ids = {str(c["candidate_id"]) for c in case["candidates"]}
+        surface_labels = {str(c["candidate_id"]): str(c["label"]) for c in case["candidates"]}
+        factor_candidates = [
+            {**row, "surface_label": surface_labels[str(row["candidate_id"])]}
+            for row in factor["response"]["candidates"]
+        ]
         binder_tasks.append(OnlineTask(
             f"{case['case_key']}|modifier_binder", "CeilingModifierBinder", MODIFIER_BINDER_PROMPT,
-            {"case_key": case["case_key"], "vignette": case["vignette"], "candidates": factor["response"]["candidates"]},
-            _modifier_validator(ids, str(case["vignette"])), {"case_key": case["case_key"], "stage": "modifier_binder"},
+            {"case_key": case["case_key"], "vignette": case["vignette"], "candidates": factor_candidates},
+            _modifier_validator(ids, str(case["vignette"]), surface_labels), {"case_key": case["case_key"], "stage": "modifier_binder"},
         ))
     binder = _run_tasks(binder_tasks, out_dir=Path(out) / "modifier_binder", model=model, workers=workers,
                         cache_only=cache_only, call_timeout=call_timeout, max_retries=max_retries,
@@ -857,12 +936,47 @@ def run_factorization_reviews(
                 }
                 flat.append({
                     "case_key": case["case_key"], "left_id": str(candidate["candidate_id"]), "right_id": str(candidate["core_id"]),
+                    "review_kind": "core_member",
                     "reviewer_id": reviewer_id, "reviewer_model": model, "panel_provenance": "independent_model_panel",
                     "grouped_correct": bool(item.get("grouped_correct")), "modifier_correct": bool(item.get("modifier_correct")),
                     "unsafe_synonym_merge": bool(item.get("unsafe_synonym_merge")), "unresolved": bool(item.get("unresolved", True)),
                     "decision": _factor_decision(item), "success": bool(row["success"]), "error": row["error"],
                     "cache_key": row["cache_key"], "payload_sha256": row["payload_sha256"], "prompt_sha256": row["prompt_sha256"],
                 })
+                for axis, obligations in (candidate.get("modifiers") or {}).items():
+                    if not obligations:
+                        continue
+                    flat.append({
+                        "case_key": case["case_key"], "left_id": str(candidate["candidate_id"]),
+                        "right_id": str(candidate["core_id"]), "review_kind": "modifier_axis",
+                        "modifier_axis": str(axis), "reviewer_id": reviewer_id, "reviewer_model": model,
+                        "panel_provenance": "independent_model_panel", "grouped_correct": bool(item.get("grouped_correct")),
+                        "modifier_correct": bool(item.get("modifier_correct")),
+                        "unsafe_synonym_merge": bool(item.get("unsafe_synonym_merge")),
+                        "unresolved": bool(item.get("unresolved", True)), "decision": _factor_decision(item),
+                        "success": bool(row["success"]), "error": row["error"], "cache_key": row["cache_key"],
+                        "payload_sha256": row["payload_sha256"], "prompt_sha256": row["prompt_sha256"],
+                    })
+            by_core: dict[str, list[Mapping[str, Any]]] = {}
+            for candidate in ann["candidates"]:
+                by_core.setdefault(str(candidate["core_id"]), []).append(candidate)
+            for core_id, members in by_core.items():
+                for left, right in combinations(sorted(members, key=lambda value: str(value["candidate_id"])), 2):
+                    left_item = response_by_id.get(str(left["candidate_id"])) or {}
+                    right_item = response_by_id.get(str(right["candidate_id"])) or {}
+                    grouped_correct = bool(left_item.get("grouped_correct")) and bool(right_item.get("grouped_correct"))
+                    unsafe_merge = bool(left_item.get("unsafe_synonym_merge")) or bool(right_item.get("unsafe_synonym_merge"))
+                    unresolved = bool(left_item.get("unresolved", True)) or bool(right_item.get("unresolved", True))
+                    flat.append({
+                        "case_key": case["case_key"], "left_id": str(left["candidate_id"]),
+                        "right_id": str(right["candidate_id"]), "core_id": core_id, "review_kind": "core_pair",
+                        "reviewer_id": reviewer_id, "reviewer_model": model,
+                        "panel_provenance": "independent_model_panel", "grouped_correct": grouped_correct,
+                        "modifier_correct": True, "unsafe_synonym_merge": unsafe_merge, "unresolved": unresolved,
+                        "decision": "accept" if grouped_correct and not unsafe_merge and not unresolved else "reject_grouping",
+                        "success": bool(row["success"]), "error": row["error"], "cache_key": row["cache_key"],
+                        "payload_sha256": row["payload_sha256"], "prompt_sha256": row["prompt_sha256"],
+                    })
     return _finalize_panel(Path(out), "factorization_reviews", flat, [cases_path, annotations], reviewer_specs)
 
 
@@ -923,12 +1037,12 @@ def run_active_reviews(
         tasks: list[OnlineTask] = []
         for case in cases:
             ann = anns[case["case_key"]]
-            action_ids = {str(action["action_id"]) for action in ann.get("actions") or []}
+            actions_by_id = {str(action["action_id"]): action for action in ann.get("actions") or []}
             tasks.append(OnlineTask(
                 f"{case['case_key']}|active_review|{reviewer_id}", f"CeilingActiveModelPanel_{reviewer_id}", ACTIVE_REVIEW_PROMPT,
                 {"case_key": case["case_key"], "raw_vignette": case["builder_payload"]["raw_vignette"],
                  "policy_candidates": case["policy_candidates"], "builder_annotation": ann},
-                _active_review_validator(action_ids), {"case_key": case["case_key"], "reviewer_id": reviewer_id, "stage": "active_model_panel"},
+                _active_review_validator(actions_by_id), {"case_key": case["case_key"], "reviewer_id": reviewer_id, "stage": "active_model_panel"},
             ))
         raw = _run_tasks(tasks, out_dir=Path(out) / reviewer_id, model=model, workers=workers,
                          cache_only=cache_only, call_timeout=call_timeout, max_retries=max_retries,
@@ -938,10 +1052,34 @@ def run_active_reviews(
             response = row["response"] if row["success"] else {}
             action_review = {str(item["action_id"]): item for item in response.get("action_reviews", [])}
             relevant = sorted(action_id for action_id, item in action_review.items() if item.get("relevant") and item.get("availability_valid"))
+            available = sorted(action_id for action_id, item in action_review.items() if item.get("availability_valid"))
+            resolving = sorted(
+                action_id for action_id, item in action_review.items()
+                if item.get("resolves_need") and item.get("availability_valid")
+            )
+            cost_valid = sorted(action_id for action_id, item in action_review.items() if item.get("cost_valid"))
+            risk_valid = sorted(action_id for action_id, item in action_review.items() if item.get("risk_valid"))
             flat.append({
                 "case_key": row["case_key"], "reviewer_id": reviewer_id, "reviewer_model": model,
                 "panel_provenance": "independent_model_panel", "need_type": str(response.get("need_type") or "unresolved"),
                 "relevant_action_ids": relevant, "direct_answer_leak": bool(response.get("direct_answer_leak", True)),
+                "available_action_ids": available,
+                "resolving_action_ids": resolving, "cost_valid_action_ids": cost_valid,
+                "risk_valid_action_ids": risk_valid,
+                "action_audits": [
+                    {
+                        "action_id": action_id,
+                        "availability_valid": bool(item.get("availability_valid")),
+                        "cost_valid": bool(item.get("cost_valid")),
+                        "risk_valid": bool(item.get("risk_valid")),
+                        "relevant": bool(item.get("relevant")),
+                        "resolves_need": bool(item.get("resolves_need")),
+                        "information_gain": int(item.get("information_gain", 0)),
+                        "wrong_episode_or_object_binding": bool(item.get("wrong_episode_or_object_binding")),
+                        "unnecessary_high_risk_action": bool(item.get("unnecessary_high_risk_action")),
+                    }
+                    for action_id, item in sorted(action_review.items())
+                ],
                 "reviewed_action_ids": sorted(action_review), "expected_action_ids": sorted(str(action["action_id"]) for action in ann.get("actions") or []),
                 "success": bool(row["success"]), "error": row["error"], "cache_key": row["cache_key"],
                 "payload_sha256": row["payload_sha256"], "prompt_sha256": row["prompt_sha256"],

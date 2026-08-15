@@ -24,7 +24,9 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import random
+import shutil
 import sys
 from collections import Counter, defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -276,6 +278,37 @@ def classify_e12_delivery(row: Mapping[str, Any]) -> dict[str, Any]:
         "actual_payload": False,
         "actual_payload_kind": "none",
     }
+
+
+def e12_surface_candidates(
+    row: Mapping[str, Any],
+    delivery: Mapping[str, Any],
+    surface: str,
+) -> list[dict[str, Any]]:
+    """Recover the candidate order for each E12 decision surface.
+
+    E12 stores its rich candidates in priority order, but online requests use
+    ``pool.payload_candidates``, which is sorted by the numeric ``D#`` ID.
+    The deterministic ``first`` control instead consumes the stored priority
+    order directly. Membership is identical, but preserving this distinction
+    is necessary for an honest ``actual_payload`` occurrence ledger.
+    """
+    candidates = [dict(candidate) for candidate in row.get("candidates") or []]
+    if surface != "actual_payload":
+        return candidates
+    if not bool(delivery.get("actual_payload")):
+        return []
+    if str(delivery.get("actual_payload_kind") or "") == "deterministic_control":
+        return candidates
+
+    def candidate_id_order(candidate: Mapping[str, Any]) -> tuple[int, str]:
+        candidate_id = str(candidate.get("candidate_id") or "")
+        suffix = candidate_id[1:]
+        if candidate_id.startswith("D") and suffix.isdigit():
+            return int(suffix), candidate_id
+        raise ValueError(f"invalid E12 candidate ID for payload recovery: {candidate_id!r}")
+
+    return sorted(candidates, key=candidate_id_order)
 
 
 def _pool_hash(candidates: Sequence[Mapping[str, Any]]) -> str:
@@ -704,28 +737,46 @@ def _build_e12(
     for arm, path, row in _iter_arm_rows(base):
         source_paths.add(path)
         case_key = str(row["case_key"])
-        candidates = list(row.get("candidates") or [])
         delivery = classify_e12_delivery(row)
-        pool_hash = str(row.get("pool_sha256") or _pool_hash(candidates))
+        source_pool_hash = str(row.get("pool_sha256") or "")
         pointer = f"{_relative(path)}#case_key={case_key}"
         for surface in ("raw_registry", "effective_frontier"):
+            surface_candidates = e12_surface_candidates(row, delivery, surface)
             _append_surface(
                 occurrence_rows, pool_rows, experiment_group="E12", arm_id=arm,
                 case_key=case_key, family=str(row["family"]), surface=surface,
-                candidates=candidates, source_path=path, source_pointer=f"{pointer}/candidates",
-                pool_sha256=pool_hash, sent=False, served=delivery["served"],
+                candidates=surface_candidates, source_path=path, source_pointer=f"{pointer}/candidates",
+                pool_sha256=_pool_hash(surface_candidates), sent=False, served=delivery["served"],
                 actual_payload_recoverable=delivery["actual_payload"],
                 opportunity_status=f"archived_{surface}",
-                champion_label=str(row.get("champion_label") or ""), extra=delivery,
+                champion_label=str(row.get("champion_label") or ""),
+                extra={
+                    **delivery,
+                    "source_pool_sha256": source_pool_hash,
+                    "payload_sha256": str(row.get("payload_sha256") or ""),
+                },
             )
+        actual_candidates = e12_surface_candidates(row, delivery, "actual_payload")
+        actual_candidate_hash = _pool_hash(actual_candidates) if actual_candidates else ""
+        if (
+            delivery["actual_payload_kind"] == "online_request"
+            and source_pool_hash
+            and actual_candidate_hash != source_pool_hash
+        ):
+            raise AssertionError(f"E12 actual-payload candidate hash drift: {arm} {case_key}")
         _append_surface(
             occurrence_rows, pool_rows, experiment_group="E12", arm_id=arm,
             case_key=case_key, family=str(row["family"]), surface="actual_payload",
-            candidates=candidates if delivery["actual_payload"] else [], source_path=path,
-            source_pointer=f"{pointer}/payload_contract", pool_sha256=pool_hash if delivery["actual_payload"] else "",
+            candidates=actual_candidates, source_path=path,
+            source_pointer=f"{pointer}/payload_contract", pool_sha256=actual_candidate_hash,
             sent=delivery["sent"], served=delivery["served"],
             actual_payload_recoverable=delivery["actual_payload"], opportunity_status=delivery["status"],
-            champion_label=str(row.get("champion_label") or ""), extra=delivery,
+            champion_label=str(row.get("champion_label") or ""),
+            extra={
+                **delivery,
+                "source_pool_sha256": source_pool_hash,
+                "payload_sha256": str(row.get("payload_sha256") or ""),
+            },
         )
         if row.get("champion_label"):
             label = str(row["champion_label"])
@@ -908,6 +959,77 @@ def freeze(out: Path = DEFAULT_OUT, *, chunk_size: int = 20) -> dict[str, Any]:
     pool_rows.sort(key=lambda r: (r["experiment_group"], r["arm_id"], r["case_key"], r["surface"]))
     top1_rows.sort(key=lambda r: (r["experiment_group"], r["arm_id"], r["case_key"]))
 
+    pool_keys = [
+        (row["experiment_group"], row["arm_id"], row["case_key"], row["surface"])
+        for row in pool_rows
+    ]
+    if len(pool_keys) != len(set(pool_keys)):
+        raise AssertionError("duplicate experiment/arm/case/surface pool rows")
+    expected_arm_cases: dict[str, dict[str, int]] = {
+        "HIST14": {
+            arm: (800 if arm in {"Collapse3c", "MultiStance", "Lite", "Forest", "IMPC"} else 400)
+            for arm, _run_dir in OLD14_RUNS
+        },
+        "E4": {
+            arm: 400
+            for arm in {
+                "collapse_obligation_ledger",
+                "e7_contrast",
+                "evidence_count_control",
+                "forest_evidence_integrator",
+                "pairwise_tournament",
+            }
+        },
+        "E5": {arm: 200 for arm in E5_ALL_ARMS},
+        "E9": {
+            arm: 400
+            for arm in {
+                "duplicate_anchor", "real_views", "role_rotated", "single_anchor"
+            }
+        },
+        "E12": {
+            arm: 300
+            for arm in {
+                "graph_k10_first", "graph_k10_pairwise", "graph_k10_pointwise",
+                "graph_k5_first", "graph_k5_pairwise", "graph_k5_pointwise",
+                "raw_depth1_k10_pairwise", "raw_depth2_k10_pairwise",
+                "raw_k10_first", "raw_k10_pairwise", "raw_k10_pointwise",
+                "raw_k5_first", "raw_k5_pairwise", "raw_k5_pointwise",
+                "s1_k10_first", "s1_k10_pairwise", "s1_k10_pointwise",
+                "s1_k5_first", "s1_k5_pairwise", "s1_k5_pointwise",
+            }
+        },
+    }
+    observed_arm_cases: dict[str, dict[str, int]] = defaultdict(dict)
+    surfaces_by_arm_case: dict[tuple[str, str, str], set[str]] = defaultdict(set)
+    for row in pool_rows:
+        surfaces_by_arm_case[
+            (str(row["experiment_group"]), str(row["arm_id"]), str(row["case_key"]))
+        ].add(str(row["surface"]))
+    for group, expected_arms in expected_arm_cases.items():
+        group_rows = [
+            row
+            for row in pool_rows
+            if row["experiment_group"] == group and row["surface"] == "raw_registry"
+        ]
+        for arm in sorted({str(row["arm_id"]) for row in group_rows}):
+            observed_arm_cases[group][arm] = sum(
+                str(row["arm_id"]) == arm for row in group_rows
+            )
+        if observed_arm_cases[group] != expected_arms:
+            raise AssertionError(
+                f"{group} arm/case coverage drift: "
+                f"{observed_arm_cases[group]} != {expected_arms}"
+            )
+        for row in group_rows:
+            arm = str(row["arm_id"])
+            case_key = str(row["case_key"])
+            surfaces = surfaces_by_arm_case[(group, arm, case_key)]
+            if surfaces != set(SURFACES):
+                raise AssertionError(
+                    f"surface coverage drift: {group}/{arm}/{case_key} {surfaces}"
+                )
+
     metadata = load_case_metadata()
     e2_relations, identities = load_e2_registry()
     bridge = FrozenExactSynonymBridge(BRIDGE_PATH)
@@ -915,11 +1037,18 @@ def freeze(out: Path = DEFAULT_OUT, *, chunk_size: int = 20) -> dict[str, Any]:
     relation_index, known, cards, card_index = build_relation_cards(
         occurrence_rows, metadata, e2_relations, identities, bridge, chunk_size=chunk_size
     )
+    missing_sources = sorted(path for path in source_paths if not path.is_file())
+    if missing_sources:
+        raise FileNotFoundError(
+            f"{len(missing_sources)} frozen source bindings are missing; "
+            f"first={missing_sources[0]}"
+        )
     bindings = [
         {"path": _relative(path), "sha256": file_sha256(path)}
         for path in sorted(source_paths, key=lambda p: str(p))
-        if path.is_file()
     ]
+    if len(bindings) != 7649:
+        raise AssertionError(f"source binding cardinality drift: {len(bindings)} != 7649")
     names_and_rows = {
         "design/occurrence_ledger.jsonl": occurrence_rows,
         "design/pool_ledger.jsonl": pool_rows,
@@ -975,6 +1104,20 @@ def freeze(out: Path = DEFAULT_OUT, *, chunk_size: int = 20) -> dict[str, Any]:
         for row in pool_rows
         if row["experiment_group"] == "E12" and row["surface"] == "actual_payload"
     )
+    resolution_counts = Counter(str(row["resolution_source"]) for row in relation_index)
+    bridge_equivalent_total = sum(
+        bridge.equivalent(
+            str(row["candidate_label"]), str(row["reference_diagnosis"])
+        )
+        for row in relation_index
+    )
+    bridge_e2_overlap = sum(
+        row["resolution_source"] == "e2_root_reuse"
+        and bridge.equivalent(
+            str(row["candidate_label"]), str(row["reference_diagnosis"])
+        )
+        for row in relation_index
+    )
     summary = {
         "schema_version": SCHEMA_VERSION,
         "created_at_utc": utcnow(),
@@ -987,6 +1130,12 @@ def freeze(out: Path = DEFAULT_OUT, *, chunk_size: int = 20) -> dict[str, Any]:
         "n_relation_universe": len(relation_index),
         "n_known_relations": len(known),
         "n_panel_pending_relations": len(relation_index) - len(known),
+        "resolution_source_counts": dict(sorted(resolution_counts.items())),
+        "frozen_bridge_equivalent_total": bridge_equivalent_total,
+        "frozen_bridge_e2_overlap": bridge_e2_overlap,
+        "frozen_bridge_further_after_e2": (
+            bridge_equivalent_total - bridge_e2_overlap
+        ),
         "n_blinded_cards": len(cards),
         "relation_n_by_group": by_group,
         "old14_actual_payload_recoverable": False,
@@ -1008,6 +1157,21 @@ def freeze(out: Path = DEFAULT_OUT, *, chunk_size: int = 20) -> dict[str, Any]:
     if by_group != expected or len(relation_index) != 19599:
         raise AssertionError(
             f"eligible relation universe drift: by_group={by_group}, union={len(relation_index)}"
+        )
+    expected_resolution = {
+        "e2_root_reuse": 2601,
+        "frozen_safe_exact": 217,
+        "three_model_adjudicated_panel_pending": 16781,
+    }
+    if (
+        dict(resolution_counts) != expected_resolution
+        or bridge_equivalent_total != 344
+        or bridge_e2_overlap != 127
+    ):
+        raise AssertionError(
+            "eligible truth-tier drift: "
+            f"resolution={dict(resolution_counts)}, bridge_total={bridge_equivalent_total}, "
+            f"bridge_e2_overlap={bridge_e2_overlap}"
         )
     atomic_json(summary_path, summary)
     return summary
@@ -1118,6 +1282,287 @@ def run_reviewer(
     return summary
 
 
+def _review_cache_key(
+    reviewer_id: str,
+    model: str,
+    payload: Mapping[str, Any],
+) -> tuple[str, str, str]:
+    prompt_sha256 = hashlib.sha256(CLINICAL_PROMPT.encode("utf-8")).hexdigest()
+    payload_sha256 = canonical_sha256(payload)
+    cache_key = canonical_sha256(
+        {
+            "schema": "mechanism_v2_online_call_v1",
+            "model": model,
+            "module": f"CeilingPoolCensus_{reviewer_id}",
+            "prompt_sha256": prompt_sha256,
+            "payload_sha256": payload_sha256,
+            "temperature": 0.0,
+        }
+    )
+    return cache_key, prompt_sha256, payload_sha256
+
+
+def _quarantine_invalid_review_cache(
+    *,
+    directory: Path,
+    reviewer_id: str,
+    model: str,
+    card: Mapping[str, Any],
+    cache_key: str,
+    attempt: int,
+    ledger_rows: list[dict[str, Any]],
+) -> dict[str, Any]:
+    """Move one validator-invalid immutable record into an auditable quarantine."""
+    payload = _clinical_payload(card)
+    expected_key, prompt_hash, payload_hash = _review_cache_key(
+        reviewer_id, model, payload
+    )
+    if cache_key != expected_key:
+        raise RuntimeError(
+            f"review cache identity drift for {card['blind_card_id']}: "
+            f"{cache_key} != {expected_key}"
+        )
+    cache_path = directory / "cache" / f"{cache_key}.json"
+    if not cache_path.is_file():
+        raise FileNotFoundError(f"validator-invalid cache record missing: {cache_path}")
+    record = json.loads(cache_path.read_text(encoding="utf-8"))
+    expected_identity = {
+        "model": model,
+        "module": f"CeilingPoolCensus_{reviewer_id}",
+        "prompt_sha256": prompt_hash,
+        "payload_sha256": payload_hash,
+        "temperature": 0.0,
+    }
+    for key, expected in expected_identity.items():
+        if record.get(key) != expected:
+            raise RuntimeError(
+                f"invalid cache provenance for {card['blind_card_id']} field {key}: "
+                f"{record.get(key)!r} != {expected!r}"
+            )
+    allowed = {str(row["candidate_id"]) for row in payload["candidate_registry"]}
+    validation_error = _validate_relation_response(
+        dict(record.get("response") or {}), allowed
+    )
+    if not validation_error:
+        raise RuntimeError(
+            f"refusing to quarantine validator-compliant cache {cache_key}"
+        )
+    raw_sha256 = file_sha256(cache_path)
+    quarantine = directory / "quarantine"
+    quarantine.mkdir(parents=True, exist_ok=True)
+    quarantine_name = (
+        f"{cache_key}.attempt-{attempt:02d}.{raw_sha256}.invalid.json"
+    )
+    quarantine_path = quarantine / quarantine_name
+    if quarantine_path.exists():
+        if file_sha256(quarantine_path) != raw_sha256:
+            raise RuntimeError(f"quarantine collision: {quarantine_path}")
+        cache_path.unlink()
+    else:
+        cache_path.replace(quarantine_path)
+    ledger_row = {
+        "schema": f"{SCHEMA_VERSION}-invalid-cache-quarantine-v1",
+        "quarantined_at_utc": utcnow(),
+        "reviewer_id": reviewer_id,
+        "model": model,
+        "blind_card_id": str(card["blind_card_id"]),
+        "cache_key": cache_key,
+        "attempt": attempt,
+        "validation_error": str(validation_error),
+        "raw_cache_sha256": raw_sha256,
+        "quarantine_path": _relative(quarantine_path),
+        "prompt_sha256": prompt_hash,
+        "payload_sha256": payload_hash,
+    }
+    ledger_rows.append(ledger_row)
+    write_jsonl(quarantine / "invalid_cache_ledger.jsonl", ledger_rows)
+    return ledger_row
+
+
+def recover_reviewer(
+    out: Path,
+    reviewer_id: str,
+    model: str = "",
+    *,
+    max_attempts: int = 3,
+) -> dict[str, Any]:
+    """Quarantine validator-invalid caches, re-call them, and rebuild artifacts.
+
+    The command is deliberately available only after a complete reviewer run.
+    It never imputes, drops or treats an invalid response as successful. Every
+    invalid raw record and the pre-recovery reviews/summary are retained under
+    ``reviewers/<id>/quarantine`` before the same immutable semantic cache
+    identity is called again.
+    """
+    if reviewer_id not in {"reviewer_a", "reviewer_b", "reviewer_c"}:
+        raise ValueError("invalid reviewer-id")
+    if max_attempts < 1:
+        raise ValueError("max_attempts must be positive")
+    out = Path(out)
+    freeze_summary = json.loads(
+        (out / "design/freeze_summary.json").read_text(encoding="utf-8")
+    )
+    _validate_hashes(out, freeze_summary["artifact_sha256"])
+    cards_path = out / "design/blinded_relation_cards.jsonl"
+    cards = {
+        str(row["blind_card_id"]): row for row in read_jsonl(cards_path)
+    }
+    directory = out / "reviewers" / reviewer_id
+    summary_path = directory / "review_summary.json"
+    reviews_path = directory / "reviews.jsonl"
+    if not summary_path.is_file() or not reviews_path.is_file():
+        raise RuntimeError("recovery requires a completed reviewer run")
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    frozen_model = str(summary.get("model") or "")
+    model = model or frozen_model
+    if model != frozen_model:
+        raise RuntimeError(f"reviewer model drift: {model} != {frozen_model}")
+    if str(summary.get("cards_sha256") or "") != file_sha256(cards_path):
+        raise RuntimeError("reviewer card freeze drift before recovery")
+    _validate_hashes(directory, summary["artifact_sha256"])
+    reviews = read_jsonl(reviews_path)
+    if len(reviews) != len(cards):
+        raise RuntimeError("review row/card cardinality mismatch")
+    by_card = {str(row["blind_card_id"]): dict(row) for row in reviews}
+    if set(by_card) != set(cards):
+        raise RuntimeError("review coverage does not match frozen cards")
+    failures = [card_id for card_id, row in by_card.items() if not bool(row.get("success"))]
+    if not failures:
+        return summary
+
+    quarantine = directory / "quarantine"
+    quarantine.mkdir(parents=True, exist_ok=True)
+    pre_reviews_sha = file_sha256(reviews_path)
+    pre_summary_sha = file_sha256(summary_path)
+    pre_reviews_path = quarantine / f"reviews.before-recovery.{pre_reviews_sha}.jsonl"
+    pre_summary_path = quarantine / f"summary.before-recovery.{pre_summary_sha}.json"
+    if not pre_reviews_path.exists():
+        shutil.copy2(reviews_path, pre_reviews_path)
+    if not pre_summary_path.exists():
+        shutil.copy2(summary_path, pre_summary_path)
+    ledger_path = quarantine / "invalid_cache_ledger.jsonl"
+    ledger_rows = read_jsonl(ledger_path)
+    caller = OnlineJSONCaller(
+        out_dir=directory,
+        model=model,
+        telemetry_path=directory / "telemetry.jsonl",
+        temperature=0.0,
+        call_timeout=240,
+        max_retries=3,
+    )
+    recovered_n = 0
+    for card_id in sorted(failures):
+        card = cards[card_id]
+        payload = _clinical_payload(card)
+        allowed = {str(row["candidate_id"]) for row in payload["candidate_registry"]}
+        cache_key, prompt_hash, payload_hash = _review_cache_key(
+            reviewer_id, model, payload
+        )
+        prior_row = by_card[card_id]
+        prior_key = str(prior_row.get("cache_key") or "")
+        if prior_key and prior_key != cache_key:
+            raise RuntimeError(f"failed review cache identity drift: {card_id}")
+        outcome = None
+        quarantined_for_card: list[dict[str, Any]] = []
+        for attempt in range(1, max_attempts + 1):
+            active_cache = directory / "cache" / f"{cache_key}.json"
+            if active_cache.is_file():
+                quarantined_for_card.append(
+                    _quarantine_invalid_review_cache(
+                        directory=directory,
+                        reviewer_id=reviewer_id,
+                        model=model,
+                        card=card,
+                        cache_key=cache_key,
+                        attempt=attempt,
+                        ledger_rows=ledger_rows,
+                    )
+                )
+            elif not any(
+                str(row.get("cache_key")) == cache_key for row in ledger_rows
+            ):
+                raise FileNotFoundError(
+                    f"no active or quarantined invalid cache provenance for {card_id}"
+                )
+            outcome = caller.call(
+                module=f"CeilingPoolCensus_{reviewer_id}",
+                prompt=CLINICAL_PROMPT,
+                payload=payload,
+                validator=lambda response: _validate_relation_response(response, allowed),
+            )
+            if outcome.success:
+                break
+        if outcome is None:  # pragma: no cover - guarded by max_attempts
+            raise AssertionError("recovery loop did not run")
+        if not outcome.success:
+            active_cache = directory / "cache" / f"{cache_key}.json"
+            if active_cache.is_file():
+                quarantined_for_card.append(
+                    _quarantine_invalid_review_cache(
+                        directory=directory,
+                        reviewer_id=reviewer_id,
+                        model=model,
+                        card=card,
+                        cache_key=cache_key,
+                        attempt=max_attempts + 1,
+                        ledger_rows=ledger_rows,
+                    )
+                )
+        else:
+            recovered_n += 1
+        by_card[card_id] = {
+            "blind_card_id": card_id,
+            "reviewer_id": reviewer_id,
+            "model": model,
+            "success": bool(outcome.success),
+            "error": str(outcome.error or ""),
+            "review": dict(outcome.response),
+            "cache_hit": bool(outcome.cache_hit),
+            "cache_key": cache_key,
+            "prompt_sha256": prompt_hash,
+            "payload_sha256": payload_hash,
+            "recovery_attempted": True,
+            "recovered_from_validator_invalid_cache": bool(outcome.success),
+            "quarantined_raw_cache_sha256": [
+                str(row["raw_cache_sha256"]) for row in quarantined_for_card
+            ],
+        }
+
+    rebuilt = [by_card[card_id] for card_id in sorted(by_card)]
+    write_jsonl(reviews_path, rebuilt)
+    recovery_manifest = {
+        "schema": f"{SCHEMA_VERSION}-reviewer-recovery-v1",
+        "created_at_utc": utcnow(),
+        "reviewer_id": reviewer_id,
+        "model": model,
+        "n_failed_before": len(failures),
+        "n_recovered": recovered_n,
+        "n_failed_after": sum(not bool(row["success"]) for row in rebuilt),
+        "max_attempts_per_failed_card": max_attempts,
+        "pre_recovery_reviews_sha256": pre_reviews_sha,
+        "pre_recovery_summary_sha256": pre_summary_sha,
+        "invalid_cache_ledger_sha256": file_sha256(ledger_path),
+        "policy": "validator-invalid raw caches quarantined; no row dropped or imputed",
+    }
+    manifest_path = quarantine / "recovery_manifest.json"
+    atomic_json(manifest_path, recovery_manifest)
+    artifacts = {"reviews.jsonl": file_sha256(reviews_path)}
+    for path in sorted(quarantine.iterdir()):
+        if path.is_file():
+            artifacts[f"quarantine/{path.name}"] = file_sha256(path)
+    rebuilt_summary = {
+        **summary,
+        "rebuilt_at_utc": utcnow(),
+        "n_cards": len(rebuilt),
+        "n_success": sum(bool(row["success"]) for row in rebuilt),
+        "n_failure": sum(not bool(row["success"]) for row in rebuilt),
+        "recovery": recovery_manifest,
+        "artifact_sha256": artifacts,
+    }
+    atomic_json(summary_path, rebuilt_summary)
+    return rebuilt_summary
+
+
 def flatten_reviews(
     rows: Sequence[Mapping[str, Any]],
     expected: set[tuple[str, str]] | None = None,
@@ -1127,7 +1572,7 @@ def flatten_reviews(
     A card-level schema/service failure is never deleted or silently retried.
     With an ``expected`` universe, valid individual judgments are retained and
     every missing, duplicate or invalid judgment is deterministically mapped
-    to ``uncertain``.  The original card remains failed in its immutable
+    to ``uncertain``. The original card remains failed in its immutable
     reviewer artifact and telemetry.
     """
     flattened: dict[tuple[str, str], str] = {}
@@ -1493,6 +1938,91 @@ def _ols(points: Sequence[tuple[float, float]]) -> dict[str, Any]:
     }
 
 
+def exact_mcnemar(left_only: int, right_only: int) -> float:
+    """Exact two-sided McNemar p-value for paired binary outcomes."""
+    discordant = left_only + right_only
+    if not discordant:
+        return 1.0
+    lower = min(left_only, right_only)
+    tail = sum(math.comb(discordant, index) for index in range(lower + 1))
+    return min(1.0, 2.0 * tail / (2**discordant))
+
+
+def paired_binary_contrast(
+    pairs: Sequence[tuple[bool, bool]],
+    *,
+    label: str,
+    bootstrap_repetitions: int = 2_000,
+) -> dict[str, Any]:
+    """Summarise right-minus-left with paired exact and bootstrap inference."""
+    if bootstrap_repetitions < 1:
+        raise ValueError("bootstrap_repetitions must be positive")
+    n = len(pairs)
+    left_only = sum(bool(left) and not bool(right) for left, right in pairs)
+    right_only = sum(bool(right) and not bool(left) for left, right in pairs)
+    both = sum(bool(left) and bool(right) for left, right in pairs)
+    neither = n - left_only - right_only - both
+    if n:
+        import numpy as np
+
+        rng = np.random.default_rng(stable_seed(SCHEMA_VERSION, "paired-bootstrap", label))
+        draws = rng.multinomial(
+            n,
+            [left_only / n, right_only / n, (both + neither) / n],
+            size=bootstrap_repetitions,
+        )
+        deltas = (draws[:, 1] - draws[:, 0]) / n
+        bounds = np.quantile(deltas, [0.025, 0.975])
+        ci = [round(float(bounds[0]), 6), round(float(bounds[1]), 6)]
+    else:
+        ci = [0.0, 0.0]
+    return {
+        "n_paired": n,
+        "left_only": left_only,
+        "right_only": right_only,
+        "both_complete": both,
+        "neither_complete": neither,
+        "left_complete_n": left_only + both,
+        "right_complete_n": right_only + both,
+        "left_complete_rate": _rate(left_only + both, n),
+        "right_complete_rate": _rate(right_only + both, n),
+        "delta_right_minus_left": _rate(right_only - left_only, n),
+        "paired_bootstrap_95ci": ci,
+        "exact_mcnemar_p": exact_mcnemar(left_only, right_only),
+    }
+
+
+def holm_adjust(
+    rows: Sequence[Mapping[str, Any]],
+    *,
+    group_fields: Sequence[str],
+) -> list[dict[str, Any]]:
+    """Holm-adjust within explicitly named, non-pooled comparison families."""
+    output = [dict(row) for row in rows]
+    families: dict[tuple[Any, ...], list[int]] = defaultdict(list)
+    for index, row in enumerate(output):
+        families[tuple(row[field] for field in group_fields)].append(index)
+    for indices in families.values():
+        ordered = sorted(
+            indices,
+            key=lambda index: (
+                float(output[index]["exact_mcnemar_p"]),
+                str(output[index].get("contrast_id") or ""),
+            ),
+        )
+        previous = 0.0
+        for rank, index in enumerate(ordered):
+            adjusted = min(
+                1.0,
+                (len(ordered) - rank) * float(output[index]["exact_mcnemar_p"]),
+            )
+            adjusted = max(previous, adjusted)
+            output[index]["holm_adjusted_p"] = adjusted
+            output[index]["holm_family_size"] = len(ordered)
+            previous = adjusted
+    return output
+
+
 def analyze(out: Path) -> dict[str, Any]:
     out = Path(out)
     summary = json.loads((out / "design/freeze_summary.json").read_text(encoding="utf-8"))
@@ -1535,32 +2065,88 @@ def analyze(out: Path) -> dict[str, Any]:
     grouped_pools: dict[tuple[str, str, str], list[Mapping[str, Any]]] = defaultdict(list)
     for row in pools:
         grouped_pools[(str(row["experiment_group"]), str(row["arm_id"]), str(row["surface"]))].append(row)
-    for (group, arm, surface), rows in sorted(grouped_pools.items()):
-        # Empty/missing actual rows remain in the denominator as unavailable,
-        # and are reported explicitly; they are never described as actual.
-        available = [row for row in rows if int(row.get("candidate_n") or 0) > 0]
-        exposed = 0
-        top_complete = 0
-        for row in available:
-            key = (group, arm, str(row["case_key"]), surface)
-            is_exposed = any(relation.get(rid) == COMPLETE for rid in candidates_by_pool[key])
-            if is_exposed:
-                exposed += 1
-            champion = champion_by_case.get((group, arm, str(row["case_key"])))
-            if is_exposed and champion and relation.get(champion) == COMPLETE:
-                top_complete += 1
-        exposure_rows.append(
-            {
-                "experiment_group": group, "arm_id": arm, "surface": surface,
-                "n_registered_cases": len(rows), "n_available_opportunities": len(available),
-                "n_unavailable": len(rows) - len(available), "n_clinical_exposure": exposed,
-                "clinical_exposure_rate": _rate(exposed, len(available)),
-                "n_top1_clinically_complete": top_complete,
-                "conditional_conversion": _rate(top_complete, exposed),
-                "actual_claim_permitted": surface == "actual_payload" and bool(available)
-                and all(bool(row.get("actual_payload_recoverable")) for row in available),
-            }
-        )
+    for (group, arm, surface), all_rows in sorted(grouped_pools.items()):
+        families = sorted({str(row["benchmark_family"]) for row in all_rows})
+        for family in ["ALL", *families]:
+            rows = (
+                all_rows
+                if family == "ALL"
+                else [row for row in all_rows if str(row["benchmark_family"]) == family]
+            )
+            # Missing historical request bodies are unknown, whereas a frozen
+            # builder/graph failure is a known zero-opportunity treatment path.
+            unknown = [
+                row
+                for row in rows
+                if str(row.get("opportunity_status") or "")
+                in {"actual_payload_not_archived", "payload_missing_unclassified"}
+            ]
+            available = [row for row in rows if int(row.get("candidate_n") or 0) > 0]
+            exposed = 0
+            top_complete_given_exposure = 0
+            top_complete_all = 0
+            for row in rows:
+                key = (group, arm, str(row["case_key"]), surface)
+                is_exposed = any(
+                    relation.get(relation_id_value) == COMPLETE
+                    for relation_id_value in candidates_by_pool[key]
+                )
+                exposed += int(is_exposed)
+                champion = champion_by_case.get((group, arm, str(row["case_key"])))
+                champion_complete = bool(
+                    champion and relation.get(champion) == COMPLETE
+                )
+                top_complete_all += int(champion_complete)
+                top_complete_given_exposure += int(is_exposed and champion_complete)
+            service_values = [row.get("served") for row in rows]
+            service_rate = (
+                _rate(sum(value is True for value in service_values), len(rows))
+                if any(value is not None for value in service_values)
+                else None
+            )
+            registered_exposure_rate = (
+                None if unknown else _rate(exposed, len(rows))
+            )
+            actual_permitted = bool(
+                surface == "actual_payload"
+                and not unknown
+                and all(
+                    bool(row.get("actual_payload_recoverable"))
+                    for row in available
+                )
+            )
+            exposure_rows.append(
+                {
+                    "experiment_group": group,
+                    "arm_id": arm,
+                    "surface": surface,
+                    "benchmark_family": family,
+                    "n_registered_cases": len(rows),
+                    "n_available_opportunities": len(available),
+                    "n_unavailable": len(rows) - len(available),
+                    "n_unknown_opportunity": len(unknown),
+                    "n_clinical_exposure": exposed,
+                    "clinical_exposure_rate_available": _rate(exposed, len(available)),
+                    "clinical_exposure_rate_ita": registered_exposure_rate,
+                    # Back-compatible alias, now explicitly conditional on a
+                    # recoverable/nonempty decision surface.
+                    "clinical_exposure_rate": _rate(exposed, len(available)),
+                    "n_top1_clinically_complete": top_complete_all,
+                    "top1_complete_rate_ita": (
+                        None if unknown else _rate(top_complete_all, len(rows))
+                    ),
+                    "n_top1_complete_given_exposure": top_complete_given_exposure,
+                    "n_top1_complete_outside_exposure": (
+                        top_complete_all - top_complete_given_exposure
+                    ),
+                    "conditional_conversion": _rate(
+                        top_complete_given_exposure, exposed
+                    ),
+                    "service_rate": service_rate,
+                    "actual_claim_permitted": actual_permitted,
+                    "truth_tier": "E2 root/safe-exact plus three-model panel sensitivity",
+                }
+            )
 
     e5_served: list[dict[str, Any]] = []
     for row in top1:
@@ -1630,36 +2216,316 @@ def analyze(out: Path) -> dict[str, Any]:
             }
         )
 
-    old_points: list[dict[str, Any]] = []
-    for row in exposure_rows:
-        if row["experiment_group"] != "HIST14" or row["surface"] not in {"raw_registry", "effective_frontier"}:
-            continue
-        family_rows = [p for p in pools if p["experiment_group"] == "HIST14" and p["arm_id"] == row["arm_id"] and p["surface"] == row["surface"]]
-        for family in ("DA", "MCR"):
-            selected = [p for p in family_rows if p["benchmark_family"] == family and int(p.get("candidate_n") or 0) > 0]
-            exposed = 0
-            top_complete = 0
-            for p in selected:
-                key = ("HIST14", str(row["arm_id"]), str(p["case_key"]), str(row["surface"]))
-                is_exposed = any(relation.get(rid) == COMPLETE for rid in candidates_by_pool[key])
-                exposed += is_exposed
-                champion = champion_by_case.get(("HIST14", str(row["arm_id"]), str(p["case_key"])))
-                top_complete += bool(is_exposed and champion and relation.get(champion) == COMPLETE)
-            old_points.append(
-                {"surface": row["surface"], "arm_id": row["arm_id"], "benchmark_family": family,
-                 "n": len(selected), "mean_candidate_n": _rate(sum(int(p["candidate_n"]) for p in selected), len(selected)),
-                 "clinical_exposure_rate": _rate(exposed, len(selected)),
-                 "conditional_conversion": _rate(top_complete, exposed),
-                 "top1_complete_rate": _rate(top_complete, len(selected))}
+    # Pre-registered E5 views. ITA retains every frozen arm/case row and
+    # counts builder/schema failures wrong. Common-served views are explicitly
+    # post-treatment survivor sensitivities, never replacements for ITA.
+    e5_actual_pools = [
+        row
+        for row in pools
+        if row["experiment_group"] == "E5" and row["surface"] == "actual_payload"
+    ]
+    e5_state_rows: list[dict[str, Any]] = []
+    e5_states: dict[str, dict[str, dict[str, Any]]] = defaultdict(dict)
+    for pool_row in e5_actual_pools:
+        case_key = str(pool_row["case_key"])
+        arm = str(pool_row["arm_id"])
+        identity = identities.get(case_key) or {}
+        champion = champion_by_case.get(("E5", arm, case_key))
+        served = bool(pool_row.get("served"))
+        if served and not champion:
+            raise RuntimeError(f"served E5 row lacks Top-1 relation: {arm} {case_key}")
+        champion_relation = relation.get(champion, "") if champion else ""
+        state = {
+            "case_key": case_key,
+            "arm_id": arm,
+            "benchmark_family": str(pool_row["benchmark_family"]),
+            "reference_identifiability": str(
+                identity.get("reference_identifiability") or "unknown"
+            ),
+            "served": served,
+            "actual_opportunity": int(pool_row.get("candidate_n") or 0) > 0,
+            "opportunity_status": str(pool_row.get("opportunity_status") or ""),
+            "champion_relation_id": champion or "",
+            "champion_relation": champion_relation,
+            "clinically_complete": bool(served and champion_relation == COMPLETE),
+        }
+        e5_state_rows.append(state)
+        e5_states[case_key][arm] = state
+    if len(e5_state_rows) != 200 * len(E5_ALL_ARMS):
+        raise AssertionError(f"E5 ITA state cardinality drift: {len(e5_state_rows)}")
+    if any(set(rows) != set(E5_ALL_ARMS) for rows in e5_states.values()):
+        raise AssertionError("E5 ITA state does not cover all nine arms per case")
+    e5_state_rows.sort(key=lambda row: (row["case_key"], row["arm_id"]))
+
+    joint_width_cases = {
+        case_key
+        for case_key, rows in e5_states.items()
+        if all(bool(rows[arm]["served"]) for arm in E5_WIDTH_ARMS)
+    }
+    joint_nine_cases = {
+        case_key
+        for case_key, rows in e5_states.items()
+        if all(bool(rows[arm]["served"]) for arm in E5_ALL_ARMS)
+    }
+    identifiability_values = sorted(
+        {str(row["reference_identifiability"]) for row in e5_state_rows}
+    )
+    stratum_specs = [
+        ("ALL", "ALL"),
+        ("DA", "ALL"),
+        ("MCR", "ALL"),
+        *[("ALL", value) for value in identifiability_values],
+    ]
+
+    def stratum_cases(family: str, identifiability: str) -> set[str]:
+        selected: set[str] = set()
+        for case_key, rows in e5_states.items():
+            base = rows["base4"]
+            if family != "ALL" and base["benchmark_family"] != family:
+                continue
+            if (
+                identifiability != "ALL"
+                and base["reference_identifiability"] != identifiability
+            ):
+                continue
+            selected.add(case_key)
+        return selected
+
+    e5_arm_metrics: list[dict[str, Any]] = []
+    for family, identifiability in stratum_specs:
+        target = stratum_cases(family, identifiability)
+        for view, arms, fixed_cases in (
+            ("ita", E5_ALL_ARMS, target),
+            ("all_served_output", E5_ALL_ARMS, target),
+            ("joint_nine_common_served", E5_ALL_ARMS, target & joint_nine_cases),
+            ("joint_width_common_served", E5_WIDTH_ARMS, target & joint_width_cases),
+        ):
+            for arm in arms:
+                states = [e5_states[case_key][arm] for case_key in sorted(fixed_cases)]
+                if view == "all_served_output":
+                    denominator_states = [row for row in states if row["served"]]
+                else:
+                    denominator_states = states
+                complete_n = sum(bool(row["clinically_complete"]) for row in denominator_states)
+                e5_arm_metrics.append(
+                    {
+                        "view": view,
+                        "benchmark_family": family,
+                        "reference_identifiability": identifiability,
+                        "arm_id": arm,
+                        "n_target_cases": len(fixed_cases),
+                        "n_denominator": len(denominator_states),
+                        "n_served": sum(bool(row["served"]) for row in states),
+                        "n_complete": complete_n,
+                        "complete_rate": _rate(complete_n, len(denominator_states)),
+                        "post_treatment_conditioning": view != "ita",
+                        "truth_tier": "three-model panel sensitivity with post-panel E2/safe-exact override",
+                    }
+                )
+
+    e5_contrasts: list[dict[str, Any]] = []
+
+    def add_contrast(
+        *,
+        view: str,
+        multiplicity_family: str,
+        family: str,
+        identifiability: str,
+        left: str,
+        right: str,
+        eligible_cases: set[str],
+        require_common_served: bool,
+    ) -> None:
+        pairs: list[tuple[bool, bool]] = []
+        for case_key in sorted(eligible_cases):
+            left_state = e5_states[case_key][left]
+            right_state = e5_states[case_key][right]
+            if require_common_served and not (
+                bool(left_state["served"]) and bool(right_state["served"])
+            ):
+                continue
+            pairs.append(
+                (
+                    bool(left_state["clinically_complete"]),
+                    bool(right_state["clinically_complete"]),
+                )
             )
-    ols = {}
+        contrast_id = (
+            f"{view}/{family}/{identifiability}/{right}-minus-{left}"
+        )
+        e5_contrasts.append(
+            {
+                "view": view,
+                "multiplicity_family": multiplicity_family,
+                "benchmark_family": family,
+                "reference_identifiability": identifiability,
+                "contrast_id": contrast_id,
+                "left_arm": left,
+                "right_arm": right,
+                "post_treatment_conditioning": view != "ita",
+                **paired_binary_contrast(pairs, label=contrast_id),
+            }
+        )
+
+    for family, identifiability in stratum_specs:
+        target = stratum_cases(family, identifiability)
+        for arm in E5_ALL_ARMS:
+            if arm == "base4":
+                continue
+            add_contrast(
+                view="ita",
+                multiplicity_family="ita_base_vs_8",
+                family=family,
+                identifiability=identifiability,
+                left="base4",
+                right=arm,
+                eligible_cases=target,
+                require_common_served=False,
+            )
+            add_contrast(
+                view="pairwise_common_served",
+                multiplicity_family="pairwise_common_served_base_vs_8",
+                family=family,
+                identifiability=identifiability,
+                left="base4",
+                right=arm,
+                eligible_cases=target,
+                require_common_served=True,
+            )
+            add_contrast(
+                view="joint_nine_common_served",
+                multiplicity_family="joint_nine_base_vs_8",
+                family=family,
+                identifiability=identifiability,
+                left="base4",
+                right=arm,
+                eligible_cases=target & joint_nine_cases,
+                require_common_served=False,
+            )
+        for left, right in (
+            ("base4", "nested_width6"),
+            ("base4", "nested_width8"),
+            ("nested_width6", "nested_width8"),
+        ):
+            add_contrast(
+                view="joint_width_common_served",
+                multiplicity_family="joint_width_3",
+                family=family,
+                identifiability=identifiability,
+                left=left,
+                right=right,
+                eligible_cases=target & joint_width_cases,
+                require_common_served=False,
+            )
+    e5_contrasts = holm_adjust(
+        e5_contrasts,
+        group_fields=(
+            "view",
+            "multiplicity_family",
+            "benchmark_family",
+            "reference_identifiability",
+        ),
+    )
+
+    old_points: list[dict[str, Any]] = []
+    historical_arms = sorted(
+        {row["arm_id"] for row in pools if row["experiment_group"] == "HIST14"}
+    )
     for surface in ("raw_registry", "effective_frontier"):
-        points = [
-            (float(row["clinical_exposure_rate"]), float(row["conditional_conversion"]))
-            for row in old_points if row["surface"] == surface
-            and row["clinical_exposure_rate"] is not None and row["conditional_conversion"] is not None
-        ]
-        ols[surface] = _ols(points)
+        for arm in historical_arms:
+            arm_rows = [
+                row
+                for row in pools
+                if row["experiment_group"] == "HIST14"
+                and row["arm_id"] == arm
+                and row["surface"] == surface
+            ]
+            for family in ("DA", "MCR"):
+                selected = [
+                    row
+                    for row in arm_rows
+                    if row["benchmark_family"] == family
+                    and int(row.get("candidate_n") or 0) > 0
+                ]
+                exposed = 0
+                top_complete_given_exposure = 0
+                top_complete_all = 0
+                for pool_row in selected:
+                    key = (
+                        "HIST14",
+                        str(arm),
+                        str(pool_row["case_key"]),
+                        surface,
+                    )
+                    is_exposed = any(
+                        relation.get(relation_id_value) == COMPLETE
+                        for relation_id_value in candidates_by_pool[key]
+                    )
+                    exposed += int(is_exposed)
+                    champion = champion_by_case.get(
+                        ("HIST14", str(arm), str(pool_row["case_key"]))
+                    )
+                    champion_complete = bool(
+                        champion and relation.get(champion) == COMPLETE
+                    )
+                    top_complete_all += int(champion_complete)
+                    top_complete_given_exposure += int(
+                        is_exposed and champion_complete
+                    )
+                old_points.append(
+                    {
+                        "surface": surface,
+                        "arm_id": arm,
+                        "benchmark_family": family,
+                        "n": len(selected),
+                        "mean_candidate_n": _rate(
+                            sum(int(row["candidate_n"]) for row in selected),
+                            len(selected),
+                        ),
+                        "clinical_exposure_rate": _rate(exposed, len(selected)),
+                        "conditional_conversion": _rate(
+                            top_complete_given_exposure, exposed
+                        ),
+                        "top1_complete_rate": _rate(
+                            top_complete_all, len(selected)
+                        ),
+                        "n_top1_complete_outside_exposure": (
+                            top_complete_all - top_complete_given_exposure
+                        ),
+                    }
+                )
+    ols_conversion_on_exposure: dict[str, dict[str, Any]] = {}
+    ols_conversion_on_width: dict[str, dict[str, Any]] = {}
+    for surface in ("raw_registry", "effective_frontier"):
+        for family in ("ALL", "DA", "MCR"):
+            selected = [
+                row
+                for row in old_points
+                if row["surface"] == surface
+                and (family == "ALL" or row["benchmark_family"] == family)
+                and row["conditional_conversion"] is not None
+            ]
+            key = f"{surface}::{family}"
+            ols_conversion_on_exposure[key] = _ols(
+                [
+                    (
+                        float(row["clinical_exposure_rate"]),
+                        float(row["conditional_conversion"]),
+                    )
+                    for row in selected
+                    if row["clinical_exposure_rate"] is not None
+                ]
+            )
+            ols_conversion_on_width[key] = _ols(
+                [
+                    (
+                        float(row["mean_candidate_n"]),
+                        float(row["conditional_conversion"]),
+                    )
+                    for row in selected
+                    if row["mean_candidate_n"] is not None
+                ]
+            )
 
     analysis_dir = out / "analysis"
     analysis_dir.mkdir(parents=True, exist_ok=True)
@@ -1668,6 +2534,9 @@ def analyze(out: Path) -> dict[str, Any]:
     write_jsonl(analysis_dir / "e5_served_identifiability_strata.jsonl", e5_strata)
     write_jsonl(analysis_dir / "e5_base_w6_w8_common_served.jsonl", common_width)
     write_jsonl(analysis_dir / "e5_joint_nine_common_served.jsonl", joint_nine)
+    write_jsonl(analysis_dir / "e5_ita_case_states.jsonl", e5_state_rows)
+    write_jsonl(analysis_dir / "e5_preregistered_arm_metrics.jsonl", e5_arm_metrics)
+    write_jsonl(analysis_dir / "e5_preregistered_paired_contrasts.jsonl", e5_contrasts)
     write_jsonl(analysis_dir / "old14_registry_frontier_points.jsonl", old_points)
     result = {
         "schema_version": f"{SCHEMA_VERSION}-analysis-v1",
@@ -1679,8 +2548,12 @@ def analyze(out: Path) -> dict[str, Any]:
         "n_e5_base_w6_w8_common_served_cases": len(common_width),
         "n_e5_base_w6_w8_relation_discordant_cases": sum(row["any_relation_discordance"] for row in common_width),
         "n_e5_joint_nine_common_served_cases": len(joint_nine),
-        "old14_ols_conversion_on_exposure": ols,
+        "n_e5_preregistered_arm_metric_rows": len(e5_arm_metrics),
+        "n_e5_preregistered_paired_contrasts": len(e5_contrasts),
+        "old14_ols_conversion_on_exposure": ols_conversion_on_exposure,
+        "old14_ols_conversion_on_width": ols_conversion_on_width,
         "actual_payload_warning": "HIST14 reconstructed frontiers are reported only as frontier; actual payload is unavailable",
+        "e5_inference_warning": "ITA is primary; all common-served views are post-treatment sensitivity analyses; all non-frozen relations remain model-panel, not human-root",
     }
     atomic_json(analysis_dir / "analysis_summary.json", result)
     return result
@@ -1698,6 +2571,11 @@ def _parser() -> argparse.ArgumentParser:
     reviewer.add_argument("--model", default="")
     reviewer.add_argument("--workers", type=int, default=20)
     reviewer.add_argument("--cache-only", action="store_true")
+    recovery = sub.add_parser("recover-reviewer")
+    recovery.add_argument("--out", type=Path, default=DEFAULT_OUT)
+    recovery.add_argument("--reviewer-id", required=True, choices=sorted(CLINICAL_REVIEWERS))
+    recovery.add_argument("--model", default="")
+    recovery.add_argument("--max-attempts", type=int, default=3)
     ab = sub.add_parser("compile-ab")
     ab.add_argument("--out", type=Path, default=DEFAULT_OUT)
     final = sub.add_parser("compile-final")
@@ -1714,6 +2592,13 @@ def main(argv: Sequence[str] | None = None) -> int:
     elif args.command == "run-reviewer":
         model = args.model or CLINICAL_REVIEWERS[args.reviewer_id]
         value = run_reviewer(args.out, args.reviewer_id, model, args.workers, cache_only=args.cache_only)
+    elif args.command == "recover-reviewer":
+        value = recover_reviewer(
+            args.out,
+            args.reviewer_id,
+            args.model,
+            max_attempts=args.max_attempts,
+        )
     elif args.command == "compile-ab":
         value = compile_ab(args.out)
     elif args.command == "compile-final":
@@ -1723,6 +2608,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     else:  # pragma: no cover
         raise AssertionError(args.command)
     print(json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True))
+    if args.command == "recover-reviewer" and int(value.get("n_failure") or 0):
+        return 2
     return 0
 
 

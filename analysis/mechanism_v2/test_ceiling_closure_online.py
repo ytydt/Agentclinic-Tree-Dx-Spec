@@ -8,6 +8,7 @@ import pytest
 
 from analysis.mechanism_v2.ceiling_closure_online import (
     _active_builder_validator,
+    _active_review_validator,
     _assert_closure_blind,
     _factorizer_validator,
     _modifier_validator,
@@ -55,15 +56,21 @@ def test_factor_and_modifier_validators_require_exact_coverage_offsets() -> None
     assert _factorizer_validator({"A", "B"})(factor) is None
     assert _factorizer_validator({"A", "B"})({"candidates": factor["candidates"][:1]}) == "exact candidate coverage mismatch"
     vignette = "fever followed by positive culture"
+    labels = {"A": "infectious alpha", "B": "beta"}
     valid = {
         "candidates": [
-            {"candidate_id": "A", "unresolved": False, "modifiers": {"etiology": [{"value": "infectious", "support_spans": [{"start": 18, "end": 34, "text": "positive culture"}]}]}},
+            {"candidate_id": "A", "unresolved": False, "modifiers": {"etiology": [{"value": "infectious", "surface_span": {"start": 0, "end": 10, "text": "infectious"}, "support_spans": [{"start": 18, "end": 34, "text": "positive culture"}]}]}},
             {"candidate_id": "B", "unresolved": False, "modifiers": {}},
         ]
     }
-    assert _modifier_validator({"A", "B"}, vignette)(valid) is None
-    valid["candidates"][0]["modifiers"]["etiology"][0]["support_spans"][0]["start"] = 17
-    assert _modifier_validator({"A", "B"}, vignette)(valid) == "modifier claim lacks exact-offset support"
+    assert _modifier_validator({"A", "B"}, vignette, labels)(valid) is None
+    valid["candidates"][0]["modifiers"]["etiology"][0]["support_spans"] = []
+    assert _modifier_validator({"A", "B"}, vignette, labels)(valid) is None
+    valid["candidates"][0]["modifiers"]["etiology"][0]["surface_span"]["start"] = 1
+    assert _modifier_validator({"A", "B"}, vignette, labels)(valid) == "modifier obligation lacks exact surface-label offset"
+    valid["candidates"][0]["modifiers"]["etiology"][0]["surface_span"]["start"] = 0
+    valid["candidates"][0]["modifiers"]["etiology"][0]["support_spans"] = [{"start": 17, "end": 34, "text": "positive culture"}]
+    assert _modifier_validator({"A", "B"}, vignette, labels)(valid) == "modifier claim lacks exact-offset support"
 
 
 def test_active_builder_and_selector_exact_offsets() -> None:
@@ -77,6 +84,10 @@ def test_active_builder_and_selector_exact_offsets() -> None:
         }],
     }
     assert _active_builder_validator(raw)(response) is None
+    earlier = json.loads(json.dumps(response))
+    earlier["initial_span"] = {"start": 16, "end": 29, "text": "showed a mass"}
+    earlier["actions"][0]["result_span"] = {"start": 0, "end": 6, "text": "cough."}
+    assert _active_builder_validator(raw)(earlier) == "action result is not later than initial presentation"
     response["actions"][0]["result_span"]["text"] = "wrong"
     assert _active_builder_validator(raw)(response) == "action result is not an exact span"
 
@@ -86,6 +97,64 @@ def test_active_builder_and_selector_exact_offsets() -> None:
     assert validator(good) is None
     good["champion_id"] = "OUTSIDE"
     assert validator(good) == "champion_id is not a supplied candidate"
+
+
+def test_active_action_bank_review_requires_all_independent_endpoints() -> None:
+    actions = {
+        "A1": {"action_id": "A1", "cost": 1.0, "risk": "low"},
+        "A2": {"action_id": "A2", "cost": 2.0, "risk": "moderate"},
+    }
+    validator = _active_review_validator(actions)
+    response = {
+        "need_type": "etiology", "direct_answer_leak": False,
+        "action_reviews": [
+            {
+                "action_id": action_id, "availability_valid": True, "cost_valid": True,
+                "risk_valid": True, "relevant": action_id == "A1", "resolves_need": action_id == "A1",
+                "information_gain": 3 if action_id == "A1" else 0,
+                "wrong_episode_or_object_binding": False, "unnecessary_high_risk_action": False,
+            }
+            for action_id in actions
+        ],
+    }
+    assert validator(response) is None
+    response["action_reviews"][0].pop("wrong_episode_or_object_binding")
+    assert validator(response) == "wrong_episode_or_object_binding must be boolean"
+    response["action_reviews"][0]["wrong_episode_or_object_binding"] = False
+    response["action_reviews"][0]["information_gain"] = 0
+    assert validator(response) == "a resolving action must be relevant and informative"
+
+
+def test_lattice_selector_enforces_core_then_member_and_obligation_trace() -> None:
+    payload = {
+        "vignette": "marker supports subtype",
+        "candidates": [
+            {"candidate_id": "A", "label": "alpha subtype"},
+            {"candidate_id": "B", "label": "beta"},
+        ],
+        "lattice": {
+            "core_nodes": [
+                {"core_id": "K1", "member_candidate_ids": ["A"]},
+                {"core_id": "K2", "member_candidate_ids": ["B"]},
+            ],
+            "member_edges": [
+                {"core_id": "K1", "candidate_id": "A", "modifier_obligations": {"subtype": [{"value": "subtype"}]}},
+                {"core_id": "K2", "candidate_id": "B", "modifier_obligations": {}},
+            ],
+        },
+    }
+    validator = _selector_validator(payload)
+    response = {
+        "selected_core_id": "K1", "champion_id": "A", "runner_up_id": "B",
+        "margin": "high", "obligation_check": {"subtype": "supported"},
+        "decisive_spans": [{"start": 0, "end": 6, "text": "marker"}],
+    }
+    assert validator(response) is None
+    response["selected_core_id"] = "K2"
+    assert validator(response) == "champion is not a member of selected_core_id"
+    response["selected_core_id"] = "K1"
+    response["obligation_check"] = {}
+    assert validator(response) == "obligation_check does not cover chosen surface obligations"
 
 
 def test_immutable_selector_jobs_reject_hash_drift_and_arm_name() -> None:
