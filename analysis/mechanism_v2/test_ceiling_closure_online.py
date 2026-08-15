@@ -10,15 +10,24 @@ from analysis.mechanism_v2.ceiling_closure_online import (
     _active_builder_validator,
     _active_review_validator,
     _assert_closure_blind,
+    _factor_review_validator,
     _factorizer_validator,
     _modifier_validator,
     _review_specs,
     _selector_validator,
     _validate_immutable_jobs,
     run_admission_typing,
+    run_factorization_reviews,
     run_selectors,
 )
+from analysis.mechanism_v2.ceiling_breakthrough_experiments import (
+    _factor_review_payload,
+    _factor_review_units,
+    _immutable_job_sha256,
+)
+from analysis.mechanism_v2.common import file_sha256
 from analysis.mechanism_v2.online_runner import canonical_sha256, read_jsonl, write_jsonl
+from analysis.mechanism_v2.runtime_contract import atomic_json
 
 
 class FakeClient:
@@ -39,6 +48,34 @@ class FakeClient:
                 "rationale": "brief",
             }
         raise AssertionError(module)
+
+
+class FakeFactorReviewClient:
+    def __init__(self) -> None:
+        self.payloads: list[dict] = []
+
+    def configure_telemetry(self, _path: str) -> None:
+        return None
+
+    def call_module(self, module: str, _prompt: str, payload: dict) -> dict:
+        assert module.startswith("CeilingFactorModelPanel_")
+        self.payloads.append(payload)
+        return {
+            "core_pair_reviews": [
+                {
+                    "unit_id": unit["unit_id"], "grouped_correct": True,
+                    "unsafe_synonym_merge": False, "unresolved": False,
+                }
+                for unit in payload["core_pair_units"]
+            ],
+            "modifier_axis_reviews": [
+                {
+                    "unit_id": unit["unit_id"], "modifier_correct": True,
+                    "unresolved": False,
+                }
+                for unit in payload["modifier_axis_units"]
+            ],
+        }
 
 
 def test_strict_target_blindness_rejects_audit_alias() -> None:
@@ -71,6 +108,81 @@ def test_factor_and_modifier_validators_require_exact_coverage_offsets() -> None
     valid["candidates"][0]["modifiers"]["etiology"][0]["surface_span"]["start"] = 0
     valid["candidates"][0]["modifiers"]["etiology"][0]["support_spans"] = [{"start": 17, "end": 34, "text": "positive culture"}]
     assert _modifier_validator({"A", "B"}, vignette, labels)(valid) == "modifier claim lacks exact-offset support"
+
+
+def test_factor_review_payload_binds_surface_obligations_and_exact_units(tmp_path: Path) -> None:
+    case = {
+        "case_key": "toy/1", "family": "DA", "vignette": "marker present",
+        "candidates": [
+            {"candidate_id": "A", "label": "Alpha subtype"},
+            {"candidate_id": "B", "label": "Alpha"},
+        ],
+    }
+    obligation = {
+        "value": "subtype",
+        "surface_span": {"start": 6, "end": 13, "text": "subtype"},
+        "support_spans": [{"start": 0, "end": 6, "text": "marker"}],
+    }
+    annotation = {
+        "case_key": "toy/1",
+        "requested_object": {"kind": "disease_entity", "explicit_modifier_axes": ["subtype"]},
+        "candidates": [
+            {
+                "candidate_id": "A", "core_id": "K1", "core_label": "Alpha",
+                "object_kind": "disease_entity", "relation_to_core": "qualified_form",
+                "surface_label": "Alpha subtype", "modifiers": {"subtype": [obligation]},
+                "modifier_source_obligations": {"subtype": [obligation]}, "unresolved": False,
+            },
+            {
+                "candidate_id": "B", "core_id": "K1", "core_label": "Alpha",
+                "object_kind": "disease_entity", "relation_to_core": "identity",
+                "surface_label": "Alpha", "modifiers": {},
+                "modifier_source_obligations": {}, "unresolved": False,
+            },
+        ],
+    }
+    payload = _factor_review_payload(case, annotation)
+    units = _factor_review_units(payload)
+    assert payload["candidates"][0]["surface_label"] == "Alpha subtype"
+    assert payload["candidates"][0]["modifier_source_obligations"]["subtype"] == [obligation]
+    assert {unit["review_kind"] for unit in units.values()} == {"core_pair", "modifier_axis"}
+
+    valid_response = {
+        "core_pair_reviews": [
+            {"unit_id": unit_id, "grouped_correct": True, "unsafe_synonym_merge": False, "unresolved": False}
+            for unit_id, unit in units.items() if unit["review_kind"] == "core_pair"
+        ],
+        "modifier_axis_reviews": [
+            {"unit_id": unit_id, "modifier_correct": True, "unresolved": False}
+            for unit_id, unit in units.items() if unit["review_kind"] == "modifier_axis"
+        ],
+    }
+    assert _factor_review_validator(units)(valid_response) is None
+    valid_response["modifier_axis_reviews"] = []
+    assert "coverage mismatch" in str(_factor_review_validator(units)(valid_response))
+
+    freeze = tmp_path / "freeze"
+    freeze.mkdir()
+    write_jsonl(freeze / "cases.jsonl", [case])
+    atomic_json(freeze / "freeze.json", {
+        "component": "factorization", "cases_sha256": canonical_sha256([case]),
+    })
+    annotations = tmp_path / "annotations.jsonl"
+    write_jsonl(annotations, [annotation])
+    clients = {"A": FakeFactorReviewClient(), "B": FakeFactorReviewClient()}
+    out = tmp_path / "panel"
+    rows = run_factorization_reviews(
+        freeze=freeze, annotations=annotations, out=out,
+        reviewer_specs=[("A", "anthropic/claude-sonnet-4.6"), ("B", "openai/gpt-5.6-sol")],
+        workers=1, client_factories={key: (lambda client=value: client) for key, value in clients.items()},
+    )
+    assert len(rows) == 4
+    assert all(len([row for row in rows if row["unit_id"] == unit_id]) == 2 for unit_id in units)
+    assert all(row["payload_sha256"] == canonical_sha256(payload) for row in rows)
+    manifest = json.loads((out / "factorization_reviews.manifest.json").read_text())
+    assert {entry["path"] for entry in manifest["online_stage_manifests"]} == {"A/manifest.json", "B/manifest.json"}
+    assert manifest["review_unit_n"] == 2
+    assert manifest["required_reviews_per_unit"] == 2
 
 
 def test_active_builder_and_selector_exact_offsets() -> None:
@@ -155,6 +267,13 @@ def test_lattice_selector_enforces_core_then_member_and_obligation_trace() -> No
     response["selected_core_id"] = "K1"
     response["obligation_check"] = {}
     assert validator(response) == "obligation_check does not cover chosen surface obligations"
+    response["obligation_check"] = {"subtype": "supported"}
+    strict_factor_validator = _selector_validator(
+        payload, require_modifier_hallucination=True
+    )
+    assert strict_factor_validator(response) == "modifier_hallucination must be boolean"
+    response["modifier_hallucination"] = False
+    assert strict_factor_validator(response) is None
 
 
 def test_immutable_selector_jobs_reject_hash_drift_and_arm_name() -> None:
@@ -173,6 +292,11 @@ def test_immutable_selector_jobs_reject_hash_drift_and_arm_name() -> None:
     exposed = dict(job, prompt=exposed_prompt, prompt_sha256=__import__("hashlib").sha256(exposed_prompt.encode()).hexdigest())
     with pytest.raises(AssertionError, match="arm name exposed"):
         _validate_immutable_jobs([exposed])
+    factor_job = dict(job, component="factorization", arm="flat")
+    with pytest.raises(AssertionError, match="job_sha256 missing"):
+        _validate_immutable_jobs([factor_job])
+    factor_job["job_sha256"] = _immutable_job_sha256(factor_job)
+    assert len(_validate_immutable_jobs([factor_job])) == 1
 
 
 def test_admission_typing_merges_exact_ids_and_writes_manifest(tmp_path: Path) -> None:

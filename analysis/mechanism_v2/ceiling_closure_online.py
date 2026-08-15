@@ -34,7 +34,6 @@ import tarfile
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from itertools import combinations
 from pathlib import Path
 from typing import Any, Callable, Iterable, Mapping, Sequence
 
@@ -47,6 +46,11 @@ if __package__ in {None, ""}:
 sys.path.insert(0, str(_ROOT_FOR_IMPORT / "src"))
 
 from analysis.mechanism_v2.common import ROOT, file_sha256, source_commit  # noqa: E402
+from analysis.mechanism_v2.ceiling_breakthrough_experiments import (  # noqa: E402
+    _factor_review_payload,
+    _factor_review_units,
+    _immutable_job_sha256,
+)
 from analysis.mechanism_v2.online_runner import (  # noqa: E402
     OnlineJSONCaller,
     assert_target_blind,
@@ -170,11 +174,15 @@ Cover every ID exactly once; use empty axis arrays only when the surface label a
 obligation."""
 
 FACTOR_REVIEW_PROMPT = """You are one member of an independent model-panel quality review. You are
-not a human or root adjudicator. Review every candidate's proposed core grouping and modifier
-binding without choosing a diagnosis. A modifier is correct only when its cited exact text supports
-that modifier for that candidate. Return strict JSON:
-{"candidate_reviews":[{"candidate_id":"ID","core_id":"core","grouped_correct":true,
-"modifier_correct":true,"unsafe_synonym_merge":false,"unresolved":false}]}. Cover each ID once."""
+not a human or root adjudicator. Audit only the explicit core-pair and modifier-axis units. The
+payload binds each candidate's original surface_label and its modifier_source_obligations with
+exact surface offsets. Do not choose a diagnosis. A core pair is correct only if both surface labels
+genuinely share the proposed clinical core; a modifier-axis unit is correct only if every asserted
+obligation is actually stated by the cited surface-label text. Echo every supplied unit_id exactly
+once in its matching list. Return strict JSON:
+{"core_pair_reviews":[{"unit_id":"FP-...","grouped_correct":true,
+"unsafe_synonym_merge":false,"unresolved":false}],"modifier_axis_reviews":[
+{"unit_id":"FM-...","modifier_correct":true,"unresolved":false}]}."""
 
 ACTIVE_BUILDER_PROMPT = f"""You are an outcome-blind retrospective evidence-release builder. You see
 only one raw clinical vignette, never answer options, candidates or benchmark truth. Extract one
@@ -379,18 +387,38 @@ def _modifier_validator(expected_ids: set[str], vignette: str, surface_labels: M
     return validate
 
 
-def _factor_review_validator(expected: Mapping[str, str]) -> Validator:
+def _factor_review_validator(expected_units: Mapping[str, Mapping[str, Any]]) -> Validator:
+    expected_pair_ids = {
+        unit_id for unit_id, unit in expected_units.items()
+        if unit.get("review_kind") == "core_pair"
+    }
+    expected_modifier_ids = {
+        unit_id for unit_id, unit in expected_units.items()
+        if unit.get("review_kind") == "modifier_axis"
+    }
+
     def validate(response: Mapping[str, Any]) -> str | None:
         error = _response_key_safety(response)
         if error:
             return error
-        error, rows = _exact_id_rows(response.get("candidate_reviews"), expected)
+        error, pair_rows = _exact_id_rows(
+            response.get("core_pair_reviews"), expected_pair_ids,
+            key="unit_id", noun="core-pair unit",
+        )
         if error:
             return error
-        for candidate_id, row in rows.items():
-            if str(row.get("core_id")) != str(expected[candidate_id]):
-                return "review core_id drift"
-            for key in ("grouped_correct", "modifier_correct", "unsafe_synonym_merge", "unresolved"):
+        error, modifier_rows = _exact_id_rows(
+            response.get("modifier_axis_reviews"), expected_modifier_ids,
+            key="unit_id", noun="modifier-axis unit",
+        )
+        if error:
+            return error
+        for row in pair_rows.values():
+            for key in ("grouped_correct", "unsafe_synonym_merge", "unresolved"):
+                if not isinstance(row.get(key), bool):
+                    return f"{key} must be boolean"
+        for row in modifier_rows.values():
+            for key in ("modifier_correct", "unresolved"):
                 if not isinstance(row.get(key), bool):
                     return f"{key} must be boolean"
         return None
@@ -506,7 +534,9 @@ def _relation_review_validator(expected_edges: set[tuple[str, str]]) -> Validato
     return validate
 
 
-def _selector_validator(payload: Mapping[str, Any]) -> Validator:
+def _selector_validator(
+    payload: Mapping[str, Any], *, require_modifier_hallucination: bool = False
+) -> Validator:
     candidate_rows = payload.get("candidates")
     if candidate_rows is None:
         candidate_rows = payload.get("main_frontier")
@@ -563,6 +593,10 @@ def _selector_validator(payload: Mapping[str, Any]) -> Validator:
             return "invalid runner_up_id"
         if str(response.get("margin")) not in MARGINS:
             return "invalid margin"
+        if require_modifier_hallucination and not isinstance(
+            response.get("modifier_hallucination"), bool
+        ):
+            return "modifier_hallucination must be boolean"
         if lattice is not None:
             selected_core = str(response.get("selected_core_id") or "")
             if selected_core not in lattice_core_ids:
@@ -612,6 +646,10 @@ def _run_tasks(
     for task in tasks:
         _assert_closure_blind(task.payload)
     telemetry_path = out_dir / "telemetry.jsonl"
+    # Materialize an empty raw ledger even when cache-only lookup never reaches
+    # a provider.  Downstream gates can then bind a concrete zero-event file
+    # instead of treating absence as evidence of zero calls.
+    telemetry_path.touch(exist_ok=True)
     caller = OnlineJSONCaller(
         out_dir=out_dir,
         model=model,
@@ -676,6 +714,8 @@ def _run_tasks(
         "schema": SCHEMA,
         "kind": "online_stage_manifest",
         "source_commit": source_commit(),
+        "runner_code_sha256": file_sha256(Path(__file__)),
+        "online_runner_code_sha256": file_sha256(ROOT / "analysis/mechanism_v2/online_runner.py"),
         "model": model,
         "workers": workers,
         "cache_only": bool(cache_only),
@@ -797,7 +837,10 @@ def _fallback_factor_candidates(candidates: Sequence[Mapping[str, Any]]) -> list
     return [{
         "candidate_id": str(candidate["candidate_id"]), "core_id": f"UNRESOLVED-{candidate['candidate_id']}",
         "core_label": str(candidate["label"]), "object_kind": "unresolved", "relation_to_core": "other",
-        "modifiers": {axis: [] for axis in MODIFIER_AXES}, "unresolved": True,
+        "surface_label": str(candidate["label"]),
+        "modifiers": {axis: [] for axis in MODIFIER_AXES},
+        "modifier_source_obligations": {axis: [] for axis in MODIFIER_AXES},
+        "unresolved": True,
     } for candidate in candidates]
 
 
@@ -858,7 +901,9 @@ def run_factorization_annotations(
                 merged.append({
                     "candidate_id": candidate_id, "core_id": str(mapped["core_id"]),
                     "core_label": str(mapped["core_label"]), "object_kind": str(mapped["object_kind"]),
-                    "relation_to_core": str(mapped["relation_to_core"]), "modifiers": modifiers,
+                    "relation_to_core": str(mapped["relation_to_core"]),
+                    "surface_label": str(candidate["label"]),
+                    "modifiers": modifiers, "modifier_source_obligations": modifiers,
                     "unresolved": bool(mapped.get("unresolved") or binding.get("unresolved")),
                 })
         annotations.append({
@@ -916,11 +961,12 @@ def run_factorization_reviews(
         tasks: list[OnlineTask] = []
         for case in cases:
             ann = anns[case["case_key"]]
-            expected = {str(row["candidate_id"]): str(row["core_id"]) for row in ann["candidates"]}
+            payload = _factor_review_payload(case, ann)
+            expected_units = _factor_review_units(payload)
             tasks.append(OnlineTask(
                 f"{case['case_key']}|factor_review|{reviewer_id}", f"CeilingFactorModelPanel_{reviewer_id}", FACTOR_REVIEW_PROMPT,
-                {"case_key": case["case_key"], "vignette": case["vignette"], "candidates": ann["candidates"], "requested_object": ann["requested_object"]},
-                _factor_review_validator(expected), {"case_key": case["case_key"], "reviewer_id": reviewer_id, "stage": "factorization_model_panel"},
+                payload, _factor_review_validator(expected_units),
+                {"case_key": case["case_key"], "reviewer_id": reviewer_id, "stage": "factorization_model_panel"},
             ))
         raw = _run_tasks(tasks, out_dir=Path(out) / reviewer_id, model=model, workers=workers,
                          cache_only=cache_only, call_timeout=call_timeout, max_retries=max_retries,
@@ -929,54 +975,67 @@ def run_factorization_reviews(
         for case in cases:
             row = raw_by_case[case["case_key"]]
             ann = anns[case["case_key"]]
-            response_by_id = {str(item["candidate_id"]): item for item in row["response"].get("candidate_reviews", [])} if row["success"] else {}
-            for candidate in ann["candidates"]:
-                item = response_by_id.get(str(candidate["candidate_id"])) or {
-                    "grouped_correct": False, "modifier_correct": False, "unsafe_synonym_merge": False, "unresolved": True,
-                }
+            payload = _factor_review_payload(case, ann)
+            units = _factor_review_units(payload)
+            response = row["response"] if row["success"] else {}
+            pair_response = {
+                str(item["unit_id"]): item
+                for item in response.get("core_pair_reviews", [])
+            }
+            modifier_response = {
+                str(item["unit_id"]): item
+                for item in response.get("modifier_axis_reviews", [])
+            }
+            for unit_id, unit in units.items():
+                if unit["review_kind"] == "core_pair":
+                    item = pair_response.get(unit_id) or {
+                        "grouped_correct": False,
+                        "unsafe_synonym_merge": False,
+                        "unresolved": True,
+                    }
+                    grouped_correct = bool(item.get("grouped_correct"))
+                    unsafe_merge = bool(item.get("unsafe_synonym_merge"))
+                    unresolved = bool(item.get("unresolved", True))
+                    decision = (
+                        "accept" if grouped_correct and not unsafe_merge and not unresolved
+                        else "reject_grouping"
+                    )
+                    unit_fields = {
+                        "left_id": str(unit["left_id"]),
+                        "right_id": str(unit["right_id"]),
+                        "core_id": str(unit["core_id"]),
+                        "grouped_correct": grouped_correct,
+                        "modifier_correct": True,
+                        "unsafe_synonym_merge": unsafe_merge,
+                        "unresolved": unresolved,
+                    }
+                else:
+                    item = modifier_response.get(unit_id) or {
+                        "modifier_correct": False,
+                        "unresolved": True,
+                    }
+                    modifier_correct = bool(item.get("modifier_correct"))
+                    unresolved = bool(item.get("unresolved", True))
+                    decision = "accept" if modifier_correct and not unresolved else "reject_modifiers"
+                    unit_fields = {
+                        "left_id": str(unit["candidate_id"]),
+                        "right_id": str(unit["core_id"]),
+                        "core_id": str(unit["core_id"]),
+                        "modifier_axis": str(unit["modifier_axis"]),
+                        "grouped_correct": True,
+                        "modifier_correct": modifier_correct,
+                        "unsafe_synonym_merge": False,
+                        "unresolved": unresolved,
+                    }
                 flat.append({
-                    "case_key": case["case_key"], "left_id": str(candidate["candidate_id"]), "right_id": str(candidate["core_id"]),
-                    "review_kind": "core_member",
+                    "case_key": case["case_key"], "unit_id": unit_id,
+                    "unit_sha256": str(unit["unit_sha256"]),
+                    "review_kind": str(unit["review_kind"]), **unit_fields,
                     "reviewer_id": reviewer_id, "reviewer_model": model, "panel_provenance": "independent_model_panel",
-                    "grouped_correct": bool(item.get("grouped_correct")), "modifier_correct": bool(item.get("modifier_correct")),
-                    "unsafe_synonym_merge": bool(item.get("unsafe_synonym_merge")), "unresolved": bool(item.get("unresolved", True)),
-                    "decision": _factor_decision(item), "success": bool(row["success"]), "error": row["error"],
+                    "decision": decision, "success": bool(row["success"]), "error": row["error"],
                     "cache_key": row["cache_key"], "payload_sha256": row["payload_sha256"], "prompt_sha256": row["prompt_sha256"],
+                    "response_sha256": canonical_sha256(row["response"]),
                 })
-                for axis, obligations in (candidate.get("modifiers") or {}).items():
-                    if not obligations:
-                        continue
-                    flat.append({
-                        "case_key": case["case_key"], "left_id": str(candidate["candidate_id"]),
-                        "right_id": str(candidate["core_id"]), "review_kind": "modifier_axis",
-                        "modifier_axis": str(axis), "reviewer_id": reviewer_id, "reviewer_model": model,
-                        "panel_provenance": "independent_model_panel", "grouped_correct": bool(item.get("grouped_correct")),
-                        "modifier_correct": bool(item.get("modifier_correct")),
-                        "unsafe_synonym_merge": bool(item.get("unsafe_synonym_merge")),
-                        "unresolved": bool(item.get("unresolved", True)), "decision": _factor_decision(item),
-                        "success": bool(row["success"]), "error": row["error"], "cache_key": row["cache_key"],
-                        "payload_sha256": row["payload_sha256"], "prompt_sha256": row["prompt_sha256"],
-                    })
-            by_core: dict[str, list[Mapping[str, Any]]] = {}
-            for candidate in ann["candidates"]:
-                by_core.setdefault(str(candidate["core_id"]), []).append(candidate)
-            for core_id, members in by_core.items():
-                for left, right in combinations(sorted(members, key=lambda value: str(value["candidate_id"])), 2):
-                    left_item = response_by_id.get(str(left["candidate_id"])) or {}
-                    right_item = response_by_id.get(str(right["candidate_id"])) or {}
-                    grouped_correct = bool(left_item.get("grouped_correct")) and bool(right_item.get("grouped_correct"))
-                    unsafe_merge = bool(left_item.get("unsafe_synonym_merge")) or bool(right_item.get("unsafe_synonym_merge"))
-                    unresolved = bool(left_item.get("unresolved", True)) or bool(right_item.get("unresolved", True))
-                    flat.append({
-                        "case_key": case["case_key"], "left_id": str(left["candidate_id"]),
-                        "right_id": str(right["candidate_id"]), "core_id": core_id, "review_kind": "core_pair",
-                        "reviewer_id": reviewer_id, "reviewer_model": model,
-                        "panel_provenance": "independent_model_panel", "grouped_correct": grouped_correct,
-                        "modifier_correct": True, "unsafe_synonym_merge": unsafe_merge, "unresolved": unresolved,
-                        "decision": "accept" if grouped_correct and not unsafe_merge and not unresolved else "reject_grouping",
-                        "success": bool(row["success"]), "error": row["error"], "cache_key": row["cache_key"],
-                        "payload_sha256": row["payload_sha256"], "prompt_sha256": row["prompt_sha256"],
-                    })
     return _finalize_panel(Path(out), "factorization_reviews", flat, [cases_path, annotations], reviewer_specs)
 
 
@@ -1083,6 +1142,7 @@ def run_active_reviews(
                 "reviewed_action_ids": sorted(action_review), "expected_action_ids": sorted(str(action["action_id"]) for action in ann.get("actions") or []),
                 "success": bool(row["success"]), "error": row["error"], "cache_key": row["cache_key"],
                 "payload_sha256": row["payload_sha256"], "prompt_sha256": row["prompt_sha256"],
+                "response_sha256": canonical_sha256(row["response"]),
             })
     return _finalize_panel(Path(out), "active_reviews", flat, [cases_path, annotations], reviewer_specs)
 
@@ -1176,6 +1236,12 @@ def _validate_immutable_jobs(jobs: Sequence[Mapping[str, Any]]) -> list[OnlineTa
             raise AssertionError(f"job {index}: missing prompt/payload")
         if _sha_text(prompt) != str(job.get("prompt_sha256")) or canonical_sha256(payload) != str(job.get("payload_sha256")):
             raise AssertionError(f"job {index}: immutable hash mismatch")
+        expected_job_sha = _immutable_job_sha256(job)
+        declared_job_sha = str(job.get("job_sha256") or "")
+        if declared_job_sha and declared_job_sha != expected_job_sha:
+            raise AssertionError(f"job {index}: immutable job hash mismatch")
+        if str(job.get("component") or "") == "factorization" and not declared_job_sha:
+            raise AssertionError(f"job {index}: factorization job_sha256 missing")
         _assert_closure_blind(payload)
         # The frozen protocol forbids exposing internal arm identifiers.  A
         # compiler that embeds e.g. ``arm=qualified_frontier`` must be repaired
@@ -1187,11 +1253,22 @@ def _validate_immutable_jobs(jobs: Sequence[Mapping[str, Any]]) -> list[OnlineTa
             raise AssertionError(f"job {index}: duplicate case/arm/stage")
         semantic_keys.add(key)
         stage = str(job.get("stage") or "selector")
-        validator = _policy_job_validator(payload) if stage == "policy" else _selector_validator(payload)
+        validator = (
+            _policy_job_validator(payload)
+            if stage == "policy"
+            else _selector_validator(
+                payload,
+                require_modifier_hallucination=str(job.get("component") or "") == "factorization",
+            )
+        )
         task_id = "|".join(key)
         tasks.append(OnlineTask(
             task_id, f"CeilingSelector_{job.get('component')}_{stage}", prompt, dict(payload), validator,
-            {"case_key": key[0], "arm": key[1], "stage": key[2], "component": str(job.get("component") or "")},
+            {
+                "case_key": key[0], "arm": key[1], "stage": key[2],
+                "component": str(job.get("component") or ""),
+                "job_sha256": expected_job_sha,
+            },
         ))
     return tasks
 
@@ -1212,8 +1289,18 @@ def run_selectors(
         **({"champion_id": str(row["response"].get("champion_id") or "")} if row["stage"] != "policy" else {"action_id": str(row["response"].get("action_id") or "")}),
         "model": model, "cache_hit": row["cache_hit"], "cache_key": row["cache_key"],
         "prompt_sha256": row["prompt_sha256"], "payload_sha256": row["payload_sha256"],
+        "job_sha256": row["job_sha256"],
     } for row in raw]
     return _finalize_product(Path(out), "selector_responses", responses, [jobs_path], model=model)
+
+
+def _manifest_input(path: Path) -> dict[str, str]:
+    resolved = Path(path).resolve()
+    try:
+        display = str(resolved.relative_to(ROOT))
+    except ValueError:
+        display = str(resolved)
+    return {"path": display, "sha256": file_sha256(resolved)}
 
 
 def _finalize_product(out: Path, product: str, rows: list[dict[str, Any]], inputs: Sequence[Path], *, model: str) -> list[dict[str, Any]]:
@@ -1231,10 +1318,14 @@ def _finalize_product(out: Path, product: str, rows: list[dict[str, Any]], input
     stage_manifests = sorted(out.glob("*/manifest.json"))
     atomic_json(out / f"{product}.manifest.json", {
         "schema": SCHEMA, "kind": "derived_product_manifest", "product": product,
-        "source_commit": source_commit(), "model": model, "row_n": len(rows),
-        "input_files": [{"path": str(Path(value)), "sha256": file_sha256(Path(value))} for value in inputs],
+        "source_commit": source_commit(), "generator_code_sha256": file_sha256(Path(__file__)),
+        "model": model, "row_n": len(rows),
+        "input_files": [_manifest_input(Path(value)) for value in inputs],
         "rows_sha256": canonical_sha256(rows), "file_sha256": file_sha256(path),
-        "online_stage_manifests": [{"path": str(value), "sha256": file_sha256(value)} for value in stage_manifests],
+        "online_stage_manifests": [
+            {"path": str(value.relative_to(out)), "sha256": file_sha256(value)}
+            for value in stage_manifests
+        ],
         "provenance": "outcome_blind_model_output", "created_at_utc": _utc_now(),
     })
     return rows
@@ -1242,18 +1333,42 @@ def _finalize_product(out: Path, product: str, rows: list[dict[str, Any]], input
 
 def _finalize_panel(out: Path, product: str, rows: list[dict[str, Any]], inputs: Sequence[Path], reviewer_specs: Sequence[tuple[str, str]]) -> list[dict[str, Any]]:
     out.mkdir(parents=True, exist_ok=True)
-    rows.sort(key=lambda row: (str(row.get("case_key")), str(row.get("left_id") or row.get("source_id") or ""), str(row.get("right_id") or row.get("target_id") or ""), str(row.get("reviewer_id"))))
+    rows.sort(key=lambda row: (
+        str(row.get("case_key")), str(row.get("review_kind") or ""),
+        str(row.get("unit_id") or ""),
+        str(row.get("left_id") or row.get("source_id") or ""),
+        str(row.get("right_id") or row.get("target_id") or ""),
+        str(row.get("modifier_axis") or ""), str(row.get("reviewer_id")),
+    ))
     path = out / "reviews.jsonl"
     write_jsonl(path, rows)
     stage_manifests = sorted(out.glob("*/manifest.json"))
-    atomic_json(out / f"{product}.manifest.json", {
+    manifest = {
         "schema": SCHEMA, "kind": "model_panel_manifest", "product": product,
-        "source_commit": source_commit(), "panel_provenance": "two_independent_models_not_human_or_root",
+        "source_commit": source_commit(), "generator_code_sha256": file_sha256(Path(__file__)),
+        "panel_provenance": "two_independent_models_not_human_or_root",
         "reviewers": [{"reviewer_id": reviewer_id, "model": model} for reviewer_id, model in reviewer_specs],
-        "row_n": len(rows), "input_files": [{"path": str(Path(value)), "sha256": file_sha256(Path(value))} for value in inputs],
+        "row_n": len(rows), "input_files": [_manifest_input(Path(value)) for value in inputs],
         "rows_sha256": canonical_sha256(rows), "file_sha256": file_sha256(path), "created_at_utc": _utc_now(),
-        "online_stage_manifests": [{"path": str(value), "sha256": file_sha256(value)} for value in stage_manifests],
-    })
+        "online_stage_manifests": [
+            {"path": str(value.relative_to(out)), "sha256": file_sha256(value)}
+            for value in stage_manifests
+        ],
+    }
+    if product == "factorization_reviews":
+        units = {
+            str(row.get("unit_id")): str(row.get("unit_sha256"))
+            for row in rows if row.get("unit_id")
+        }
+        manifest.update({
+            "review_unit_n": len(units),
+            "review_units_sha256": canonical_sha256([
+                {"unit_id": unit_id, "unit_sha256": units[unit_id]}
+                for unit_id in sorted(units)
+            ]),
+            "required_reviews_per_unit": 2,
+        })
+    atomic_json(out / f"{product}.manifest.json", manifest)
     return rows
 
 
