@@ -1,0 +1,187 @@
+{
+  "schema_version": "counterfactual-audited-source-manifest-v1",
+  "research_date": "2026-08-20",
+  "new_llm_calls": 0,
+  "repository_rule": "Official means linked by the paper/project/author/availability statement. Each repository was cloned, checked out at the recorded content-addressed commit, and inspected locally. Repository absence means no paper link and no exact-title/author official result found on the research date.",
+  "recheck_recipe": [
+    "git clone <repo_url>",
+    "git -C <clone> checkout --detach <audited_commit>",
+    "inspect the recorded paths/functions and search the tree for log/result/output artifacts"
+  ],
+  "sources": [
+    {
+      "key": "med_einst_ecr",
+      "paper": "https://aclanthology.org/2026.acl-long.1847/",
+      "repo": "https://github.com/zhui711/MedEinst",
+      "commit": "984ccdaaf55d1877d4082242dee07255cc3b5504",
+      "locators": ["README.md", "website/index.html"],
+      "artifact_finding": "README marks ECR-Agent code Coming Soon; no inference implementation or run logs."
+    },
+    {
+      "key": "cf_mar",
+      "paper": "https://arxiv.org/abs/2603.27820",
+      "repo": "https://github.com/FAIRHealth/clinical-counterfactual-reasoning",
+      "commit": "265d1aea88f705063bb7ff2d686547d373da7e09",
+      "locators": [
+        "cfdx/counterfactual.py:evaluate_counterfactual_candidate",
+        "cfdx/counterfactual.py:generate_counterfactual_candidates",
+        "cfdx/confidence.py:probability_of_label",
+        "cfdx/confidence.py:diagnose_top1_with_confidence",
+        "cfdx/scoring.py:compute_sip_score",
+        "cfdx/scoring.py:combine_scores",
+        "cfdx/agents.py",
+        "cfdx/pipeline.py"
+      ],
+      "artifact_finding": "Public code implements the pipeline but no tests, experimental configuration snapshots, results, or run logs are committed."
+    },
+    {
+      "key": "evidence_audit",
+      "paper": "https://arxiv.org/abs/2607.20848",
+      "repo": null,
+      "commit": null,
+      "locators": ["paper Sections 3-5 and robustness/human-review tables"],
+      "artifact_finding": "No code URL in the paper and no official repository found."
+    },
+    {
+      "key": "devise",
+      "paper": "https://aclanthology.org/2026.findings-eacl.338/",
+      "repo": "https://github.com/camztag/DeVisE",
+      "commit": "d5a0b99e8ebb38a46270b3fe1cd22f3215787159",
+      "locators": [
+        "section1_counterfactuals/5-counterfactual-dictionary.py:sample_bp_values",
+        "section1_counterfactuals/5-counterfactual-dictionary.py:generate_counterfactuals",
+        "section1_counterfactuals/7-counterfactuals-checks.py",
+        "section1_counterfactuals/8-templates-generation-and-counterfactuals.py",
+        "section3_behavioral_evaluation/full-analysis-mortality2.py:robustness_analysis",
+        "section3_behavioral_evaluation/full-analysis-los3.py:robustness_analysis",
+        "section3_behavioral_evaluation/full-analysis-notask.py"
+      ],
+      "artifact_finding": "Generation/inference/analysis code is public; expected data/results/log directories are not populated. Paper prose and Table 3 give slightly different average direction rates."
+    },
+    {
+      "key": "css",
+      "paper": "https://arxiv.org/abs/2605.30590",
+      "repo": null,
+      "commit": null,
+      "locators": ["paper intervention catalog, Family-D agent experiment, and medical-validation appendix"],
+      "artifact_finding": "The paper describes YAML-style preregistration but exposes no accessible code artifact."
+    },
+    {
+      "key": "mamabench_ea_rag",
+      "paper": "https://arxiv.org/abs/2607.14385",
+      "dataset": "https://huggingface.co/datasets/HelpMum-Personal/MamaBench",
+      "repo": null,
+      "commit": null,
+      "locators": ["paper Sections 4.1-4.3, Table 1, and Table 2"],
+      "artifact_finding": "Author dataset is public; no official code repository or inference logs found."
+    },
+    {
+      "key": "medcounterfact",
+      "paper": "https://aclanthology.org/2026.findings-acl.1847/",
+      "repo": "https://github.com/KaijieMo-kj/Counterfactual-Medical-Evidence",
+      "commit": "f35b98063b51a63e677829b6d173029d98dd3b1e",
+      "locators": [
+        "README.md",
+        "DataFormat.md",
+        "MedCounterFact_original_data.jsonl",
+        "MedCounterFact_replaced_data.jsonl"
+      ],
+      "artifact_finding": "Dataset only; README defers code/model outputs and no logs are committed."
+    },
+    {
+      "key": "medexa",
+      "paper": "https://doi.org/10.1016/j.knosys.2026.116692",
+      "repo": "https://github.com/imaabay/medexa",
+      "commit": "f06bea8ddc15acf6ce1143dbd128bd0dd625da05",
+      "locators": [
+        "src/graph.py",
+        "src/counterfactual_generation.py:counterfactual_generation_node",
+        "src/confidence_score.py:confidence_score_generation_node",
+        "src/retriever.py",
+        "src/final_generation.py",
+        "src/evaluation/ablation_study.py",
+        "statistical_tests/"
+      ],
+      "artifact_finding": "Pipeline code and embedded statistical arrays are present; expected prediction/results.json and raw responses/logs are absent."
+    },
+    {
+      "key": "pearl_lab",
+      "paper": "https://doi.org/10.1038/s41746-026-02632-3",
+      "repo": "https://github.com/balubhasuran/LLM_Causality_LabTest",
+      "commit": "6d0fbd1bc42cf604258f0fde4317a542d0b9090f",
+      "locators": ["scripts/Causality.py", "data/DataSet.xlsx", "notebooks/Causality.ipynb", "README.md"],
+      "artifact_finding": "Published response/reviewer spreadsheet is present; no SCM solver; advertised config/result directories are absent and script model naming differs from the paper."
+    },
+    {
+      "key": "biorab",
+      "paper": "https://doi.org/10.1126/sciadv.adr1443",
+      "repo": "https://github.com/ToneLi/ToneLi-Evaluating-Retrival-LLM-in-Biomedical-Domain",
+      "commit": "a76aebff66a9612a33a21ad80d995216c08ddd24",
+      "historical_log_commit": "c8045f2",
+      "locators": [
+        "data/triple_extraction/3_train.py",
+        "data/triple_extraction/9_metrics_reject_rate.py",
+        "train_gernation_eval_code/",
+        "retriver_code/",
+        "historical c8045f2:model/MedMCQA/inference/"
+      ],
+      "artifact_finding": "Current main is incomplete and lacks the published triplet-loss implementation; historical MedMCQA logs exist but model identities must be matched arm by arm."
+    },
+    {
+      "key": "checklist",
+      "paper": "https://aclanthology.org/2020.acl-main.442/",
+      "repo": "https://github.com/marcotcr/checklist",
+      "commit": "4e6e5e33a26f30c20ed602b2050f6c73e123cc23",
+      "locators": ["checklist/test_types.py", "checklist/abstract_test.py", "checklist/expect.py", "checklist/perturb.py", "release_data.tar.gz", "release_suites/"],
+      "artifact_finding": "Full MFT/INV/DIR harness and release benchmark predictions are present."
+    },
+    {
+      "key": "contrast_sets",
+      "paper": "https://aclanthology.org/2020.findings-emnlp.117/",
+      "repo": "https://github.com/allenai/contrast-sets",
+      "commit": "e2b87316ba7b30093bc9ffbc340e6550cab79f67",
+      "locators": ["DROP/consistency.py", "perspectrum/run_evaluation.py", "MATRES/consistency_analysis.py", "MATRES/*.output"],
+      "artifact_finding": "Ten task directories, evaluators, and several model-output files are present."
+    },
+    {
+      "key": "cad",
+      "paper": "https://openreview.net/forum?id=Sklgs0NFvr",
+      "repo": "https://github.com/acmi-lab/counterfactually-augmented-data",
+      "commit": "6f232a1d2a11462a30ce08fb4825b734ab30828e",
+      "locators": ["README.md", "sentiment/", "NLI/"],
+      "artifact_finding": "Counterfactually augmented data is present; training code, annotation app, and model logs are absent."
+    },
+    {
+      "key": "shap",
+      "paper": "https://proceedings.neurips.cc/paper/2017/hash/8a20a8621978632d76c43dfd28b67767-Abstract.html",
+      "repo": "https://github.com/shap/shap",
+      "commit": "df974a1966294b9c7acebb1373fd6dc5445d1d3d",
+      "locators": ["shap/explainers/_exact.py", "shap/explainers/_tree.py", "shap/maskers/", "tests/"],
+      "artifact_finding": "Mature attribution library; no logs for this clinical task."
+    },
+    {
+      "key": "shapley_taylor",
+      "paper": "https://proceedings.mlr.press/v119/sundararajan20a.html",
+      "repo": null,
+      "commit": null,
+      "locators": ["paper definitions and axioms"],
+      "artifact_finding": "No separate author-linked official implementation found; third-party baselines must not be called official."
+    },
+    {
+      "key": "archipelago",
+      "paper": "https://proceedings.neurips.cc/paper/2020/hash/443dec3062d0286986e21dc0631734c9-Abstract.html",
+      "repo": "https://github.com/mtsang/archipelago",
+      "commit": "8ff437e5672809827d7daa6a5656aeedbc0e1094",
+      "locators": ["src/explainer.py", "experiments/README.md", "baselines/shapley_taylor_interaction_index/sti_explainer.py"],
+      "artifact_finding": "Black-box interaction code, baselines, notebooks and table outputs are present."
+    },
+    {
+      "key": "idg",
+      "paper": "https://aclanthology.org/2021.acl-long.71/",
+      "repo": "https://github.com/parantapa/integrated-directional-gradients",
+      "commit": "5e629ce3af58e83394227ed6ce754e6c73daf758",
+      "locators": ["IDG/calculate_gradients.py", "IDG/Intermediate_gradients/", "IDG/models/", "main.py"],
+      "artifact_finding": "Gradient implementation and examples are present; no logs for this clinical task."
+    }
+  ]
+}
