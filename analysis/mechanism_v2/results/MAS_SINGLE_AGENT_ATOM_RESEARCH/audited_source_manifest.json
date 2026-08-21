@@ -2,6 +2,9 @@
   "schema_version": "mas-audited-source-manifest-v1",
   "research_date": "2026-08-21",
   "new_llm_calls": 0,
+  "new_external_llm_inference_calls": 0,
+  "project_repository_baseline": "6f3a01f567a25058630600a5a4c6fc923df562b0",
+  "input_mas_md_sha256": "bfcbaf106b184de6b917f2c9e266ffe37804f5090acffa81418f31499b1c46ee",
   "repository_rule": "A repository is official only when linked by the paper/project page or owned by the author organization with explicit paper attribution. Third-party reimplementations and same-name unrelated projects are excluded.",
   "recheck_recipe": [
     "Clone each repository URL, fetch the audited commit, and inspect it in detached mode.",
@@ -32,8 +35,8 @@
       "paper": "https://www.nature.com/articles/s41746-025-01550-0",
       "repo": "https://github.com/geteff1/Multi-agent-conversation-for-disease-diagnosis",
       "commit": "896a5deb4d6db7a2c872630a6638da4da3b0f4d4",
-      "locators": ["main.py::process_single_case", "main_wo_supr.py", "main_ws.py", "utils/prompts.py"],
-      "artifact_finding": "The code writes chats and summaries when run, but no generated conversation/result/log artifacts are committed."
+      "locators": ["main.py::process_single_case", "main_wo_supr.py", "main_ws.py", "utils/prompts.py", "utils/data.py", "dataset/rare_disease_302.json"],
+      "artifact_finding": "The code writes chats and summaries when run, but no generated conversation/result/log artifacts are committed. A case-insensitive exact-gold scan finds target strings in 21/302 initial and 31/302 follow-up presentations; the loader and prompt inject them without cleaning."
     },
     {
       "key": "mdagents",
@@ -48,24 +51,24 @@
       "paper": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12866169/",
       "repo": "https://github.com/sunxinti/MCC",
       "commit": "56c282b971c692da285da19c2aafccc999516615",
-      "locators": ["code/MCC_MedQA.py::initialize_debate", "code/MCC_MedQA.py::check_consensus", "code/MCC_MedQA.py::conduct_debate", "logs/MedQA/case_0.txt", "logs/PubmedQA", "logs/MMLU_Anatomy", "logs/LFQ"],
-      "artifact_finding": "2,865 text case logs: MedQA 1,273; PubMedQA 500; six MMLU subsets 1,089; LFQ 3. They include complete initial responses, critiques, revisions, final consensus, and correctness, but no aggregate result file or ten-run replication."
+      "locators": ["code/MCC_MedQA.py::initialize_debate", "code/MCC_MedQA.py::check_consensus", "code/MCC_MedQA.py::conduct_debate", "logs/MedQA/case_0.txt", "logs/MedQA/case_290.txt", "logs/PubmedQA", "logs/MMLU_Anatomy", "logs/LFQ"],
+      "artifact_finding": "2,865 text case files: MedQA 1,273; PubMedQA 500; six MMLU subsets 1,089; LFQ 3. The public MedQA snapshot contains one damaged file and routes 993 initial-stop/280 debate, versus the paper's 1,019 unanimous/254 disagreement. Headline totals can be repaired, but the conditional mechanism census and ten-run result cannot be reproduced."
     },
     {
       "key": "mixed_vendor_mac",
       "paper": "https://aclanthology.org/2026.healing-1.1/",
       "repo": "https://github.com/rajpurkarlab/mixed-vendor-mac",
       "commit": "cb5fd0a782fd51ada06e56b6ea57cedef21943e1",
-      "locators": ["DiagnosisArena/mac_da/main_mac_da.py::run_case_open", "DiagnosisArena/mac_da/main_mac_da_mixed.py::run_case_open_mixed", "RareBench/mac_mixed/main_mixed.py::MixedVendorAgent", "RareBench/mac_runner/prompts_mac_rare.py"],
-      "artifact_finding": "No committed output trajectories or results; placeholder configuration and mapping data only. RareBench supervisor/provenance settings differ from the paper narrative."
+      "locators": ["DiagnosisArena/mac_da/main_mac_da.py::run_case_open", "DiagnosisArena/mac_da/main_mac_da_mixed.py::run_case_open_mixed", "RareBench/mac_mixed/main_mixed.py::MixedVendorAgent", "RareBench/mac_mixed/main_mixed.py::temperature_and_supervisor_defaults", "RareBench/mac_runner/main_mac.py::temperature_default", "RareBench/mac_runner/mac_eval_adapter.py", "llm_utils/api.py", "RareBench/mac_runner/prompts_mac_rare.py"],
+      "artifact_finding": "No committed output trajectories or results; placeholder configuration and mapping data only. Public defaults differ between mixed and same-vendor temperature, RareBench mixed hard-codes a Gemini supervisor, evaluator mappings differ, and provenance labels can be wrong."
     },
     {
       "key": "medla",
       "paper": "https://arxiv.org/abs/2509.23725",
       "repo": "https://github.com/alexander2618/MedLA",
       "commit": "5c12cfc8d67170b1f4b131b9c120a54a573c634d",
-      "locators": ["main.py::run_single_exp", "main.py::agents_talk", "util/agent.py::LogicAgent", "util/agent.py::DecisionMakersAgent", "docs/html/html"],
-      "artifact_finding": "Eleven Plotly/Sankey HTML visualizations, no W&B histories or run metrics. The public implementation lacks the full premise/decomposition/credibility/tree-merge architecture."
+      "locators": ["main.py::run_single_exp", "main.py::agents_talk", "util/agent.py::LogicAgent", "util/agent.py::DecisionMakersAgent", "util/prompt.py", "test/graph", "docs/html/html"],
+      "artifact_finding": "Eleven static HTML visualizations, no W&B histories or run metrics. The runtime lacks the paper's premise/decomposition/credibility/tree graph; graph code is under test and the executed auditor/moderator remain free text."
     },
     {
       "key": "peer_review_reasoning",
@@ -73,7 +76,7 @@
       "repo": "https://github.com/Learner4everrr/Multi-agent-peer-reviewed-framework-for-MedQA",
       "commit": "a90b9578849c70aa23c8706dd554f923ae791475",
       "locators": ["main.py::judge", "main.py::majority_vote", "main.py::reaonsoning_vote", "dataset_manager/QA.py::get_judge_prompt", "prompt_manager/judge.py", "job.sh"],
-      "artifact_finding": "Source and combination-sweep script only; no README, requirements, dataset, results, configs, or logs."
+      "artifact_finding": "Source and combination-sweep script only; no README, requirements, dataset, results, configs, or logs. Runtime averages N-by-N reviews including self; majority tie handling is lexicographic, and the executed judge prompt/parser differ from the paper rubric."
     },
     {
       "key": "marc",
@@ -81,7 +84,7 @@
       "repo": "https://github.com/jraymartinez/marc-medical-calibration",
       "commit": "44e0364c77125571f429b4404075b77413a853fa",
       "locators": ["src/agents/specialist_agent.py::SpecialistAgent.analyze_question", "src/verification/tier1_verification.py::Tier1Verifier.verify_specialist", "src/verification/tier1_verification.py::_measure_inconsistencies", "src/verification/tier1_verification.py::_answers_similar", "src/fusion/agreement_based_fusion.py::SScoreWeightedFusion.fuse", "scripts/run_4_configs.py", "results/4_config_comparison", "results/per_specialist"],
-      "artifact_finding": "Four main JSONs contain 2,800 per-case config records; five per-specialist JSONs contain 3,200 specialist records. C2 stores final S_score but not I; C4 omits per-specialist S and complete verification/fusion traces. Current C3-saving code and the committed old-schema main artifacts are not provenance-identical."
+      "artifact_finding": "Four main JSONs contain 2,800 per-case config records; five per-specialist JSONs contain 3,200 specialist records. Verification changes temperature/seed together with rationale visibility. C3-to-C4 rescue/harm is 4/0, 8/3, 3/5, and 8/15. C2 stores final S_score but not I; C4 omits full mediator traces, and current saving code postdates the main artifacts."
     },
     {
       "key": "cf_mar_cross_reference",
@@ -97,7 +100,7 @@
       "repo": "https://github.com/nec-research/meddxagent",
       "commit": "b62a451a6a1fcc9a4f8b7fd3f338af2b29c7a323",
       "locators": ["ddxdriver/ddxdrivers/base.py", "ddxdriver/ddxdrivers/fixed_choice.py", "ddxdriver/ddxdrivers/open_choice.py", "ddxdriver/rag_agents/searchrag_base.py", "examples/patient_logs/patient_1.log", "examples/patient_logs/patient_2.log", "examples/results.json", "examples/configs.json"],
-      "artifact_finding": "Two patient logs and a two-case result/config package. Retrieved examples expose matching pathology labels; no paper-scale experiments are committed."
+      "artifact_finding": "Two fixed GPT-4o/DDxPlus patient logs and a two-case result/config package; no dynamic or paper-scale logs. OpenChoice can record a forced diagnosis then execute history, and full-profile few-shot retrieval is label-bearing."
     },
     {
       "key": "medxagent",
@@ -121,15 +124,15 @@
       "repo": "https://github.com/ZhuohanGe/ClinicalAgents-Code",
       "commit": "e7dbd15513235e388cbb0dc0afafdfcbacefe420",
       "locators": ["state_memory.py", "mcts_state.py", "mcts_search.py", "med_orchestrator.py", "main.py"],
-      "artifact_finding": "Twenty-nine tracked files, no results/data/config/logs, and missing required app_config.py and experience_memory.py; public commit is not experiment-reproducible."
+      "artifact_finding": "Twenty-nine tracked files, no results/data/config/logs, and missing required app_config.py and experience_memory.py. MCTS score lacks visit exploration, simulations fabricate state/evidence, reward is self-referential, and the public commit is not experiment-reproducible."
     },
     {
       "key": "mdteamgpt",
       "paper": "https://aclanthology.org/2026.findings-acl.1427/",
       "repo": "https://github.com/KaiChenNJ/MDTeamGPT",
       "commit": "9c80d6be76fee4eb527c12bace54b3ae474065d7",
-      "locators": ["workflow.py", "agents.py", "knowledge_base.py", "app.py"],
-      "artifact_finding": "Eight code/demo files only; no benchmark scripts, datasets, KB, configs, results, or logs. Round-one KB exposure differs from the paper."
+      "locators": ["workflow.py", "agents.py", "knowledge_base.py", "tools.py", "utils.py", "app.py"],
+      "artifact_finding": "Eight code/demo files only; no benchmark scripts, datasets, KB, configs, results, or logs. Round-one KB exposure, retrieval k, default tool use, and grading/memory lifecycle differ from the paper; this is a later demo, not the experiment implementation."
     },
     {
       "key": "medagentboard",
@@ -176,7 +179,7 @@
       "commit": "f9b5c181e8d120d6a244accba9422ffb89d1f319",
       "locators": ["code/trial_doctor_provider.py::history_gathering", "code/trial_doctor_provider.py::pe_gathering", "code/trial_doctor_provider.py::test_gathering", "code/trial_doctor_provider.py::diagnosis_stage", "code/trial_multidoctor.py", "code/trial_critic.py", "Clindiag_Benchmark.zip"],
       "release_identity": "git tag v1.0 equals f9b5c181e8d120d6a244accba9422ffb89d1f319; DOI 10.1038/s41467-026-70274-w; Zenodo 10.5281/zenodo.18159952",
-      "artifact_finding": "Public benchmark archive has 2,021 case directories, 13,141 ZIP entries, and 10,142 payload files after excluding __MACOSX; no generated run/result/interaction logs. MIMIC emergency cases are not released."
+      "artifact_finding": "Public benchmark archive has 2,021 case directories, 13,141 ZIP entries, and 10,142 payload files after excluding __MACOSX; no generated run/result/interaction logs. Multi-doctor code repeats one backbone and near-identical prompt, round-robins, then lets Doctor0 summarize; MIMIC emergency cases are not released."
     },
     {
       "key": "agentrx_multimodal",
@@ -192,7 +195,7 @@
       "repo": "https://github.com/gersteinlab/MedicalAgentsBench",
       "commit": "fcb5292720c28f4168992ee37cda944e452cd098",
       "locators": ["baselines/MDAgents/main.py", "baselines/MDAgents/utils.py::determine_difficulty", "baselines/MDAgents/utils.py::process_basic_query", "baselines/MDAgents/utils.py::process_intermediate_query", "baselines/MDAgents/utils.py::process_advanced_query", "baselines/MedAgents/utils.py::fully_decode", "output", "output/baseline_results.csv"],
-      "artifact_finding": "Main output has 1,385 JSON/385,204 records/about 1.06GB; MDAgents 108 JSON/10,219 records; MedAgents 118/11,067 records; baseline CSV 792 rows; paper-hard predictions 75,764. Headline MedAgents/MDAgents outputs omit internal agent rounds."
+      "artifact_finding": "Main output has 1,385 JSON/385,204 records/about 1.06GB; MDAgents 108 JSON/10,219 records; MedAgents 118/11,067 records; baseline CSV 792 rows; paper-hard predictions 75,764. In released o3 MDAgents, 2,476/2,521 cases stay basic; that path executes 11 API calls while usage records only eight because three priming calls are omitted. Headline outputs omit agent rounds."
     }
   ]
 }

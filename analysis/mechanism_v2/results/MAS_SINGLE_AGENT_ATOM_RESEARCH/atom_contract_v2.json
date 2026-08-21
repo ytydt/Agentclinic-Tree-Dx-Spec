@@ -1,0 +1,459 @@
+{
+  "schema_version": "ve-mas-atom-contract-v2",
+  "status": "research prototype contract; no online run executed; supersedes v1 without mutating the archived v1 file",
+  "supersedes": "atom_contract_v1.json",
+  "trajectory_source_commit": "c39a19d738676f2838994727608291398802e9a1",
+  "project_repository_baseline": "6f3a01f567a25058630600a5a4c6fc923df562b0",
+  "commit_roles": "trajectory_source_commit freezes the 3,200 source traces; project_repository_baseline freezes the repository state researched in this report",
+  "new_external_llm_inference_calls": 0,
+  "invariants": [
+    "Every atom receives the same immutable vignette bytes and requested-object contract.",
+    "Phase-1 atoms cannot observe peer identities, proposals, claims, ranks, or rationales.",
+    "All hashes use RFC 8785 canonical JSON over UTF-8; source offsets are zero-based UTF-8 byte half-open intervals and must reproduce the source span exactly.",
+    "An atom packet is append-only after emission and is addressed by its canonical JSON hash.",
+    "Candidate identity never uses substring, fuzzy string overlap, or unadjudicated generated ontology edges.",
+    "Parent, component, sibling, manifestation, mechanism, subtype, and complete object are typed relations, not aliases.",
+    "Generator view count, repeated mentions, persona count, and agreement are provenance, not likelihood or votes.",
+    "Multiple packets with the same lineage_id never create multiple votes; atom, lineage, stance, group, and also_found_by provenance are hidden from every global comparator.",
+    "Every consumable support or against claim binds a verbatim source span to a fact id, candidate id, subject, episode, temporality, polarity, and object scope.",
+    "Unverified claims and counterfactual prose cannot change the shared rank or delete a candidate.",
+    "Every verifier result, including rejected and unknown, is appended to the audit ledger; only validated and consumable patches can affect aggregation.",
+    "Every edge used to certify a unique Top-1 requires a validated mirrored-comparator patch even when atoms agree; non-decisive pairs may remain explicitly incomparable under a progressive budget.",
+    "A clinical proposal-closure certificate requires successful peer-blind packets from at least two different mandatory proposal lineages; an explicitly recorded failure satisfies audit accounting but invalidates clinical closure.",
+    "A unique decision is non-vacuous only when at least two object-compatible active candidates were frozen; this v2 prototype has no exhaustive-null-alternative certificate, so a singleton active set returns an abstention or a conditional-active-set result.",
+    "Every identity-safe proposal that may be object-compatible reaches an explicit terminal state; unresolved identity, object scope, fact binding, or exposure gaps block a unique decision rather than being silently excluded.",
+    "Pairwise LLM preferences are non-transitive in v2: a proposed top requires a direct mirrored validated win against every active rival; paths may prioritize calls but never certify an untested pair.",
+    "The residual candidate ledger may be wide; the active comparison graph is evidence-qualified and need not be filled to a fixed width.",
+    "External medical knowledge is never an observed patient fact and cannot materialize an unobserved symptom, test, or history item.",
+    "Cross-case memory is disabled in v2."
+  ],
+  "shared_input_contract": {
+    "case_hash": "sha256 of frozen case identity",
+    "vignette_hash": "sha256 of exact UTF-8 vignette bytes",
+    "requested_object_contract": {
+      "contract_id": "immutable id",
+      "object_type": "disease | etiology | subtype | complication | manifestation | mechanism | composite | unknown",
+      "required_components": [],
+      "allowed_subject": "patient",
+      "allowed_episode": "case-defined",
+      "derivation_source_type": "task_prompt | task_schema",
+      "derivation_source_hash": "sha256 of the exact task prompt/schema bytes",
+      "forbidden_derivation_sources": [
+        "reference diagnosis or label",
+        "answer option mapper output",
+        "clinical adjudication",
+        "arm output or score"
+      ],
+      "reference_blind_verified": true
+    },
+    "fact_manifest_hash": "sha256 of the RFC-8785 canonical fact manifest",
+    "fact_manifest": [
+      {
+        "fact_id": "global immutable fact id",
+        "source_span": "verbatim vignette span",
+        "source_offsets_utf8_bytes": [0, 0],
+        "offset_check": "vignette_utf8[start:end] == source_span_utf8",
+        "subject": "patient | other | unknown",
+        "episode": "case-defined",
+        "temporality": "current | past | progressive | case-defined",
+        "polarity": "present | absent | uncertain",
+        "source_type": "vignette_observation"
+      }
+    ],
+    "external_knowledge_contract": {
+      "source_type": "external_medical_knowledge_rule",
+      "may_create_observed_fact": false,
+      "may_claim_unobserved_patient_finding": false,
+      "required_fields": [
+        "source_locator",
+        "source_hash",
+        "retrieval_query_hash",
+        "candidate_ids",
+        "general_relation",
+        "status"
+      ],
+      "empty_result": "unavailable"
+    },
+    "external_rule_ledger_hash": "sha256 of the RFC-8785 canonical append-only external rule ledger",
+    "external_rule_ledger": [
+      {
+        "event_type": "rule | unavailable_retrieval",
+        "external_rule_id": "global immutable rule id, or null only for unavailable_retrieval",
+        "event_sequence": 0,
+        "previous_ledger_hash": "genesis or sha256 of the RFC-8785 canonical ledger before this append",
+        "supersedes_rule_event_hash": null,
+        "source_locator": "retrieved primary/approved source locator",
+        "source_hash": "sha256 of retrieved source bytes",
+        "retrieval_query_hash": "sha256",
+        "candidate_ids_or_temporary_proposal_ids": [],
+        "general_relation": "general medical knowledge only; never a patient observation",
+        "status": "unverified | validated | rejected | unknown | unavailable",
+        "ledger_event_hash": "sha256"
+      }
+    ],
+    "external_rule_state_machine": {
+      "append_contract": "Every retrieval result first appends an unverified rule event chained to the current external-rule ledger hash. Validation appends, never mutates, a decision event that supersedes the latest event for the same external_rule_id; the whole-ledger hash is recomputed after every event.",
+      "allowed_transitions": [
+        "absent -> unverified",
+        "unverified -> validated | rejected | unknown",
+        "unknown -> validated | rejected | unknown when a new source/version event is appended"
+      ],
+      "terminal_without_new_version": [
+        "validated",
+        "rejected"
+      ],
+      "empty_retrieval": "Append an event_type=unavailable_retrieval event carrying status=unavailable, retrieval_query_hash, and previous_ledger_hash; it creates no rule id and no proposal.",
+      "reference_integrity_gate": "Every external_rule_id cited by a proposal or claim must exist, and its latest valid event, source hash, query hash, and event hash must match the cited provenance.",
+      "activation_gate": "An externally sourced proposal may be identity-mapped into the residual registry, but it cannot become an active candidate or make any edge consumable unless every cited external rule has latest status validated and the candidate also has at least one candidate-relative patient claim grounded only in existing fact_manifest fact ids. External rules never satisfy the patient-observation requirement."
+    }
+  },
+  "atom_packet_required_fields": {
+    "atom_id": "forest | impc | collapse3c | multistance_residual",
+    "atom_kind": "primary_evidence_transformer | composite_residual_generator",
+    "lineage_id": "mosaic_forest | mosaic_impc | aphhm_c",
+    "subpacket_id": "null | commit | coverage | mechanism",
+    "peer_blind": true,
+    "provenance_visible_to_comparator": false,
+    "atom_version": "implementation/config identifier",
+    "case_hash": "sha256 of frozen case identity",
+    "vignette_hash": "sha256 of exact vignette bytes",
+    "input_visibility_hash": "sha256 of all information visible to the atom",
+    "fact_manifest_hash": "must equal the shared fact manifest hash",
+    "atom_status": "success | partial | failed",
+    "schema_valid": true,
+    "phase_completion": {},
+    "failure_code": null,
+    "failure_detail_hash": null,
+    "requested_object_contract": {
+      "object_type": "disease | etiology | subtype | complication | manifestation | mechanism | composite | unknown",
+      "required_components": [],
+      "allowed_subject": "patient",
+      "allowed_episode": "case-defined",
+      "derivation_source_hash": "must equal the shared task prompt/schema hash",
+      "reference_blind_verified": true
+    },
+    "proposal_set": [
+      {
+        "local_id": "atom-local immutable candidate id",
+        "label": "verbatim proposed label",
+        "object_type": "typed requested-object class",
+        "aliases": [
+          {
+            "label": "atom-reported alias",
+            "source": "atom packet provenance",
+            "status": "unverified"
+          }
+        ],
+        "provenance": [],
+        "protected_reason": null
+      }
+    ],
+    "claims": [
+      {
+        "claim_id": "atom-local immutable claim id",
+        "candidate_local_id": "proposal local_id",
+        "fact_id": "bound fact id; null only when fact_binding_status=unresolved and the claim remains quarantined",
+        "role": "support | against | unknown",
+        "polarity": "present | absent | uncertain",
+        "temporality": "current | past | progressive | case-defined",
+        "subject": "patient | other | unknown",
+        "episode": "case-defined",
+        "object_scope": "disease | etiology | subtype | complication | manifestation | mechanism | composite | parent | component | complete | unknown",
+        "source_span": "verbatim vignette span",
+        "source_offsets": [0, 0],
+        "provenance": [],
+        "fact_binding_status": "validated | unresolved | rejected",
+        "status": "unverified"
+      }
+    ],
+    "local_order": [],
+    "unresolved": [],
+    "call_count": 0,
+    "retry_count": 0,
+    "call_ledger": [
+      {
+        "phase": "atom-defined phase",
+        "call_index": 0,
+        "retry_index": 0,
+        "input_hash": "sha256",
+        "output_hash": "sha256 or null",
+        "status": "success | schema_invalid | transport_error | exhausted"
+      }
+    ],
+    "packet_hash": "sha256 of canonical packet excluding packet_hash"
+  },
+  "atom_specific_requirements": {
+    "forest": [
+      "Export syndrome, mechanism, and definitive-modality channel provenance without consensus scoring.",
+      "Export every protected-lane proposal even when it is not local Top-1.",
+      "Bind every support and against item to a fact id and preserve selector rejection reasons as unverified claims."
+    ],
+    "impc": [
+      "Keep common, uncommon/high-specificity, and challenge channels peer-blind through packet emission.",
+      "Rename agent_votes to merge_occurrences and prohibit it from rank computation.",
+      "Preserve single-channel proposals in the residual ledger; require candidate-unique evidence for active comparison."
+    ],
+    "collapse3c": [
+      "Add against_fact_ids and bind each contradict span to subject, episode, temporality, polarity, and candidate scope.",
+      "Export pre-selector proposals, typed fact ledger, and unresolved edges.",
+      "Do not reactivate the unvalidated global fact-by-concept matrix as a truth substrate."
+    ],
+    "multistance_residual": [
+      "Treat commit, coverage, and mechanism as conditionally invoked proposal operators over one shared immutable C1 fact manifest, not as three independent votes.",
+      "Export the complete pre-tournament registry, stance provenance, local rejection reasons, and all proposals that the historical tournament removed; never export the local tournament champion as a vote.",
+      "Set stance count, also_found_by, group membership, and repeated nominations to provenance-only fields with aggregation weight zero.",
+      "A source span that is absent from the fact manifest creates a quarantined manifest-delta request; it may never be attached to the nearest fact id.",
+      "Invoke commit for unresolved global synthesis, coverage for a typed missing-alternative trigger, and mechanism for a named causal gap; do not run all three merely to fill a fixed width."
+    ]
+  },
+  "post_alignment_state": {
+    "candidate_registry_hash": "sha256 of the RFC-8785 canonical candidate registry",
+    "candidate_registry": [
+      {
+        "global_candidate_id": "global immutable candidate id",
+        "preferred_label": "identity-safe display label",
+        "object_type": "disease | etiology | subtype | complication | manifestation | mechanism | composite | unknown",
+        "aliases": [
+          {
+            "label": "alias text",
+            "source": "frozen safe synonym bridge | audited ontology edge",
+            "status": "validated"
+          }
+        ],
+        "local_members": [
+          {
+            "atom_id": "forest | impc | collapse3c | multistance_residual",
+            "local_id": "atom-local candidate id",
+            "lineage_id": "mosaic_forest | mosaic_impc | aphhm_c",
+            "subpacket_id": "null | commit | coverage | mechanism"
+          }
+        ]
+      }
+    ],
+    "local_to_global_candidate_map": [
+      {
+        "atom_id": "forest | impc | collapse3c | multistance_residual",
+        "local_id": "atom-local candidate id",
+        "lineage_id": "mosaic_forest | mosaic_impc | aphhm_c",
+        "subpacket_id": "null | commit | coverage | mechanism",
+        "global_candidate_id": "global immutable candidate id",
+        "alignment_status": "validated | unresolved",
+        "alignment_source": "exact | frozen_safe_synonym | audited_typed_relation"
+      }
+    ],
+    "aligned_claims": [
+      {
+        "global_claim_id": "immutable id",
+        "source_atom_claim_id": "atom claim id",
+        "global_candidate_id": "mapped candidate id",
+        "fact_id": "id from the shared fact manifest",
+        "status": "unverified | validated | rejected | unknown"
+      }
+    ],
+    "failed_atom_behavior": [
+      "A missing packet is represented by an explicit failed packet and is never treated as an empty successful proposal set.",
+      "Valid packets may still populate the residual ledger in degraded mode.",
+      "Degraded mode may emit a unique_top_within_frozen_active_set only if proposal closure remains valid, every active candidate has a validated object projection, and a direct validated mirrored edge establishes the proposed top against every active rival; otherwise it returns a tie set or abstention.",
+      "A degraded result cannot be reported as a complete scheduled-atom MAS run."
+    ],
+    "registry_delta_alignment": {
+      "trigger": "every proposal created after initial Phase-2 alignment",
+      "temporary_proposal_required_fields": {
+        "temporary_proposal_id": "immutable quarantine id",
+        "verbatim_label": "exact generated/retrieved label",
+        "object_type_claim": "unverified atom/retrieval claim",
+        "origin_patch_id": "proposal patch id",
+        "source_provenance": [],
+        "patient_fact_ids": [],
+        "external_rule_ids": []
+      },
+      "registry_delta_patch": {
+        "previous_candidate_registry_hash": "sha256",
+        "temporary_proposal_id": "quarantine id",
+        "identity_verdict": "same_as_existing | new_identity | typed_related | rejected | unknown",
+        "existing_global_candidate_id": null,
+        "new_global_candidate_id": null,
+        "typed_relation": "parent_of | component_of | sibling_of | unrelated | not_applicable | unknown",
+        "alignment_source": "exact | frozen_safe_synonym | audited_typed_relation | unknown",
+        "verdict": "validated | rejected | unknown",
+        "new_candidate_registry_hash": "sha256",
+        "patch_hash": "sha256"
+      },
+      "admission_rule": "A temporary proposal remains quarantined and cannot be object-projected, compared, ranked, or marked evidence-qualified until a validated registry-delta patch maps it to an existing or new global candidate id. Identity mapping alone admits only to the residual registry; an externally sourced candidate additionally must pass external_rule_state_machine.reference_integrity_gate and activation_gate before entering the preprojection admission set."
+    }
+  },
+  "dispute_types": {
+    "exposure": {
+      "observable_trigger": "an identity-safe candidate is unique to one atom or a required object component is missing",
+      "route": "budgeted_typed_residual_generator_or_approved_retrieval",
+      "allowed_output": "quarantined proposal patch; patient claims require vignette fact ids, while external sources may supply only general knowledge rules",
+      "budget_contract": "one bounded expansion pass with a predeclared maximum candidate increment; no recursive proposal-to-gap expansion"
+    },
+    "identity": {
+      "observable_trigger": "labels appear related but fail the frozen safe synonym bridge",
+      "route": "safe_identity_and_typed_relation_resolver",
+      "allowed_output": "same_as | parent | component | sibling | unrelated | unknown"
+    },
+    "polarity": {
+      "observable_trigger": "the same fact-candidate edge is support in one packet and against in another",
+      "route": "verbatim_polarity_threshold_verifier",
+      "allowed_output": "validated direction or unknown"
+    },
+    "time_episode_subject": {
+      "observable_trigger": "claim bindings differ by time, episode, or subject",
+      "route": "temporal_episode_subject_binder",
+      "allowed_output": "validated binding or unknown"
+    },
+    "object_scope": {
+      "observable_trigger": "disease, mechanism, manifestation, parent, component, or subtype are co-ranked",
+      "route": "requested_object_projector",
+      "allowed_output": "typed compatibility relation"
+    },
+    "dependency_interaction": {
+      "observable_trigger": "single-edge directions agree but combined evidence changes the candidate comparison",
+      "route": "validity_gated_fixed_candidate_counterfactual_edge_audit",
+      "allowed_output": "signed edge response with validity status"
+    },
+    "comparator_order": {
+      "observable_trigger": "validated claims agree but A>B differs across atoms or presentation order",
+      "route": "mirrored_frozen_pair_comparator",
+      "allowed_output": "A>B | B>A | tie | unknown plus order-consistency status"
+    }
+  },
+  "edge_patch_contract": {
+    "common_required_fields": {
+      "patch_id": "immutable id",
+      "supersedes": [],
+      "dispute_type": "one of dispute_types",
+      "global_candidate_ids": [],
+      "fact_ids": [],
+      "verifier_id": "deterministically routed verifier",
+      "verifier_input_hash": "sha256",
+      "verdict": "validated | rejected | unknown",
+      "consumable": false,
+      "source_spans": [],
+      "reason_code": "closed vocabulary",
+      "new_observed_patient_fact_introduced": false,
+      "patch_hash": "sha256 of canonical patch"
+    },
+    "payload_by_dispute_type": {
+      "exposure": {
+        "patch_type": "proposal_patch",
+        "temporary_proposal_id": "new quarantined id; not a global candidate id",
+        "verbatim_label": "exact proposed label",
+        "object_type_claim": "unverified typed object claim",
+        "source_provenance": [],
+        "evidence_source_type": "vignette_observation | external_medical_knowledge_rule",
+        "patient_fact_ids": [],
+        "external_rule_ids": [],
+        "admission_status": "quarantined"
+      },
+      "identity": {
+        "patch_type": "identity_relation_patch",
+        "subject_global_candidate_id": "directed relation subject",
+        "object_global_candidate_id": "directed relation object",
+        "relation": "same_as | parent_of | component_of | sibling_of | unrelated | unknown"
+      },
+      "polarity": {
+        "patch_type": "evidence_direction_patch",
+        "global_candidate_id": "candidate id",
+        "fact_id": "shared manifest fact id",
+        "direction": "support | against | neutral | unknown"
+      },
+      "time_episode_subject": {
+        "patch_type": "binding_patch",
+        "fact_id": "shared manifest fact id",
+        "subject": "patient | other | unknown",
+        "episode": "case-defined",
+        "temporality": "current | past | progressive | case-defined",
+        "binding_status": "compatible | incompatible | unknown"
+      },
+      "object_scope": {
+        "patch_type": "object_projection_patch",
+        "global_candidate_id": "candidate id",
+        "projected_object_type": "disease | etiology | subtype | complication | manifestation | mechanism | composite | unknown",
+        "compatibility": "complete | compatible_parent | component | conflicting_scope | unrelated | unknown"
+      },
+      "dependency_interaction": {
+        "patch_type": "counterfactual_response_patch",
+        "candidate_pair": [],
+        "intervention_ids": [],
+        "validity_status": "valid | invalid | unknown",
+        "signed_response": "supports_A_over_B | supports_B_over_A | invariant | direction_error | unknown"
+      },
+      "comparator_order": {
+        "patch_type": "comparator_patch",
+        "trigger_kind": "dispute_resolution | decision_boundary_certificate | cycle_resolution",
+        "visibility_contract": "candidate ids, requested-object contract, and validated fact-bound claims only; atom_id, lineage_id, subpacket_id, stance, group, also_found_by, and repetition counts are hidden",
+        "candidate_a": "global id",
+        "candidate_b": "global id",
+        "verdict": "A>B | B>A | tie | unknown",
+        "ab_order_verdict": "A>B | B>A | tie | unknown",
+        "ba_order_verdict": "A>B | B>A | tie | unknown",
+        "order_consistent": true
+      }
+    }
+  },
+  "progressive_final_certification": {
+    "proposal_closure": {
+      "audit_accounting": "Every mandatory and conditionally scheduled packet is recorded as success, partial, or explicit failure; absence is never reinterpreted as an empty candidate set.",
+      "mandatory_successful_lineages": [
+        "aphhm_c",
+        "mosaic_forest"
+      ],
+      "mandatory_failure_behavior": "A failed or partial mandatory lineage remains in the audit ledger but invalidates clinical proposal closure; only abstention or an explicitly conditional active-set result is allowed.",
+      "proposal_terminal_states": [
+        "admitted_for_projection",
+        "validated_object_incompatible",
+        "validated_non_decision_relevant",
+        "unresolved"
+      ],
+      "closure_requirements": [
+        "both mandatory lineages emitted successful peer-blind packets over the identical immutable input",
+        "every scheduled packet has an explicit terminal call state",
+        "every temporary proposal and global candidate has terminal identity, alias, object-scope, manifest-binding, patient-evidence, and external-rule states",
+        "every identity-safe potentially object-compatible proposal is admitted_for_projection unless a validated patch proves it object-incompatible or non-decision-relevant",
+        "lack of evidence, a failed verifier, or an unknown state never proves non-decision relevance",
+        "all requested-object components and all decision-relevant exposure or mechanism gaps are closed"
+      ],
+      "failure_behavior": "Any unresolved proposal or gap invalidates closure and returns abstention or an explicitly conditional active-set result; it can never be silently dropped from the denominator of a unique clinical decision."
+    },
+    "preprojection_admission_set": "After proposal closure validates, freeze and hash every identity-safe potentially object-compatible proposal not proven object-incompatible or non-decision-relevant. Admission does not depend on local rank or current evidence strength. Every member must receive validated requested-object projection and evidence-state patches; missing, rejected, or unknown states return tie or abstention rather than silently dropping the candidate.",
+    "object_projection": "Atom-reported object_type is never sufficient. A validated explicitly incompatible projection is moved to the residual ledger by a deterministic, audited scope-transition event; every validated compatible member enters the active comparison set.",
+    "active_set_freeze": "Freeze and hash the complete active comparison set after all admission-set projection events. No proposal, projection, rule, or edge may add, delete, or relabel a member during final comparison.",
+    "non_vacuity_gate": "The frozen active set must contain at least two object-compatible candidates before v2 can certify a unique Top-1. A singleton returns abstention or conditional-active-set because v2 defines no exhaustive-null-alternative certificate.",
+    "pair_plan": "Start the decision graph only with validated consumable edge patches. Local atom orders may prioritize the deterministic dispute queue but never enter the graph. Request mirrored comparisons in deterministic decision-boundary order. A previously validated mirrored comparator patch may be reused only when candidate ids, active-set hash, validated context hash, requested-object hash, and AB/BA order contract are identical.",
+    "comparator_trigger": "A candidate pair is mandatory when its resolution can change the current maximal set, fill a missing direct proposed-top-versus-rival edge, or break a cycle. A path may prioritize the call queue but never substitutes for the direct tested pair; concordance never substitutes for a consumed certificate edge.",
+    "coverage_gate": "For a unique Top-1, require a validated consumable direct mirrored greater-than edge from that candidate to every other active candidate. Unresolved rival-rival pairs may remain incomparable. If the direct proposed-top star is incomplete or more than one maximal candidate remains when the budget ends, return that tie set or abstain.",
+    "graph_gate": "Maintain an acyclic validated-edge graph after every append; a new cycle is quarantined and routed for re-verification before any unique-top claim.",
+    "unique_top_certificate": [
+      "The proposal-closure certificate is validated and the frozen active set contains at least two object-compatible candidates.",
+      "The candidate has a validated, consumable, order-consistent direct mirrored greater-than edge against every other active candidate; no transitive path substitutes for an untested pair.",
+      "All consumed certificate edges form an acyclic graph.",
+      "No active rival is incomparable with, tied with, or above the proposed top."
+    ],
+    "non_unique_behavior": "Any invalid proposal closure, mandatory-lineage failure, singleton active set, missing projection, unresolved candidate, incomplete direct proposed-top star, tie, unknown decision-boundary edge, order inconsistency, or cycle returns a tie set, abstention, or explicitly conditional active-set result; benchmark-only deterministic linearization must be labeled uncertified and cannot be reported as clinical Top-1 evidence."
+  },
+  "aggregation_contract": [
+    "Consume only identity-safe candidates and validated edge patches.",
+    "Project every member of the frozen preprojection admission set to the requested object before freezing the active comparison set; unresolved projection fails closed.",
+    "Progressively certify a direct mirrored proposed-top-versus-every-rival star from the same frozen active-set hash; local atom orders and transitive paths may prioritize calls but never certify an untested pair.",
+    "Use deterministic partial-order construction; do not use majority or persona weights.",
+    "Treat invalid proposal closure, a singleton active set, cycles, a missing direct proposed-top-versus-rival certificate, and unresolved scope as tie, abstention, or explicitly conditional active-set output.",
+    "Natural-language rendering is downstream of the frozen decision and cannot recompute it."
+  ],
+  "forbidden_operations": [
+    "free-form supervisor final diagnosis",
+    "majority vote over atom champions",
+    "iterating until unanimity",
+    "overwriting phase-1 claims after peer reveal",
+    "fixed-k filler candidates",
+    "global summary as sole state",
+    "self-reported confidence as likelihood",
+    "synthetic patient answers or tests in the static complete-vignette task",
+    "counterfactual text promoted to observed evidence",
+    "any cross-case memory in v2, including answer-bearing, ground-truth-bearing, exemplar, success, error, or policy memory",
+    "external knowledge promoted to a patient observation",
+    "requested-object contracts derived from reference labels, answer mappers, adjudication, or arm outputs"
+  ]
+}

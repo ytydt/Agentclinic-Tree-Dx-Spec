@@ -1,43 +1,55 @@
 {
-  "schema_version": "mas-single-agent-atom-census-v3-authorized-case-consensus",
+  "schema_version": "mas-single-agent-atom-census-v4-multistance",
   "scope": "Offline observational census; no model/API calls and no new clinical adjudication.",
   "publication_contract": {
     "case_level_records_included": true,
-    "case_level_scope": "All 51 cases in which exactly one of Forest, IMPC, and Collapse3c is clinically complete.",
+    "case_level_scope": "Cases in which exactly one atom is clinically complete, reported separately for the historical three-atom and four-atom sets.",
     "case_level_diagnoses_included": true,
     "case_level_predictions_included": true,
     "case_level_clinical_relations_included": true,
     "raw_vignette_text_included": false,
-    "authorization": "The user explicitly authorized public release of per-case consensus data on 2026-08-21."
+    "authorization": "The user explicitly authorized public release of dataset-derived outputs, including per-case consensus, on 2026-08-21."
   },
   "interpretation_contract": [
-    "The three-arm oracle union is an upper-bound complementarity diagnostic, not an achievable MAS score.",
+    "Oracle unions are upper-bound complementarity diagnostics, not achievable MAS scores.",
+    "MultiStance shares its C1 fact substrate across three stance prompts; its stances are not independent votes.",
+    "MultiStance is evaluated here as the historically served tournament champion; the proposed transfer exports its pre-tournament registry instead.",
     "Root labels adjudicate served champions, not every candidate in each registry.",
     "Cross-atom candidate presence uses normalized primary labels only; it is not a clinical synonym or ontology matcher.",
-    "Two wrong atoms sharing an E2 output cluster marks majority-suppression risk, not proof that a particular aggregator would vote that way."
+    "Wrong atoms sharing an E2 output cluster marks majority-suppression risk, not proof that a particular aggregator would vote that way.",
+    "For the four-atom unique-correct subset, two or more of the three wrong arms sharing a cluster is a wrong-plurality or 2-2-tie risk, not necessarily an absolute majority of all four arms."
   ],
   "provenance": {
     "source_commit": "c39a19d738676f2838994727608291398802e9a1",
-    "script_sha256": "0da176900925677ad9db2d3f146ba5e6d1eeff414b4718dd4956ce51f31976bf",
+    "script_sha256": "96c618901afa6f08d4bbab6460757f733a9950ba1d5d9bb1c69bb4dbe40eeb2e",
     "e2_replay_path": "analysis/mechanism_v2/results/E2_blinded_clinical_adjudication/unified_800/five_endpoint_replay.jsonl",
     "e2_replay_sha256": "a8e6009e6f49ea22650767ef36d2fd749742af3434535d8dec5f4c6e0008c934",
-    "files_verified": 2400,
-    "unique_paths": 2400,
+    "files_verified": 3200,
+    "unique_paths": 3200,
     "source_tree_verified": true
   },
   "cases_n": 800,
-  "case_arm_rows_n": 2400,
+  "case_arm_rows_n": 3200,
   "per_arm": {
     "forest": {
       "cases_n": 800,
+      "safe_exact_n": 66,
+      "legacy_chain_n": 213,
+      "task_n": 361,
       "clinical_complete_n": 107,
       "compatible_partial_n": 279,
       "complete_or_partial_n": 386,
-      "unique_correct_atom_n": 8,
-      "wrong_consensus_suppression_risk_n": 4,
+      "four_atom_unique_correct_atom_n": 5,
+      "four_atom_wrong_plurality_or_tie_suppression_risk_n": 4,
+      "triad_unique_correct_atom_n": 8,
+      "triad_wrong_consensus_suppression_risk_n": 4,
       "mean_primary_candidates": 4.48625,
       "mean_frontier_candidates": 4.3275,
       "mean_llm_calls": 4.06125,
+      "llm_call_distribution": {
+        "4": 751,
+        "5": 49
+      },
       "channel_structure": {
         "candidate_rows_n": 3589,
         "multi_view_candidates_n": 1913,
@@ -48,14 +60,22 @@
     },
     "impc": {
       "cases_n": 800,
+      "safe_exact_n": 68,
+      "legacy_chain_n": 212,
+      "task_n": 347,
       "clinical_complete_n": 98,
       "compatible_partial_n": 275,
       "complete_or_partial_n": 373,
-      "unique_correct_atom_n": 11,
-      "wrong_consensus_suppression_risk_n": 3,
+      "four_atom_unique_correct_atom_n": 8,
+      "four_atom_wrong_plurality_or_tie_suppression_risk_n": 6,
+      "triad_unique_correct_atom_n": 11,
+      "triad_wrong_consensus_suppression_risk_n": 3,
       "mean_primary_candidates": 4.09375,
       "mean_frontier_candidates": 4.0525,
       "mean_llm_calls": 4.0,
+      "llm_call_distribution": {
+        "4": 800
+      },
       "channel_structure": {
         "candidate_rows_n": 3275,
         "generator_view_count_distribution": {
@@ -81,14 +101,23 @@
     },
     "collapse3c": {
       "cases_n": 800,
+      "safe_exact_n": 68,
+      "legacy_chain_n": 169,
+      "task_n": 369,
       "clinical_complete_n": 122,
       "compatible_partial_n": 263,
       "complete_or_partial_n": 385,
-      "unique_correct_atom_n": 32,
-      "wrong_consensus_suppression_risk_n": 20,
+      "four_atom_unique_correct_atom_n": 15,
+      "four_atom_wrong_plurality_or_tie_suppression_risk_n": 12,
+      "triad_unique_correct_atom_n": 32,
+      "triad_wrong_consensus_suppression_risk_n": 20,
       "mean_primary_candidates": 5.24625,
       "mean_frontier_candidates": 4.26375,
       "mean_llm_calls": 3.2775,
+      "llm_call_distribution": {
+        "3": 578,
+        "4": 222
+      },
       "channel_structure": {
         "candidate_rows_n": 4197,
         "multi_provenance_candidates_n": 245,
@@ -97,11 +126,53 @@
         "with_against_spans_n": 2595,
         "with_against_fact_ids_n": 0
       }
+    },
+    "multistance": {
+      "cases_n": 800,
+      "safe_exact_n": 69,
+      "legacy_chain_n": 181,
+      "task_n": 360,
+      "clinical_complete_n": 121,
+      "compatible_partial_n": 260,
+      "complete_or_partial_n": 381,
+      "four_atom_unique_correct_atom_n": 10,
+      "four_atom_wrong_plurality_or_tie_suppression_risk_n": 7,
+      "triad_unique_correct_atom_n": null,
+      "triad_wrong_consensus_suppression_risk_n": null,
+      "mean_primary_candidates": 8.8975,
+      "mean_frontier_candidates": 4.1675,
+      "mean_llm_calls": 5.1725,
+      "llm_call_distribution": {
+        "5": 662,
+        "6": 138
+      },
+      "channel_structure": {
+        "candidate_rows_n": 7118,
+        "multi_provenance_candidates_n": 780,
+        "with_support_fact_ids_n": 7085,
+        "with_support_spans_n": 6911,
+        "with_against_spans_n": 3355,
+        "with_against_fact_ids_n": 0,
+        "stance_candidate_memberships": {
+          "commit": 3988,
+          "coverage": 3191,
+          "mechanism": 3178
+        },
+        "first_stance_group_assignment": {
+          "commit": 3988,
+          "coverage": 2065,
+          "mechanism": 936
+        },
+        "multi_stance_candidates_n": 2511,
+        "selector_cases_with_finalists_n": 800,
+        "selector_finalist_rows_n": 2116
+      }
     }
   },
   "pairwise": {
     "forest__impc": {
       "exact_champion_agreement_n": 488,
+      "same_output_cluster_n": 487,
       "left_champion_in_right_primary_pool_n": 645,
       "right_champion_in_left_primary_pool_n": 643,
       "both_complete_n": 82,
@@ -114,6 +185,7 @@
     },
     "forest__collapse3c": {
       "exact_champion_agreement_n": 385,
+      "same_output_cluster_n": 385,
       "left_champion_in_right_primary_pool_n": 547,
       "right_champion_in_left_primary_pool_n": 531,
       "both_complete_n": 85,
@@ -124,8 +196,22 @@
       "mean_primary_pool_union_n": 7.545,
       "mean_primary_pool_intersection_n": 2.18375
     },
+    "forest__multistance": {
+      "exact_champion_agreement_n": 396,
+      "same_output_cluster_n": 396,
+      "left_champion_in_right_primary_pool_n": 631,
+      "right_champion_in_left_primary_pool_n": 544,
+      "both_complete_n": 87,
+      "left_only_complete_n": 20,
+      "right_only_complete_n": 34,
+      "neither_complete_n": 659,
+      "mean_primary_pool_jaccard": 0.280292,
+      "mean_primary_pool_union_n": 10.63,
+      "mean_primary_pool_intersection_n": 2.75
+    },
     "impc__collapse3c": {
       "exact_champion_agreement_n": 343,
+      "same_output_cluster_n": 343,
       "left_champion_in_right_primary_pool_n": 517,
       "right_champion_in_left_primary_pool_n": 512,
       "both_complete_n": 73,
@@ -135,6 +221,32 @@
       "mean_primary_pool_jaccard": 0.319396,
       "mean_primary_pool_union_n": 7.24625,
       "mean_primary_pool_intersection_n": 2.0925
+    },
+    "impc__multistance": {
+      "exact_champion_agreement_n": 367,
+      "same_output_cluster_n": 367,
+      "left_champion_in_right_primary_pool_n": 615,
+      "right_champion_in_left_primary_pool_n": 527,
+      "both_complete_n": 78,
+      "left_only_complete_n": 20,
+      "right_only_complete_n": 43,
+      "neither_complete_n": 659,
+      "mean_primary_pool_jaccard": 0.273039,
+      "mean_primary_pool_union_n": 10.37125,
+      "mean_primary_pool_intersection_n": 2.61875
+    },
+    "collapse3c__multistance": {
+      "exact_champion_agreement_n": 546,
+      "same_output_cluster_n": 546,
+      "left_champion_in_right_primary_pool_n": 698,
+      "right_champion_in_left_primary_pool_n": 675,
+      "both_complete_n": 100,
+      "left_only_complete_n": 22,
+      "right_only_complete_n": 21,
+      "neither_complete_n": 657,
+      "mean_primary_pool_jaccard": 0.424056,
+      "mean_primary_pool_union_n": 10.205,
+      "mean_primary_pool_intersection_n": 3.93875
     }
   },
   "by_benchmark_family": {
@@ -159,9 +271,10 @@
         "impc": 5,
         "collapse3c": 7
       },
-      "two_wrong_atoms_same_output_cluster_n": 8,
+      "wrong_atom_majority_same_output_cluster_n": 8,
+      "all_wrong_atoms_same_output_cluster_n": 8,
       "unique_correct_with_label_in_any_wrong_pool_n": 2,
-      "unique_correct_with_label_in_both_wrong_pools_n": 0
+      "unique_correct_with_label_in_all_wrong_pools_n": 0
     },
     "MCR": {
       "cases_n": 400,
@@ -184,16 +297,82 @@
         "impc": 6,
         "collapse3c": 25
       },
-      "two_wrong_atoms_same_output_cluster_n": 19,
+      "wrong_atom_majority_same_output_cluster_n": 19,
+      "all_wrong_atoms_same_output_cluster_n": 19,
       "unique_correct_with_label_in_any_wrong_pool_n": 16,
-      "unique_correct_with_label_in_both_wrong_pools_n": 8
+      "unique_correct_with_label_in_all_wrong_pools_n": 8
+    }
+  },
+  "four_atom_by_benchmark_family": {
+    "DA": {
+      "cases_n": 400,
+      "per_arm_clinical_complete_n": {
+        "forest": 14,
+        "impc": 13,
+        "collapse3c": 15,
+        "multistance": 17
+      },
+      "clinical_complete_atom_count": {
+        "0": 371,
+        "1": 12,
+        "2": 8,
+        "3": 5,
+        "4": 4
+      },
+      "oracle_any_complete_n": 29,
+      "best_single_complete_n": 17,
+      "oracle_minus_best_single_n": 12,
+      "unique_correct_atom_n": {
+        "forest": 1,
+        "impc": 4,
+        "collapse3c": 4,
+        "multistance": 3
+      },
+      "wrong_atom_majority_same_output_cluster_n": 11,
+      "all_wrong_atoms_same_output_cluster_n": 3,
+      "unique_correct_with_label_in_any_wrong_pool_n": 5,
+      "unique_correct_with_label_in_all_wrong_pools_n": 1
+    },
+    "MCR": {
+      "cases_n": 400,
+      "per_arm_clinical_complete_n": {
+        "forest": 93,
+        "impc": 85,
+        "collapse3c": 107,
+        "multistance": 104
+      },
+      "clinical_complete_atom_count": {
+        "0": 264,
+        "1": 26,
+        "2": 29,
+        "3": 19,
+        "4": 62
+      },
+      "oracle_any_complete_n": 136,
+      "best_single_complete_n": 107,
+      "oracle_minus_best_single_n": 29,
+      "unique_correct_atom_n": {
+        "forest": 4,
+        "impc": 4,
+        "collapse3c": 11,
+        "multistance": 7
+      },
+      "wrong_atom_majority_same_output_cluster_n": 18,
+      "all_wrong_atoms_same_output_cluster_n": 11,
+      "unique_correct_with_label_in_any_wrong_pool_n": 19,
+      "unique_correct_with_label_in_all_wrong_pools_n": 7
     }
   },
   "triad": {
-    "exact_champion_agreement": {
-      "two_exact_agree": 361,
-      "all_exact_agree": 285,
-      "all_exact_different": 154
+    "arms": [
+      "forest",
+      "impc",
+      "collapse3c"
+    ],
+    "exact_champion_agreement_pattern": {
+      "1+1+1": 154,
+      "2+1": 361,
+      "3": 285
     },
     "clinical_complete_atom_count": {
       "0": 645,
@@ -210,21 +389,116 @@
       "impc": 11,
       "collapse3c": 32
     },
+    "wrong_majority_consensus_suppression_risk_n": 27,
+    "wrong_majority_consensus_suppression_risk_by_correct_atom": {
+      "forest": 4,
+      "impc": 3,
+      "collapse3c": 20
+    },
+    "unique_correct_with_label_in_any_wrong_pool_n": 18,
+    "unique_correct_with_label_in_all_wrong_pools_n": 8,
+    "exact_champion_agreement": {
+      "all_exact_agree": 285,
+      "two_exact_agree": 361,
+      "all_exact_different": 154
+    },
     "wrong_consensus_suppression_risk_n": 27,
     "wrong_consensus_suppression_risk_by_correct_atom": {
       "forest": 4,
-      "collapse3c": 20,
-      "impc": 3
+      "impc": 3,
+      "collapse3c": 20
     },
-    "unique_correct_with_label_in_any_wrong_pool_n": 18,
     "unique_correct_with_label_in_both_wrong_pools_n": 8
+  },
+  "four_atom": {
+    "arms": [
+      "forest",
+      "impc",
+      "collapse3c",
+      "multistance"
+    ],
+    "exact_champion_agreement_pattern": {
+      "1+1+1+1": 59,
+      "2+1+1": 169,
+      "2+2": 122,
+      "3+1": 196,
+      "4": 254
+    },
+    "clinical_complete_atom_count": {
+      "0": 635,
+      "1": 38,
+      "2": 37,
+      "3": 24,
+      "4": 66
+    },
+    "oracle_any_complete_n": 165,
+    "best_single_complete_n": 122,
+    "oracle_minus_best_single_n": 43,
+    "oracle_any_complete_or_partial_n": 489,
+    "unique_correct_atom_n": {
+      "forest": 5,
+      "impc": 8,
+      "collapse3c": 15,
+      "multistance": 10
+    },
+    "wrong_majority_consensus_suppression_risk_n": 29,
+    "wrong_majority_consensus_suppression_risk_by_correct_atom": {
+      "forest": 4,
+      "impc": 6,
+      "collapse3c": 12,
+      "multistance": 7
+    },
+    "unique_correct_with_label_in_any_wrong_pool_n": 24,
+    "unique_correct_with_label_in_all_wrong_pools_n": 8,
+    "wrong_plurality_or_tie_suppression_risk_n": 29,
+    "wrong_plurality_or_tie_suppression_risk_by_correct_atom": {
+      "forest": 4,
+      "impc": 6,
+      "collapse3c": 12,
+      "multistance": 7
+    }
+  },
+  "multistance_incremental_over_triad": {
+    "neither_complete": 635,
+    "collapse_multistance_same_output_cluster": 546,
+    "triad_only_complete": 44,
+    "same_lineage_same_wrong_cluster_other_core_complete": 13,
+    "both_complete": 111,
+    "multistance_rescue_over_collapse": 21,
+    "rescue_champion_with_commit_provenance": 20,
+    "rescue_champion_coverage_only": 1,
+    "rescue_champion_present_in_collapse_primary_pool": 10,
+    "multistance_only_complete": 10,
+    "multistance_loss_against_collapse": 22,
+    "loss_champion_with_commit_provenance": 22,
+    "correct_collapse_champion_present_in_multistance_primary_pool": 13,
+    "loss_relation__partial_parent_or_component": 7,
+    "loss_relation__conflicting_subtype_or_scope": 7,
+    "loss_relation__not_equivalent": 6,
+    "loss_relation__manifestation_or_related": 2,
+    "multistance_only_complete_correct_label_in_any_triad_primary_pool_n": 6,
+    "multistance_only_complete_correct_label_absent_from_all_triad_primary_pools_n": 4,
+    "multistance_only_complete_champion_with_commit_provenance_n": 10,
+    "mean_multistance_commit_pool_vs_collapse_pool_jaccard": 0.585349,
+    "mean_multistance_commit_labels_absent_from_collapse_pool_n": 1.43125,
+    "mean_coverage_or_mechanism_labels_absent_from_collapse_and_commit_pools_n": 3.40875,
+    "span_reuse_diagnostic": {
+      "support_span_entries_n": 16204,
+      "candidate_rows_same_exact_raw_span_in_support_and_against_n": 240,
+      "candidate_rows_same_normalized_span_in_support_and_against_n": 241,
+      "support_entries_exact_raw_span_used_by_other_candidate_n": 13689,
+      "support_entries_normalized_span_used_by_other_candidate_n": 13701
+    },
+    "four_atom_oracle_minus_triad_oracle_n": 10
   },
   "unique_correct_cases": [
     {
       "case_key": "DA_d2_heldout100/257",
       "reference_diagnosis": "Heterozygous HTRA1-related cerebral small vessel disease (CSVD)",
       "correct_atom": "forest",
-      "wrong_pair_same_output_cluster": true,
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
       "predictions": {
         "forest": "HTRA1-related hereditary cerebral small vessel disease",
         "impc": "CARASIL syndrome",
@@ -240,13 +514,15 @@
         "collapse3c": false
       },
       "correct_label_present_in_any_wrong_pool": false,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "DA_d2_heldout100/373",
       "reference_diagnosis": "Anastrozole-associated crystalline retinopathy",
       "correct_atom": "forest",
-      "wrong_pair_same_output_cluster": false,
+      "wrong_atom_modal_output_cluster_size": 1,
+      "wrong_atom_majority_same_output_cluster": false,
+      "all_wrong_atoms_same_output_cluster": false,
       "predictions": {
         "forest": "Anastrozole-associated crystalline maculopathy",
         "impc": "Anastrozole-induced retinopathy",
@@ -262,13 +538,15 @@
         "collapse3c": false
       },
       "correct_label_present_in_any_wrong_pool": false,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "DA_d2_heldout100/421",
       "reference_diagnosis": "Rowell syndrome",
       "correct_atom": "impc",
-      "wrong_pair_same_output_cluster": false,
+      "wrong_atom_modal_output_cluster_size": 1,
+      "wrong_atom_majority_same_output_cluster": false,
+      "all_wrong_atoms_same_output_cluster": false,
       "predictions": {
         "forest": "Stevens-Johnson Syndrome",
         "impc": "Rowell Syndrome",
@@ -284,13 +562,15 @@
         "collapse3c": false
       },
       "correct_label_present_in_any_wrong_pool": false,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "DA_d2_heldout200b/473",
       "reference_diagnosis": "COVID-19 (SARS-CoV-2 infection)",
       "correct_atom": "collapse3c",
-      "wrong_pair_same_output_cluster": true,
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
       "predictions": {
         "forest": "Respiratory Syncytial Virus (RSV) infection",
         "impc": "Respiratory Syncytial Virus (RSV) infection",
@@ -306,13 +586,15 @@
         "impc": true
       },
       "correct_label_present_in_any_wrong_pool": true,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "DA_d2_heldout200b/583",
       "reference_diagnosis": "Surfer's Myelopathy",
       "correct_atom": "collapse3c",
-      "wrong_pair_same_output_cluster": true,
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
       "predictions": {
         "forest": "Spinal Cord Injury",
         "impc": "Spinal Cord Injury",
@@ -328,13 +610,15 @@
         "impc": false
       },
       "correct_label_present_in_any_wrong_pool": false,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "DA_d2_heldout200b/687",
       "reference_diagnosis": "Epstein-Barr virus (EBV) meningoencephalitis",
       "correct_atom": "impc",
-      "wrong_pair_same_output_cluster": false,
+      "wrong_atom_modal_output_cluster_size": 1,
+      "wrong_atom_majority_same_output_cluster": false,
+      "all_wrong_atoms_same_output_cluster": false,
       "predictions": {
         "forest": "Epstein-Barr Virus (EBV) Encephalitis",
         "impc": "Epstein-Barr Virus (EBV) Meningoencephalitis",
@@ -350,13 +634,15 @@
         "collapse3c": false
       },
       "correct_label_present_in_any_wrong_pool": false,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "DA_d2_heldout200b/729",
       "reference_diagnosis": "Left ventricular free wall rupture following acute myocardial infarction",
       "correct_atom": "collapse3c",
-      "wrong_pair_same_output_cluster": true,
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
       "predictions": {
         "forest": "Myocardial Infarction",
         "impc": "Myocardial Infarction",
@@ -372,13 +658,15 @@
         "impc": false
       },
       "correct_label_present_in_any_wrong_pool": false,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "DA_d2_heldout200b/763",
       "reference_diagnosis": "Harel-Yoon syndrome (HAYOS) caused by ATAD3A gene mutation",
       "correct_atom": "collapse3c",
-      "wrong_pair_same_output_cluster": false,
+      "wrong_atom_modal_output_cluster_size": 1,
+      "wrong_atom_majority_same_output_cluster": false,
+      "all_wrong_atoms_same_output_cluster": false,
       "predictions": {
         "forest": "Hoyeraal-Hreidarsson syndrome",
         "impc": "ATAD3A-related disorder",
@@ -394,13 +682,15 @@
         "impc": false
       },
       "correct_label_present_in_any_wrong_pool": false,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "DA_d2_seq100/161",
       "reference_diagnosis": "Hemosiderotic fibrolipomatous tumor (HFLT)",
       "correct_atom": "impc",
-      "wrong_pair_same_output_cluster": false,
+      "wrong_atom_modal_output_cluster_size": 1,
+      "wrong_atom_majority_same_output_cluster": false,
+      "all_wrong_atoms_same_output_cluster": false,
       "predictions": {
         "forest": "Nora's lesion",
         "impc": "Hemosiderotic fibrolipomatous tumor",
@@ -416,13 +706,15 @@
         "collapse3c": false
       },
       "correct_label_present_in_any_wrong_pool": false,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "DA_d2_seq100/173",
       "reference_diagnosis": "Netherton syndrome",
       "correct_atom": "impc",
-      "wrong_pair_same_output_cluster": false,
+      "wrong_atom_modal_output_cluster_size": 1,
+      "wrong_atom_majority_same_output_cluster": false,
+      "all_wrong_atoms_same_output_cluster": false,
       "predictions": {
         "forest": "Psoriasis",
         "impc": "Netherton syndrome",
@@ -438,13 +730,15 @@
         "collapse3c": false
       },
       "correct_label_present_in_any_wrong_pool": false,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "DA_d2_seq100/228",
       "reference_diagnosis": "Primary systemic (AL) amyloidosis",
       "correct_atom": "forest",
-      "wrong_pair_same_output_cluster": true,
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
       "predictions": {
         "forest": "Primary Systemic Amyloidosis",
         "impc": "Amyloidosis",
@@ -460,13 +754,15 @@
         "collapse3c": false
       },
       "correct_label_present_in_any_wrong_pool": false,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "DA_d2_seq100/3",
       "reference_diagnosis": "Familial cerebral cavernous malformations",
       "correct_atom": "collapse3c",
-      "wrong_pair_same_output_cluster": true,
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
       "predictions": {
         "forest": "Cerebral cavernous malformation",
         "impc": "Cerebral cavernous malformation",
@@ -482,13 +778,15 @@
         "impc": false
       },
       "correct_label_present_in_any_wrong_pool": false,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "DA_d2_seq100/45",
       "reference_diagnosis": "Drug-induced dermatomyositis secondary to ipilimumab therapy",
       "correct_atom": "collapse3c",
-      "wrong_pair_same_output_cluster": false,
+      "wrong_atom_modal_output_cluster_size": 1,
+      "wrong_atom_majority_same_output_cluster": false,
+      "all_wrong_atoms_same_output_cluster": false,
       "predictions": {
         "forest": "Dermatomyositis",
         "impc": "Ipilimumab-induced myositis",
@@ -504,13 +802,15 @@
         "impc": false
       },
       "correct_label_present_in_any_wrong_pool": false,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "DA_d2_seq100/60",
       "reference_diagnosis": "Ostium secundum atrial septal defect (OS-ASD)",
       "correct_atom": "collapse3c",
-      "wrong_pair_same_output_cluster": true,
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
       "predictions": {
         "forest": "Atrial Septal Defect",
         "impc": "Atrial Septal Defect",
@@ -526,13 +826,15 @@
         "impc": false
       },
       "correct_label_present_in_any_wrong_pool": false,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "DA_d2_seq100/99",
       "reference_diagnosis": "Epidermolysis bullosa pruriginosa (EBP)",
       "correct_atom": "impc",
-      "wrong_pair_same_output_cluster": true,
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
       "predictions": {
         "forest": "Dystrophic Epidermolysis Bullosa",
         "impc": "Epidermolysis Bullosa Pruriginosa",
@@ -548,13 +850,15 @@
         "collapse3c": false
       },
       "correct_label_present_in_any_wrong_pool": true,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "MCR_seq200b/275",
       "reference_diagnosis": "Ischemic colitis",
       "correct_atom": "collapse3c",
-      "wrong_pair_same_output_cluster": false,
+      "wrong_atom_modal_output_cluster_size": 1,
+      "wrong_atom_majority_same_output_cluster": false,
+      "all_wrong_atoms_same_output_cluster": false,
       "predictions": {
         "forest": "Ulcerative Colitis",
         "impc": "Crohn's Disease",
@@ -570,13 +874,15 @@
         "impc": true
       },
       "correct_label_present_in_any_wrong_pool": true,
-      "correct_label_present_in_both_wrong_pools": true
+      "correct_label_present_in_all_wrong_pools": true
     },
     {
       "case_key": "MCR_seq200b/292",
       "reference_diagnosis": "Anaplastic large-cell lymphoma",
       "correct_atom": "collapse3c",
-      "wrong_pair_same_output_cluster": true,
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
       "predictions": {
         "forest": "Hodgkin lymphoma",
         "impc": "Hodgkin lymphoma",
@@ -592,13 +898,15 @@
         "impc": true
       },
       "correct_label_present_in_any_wrong_pool": true,
-      "correct_label_present_in_both_wrong_pools": true
+      "correct_label_present_in_all_wrong_pools": true
     },
     {
       "case_key": "MCR_seq200b/310",
       "reference_diagnosis": "ExtraskeletalMyxoidChondrosarcoma",
       "correct_atom": "collapse3c",
-      "wrong_pair_same_output_cluster": false,
+      "wrong_atom_modal_output_cluster_size": 1,
+      "wrong_atom_majority_same_output_cluster": false,
+      "all_wrong_atoms_same_output_cluster": false,
       "predictions": {
         "forest": "Extraskeletal myxoid chondrosarcoma",
         "impc": "Metastatic tumor",
@@ -614,13 +922,15 @@
         "impc": false
       },
       "correct_label_present_in_any_wrong_pool": false,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "MCR_seq200b/312",
       "reference_diagnosis": "Hepatic cystadenoma",
       "correct_atom": "collapse3c",
-      "wrong_pair_same_output_cluster": false,
+      "wrong_atom_modal_output_cluster_size": 1,
+      "wrong_atom_majority_same_output_cluster": false,
+      "all_wrong_atoms_same_output_cluster": false,
       "predictions": {
         "forest": "Intraductal Papillary Mucinous Neoplasm (IPMN) of the Bile Duct",
         "impc": "intraductal papillary mucinous neoplasm",
@@ -636,13 +946,15 @@
         "impc": false
       },
       "correct_label_present_in_any_wrong_pool": false,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "MCR_seq200b/327",
       "reference_diagnosis": "dermatofibrosarcoma protuberans",
       "correct_atom": "collapse3c",
-      "wrong_pair_same_output_cluster": false,
+      "wrong_atom_modal_output_cluster_size": 1,
+      "wrong_atom_majority_same_output_cluster": false,
+      "all_wrong_atoms_same_output_cluster": false,
       "predictions": {
         "forest": "Metastatic disease to the thyroid",
         "impc": "Papillary Thyroid Carcinoma",
@@ -658,13 +970,15 @@
         "impc": false
       },
       "correct_label_present_in_any_wrong_pool": false,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "MCR_seq200b/329",
       "reference_diagnosis": "urachal cyst",
       "correct_atom": "collapse3c",
-      "wrong_pair_same_output_cluster": true,
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
       "predictions": {
         "forest": "Urachal sinus",
         "impc": "Urachal sinus",
@@ -680,13 +994,15 @@
         "impc": true
       },
       "correct_label_present_in_any_wrong_pool": true,
-      "correct_label_present_in_both_wrong_pools": true
+      "correct_label_present_in_all_wrong_pools": true
     },
     {
       "case_key": "MCR_seq200b/335",
       "reference_diagnosis": "Drug-induced lupus",
       "correct_atom": "forest",
-      "wrong_pair_same_output_cluster": false,
+      "wrong_atom_modal_output_cluster_size": 1,
+      "wrong_atom_majority_same_output_cluster": false,
+      "all_wrong_atoms_same_output_cluster": false,
       "predictions": {
         "forest": "Drug-induced lupus erythematosus",
         "impc": "Sarcoidosis",
@@ -702,13 +1018,15 @@
         "collapse3c": false
       },
       "correct_label_present_in_any_wrong_pool": false,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "MCR_seq200b/345",
       "reference_diagnosis": "Hereditary hypophosphatemic rickets with hypercalciuria",
       "correct_atom": "collapse3c",
-      "wrong_pair_same_output_cluster": true,
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
       "predictions": {
         "forest": "X-linked hypophosphatemia",
         "impc": "X-linked hypophosphatemia",
@@ -724,13 +1042,15 @@
         "impc": true
       },
       "correct_label_present_in_any_wrong_pool": true,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "MCR_seq200b/346",
       "reference_diagnosis": "myxoinflammatory fibroblastic sarcoma",
       "correct_atom": "impc",
-      "wrong_pair_same_output_cluster": true,
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
       "predictions": {
         "forest": "Hodgkin lymphoma",
         "impc": "Inflammatory myxohyaline tumor",
@@ -746,13 +1066,15 @@
         "collapse3c": false
       },
       "correct_label_present_in_any_wrong_pool": true,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "MCR_seq200b/368",
       "reference_diagnosis": "LeukemiaCutis",
       "correct_atom": "impc",
-      "wrong_pair_same_output_cluster": false,
+      "wrong_atom_modal_output_cluster_size": 1,
+      "wrong_atom_majority_same_output_cluster": false,
+      "all_wrong_atoms_same_output_cluster": false,
       "predictions": {
         "forest": "Cutaneous Lymphoma",
         "impc": "Myeloid Leukemia Cutis",
@@ -768,13 +1090,15 @@
         "collapse3c": false
       },
       "correct_label_present_in_any_wrong_pool": false,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "MCR_seq200b/374",
       "reference_diagnosis": "cryptogenic organizing pneumonia",
       "correct_atom": "collapse3c",
-      "wrong_pair_same_output_cluster": true,
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
       "predictions": {
         "forest": "Sarcoidosis",
         "impc": "Sarcoidosis",
@@ -790,13 +1114,15 @@
         "impc": true
       },
       "correct_label_present_in_any_wrong_pool": true,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "MCR_seq200b/388",
       "reference_diagnosis": "ClearCellMeningioma",
       "correct_atom": "collapse3c",
-      "wrong_pair_same_output_cluster": true,
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
       "predictions": {
         "forest": "Meningioma",
         "impc": "meningioma",
@@ -812,13 +1138,15 @@
         "impc": false
       },
       "correct_label_present_in_any_wrong_pool": false,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "MCR_seq200b/430",
       "reference_diagnosis": "Atrial tachycardia",
       "correct_atom": "collapse3c",
-      "wrong_pair_same_output_cluster": false,
+      "wrong_atom_modal_output_cluster_size": 1,
+      "wrong_atom_majority_same_output_cluster": false,
+      "all_wrong_atoms_same_output_cluster": false,
       "predictions": {
         "forest": "Mitral Isthmus Dependent Atrial Flutter",
         "impc": "Mitral Isthmus-Dependent Atrial Flutter",
@@ -834,13 +1162,15 @@
         "impc": false
       },
       "correct_label_present_in_any_wrong_pool": false,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "MCR_seq200b/437",
       "reference_diagnosis": "Hepatopulmonary syndrome",
       "correct_atom": "impc",
-      "wrong_pair_same_output_cluster": false,
+      "wrong_atom_modal_output_cluster_size": 1,
+      "wrong_atom_majority_same_output_cluster": false,
+      "all_wrong_atoms_same_output_cluster": false,
       "predictions": {
         "forest": "Heart Failure with Preserved Ejection Fraction",
         "impc": "Hepatopulmonary Syndrome",
@@ -856,13 +1186,15 @@
         "collapse3c": false
       },
       "correct_label_present_in_any_wrong_pool": false,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "MCR_seq200b/438",
       "reference_diagnosis": "chemotherapy induced sclerosing cholangitis",
       "correct_atom": "collapse3c",
-      "wrong_pair_same_output_cluster": true,
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
       "predictions": {
         "forest": "Cholangitis",
         "impc": "Cholangitis",
@@ -878,13 +1210,15 @@
         "impc": false
       },
       "correct_label_present_in_any_wrong_pool": false,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "MCR_seq200b/480",
       "reference_diagnosis": "Myasthenia gravis",
       "correct_atom": "collapse3c",
-      "wrong_pair_same_output_cluster": false,
+      "wrong_atom_modal_output_cluster_size": 1,
+      "wrong_atom_majority_same_output_cluster": false,
+      "all_wrong_atoms_same_output_cluster": false,
       "predictions": {
         "forest": "Transient Ischemic Attack of the Vertebrobasilar System",
         "impc": "Transient Ischemic Attack",
@@ -900,13 +1234,15 @@
         "impc": true
       },
       "correct_label_present_in_any_wrong_pool": true,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "MCR_v1_seq100/12",
       "reference_diagnosis": "Tumor-induced osteomalacia",
       "correct_atom": "collapse3c",
-      "wrong_pair_same_output_cluster": true,
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
       "predictions": {
         "forest": "Osteomalacia",
         "impc": "Osteomalacia",
@@ -922,13 +1258,15 @@
         "impc": false
       },
       "correct_label_present_in_any_wrong_pool": false,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "MCR_v1_seq100/16",
       "reference_diagnosis": "LocalizedUrethralAmyloidosis",
       "correct_atom": "forest",
-      "wrong_pair_same_output_cluster": false,
+      "wrong_atom_modal_output_cluster_size": 1,
+      "wrong_atom_majority_same_output_cluster": false,
+      "all_wrong_atoms_same_output_cluster": false,
       "predictions": {
         "forest": "Primary Amyloidosis of the Urethra",
         "impc": "Urethral stricture",
@@ -944,13 +1282,15 @@
         "collapse3c": true
       },
       "correct_label_present_in_any_wrong_pool": true,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "MCR_v1_seq100/2",
       "reference_diagnosis": "5-oxoprolinemia",
       "correct_atom": "collapse3c",
-      "wrong_pair_same_output_cluster": true,
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
       "predictions": {
         "forest": "Lactic Acidosis",
         "impc": "Lactic Acidosis",
@@ -966,13 +1306,15 @@
         "impc": false
       },
       "correct_label_present_in_any_wrong_pool": true,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "MCR_v1_seq100/41",
       "reference_diagnosis": "Gastric lipoma",
       "correct_atom": "collapse3c",
-      "wrong_pair_same_output_cluster": true,
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
       "predictions": {
         "forest": "Gastrointestinal Stromal Tumor (GIST)",
         "impc": "Gastrointestinal Stromal Tumor (GIST)",
@@ -988,13 +1330,15 @@
         "impc": false
       },
       "correct_label_present_in_any_wrong_pool": false,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "MCR_v1_seq100/49",
       "reference_diagnosis": "StumpAppendicitis",
       "correct_atom": "collapse3c",
-      "wrong_pair_same_output_cluster": false,
+      "wrong_atom_modal_output_cluster_size": 1,
+      "wrong_atom_majority_same_output_cluster": false,
+      "all_wrong_atoms_same_output_cluster": false,
       "predictions": {
         "forest": "Appendiceal abscess",
         "impc": "Abscess",
@@ -1010,13 +1354,15 @@
         "impc": false
       },
       "correct_label_present_in_any_wrong_pool": false,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "MCR_v1_seq100/50",
       "reference_diagnosis": "Gastrointestinal clear cell sarcoma",
       "correct_atom": "collapse3c",
-      "wrong_pair_same_output_cluster": false,
+      "wrong_atom_modal_output_cluster_size": 1,
+      "wrong_atom_majority_same_output_cluster": false,
+      "all_wrong_atoms_same_output_cluster": false,
       "predictions": {
         "forest": "Malignant Peripheral Nerve Sheath Tumor (MPNST)",
         "impc": "Schwannoma",
@@ -1032,13 +1378,15 @@
         "impc": false
       },
       "correct_label_present_in_any_wrong_pool": false,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "MCR_v1_seq100/62",
       "reference_diagnosis": "Lipoblastoma",
       "correct_atom": "collapse3c",
-      "wrong_pair_same_output_cluster": true,
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
       "predictions": {
         "forest": "Lipoma",
         "impc": "Lipoma",
@@ -1054,13 +1402,15 @@
         "impc": true
       },
       "correct_label_present_in_any_wrong_pool": true,
-      "correct_label_present_in_both_wrong_pools": true
+      "correct_label_present_in_all_wrong_pools": true
     },
     {
       "case_key": "MCR_v1_seq100/67",
       "reference_diagnosis": "congenital unilateral hypoplasia of depressor anguli oris",
       "correct_atom": "collapse3c",
-      "wrong_pair_same_output_cluster": true,
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
       "predictions": {
         "forest": "Congenital unilateral lower lip palsy",
         "impc": "Congenital unilateral lower lip palsy",
@@ -1076,13 +1426,15 @@
         "impc": false
       },
       "correct_label_present_in_any_wrong_pool": false,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "MCR_v1_seq100/73",
       "reference_diagnosis": "metastatic prostate carcinoma",
       "correct_atom": "forest",
-      "wrong_pair_same_output_cluster": false,
+      "wrong_atom_modal_output_cluster_size": 1,
+      "wrong_atom_majority_same_output_cluster": false,
+      "all_wrong_atoms_same_output_cluster": false,
       "predictions": {
         "forest": "Brain Metastasis from Prostate Cancer",
         "impc": "metastatic brain tumor",
@@ -1098,13 +1450,15 @@
         "collapse3c": false
       },
       "correct_label_present_in_any_wrong_pool": false,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "MCR_v1_seq100/74",
       "reference_diagnosis": "Catecholaminergic polymorphic ventricular tachycardia",
       "correct_atom": "forest",
-      "wrong_pair_same_output_cluster": true,
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
       "predictions": {
         "forest": "Catecholaminergic Polymorphic Ventricular Tachycardia",
         "impc": "Long QT Syndrome",
@@ -1120,13 +1474,15 @@
         "collapse3c": true
       },
       "correct_label_present_in_any_wrong_pool": true,
-      "correct_label_present_in_both_wrong_pools": true
+      "correct_label_present_in_all_wrong_pools": true
     },
     {
       "case_key": "MCR_v1_seq100/90",
       "reference_diagnosis": "squamous cell carcinoma",
       "correct_atom": "forest",
-      "wrong_pair_same_output_cluster": true,
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
       "predictions": {
         "forest": "Squamous cell carcinoma metastasis",
         "impc": "pacemaker pocket tumor",
@@ -1142,13 +1498,15 @@
         "collapse3c": false
       },
       "correct_label_present_in_any_wrong_pool": false,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "MCR_v2_seq100/159",
       "reference_diagnosis": "endometrioid adenocarcinoma",
       "correct_atom": "impc",
-      "wrong_pair_same_output_cluster": false,
+      "wrong_atom_modal_output_cluster_size": 1,
+      "wrong_atom_majority_same_output_cluster": false,
+      "all_wrong_atoms_same_output_cluster": false,
       "predictions": {
         "forest": "Iatrogenic tumor dissemination",
         "impc": "Endometrioid adenocarcinoma",
@@ -1164,13 +1522,15 @@
         "collapse3c": true
       },
       "correct_label_present_in_any_wrong_pool": true,
-      "correct_label_present_in_both_wrong_pools": true
+      "correct_label_present_in_all_wrong_pools": true
     },
     {
       "case_key": "MCR_v2_seq100/173",
       "reference_diagnosis": "Chronic subdural hematoma",
       "correct_atom": "collapse3c",
-      "wrong_pair_same_output_cluster": true,
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
       "predictions": {
         "forest": "Subdural Hematoma",
         "impc": "Subdural Hematoma",
@@ -1186,13 +1546,15 @@
         "impc": false
       },
       "correct_label_present_in_any_wrong_pool": false,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "MCR_v2_seq100/178",
       "reference_diagnosis": "Malingering",
       "correct_atom": "collapse3c",
-      "wrong_pair_same_output_cluster": true,
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
       "predictions": {
         "forest": "Factitious disorder",
         "impc": "Factitious disorder",
@@ -1208,13 +1570,15 @@
         "impc": true
       },
       "correct_label_present_in_any_wrong_pool": true,
-      "correct_label_present_in_both_wrong_pools": true
+      "correct_label_present_in_all_wrong_pools": true
     },
     {
       "case_key": "MCR_v2_seq100/188",
       "reference_diagnosis": "Liposarcoma",
       "correct_atom": "impc",
-      "wrong_pair_same_output_cluster": true,
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
       "predictions": {
         "forest": "Gastrointestinal stromal tumor (GIST)",
         "impc": "Liposarcoma",
@@ -1230,13 +1594,15 @@
         "collapse3c": false
       },
       "correct_label_present_in_any_wrong_pool": false,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "MCR_v2_seq100/196",
       "reference_diagnosis": "vertebral hemangioma",
       "correct_atom": "collapse3c",
-      "wrong_pair_same_output_cluster": false,
+      "wrong_atom_modal_output_cluster_size": 1,
+      "wrong_atom_majority_same_output_cluster": false,
+      "all_wrong_atoms_same_output_cluster": false,
       "predictions": {
         "forest": "Primary spinal tumor",
         "impc": "Lymphoma",
@@ -1252,13 +1618,15 @@
         "impc": false
       },
       "correct_label_present_in_any_wrong_pool": false,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "MCR_v2_seq100/212",
       "reference_diagnosis": "Neurofibromatosis type 2",
       "correct_atom": "collapse3c",
-      "wrong_pair_same_output_cluster": true,
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
       "predictions": {
         "forest": "Neurofibromatosis type 1",
         "impc": "Neurofibromatosis type 1",
@@ -1274,13 +1642,15 @@
         "impc": true
       },
       "correct_label_present_in_any_wrong_pool": true,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "MCR_v2_seq100/223",
       "reference_diagnosis": "COVID-19-related coagulopathy",
       "correct_atom": "collapse3c",
-      "wrong_pair_same_output_cluster": true,
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
       "predictions": {
         "forest": "Sepsis",
         "impc": "Sepsis",
@@ -1296,13 +1666,15 @@
         "impc": false
       },
       "correct_label_present_in_any_wrong_pool": false,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
     },
     {
       "case_key": "MCR_v2_seq100/227",
       "reference_diagnosis": "pulmonary embolism",
       "correct_atom": "impc",
-      "wrong_pair_same_output_cluster": false,
+      "wrong_atom_modal_output_cluster_size": 1,
+      "wrong_atom_majority_same_output_cluster": false,
+      "all_wrong_atoms_same_output_cluster": false,
       "predictions": {
         "forest": "Takotsubo Cardiomyopathy",
         "impc": "Pulmonary Embolism",
@@ -1318,13 +1690,15 @@
         "collapse3c": true
       },
       "correct_label_present_in_any_wrong_pool": true,
-      "correct_label_present_in_both_wrong_pools": true
+      "correct_label_present_in_all_wrong_pools": true
     },
     {
       "case_key": "MCR_v2_seq100/233",
       "reference_diagnosis": "double-outlet right ventricle",
       "correct_atom": "collapse3c",
-      "wrong_pair_same_output_cluster": false,
+      "wrong_atom_modal_output_cluster_size": 1,
+      "wrong_atom_majority_same_output_cluster": false,
+      "all_wrong_atoms_same_output_cluster": false,
       "predictions": {
         "forest": "Tetralogy of Fallot",
         "impc": "Tricuspid Atresia",
@@ -1340,7 +1714,1221 @@
         "impc": false
       },
       "correct_label_present_in_any_wrong_pool": true,
-      "correct_label_present_in_both_wrong_pools": false
+      "correct_label_present_in_all_wrong_pools": false
+    }
+  ],
+  "four_atom_unique_correct_cases": [
+    {
+      "case_key": "DA_d2_heldout100/257",
+      "reference_diagnosis": "Heterozygous HTRA1-related cerebral small vessel disease (CSVD)",
+      "correct_atom": "forest",
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": false,
+      "predictions": {
+        "forest": "HTRA1-related hereditary cerebral small vessel disease",
+        "impc": "CARASIL syndrome",
+        "collapse3c": "CARASIL syndrome",
+        "multistance": "HTRA1-related hereditary vascular dementia"
+      },
+      "relations": {
+        "forest": "complete_equivalent",
+        "impc": "conflicting_subtype_or_scope",
+        "collapse3c": "conflicting_subtype_or_scope",
+        "multistance": "partial_parent_or_component"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "impc": false,
+        "collapse3c": false,
+        "multistance": false
+      },
+      "correct_label_present_in_any_wrong_pool": false,
+      "correct_label_present_in_all_wrong_pools": false,
+      "wrong_atom_plurality_or_tie_same_output_cluster": true
+    },
+    {
+      "case_key": "DA_d2_heldout100/353",
+      "reference_diagnosis": "Atypical epidermolysis bullosa nevus (benign)",
+      "correct_atom": "multistance",
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": false,
+      "predictions": {
+        "forest": "Congenital Melanocytic Nevus",
+        "impc": "congenital melanocytic nevus",
+        "collapse3c": "Atypical Melanocytic Proliferation",
+        "multistance": "Epidermolysis Bullosa Nevus"
+      },
+      "relations": {
+        "forest": "conflicting_subtype_or_scope",
+        "impc": "conflicting_subtype_or_scope",
+        "collapse3c": "partial_parent_or_component",
+        "multistance": "complete_equivalent"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "forest": true,
+        "impc": false,
+        "collapse3c": true
+      },
+      "correct_label_present_in_any_wrong_pool": true,
+      "correct_label_present_in_all_wrong_pools": false,
+      "wrong_atom_plurality_or_tie_same_output_cluster": true
+    },
+    {
+      "case_key": "DA_d2_heldout100/421",
+      "reference_diagnosis": "Rowell syndrome",
+      "correct_atom": "impc",
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": false,
+      "predictions": {
+        "forest": "Stevens-Johnson Syndrome",
+        "impc": "Rowell Syndrome",
+        "collapse3c": "Systemic Lupus Erythematosus with Bullous Lesions",
+        "multistance": "Systemic Lupus Erythematosus with Bullous Lesions"
+      },
+      "relations": {
+        "forest": "conflicting_subtype_or_scope",
+        "impc": "complete_equivalent",
+        "collapse3c": "conflicting_subtype_or_scope",
+        "multistance": "conflicting_subtype_or_scope"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "forest": false,
+        "collapse3c": false,
+        "multistance": false
+      },
+      "correct_label_present_in_any_wrong_pool": false,
+      "correct_label_present_in_all_wrong_pools": false,
+      "wrong_atom_plurality_or_tie_same_output_cluster": true
+    },
+    {
+      "case_key": "DA_d2_heldout200b/583",
+      "reference_diagnosis": "Surfer's Myelopathy",
+      "correct_atom": "collapse3c",
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": false,
+      "predictions": {
+        "forest": "Spinal Cord Injury",
+        "impc": "Spinal Cord Injury",
+        "collapse3c": "Surfer's Myelopathy",
+        "multistance": "Spinal Cord Trauma"
+      },
+      "relations": {
+        "forest": "partial_parent_or_component",
+        "impc": "partial_parent_or_component",
+        "collapse3c": "complete_equivalent",
+        "multistance": "conflicting_subtype_or_scope"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "forest": false,
+        "impc": false,
+        "multistance": false
+      },
+      "correct_label_present_in_any_wrong_pool": false,
+      "correct_label_present_in_all_wrong_pools": false,
+      "wrong_atom_plurality_or_tie_same_output_cluster": true
+    },
+    {
+      "case_key": "DA_d2_heldout200b/687",
+      "reference_diagnosis": "Epstein-Barr virus (EBV) meningoencephalitis",
+      "correct_atom": "impc",
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": false,
+      "predictions": {
+        "forest": "Epstein-Barr Virus (EBV) Encephalitis",
+        "impc": "Epstein-Barr Virus (EBV) Meningoencephalitis",
+        "collapse3c": "Epstein-Barr Virus Encephalitis",
+        "multistance": "Epstein-Barr Virus Encephalitis"
+      },
+      "relations": {
+        "forest": "partial_parent_or_component",
+        "impc": "complete_equivalent",
+        "collapse3c": "partial_parent_or_component",
+        "multistance": "partial_parent_or_component"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "forest": false,
+        "collapse3c": false,
+        "multistance": false
+      },
+      "correct_label_present_in_any_wrong_pool": false,
+      "correct_label_present_in_all_wrong_pools": false,
+      "wrong_atom_plurality_or_tie_same_output_cluster": true
+    },
+    {
+      "case_key": "DA_d2_heldout200b/740",
+      "reference_diagnosis": "Secondary cutaneous endometriosis (SCE)",
+      "correct_atom": "multistance",
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": false,
+      "predictions": {
+        "forest": "Abdominal Endometriosis",
+        "impc": "Abdominal Wall Endometrioma",
+        "collapse3c": "Abdominal Endometriosis",
+        "multistance": "Scar Endometriosis"
+      },
+      "relations": {
+        "forest": "partial_parent_or_component",
+        "impc": "partial_parent_or_component",
+        "collapse3c": "partial_parent_or_component",
+        "multistance": "complete_equivalent"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "forest": false,
+        "impc": false,
+        "collapse3c": false
+      },
+      "correct_label_present_in_any_wrong_pool": false,
+      "correct_label_present_in_all_wrong_pools": false,
+      "wrong_atom_plurality_or_tie_same_output_cluster": true
+    },
+    {
+      "case_key": "DA_d2_seq100/103",
+      "reference_diagnosis": "Intra-atrial reentrant tachycardia (IART) with variable atrioventricular block",
+      "correct_atom": "multistance",
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": false,
+      "predictions": {
+        "forest": "Orthodromic Atrioventricular Reentrant Tachycardia",
+        "impc": "Orthodromic Atrioventricular Reentrant Tachycardia (OAVRT)",
+        "collapse3c": "Orthodromic Atrioventricular Reentrant Tachycardia",
+        "multistance": "Intra-atrial Reentrant Tachycardia"
+      },
+      "relations": {
+        "forest": "conflicting_subtype_or_scope",
+        "impc": "conflicting_subtype_or_scope",
+        "collapse3c": "conflicting_subtype_or_scope",
+        "multistance": "complete_equivalent"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "forest": true,
+        "impc": true,
+        "collapse3c": true
+      },
+      "correct_label_present_in_any_wrong_pool": true,
+      "correct_label_present_in_all_wrong_pools": true,
+      "wrong_atom_plurality_or_tie_same_output_cluster": true
+    },
+    {
+      "case_key": "DA_d2_seq100/161",
+      "reference_diagnosis": "Hemosiderotic fibrolipomatous tumor (HFLT)",
+      "correct_atom": "impc",
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": false,
+      "predictions": {
+        "forest": "Nora's lesion",
+        "impc": "Hemosiderotic fibrolipomatous tumor",
+        "collapse3c": "Nodular pseudolipomatous fat necrosis",
+        "multistance": "Nora's lesion"
+      },
+      "relations": {
+        "forest": "not_equivalent",
+        "impc": "complete_equivalent",
+        "collapse3c": "not_equivalent",
+        "multistance": "not_equivalent"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "forest": false,
+        "collapse3c": false,
+        "multistance": false
+      },
+      "correct_label_present_in_any_wrong_pool": false,
+      "correct_label_present_in_all_wrong_pools": false,
+      "wrong_atom_plurality_or_tie_same_output_cluster": true
+    },
+    {
+      "case_key": "DA_d2_seq100/3",
+      "reference_diagnosis": "Familial cerebral cavernous malformations",
+      "correct_atom": "collapse3c",
+      "wrong_atom_modal_output_cluster_size": 3,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
+      "predictions": {
+        "forest": "Cerebral cavernous malformation",
+        "impc": "Cerebral cavernous malformation",
+        "collapse3c": "Familial Cerebral Cavernous Malformation",
+        "multistance": "Cerebral Cavernous Malformation"
+      },
+      "relations": {
+        "forest": "partial_parent_or_component",
+        "impc": "partial_parent_or_component",
+        "collapse3c": "complete_equivalent",
+        "multistance": "partial_parent_or_component"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "forest": false,
+        "impc": false,
+        "multistance": true
+      },
+      "correct_label_present_in_any_wrong_pool": true,
+      "correct_label_present_in_all_wrong_pools": false,
+      "wrong_atom_plurality_or_tie_same_output_cluster": true
+    },
+    {
+      "case_key": "DA_d2_seq100/45",
+      "reference_diagnosis": "Drug-induced dermatomyositis secondary to ipilimumab therapy",
+      "correct_atom": "collapse3c",
+      "wrong_atom_modal_output_cluster_size": 1,
+      "wrong_atom_majority_same_output_cluster": false,
+      "all_wrong_atoms_same_output_cluster": false,
+      "predictions": {
+        "forest": "Dermatomyositis",
+        "impc": "Ipilimumab-induced myositis",
+        "collapse3c": "Ipilimumab-induced Dermatomyositis",
+        "multistance": "Melanoma-associated Dermatomyositis"
+      },
+      "relations": {
+        "forest": "partial_parent_or_component",
+        "impc": "partial_parent_or_component",
+        "collapse3c": "complete_equivalent",
+        "multistance": "conflicting_subtype_or_scope"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "forest": false,
+        "impc": false,
+        "multistance": true
+      },
+      "correct_label_present_in_any_wrong_pool": true,
+      "correct_label_present_in_all_wrong_pools": false,
+      "wrong_atom_plurality_or_tie_same_output_cluster": false
+    },
+    {
+      "case_key": "DA_d2_seq100/60",
+      "reference_diagnosis": "Ostium secundum atrial septal defect (OS-ASD)",
+      "correct_atom": "collapse3c",
+      "wrong_atom_modal_output_cluster_size": 3,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
+      "predictions": {
+        "forest": "Atrial Septal Defect",
+        "impc": "Atrial Septal Defect",
+        "collapse3c": "Secundum Atrial Septal Defect",
+        "multistance": "Atrial Septal Defect"
+      },
+      "relations": {
+        "forest": "partial_parent_or_component",
+        "impc": "partial_parent_or_component",
+        "collapse3c": "complete_equivalent",
+        "multistance": "partial_parent_or_component"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "forest": false,
+        "impc": false,
+        "multistance": false
+      },
+      "correct_label_present_in_any_wrong_pool": false,
+      "correct_label_present_in_all_wrong_pools": false,
+      "wrong_atom_plurality_or_tie_same_output_cluster": true
+    },
+    {
+      "case_key": "DA_d2_seq100/99",
+      "reference_diagnosis": "Epidermolysis bullosa pruriginosa (EBP)",
+      "correct_atom": "impc",
+      "wrong_atom_modal_output_cluster_size": 3,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
+      "predictions": {
+        "forest": "Dystrophic Epidermolysis Bullosa",
+        "impc": "Epidermolysis Bullosa Pruriginosa",
+        "collapse3c": "Dystrophic Epidermolysis Bullosa",
+        "multistance": "Dystrophic Epidermolysis Bullosa"
+      },
+      "relations": {
+        "forest": "partial_parent_or_component",
+        "impc": "complete_equivalent",
+        "collapse3c": "partial_parent_or_component",
+        "multistance": "partial_parent_or_component"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "forest": true,
+        "collapse3c": false,
+        "multistance": false
+      },
+      "correct_label_present_in_any_wrong_pool": true,
+      "correct_label_present_in_all_wrong_pools": false,
+      "wrong_atom_plurality_or_tie_same_output_cluster": true
+    },
+    {
+      "case_key": "MCR_seq200b/275",
+      "reference_diagnosis": "Ischemic colitis",
+      "correct_atom": "collapse3c",
+      "wrong_atom_modal_output_cluster_size": 1,
+      "wrong_atom_majority_same_output_cluster": false,
+      "all_wrong_atoms_same_output_cluster": false,
+      "predictions": {
+        "forest": "Ulcerative Colitis",
+        "impc": "Crohn's Disease",
+        "collapse3c": "Ischemic Colitis",
+        "multistance": "Inflammatory Bowel Disease"
+      },
+      "relations": {
+        "forest": "conflicting_subtype_or_scope",
+        "impc": "conflicting_subtype_or_scope",
+        "collapse3c": "complete_equivalent",
+        "multistance": "partial_parent_or_component"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "forest": true,
+        "impc": true,
+        "multistance": true
+      },
+      "correct_label_present_in_any_wrong_pool": true,
+      "correct_label_present_in_all_wrong_pools": true,
+      "wrong_atom_plurality_or_tie_same_output_cluster": false
+    },
+    {
+      "case_key": "MCR_seq200b/287",
+      "reference_diagnosis": "Autoimmune hepatitis",
+      "correct_atom": "multistance",
+      "wrong_atom_modal_output_cluster_size": 3,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
+      "predictions": {
+        "forest": "Acute Liver Failure",
+        "impc": "Acute Liver Failure",
+        "collapse3c": "Acute liver failure",
+        "multistance": "Autoimmune Hepatitis"
+      },
+      "relations": {
+        "forest": "partial_parent_or_component",
+        "impc": "partial_parent_or_component",
+        "collapse3c": "partial_parent_or_component",
+        "multistance": "complete_equivalent"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "forest": true,
+        "impc": true,
+        "collapse3c": true
+      },
+      "correct_label_present_in_any_wrong_pool": true,
+      "correct_label_present_in_all_wrong_pools": true,
+      "wrong_atom_plurality_or_tie_same_output_cluster": true
+    },
+    {
+      "case_key": "MCR_seq200b/309",
+      "reference_diagnosis": "Graves disease",
+      "correct_atom": "multistance",
+      "wrong_atom_modal_output_cluster_size": 1,
+      "wrong_atom_majority_same_output_cluster": false,
+      "all_wrong_atoms_same_output_cluster": false,
+      "predictions": {
+        "forest": "Thyroid Storm",
+        "impc": "Hyperthyroidism",
+        "collapse3c": "Thyrotoxicosis",
+        "multistance": "Graves' Disease"
+      },
+      "relations": {
+        "forest": "conflicting_subtype_or_scope",
+        "impc": "partial_parent_or_component",
+        "collapse3c": "partial_parent_or_component",
+        "multistance": "complete_equivalent"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "forest": true,
+        "impc": true,
+        "collapse3c": false
+      },
+      "correct_label_present_in_any_wrong_pool": true,
+      "correct_label_present_in_all_wrong_pools": false,
+      "wrong_atom_plurality_or_tie_same_output_cluster": false
+    },
+    {
+      "case_key": "MCR_seq200b/335",
+      "reference_diagnosis": "Drug-induced lupus",
+      "correct_atom": "forest",
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": false,
+      "predictions": {
+        "forest": "Drug-induced lupus erythematosus",
+        "impc": "Sarcoidosis",
+        "collapse3c": "Systemic Lupus Erythematosus",
+        "multistance": "Systemic Lupus Erythematosus"
+      },
+      "relations": {
+        "forest": "complete_equivalent",
+        "impc": "not_equivalent",
+        "collapse3c": "conflicting_subtype_or_scope",
+        "multistance": "conflicting_subtype_or_scope"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "impc": false,
+        "collapse3c": false,
+        "multistance": true
+      },
+      "correct_label_present_in_any_wrong_pool": true,
+      "correct_label_present_in_all_wrong_pools": false,
+      "wrong_atom_plurality_or_tie_same_output_cluster": true
+    },
+    {
+      "case_key": "MCR_seq200b/345",
+      "reference_diagnosis": "Hereditary hypophosphatemic rickets with hypercalciuria",
+      "correct_atom": "collapse3c",
+      "wrong_atom_modal_output_cluster_size": 3,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
+      "predictions": {
+        "forest": "X-linked hypophosphatemia",
+        "impc": "X-linked hypophosphatemia",
+        "collapse3c": "Hereditary Hypophosphatemic Rickets with Hypercalciuria",
+        "multistance": "X-linked Hypophosphatemia"
+      },
+      "relations": {
+        "forest": "conflicting_subtype_or_scope",
+        "impc": "conflicting_subtype_or_scope",
+        "collapse3c": "complete_equivalent",
+        "multistance": "conflicting_subtype_or_scope"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "forest": false,
+        "impc": true,
+        "multistance": false
+      },
+      "correct_label_present_in_any_wrong_pool": true,
+      "correct_label_present_in_all_wrong_pools": false,
+      "wrong_atom_plurality_or_tie_same_output_cluster": true
+    },
+    {
+      "case_key": "MCR_seq200b/346",
+      "reference_diagnosis": "myxoinflammatory fibroblastic sarcoma",
+      "correct_atom": "impc",
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": false,
+      "predictions": {
+        "forest": "Hodgkin lymphoma",
+        "impc": "Inflammatory myxohyaline tumor",
+        "collapse3c": "Hodgkin lymphoma",
+        "multistance": "Myxoid liposarcoma"
+      },
+      "relations": {
+        "forest": "manifestation_or_related",
+        "impc": "complete_equivalent",
+        "collapse3c": "manifestation_or_related",
+        "multistance": "conflicting_subtype_or_scope"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "forest": true,
+        "collapse3c": false,
+        "multistance": false
+      },
+      "correct_label_present_in_any_wrong_pool": true,
+      "correct_label_present_in_all_wrong_pools": false,
+      "wrong_atom_plurality_or_tie_same_output_cluster": true
+    },
+    {
+      "case_key": "MCR_seq200b/364",
+      "reference_diagnosis": "acute interstitial nephritis",
+      "correct_atom": "multistance",
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": false,
+      "predictions": {
+        "forest": "Acute Kidney Injury",
+        "impc": "Acute Kidney Injury",
+        "collapse3c": "Sildenafil-induced acute kidney injury",
+        "multistance": "Sildenafil-induced allergic interstitial nephritis"
+      },
+      "relations": {
+        "forest": "manifestation_or_related",
+        "impc": "manifestation_or_related",
+        "collapse3c": "partial_parent_or_component",
+        "multistance": "complete_equivalent"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "forest": false,
+        "impc": false,
+        "collapse3c": false
+      },
+      "correct_label_present_in_any_wrong_pool": false,
+      "correct_label_present_in_all_wrong_pools": false,
+      "wrong_atom_plurality_or_tie_same_output_cluster": true
+    },
+    {
+      "case_key": "MCR_seq200b/371",
+      "reference_diagnosis": "Brucellosis",
+      "correct_atom": "multistance",
+      "wrong_atom_modal_output_cluster_size": 1,
+      "wrong_atom_majority_same_output_cluster": false,
+      "all_wrong_atoms_same_output_cluster": false,
+      "predictions": {
+        "forest": "Hemarthrosis",
+        "impc": "hematoma",
+        "collapse3c": "Septic Bursitis",
+        "multistance": "Brucellar bursitis"
+      },
+      "relations": {
+        "forest": "not_equivalent",
+        "impc": "not_equivalent",
+        "collapse3c": "manifestation_or_related",
+        "multistance": "complete_equivalent"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "forest": false,
+        "impc": false,
+        "collapse3c": false
+      },
+      "correct_label_present_in_any_wrong_pool": false,
+      "correct_label_present_in_all_wrong_pools": false,
+      "wrong_atom_plurality_or_tie_same_output_cluster": false
+    },
+    {
+      "case_key": "MCR_seq200b/374",
+      "reference_diagnosis": "cryptogenic organizing pneumonia",
+      "correct_atom": "collapse3c",
+      "wrong_atom_modal_output_cluster_size": 3,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
+      "predictions": {
+        "forest": "Sarcoidosis",
+        "impc": "Sarcoidosis",
+        "collapse3c": "Cryptogenic organizing pneumonia",
+        "multistance": "Sarcoidosis"
+      },
+      "relations": {
+        "forest": "not_equivalent",
+        "impc": "not_equivalent",
+        "collapse3c": "complete_equivalent",
+        "multistance": "not_equivalent"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "forest": false,
+        "impc": true,
+        "multistance": true
+      },
+      "correct_label_present_in_any_wrong_pool": true,
+      "correct_label_present_in_all_wrong_pools": false,
+      "wrong_atom_plurality_or_tie_same_output_cluster": true
+    },
+    {
+      "case_key": "MCR_seq200b/430",
+      "reference_diagnosis": "Atrial tachycardia",
+      "correct_atom": "collapse3c",
+      "wrong_atom_modal_output_cluster_size": 1,
+      "wrong_atom_majority_same_output_cluster": false,
+      "all_wrong_atoms_same_output_cluster": false,
+      "predictions": {
+        "forest": "Mitral Isthmus Dependent Atrial Flutter",
+        "impc": "Mitral Isthmus-Dependent Atrial Flutter",
+        "collapse3c": "Vein of Marshall Atrial Tachycardia",
+        "multistance": "Atrial Tachycardia due to Epicardial Accessory Pathway"
+      },
+      "relations": {
+        "forest": "conflicting_subtype_or_scope",
+        "impc": "conflicting_subtype_or_scope",
+        "collapse3c": "complete_equivalent",
+        "multistance": "not_equivalent"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "forest": false,
+        "impc": false,
+        "multistance": true
+      },
+      "correct_label_present_in_any_wrong_pool": true,
+      "correct_label_present_in_all_wrong_pools": false,
+      "wrong_atom_plurality_or_tie_same_output_cluster": false
+    },
+    {
+      "case_key": "MCR_seq200b/437",
+      "reference_diagnosis": "Hepatopulmonary syndrome",
+      "correct_atom": "impc",
+      "wrong_atom_modal_output_cluster_size": 1,
+      "wrong_atom_majority_same_output_cluster": false,
+      "all_wrong_atoms_same_output_cluster": false,
+      "predictions": {
+        "forest": "Heart Failure with Preserved Ejection Fraction",
+        "impc": "Hepatopulmonary Syndrome",
+        "collapse3c": "Prosthetic valve dysfunction",
+        "multistance": "Severe Prosthesis-Patient Mismatch"
+      },
+      "relations": {
+        "forest": "manifestation_or_related",
+        "impc": "complete_equivalent",
+        "collapse3c": "manifestation_or_related",
+        "multistance": "manifestation_or_related"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "forest": false,
+        "collapse3c": false,
+        "multistance": true
+      },
+      "correct_label_present_in_any_wrong_pool": true,
+      "correct_label_present_in_all_wrong_pools": false,
+      "wrong_atom_plurality_or_tie_same_output_cluster": false
+    },
+    {
+      "case_key": "MCR_v1_seq100/50",
+      "reference_diagnosis": "Gastrointestinal clear cell sarcoma",
+      "correct_atom": "collapse3c",
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": false,
+      "predictions": {
+        "forest": "Malignant Peripheral Nerve Sheath Tumor (MPNST)",
+        "impc": "Schwannoma",
+        "collapse3c": "Gastrointestinal Clear Cell Sarcoma",
+        "multistance": "Malignant Peripheral Nerve Sheath Tumor (MPNST)"
+      },
+      "relations": {
+        "forest": "not_equivalent",
+        "impc": "not_equivalent",
+        "collapse3c": "complete_equivalent",
+        "multistance": "not_equivalent"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "forest": false,
+        "impc": false,
+        "multistance": false
+      },
+      "correct_label_present_in_any_wrong_pool": false,
+      "correct_label_present_in_all_wrong_pools": false,
+      "wrong_atom_plurality_or_tie_same_output_cluster": true
+    },
+    {
+      "case_key": "MCR_v1_seq100/62",
+      "reference_diagnosis": "Lipoblastoma",
+      "correct_atom": "collapse3c",
+      "wrong_atom_modal_output_cluster_size": 3,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
+      "predictions": {
+        "forest": "Lipoma",
+        "impc": "Lipoma",
+        "collapse3c": "Lipoblastoma",
+        "multistance": "Lipoma"
+      },
+      "relations": {
+        "forest": "conflicting_subtype_or_scope",
+        "impc": "conflicting_subtype_or_scope",
+        "collapse3c": "complete_equivalent",
+        "multistance": "conflicting_subtype_or_scope"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "forest": true,
+        "impc": true,
+        "multistance": false
+      },
+      "correct_label_present_in_any_wrong_pool": true,
+      "correct_label_present_in_all_wrong_pools": false,
+      "wrong_atom_plurality_or_tie_same_output_cluster": true
+    },
+    {
+      "case_key": "MCR_v1_seq100/67",
+      "reference_diagnosis": "congenital unilateral hypoplasia of depressor anguli oris",
+      "correct_atom": "collapse3c",
+      "wrong_atom_modal_output_cluster_size": 3,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
+      "predictions": {
+        "forest": "Congenital unilateral lower lip palsy",
+        "impc": "Congenital unilateral lower lip palsy",
+        "collapse3c": "Asymmetric Crying Face Syndrome",
+        "multistance": "Congenital unilateral lower lip palsy"
+      },
+      "relations": {
+        "forest": "partial_parent_or_component",
+        "impc": "partial_parent_or_component",
+        "collapse3c": "complete_equivalent",
+        "multistance": "partial_parent_or_component"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "forest": false,
+        "impc": false,
+        "multistance": true
+      },
+      "correct_label_present_in_any_wrong_pool": true,
+      "correct_label_present_in_all_wrong_pools": false,
+      "wrong_atom_plurality_or_tie_same_output_cluster": true
+    },
+    {
+      "case_key": "MCR_v1_seq100/73",
+      "reference_diagnosis": "metastatic prostate carcinoma",
+      "correct_atom": "forest",
+      "wrong_atom_modal_output_cluster_size": 1,
+      "wrong_atom_majority_same_output_cluster": false,
+      "all_wrong_atoms_same_output_cluster": false,
+      "predictions": {
+        "forest": "Brain Metastasis from Prostate Cancer",
+        "impc": "metastatic brain tumor",
+        "collapse3c": "Cerebellar metastasis",
+        "multistance": "Brain Metastasis"
+      },
+      "relations": {
+        "forest": "complete_equivalent",
+        "impc": "partial_parent_or_component",
+        "collapse3c": "partial_parent_or_component",
+        "multistance": "partial_parent_or_component"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "impc": false,
+        "collapse3c": false,
+        "multistance": false
+      },
+      "correct_label_present_in_any_wrong_pool": false,
+      "correct_label_present_in_all_wrong_pools": false,
+      "wrong_atom_plurality_or_tie_same_output_cluster": false
+    },
+    {
+      "case_key": "MCR_v1_seq100/74",
+      "reference_diagnosis": "Catecholaminergic polymorphic ventricular tachycardia",
+      "correct_atom": "forest",
+      "wrong_atom_modal_output_cluster_size": 3,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
+      "predictions": {
+        "forest": "Catecholaminergic Polymorphic Ventricular Tachycardia",
+        "impc": "Long QT Syndrome",
+        "collapse3c": "Long QT Syndrome",
+        "multistance": "Long QT Syndrome"
+      },
+      "relations": {
+        "forest": "complete_equivalent",
+        "impc": "not_equivalent",
+        "collapse3c": "not_equivalent",
+        "multistance": "not_equivalent"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "impc": true,
+        "collapse3c": true,
+        "multistance": true
+      },
+      "correct_label_present_in_any_wrong_pool": true,
+      "correct_label_present_in_all_wrong_pools": true,
+      "wrong_atom_plurality_or_tie_same_output_cluster": true
+    },
+    {
+      "case_key": "MCR_v1_seq100/90",
+      "reference_diagnosis": "squamous cell carcinoma",
+      "correct_atom": "forest",
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": false,
+      "predictions": {
+        "forest": "Squamous cell carcinoma metastasis",
+        "impc": "pacemaker pocket tumor",
+        "collapse3c": "Pacemaker pocket tumor",
+        "multistance": "Pacemaker site sarcoma"
+      },
+      "relations": {
+        "forest": "complete_equivalent",
+        "impc": "manifestation_or_related",
+        "collapse3c": "manifestation_or_related",
+        "multistance": "conflicting_subtype_or_scope"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "impc": false,
+        "collapse3c": false,
+        "multistance": false
+      },
+      "correct_label_present_in_any_wrong_pool": false,
+      "correct_label_present_in_all_wrong_pools": false,
+      "wrong_atom_plurality_or_tie_same_output_cluster": true
+    },
+    {
+      "case_key": "MCR_v2_seq100/143",
+      "reference_diagnosis": "ANCA-associated vasculitis",
+      "correct_atom": "multistance",
+      "wrong_atom_modal_output_cluster_size": 3,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
+      "predictions": {
+        "forest": "Wegener's granulomatosis",
+        "impc": "Wegener's granulomatosis",
+        "collapse3c": "Wegener's granulomatosis",
+        "multistance": "ANCA-associated vasculitis"
+      },
+      "relations": {
+        "forest": "partial_parent_or_component",
+        "impc": "partial_parent_or_component",
+        "collapse3c": "partial_parent_or_component",
+        "multistance": "complete_equivalent"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "forest": true,
+        "impc": true,
+        "collapse3c": true
+      },
+      "correct_label_present_in_any_wrong_pool": true,
+      "correct_label_present_in_all_wrong_pools": true,
+      "wrong_atom_plurality_or_tie_same_output_cluster": true
+    },
+    {
+      "case_key": "MCR_v2_seq100/173",
+      "reference_diagnosis": "Chronic subdural hematoma",
+      "correct_atom": "collapse3c",
+      "wrong_atom_modal_output_cluster_size": 3,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
+      "predictions": {
+        "forest": "Subdural Hematoma",
+        "impc": "Subdural Hematoma",
+        "collapse3c": "Chronic Subdural Hematoma",
+        "multistance": "Subdural Hematoma"
+      },
+      "relations": {
+        "forest": "partial_parent_or_component",
+        "impc": "partial_parent_or_component",
+        "collapse3c": "complete_equivalent",
+        "multistance": "partial_parent_or_component"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "forest": false,
+        "impc": false,
+        "multistance": false
+      },
+      "correct_label_present_in_any_wrong_pool": false,
+      "correct_label_present_in_all_wrong_pools": false,
+      "wrong_atom_plurality_or_tie_same_output_cluster": true
+    },
+    {
+      "case_key": "MCR_v2_seq100/174",
+      "reference_diagnosis": "autoimmune gastritis",
+      "correct_atom": "multistance",
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": false,
+      "predictions": {
+        "forest": "Atrophic gastritis",
+        "impc": "atrophic gastritis",
+        "collapse3c": "Gastric mucosal atrophy",
+        "multistance": "Autoimmune gastritis"
+      },
+      "relations": {
+        "forest": "partial_parent_or_component",
+        "impc": "partial_parent_or_component",
+        "collapse3c": "partial_parent_or_component",
+        "multistance": "complete_equivalent"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "forest": true,
+        "impc": true,
+        "collapse3c": true
+      },
+      "correct_label_present_in_any_wrong_pool": true,
+      "correct_label_present_in_all_wrong_pools": true,
+      "wrong_atom_plurality_or_tie_same_output_cluster": true
+    },
+    {
+      "case_key": "MCR_v2_seq100/178",
+      "reference_diagnosis": "Malingering",
+      "correct_atom": "collapse3c",
+      "wrong_atom_modal_output_cluster_size": 3,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
+      "predictions": {
+        "forest": "Factitious disorder",
+        "impc": "Factitious disorder",
+        "collapse3c": "Malingering",
+        "multistance": "Factitious disorder"
+      },
+      "relations": {
+        "forest": "conflicting_subtype_or_scope",
+        "impc": "conflicting_subtype_or_scope",
+        "collapse3c": "complete_equivalent",
+        "multistance": "conflicting_subtype_or_scope"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "forest": true,
+        "impc": true,
+        "multistance": true
+      },
+      "correct_label_present_in_any_wrong_pool": true,
+      "correct_label_present_in_all_wrong_pools": true,
+      "wrong_atom_plurality_or_tie_same_output_cluster": true
+    },
+    {
+      "case_key": "MCR_v2_seq100/188",
+      "reference_diagnosis": "Liposarcoma",
+      "correct_atom": "impc",
+      "wrong_atom_modal_output_cluster_size": 3,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
+      "predictions": {
+        "forest": "Gastrointestinal stromal tumor (GIST)",
+        "impc": "Liposarcoma",
+        "collapse3c": "Gastrointestinal Stromal Tumor (GIST)",
+        "multistance": "Gastrointestinal Stromal Tumor (GIST)"
+      },
+      "relations": {
+        "forest": "not_equivalent",
+        "impc": "complete_equivalent",
+        "collapse3c": "not_equivalent",
+        "multistance": "not_equivalent"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "forest": false,
+        "collapse3c": false,
+        "multistance": true
+      },
+      "correct_label_present_in_any_wrong_pool": true,
+      "correct_label_present_in_all_wrong_pools": false,
+      "wrong_atom_plurality_or_tie_same_output_cluster": true
+    },
+    {
+      "case_key": "MCR_v2_seq100/213",
+      "reference_diagnosis": "morbilliform drug eruption",
+      "correct_atom": "multistance",
+      "wrong_atom_modal_output_cluster_size": 1,
+      "wrong_atom_majority_same_output_cluster": false,
+      "all_wrong_atoms_same_output_cluster": false,
+      "predictions": {
+        "forest": "Drug rash with eosinophilia and systemic symptoms (DRESS) syndrome",
+        "impc": "Drug Rash with Eosinophilia and Systemic Symptoms (DRESS)",
+        "collapse3c": "Maculopapular Rash",
+        "multistance": "Maculopapular Drug Eruption"
+      },
+      "relations": {
+        "forest": "conflicting_subtype_or_scope",
+        "impc": "conflicting_subtype_or_scope",
+        "collapse3c": "partial_parent_or_component",
+        "multistance": "complete_equivalent"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "forest": false,
+        "impc": false,
+        "collapse3c": false
+      },
+      "correct_label_present_in_any_wrong_pool": false,
+      "correct_label_present_in_all_wrong_pools": false,
+      "wrong_atom_plurality_or_tie_same_output_cluster": false
+    },
+    {
+      "case_key": "MCR_v2_seq100/223",
+      "reference_diagnosis": "COVID-19-related coagulopathy",
+      "correct_atom": "collapse3c",
+      "wrong_atom_modal_output_cluster_size": 3,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": true,
+      "predictions": {
+        "forest": "Sepsis",
+        "impc": "Sepsis",
+        "collapse3c": "COVID-19-associated coagulopathy",
+        "multistance": "Sepsis"
+      },
+      "relations": {
+        "forest": "manifestation_or_related",
+        "impc": "manifestation_or_related",
+        "collapse3c": "complete_equivalent",
+        "multistance": "manifestation_or_related"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "forest": false,
+        "impc": false,
+        "multistance": true
+      },
+      "correct_label_present_in_any_wrong_pool": true,
+      "correct_label_present_in_all_wrong_pools": false,
+      "wrong_atom_plurality_or_tie_same_output_cluster": true
+    },
+    {
+      "case_key": "MCR_v2_seq100/227",
+      "reference_diagnosis": "pulmonary embolism",
+      "correct_atom": "impc",
+      "wrong_atom_modal_output_cluster_size": 1,
+      "wrong_atom_majority_same_output_cluster": false,
+      "all_wrong_atoms_same_output_cluster": false,
+      "predictions": {
+        "forest": "Takotsubo Cardiomyopathy",
+        "impc": "Pulmonary Embolism",
+        "collapse3c": "Acute Cor Pulmonale",
+        "multistance": "Acute Coronary Syndrome with Normal Coronary Arteries"
+      },
+      "relations": {
+        "forest": "conflicting_subtype_or_scope",
+        "impc": "complete_equivalent",
+        "collapse3c": "manifestation_or_related",
+        "multistance": "conflicting_subtype_or_scope"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "forest": true,
+        "collapse3c": true,
+        "multistance": true
+      },
+      "correct_label_present_in_any_wrong_pool": true,
+      "correct_label_present_in_all_wrong_pools": true,
+      "wrong_atom_plurality_or_tie_same_output_cluster": false
+    },
+    {
+      "case_key": "MCR_v2_seq100/233",
+      "reference_diagnosis": "double-outlet right ventricle",
+      "correct_atom": "collapse3c",
+      "wrong_atom_modal_output_cluster_size": 2,
+      "wrong_atom_majority_same_output_cluster": true,
+      "all_wrong_atoms_same_output_cluster": false,
+      "predictions": {
+        "forest": "Tetralogy of Fallot",
+        "impc": "Tricuspid Atresia",
+        "collapse3c": "Double Outlet Right Ventricle",
+        "multistance": "Tricuspid Atresia"
+      },
+      "relations": {
+        "forest": "conflicting_subtype_or_scope",
+        "impc": "not_equivalent",
+        "collapse3c": "complete_equivalent",
+        "multistance": "not_equivalent"
+      },
+      "correct_primary_label_in_wrong_atom_pool": {
+        "forest": true,
+        "impc": false,
+        "multistance": true
+      },
+      "correct_label_present_in_any_wrong_pool": true,
+      "correct_label_present_in_all_wrong_pools": false,
+      "wrong_atom_plurality_or_tie_same_output_cluster": true
+    }
+  ],
+  "multistance_only_complete_cases": [
+    {
+      "case_key": "DA_d2_heldout100/353",
+      "reference_diagnosis": "Atypical epidermolysis bullosa nevus (benign)",
+      "multistance_prediction": "Epidermolysis Bullosa Nevus",
+      "multistance_champion_stances": [
+        "commit"
+      ],
+      "correct_label_in_triad_primary_pool": {
+        "forest": true,
+        "impc": false,
+        "collapse3c": true
+      },
+      "correct_label_present_in_any_triad_primary_pool": true
+    },
+    {
+      "case_key": "DA_d2_heldout200b/740",
+      "reference_diagnosis": "Secondary cutaneous endometriosis (SCE)",
+      "multistance_prediction": "Scar Endometriosis",
+      "multistance_champion_stances": [
+        "commit",
+        "mechanism"
+      ],
+      "correct_label_in_triad_primary_pool": {
+        "forest": false,
+        "impc": false,
+        "collapse3c": false
+      },
+      "correct_label_present_in_any_triad_primary_pool": false
+    },
+    {
+      "case_key": "DA_d2_seq100/103",
+      "reference_diagnosis": "Intra-atrial reentrant tachycardia (IART) with variable atrioventricular block",
+      "multistance_prediction": "Intra-atrial Reentrant Tachycardia",
+      "multistance_champion_stances": [
+        "commit",
+        "mechanism"
+      ],
+      "correct_label_in_triad_primary_pool": {
+        "forest": true,
+        "impc": true,
+        "collapse3c": true
+      },
+      "correct_label_present_in_any_triad_primary_pool": true
+    },
+    {
+      "case_key": "MCR_seq200b/287",
+      "reference_diagnosis": "Autoimmune hepatitis",
+      "multistance_prediction": "Autoimmune Hepatitis",
+      "multistance_champion_stances": [
+        "commit",
+        "coverage",
+        "mechanism"
+      ],
+      "correct_label_in_triad_primary_pool": {
+        "forest": true,
+        "impc": true,
+        "collapse3c": true
+      },
+      "correct_label_present_in_any_triad_primary_pool": true
+    },
+    {
+      "case_key": "MCR_seq200b/309",
+      "reference_diagnosis": "Graves disease",
+      "multistance_prediction": "Graves' Disease",
+      "multistance_champion_stances": [
+        "commit",
+        "mechanism"
+      ],
+      "correct_label_in_triad_primary_pool": {
+        "forest": true,
+        "impc": true,
+        "collapse3c": false
+      },
+      "correct_label_present_in_any_triad_primary_pool": true
+    },
+    {
+      "case_key": "MCR_seq200b/364",
+      "reference_diagnosis": "acute interstitial nephritis",
+      "multistance_prediction": "Sildenafil-induced allergic interstitial nephritis",
+      "multistance_champion_stances": [
+        "commit"
+      ],
+      "correct_label_in_triad_primary_pool": {
+        "forest": false,
+        "impc": false,
+        "collapse3c": false
+      },
+      "correct_label_present_in_any_triad_primary_pool": false
+    },
+    {
+      "case_key": "MCR_seq200b/371",
+      "reference_diagnosis": "Brucellosis",
+      "multistance_prediction": "Brucellar bursitis",
+      "multistance_champion_stances": [
+        "commit"
+      ],
+      "correct_label_in_triad_primary_pool": {
+        "forest": false,
+        "impc": false,
+        "collapse3c": false
+      },
+      "correct_label_present_in_any_triad_primary_pool": false
+    },
+    {
+      "case_key": "MCR_v2_seq100/143",
+      "reference_diagnosis": "ANCA-associated vasculitis",
+      "multistance_prediction": "ANCA-associated vasculitis",
+      "multistance_champion_stances": [
+        "commit"
+      ],
+      "correct_label_in_triad_primary_pool": {
+        "forest": true,
+        "impc": true,
+        "collapse3c": true
+      },
+      "correct_label_present_in_any_triad_primary_pool": true
+    },
+    {
+      "case_key": "MCR_v2_seq100/174",
+      "reference_diagnosis": "autoimmune gastritis",
+      "multistance_prediction": "Autoimmune gastritis",
+      "multistance_champion_stances": [
+        "commit",
+        "mechanism"
+      ],
+      "correct_label_in_triad_primary_pool": {
+        "forest": true,
+        "impc": true,
+        "collapse3c": true
+      },
+      "correct_label_present_in_any_triad_primary_pool": true
+    },
+    {
+      "case_key": "MCR_v2_seq100/213",
+      "reference_diagnosis": "morbilliform drug eruption",
+      "multistance_prediction": "Maculopapular Drug Eruption",
+      "multistance_champion_stances": [
+        "commit"
+      ],
+      "correct_label_in_triad_primary_pool": {
+        "forest": false,
+        "impc": false,
+        "collapse3c": false
+      },
+      "correct_label_present_in_any_triad_primary_pool": false
     }
   ]
 }
