@@ -31,12 +31,19 @@ class MasSingleAgentAtomCensusTest(unittest.TestCase):
     def test_census_contract_and_key_mechanism_counts(self) -> None:
         self.assertEqual(
             self.result["schema_version"],
-            "mas-single-agent-atom-census-v2-public-aggregate",
+            "mas-single-agent-atom-census-v3-authorized-case-consensus",
         )
-        self.assertFalse(
+        self.assertTrue(
             self.result["publication_contract"]["case_level_records_included"]
         )
-        self.assertNotIn("unique_correct_cases", self.result)
+        self.assertEqual(len(self.result["unique_correct_cases"]), 51)
+        self.assertTrue(
+            all(
+                set(row["predictions"]) == {"forest", "impc", "collapse3c"}
+                and set(row["relations"]) == {"forest", "impc", "collapse3c"}
+                for row in self.result["unique_correct_cases"]
+            )
+        )
         self.assertEqual(self.result["cases_n"], 800)
         self.assertEqual(self.result["case_arm_rows_n"], 2400)
         self.assertEqual(self.result["provenance"]["files_verified"], 2400)

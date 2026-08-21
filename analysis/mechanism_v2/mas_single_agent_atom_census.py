@@ -223,8 +223,7 @@ def build(repo: Path, commit: str, replay_path: Path) -> dict:
     per_arm = {}
     unique_correct = Counter()
     minority_risk = Counter()
-    unique_label_in_any_wrong_pool = 0
-    unique_label_in_both_wrong_pools = 0
+    minority_examples = []
     complete_hist = Counter()
     agreement_hist = Counter()
     oracle_complete = 0
@@ -281,12 +280,19 @@ def build(repo: Path, commit: str, replay_path: Path) -> dict:
                 arm: correct_label in {_norm(x) for x in recs[arm]["candidates"]}
                 for arm in wrong_arms
             }
-            in_any_wrong_pool = any(pool_presence.values())
-            in_both_wrong_pools = all(pool_presence.values())
-            unique_label_in_any_wrong_pool += in_any_wrong_pool
-            unique_label_in_both_wrong_pools += in_both_wrong_pools
-            family_stats["unique_label_in_any_wrong_pool"] += in_any_wrong_pool
-            family_stats["unique_label_in_both_wrong_pools"] += in_both_wrong_pools
+            family_stats["unique_label_in_any_wrong_pool"] += any(pool_presence.values())
+            family_stats["unique_label_in_both_wrong_pools"] += all(pool_presence.values())
+            minority_examples.append(
+                {
+                    "case_key": case_key,
+                    "reference_diagnosis": rows[correct_arm]["reference_diagnosis"],
+                    "correct_atom": correct_arm,
+                    "wrong_pair_same_output_cluster": wrong_same_cluster,
+                    "predictions": {arm: recs[arm]["champion"] for arm in ARMS},
+                    "relations": {arm: rows[arm]["clinical_relation"] for arm in ARMS},
+                    "correct_primary_label_in_wrong_atom_pool": pool_presence,
+                }
+            )
 
     for arm, records in arm_records.items():
         ep = [endpoints[(case_key, arm)] for case_key in cases]
@@ -335,6 +341,11 @@ def build(repo: Path, commit: str, replay_path: Path) -> dict:
                 "mean_primary_pool_intersection_n": _mean(intersection_sizes),
             }
 
+    for item in minority_examples:
+        values = list(item["correct_primary_label_in_wrong_atom_pool"].values())
+        item["correct_label_present_in_any_wrong_pool"] = any(values)
+        item["correct_label_present_in_both_wrong_pools"] = all(values)
+
     best_single = max(value["clinical_complete_n"] for value in per_arm.values())
     by_family_out = {}
     for family, stats in by_family.items():
@@ -362,13 +373,16 @@ def build(repo: Path, commit: str, replay_path: Path) -> dict:
             ],
         }
     return {
-        "schema_version": "mas-single-agent-atom-census-v2-public-aggregate",
+        "schema_version": "mas-single-agent-atom-census-v3-authorized-case-consensus",
         "scope": "Offline observational census; no model/API calls and no new clinical adjudication.",
         "publication_contract": {
-            "case_level_records_included": False,
-            "case_level_diagnoses_included": False,
-            "case_level_predictions_included": False,
-            "reason": "Public artifact contains aggregate mechanism counts only; exact values remain reproducible from the frozen source tree and script.",
+            "case_level_records_included": True,
+            "case_level_scope": "All 51 cases in which exactly one of Forest, IMPC, and Collapse3c is clinically complete.",
+            "case_level_diagnoses_included": True,
+            "case_level_predictions_included": True,
+            "case_level_clinical_relations_included": True,
+            "raw_vignette_text_included": False,
+            "authorization": "The user explicitly authorized public release of per-case consensus data on 2026-08-21.",
         },
         "interpretation_contract": [
             "The three-arm oracle union is an upper-bound complementarity diagnostic, not an achievable MAS score.",
@@ -398,9 +412,14 @@ def build(repo: Path, commit: str, replay_path: Path) -> dict:
             "unique_correct_atom_n": dict(unique_correct),
             "wrong_consensus_suppression_risk_n": sum(minority_risk.values()),
             "wrong_consensus_suppression_risk_by_correct_atom": dict(minority_risk),
-            "unique_correct_with_label_in_any_wrong_pool_n": unique_label_in_any_wrong_pool,
-            "unique_correct_with_label_in_both_wrong_pools_n": unique_label_in_both_wrong_pools,
+            "unique_correct_with_label_in_any_wrong_pool_n": sum(
+                item["correct_label_present_in_any_wrong_pool"] for item in minority_examples
+            ),
+            "unique_correct_with_label_in_both_wrong_pools_n": sum(
+                item["correct_label_present_in_both_wrong_pools"] for item in minority_examples
+            ),
         },
+        "unique_correct_cases": minority_examples,
     }
 
 

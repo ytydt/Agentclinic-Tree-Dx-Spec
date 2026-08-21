@@ -73,7 +73,7 @@ Forest、IMPC、Collapse3c 均可成为原子，但必须修改其接口和若�
 - 对存在日志的仓库统计文件数、结构与其能证明/不能证明的机制；
 - 区分作者官方实现、论文未给仓库、第三方复现与同名无关项目。
 
-完整机器账本见 [paper_code_ledger.json](results/MAS_SINGLE_AGENT_ATOM_RESEARCH/paper_code_ledger.json)，官方仓库提交与日志探测见 [audited_source_manifest.json](results/MAS_SINGLE_AGENT_ATOM_RESEARCH/audited_source_manifest.json)。主项目离线 census 见 [backbone_atom_census.json](results/MAS_SINGLE_AGENT_ATOM_RESEARCH/backbone_atom_census.json)，其生成脚本为 [mas_single_agent_atom_census.py](mas_single_agent_atom_census.py)。公开 census 只保存 800 例汇总、分层和机制计数，不发布逐病例诊断/预测列表；脚本仍会从冻结 source tree 精确重建这些汇总，并由单元测试逐字段比对。
+完整机器账本见 [paper_code_ledger.json](results/MAS_SINGLE_AGENT_ATOM_RESEARCH/paper_code_ledger.json)，官方仓库提交与日志探测见 [audited_source_manifest.json](results/MAS_SINGLE_AGENT_ATOM_RESEARCH/audited_source_manifest.json)。主项目离线 census 见 [backbone_atom_census.json](results/MAS_SINGLE_AGENT_ATOM_RESEARCH/backbone_atom_census.json)，其生成脚本为 [mas_single_agent_atom_census.py](mas_single_agent_atom_census.py)。根据用户于 2026-08-21 的明确公开授权，census 同时发布 51 个 unique-correct 病例的 case key、reference diagnosis、三原子 prediction、root relation、错误原子同簇状态与正确标签跨池存在性；不重复嵌入原始 vignette 文本。脚本从冻结 source tree 精确重建全部汇总和逐例 consensus，并由单元测试逐字段比对。
 
 ### 1.2 “真正机制”的判定合同
 
@@ -401,19 +401,45 @@ VE-MAS v1 只迁移 residual principle：原始 vignette、原始 atom claims、
 
 DA 的 15 个 unique-correct 中只有 2 个规范化正确标签出现在任一错误原子池；MCR 为 16/36。这个字符串级诊断不能当 ontology recall，但提示 DA 更依赖保留某一原子独有的完整标签/对象组件，MCR 则有更多 shared-candidate evidence/comparator 修复机会。它进一步反对“一种全局讨论协议同时解决两个域”。
 
-### 5.4 去标识轨迹模式揭示需要哪种 verifier
+### 5.4 四个可复查病例揭示需要哪种 verifier
 
-逐轨迹复核只在本地完成；公开报告不列病例 id、reference、三臂预测或逐例 relation。可公开复核的汇总约束为：
+#### MCR 292：多数错，正确候选三池都在
 
-| 去标识失败模式 | 汇总锚点 | 不能采用的动作 | 所需 verifier/合同 |
-|---|---:|---|---|
-| 正确少数面对两个同簇错误输出 | 27/51 unique-correct | majority/unanimity | correct-minority preservation + mirrored pair comparator |
-| 正确标签也存在于两个错误原子主池 | 8/51 | 再生成更多同义候选 | candidate-relative polarity/threshold audit + frozen comparison |
-| 正确标签只存在于一个错误池或两个都不存在 | 43/51，其中 33/51 两池均无 | 只比较池交集 | append-only union + safe identity + exposure-preserving admission |
-| disease、mechanism、manifestation、parent/component 混排 | 定性轨迹审计；未建立全量候选根标签 | 用同一标量直接排序 | mandatory requested-object projection + typed relation |
-| 单条 evidence 方向相似而组合排序冲突 | 定性轨迹审计；interaction mediator 未随机化 | 自由讨论或取绝对变化 | low-order signed counterfactual edge audit |
+Forest 与 IMPC 都选 Hodgkin lymphoma，Collapse3c 选完整正确的 anaplastic large-cell lymphoma；ALCL 实际存在于三个池。Forest/IMPC 把 Reed–Sternberg-like/CD30 当作 Hodgkin 支持，即使 CD15 阴性；Collapse3c 保留 kidney-shaped pleomorphic cells 与 CD30 的候选相对关系。
 
-这些模式把下一步干预定位到“保留独特候选—校验对象—校验证据方向/组合—冻结逐对比较”四层，而不是增加第四位总体诊断者。前两行有冻结汇总计数；后两行是轨迹审计生成的待验证机制假说，报告不把它们伪装成已完成 census。
+- [Forest 轨迹](../../logs/backbone_v1/medcasereasoning_200b/mosaic_forest_v1/case_stages/292.json)
+- [IMPC 轨迹](../../logs/backbone_v1/medcasereasoning_200b/mosaic_impc_v1/case_stages/292.json)
+- [Collapse3c 轨迹](../../logs/backbone_v1/medcasereasoning_200b/aphhm_c_collapse3c_v1/case_stages/292.json)
+
+多数票会压制正确原子；需要的是 pathology/IHC polarity + candidate-pair comparator。
+
+#### MCR 74：正常 QTc 被两个原子当作 Long QT 支持
+
+Forest 正确选 CPVT；IMPC 与 Collapse3c 都选 Long QT syndrome，且正确候选在两个错误池中。IMPC 的 rationale 明说 `QTc 380 ms ... support Long QT Syndrome`，Collapse3c 也把同一 span 放入 LQTS support。
+
+- [Forest 轨迹](../../logs/backbone_v1/medcasereasoning/mosaic_forest_v1/case_stages/74.json)
+- [IMPC 轨迹](../../logs/backbone_v1/medcasereasoning/mosaic_impc_v1/case_stages/74.json)
+- [Collapse3c 轨迹](../../logs/backbone_v1/medcasereasoning/aphhm_c_collapse3c_v1/case_stages/74.json)
+
+这是 typed polarity/threshold edge 错误，不是需要第四位医生发表总体意见。
+
+#### MCR-v2 159：诊断对象、机制和组织学被混在一个排名里
+
+IMPC 给出完整正确 endometrioid adenocarcinoma；Forest 选择 `Iatrogenic tumor dissemination`（机制/过程），Collapse3c 选择 sarcomatoid carcinoma（冲突组织学），而正确候选也在两个错误池里。
+
+- [Forest 轨迹](../../logs/backbone_v1/medcasereasoning_v2/mosaic_forest_v1/case_stages/159.json)
+- [IMPC 轨迹](../../logs/backbone_v1/medcasereasoning_v2/mosaic_impc_v1/case_stages/159.json)
+- [Collapse3c 轨迹](../../logs/backbone_v1/medcasereasoning_v2/aphhm_c_collapse3c_v1/case_stages/159.json)
+
+需要 requested-object/type projector，不应把 disease、mechanism、manifestation 放在同一可比集合。
+
+#### MCR 275：三者全异，但正确缺血性结肠炎在两个错误池中
+
+Forest 选 ulcerative colitis，IMPC 选 Crohn disease，Collapse3c 正确选 ischemic colitis。这里应审计同一批 pathology/vascular/temporal evidence 对三候选的 interaction，而不是追求两轮共识。
+
+- [Forest 轨迹](../../logs/backbone_v1/medcasereasoning_200b/mosaic_forest_v1/case_stages/275.json)
+- [IMPC 轨迹](../../logs/backbone_v1/medcasereasoning_200b/mosaic_impc_v1/case_stages/275.json)
+- [Collapse3c 轨迹](../../logs/backbone_v1/medcasereasoning_200b/aphhm_c_collapse3c_v1/case_stages/275.json)
 
 ---
 
