@@ -1,9 +1,61 @@
 # C2 executable core/modifier factorization: closure result
 
-Status: **NOT_EXECUTED_OPERATIONAL_NO_GO**
+Status: **EXECUTED_MAP_GATE_NO_GO**
 
-Scientific result: **NOT_EVALUATED**. This status is not evidence that core/
-modifier factorization is ineffective, harmful or scientifically negative.
+Scientific result: **SELECTOR EFFICACY NOT EVALUATED**. Capacity restoration
+allowed the frozen outcome-blind annotation and two-model map review to run.
+The preregistered map gate failed, so no five-arm selector job was compiled or
+executed.
+
+## Resumed execution
+
+The original 200-case freeze was rebuilt as `freeze_resumed` solely because the
+formal gate binds the current generator code hash. Its case ledger is
+semantically identical to the original:
+`1be9453cbcca2c9f496d58868d62064987416492f9f70a2b3f1f24bf778613ab`.
+
+The user-authorized manual-surrogate calibration routed work to C2 because
+35/50 cases had all reference modifiers determinable from the vignette. That
+routing result does not validate C2's automatic map.
+
+The resumed annotation used the frozen construction identity
+`google/gemini-2.5-flash`. Validator-invalid caches were quarantined before exact
+retries. Eighteen cases remained fail-closed/unresolved rather than being
+manually imputed. Independent map reviews then completed 200/200 cases under
+each frozen heterogeneous reviewer:
+
+- `anthropic/claude-sonnet-4.6`
+- `openai/gpt-5.6-sol`
+
+### Scientific map gate
+
+| Check | Required | Observed | Result |
+|---|---:|---:|---|
+| Grouped-pair precision | >=0.95 | 0.8968 | fail |
+| Modifier-axis precision | >=0.85 | 0.8474 | fail |
+| Citation closure | 1.00 | 1.0000 | pass |
+| Nontrivial corruption cases | >=0.90 | 0.8600 | fail |
+| Raw agreement | >=0.90 | 0.8182 | fail |
+| Gwet AC1 | >=0.75 | 0.7914 | pass |
+| Unresolved rate | <=0.10 | 0.1500 | fail |
+| Unsafe synonym merges | 0 | 18 | fail |
+
+The machine-readable result is `scientific_gate.json` with status `NO_GO`.
+Because this is a pre-arm gate, clinical-complete and modifier-axis selector
+endpoints remain unobserved. Running the arms despite failure would invalidate
+the preregistered experiment.
+
+The final gate follows deterministic normalization of literal quotation offsets.
+The earlier pre-normalization diagnostic is preserved as
+`scientific_gate.pre_normalization.json`; it is not the scientific result.
+
+This result does not show that modifier information is absent. It shows that
+the current free-form factorizer/binder cannot turn available information into
+a sufficiently reliable executable lattice. Moreover, frozen C2 can only pick
+an existing surface candidate; it cannot synthesize a newly completed
+core-plus-modifier diagnosis. A ceiling-breaking successor therefore needs a
+safer modifier-completion representation rather than C3 evidence acquisition or
+an un-gated rerun of these arms.
 
 ## Frozen design
 
@@ -30,7 +82,7 @@ and its freeze ID is
 The protocol source commit was
 `bfd6755978693435d0929efe513f70e1a893ccfe`.
 
-## Why the probe was not executed
+## Historical pre-resume operational state
 
 The C0 model-panel release gate is
 `NO_GO_COVERAGE_RELIABILITY_AUDIT_ONLY`. Separately, the bound operational
@@ -97,10 +149,8 @@ python -m analysis.mechanism_v2.ceiling_breakthrough_experiments \
   --decision-out analysis/mechanism_v2/results/CEILING_CLOSURE/C2_factorization/decision.json
 ```
 
-If capacity is restored, the only permitted continuation is to resume the
-same frozen annotation and reviewer identities, then apply the preregistered
-gate and five-arm comparison without changing the sample, models, arms or
-thresholds.
+Capacity was restored and the same frozen identities were resumed. The map gate
+failed, so the five-arm comparison was not permitted.
 
 ## Offline implementation closure for a future resume
 
@@ -129,5 +179,5 @@ state evidence, not provider-account telemetry; `online_call_n` is therefore
 `null`. The formal-freeze check also recomputes `freeze_id`, verifies source
 artifact hashes and enforces the frozen cohort/family/arm contracts.
 
-Until then, C2 supplies a reusable frozen design and an operational No-Go—not
-a scientific effect estimate and not deployment evidence.
+C2 now supplies a scientific map-gate No-Go, not a selector effect estimate and
+not deployment evidence.

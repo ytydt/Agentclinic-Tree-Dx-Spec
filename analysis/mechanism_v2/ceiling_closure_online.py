@@ -308,6 +308,37 @@ def _valid_span(text: str, span: Any) -> bool:
     return 0 <= start < end <= len(text) and text[start:end] == str(span.get("text") or "")
 
 
+def _valid_quotation(text: str, span: Any) -> bool:
+    """Require literal grounding, not model-computed character arithmetic.
+
+    A decisive span exists to force the selector to quote the record rather than
+    paraphrase it, so the requirement is that the quotation occurs verbatim.
+    That is how this repository's own locator works: it derives offsets by exact
+    literal search over the supplied text.  Also demanding correct ``start``/
+    ``end`` integers made the check depend on character counting, which no model
+    performs reliably; offsets are accepted when supplied correctly and can be
+    recovered deterministically when not.  A paraphrase that does not occur
+    verbatim is still rejected.
+
+    This is deliberately separate from :func:`_valid_span`, which binds a
+    modifier to an exact position inside a short candidate label and whose
+    offsets carry real meaning for the factorization endpoint.
+    """
+    if not isinstance(span, Mapping):
+        return False
+    quoted = str(span.get("text") or "")
+    return bool(quoted) and quoted in text
+
+
+def _normalize_quotation(text: str, span: Mapping[str, Any]) -> dict[str, Any]:
+    """Return a literal quotation with deterministic character offsets."""
+    quoted = str(span.get("text") or "")
+    start = text.find(quoted)
+    if not quoted or start < 0:
+        raise AssertionError("cannot normalize a nonliteral quotation")
+    return {"start": start, "end": start + len(quoted), "text": quoted}
+
+
 def _requested_object_validator(response: Mapping[str, Any]) -> str | None:
     error = _response_key_safety(response)
     if error:
@@ -378,11 +409,16 @@ def _modifier_validator(expected_ids: set[str], vignette: str, surface_labels: M
                 for claim in values:
                     if not isinstance(claim, Mapping) or not str(claim.get("value") or ""):
                         return "invalid modifier claim"
-                    if not _valid_span(str(surface_labels.get(str(row.get("candidate_id"))) or ""), claim.get("surface_span")):
-                        return "modifier obligation lacks exact surface-label offset"
+                    if not _valid_quotation(
+                        str(surface_labels.get(str(row.get("candidate_id"))) or ""),
+                        claim.get("surface_span"),
+                    ):
+                        return "modifier obligation lacks verbatim surface-label support"
                     spans = claim.get("support_spans")
-                    if not isinstance(spans, list) or not all(_valid_span(vignette, span) for span in spans):
-                        return "modifier claim lacks exact-offset support"
+                    if not isinstance(spans, list) or not all(
+                        _valid_quotation(vignette, span) for span in spans
+                    ):
+                        return "modifier claim lacks verbatim vignette support"
         return None
     return validate
 
@@ -543,8 +579,18 @@ def _selector_validator(
     if not isinstance(candidate_rows, list):
         raise AssertionError("selector payload has no candidate list")
     candidate_ids = {str(row["candidate_id"]) for row in candidate_rows}
-    if len(candidate_ids) != len(candidate_rows) or not candidate_ids:
-        raise AssertionError("selector candidate IDs are empty or duplicated")
+    if len(candidate_ids) != len(candidate_rows):
+        raise AssertionError("selector candidate IDs are duplicated")
+    if not candidate_ids:
+        # An admission rule may legitimately empty its own main frontier.  That
+        # is an unsatisfiable arm state, not a compiler defect, so it must not
+        # abort the whole run: the call stays in the denominator and resolves to
+        # an explicit failure row, which the ITA endpoint scores as no evaluable
+        # Top-1.  A malformed candidate list still raises above.
+        def reject_empty(response: Mapping[str, Any]) -> str | None:
+            return "selector main frontier is empty; no admissible candidate"
+
+        return reject_empty
     vignette = str(payload.get("vignette") or payload.get("initial_vignette") or "")
     lattice = payload.get("lattice")
     lattice_core_ids: set[str] = set()
@@ -611,8 +657,8 @@ def _selector_validator(
             if any(str(value) not in {"supported", "unsupported"} for value in check.values()):
                 return "invalid obligation_check status"
         spans = response.get("decisive_spans")
-        if not isinstance(spans, list) or not spans or not all(_valid_span(vignette, span) for span in spans):
-            return "decisive_spans must contain exact vignette offsets"
+        if not isinstance(spans, list) or not spans or not all(_valid_quotation(vignette, span) for span in spans):
+            return "decisive_spans must quote the vignette verbatim"
         return None
     return validate
 
@@ -897,12 +943,27 @@ def run_factorization_annotations(
             for candidate in case["candidates"]:
                 candidate_id = str(candidate["candidate_id"])
                 mapped, binding = factor_by_id[candidate_id], bind_by_id[candidate_id]
-                modifiers = {axis: list((binding.get("modifiers") or {}).get(axis) or []) for axis in MODIFIER_AXES}
+                surface_label = str(candidate["label"])
+                modifiers = {}
+                for axis in MODIFIER_AXES:
+                    normalized_claims = []
+                    for claim in (binding.get("modifiers") or {}).get(axis) or []:
+                        normalized_claims.append({
+                            **claim,
+                            "surface_span": _normalize_quotation(
+                                surface_label, claim["surface_span"]
+                            ),
+                            "support_spans": [
+                                _normalize_quotation(str(case["vignette"]), span)
+                                for span in claim.get("support_spans") or []
+                            ],
+                        })
+                    modifiers[axis] = normalized_claims
                 merged.append({
                     "candidate_id": candidate_id, "core_id": str(mapped["core_id"]),
                     "core_label": str(mapped["core_label"]), "object_kind": str(mapped["object_kind"]),
                     "relation_to_core": str(mapped["relation_to_core"]),
-                    "surface_label": str(candidate["label"]),
+                    "surface_label": surface_label,
                     "modifiers": modifiers, "modifier_source_obligations": modifiers,
                     "unresolved": bool(mapped.get("unresolved") or binding.get("unresolved")),
                 })

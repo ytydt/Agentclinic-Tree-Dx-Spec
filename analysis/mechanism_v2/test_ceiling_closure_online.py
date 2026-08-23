@@ -13,6 +13,7 @@ from analysis.mechanism_v2.ceiling_closure_online import (
     _factor_review_validator,
     _factorizer_validator,
     _modifier_validator,
+    _normalize_quotation,
     _review_specs,
     _selector_validator,
     _validate_immutable_jobs,
@@ -83,7 +84,7 @@ def test_strict_target_blindness_rejects_audit_alias() -> None:
         _assert_closure_blind({"candidate": {"root_relation": "C"}})
 
 
-def test_factor_and_modifier_validators_require_exact_coverage_offsets() -> None:
+def test_factor_and_modifier_validators_require_exact_labels_and_grounded_support() -> None:
     factor = {
         "candidates": [
             {"candidate_id": "A", "core_id": "K1", "core_label": "core", "object_kind": "disease_entity", "relation_to_core": "identity", "unresolved": False},
@@ -104,10 +105,31 @@ def test_factor_and_modifier_validators_require_exact_coverage_offsets() -> None
     valid["candidates"][0]["modifiers"]["etiology"][0]["support_spans"] = []
     assert _modifier_validator({"A", "B"}, vignette, labels)(valid) is None
     valid["candidates"][0]["modifiers"]["etiology"][0]["surface_span"]["start"] = 1
-    assert _modifier_validator({"A", "B"}, vignette, labels)(valid) == "modifier obligation lacks exact surface-label offset"
-    valid["candidates"][0]["modifiers"]["etiology"][0]["surface_span"]["start"] = 0
+    assert _modifier_validator({"A", "B"}, vignette, labels)(valid) is None
+    valid["candidates"][0]["modifiers"]["etiology"][0]["surface_span"] = {
+        "start": 0,
+        "end": 9,
+        "text": "infection",
+    }
+    assert _modifier_validator({"A", "B"}, vignette, labels)(valid) == "modifier obligation lacks verbatim surface-label support"
+    valid["candidates"][0]["modifiers"]["etiology"][0]["surface_span"] = {
+        "start": 0,
+        "end": 10,
+        "text": "infectious",
+    }
     valid["candidates"][0]["modifiers"]["etiology"][0]["support_spans"] = [{"start": 17, "end": 34, "text": "positive culture"}]
-    assert _modifier_validator({"A", "B"}, vignette, labels)(valid) == "modifier claim lacks exact-offset support"
+    assert _modifier_validator({"A", "B"}, vignette, labels)(valid) is None
+    valid["candidates"][0]["modifiers"]["etiology"][0]["support_spans"] = [{"start": 18, "end": 34, "text": "culture was positive"}]
+    assert _modifier_validator({"A", "B"}, vignette, labels)(valid) == "modifier claim lacks verbatim vignette support"
+
+
+def test_normalize_quotation_recovers_exact_offsets() -> None:
+    assert _normalize_quotation(
+        "alpha positive culture omega",
+        {"start": 0, "end": 1, "text": "positive culture"},
+    ) == {"start": 6, "end": 22, "text": "positive culture"}
+    with pytest.raises(AssertionError, match="nonliteral"):
+        _normalize_quotation("alpha", {"text": "beta"})
 
 
 def test_factor_review_payload_binds_surface_obligations_and_exact_units(tmp_path: Path) -> None:

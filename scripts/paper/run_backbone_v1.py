@@ -366,7 +366,9 @@ def run_arm(
     return out_dir
 
 
-def score_da(pred_dir: Path, subset: Path, model: str) -> dict[str, Any]:
+def score_da(
+    pred_dir: Path, subset: Path, model: str, workers: int = 1
+) -> dict[str, Any]:
     import baseline_mapper_score as mapper_score
 
     cases = bc.load_runtime_cases(dataset="diagnosisarena", subset_dir=subset)
@@ -404,6 +406,7 @@ def score_da(pred_dir: Path, subset: Path, model: str) -> dict[str, Any]:
         mode="typed_llm_disagreement_rag",
         model=model,
         dry_run=False,
+        workers=workers,
     )
     _atomic_json(pred_dir / "mapper" / "summary.json", scored)
     print(
@@ -414,7 +417,7 @@ def score_da(pred_dir: Path, subset: Path, model: str) -> dict[str, Any]:
     return {"lexical": lex, "mapper": scored}
 
 
-def score_mcr(pred_dir: Path, subset_parquet: Path, workers: int = 25) -> dict[str, Any]:
+def score_mcr(pred_dir: Path, subset_parquet: Path, workers: int = 50) -> dict[str, Any]:
     from build_baseline_eval_projection import build_baseline_eval_projections
     from run_ox_mcr_official_eval import run_eval
     from transfer_eval import judges
@@ -511,7 +514,7 @@ def main() -> int:
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--score", action="store_true")
     ap.add_argument("--score-only", action="store_true")
-    ap.add_argument("--mcr-judge-workers", type=int, default=25)
+    ap.add_argument("--mcr-judge-workers", type=int, default=50)
     args = ap.parse_args()
 
     ds_key = args.dataset

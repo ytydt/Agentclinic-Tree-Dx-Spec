@@ -25,6 +25,7 @@ from agentclinic_tree_dx.aphhm_c import (  # noqa: E402
     AXIS_MODES,
     CONCEPT_CONTRACTS,
     MODES,
+    SELECTOR_ORDERS,
     AphhmCPipeline,
 )
 from agentclinic_tree_dx.llm_client import RobustLLMClient  # noqa: E402
@@ -77,6 +78,43 @@ def main() -> int:
         action="store_true",
         help="Collapse near-duplicates inside each stance group before nomination",
     )
+    ap.add_argument(
+        "--enforce-group-quota",
+        action="store_true",
+        help="Seat the highest-ranked member of any stance group the tournament "
+        "reply left silent, then re-adjudicate (contract fix, +1 call when used)",
+    )
+    ap.add_argument(
+        "--strict-identity",
+        action="store_true",
+        help="Merge concepts on morphological equality only; a generator-claimed "
+        "alias no longer folds a parent and a child into one concept",
+    )
+    ap.add_argument(
+        "--quarantine-direction-conflicts",
+        action="store_true",
+        help="Withdraw both directions when one fact is asserted as support and "
+        "contradict for the same candidate, and log the edge (design 9.3 item 2)",
+    )
+    ap.add_argument(
+        "--typed-selector-cards",
+        action="store_true",
+        help="Hand the selector typed fact cards (polarity/time/specificity/"
+        "reliability) instead of bare for/against strings (design 9.3 item 5)",
+    )
+    ap.add_argument(
+        "--pair-edge-audit",
+        action="store_true",
+        help="Zero-call disputed-edge audit over the frozen shortlist, inserted "
+        "before the selector; adds no candidate and removes none (design 9.3 item 3)",
+    )
+    ap.add_argument(
+        "--selector-order",
+        choices=list(SELECTOR_ORDERS),
+        default="generation",
+        help="Presentation order of the selector shortlist. ORDER_COUNTERFACTUAL_V1 "
+        "arm: the candidate set is unchanged, only its order moves",
+    )
     ap.add_argument("--near-dedup-jaccard", type=float, default=0.4)
     ap.add_argument("--score", action="store_true")
     ap.add_argument("--mcr-judge-workers", type=int, default=50)
@@ -122,6 +160,12 @@ def main() -> int:
         near_dedup_shortlist=bool(args.near_dedup_shortlist),
         group_near_dedup=bool(args.group_near_dedup),
         near_dedup_jaccard=float(args.near_dedup_jaccard),
+        enforce_group_quota=bool(args.enforce_group_quota),
+        strict_identity=bool(args.strict_identity),
+        quarantine_direction_conflicts=bool(args.quarantine_direction_conflicts),
+        typed_selector_cards=bool(args.typed_selector_cards),
+        pair_edge_audit=bool(args.pair_edge_audit),
+        selector_order=str(args.selector_order),
     )
 
     _atomic_json(
@@ -140,6 +184,12 @@ def main() -> int:
             "near_dedup_shortlist": pipe.near_dedup_shortlist,
             "group_near_dedup": pipe.group_near_dedup,
             "near_dedup_jaccard": pipe.near_dedup_jaccard,
+            "enforce_group_quota": pipe.enforce_group_quota,
+            "strict_identity": pipe.strict_identity,
+            "quarantine_direction_conflicts": pipe.quarantine_direction_conflicts,
+            "typed_selector_cards": pipe.typed_selector_cards,
+            "pair_edge_audit": pipe.pair_edge_audit,
+            "selector_order": pipe.selector_order,
             "max_facts": args.max_facts,
             "axis_lambda": args.axis_lambda,
             "max_calls": pipe.max_calls,

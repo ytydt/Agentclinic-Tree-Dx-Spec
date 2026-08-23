@@ -491,6 +491,7 @@ def gate_admission(freeze_dir: Path, out: Path) -> dict[str, Any]:
     freeze = _json(freeze_path) if freeze_path.is_file() else {}
     k = int(freeze.get("k") or 4)
     failures: list[str] = []
+    substantively_empty_typed: list[str] = []
     if not freeze_path.is_file():
         failures.append("freeze_manifest_missing")
     cases_sha256 = canonical_sha256(rows)
@@ -534,7 +535,23 @@ def gate_admission(freeze_dir: Path, out: Path) -> dict[str, Any]:
             if set(main) & set(residual) or set(main) | set(residual) != universe or len(main) + len(residual) != len(universe):
                 failures.append(f"{row['case_key']}:{arm}:ledger_partition")
         if len(row["arms"]["typed_fixed_k"]["main_frontier"]) == 0:
-            failures.append(f"{row['case_key']}:typed_frontier_empty")
+            # Pre-arm amendment 2026-08-18: an empty typed frontier blocks
+            # readiness only when annotation is missing, since the arm would
+            # otherwise collapse silently into fixed-k.  When the request is
+            # positively resolved and every candidate is positively typed, the
+            # emptiness is the frozen strict-equality rule's own outcome; the
+            # case is carried into the arm, where it yields no evaluable Top-1
+            # under the frozen ITA rule.
+            kinds = row.get("object_kind_by_id") or {}
+            request_resolved = str(row["requested_object"].get("kind")) not in {"", "unresolved"}
+            all_positively_typed = bool(universe) and all(
+                str(kinds.get(candidate_id) or "") not in {"", "unresolved"}
+                for candidate_id in universe
+            )
+            if request_resolved and all_positively_typed:
+                substantively_empty_typed.append(str(row["case_key"]))
+            else:
+                failures.append(f"{row['case_key']}:typed_frontier_empty")
         expected_typed_width = min(k, len(row.get("typing_eligible_ids") or []))
         if len(row["arms"]["typed_fixed_k"]["main_frontier"]) != expected_typed_width:
             failures.append(f"{row['case_key']}:typed_fixed_k_not_filled")
@@ -547,6 +564,8 @@ def gate_admission(freeze_dir: Path, out: Path) -> dict[str, Any]:
         "freeze_id": freeze.get("freeze_id"),
         "cases_sha256": cases_sha256,
         "case_n": len(rows),
+        "substantively_empty_typed_frontier_n": len(substantively_empty_typed),
+        "substantively_empty_typed_frontier_cases": sorted(substantively_empty_typed),
     }, "pre-online structural readiness only; final admission efficacy gate is owned by analyse")
 
 
@@ -1963,17 +1982,43 @@ def gate_factorization(freeze_dir: Path, annotations: Path, reviews: Path, admis
                 for candidate in case["candidates"]:
                     candidate_id = str(candidate["candidate_id"])
                     mapped, binding = factor_by_id[candidate_id], bind_by_id[candidate_id]
-                    modifiers = {
-                        axis: list((binding.get("modifiers") or {}).get(axis) or [])
-                        for axis in MODIFIER_AXES
-                    }
+                    surface_label = str(candidate["label"])
+                    modifiers = {}
+                    for axis in MODIFIER_AXES:
+                        normalized_claims = []
+                        for claim in (binding.get("modifiers") or {}).get(axis) or []:
+                            surface_text = str((claim.get("surface_span") or {}).get("text") or "")
+                            surface_start = surface_label.find(surface_text)
+                            if not surface_text or surface_start < 0:
+                                raise ValueError("nonliteral surface quotation")
+                            support_spans = []
+                            for span in claim.get("support_spans") or []:
+                                support_text = str((span or {}).get("text") or "")
+                                support_start = str(case["vignette"]).find(support_text)
+                                if not support_text or support_start < 0:
+                                    raise ValueError("nonliteral vignette quotation")
+                                support_spans.append({
+                                    "start": support_start,
+                                    "end": support_start + len(support_text),
+                                    "text": support_text,
+                                })
+                            normalized_claims.append({
+                                **claim,
+                                "surface_span": {
+                                    "start": surface_start,
+                                    "end": surface_start + len(surface_text),
+                                    "text": surface_text,
+                                },
+                                "support_spans": support_spans,
+                            })
+                        modifiers[axis] = normalized_claims
                     merged.append({
                         "candidate_id": candidate_id,
                         "core_id": str(mapped["core_id"]),
                         "core_label": str(mapped["core_label"]),
                         "object_kind": str(mapped["object_kind"]),
                         "relation_to_core": str(mapped["relation_to_core"]),
-                        "surface_label": str(candidate["label"]),
+                        "surface_label": surface_label,
                         "modifiers": modifiers,
                         "modifier_source_obligations": modifiers,
                         "unresolved": bool(mapped.get("unresolved") or binding.get("unresolved")),

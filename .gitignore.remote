@@ -1,0 +1,88 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+.cache/
+data/cpg/restricted/
+data/poc/
+# Case-report sources: large + regenerable via scripts/download_case_report_sources.py
+# and scripts/build_case_report_{corpus,index}.py (do NOT commit ~700MB of data).
+data/case_reports/raw/
+data/case_reports/case_reports.jsonl
+data/cpg/raw/
+data/cpg/processed/case_report_chunks.jsonl
+# Full corpus subtree (indices, embeddings, textbooks, statpearls, etc.)
+data/corpus/
+# GitHub 100MB/file hard limit — keep local-only
+data/cpg/processed/cpg_chunks.jsonl
+data/cpg/processed/pmc_oa_ddx_chunks.jsonl
+data/knowledge_raw/kg.csv
+data/knowledge_raw/unified_symptom_disease_cache.json
+data/knowledge_raw/pathophenodb_v1.2.1.nt
+data/knowledge_raw/snomed_typed_rf2_eval.json
+# Local-only working dirs
+backups/
+backup/
+checkpoints/
+chat_recs/
+# Archived conversation exports may embed historical script snapshots; keep out of git
+data/cpg/eval/conversation_export_*.json
+data/cpg/eval/conversation_export_*.jsonl
+
+# NOTE: logs/ is intentionally tracked on cursor4 for experiment reproducibility.
+
+chat_recs/
+构建临床诊断kg*
+TALP_chat_record.md
+baselines/chain_of_diagnosis/models/
+data/benchmarks/ddxplus/raw/
+data/benchmarks/medcasereasoning/raw/
+
+# E7b's expanded raw result tree is retained locally and published as one
+# checksummed full-results archive.  Keep the small human-auditable summaries
+# directly visible in Git while avoiding ~1,000 Git Data API object writes.
+analysis/mechanism_v2/results/E7b_registry_selector/cache/
+analysis/mechanism_v2/results/E7b_registry_selector/case_conditions*.jsonl
+analysis/mechanism_v2/results/E7b_registry_selector/telemetry.jsonl
+analysis/mechanism_v2/results/E7b_registry_selector/audit_queue*.jsonl
+
+# E7c publishes the complete raw calls/cache as one checksummed archive while
+# retaining the compact tables, preregistration and human audit in Git.
+analysis/mechanism_v2/results/E7c_directional_registry/cache/
+analysis/mechanism_v2/results/E7c_directional_registry/case_conditions.jsonl
+analysis/mechanism_v2/results/E7c_directional_registry/relation_classifications.jsonl
+analysis/mechanism_v2/results/E7c_directional_registry/telemetry.jsonl
+analysis/mechanism_v2/results/E7c_directional_registry/audit_queue.jsonl
+
+# E4 commits one checksummed raw archive per selector arm; immutable cache
+# objects remain local to avoid hundreds of tiny Git objects per arm.
+analysis/mechanism_v2/results/E4_fixed_pool_crossover/arms/*/cache/
+analysis/mechanism_v2/results/E4_fixed_pool_crossover/case_conditions.jsonl
+analysis/mechanism_v2/results/E4_fixed_pool_crossover/audit_queue.jsonl
+
+# E1 commits one checksummed raw archive per factorial arm.  The immutable
+# per-request cache stays local to avoid hundreds of tiny Git objects.
+analysis/mechanism_v2/results/E1_input_factorial/arms/*/cache/
+analysis/mechanism_v2/results/E1_input_factorial/case_conditions.jsonl
+analysis/mechanism_v2/results/E1_input_factorial/audit_queue.jsonl
+
+# E5 commits checksummed response-cache archives per construction/selector
+# phase while keeping the large joined condition table local.
+analysis/mechanism_v2/results/E5_candidate_interference/perturbations/cache/
+analysis/mechanism_v2/results/E5_candidate_interference/arms/*/cache/
+analysis/mechanism_v2/results/E5_candidate_interference/case_conditions.jsonl
+analysis/mechanism_v2/results/E5_candidate_interference/audit_queue.jsonl
+
+# E6 commits checksummed caches for the builder and each representation arm;
+# the expanded matched representations and joined audit queue stay archived.
+analysis/mechanism_v2/results/E6_representation_fidelity/representations/cache/
+analysis/mechanism_v2/results/E6_representation_fidelity/representations/case_representations.jsonl
+analysis/mechanism_v2/results/E6_representation_fidelity/arms/*/cache/
+analysis/mechanism_v2/results/E6_representation_fidelity/representation_manifest.jsonl
+analysis/mechanism_v2/results/E6_representation_fidelity/case_conditions.jsonl
+analysis/mechanism_v2/results/E6_representation_fidelity/audit_queue.jsonl
+analysis/mechanism_v2/results/E6_representation_fidelity/semantic_adjudication/cache/
+
+# E2 retains compact reviewer outputs, telemetry and checksummed archives;
+# immutable per-call caches stay local to avoid hundreds of tiny Git objects.
+analysis/mechanism_v2/results/E2_blinded_clinical_adjudication/reviewer_*/cache/

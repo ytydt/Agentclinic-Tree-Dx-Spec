@@ -69,6 +69,8 @@ class CandidateConcept:
     score_logit: float = 0.0
     status: str = "live"
     agent_votes: int = 0
+    narrower_than: list[str] = field(default_factory=list)
+    broader_than: list[str] = field(default_factory=list)
 
     def as_dict(self) -> dict[str, Any]:
         return {
@@ -83,21 +85,42 @@ class CandidateConcept:
             "score_logit": self.score_logit,
             "status": self.status,
             "agent_votes": self.agent_votes,
+            "narrower_than": list(self.narrower_than),
+            "broader_than": list(self.broader_than),
         }
 
 
 class GlobalConceptRegistry:
-    def __init__(self, resolver: Any = None) -> None:
+    def __init__(self, resolver: Any = None, *, safe_identity: bool = True) -> None:
         self.resolver = resolver
+        # Default on: folding on containment is a defect, so a new run should not
+        # have to opt out of the repair.  It stays switchable, and is recorded in
+        # the run manifest, so an archived arm can still be replayed verbatim by
+        # passing `safe_identity=False`.
+        self.safe_identity = bool(safe_identity)
         self.concepts: dict[str, CandidateConcept] = {}
         self._alias_index: dict[str, str] = {}
         self.events: list[dict[str, Any]] = []
+        self.merge_audit: list[dict[str, Any]] = []
         self._next_id = 1
 
     def _match(self, a: str, b: str) -> bool:
+        """Only confirmed equivalence merges.
+
+        Substring containment is *not* identity: it is a broader/narrower
+        relation, and folding on it turns a complete composite into an alias of
+        its own parent, which the selector shortlist can never reach because the
+        shortlist is built from ``preferred_name`` alone.  Containment is handled
+        by :meth:`_relation`, mirroring ``aphhm_c.ConceptRegistry``.
+
+        With ``safe_identity=False`` the pre-repair predicate is restored so the
+        archived Forest/IMPC arms replay unchanged; it folded 561/452 concepts.
+        """
         if not a or not b:
             return False
         if _norm(a) == _norm(b):
+            return True
+        if not self.safe_identity and self._relation(a, b):
             return True
         if self.resolver is not None:
             try:
@@ -105,14 +128,24 @@ class GlobalConceptRegistry:
                 if callable(ra):
                     aa = str(ra(a) or a)
                     bb = str(ra(b) or b)
-                    if _norm(aa) == _norm(bb):
+                    if _norm(aa) == _norm(bb) and _norm(aa):
                         return True
             except Exception:
                 pass
-        na, nb = _norm(a), _norm(b)
-        if len(na) >= 6 and len(nb) >= 6 and (na in nb or nb in na):
-            return True
         return False
+
+    def _relation(self, a: str, b: str) -> str:
+        """Directed relation of ``a`` w.r.t. ``b`` when they are not identical."""
+        na, nb = _norm(a), _norm(b)
+        if not na or not nb or na == nb:
+            return ""
+        aw, bw = set(na.split()), set(nb.split())
+        if len(na) >= 6 and len(nb) >= 6:
+            if nb in na or bw < aw:
+                return "narrower_than"
+            if na in nb or aw < bw:
+                return "broader_than"
+        return ""
 
     def _find(self, name: str) -> Optional[str]:
         key = _norm(name)
@@ -173,6 +206,23 @@ class GlobalConceptRegistry:
             axis_nodes=[axis_node] if axis_node else [],
             agent_votes=1 if count_vote else 0,
         )
+        # Containment now records a typed relation instead of folding, so a
+        # parent and its qualified child stay separately addressable.  Under the
+        # legacy predicate `_find` already folded, so this loop cannot fire.
+        for other in self.concepts.values() if self.safe_identity else ():
+            rel = self._relation(name, other.preferred_name)
+            if rel == "narrower_than":
+                c.narrower_than.append(other.concept_id)
+                other.broader_than.append(cid)
+                self.merge_audit.append(
+                    {"kind": "narrower_than", "child": cid, "parent": other.concept_id}
+                )
+            elif rel == "broader_than":
+                c.broader_than.append(other.concept_id)
+                other.narrower_than.append(cid)
+                self.merge_audit.append(
+                    {"kind": "broader_than", "parent": cid, "child": other.concept_id}
+                )
         self.concepts[cid] = c
         self._alias_index[_norm(name)] = cid
         self.events.append({"op": "add", "concept_id": cid, "name": name, "view": view})
@@ -204,7 +254,9 @@ class GlobalConceptRegistry:
             seen[k] = c.concept_id
         return dups
 
-    def two_lane_frontier(self, main_k: int = 4, protected_k: int = 2) -> list[CandidateConcept]:
+    def two_lane_frontier(
+        self, main_k: int = 4, protected_k: int = 2, parent_refund_k: int = 2
+    ) -> list[CandidateConcept]:
         live = [c for c in self.concepts.values() if c.status == "live"]
         live.sort(key=lambda c: (-c.score_logit, c.preferred_name.lower()))
         main = live[:main_k]
@@ -224,9 +276,39 @@ class GlobalConceptRegistry:
             if c not in protected:
                 protected.append(c)
         out = list(main)
+        seen = {x.concept_id for x in out}
         for c in protected:
-            if c.concept_id not in {x.concept_id for x in out}:
+            if c.concept_id not in seen:
                 out.append(c)
+                seen.add(c.concept_id)
+        # A jointly admitted parent/child pair descends from one pre-split
+        # concept that occupied one slot, so charging it two is what evicts an
+        # unrelated candidate.  Refund one slot per such pair, capped.  Widening
+        # unconditionally is not the alternative: E5 measured width 4->8 at about
+        # -17.68pp clinical-complete.
+        # ``narrower_than`` holds the *broader* concepts, matching
+        # ``aphhm_c.ConceptNode``, so each relation is already recorded once from
+        # the narrower side; count unordered pairs both of which were admitted.
+        # Seating a refunded child can itself complete a further pair, so grant
+        # slots to a fixpoint rather than from a single pre-count.  The budget
+        # keeps this bounded: n pre-split concepts plus at most
+        # ``parent_refund_k`` splits, never a general widening.
+        granted = 0
+        while granted < int(parent_refund_k):
+            pairs = {
+                frozenset((c.concept_id, broader))
+                for c in out
+                for broader in c.narrower_than
+                if broader in seen
+            }
+            if len(pairs) <= granted:
+                break
+            nxt = next((c for c in live if c.concept_id not in seen), None)
+            if nxt is None:
+                break
+            out.append(nxt)
+            seen.add(nxt.concept_id)
+            granted += 1
         return out
 
 
@@ -266,11 +348,18 @@ class MosaicPipeline:
         resolver: Any = None,
         margin_threshold: float = 0.75,
         max_calls: Optional[int] = None,
+        safe_identity: bool = True,
     ) -> None:
         if mode not in MODES:
             raise ValueError(f"mode must be one of {MODES}")
         self.llm = llm
         self.mode = mode
+        # Substring containment folded 561/452 concepts in the archived Forest and
+        # IMPC arms, silently turning a complete composite into an alias of its
+        # own parent; the shortlist is built from `preferred_name`, so the child
+        # then became unreachable.  Repaired by default (net +17/+13 addressable
+        # complete objects, zero harm), switchable for verbatim replay.
+        self.safe_identity = bool(safe_identity)
         self.main_k = main_k
         self.protected_k = protected_k
         self.resolver = resolver
@@ -564,6 +653,7 @@ class MosaicPipeline:
         stages["evidence"] = [e.as_dict() for e in evidence.values()]
         stages["registry"] = [c.as_dict() for c in registry.concepts.values()]
         stages["events"] = list(registry.events)
+        stages["merge_audit"] = list(registry.merge_audit)
         stages["frontier_final"] = [c.as_dict() for c in frontier]
         return MosaicResult(
             case_id=case_id,
@@ -576,7 +666,9 @@ class MosaicPipeline:
 
     def _run_lite_family(self, *, case_id: str, vignette: str, strict_gate: bool) -> MosaicResult:
         calls = 0
-        registry = GlobalConceptRegistry(resolver=self.resolver)
+        registry = GlobalConceptRegistry(
+            resolver=self.resolver, safe_identity=self.safe_identity
+        )
         evidence: dict[str, EvidenceFact] = {}
         stages: dict[str, Any] = {"mode": self.mode, "vignette_chars": len(vignette)}
 
@@ -656,7 +748,9 @@ class MosaicPipeline:
 
     def _run_forest(self, *, case_id: str, vignette: str) -> MosaicResult:
         calls = 0
-        registry = GlobalConceptRegistry(resolver=self.resolver)
+        registry = GlobalConceptRegistry(
+            resolver=self.resolver, safe_identity=self.safe_identity
+        )
         evidence: dict[str, EvidenceFact] = {}
         stages: dict[str, Any] = {"mode": "forest", "vignette_chars": len(vignette)}
         axes = [
@@ -722,7 +816,9 @@ class MosaicPipeline:
 
     def _run_impc(self, *, case_id: str, vignette: str) -> MosaicResult:
         calls = 0
-        registry = GlobalConceptRegistry(resolver=self.resolver)
+        registry = GlobalConceptRegistry(
+            resolver=self.resolver, safe_identity=self.safe_identity
+        )
         evidence: dict[str, EvidenceFact] = {}
         stages: dict[str, Any] = {"mode": "impc", "vignette_chars": len(vignette)}
         name_sets: list[set[str]] = []

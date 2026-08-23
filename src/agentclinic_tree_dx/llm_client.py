@@ -7,60 +7,33 @@ from LLM-Structured-Data-main/debate.py.  It exposes:
   - ``RobustLLMClient`` – drop-in replacement for the original ``OpenAILLMClient``
     with the same ``call_module(module_name, prompt_text, payload)`` interface
 
-Proxy mode is controlled by ``TREE_DX_PROXY_MODE``:
-  - ``fixed``        → repository/server Clash proxy (the historical default)
-  - ``environment``  → preserve the execution environment's dynamic proxy
-  - ``direct``       → ignore proxy environment variables
-
-When ``TREE_DX_PROXY_MODE`` is unset, ``TREE_DX_USE_PROXY`` retains its
-backward-compatible meaning: true selects ``fixed`` and false selects
-``direct``.
+Proxy mode is controlled by the environment variable ``TREE_DX_USE_PROXY``:
+  - unset or "1" / "true"  → proxy ON  (default, matching the server environment)
+  - "0" / "false"          → proxy OFF (direct connection)
 
 To override host / port use ``TREE_DX_PROXY_HOST`` / ``TREE_DX_PROXY_PORT``.
-
-OpenRouter reasoning output is opt-in and resolved per request:
-  - ``TREE_DX_REASONING_EFFORT`` → xhigh/high/medium/low/minimal/none
-  - ``TREE_DX_REASONING_MAX_TOKENS`` → positive integer budget (exclusive with effort)
-  - ``TREE_DX_REASONING_EXCLUDE`` → omit returned reasoning text while retaining usage
 """
 
 from __future__ import annotations
 
 import json
-import hashlib
 import logging
 import os
 import re
 import socket as _socket
 import subprocess
-import sys
 import threading
 import types
-import urllib.error
-import urllib.request
 from dataclasses import dataclass, field
 from datetime import datetime
-from time import perf_counter, sleep
+from time import sleep
 from typing import Any
 
-try:  # Official SDK remains the preferred transport when the environment has it.
-    import httpx  # type: ignore
-except ImportError:  # pragma: no cover - exercised by environment probe tests
-    httpx = None  # type: ignore[assignment]
-
-try:
-    import openai  # type: ignore
-except ImportError:  # pragma: no cover - exercised by environment probe tests
-    openai = None  # type: ignore[assignment]
-
-try:
-    import requests  # type: ignore
-    from requests.adapters import HTTPAdapter  # type: ignore
-    from urllib3.util.retry import Retry  # type: ignore
-except ImportError:  # pragma: no cover - exercised by environment probe tests
-    requests = None  # type: ignore[assignment]
-    HTTPAdapter = None  # type: ignore[assignment,misc]
-    Retry = None  # type: ignore[assignment,misc]
+import httpx
+import openai
+import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 try:
     import tiktoken as _tiktoken
@@ -74,10 +47,6 @@ except ImportError:
 # ══════════════════════════════════════════════════════════════════════════════
 
 _LOG_TLS = threading.local()
-_TELEMETRY_TLS = threading.local()
-_TELEMETRY_WRITE_LOCK = threading.Lock()
-_PROVIDER_ROUTE_LOCK = threading.Lock()
-_PROVIDER_ROUTE_COUNTER = 0
 
 
 def set_thread_log_path(path: str | None) -> None:
@@ -88,20 +57,6 @@ def set_thread_log_path(path: str | None) -> None:
 
 def get_thread_log_path() -> str | None:
     return getattr(_LOG_TLS, "path", None)
-
-
-def set_thread_telemetry_path(path: str | None) -> None:
-    """Route structured request telemetry for the current case/thread.
-
-    The JSONL record intentionally contains hashes and runtime metadata, never
-    credential values.  Experiment runners can keep verbose prompt/output logs
-    separate from the cost and provenance ledger.
-    """
-    _TELEMETRY_TLS.path = path
-
-
-def get_thread_telemetry_path() -> str | None:
-    return getattr(_TELEMETRY_TLS, "path", None)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -115,74 +70,25 @@ def _env_bool(key: str, default: bool) -> bool:
     return v not in ("0", "false", "no", "off")
 
 
-def _resolve_proxy_mode(
-    explicit_mode: str | None = None,
-    legacy_use_proxy: bool | None = None,
-) -> str:
-    """Resolve proxy policy without mutating process environment.
-
-    ``environment`` is essential in managed runtimes whose proxy ports are
-    injected per process.  Replacing those values with the historical local
-    Clash port makes the official SDK fail before reaching the provider.
-    """
-    mode = (
-        explicit_mode
-        if explicit_mode is not None
-        else os.environ.get("TREE_DX_PROXY_MODE", "")
-    ).strip().lower()
-    if not mode:
-        enabled = (
-            legacy_use_proxy
-            if legacy_use_proxy is not None
-            else _env_bool("TREE_DX_USE_PROXY", default=True)
-        )
-        return "fixed" if enabled else "direct"
-    aliases = {"env": "environment", "off": "direct", "on": "fixed"}
-    mode = aliases.get(mode, mode)
-    if mode not in {"fixed", "environment", "direct"}:
-        raise ValueError(
-            "TREE_DX_PROXY_MODE must be fixed, environment, or direct"
-        )
-    return mode
-
-
-_PROXY_MODE = _resolve_proxy_mode()
-USE_PROXY = _PROXY_MODE != "direct"
+USE_PROXY  = _env_bool("TREE_DX_USE_PROXY", default=True)
 PROXY_HOST = os.environ.get("TREE_DX_PROXY_HOST", "127.0.0.1")
 PROXY_PORT = int(os.environ.get("TREE_DX_PROXY_PORT", "7890"))
 
 _PROXY_URL = f"http://{PROXY_HOST}:{PROXY_PORT}"
-_PROXIES = (
-    {"https": _PROXY_URL, "http": _PROXY_URL}
-    if _PROXY_MODE == "fixed"
-    else {}
-)
+_PROXIES   = {"https": _PROXY_URL, "http": _PROXY_URL} if USE_PROXY else {}
 
-if _PROXY_MODE == "fixed":
+if USE_PROXY:
     os.environ["HTTP_PROXY"]  = _PROXY_URL
     os.environ["HTTPS_PROXY"] = _PROXY_URL
-elif _PROXY_MODE == "direct":
-    for _k in (
-        "HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY",
-        "http_proxy", "https_proxy", "all_proxy",
-    ):
+else:
+    for _k in ("HTTP_PROXY", "HTTPS_PROXY", "http_proxy", "https_proxy"):
         os.environ.pop(_k, None)
-# ``environment`` deliberately leaves every injected proxy variable untouched.
 
-# httpx client used by openai.OpenAI().  ``proxy`` replaced ``proxies`` in
-# recent httpx versions; detect the installed signature instead of pinning the
-# runner to one server image.
-_http_client = None
-if httpx is not None:
-    if _PROXY_MODE == "fixed":
-        try:
-            _http_client = httpx.Client(proxy=_PROXY_URL, timeout=180.0)
-        except TypeError:  # httpx < 0.28
-            _http_client = httpx.Client(proxies=_PROXY_URL, timeout=180.0)
-    elif _PROXY_MODE == "environment":
-        _http_client = httpx.Client(timeout=180.0, trust_env=True)
-    else:
-        _http_client = httpx.Client(timeout=180.0, trust_env=False)
+# httpx client used by openai.OpenAI()
+if USE_PROXY:
+    _http_client = httpx.Client(proxies=_PROXY_URL, timeout=180.0)
+else:
+    _http_client = httpx.Client(timeout=180.0)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -197,8 +103,8 @@ _WATCHDOG_PID = "/home/wanghongyi/clashctl/resources/watchdog.pid"
 
 def _is_proxy_port_open(host: str | None = None, port: int | None = None,
                          timeout: float = 3.0) -> bool:
-    """TCP-connect test for the repository-managed fixed proxy only."""
-    if _PROXY_MODE != "fixed":
+    """TCP-connect test for the proxy port.  Always True when USE_PROXY=False."""
+    if not USE_PROXY:
         return True
     host = host or PROXY_HOST
     port = port or PROXY_PORT
@@ -211,8 +117,8 @@ def _is_proxy_port_open(host: str | None = None, port: int | None = None,
 
 def _ensure_watchdog_running() -> None:
     """Start the Clash watchdog daemon if it is not already running.
-    No-op outside fixed-proxy mode or when watchdog scripts are absent."""
-    if _PROXY_MODE != "fixed":
+    No-op when USE_PROXY=False or the watchdog scripts are absent."""
+    if not USE_PROXY:
         return
     if not os.path.exists(_WATCHDOG_SH):
         return
@@ -237,11 +143,9 @@ def _ensure_watchdog_running() -> None:
 
 
 def _restore_vpn_blocking(wait: int = 25) -> bool:
-    """Recover the repository-managed fixed proxy, then wait for its port.
-
-    Environment-proxy and direct modes are externally managed and no-op here.
+    """Call clashon.sh to recover the VPN, then wait for the port to reopen.
     Returns True when the port is reachable again within *wait* seconds."""
-    if _PROXY_MODE != "fixed":
+    if not USE_PROXY:
         return True
     if not os.path.exists(_CLASHON_SH):
         print("[VPN] clashon.sh not found; skipping recovery.")
@@ -268,27 +172,23 @@ _ensure_watchdog_running()
 # §3  Persistent requests.Session with connection pooling + retry
 # ══════════════════════════════════════════════════════════════════════════════
 
-_openrouter_session = None
-if requests is not None and Retry is not None and HTTPAdapter is not None:
-    _retry_strategy = Retry(
-        total=5,
-        backoff_factor=2,
-        status_forcelist=[429, 500, 502, 503, 504],
-        allowed_methods=["POST"],
-        raise_on_status=False,
-    )
-    _http_adapter = HTTPAdapter(
-        max_retries=_retry_strategy,
-        pool_connections=4,
-        pool_maxsize=8,
-    )
-    _openrouter_session = requests.Session()
-    if _PROXY_MODE == "direct":
-        _openrouter_session.trust_env = False
-    _openrouter_session.mount("https://", _http_adapter)
-    _openrouter_session.mount("http://",  _http_adapter)
-    if _PROXY_MODE == "fixed":
-        _openrouter_session.proxies.update(_PROXIES)
+_retry_strategy = Retry(
+    total=5,
+    backoff_factor=2,
+    status_forcelist=[429, 500, 502, 503, 504],
+    allowed_methods=["POST"],
+    raise_on_status=False,
+)
+_http_adapter = HTTPAdapter(
+    max_retries=_retry_strategy,
+    pool_connections=4,
+    pool_maxsize=8,
+)
+_openrouter_session = requests.Session()
+_openrouter_session.mount("https://", _http_adapter)
+_openrouter_session.mount("http://",  _http_adapter)
+if USE_PROXY:
+    _openrouter_session.proxies.update(_PROXIES)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -308,88 +208,6 @@ _OPENROUTER_KEY  = os.environ.get("OPENROUTER_API_KEY",
                                   "")
 _OPENROUTER_KEY2 = os.environ.get("OPENROUTER_API_KEY2",
                                   "")
-
-# ``auto`` preserves the repository's historical routing: explicitly routed
-# models use OpenRouter-compatible POST and all others prefer the official
-# OpenAI SDK.  On minimal execution images where the SDK is unavailable, auto
-# falls back to a standard-library compatible POST without changing the public
-# ``call_module`` interface.  ``openai`` and ``stdlib`` are explicit, auditable
-# overrides for environment parity experiments.
-_TRANSPORT_MODE = os.environ.get("TREE_DX_LLM_TRANSPORT", "auto").strip().lower()
-if _TRANSPORT_MODE not in {"auto", "openai", "stdlib"}:
-    raise ValueError(
-        "TREE_DX_LLM_TRANSPORT must be one of: auto, openai, stdlib"
-    )
-
-
-_REASONING_EFFORT_VALUES = {
-    "xhigh",
-    "high",
-    "medium",
-    "low",
-    "minimal",
-    "none",
-}
-
-
-def _openrouter_reasoning_config(
-    environ: dict[str, str] | None = None,
-) -> dict[str, Any] | None:
-    """Read an optional OpenRouter reasoning policy from the environment.
-
-    The policy is resolved per request rather than at module import, allowing
-    experiment runners to set a bounded policy without changing repository
-    defaults.  OpenRouter accepts either an effort level or a token budget, not
-    both.  ``exclude`` controls whether reasoning text is returned while usage
-    remains visible in provider telemetry.
-    """
-    env = os.environ if environ is None else environ
-    effort = str(env.get("TREE_DX_REASONING_EFFORT", "")).strip().lower()
-    budget_text = str(env.get("TREE_DX_REASONING_MAX_TOKENS", "")).strip()
-    exclude_text = str(env.get("TREE_DX_REASONING_EXCLUDE", "")).strip().lower()
-
-    if effort and budget_text:
-        raise ValueError(
-            "set only one of TREE_DX_REASONING_EFFORT and "
-            "TREE_DX_REASONING_MAX_TOKENS"
-        )
-    config: dict[str, Any] = {}
-    if effort:
-        if effort not in _REASONING_EFFORT_VALUES:
-            raise ValueError(
-                "TREE_DX_REASONING_EFFORT must be one of: "
-                + ", ".join(sorted(_REASONING_EFFORT_VALUES))
-            )
-        config["effort"] = effort
-    if budget_text:
-        try:
-            budget = int(budget_text)
-        except ValueError as exc:
-            raise ValueError(
-                "TREE_DX_REASONING_MAX_TOKENS must be a positive integer"
-            ) from exc
-        if budget <= 0:
-            raise ValueError(
-                "TREE_DX_REASONING_MAX_TOKENS must be a positive integer"
-            )
-        config["max_tokens"] = budget
-    if exclude_text:
-        if exclude_text not in {"1", "true", "yes", "on", "0", "false", "no", "off"}:
-            raise ValueError(
-                "TREE_DX_REASONING_EXCLUDE must be a boolean value"
-            )
-        config["exclude"] = exclude_text in {"1", "true", "yes", "on"}
-    return config or None
-
-
-def _with_openrouter_reasoning(
-    body: dict[str, Any], config: dict[str, Any] | None
-) -> dict[str, Any]:
-    """Return a request body with an isolated copy of the reasoning policy."""
-    result = dict(body)
-    if config is not None:
-        result["reasoning"] = dict(config)
-    return result
 
 # ── Set A: models that should use the OpenRouter API as base_url ─────────────
 # Corresponds to debate.py line 196 `elif model in [...]`.
@@ -457,97 +275,6 @@ _MAX_TOKENS_BY_MODEL: dict[str, int] = {
 }
 
 
-def _current_telemetry() -> dict[str, Any] | None:
-    return getattr(_TELEMETRY_TLS, "current", None)
-
-
-def _telemetry_attempt_started(transport: str) -> float:
-    record = _current_telemetry()
-    if record is not None:
-        with _TELEMETRY_WRITE_LOCK:
-            record["physical_attempts"] = int(record.get("physical_attempts", 0)) + 1
-            record.setdefault("transports", []).append(transport)
-    return perf_counter()
-
-
-def _telemetry_attempt_finished(
-    started: float,
-    *,
-    payload: dict[str, Any] | None = None,
-    status_code: int | None = None,
-    error: Exception | None = None,
-) -> None:
-    record = _current_telemetry()
-    if record is None:
-        return
-    elapsed = perf_counter() - started
-    with _TELEMETRY_WRITE_LOCK:
-        record["http_latency_seconds"] = float(
-            record.get("http_latency_seconds", 0.0)
-        ) + elapsed
-        if status_code is not None:
-            record.setdefault("status_codes", []).append(int(status_code))
-        if error is not None:
-            record.setdefault("errors", []).append(type(error).__name__)
-        if payload:
-            provider = payload.get("provider")
-            if provider:
-                record.setdefault("providers", []).append(str(provider))
-            usage = payload.get("usage") or {}
-            if isinstance(usage, dict):
-                in_tok = usage.get("prompt_tokens", usage.get("input_tokens", 0)) or 0
-                out_tok = usage.get("completion_tokens", usage.get("output_tokens", 0)) or 0
-                record["input_tokens"] = int(record.get("input_tokens", 0)) + int(in_tok)
-                record["output_tokens"] = int(record.get("output_tokens", 0)) + int(out_tok)
-
-
-def _post_openrouter_json(
-    body: dict[str, Any],
-    headers: dict[str, str],
-    *,
-    timeout: int,
-) -> tuple[int, dict[str, Any]]:
-    """POST to the OpenRouter-compatible endpoint using available capability.
-
-    ``requests`` remains supported for the original server image.  A stdlib
-    fallback is used only when that dependency is absent; callers and retry
-    semantics remain inside :class:`RobustLLMClient`.
-    """
-    url = "https://openrouter.ai/api/v1/chat/completions"
-    if _openrouter_session is not None:
-        response = _openrouter_session.post(
-            url,
-            headers=headers,
-            json=body,
-            timeout=timeout,
-        )
-        try:
-            return int(response.status_code), response.json()
-        except Exception:
-            return int(response.status_code), json.loads(response.text)
-
-    encoded = json.dumps(body, ensure_ascii=False).encode("utf-8")
-    request = urllib.request.Request(url, data=encoded, headers=headers, method="POST")
-    if _PROXY_MODE == "fixed":
-        proxy_handler = urllib.request.ProxyHandler(_PROXIES)
-    elif _PROXY_MODE == "environment":
-        proxy_handler = urllib.request.ProxyHandler()
-    else:
-        proxy_handler = urllib.request.ProxyHandler({})
-    opener = urllib.request.build_opener(proxy_handler)
-    try:
-        with opener.open(request, timeout=timeout) as response:
-            raw = response.read().decode("utf-8", errors="replace")
-            return int(response.status), json.loads(raw)
-    except urllib.error.HTTPError as exc:
-        raw = exc.read().decode("utf-8", errors="replace")
-        try:
-            payload = json.loads(raw)
-        except json.JSONDecodeError:
-            payload = {"error": {"message": raw[:1000]}}
-        return int(exc.code), payload
-
-
 # ══════════════════════════════════════════════════════════════════════════════
 # §5  RobustLLMClient
 # ══════════════════════════════════════════════════════════════════════════════
@@ -612,33 +339,15 @@ class RobustLLMClient:
             # Novita is retired for this project — do not route or fall back to it.
             # google-vertex rejects max_tokens≥8193; when TREE_DX_DIRECT_POST_OUTPUT_CAP
             # escalates past 8k (truncation/error retries), Vertex 400s the whole call.
-            # Use both Groq and DeepInfra. ``ordered`` preserves historical
-            # behaviour; ``balanced`` alternates the primary across semantic
-            # calls and then reverses it on an internal transport retry.  The
-            # latter prevents a large concurrent experiment from depending on
-            # one provider's transient quality/capacity state.
-            policy = os.environ.get(
-                "TREE_DX_LLAMA_PROVIDER_POLICY", "ordered"
-            ).strip().lower()
-            if policy not in {"ordered", "balanced"}:
-                raise ValueError(
-                    "TREE_DX_LLAMA_PROVIDER_POLICY must be ordered or balanced"
-                )
+            # Prefer Groq / DeepInfra only for this backbone.
             if not change_model:
-                primary = "groq"
-                if policy == "balanced":
-                    global _PROVIDER_ROUTE_COUNTER
-                    with _PROVIDER_ROUTE_LOCK:
-                        route_index = _PROVIDER_ROUTE_COUNTER
-                        _PROVIDER_ROUTE_COUNTER += 1
-                    primary = "groq" if route_index % 2 == 0 else "deepinfra"
-                _TELEMETRY_TLS.llama_primary = primary
-            else:
-                initial = getattr(_TELEMETRY_TLS, "llama_primary", "groq")
-                primary = "deepinfra" if initial == "groq" else "groq"
-            secondary = "deepinfra" if primary == "groq" else "groq"
+                return {
+                    "order": ["groq", "deepinfra/base"],
+                    "ignore": ["google-vertex", "google-ai-studio", "novita"],
+                    "allow_fallbacks": False,
+                }
             return {
-                "order": [primary, secondary],
+                "order": ["deepinfra/base", "groq"],
                 "ignore": ["google-vertex", "google-ai-studio", "novita"],
                 "allow_fallbacks": False,
             }
@@ -672,6 +381,7 @@ class RobustLLMClient:
         # generic fallback — never prefer Novita; stay on OpenRouter providers
         return {
             "ignore": ["nebius", "parasail", "novita"],
+            "order": ["deepinfra", "together", "groq", "hyperbolic"],
             "allow_fallbacks": True,
         }
 
@@ -708,67 +418,48 @@ class RobustLLMClient:
         if model in ("gpt-3.5-turbo-0125", "gpt-3.5-turbo-1106"):
             max_tokens = min(max_tokens, 4096)
 
-        sdk_available = openai is not None and hasattr(openai, "OpenAI")
-        if _TRANSPORT_MODE == "openai" and not sdk_available:
-            raise RuntimeError(
-                "TREE_DX_LLM_TRANSPORT=openai requested, but the official "
-                "openai Python SDK is not importable"
+        # Direct-POST models do not need the OpenAI SDK client.  Constructing
+        # one unconditionally broke these models on environments that ship the
+        # legacy ``openai`` package even though the request path below uses
+        # ``requests.Session`` exclusively.
+        if model in _OPENROUTER_DIRECT_POST_MODELS:
+            client = None
+        elif model == "phala/llama-3.3-70b-instruct":
+            client = openai.OpenAI(
+                api_key=_REDPILL_KEY,
+                base_url="https://api.redpill.ai/v1",
+                http_client=_http_client,
             )
-        use_direct = _TRANSPORT_MODE == "stdlib" or (
-            _TRANSPORT_MODE == "auto"
-            and (model in _OPENROUTER_DIRECT_POST_MODELS or not sdk_available)
-        )
-
-        client = None
-        sdk_uses_openrouter = False
-        if not use_direct:
-            client_kwargs: dict[str, Any] = {}
-            if _http_client is not None:
-                client_kwargs["http_client"] = _http_client
-            if model == "phala/llama-3.3-70b-instruct":
-                client = openai.OpenAI(
-                    api_key=_REDPILL_KEY,
-                    base_url="https://api.redpill.ai/v1",
-                    **client_kwargs,
-                )
-                model = "meta-llama/llama-3.3-70b-instruct"
-            elif model in ("gpt-3.5-turbo-0125", "gpt-3.5-turbo-1106"):
-                client = openai.OpenAI(
-                    api_key=_LAOZHANG_KEY,
-                    base_url="https://api.laozhang.ai/v1",
-                    **client_kwargs,
-                )
-            else:
-                # OpenRouter exposes an OpenAI-compatible API.  This remains
-                # the preferred path whenever the official SDK is available.
-                client = openai.OpenAI(
-                    api_key=_OPENROUTER_KEY,
-                    base_url="https://openrouter.ai/api/v1",
-                    **client_kwargs,
-                )
-                sdk_uses_openrouter = True
-        elif model.startswith("phala/") or model.startswith("gpt-3.5-turbo"):
-            raise RuntimeError(
-                f"stdlib transport supports OpenRouter models only; got {model!r}"
+            model = "meta-llama/llama-3.3-70b-instruct"
+        elif model in ("gpt-3.5-turbo-0125", "gpt-3.5-turbo-1106"):
+            client = openai.OpenAI(
+                api_key=_LAOZHANG_KEY,
+                base_url="https://api.laozhang.ai/v1",
+                http_client=_http_client,
+            )
+        elif model in _OPENROUTER_CLIENT_MODELS:
+            # Set A: use OpenRouter as API endpoint
+            client = openai.OpenAI(
+                api_key=_OPENROUTER_KEY,
+                base_url="https://openrouter.ai/api/v1",
+                http_client=_http_client,
+            )
+        else:
+            # Never fall through to Novita / other non-OpenRouter endpoints.
+            # Unknown models go through OpenRouter; Set-B models skip the client
+            # entirely and use direct-POST above.
+            client = openai.OpenAI(
+                api_key=_OPENROUTER_KEY,
+                base_url="https://openrouter.ai/api/v1",
+                http_client=_http_client,
             )
 
         change_model = False
-        reasoning_config = _openrouter_reasoning_config()
-        telemetry = _current_telemetry()
-        if telemetry is not None:
-            telemetry["reasoning_config"] = reasoning_config
         # Escalating direct-POST output budget across truncation retries.
         # Without this, ``max_tokens += 10000`` is a no-op under a fixed 1024 cap
         # (root cause of DiscriminatorAgentMatrix finish_reason=length storms).
         attempt_output_cap: int | None = None
         for attempt in range(3):
-            transport_label = (
-                "openai_sdk"
-                if not use_direct
-                else ("requests_openrouter" if _openrouter_session is not None else "stdlib_openrouter")
-            )
-            attempt_started = _telemetry_attempt_started(transport_label)
-            attempt_recorded = False
             try:
                 if model == "gpt-3.5-turbo-instruct":
                     response = client.completions.create(
@@ -779,27 +470,17 @@ class RobustLLMClient:
                     )
                     return response.choices[0].text
 
-                elif not use_direct:
-                    request_kwargs: dict[str, Any] = {
-                        "model": model,
-                        "messages": messages,
-                        "temperature": temperature,
-                        "max_tokens": max_tokens,
-                    }
-                    if sdk_uses_openrouter and reasoning_config is not None:
-                        # ``extra_body`` is the official OpenAI SDK escape hatch
-                        # for OpenRouter-specific request fields.
-                        request_kwargs["extra_body"] = {
-                            "reasoning": dict(reasoning_config)
-                        }
+                elif model not in _OPENROUTER_DIRECT_POST_MODELS:
+                    # Set A models that are NOT in Set B → standard API call
                     response = client.chat.completions.create(
-                        **request_kwargs,
+                        model=model,
+                        messages=messages,
+                        temperature=temperature,
+                        max_tokens=max_tokens,
                     )
 
                 else:
-                    # OpenRouter-compatible POST.  In ``auto`` this is the
-                    # historical routed path for Set-B models and the explicit
-                    # dependency-free fallback for minimal environments.
+                    # Set B: provider-routed path via direct POST ──────────
                     provider = self._get_openrouter_provider(model, change_model)
                     # Production default stays 1024. Dedicated long-output
                     # probes / P5 compile may raise via env.
@@ -814,25 +495,28 @@ class RobustLLMClient:
                     else:
                         attempt_output_cap = max(attempt_output_cap, output_cap)
                     headers = {
-                        "Authorization": f"Bearer {_OPENROUTER_KEY2 or _OPENROUTER_KEY}",
+                        "Authorization": f"Bearer {_OPENROUTER_KEY2}",
                         "HTTP-Referer": "google.com",
                         "X-Title": "google.com",
                         "Content-Type": "application/json",
                     }
                     try:
-                        status_code, payload = _post_openrouter_json(
-                            _with_openrouter_reasoning({
+                        raw = _openrouter_session.post(
+                            "https://openrouter.ai/api/v1/chat/completions",
+                            headers=headers,
+                            json={
                                 "model": model,
                                 "messages": messages,
                                 "temperature": temperature,
                                 "max_tokens": min(max_tokens, attempt_output_cap),
                                 "provider": provider,
-                            }, reasoning_config),
-                            headers,
+                            },
                             timeout=180,
                         )
+                        payload = json.loads(raw.text)
                         response = types.SimpleNamespace(**payload)
-                    except (_ssl.SSLError, urllib.error.URLError, OSError) as ssl_exc:
+                    except (_ssl.SSLError, requests.exceptions.SSLError,
+                            requests.exceptions.ConnectionError) as ssl_exc:
                         print(f"[LLM] SSL/connection error (VPN overload?): {ssl_exc}. Sleeping 15s …")
                         sleep(15)
                         raise
@@ -857,24 +541,6 @@ class RobustLLMClient:
                             % err_snip
                         ) from unpack_exc
 
-                telemetry_payload: dict[str, Any] | None = None
-                if use_direct:
-                    telemetry_payload = payload
-                    telemetry_status = status_code
-                else:
-                    telemetry_status = 200
-                    if hasattr(response, "model_dump"):
-                        try:
-                            telemetry_payload = response.model_dump()
-                        except Exception:
-                            telemetry_payload = None
-                _telemetry_attempt_finished(
-                    attempt_started,
-                    payload=telemetry_payload,
-                    status_code=telemetry_status,
-                )
-                attempt_recorded = True
-
                 # Check finish_reason
                 finish_reason = getattr(
                     response.choices[0], "finish_reason", None
@@ -885,23 +551,10 @@ class RobustLLMClient:
                     if attempt_output_cap is not None:
                         # Length truncations must raise the hard cap, not only
                         # max_tokens (otherwise min(max_tokens, 1024) stays 1024).
-                        # Default ceiling 8192: several OpenRouter providers
-                        # (especially Google Vertex) reject >=8193.  A dedicated
-                        # long-JSON experiment may opt into a larger ceiling;
-                        # the initial cap and every physical attempt remain in
-                        # telemetry, so this cannot silently alter old runs.
-                        configured_ceiling = int(
-                            os.environ.get("TREE_DX_DIRECT_POST_OUTPUT_MAX_CAP")
-                            or "8192"
-                        )
-                        if not 1024 <= configured_ceiling <= 32768:
-                            raise ValueError(
-                                "TREE_DX_DIRECT_POST_OUTPUT_MAX_CAP must be "
-                                "between 1024 and 32768"
-                            )
-                        retry_ceiling = max(attempt_output_cap, configured_ceiling)
+                        # Soft ceiling 8192: several OpenRouter providers (esp.
+                        # Google Vertex) reject ≥8193; keep retries inside that band.
                         attempt_output_cap = min(
-                            max(attempt_output_cap * 2, 4096), retry_ceiling
+                            max(attempt_output_cap * 2, 4096), 8192
                         )
                     raise RuntimeError(
                         "Completion did not finish "
@@ -915,8 +568,6 @@ class RobustLLMClient:
                     return response.choices[0].message["content"]
 
             except Exception as exc:
-                if not attempt_recorded:
-                    _telemetry_attempt_finished(attempt_started, error=exc)
                 if isinstance(exc, ValueError):
                     raise RuntimeError("Token limit exceeded.") from exc
                 print(f"[LLM] Attempt {attempt + 1}/3 error: {exc}")
@@ -954,7 +605,6 @@ class RobustLLMClient:
         call_timeout = self.call_timeout
         last_response: str | None = None
         timeout_count = 0
-        parent_telemetry = _current_telemetry()
 
         for attempt in range(max_retries):
             result_holder: list[str | None] = [None]
@@ -966,9 +616,7 @@ class RobustLLMClient:
                 _rh: list = result_holder,
                 _eh: list = exc_holder,
                 _temp: float | None = temperature,
-                _telemetry: dict[str, Any] | None = parent_telemetry,
             ) -> None:
-                _TELEMETRY_TLS.current = _telemetry
                 try:
                     if _temp is not None:
                         _rh[0] = self.get_completion_from_messages(
@@ -1087,30 +735,6 @@ class RobustLLMClient:
             f.write(f"Model: {self.model}\n")
             f.write(f"{'='*80}\n\n")
 
-    def configure_telemetry(self, telemetry_path: str) -> None:
-        """Append one machine-readable JSON object per semantic module call."""
-        self._telemetry_path = telemetry_path
-        os.makedirs(os.path.dirname(os.path.abspath(telemetry_path)), exist_ok=True)
-
-    def _write_telemetry(self, record: dict[str, Any]) -> None:
-        telemetry_path = get_thread_telemetry_path() or getattr(
-            self, "_telemetry_path", None
-        )
-        if not telemetry_path:
-            return
-        clean = dict(record)
-        # Internal duplicate transport/provider entries are useful while a call
-        # retries, but compact ordered-unique lists keep manifests readable.
-        for key in ("transports", "providers", "errors"):
-            values = clean.get(key, [])
-            clean[key] = list(dict.fromkeys(str(v) for v in values))
-        try:
-            with _TELEMETRY_WRITE_LOCK:
-                with open(telemetry_path, "a", encoding="utf-8") as stream:
-                    stream.write(json.dumps(clean, ensure_ascii=False) + "\n")
-        except OSError as exc:
-            print(f"[LLM] Warning: could not write telemetry entry: {exc}")
-
     def _write_log(self, module_name: str, messages: list[dict],
                    raw_response: str, parsed: dict) -> None:
         """Append one call record to the log file (if configured)."""
@@ -1170,22 +794,11 @@ class RobustLLMClient:
         return text.count("{") != text.count("}") or text.count("[") != text.count("]")
 
     @staticmethod
-    def _bump_direct_post_output_cap(
-        *, floor: int = 8192, ceiling: int | None = None
-    ) -> int:
-        # The compatibility default remains 8192.  Long structured-output
-        # experiments can explicitly raise the ceiling for providers that
-        # support it without changing the default route used by llama/GVertex.
-        if ceiling is None:
-            ceiling = int(
-                os.environ.get("TREE_DX_DIRECT_POST_OUTPUT_MAX_CAP") or "8192"
-            )
-        if not 1024 <= ceiling <= 32768:
-            raise ValueError(
-                "TREE_DX_DIRECT_POST_OUTPUT_MAX_CAP must be between 1024 and 32768"
-            )
+    def _bump_direct_post_output_cap(*, floor: int = 8192, ceiling: int = 8192) -> int:
+        # Ceiling 8192: Google Vertex / AI Studio reject maxOutputTokens ≥ 8193.
+        # Even with those providers ignored for llama, keep the shared env cap
+        # inside the strictest OpenRouter provider band used by this project.
         current = int(os.environ.get("TREE_DX_DIRECT_POST_OUTPUT_CAP") or "1024")
-        ceiling = max(current, ceiling)
         nxt = min(max(current * 2, floor), ceiling)
         os.environ["TREE_DX_DIRECT_POST_OUTPUT_CAP"] = str(nxt)
         return nxt
@@ -1233,40 +846,6 @@ class RobustLLMClient:
         silently and poisoned fail-open downstream stages).
         """
         user_content = json.dumps(payload, default=str, ensure_ascii=False)
-        started = perf_counter()
-        case_id = None
-        if isinstance(payload, dict):
-            case_id = payload.get("case_id") or payload.get("id")
-        record: dict[str, Any] = {
-            "timestamp": datetime.now().isoformat(),
-            "case_id": case_id,
-            "module": module_name,
-            "model": self.model,
-            "semantic_calls": 1,
-            "physical_attempts": 0,
-            "input_tokens": 0,
-            "output_tokens": 0,
-            "prompt_sha256": hashlib.sha256(
-                prompt_text.encode("utf-8")
-            ).hexdigest(),
-            "payload_sha256": hashlib.sha256(
-                user_content.encode("utf-8")
-            ).hexdigest(),
-            "options_visible": bool(
-                re.search(r"(?im)\boptions?\s*:", user_content)
-                or re.search(r'"options"\s*:', user_content)
-            ),
-            "temperature": self.temperature,
-            "transport_mode": _TRANSPORT_MODE,
-            "python_version": sys.version.split()[0],
-            "openai_version": getattr(openai, "__version__", None),
-            "httpx_version": getattr(httpx, "__version__", None),
-            "cache_hit": False,
-            "transports": [],
-            "providers": [],
-            "errors": [],
-        }
-        _TELEMETRY_TLS.current = record
         base_user = (
             f"Module: {module_name}\n"
             "Return strict JSON only, no markdown.\n"
@@ -1310,7 +889,6 @@ class RobustLLMClient:
             raw_stripped = self._strip_markdown_fences(raw)
             parsed = self._parse_json_object(raw_stripped)
             if parsed:
-                record["parse_attempts"] = attempt + 1
                 break
             if attempt + 1 < max_parse_attempts and (
                 self._looks_truncated_json(raw_stripped)
@@ -1323,13 +901,7 @@ class RobustLLMClient:
                 flush=True,
             )
             break
-        record["success"] = bool(parsed)
-        record["latency_seconds"] = perf_counter() - started
-        record["response_sha256"] = hashlib.sha256(
-            (raw or "").encode("utf-8")
-        ).hexdigest()
         self._write_log(module_name, messages, raw, parsed)
-        self._write_telemetry(record)
         return parsed
 
 

@@ -1,0 +1,53 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "CoreLiftClinical_reviewer_b",
+  "payload_sha256": "0d3d611b600d7bf90a5cad1545bc8fcb038f074ad2c943629576865baab767da",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "The reference requires a composite diagnosis: arrhythmia-induced cardiomyopathy caused by paroxysmal ectopic atrial tachycardia. C001 captures only the arrhythmia limb and omits the cardiomyopathy and causal linkage entirely.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Names only the arrhythmia component (atrial tachycardia, narrow complex) without the cardiomyopathy/causal relationship"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "The reference is an arrhythmia-induced cardiomyopathy; C002 describes the resulting heart failure phenotype but omits the ectopic atrial tachycardia as the causative mechanism, which is the defining feature of the reference diagnosis.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Names only the cardiac dysfunction component (HFrEF, severe) without the arrhythmia etiology or causal relationship"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "medium",
+        "reason": "C003 co-locates both components but uses 'with' rather than 'induced by,' leaving the causal direction ambiguous. It also omits the paroxysmal ectopic characterization of the tachycardia. Missing required specificity for complete equivalence.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Combines atrial tachycardia with cardiac dysfunction but lacks explicit causal/induced relationship and paroxysmal ectopic specificity"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "medium",
+        "reason": "Same structural limitation as C003 with an added severity descriptor. The causal relationship (arrhythmia-induced) and the specific arrhythmia subtype (paroxysmal ectopic atrial tachycardia) are not explicitly stated, leaving the composite incomplete.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Adds severity qualifier but still uses 'with' rather than causal language and lacks paroxysmal ectopic atrial tachycardia specificity"
+      },
+      {
+        "candidate_id": "C005",
+        "confidence": "high",
+        "reason": "C005 captures the causal mechanism (tachycardia-induced cardiomyopathy) and severity of LV dysfunction, which aligns well with the reference. However, it does not specify the arrhythmia as paroxysmal ectopic atrial tachycardia, which is a required component of the reference diagnosis. 'Tachycardia-induced cardiomyopathy' is a parent category that could encompass other tachyarrhythmias.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Correctly frames the causal relationship (tachycardia-induced cardiomyopathy) and severity but does not specify paroxysmal ectopic atrial tachycardia as the arrhythmia subtype"
+      }
+    ],
+    "case_quality_flags": [
+      "Reference diagnosis is a well-supported composite: ECG features (ectopic P-wave morphology, paroxysmal onset with PAC trigger, rate normalization on follow-up), non-ischemic severe LV dysfunction, and elevated BNP all support arrhythmia-induced cardiomyopathy from paroxysmal ectopic atrial tachycardia",
+      "No candidate achieves complete equivalence due to missing paroxysmal ectopic atrial tachycardia specificity in the arrhythmia component"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

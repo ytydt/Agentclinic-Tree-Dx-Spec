@@ -19,6 +19,7 @@ and the tie-break all read the same append-only ledger.
 
 from __future__ import annotations
 
+import hashlib
 import re
 from dataclasses import dataclass, field
 from typing import Any, Iterable, Mapping, Optional
@@ -41,6 +42,10 @@ MODES = (
     "multistance_split",
     "legacy_champion",
 )
+
+# Presentation order of the selector shortlist. "generation" is the shipped
+# behaviour; the other two exist only to isolate the position anchor.
+SELECTOR_ORDERS = ("generation", "reverse", "permuted")
 SELECTOR_MODES = (
     "c4_selector",
     "c4_selector_wide",
@@ -99,6 +104,33 @@ def _norm(s: Any) -> str:
     s = re.sub(r"\s+", " ", s)
     s = re.sub(r"[^\w\s\-/\+]", "", s)
     return s
+
+
+def _strict_key(s: Any) -> str:
+    """Identity key for `strict_identity`: surface morphology only.
+
+    Folds possessives, hyphenation and plurals, so `Grover's disease` and
+    `Grover disease`, or `Right Bundle-Branch Block` and `Right Bundle Branch
+    Block`, stay one concept. Deliberately does not fold derivations
+    (`leukemic`/`leukemia`) or any token difference: a single extra token is a
+    modifier, and folding it is the parent/child collapse this key exists to
+    prevent.
+    """
+    s = re.sub(r"['\u2019]s\b", "", str(s or "").strip())
+    s = re.sub(r"[^\w\s]", " ", s)
+    toks = []
+    for t in s.split():
+        # An all-caps token is an acronym, and trimming its tail `s` would fold
+        # unrelated entities (AIDS, ARDS, SIRS).
+        if (
+            not t.isupper()
+            and len(t) > 3
+            and t.endswith("s")
+            and not t.lower().endswith(("ss", "us", "is"))
+        ):
+            t = t[:-1]
+        toks.append(t.lower())
+    return " ".join(toks)
 
 
 def _as_list(x: Any) -> list[Any]:
@@ -237,6 +269,7 @@ class ConceptNode:
     support_fact_ids: list[str] = field(default_factory=list)
     support_spans: list[str] = field(default_factory=list)
     contradict_spans: list[str] = field(default_factory=list)
+    contradict_fact_ids: list[str] = field(default_factory=list)
     stances: list[str] = field(default_factory=list)
     recall_provenance: list[str] = field(default_factory=list)
     origin: str = "c3"
@@ -259,6 +292,7 @@ class ConceptNode:
             "support_fact_ids": list(self.support_fact_ids),
             "support_spans": list(self.support_spans),
             "contradict_spans": list(self.contradict_spans),
+            "contradict_fact_ids": list(self.contradict_fact_ids),
             "stances": list(self.stances),
             "recall_provenance": list(self.recall_provenance),
             "origin": self.origin,
@@ -278,14 +312,17 @@ class ConceptRegistry:
 
     ACTIVE_STATES = ("active", "protected")
 
-    def __init__(self, resolver: Any = None) -> None:
+    def __init__(self, resolver: Any = None, *, strict_identity: bool = False) -> None:
         self.resolver = resolver
+        self.strict_identity = bool(strict_identity)
         self.concepts: dict[str, ConceptNode] = {}
         self.events: list[dict[str, Any]] = []
         self._alias_index: dict[str, str] = {}
         self._next_id = 1
         self._next_event = 1
         self.merge_audit: list[dict[str, Any]] = []
+        self.direction_quarantine: list[dict[str, Any]] = []
+        self.direction_binding: dict[str, Any] = {}
 
     # --- identity -----------------------------------------------------
     def _same_as(self, a: str, b: str) -> bool:
@@ -296,6 +333,11 @@ class ConceptRegistry:
         na, nb = _norm(a), _norm(b)
         if na == nb:
             return True
+        if self.strict_identity:
+            # Identity is morphological only. A generator-claimed alias, or a
+            # resolver that maps a parent and a child to one code, is not
+            # evidence that two labels denote the same object.
+            return _strict_key(a) == _strict_key(b) and bool(_strict_key(a))
         if self.resolver is not None:
             try:
                 fn = getattr(self.resolver, "resolve", None)
@@ -327,7 +369,16 @@ class ConceptRegistry:
         for cid, c in self.concepts.items():
             if self._same_as(label, c.preferred_label):
                 return cid
+            if self.strict_identity:
+                continue
             if any(self._same_as(label, al) for al in c.aliases):
+                return cid
+        return None
+
+    def _claimed_alias_owner(self, label: str) -> Optional[str]:
+        """Concept that *claimed* ``label`` as an alias without proving it."""
+        for cid, c in self.concepts.items():
+            if any(_norm(label) == _norm(al) for al in c.aliases):
                 return cid
         return None
 
@@ -336,6 +387,120 @@ class ConceptRegistry:
         self._next_event += 1
         self.events.append({"event_id": eid, "op": op, "concept_id": concept_id, **kw})
         return eid
+
+    def audit_directions(
+        self, facts: list["ObservedFact"], *, quarantine: bool = False
+    ) -> dict[str, Any]:
+        """Bind the against direction, validate it, and optionally withdraw conflicts.
+
+        Design 9.3 items 1-2. Three things are separated on purpose, because they
+        have different licences:
+
+        - **Binding** (always on, additive): ``contradict_spans`` shipped with no
+          id column, so an against edge could not carry polarity, time or
+          specificity anywhere. Binding is exact-normalized only; an unresolved
+          span stays unbound and is reported, because containment binding is the
+          very tier §6.2 shows conflates distinct propositions.
+        - **Validation** (always on, observational): reports exact citation
+          closure against the §11.2 ``>=0.98`` gate, plus the review queues.
+          Changes nothing, so it cannot alter an archived arm.
+        - **Withdrawal** (``quarantine``, default off): a fact asserted as both
+          support and contradict for one concept carries zero net direction.
+          Which side is clinically right is not decidable here, so both sides are
+          withdrawn and the edge is logged rather than resolved by guesswork.
+          Default off because it *is* selector-visible, and this project keeps
+          every behaviour change opt-in and recorded in the run manifest.
+
+        Must run after every ingestion path, including the complement lane:
+        support can arrive under one stance and the contradicting assertion under
+        another, so only a post-pass sees the conflict.
+        """
+        by_norm: dict[str, str] = {}
+        raw_of: dict[str, str] = {}
+        fact_of: dict[str, "ObservedFact"] = {}
+        for f in facts:
+            by_norm.setdefault(_norm(f.raw_span), f.fact_id)
+            raw_of[f.fact_id] = f.raw_span
+            fact_of[f.fact_id] = f
+
+        against_total = against_bound = 0
+        support_span_total = support_span_bound = 0
+        absent_as_support: list[dict[str, Any]] = []
+        conflicts_seen: list[dict[str, Any]] = []
+        dangling_support_ids = 0
+
+        for c in self.concepts.values():
+            bound: list[str] = []
+            for span in c.contradict_spans:
+                against_total += 1
+                fid = by_norm.get(_norm(span))
+                if fid is None:
+                    continue
+                against_bound += 1
+                if fid not in bound:
+                    bound.append(fid)
+            c.contradict_fact_ids = bound
+            for span in c.support_spans:
+                support_span_total += 1
+                if by_norm.get(_norm(span)) is not None:
+                    support_span_bound += 1
+            for fid in c.support_fact_ids:
+                if fid not in fact_of:
+                    dangling_support_ids += 1
+                    continue
+                f = fact_of[fid]
+                # Not an error: absence can correctly support a diagnosis by
+                # exclusion. It is a review item only, per design 3.3.
+                if f.polarity == "absent" and f.specificity == "high":
+                    absent_as_support.append(
+                        {
+                            "concept_id": c.concept_id,
+                            "label": c.preferred_label,
+                            "fact_id": fid,
+                            "reliability": f.reliability,
+                        }
+                    )
+            for fid in [x for x in bound if x in c.support_fact_ids]:
+                row = {
+                    "kind": "support_and_contradict_same_fact",
+                    "concept_id": c.concept_id,
+                    "label": c.preferred_label,
+                    "fact_id": fid,
+                    "raw_span": raw_of.get(fid, ""),
+                }
+                conflicts_seen.append(row)
+                if not quarantine:
+                    continue
+                target = _norm(raw_of.get(fid, ""))
+                c.support_fact_ids = [x for x in c.support_fact_ids if x != fid]
+                c.contradict_fact_ids = [x for x in c.contradict_fact_ids if x != fid]
+                c.support_spans = [s for s in c.support_spans if _norm(s) != target]
+                c.contradict_spans = [s for s in c.contradict_spans if _norm(s) != target]
+                self.direction_quarantine.append(row)
+                self._log("quarantine_direction", c.concept_id, fact_id=fid)
+
+        closure = (against_bound + support_span_bound) / max(
+            1, against_total + support_span_total
+        )
+        self.direction_binding = {
+            "against_spans": against_total,
+            "against_spans_bound": against_bound,
+            "against_citation_closure": round(against_bound / max(1, against_total), 6),
+            "support_spans": support_span_total,
+            "support_spans_bound": support_span_bound,
+            "exact_citation_closure": round(closure, 6),
+            "citation_closure_gate_0_98": closure >= 0.98,
+            "dangling_support_fact_ids": dangling_support_ids,
+            "absent_high_specificity_used_as_support": len(absent_as_support),
+            "self_contradictory_edges": len(conflicts_seen),
+            "quarantine_enabled": bool(quarantine),
+            "edges_withdrawn": len(self.direction_quarantine) if quarantine else 0,
+            "review_queue": {
+                "absent_as_support": absent_as_support[:20],
+                "self_contradictory": conflicts_seen[:20],
+            },
+        }
+        return dict(self.direction_binding)
 
     def add(
         self,
@@ -362,7 +527,7 @@ class ConceptRegistry:
         aliases = [str(a).strip() for a in (aliases or []) if str(a).strip()]
 
         existing = self._find_same_as(label)
-        if existing is None:
+        if existing is None and not self.strict_identity:
             for al in aliases:
                 existing = self._find_same_as(al)
                 if existing:
@@ -435,8 +600,22 @@ class ConceptRegistry:
                 )
         self.concepts[cid] = node
         self._alias_index[_norm(label)] = cid
-        for al in aliases:
-            self._alias_index.setdefault(_norm(al), cid)
+        if not self.strict_identity:
+            for al in aliases:
+                self._alias_index.setdefault(_norm(al), cid)
+        else:
+            # The claim is kept as information on the node but is not allowed to
+            # decide identity for anything that arrives later.
+            owner = self._claimed_alias_owner(label)
+            if owner and owner != cid:
+                self.merge_audit.append(
+                    {
+                        "kind": "claimed_alias_not_merged",
+                        "label": label,
+                        "claimed_by": owner,
+                        "kept_as": cid,
+                    }
+                )
         self._log("add", cid, label=label, origin=origin)
         return cid
 
@@ -738,6 +917,12 @@ class AphhmCPipeline:
         near_dedup_shortlist: bool = False,
         group_near_dedup: bool = False,
         near_dedup_jaccard: float = 0.4,
+        enforce_group_quota: bool = False,
+        strict_identity: bool = False,
+        quarantine_direction_conflicts: bool = False,
+        typed_selector_cards: bool = False,
+        pair_edge_audit: bool = False,
+        selector_order: str = "generation",
     ) -> None:
         if mode not in MODES:
             raise ValueError(f"mode must be one of {MODES}")
@@ -818,10 +1003,55 @@ class AphhmCPipeline:
             "multistance_split",
         )
         self.legacy_champion = mode == "legacy_champion"
+        # Two contract debts found by the frozen-log audit, both off by default
+        # so every archived arm replays byte-identically.
+        #
+        # `enforce_group_quota`: the tournament prompt asks for one finalist per
+        # stance group, but nothing checked the reply. 125/400 multistance cases
+        # silently returned fewer, so a stance that the model ignored never got
+        # a hearing. Seats the group's own highest-ranked member and re-runs the
+        # adjudication over the repaired slate (+1 call on repaired cases only).
+        #
+        # `strict_identity`: 488/3432 same_as merges were not norm-exact, and
+        # 186 of those folded a parent and a child into one concept, which is
+        # the fold design 2.2 explicitly forbids. Restricting identity to
+        # morphological equality turns those into broader/narrower edges, which
+        # `add` already builds for non-folded concepts.
+        self.enforce_group_quota = bool(enforce_group_quota)
+        self.strict_identity = bool(strict_identity)
+        # Design 9.3 items 2/5/3. All three are selector-visible, so all three
+        # are opt-in and recorded in the run manifest; the binding and the
+        # validity report they rest on are always on because they change nothing.
+        #
+        # `quarantine_direction_conflicts`: withdraw a fact asserted as both
+        # support and contradict for one candidate. 28 such edges on the frozen
+        # 800, reaching 23 selector payloads.
+        # `typed_selector_cards`: candev hands the selector bare `for`/`against`
+        # strings, so polarity, time, specificity and reliability -- all of which
+        # C1 already captured -- are dropped at the last step. Cards restore them.
+        # `pair_edge_audit`: a zero-call discriminator audit over the *frozen*
+        # shortlist. It may add no candidate and remove none (design 8.3 step 4),
+        # and it must not switch on the global matrix (design 9.3 item 4), so it
+        # reads generator-bound typed facts rather than ledger cells.
+        self.quarantine_direction_conflicts = bool(quarantine_direction_conflicts)
+        self.typed_selector_cards = bool(typed_selector_cards)
+        self.pair_edge_audit = bool(pair_edge_audit)
+        # Isolates presentation order: everything else in the payload, including
+        # the candidate set, stays byte-identical.  Note the anchor this was built
+        # to chase does not exist -- on the frozen 800 the champion sits at pool
+        # index 0 in 71.0% of cases (19.2% uniform), but re-analysis of the archived
+        # R6 X4 permutation shows champion identity is 85-89% stable and the index-0
+        # rate falls to chance under permutation, so generation order predicts the
+        # selector's pick without causing it.  Keep this off unless re-checking that
+        # on a slice X4 never covered.
+        if selector_order not in SELECTOR_ORDERS:
+            raise ValueError(f"selector_order must be one of {SELECTOR_ORDERS}")
+        self.selector_order = selector_order
         self.resolver = resolver
         self.max_calls = int(
             max_calls
             or (len(self.stances) + (4 if self.split_final else 3) if self.stances else 6)
+            + (1 if self.enforce_group_quota and not self.split_final else 0)
         )
         self.prompt_c1 = _read_prompt("aphhm_c_fact_ledger.txt")
         self.prompt_c2 = _read_prompt("aphhm_c_axis_contract.txt")
@@ -1389,12 +1619,229 @@ class AphhmCPipeline:
         raw["_rejected"] = rejected
         return raw
 
+    def _order_shortlist(
+        self, shortlist: list[ConceptNode], *, case_id: str
+    ) -> list[ConceptNode]:
+        """Permute presentation order and nothing else (ORDER_COUNTERFACTUAL_V1).
+
+        The permutation is keyed on ``case_id`` only, never on labels or scores, so
+        it is reproducible from the manifest and carries no information about the
+        candidates.  Returning the same objects in a different order guarantees the
+        payload differs from the baseline in order alone.
+        """
+        if self.selector_order == "generation" or len(shortlist) < 2:
+            return shortlist
+        if self.selector_order == "reverse":
+            return list(reversed(shortlist))
+        keyed = sorted(
+            shortlist,
+            key=lambda c: hashlib.sha256(
+                f"order-cf-v1|{case_id}|{c.concept_id}".encode()
+            ).hexdigest(),
+        )
+        return keyed
+
+    def _pair_edge_audit_payload(
+        self,
+        *,
+        shortlist: list[ConceptNode],
+        ranked: list[ConceptNode],
+        ledger: EvidenceLedger,
+    ) -> dict[str, Any]:
+        """Zero-call disputed-edge audit over the frozen shortlist (design 9.3 item 3).
+
+        Placed after the shortlist is frozen and before `_select_frontier`, and it
+        obeys the three constraints that make it an audit rather than a second
+        selector:
+
+        - it may not add or remove a candidate (design 8.3 step 4), which the
+          logged ``candidate_order_hash`` is here to prove;
+        - it may not switch the global C4 matrix back on (design 9.3 item 4), so
+          it reads generator-bound typed facts, never ledger cells.  That is also
+          what makes it work in the collapsed arm, where the matrix is off and
+          every cell is a default;
+        - it decides nothing.  It labels which facts separate the pair and says
+          whether the edge is resolvable on the evidence present.
+
+        The pair is taken in `ranked` order restricted to shortlist members, not
+        in shortlist order, because `selector_unanchored` re-sorts the shortlist
+        by concept_id and its first two entries are then not the top two.
+        """
+        labels = [c.preferred_label for c in shortlist]
+        order_hash = hashlib.sha256("\u0000".join(labels).encode()).hexdigest()[:16]
+        in_shortlist = {c.concept_id for c in shortlist}
+        pair = [c for c in ranked if c.concept_id in in_shortlist][:2]
+        if len(pair) < 2:
+            return {
+                "skipped": True,
+                "reason": "fewer_than_two_candidates",
+                "candidate_order_hash": order_hash,
+            }
+        a, b = pair
+
+        def typed(fid: str) -> Optional[dict[str, Any]]:
+            f = ledger.facts.get(fid)
+            if f is None:
+                return None
+            return {
+                "fact_id": fid,
+                "span": f.raw_span,
+                "polarity": f.polarity,
+                "temporality": f.temporality,
+                "specificity": f.specificity,
+                "reliability": f.reliability,
+            }
+
+        a_for, b_for = set(a.support_fact_ids), set(b.support_fact_ids)
+        a_against, b_against = set(a.contradict_fact_ids), set(b.contradict_fact_ids)
+        def role(fid: str, own_for: set[str], own_against: set[str]) -> str:
+            if fid in own_for and fid in own_against:
+                return "self_contradictory"
+            if fid in own_for:
+                return "for"
+            if fid in own_against:
+                return "against"
+            return "none"
+
+        # A fact supporting *both* candidates is shared and settles nothing; a
+        # fact supporting one and opposing the other is the clean discriminator.
+        # Collapsing those two into one "conflicting" bucket would make most
+        # shared findings look like contradictions.
+        RELATION = {
+            ("for", "for"): "shared_support",
+            ("against", "against"): "shared_objection",
+            ("for", "against"): "discriminates_a",
+            ("against", "for"): "discriminates_b",
+            ("for", "none"): "favours_a",
+            ("none", "for"): "favours_b",
+            ("against", "none"): "favours_b",
+            ("none", "against"): "favours_a",
+            ("none", "none"): "unused",
+        }
+        cards: list[dict[str, Any]] = []
+        self_contradictory: list[str] = []
+        for fid in sorted((a_for | b_for | a_against | b_against)):
+            card = typed(fid)
+            if card is None:
+                continue
+            ra = role(fid, a_for, a_against)
+            rb = role(fid, b_for, b_against)
+            if "self_contradictory" in (ra, rb):
+                relation = "self_contradictory"
+                self_contradictory.append(fid)
+            else:
+                relation = RELATION[(ra, rb)]
+            card.update(
+                {
+                    "role_a": ra,
+                    "role_b": rb,
+                    "relation": relation,
+                    "discriminating": relation
+                    in ("discriminates_a", "discriminates_b", "favours_a", "favours_b"),
+                }
+            )
+            cards.append(card)
+
+        def exclusive_high(own: set[str], other: set[str]) -> list[str]:
+            return [
+                fid
+                for fid in sorted(own - other)
+                if (ledger.facts.get(fid) is not None)
+                and ledger.facts[fid].specificity == "high"
+            ]
+
+        a_disc = exclusive_high(a_for, b_for)
+        b_disc = exclusive_high(b_for, a_for)
+        if self_contradictory:
+            # An item-2 defect that survived into the pair: the edge cannot be
+            # adjudicated on evidence that points both ways for one candidate.
+            reason = "self_contradictory_edge_present"
+        elif b.concept_id in a.broader_than or b.concept_id in a.narrower_than:
+            reason = "broad_subtype_unresolved"
+        elif a_disc and b_disc:
+            reason = "both_sides_hold_exclusive_high_specificity"
+        elif not a_disc and not b_disc:
+            reason = "neither_side_holds_an_exclusive_high_specificity_discriminator"
+        else:
+            reason = "one_side_holds_the_only_discriminator"
+        # A tie is *not* a reason: with the C4 matrix off every score is 0.0, so a
+        # tie is universal in the collapsed arm and would swamp the distribution.
+        # It is reported as a field so it can be read where it means something.
+        return {
+            "scores_tied": abs(a.score - b.score) < 1e-9,
+            "candidate_order_hash": order_hash,
+            "candidate_a": a.preferred_label,
+            "candidate_b": b.preferred_label,
+            "disputed_reason": reason,
+            "resolvable_on_present_evidence": bool(
+                reason == "one_side_holds_the_only_discriminator"
+            ),
+            "a_exclusive_high_specificity": a_disc,
+            "b_exclusive_high_specificity": b_disc,
+            "self_contradictory_fact_ids": self_contradictory,
+            "shared_non_discriminating_fact_ids": [
+                c["fact_id"]
+                for c in cards
+                if c["relation"] in ("shared_support", "shared_objection")
+            ],
+            "edge_cards": cards[:12],
+            "n_edge_cards": len(cards),
+        }
+
+    @staticmethod
+    def _fact_cards(
+        fact_ids: list[str],
+        spans: list[str],
+        ledger: EvidenceLedger,
+        k: int,
+    ) -> list[dict[str, Any]]:
+        """Typed cards for design 9.3 item 5.
+
+        The candev note hands the selector bare strings, so polarity, time,
+        specificity and reliability are dropped at the very step that decides the
+        answer even though C1 captured them.  Cards carry them.
+
+        An unbindable span is kept and marked ``bound: false`` rather than
+        dropped: silently removing a citation would change what the selector sees
+        without leaving a trace, and the closure figure in
+        ``direction_validity`` is what says how often that happens.
+        """
+        cards: list[dict[str, Any]] = []
+        seen: set[str] = set()
+        for fid in fact_ids:
+            f = ledger.facts.get(fid)
+            if f is None or fid in seen:
+                continue
+            seen.add(fid)
+            cards.append(
+                {
+                    "fact_id": fid,
+                    "span": f.raw_span,
+                    "polarity": f.polarity,
+                    "temporality": f.temporality,
+                    "specificity": f.specificity,
+                    "reliability": f.reliability,
+                    "bound": True,
+                }
+            )
+            if len(cards) >= k:
+                return cards
+        bound_spans = {_norm(c["span"]) for c in cards}
+        for span in spans:
+            if len(cards) >= k:
+                break
+            if _norm(span) in bound_spans:
+                continue
+            cards.append({"span": span, "bound": False})
+        return cards
+
     def _select_frontier(
         self,
         *,
         vignette: str,
         frontier: list[ConceptNode],
         ledger: EvidenceLedger,
+        edge_audit: Optional[dict[str, Any]] = None,
     ) -> tuple[dict, str]:
         notes = []
         for c in frontier:
@@ -1413,7 +1860,15 @@ class AphhmCPipeline:
                     if x.direction == "rule_out"
                 ][:2],
             }
-            if self.selector_candidate_evidence:
+            if self.selector_candidate_evidence and self.typed_selector_cards:
+                note = {
+                    "label": c.preferred_label,
+                    "for": self._fact_cards(c.support_fact_ids, c.support_spans, ledger, 4),
+                    "against": self._fact_cards(
+                        c.contradict_fact_ids, c.contradict_spans, ledger, 3
+                    ),
+                }
+            elif self.selector_candidate_evidence:
                 note = {
                     "label": c.preferred_label,
                     "for": list(c.support_spans)[:4],
@@ -1472,6 +1927,14 @@ class AphhmCPipeline:
                 "shortlist": shortlist,
                 "candidate_notes": notes,
             }
+        if edge_audit and not edge_audit.get("skipped"):
+            # An audit feature, not a verdict: design 8.3 step 10 keeps the
+            # original evidence authoritative and forbids overwriting it.
+            payload["disputed_edge_audit"] = {
+                k: v
+                for k, v in edge_audit.items()
+                if k != "candidate_order_hash"
+            }
         if self.tournament and self.split_final:
             return self._select_in_two_rounds(
                 vignette=vignette, frontier=frontier, payload=payload
@@ -1482,7 +1945,102 @@ class AphhmCPipeline:
             champ = next(
                 (x for x in shortlist if _norm(x) == _norm(champ)), shortlist[0]
             )
+        if self.tournament and self.enforce_group_quota:
+            return self._enforce_group_quota(
+                vignette=vignette, payload=payload, raw=raw, champ=champ
+            )
         return raw, champ, 1
+
+    def _enforce_group_quota(
+        self, *, vignette: str, payload: dict, raw: dict, champ: str
+    ) -> tuple[dict, str, int]:
+        """Give every non-empty stance group the finalist the contract promised.
+
+        The seat filler is deterministic and outcome-blind: a silent group is
+        represented by its own highest-ranked member, which is `candidates[0]`
+        because the groups were built by walking the frontier in ledger-rank
+        order. Only when a seat is actually added does the champion get
+        re-decided, so a compliant reply costs nothing and is left untouched.
+        """
+        groups = [g for g in payload.get("groups") or [] if g.get("candidates")]
+        by_norm: dict[str, str] = {}
+        for g in groups:
+            for c in g["candidates"]:
+                lab = str(c.get("label") or "")
+                if lab:
+                    by_norm.setdefault(_norm(lab), lab)
+
+        seated: dict[str, dict] = {}
+        for item in _as_list(raw.get("finalists")):
+            lab = str(
+                (item.get("label") if isinstance(item, Mapping) else item) or ""
+            ).strip()
+            norm = _norm(lab)
+            if norm not in by_norm or norm in seated:
+                continue
+            group = next(
+                (
+                    g["group"]
+                    for g in groups
+                    if any(_norm(str(c.get("label") or "")) == norm for c in g["candidates"])
+                ),
+                "",
+            )
+            entry = dict(item) if isinstance(item, Mapping) else {"label": lab}
+            entry["label"] = by_norm[norm]
+            entry["group"] = group
+            seated[norm] = entry
+
+        filled: list[dict] = []
+        represented = {e["group"] for e in seated.values()}
+        for g in groups:
+            if g["group"] in represented:
+                continue
+            top = next(
+                (
+                    str(c.get("label") or "")
+                    for c in g["candidates"]
+                    if _norm(str(c.get("label") or "")) not in seated
+                ),
+                "",
+            )
+            if not top:
+                continue
+            entry = {
+                "group": g["group"],
+                "label": top,
+                "why": "",
+                "quota_fill": "highest_ranked_member_of_a_silent_group",
+            }
+            seated[_norm(top)] = entry
+            filled.append({"group": g["group"], "label": top})
+
+        finalists = list(seated.values())
+        out = dict(raw)
+        out["finalists"] = finalists
+        out["group_quota"] = {
+            "n_groups": len(groups),
+            "n_finalists_from_model": len(finalists) - len(filled),
+            "filled": filled,
+        }
+        if not filled or len(finalists) < 2:
+            return out, champ, 1
+
+        labels = [f["label"] for f in finalists]
+        final = self._call(
+            "AphhmCFinalAdjudicator",
+            self.prompt_final,
+            {"vignette": vignette, "finalists": finalists, "shortlist": labels},
+        )
+        new_champ = str(final.get("champion") or "").strip()
+        if new_champ not in labels:
+            new_champ = next(
+                (x for x in labels if _norm(x) == _norm(new_champ)), labels[0]
+            )
+        out["final"] = final
+        out["champion_before_quota"] = champ
+        out["champion"] = new_champ
+        return out, new_champ, 2
 
     def _select_in_two_rounds(
         self, *, vignette: str, frontier: list[ConceptNode], payload: dict
@@ -1556,7 +2114,9 @@ class AphhmCPipeline:
     def run(self, *, case_id: str, vignette: str) -> AphhmCResult:
         calls = 0
         stages: dict[str, Any] = {"mode": self.mode, "vignette_chars": len(vignette)}
-        registry = ConceptRegistry(resolver=self.resolver)
+        registry = ConceptRegistry(
+            resolver=self.resolver, strict_identity=self.strict_identity
+        )
 
         facts, c1 = self._build_fact_ledger(vignette)
         calls += 1
@@ -1595,6 +2155,13 @@ class AphhmCPipeline:
             )
             calls += 1
             gap_used = True
+
+        # Bind the against direction and validate it before the ledger, the
+        # ranking or the selector payload can read it.  Withdrawal is opt-in.
+        stages["direction_validity"] = registry.audit_directions(
+            facts, quarantine=self.quarantine_direction_conflicts
+        )
+        stages["direction_quarantine"] = list(registry.direction_quarantine)
 
         concepts = registry.active()
         ledger = EvidenceLedger(facts, concepts)
@@ -1644,6 +2211,19 @@ class AphhmCPipeline:
         if self.selector_unanchored:
             # present in generation order so the shortlist carries no ranking
             shortlist = sorted(shortlist, key=lambda c: c.concept_id)
+        if self.selector_order != "generation" and shortlist:
+            before = [c.concept_id for c in shortlist]
+            shortlist = self._order_shortlist(shortlist, case_id=case_id)
+            after = [c.concept_id for c in shortlist]
+            # Order is the only permitted difference: same multiset, new sequence.
+            if sorted(after) != sorted(before):
+                raise AssertionError("selector_order changed the candidate set")
+            stages["selector_order"] = {
+                "mode": self.selector_order,
+                "presented": after,
+                "baseline": before,
+                "moved": after != before,
+            }
         if self.near_dedup_shortlist and shortlist:
             before_n = len(shortlist)
             shortlist = nd.dedupe_by_label(
@@ -1656,10 +2236,23 @@ class AphhmCPipeline:
                 "after": len(shortlist),
                 "jaccard": self.near_dedup_jaccard,
             }
+        edge_audit: Optional[dict[str, Any]] = None
+        if self.pair_edge_audit and shortlist:
+            # Frozen shortlist in, audit features out; zero calls, no membership change.
+            edge_audit = self._pair_edge_audit_payload(
+                shortlist=shortlist, ranked=ranked, ledger=ledger
+            )
+            stages["pair_edge_audit"] = edge_audit
+            after = hashlib.sha256(
+                "\u0000".join(c.preferred_label for c in shortlist).encode()
+            ).hexdigest()[:16]
+            if after != edge_audit["candidate_order_hash"]:
+                raise AssertionError("pair edge audit changed the frozen candidate set")
+
         rounds = 2 if self.split_final else 1
         if self.frontier_selector and shortlist and calls + rounds <= self.max_calls:
             sel, champion, used = self._select_frontier(
-                vignette=vignette, frontier=shortlist, ledger=ledger
+                vignette=vignette, frontier=shortlist, ledger=ledger, edge_audit=edge_audit
             )
             calls += used
             stages["frontier_selector"] = sel

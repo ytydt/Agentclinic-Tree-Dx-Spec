@@ -3,8 +3,11 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 import sys
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 
@@ -78,6 +81,45 @@ def score_case_with_mapper(
     }
 
 
+class _LockedRetriever:
+    """Serialize retriever search so shared FAISS/TF-IDF indices stay safe."""
+
+    def __init__(self, inner: Any, lock: threading.Lock) -> None:
+        self._inner = inner
+        self._lock = lock
+
+    def search(self, *args: Any, **kwargs: Any) -> Any:
+        with self._lock:
+            return self._inner.search(*args, **kwargs)
+
+    def search_for_disease(self, *args: Any, **kwargs: Any) -> Any:
+        with self._lock:
+            return self._inner.search_for_disease(*args, **kwargs)
+
+    def search_for_differential(self, *args: Any, **kwargs: Any) -> Any:
+        with self._lock:
+            return self._inner.search_for_differential(*args, **kwargs)
+
+
+class _ThreadLocalLLM:
+    def __init__(self, factory: Any) -> None:
+        self._factory = factory
+        self._local = threading.local()
+
+    def call_module(self, module: str, prompt: str, payload: Mapping[str, Any]) -> Any:
+        client = getattr(self._local, "client", None)
+        if client is None:
+            client = self._factory()
+            self._local.client = client
+        return client.call_module(module, prompt, dict(payload))
+
+
+def _fork_resolver(base: Any) -> Any:
+    resolver = copy.copy(base)
+    resolver._cache = {}
+    return resolver
+
+
 def build_mapper(
     *,
     mode: str,
@@ -85,21 +127,25 @@ def build_mapper(
     cache_path: Path,
     call_timeout: int = 240,
     dry_run: bool = False,
+    workers: int = 1,
 ) -> RelationAwareAnswerMapper:
     from agentclinic_tree_dx.llm_client import RobustLLMClient
-    import baseline_common as bc_mod
     from baseline_common import SimpleCachedLLM
 
+    workers = max(1, int(workers))
     resolver = load_offline_resolver(ROOT)
     client = None
     if not dry_run and mode != "deterministic_gold_blind":
-        client = RobustLLMClient(
-            model=model,
-            call_timeout=call_timeout,
-            max_retries=5,
-            timeout_retry_cap=2,
-            temperature=0.0,
-        )
+        def _make_client() -> Any:
+            return RobustLLMClient(
+                model=model,
+                call_timeout=call_timeout,
+                max_retries=5,
+                timeout_retry_cap=2,
+                temperature=0.0,
+            )
+
+        client = _ThreadLocalLLM(_make_client) if workers > 1 else _make_client()
     cached = SimpleCachedLLM(client, cache_path, model)
 
     class _Adapter:
@@ -119,9 +165,15 @@ def build_mapper(
             retrievers["cpg_index"] = RAGRetriever(str(cpg_index), device="cpu")
         if not retrievers:
             retrievers = None
+        elif workers > 1:
+            lock = threading.Lock()
+            retrievers = {
+                name: _LockedRetriever(retriever, lock)
+                for name, retriever in retrievers.items()
+            }
 
-    return RelationAwareAnswerMapper(
-        resolver=resolver,
+    mapper = RelationAwareAnswerMapper(
+        resolver=resolver if workers == 1 else _fork_resolver(resolver),
         llm=_Adapter() if mode != "deterministic_gold_blind" else None,
         relation_prompt=(PROMPT_DIR / "answer_relation_mapper.txt").read_text(
             encoding="utf-8",
@@ -131,6 +183,31 @@ def build_mapper(
         ),
         retrievers=retrievers,
     )
+    if workers == 1:
+        return mapper
+
+    local = threading.local()
+
+    class _PerThreadMapper:
+        def map(self, **kwargs: Any) -> dict[str, Any]:
+            thread_mapper = getattr(local, "mapper", None)
+            if thread_mapper is None:
+                thread_mapper = RelationAwareAnswerMapper(
+                    resolver=_fork_resolver(resolver),
+                    llm=mapper.llm,
+                    relation_prompt=mapper.relation_prompt,
+                    critic_prompt=mapper.critic_prompt,
+                    retrievers=mapper.retrievers,
+                    confidence_threshold=mapper.confidence_threshold,
+                    rag_top_k=mapper.rag_top_k,
+                    rag_max_snippets=mapper.rag_max_snippets,
+                    rag_max_chars=mapper.rag_max_chars,
+                    strict_total_order=mapper.strict_total_order,
+                )
+                local.mapper = thread_mapper
+            return thread_mapper.map(**kwargs)
+
+    return _PerThreadMapper()  # type: ignore[return-value]
 
 
 def score_predictions_dir(
@@ -140,6 +217,7 @@ def score_predictions_dir(
     mode: str,
     model: str,
     dry_run: bool = False,
+    workers: int = 1,
 ) -> dict[str, Any]:
     predictions_path = pred_dir / "predictions.jsonl"
     if not predictions_path.is_file():
@@ -150,13 +228,15 @@ def score_predictions_dir(
         for line in predictions_path.read_text(encoding="utf-8").splitlines()
         if line.strip()
     ]
+    workers = max(1, int(workers))
     mapper = build_mapper(
         mode=mode,
         model=model,
         cache_path=pred_dir / "cache" / "mapper_llm.json",
         dry_run=dry_run or mode == "deterministic_gold_blind",
+        workers=workers,
     )
-    records: list[dict[str, Any]] = []
+    jobs: list[tuple[Mapping[str, Any], Sequence[str], str]] = []
     for row in rows:
         case = by_id.get(str(row["case_id"]))
         if case is None:
@@ -165,14 +245,29 @@ def score_predictions_dir(
         effective_mode = mode
         if dry_run and mode != "deterministic_gold_blind":
             effective_mode = "deterministic_gold_blind"
-        records.append(
-            score_case_with_mapper(
-                case=case,
-                top2=top2,
-                mapper=mapper,
-                mode=effective_mode,
-            )
+        jobs.append((case, top2, effective_mode))
+    records = [None] * len(jobs)
+
+    def _one(index: int) -> tuple[int, dict[str, Any]]:
+        case, top2, effective_mode = jobs[index]
+        return index, score_case_with_mapper(
+            case=case,
+            top2=top2,
+            mapper=mapper,
+            mode=effective_mode,
         )
+
+    if workers == 1 or len(jobs) <= 1:
+        for index in range(len(jobs)):
+            _, record = _one(index)
+            records[index] = record
+    else:
+        with ThreadPoolExecutor(max_workers=workers) as pool:
+            futures = [pool.submit(_one, index) for index in range(len(jobs))]
+            for future in as_completed(futures):
+                index, record = future.result()
+                records[index] = record
+    records = [record for record in records if record is not None]
     summary = {
         "n": len(records),
         "mapper_mode": mode if not dry_run else "deterministic_gold_blind",
@@ -211,6 +306,7 @@ def main() -> int:
     parser.add_argument("--model", default="meta-llama/llama-3.3-70b-instruct")
     parser.add_argument("--limit", type=int, default=0)
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--workers", type=int, default=1)
     args = parser.parse_args()
     cases = bc.load_runtime_cases(subset_dir=args.subset_dir, limit=args.limit)
     summary = score_predictions_dir(
@@ -219,6 +315,7 @@ def main() -> int:
         mode=args.mapper_mode,
         model=args.model,
         dry_run=args.dry_run,
+        workers=args.workers,
     )
     print(json.dumps(summary, indent=2))
     return 0

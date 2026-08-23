@@ -1,0 +1,46 @@
+{
+  "error": "",
+  "model": "anthropic/claude-sonnet-4.6",
+  "module": "CoreLiftClinical_reviewer_b",
+  "payload_sha256": "5ced76dc407945880ff0028f853012c7f11578ca3b6e233c6729a8cfb8843abb",
+  "prompt_sha256": "463c126908d57538bc5d7e04a9b75ec87f6b41fc1afd26a835068d4067c50978",
+  "response": {
+    "candidate_relations": [
+      {
+        "candidate_id": "C001",
+        "confidence": "high",
+        "reason": "The reference diagnosis is a composite: peripheral-type facial palsy caused by dorsolateral pontine infarction. C001 names only the causative stroke without specifying the resulting facial palsy or its peripheral-type classification.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures the pontine infarction (etiology/anatomy) but omits the peripheral-type facial palsy component"
+      },
+      {
+        "candidate_id": "C002",
+        "confidence": "high",
+        "reason": "Right peripheral facial palsy is the correct palsy descriptor but the reference requires the etiology (dorsolateral pontine infarction) to be complete. C002 is a component of the full diagnosis without the causative lesion.",
+        "relation": "partial_parent_or_component",
+        "scope_detail": "Captures the facial palsy component and laterality but omits the etiology (pontine infarction)"
+      },
+      {
+        "candidate_id": "C003",
+        "confidence": "high",
+        "reason": "MRI shows T1 hypointense, T2 moderate signal in the dorsolateral pons with no DWI restriction noted but clinical context and MRTA findings are more consistent with infarction. A schwannoma is a different pathological entity and conflicts with the infarction-based reference diagnosis.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Asserts a neoplastic etiology (schwannoma) incompatible with the infarction etiology supported by MRI findings"
+      },
+      {
+        "candidate_id": "C004",
+        "confidence": "high",
+        "reason": "Neuroma implies a nerve sheath tumor, which conflicts with the reference diagnosis of pontine infarction. The imaging and clinical course do not support a neoplastic process as the primary diagnosis.",
+        "relation": "conflicting_subtype_or_scope",
+        "scope_detail": "Asserts a neoplastic/nerve tumor etiology incompatible with the infarction etiology"
+      }
+    ],
+    "case_quality_flags": [
+      "DWI negative for hyperintensity despite clinical infarction diagnosis — subacute timing (7 months) may explain DWI negativity; reference diagnosis of infarction is still supported by overall clinical picture",
+      "Reference diagnosis composite requires both etiology (pontine infarction) and manifestation (peripheral facial palsy) — no single candidate captures both components"
+    ]
+  },
+  "schema": "mechanism_v2_online_call_v1",
+  "success": true,
+  "temperature": 0.0
+}

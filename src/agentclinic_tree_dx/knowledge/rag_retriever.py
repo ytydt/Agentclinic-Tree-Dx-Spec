@@ -12,10 +12,15 @@ from __future__ import annotations
 
 import json
 import logging
+import threading
 from pathlib import Path
 from typing import Optional
 
 logger = logging.getLogger(__name__)
+
+# sklearn TfidfVectorizer.transform / sparse matmul are not documented as
+# thread-safe; serialize the sparse path the same way FAISS search is locked.
+_TFIDF_LOCK = threading.Lock()
 
 
 class RAGRetriever:
@@ -314,9 +319,10 @@ class RAGRetriever:
         if self._tfidf_vectorizer is None or self._tfidf_matrix is None:
             return []
         import numpy as np
-        q_vec = self._tfidf_vectorizer.transform([query])
-        scores = (self._tfidf_matrix @ q_vec.T).toarray().flatten()
-        top_indices = np.argsort(scores)[::-1][:top_k]
+        with _TFIDF_LOCK:
+            q_vec = self._tfidf_vectorizer.transform([query])
+            scores = (self._tfidf_matrix @ q_vec.T).toarray().flatten()
+            top_indices = np.argsort(scores)[::-1][:top_k]
         results = []
         for idx in top_indices:
             s = float(scores[idx])

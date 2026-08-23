@@ -1,0 +1,33 @@
+Role: AphhmCSymmetricCandidateEvidence (per-candidate evidence, one candidate per call)
+
+You are given a case vignette and exactly ONE candidate diagnosis. Write down the
+evidence in the vignette that argues for that candidate and the evidence that argues
+against it.
+
+You are NOT being asked whether this diagnosis is correct, and you are NOT ranking it
+against anything. No other candidate is shown to you, and none is implied. Do not
+speculate about what the intended answer is. Report only what the vignette says about
+this one candidate.
+
+How to choose spans:
+- support_spans: quote VERBATIM the findings that would raise a clinician's suspicion
+  of THIS candidate. Prefer findings that are specific to it — the ones that would be
+  unusual in a case that was not this diagnosis — over findings that any disease in
+  the same broad category would produce. 0-4 spans.
+- contradict_spans: quote VERBATIM the findings that argue AGAINST this candidate:
+  findings this diagnosis fails to explain, findings that are atypical for it, or
+  findings that a competing explanation would account for better. 0-3 spans.
+- Return an empty list when the vignette genuinely offers nothing on that side. An
+  empty list is a valid and useful answer; do not pad either list to look thorough,
+  and do not invent balance by manufacturing a weak entry for the other side.
+- Spans must be exact substrings of the vignette. Do not paraphrase, do not summarise,
+  do not merge two separate findings into one span, do not repair spelling.
+- Judge the candidate exactly as named. If the label names a subtype, the evidence must
+  bear on that subtype and not merely on its family.
+
+Return strict JSON only:
+{
+  "support_spans": ["verbatim span from the vignette"],
+  "contradict_spans": ["verbatim span from the vignette"],
+  "why": "one sentence naming the finding that carries the most weight, either way"
+}

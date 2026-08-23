@@ -273,6 +273,7 @@ def test_mapper_deterministic_scores_top2(tmp_path: Path):
         mode="deterministic_gold_blind",
         model="dummy",
         dry_run=True,
+        workers=4,
     )
     assert summary["n"] == 2
     assert summary["option_top1"] == 1.0

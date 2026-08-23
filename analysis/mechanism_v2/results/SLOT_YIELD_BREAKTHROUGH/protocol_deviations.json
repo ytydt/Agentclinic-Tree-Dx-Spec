@@ -1,0 +1,105 @@
+{
+  "schema": "corelift_protocol_deviations_v1",
+  "deviations": [
+    {
+      "id": "PD-001",
+      "timestamp_utc": "2026-08-18T23:57:00Z",
+      "stage": "type_completion_before_any_endpoint_evaluation",
+      "classification": "implementation_defect_repair",
+      "trigger": "Four of 800 otherwise schema-valid responses contained at least one completion with a non-frozen modifier axis. The v1 validator failed the whole case.",
+      "affected_case_keys": [
+        "DA_d2_heldout200b/473",
+        "DA_d2_heldout200b/478",
+        "MCR_v2_seq100/179",
+        "MCR_v2_seq100/223"
+      ],
+      "repair": "The case-level validator now validates the mandatory admission ledger and the completions container. Deterministic normalization rejects each malformed completion independently, including unknown axes, while retaining valid admissions and other valid completions.",
+      "scientific_rationale": "This restores the frozen fail-closed contract at the candidate level: a completion without an allowed axis is not admitted, but it does not erase unrelated valid candidate admissions or completions.",
+      "outcome_blind": true,
+      "provider_recall": false,
+      "cache_replay": true,
+      "prompt_changed": false,
+      "threshold_changed": false,
+      "arm_outcome_observed": false,
+      "endpoint_observed": false,
+      "source_sha256_before": "7ceed37f03a9bab940664c31a388f5edc57b37ad9ace908cb09c1111da1de7b9",
+      "source_sha256_after": "536e0d604cc75f887b9f93b80b787da745302d6bdfe06511c4b3fe4b63176564"
+    },
+    {
+      "id": "PD-002",
+      "timestamp_utc": "2026-08-19T00:37:00Z",
+      "stage": "selector_execution_before_any_endpoint_evaluation",
+      "classification": "operational_reliability_recovery",
+      "trigger": "The frozen DeepSeek selector returned only 704/800 valid A0 rows and 738/800 valid A1 rows under the initial 180-second, two-retry transport envelope. Failures were explicit timeouts, output truncations, or invalid fallback responses.",
+      "repair": "Preserve every first-pass failed case and cache record in an immutable retry archive, then reissue only explicit failures with the identical model, prompt, payload, temperature, candidate order, and thresholds under a 300-second, four-retry transport envelope.",
+      "scientific_rationale": "Transport failure is not an algorithmic negative prediction. Recovery changes no semantic intervention and is required to approach the preregistered service-rate denominator without deleting or imputing cases.",
+      "outcome_blind": true,
+      "provider_recall": true,
+      "cache_replay": false,
+      "prompt_changed": false,
+      "model_changed": false,
+      "payload_changed": false,
+      "temperature_changed": false,
+      "threshold_changed": false,
+      "endpoint_observed": false,
+      "first_pass_service": {
+        "A0_control": "704/800",
+        "A1_views": "738/800"
+      },
+      "initial_transport": {
+        "call_timeout_seconds": 180,
+        "max_retries": 2
+      },
+      "recovery_transport": {
+        "call_timeout_seconds": 300,
+        "max_retries": 4
+      },
+      "source_sha256_before": "536e0d604cc75f887b9f93b80b787da745302d6bdfe06511c4b3fe4b63176564",
+      "source_sha256_after": "3119a824d408be10c65c8c24a28dd2568aedae057abccdbbbcaaa1ea74b177ad"
+    },
+    {
+      "id": "PD-003",
+      "timestamp_utc": "2026-08-19T00:52:20Z",
+      "stage": "A2_startup_before_provider_call",
+      "classification": "concurrency_safety_repair",
+      "trigger": "Concurrent A2/A3 startup used the shared write_jsonl temporary filename while redundantly rewriting the already frozen construction ledger. A2 exited before any provider call; A3 completed the atomic replacement.",
+      "repair": "Only --prepare-only may write construction_ledger.jsonl. Every online stage now requires the frozen ledger to exist and treats it as read-only.",
+      "scientific_rationale": "The construction ledger is an immutable pre-online artifact. Preventing later writes changes no treatment, payload, prompt, model, threshold, or outcome.",
+      "outcome_blind": true,
+      "provider_recall": false,
+      "prompt_changed": false,
+      "model_changed": false,
+      "payload_changed": false,
+      "threshold_changed": false,
+      "endpoint_observed": false,
+      "source_sha256_before": "3119a824d408be10c65c8c24a28dd2568aedae057abccdbbbcaaa1ea74b177ad",
+      "source_sha256_after": "ed1017f2a8d636f27dd4d8ff2e6ee803ff150f30a1b78351275b2dd90c4d88ca"
+    },
+    {
+      "id": "PD-004",
+      "timestamp_utc": "2026-08-19T15:30:00Z",
+      "stage": "evaluator_prepare_before_any_online_review_or_endpoint_evaluation",
+      "classification": "reuse_contract_repair",
+      "trigger": "The two frozen clinical sources (C0 three-model adjudicated panel and ALL_ARM_ENDPOINT_MIGRATION final replay) overlap on 3016 case-by-label keys and disagree on the five-way fine label for 368 of them (12.20%). The v1 reuse loader failed closed on any fine-label disagreement, which blocked prepare entirely.",
+      "repair": "Reuse is now keyed on the boundaries an endpoint actually reads. A key whose two frozen sources disagree on the complete boundary or on the complete-or-compatible-partial boundary is dropped from reuse and re-adjudicated by the preregistered online three-reviewer panel. Fine-label-only divergence retains the first source and carries the divergent label as provenance. The identical rule is applied to frozen task reuse, where a disagreement on the official task outcome drops the key to fresh online scoring. Counts and the full conflict list are written to design/frozen_reuse_audit.json.",
+      "scientific_rationale": "Measured on the 3016-key overlap, disagreement is 0.70% on the complete boundary and 3.05% on complete-or-compatible-partial, against 12.20% on the fine label. This reproduces the known C0 result that the binary complete boundary is reliable while the five-way taxonomy missed its 0.80 agreement gate at 0.7210. Failing the whole evaluation on a label no endpoint consumes would be the same category of error the plan documents as the old roadmap's fatal defect. Silently preferring one frozen source is not acceptable either, so ambiguous keys are re-adjudicated rather than imputed.",
+      "outcome_blind": true,
+      "provider_recall": false,
+      "prompt_changed": false,
+      "model_changed": false,
+      "payload_changed": false,
+      "threshold_changed": false,
+      "endpoint_observed": false,
+      "frozen_overlap_keys": 3016,
+      "disagreement_rate": {
+        "fine_five_way_label": 0.122,
+        "complete_boundary": 0.007,
+        "complete_or_compatible_partial_boundary": 0.0305
+      },
+      "evaluator_sha256_before": null,
+      "evaluator_sha256_before_note": "Not recorded. The v1 loader aborted prepare before any design artifact was written, so no evaluator preregistration existed to bind a hash to, and the file was not yet under version control. No endpoint, review, or arm outcome was ever computed under the v1 loader.",
+      "evaluator_sha256_after": "c8f616968b35a77336a23cbd1457d34296b27b2ed410e53e769ced0fcb1e0f6a",
+      "runner_source_unchanged_sha256": "ed1017f2a8d636f27dd4d8ff2e6ee803ff150f30a1b78351275b2dd90c4d88ca"
+    }
+  ]
+}

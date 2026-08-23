@@ -6,6 +6,141 @@
 > 新 LLM/API 调用：**0**
 > 外部代码：只克隆、只读审计；未把第三方仓库写入主项目
 
+> **2026-08-22 更新：§12 的 P0/P1 已零调用执行完毕，结论与本文的优先级不一致。**
+> 见 [`CF_SUBSTRATE_REPLAY/REPORT.md`](results/CF_SUBSTRATE_REPLAY/REPORT.md)。三点分歧：
+> ① P0 的五处并非并列——**只有 safe identity 有可测收益**（Forest 净 +16、IMPC 净 +11 个
+> addressable-complete），proposition dedup 净 0，移除 view 加分在 IMPC 净 −2；
+> ② 这条修复 **Collapse3c 早已实现**：三臂用同一个 containment 谓词，Forest/IMPC 静默折叠
+> 561/452 次，Collapse3c 保留为 `narrower_than`/`broader_than` 141 次——这给 §7.2 的
+> "Collapse3c 是 specificity-retention 参考" 第一次配上机制和数字；
+> ③ **§8/§11 的 `CF_EDGE_AUDIT_V1` 规模比预期小一个量级**：edge 可审计性轻松通过（86.1% 的病例
+> 有候选独有高特异判别子），但真实 conversion gap 仅 50/800、带判别子者 15/800，
+> top-pair 版本上界 22/800，且 harm 暴露面（109 例 champion 本已正确）是可寻址集的 5 倍。
+> 故 §12 的执行顺序应改为：**先做 P0 第 1 处 + 修自相矛盾边，不按现设计预注册 P2。**
+>
+> **2026-08-22 二次更新：上述两项已落到生产代码并通过零调用验收。**
+> `mosaic.py` 的 `_match` 去掉 containment、改由 `_relation()` 产出 typed relation，
+> 并加一条有界的父子退坑准入规则（迭代到不动点，上限 2）；`aphhm_c.py` 新增
+> `bind_and_quarantine_directions()`，补上 `contradict_fact_ids`（即 §9.3 要的 `against_fact_ids`）
+> 并撤回自相矛盾边。补上准入规则后 **harm 在两臂均归零**，Forest 净 +16→**+17**、
+> IMPC 净 +11→**+13**（IMPC 的 176 已等于 pool 上限，其剩余损失全部在 selector 侧）。
+> 该收益**不依赖分析层的冻结同义桥**，生产 `resolver=None` 下即为此数。
+> 44 条自相矛盾边按绑定层拆为 28 条 exact + 16 条 containment-only；生产只自动撤回前 28 条，
+> 后 16 条留 review queue——因为 §6.2 已证 containment 正是混淆对象的那一层，
+> 不能为了凑数把它装回 evidence 方向上。
+> **但两项修复的记账必须分开**：边隔离的端点上界只有 23/800 例 selector payload 变动
+> （1 例 rescue 暴露、至多 1 例可能有害、21 例惰性），因为 `score_concept` 不读
+> `support_fact_ids`/`contradict_spans`，其确定性效应恒为 0——它是自洽性修复，不是涨分修复。
+> 另一个反转：修复后 Forest 173 / IMPC 176 **已超过** Collapse3c 的 168 addressability，
+> 但 Collapse3c 仍以 conversion（.726 vs .686/.601）在真端点领先（122 vs 107/98），
+> 所以瓶颈已从 recall 移到 conversion。
+> 四层依赖次序（identity → 方向自洽 → evidence schema → edge 干预）见报告 §7.0。
+>
+> **§11.2 的 exact citation closure ≥98% 现在就不过**：against 一侧 2,820 条 span 只有 85.0%
+> 能在 exact 层闭合，约 15% 在 §8.1 的数据对象定义下无法构成 intervention card。这是 P2 的
+> 硬前置。反之，先前被列为前置成本的「未挂载 fact」经按特异性拆分已撤回：高特异 fact
+> 已 99.1% 挂载（未绑定主体是低特异，82.3%），§8.3 step 2 在 Collapse3c 上无需补挂载。
+>
+> **2026-08-23 三次更新：(B) direction validator 与 §9.3 第 3、5 项已实现，结论是 P2 应停。**
+> 见 [`CF_SUBSTRATE_REPLAY/REPORT.md` §「方向校验与 pair-edge audit」](results/CF_SUBSTRATE_REPLAY/REPORT.md)。
+> ① **开关形态纠正**：三项都改行为，故一律做成 `AphhmCPipeline` 默认 `False` 的 kwarg，
+> 经 CLI 传入并记入 `manifest.json`，与 `strict_identity`/`enforce_group_quota` 同一形态。
+> 上一轮把边隔离做成常开是违反该约定的（改行为却不进 manifest），本轮已改为
+> `quarantine_direction_conflicts`；绑定与校验保持常开，因为它们不改任何 selector 可见字段。
+> ② **闭合率门两侧都不过，且比先前报的更差**：把 support 一侧一并计入后，DA/MCR 的
+> combined closure 均为 **92.4%**（against 83.9%/85.9%，support 95.2%/95.1%），
+> 逐例只有 62.8%/63.0% 的病例自身达标。§11.2 的 ≥98% 不是差一点，是差 5.6pp。
+> ③ **决定性的负面结果：pair-edge audit 够不到 conversion gap，且它瞄错了边。**
+> 在 45 例 gap（DA 6 / MCR 39）上，正确完整对象落在 top-2 边内只有 50.0%/48.7%——
+> 即 §8.3 step 5 的 top-2 触发器有一半时间根本不含要救的那个候选。更关键的是在
+> **真正决定胜负的那条边**（champion vs 完整对象）上，独占高特异判别子落在
+> **错误冠军一侧的比例是正确一侧的 2.6–3.4 倍**（DA 33.3% vs 16.7%，MCR 43.6% vs 12.8%）。
+> ④ **该不对称已用厚度混淆检验定性**：MCR gap 上完整对象平均只有 **0.97** 个高特异支持
+> fact，错误冠军有 **1.95** 个，正好两倍（总支持 fact 1.79 vs 2.85）。所以 gap 不是
+> 「selector 读不到判别证据」，而是**生成器给正确答案挂的高特异证据只有胜者的一半**。
+> typed cards 与 edge audit 只会忠实地把「错误候选证据更具体」这件事讲得更清楚。
+> 结论：§8/§11 的 `CF_EDGE_AUDIT_V1` 不应预注册；下一步的唯一有效目标是
+> **evidence attachment（让正确对象拿到它应得的高特异证据）**，而非 edge 干预。
+> 副产物：collapsed 臂 `score` 恒为 0.0（矩阵关闭，`score_concept` 无 admitted cell），
+> 故 `tied_score` 恒真、无信息量，已从 disputed_reason 降级为 `scores_tied` 字段。
+>
+> **2026-08-23 四次更新：evidence attachment 也不接替 P2；真正的杠杆是呈现顺序。**
+> 见 [`EVIDENCE_ATTACHMENT_AND_ORDER_COUNTERFACTUAL_PLAN.md`](EVIDENCE_ATTACHMENT_AND_ORDER_COUNTERFACTUAL_PLAN.md)。
+> ① **先更正上一条的数**：`c4_selector_candev_nomatrix` 属 `selector_all_concepts`，
+> `shortlist = ranked`——selector 看到整个池，frontier 只是 lane 标记。上一轮用 4 宽 frontier
+> 当 selector 输入，故 conversion gap 应为 **55/800**（DA 9 / MCR 46）而非 45/800；
+> 但仅 5 例的完整对象落在 frontier 之外，量级未变。
+> ② **挂载路线三种形态全部零调用测死**：补孤儿证据（gap 例平均仅 0.04–0.11 条孤儿高特异 fact）；
+> 复活 protected lane（正确对象持有池内独有高特异 fact 仅 19.6%，冠军 39.1%，优先保护的是已赢者）；
+> EA-RAG 式生成侧覆盖审计（623 例池内无完整对象中，仅 2.6–4.2% 存在未被解释的高特异发现）。
+> 第三条最关键：**EA-RAG 的前提「retrieval 未覆盖 discriminator」在本系统不成立**，
+> 池子已解释约 97% 的高特异发现，只是用错误诊断解释——与「高特异 fact 已 99.1% 挂载」互为印证。
+> 故失败模式不是证据缺失、也不是覆盖缺失，而是**错误候选把同样证据解释得一样好**。
+> ③ **「规模过小」的根不在 selector**：**623/800（77.9%）的病例正确答案根本不在池内**，
+> 55/800 有而选丢，其中可干预者仅 21/800。任何 selector/边/挂载侧机制的端点天花板都锁在此。
+> ④ **本轮最大发现：selector 有 71.0% 选中池内 index 0，均匀期望 19.2%，集中度 3.69×**
+> （DA .688 / MCR .733，n=800）；gap 例中冠军平均位置 0.50、正确对象 1.98。
+> 反讽在于 `selector_unanchored` 本是为撤掉分数锚而设，其实现按 `concept_id` 排序，
+> 而 concept_id 序就是生成序——撤掉一个锚，装上了另一个更强的锚。
+> ⑤ 故下一步主推 `ORDER_COUNTERFACTUAL_V1`：只扰动呈现顺序这一个变量（DeVisE 式受控扰动），
+> 预注册 CSS 式方向分与三层（122 controls / 55 gap / 623 inert），成本 400–800 调用。
+> 它同时绕开两个障碍——power 来自 800 对配对而非 55 次稀有翻转，
+> 且它能判定「错误候选证据更多」究竟是顺序artifact还是真实先验。**两个方向都改变后续判断。**
+> 注意：位置集中度是相关量，H1（顺序artifact）与 H2（真实先验）本轮**未分离**。
+
+> **2026-08-23 五次更新（第 ④⑤ 条已结案，顺序路线关闭，未花调用）：**
+> 见 [`results/ORDER_COUNTERFACTUAL/REPORT.md`](results/ORDER_COUNTERFACTUAL/REPORT.md)。
+> ① 上一条 ⑤ 说的实验**其实早已跑过**：R6 的 X4 探针在同一 Collapse3c 池上以 3 个种子置换过
+> 呈现顺序，逐例输出留存于 `logs/backbone_v1/*/r6_x4_c3c_s{0,1,2}`；当年只按准确率
+> spread 分析并写下「顺序不敏感」。第 ④ 条断言「H1/H2 未分离」是因为**漏查了归档**。
+> ② 换成正确统计量重算（`cf_order_stability.py`，**0 调用**）：冠军身份稳定性 .852（DA）/
+> .885（MCR），θ = **.148 / .115**，三种子族内极差 ≤ .055。
+> ③ **决定性读数：置换后 index-0 率从 .660/.700 塌到 .190/.243 ≈ 均匀期望 .192。**
+> 若 selector 锚定位置，它按定义仍挑第 0 位，该率应维持 .70。**判决 H2**——
+> 生成序**预测**冠军但不**驱动**冠军，71.0% 的集中度由共同成因（临床显著性）解释。
+> ④ R6 当年的方法论缺口是真的（准确率在 623 例池内无答案上按构造看不见churn：
+> DA 89 次改变里 82 次错→错），但缺口里没有效应。残余 12–15% 顺序敏感度**净有害**
+> （救回 11、打翻 20），即现状生成序优于随机序，又一次独立确认 H2。
+> ⑤ **后果：证据厚度差应照字面理解**——证据确实偏向错误候选。selector 侧三条路线
+> （P2 edge 干预、evidence attachment、呈现顺序）**全部关闭**；剩余杠杆在生成/知识侧
+> 的 623 例，不在选择侧。
+> ⑥ `selector_order` 开关与 7 项测试保留，作为在 X4 未覆盖的 200b 切片上复核的仪器。
+
+> **2026-08-23 六次更新（生成侧亦封闭；瓶颈定位到生成器模型，未花调用）：**
+> 见 [`GENERATION_SIDE_HEADROOM_AND_MODEL_CEILING.md`](GENERATION_SIDE_HEADROOM_AND_MODEL_CEILING.md)。
+> ① **先修口径**：`reference_identifiability` 显示只有 **455/800（56.9%）**的病例其参考答案
+> 被病历文本唯一确定；345 例（43.1%）的完整特异性**不是文本的函数**，端点一直把它们计入分母。
+> 分层后 Collapse3c 池可达 DA .0600→**.0772**、MCR .3825→**.6294**。
+> ② **43 个真实配置的并集是上界，而它很低**：公平层 DA .1789 / MCR .7471；
+> **DA 有 234/285（82.1%）从未被任何配置命名过**。E5 那组 9 个臂池可达全为 1.0000（oracle 构造），
+> 已整组剔除，否则并集是循环论证。
+> ③ **失败形态是特异性不足而非方向错误**：并集 C∪P 可达 .9825/.9175，几乎每例池内都有正确科属；
+> 未命中例中 DA 80.6% 池内已有父类/成分。但 DA 的参考答案是**后组配合成式**
+> （「levator scapulae 的 F. necrophorum 化脓性肌炎」「Stage IIA melanoma with…」），
+> **本体没有这些类**，故「查知识库枚举子代」不成立；而输出侧组配已由
+> `DA_FINALS_AXIS_COMPLETION` 测死（Δ=+2、Holm 1.0、幻觉 .1583 破 .10 硬门）。
+> ④ **本轮新杀一条：多臂并池**。换池先前测过（净 −13），并池未测过，故离线测算：
+> 公平层贪心加入，第 2 臂 +13（DA）/+7（MCR），**第 3 臂 +1、第 4 臂 +0——两步饱和**。
+> **不得把池可达增益折算成端点增益**：`CONTRACT_FIX_VERIFY` 里同量级的池 recall 增益
+> （DA +3pp / MCR +4.5pp）实测**转化为零**；而加宽的代价方向已被两次实测
+> （`E5` width8 safe-exact **−16.46pp**、MCR width4→8 **−24.0pp**；`E12` k5→k10
+> clinical-complete **−1.67pp**，与「k10 池可达 +2pp」同时成立）。判不值得预注册。
+> ⑤' **仓库里唯一未被否证的生成侧正信号是「多视图横向提案」，本轮把它定位而非否证**：
+> `SLOT_YIELD` A1−A0 在 DA 官方 Acc@4 上 +6.00pp（q=.0184），但
+> **clinical-complete 仅 +1.75pp、q=.063 未过门**（需更正一处流传说法：A1 的 clinical-complete
+> 是**被测出来**的，只有依赖失败 M2 门的 `B1−A3` 才是扣留）；它显著买到的是
+> **C∪P +6.50pp**，即科属级覆盖——而并集口径下 C∪P 已达 **.9825/.9175 近饱和**。
+> **A1 加的正是已经不缺的那一层**，与该报告自己的判词「横向槽位买到覆盖却几乎买不到完整对象」一致。
+> 另：外部知识注入亦已否证（`E11` TF-IDF RAG clinical-complete **−2.00pp**，仅 6.62% chunk 与病例相符）。
+> ⑤ **饱和本身是最有信息量的读数**：`manifest.json` 里 **243/243** 全是
+> `meta-llama/llama-3.3-70b-instruct`——43 个「不同方法」是同一个 70B 模型的变体，
+> 不是 43 个独立样本。九个机制族的一致零结果在此事实下是可预期的。
+> ⑥ 故提议 `MODEL_CEILING_PROBE_V1`：570 次调用、**零面板**、用同义桥做**下界**判定，
+> 附「同模型 + 宽松契约」对照臂以分离模型与证据契约两个因素。两个方向都改变后续判断。
+> ⑦ **一条纪律**：本轮测到的「特异化靶集」（DA 215 例）由面板关系定义，
+> 按 `DA_FINALS_AXIS_COMPLETION` §10 明文禁止（需端点信息选例 → 不可部署），
+> **只能作分析分层，不得作干预选例依据**。
+
 ## 0. 结论先行
 
 本轮最重要的结论不是“应给现有 selector 再加一个 counterfactual 分数”，而是：

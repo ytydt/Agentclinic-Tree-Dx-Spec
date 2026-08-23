@@ -4,17 +4,14 @@
 实现：`src/agentclinic_tree_dx/aphhm_c.py`、`scripts/paper/run_aphhm_c.py`、6+1 个 `aphhm_c_*.txt` prompt
 数据：DA200（`d2_seq100` + `d2_heldout100`）、MCR200（`mcr_v1` + `mcr_v2`）；模型 `meta-llama/llama-3.3-70b-instruct`
 日期：2026-08-08
-端点迁移修订：2026-08-13（基于 commit `71861b3e` 所含 79 臂 model-panel census 与根级综合）
 
-> **2026-08-13 端点迁移后的阅读口径。** 本报告是历史试点与机制探索记录；下文原始 `concept`、`dc.match`、`dc.any_match`、pool recall、`conv|both` 和相应 p 值为 legacy-chain/片段匹配时代的历史数值，保留用于复核实验轨迹，不能改名为 clinical-complete，也不能直接进入当前能力榜。统一端点合同、79 臂盲法模型面板迁移和根级综合分别见 [`ALL_ARM_ENDPOINT_MIGRATION/REPORT.md`](../mechanism_v2/results/ALL_ARM_ENDPOINT_MIGRATION/REPORT.md) 与 [`CROSS_EXPERIMENT_ROOT_CRITICAL_SYNTHESIS.md`](../mechanism_v2/CROSS_EXPERIMENT_ROOT_CRITICAL_SYNTHESIS.md)。
+> **结论先行：结构性成功标准全部通过，经验性成功标准全部未通过。** APHHM-C 的候选生成质量与 Forest 相当（registry recall 0.425/0.375 vs 0.455/0.360），但确定性 ledger 排序把金标转化为 top-1 的能力只有 28%，而同等候选池下 Forest 的 LLM selector 是 72%。设计 §10.4 要求的「strict concept top-1/top-2 提高」在本试点上被证伪。
 >
-> **最初 APHHM-C 的结论仍是 No-Go，但理由已被校准。** 结构合同全部通过；确定性 ledger 排序在历史 safe/legacy 下只把约 28% 的已命中 reference 转成 Top-1，换成病例证据 selector 后 MCR 明显改善，因此“冻结分数足以替代比较器”被证伪。后续 `Collapse3c`、`MultiStance` 与 `MSplit` 的历史数值仍说明候选 admission、证据和比较结构均重要，却不能再据此宣布某个配置为 clinical winner。
+> 三轮修复已实测：换掉确定性排序（§5–6）后 MCR 接近翻倍（task 0.115→0.225，p=1e-5），任务级追平 IMPC/B07/Forest；再收紧生成契约并扫描候选宽度（§7）**没有带来任何可测增量**（vs `+clean` 四项 p≥0.16）。最好配置 5.31 calls，concept 级仍对每个强基线显著为负。整体判定 No-Go；残余原因已定位到 C3 的轴条件化生成本身（§7.3）。
 >
-> **旧 §17.3 的两条直线不是确定律、因果系数或 selector 上限。** 它们只是 14 个相关臂、异质切片上的 historical legacy-chain arm-level descriptive OLS：DA `conv = 0.736 − 0.0469×width`，MCR `conv = 0.820 − 0.0453×width`。E5 在冻结共享候选/顺序、base pool 已含 reference 的局部干预中，确实复现了约 **−4.48pp/新增候选**的九臂 joint-common-served model-panel complete 损失；但 DA/MCR、候选类型和干扰机制高度异质。E4 又在**同一个候选池**上仅换证据整合/selector 就把 model-panel complete 从 7.75% 抬到 17.25%，E9 的真实多视图相对单视图反而取得 +3.25pp complete（Holm `q=.01328`）。因此当前可写结论是“无门控的 flat fixed-k 扩池会造成候选干扰”，不是“conversion 只由 width 决定”或“coverage 与 conversion 数学上不可兼得”。
+> 此后又推进了两步（§9–§17），结论已经改写：把 C2/C4 拆掉、改用逐候选证据与承诺契约后（§9–§13），`Collapse3c` 以 3.3 calls 在 MCR task 上做到全表最高（n=400 上 0.2925，对 IMPC p=0.017 显著）；再把生成侧改成三取向并集 + 锦标赛决策后（§16–§17），`MultiStance` 以 5.2 calls 把池召回抬到 DA 0.618 / MCR 0.472（原 APHHM 是 31 个节点换 0.555 / 0.530），样本外复现。但它在 dev 上对 `Collapse3c` 的 da_concept +5.5pp **没有样本外复现**，原因由 §17.3 的一般规律给出：**转化率随候选宽度以约 4.6pp/候选衰减（DA R²=0.58、MCR R²=0.52，跨 14 个臂含基线），而召回与 top-1 不相关**，扩池的收益被精确抵消。因此当前默认配置仍是 `Collapse3c`（3.3 calls）。决策侧随后也已试到头：拆分决赛未通过预注册验收且方向相反（§18），**这条 conv(width) 线就是「一次 selector 定序」范式的上限**。同一轮还测出 da_concept 在 n=200 上的运行间标准差约 4pp（§18.3），报告中差值小于 5pp 的该指标比较均不可作结论。上面这段 No-Go 判定针对的是**最初的确定性排序版本**。
 >
-> **当前工程默认改为 Lite-like：两次独立 proposal + 一次冻结池 comparator。** `Collapse3c` 在 E2 800 例根审计中 clinical-complete 为 15.25%，是 specificity-retention reference；`MultiStance` 为 15.12%，两者净差仅 1/800，且没有总体确认性胜者。Lite 的 13.25% 并非最高，但接口简单、served 稳定，复杂替代品尚未证明净益。下一版应把 `Collapse3c` 的 specificity retention 融入 Lite comparator，而不是把 `Collapse3c` 或任何更宽系统直接设为默认。
->
-> `d2_heldout200b` / `mcr_200b` 虽按原协议预留，但完整 800 例已经被反复用于算法开发和机制分析，故现在全部属于 **development evidence**，不得再称 external/sample-out confirmation。79 臂迁移完成的是 Top-1 全病例模型面板 census；它没有对旧 14 臂每个 pool candidate 做 clinical relation census，因而**不能**重算旧 14 臂的 clinical pool exposure 或 clinical exposure→Top-1 conversion。该缺口必须通过 full-pool adjudication 或新的冻结池随机实验解决。
+> `d2_heldout200b` / `mcr_200b` 保留为确认集，`Collapse3c` 与 `MultiStance` 均已在其上确认（§15、§17）。
 
 ---
 
@@ -269,7 +266,7 @@ span 存活情况：每候选平均 2.0 条 for、0.5 条 against 通过了 verb
 | Lite | 4.21 | 0.400 | 0.675 | 4.32 | 0.375 | 0.627 |
 | Forest | 4.17 | 0.455 | 0.593 | 4.45 | 0.360 | 0.722 |
 
-MCR 转化率 0.487 → 0.652，**超过 Lite 的 0.627**，逼近 Forest 的 0.722；DA 0.444 → 0.500。§5–8 四轮都没能撬动的这个量，换掉证据形式后一次撬动了 16.5 个百分点。这直接证伪设计 §2.4「evidence、score、rank 只能有一个权威来源」：把每候选自带的证据作为第二来源交给选择器，是当时已完成的 APHHM-C 消融中唯一观察到的有效修复。
+MCR 转化率 0.487 → 0.652，**超过 Lite 的 0.627**，逼近 Forest 的 0.722；DA 0.444 → 0.500。§5–8 四轮都没能撬动的这个量，换掉证据形式后一次撬动了 16.5 个百分点。这直接证伪设计 §2.4「evidence、score、rank 只能有一个权威来源」：把每候选自带的证据作为第二来源交给选择器，是当前唯一有效的修复。
 
 ### 9.2 但 C4 是第二个净负担
 
@@ -326,7 +323,7 @@ Lite 的优势不在任一端，而在两端同时成立：它用 4.2–4.3 个 
 
 ## 10. Go / No-Go
 
-**当前结论分两层：原设计形态仍为 No-Go；删光其机制后的收缩形态只在历史 task/legacy 表上达到内部基线档，不再称样本外 Go 或 clinical winner。**
+**结论分两层：原设计形态 No-Go，删光其机制后的收缩形态在样本外达到 Go（§15）。**
 
 ### 10.1 原设计形态：No-Go
 
@@ -341,22 +338,21 @@ Lite 的优势不在任一端，而在两端同时成立：它用 4.2–4.3 个 
 | 单一权威证据来源（§2.4） | 架构原则 | MCR 转化率 +16.5pp，反超 Lite |
 | C4 全局矩阵（§6.1 固定槽） | 固定调用 | 省 1 call，MCR task +2pp |
 
-### 10.2 收缩形态：历史任务级内部 Go，但不是当前能力确认
+### 10.2 收缩形态：任务级 Go（样本外确认），但已不是原设计
 
 `Collapse3w` = C1 事实账本 + 每候选自带 verbatim 证据的扁平生成 + selector，3.40 calls。它与 Lite（3.00 calls）**四个指标全部不显著**，其中两个任务级指标精确并列（DA 0.6000 vs 0.6000、MCR 0.2500 vs 0.2500）；对 B07 只剩 mcr_concept 显著；对 Forest 四项均不显著但同向为负。这是本轮唯一达到基线档位的配置。
 
 但必须如实标注它的性质：**这个配置里已经不剩任何设计特有的机制**。轴、家族、配额、确定性排序、全局证据矩阵、单一权威来源全部删除，留下的是 C1 + 扁平生成 + 选择，加上不花调用的 registry / ledger 记账。它跟 Lite 的差别只是多了一次 C1 与结构记账。因此它证明的是「结构记账无害」，而不是「层次化有用」。
 
-同一形态换上承诺契约后（`Collapse3c`，3.27–3.31 calls，§12）在历史 MCR task 上更进一步。原 §15 的预留切片中，MCR task 0.2950 是六者最高，DA task 0.6550 与同预算 B07（0.6600）打平；合并 n=400 后对 IMPC 的未校正历史比较为 p=0.017、对 Lite 为 p=0.053。这些数值仍可说明开发样本中的工程潜力，但完整 800 例已参与后续开发，且统一根级端点没有总体 winner，故不再称“样本外确认”。
+同一形态换上承诺契约后（`Collapse3c`，3.27–3.31 calls，§12）在 MCR 上更进一步。**§15 的样本外 holdout 在六个方法齐全的口径下确认了这一点**：在预留的 `d2_heldout200b` / `mcr_200b` 上，MCR task 0.2950 是六者最高，DA task 0.6550 与同预算的 B07（0.6600）打平并高于其余四个；合并 n=400 后 MCR task 0.2925 对 IMPC 显著（p=0.017）、对 Lite 临界（p=0.053），这是 APHHM-C 系第一次在 n=400 上对强基线取得显著优势。
 
 因此判据要按指标分开写：
 
-- **历史任务级：内部 Go。** 两个 development 切片方向相近，说明该收缩形态值得作为 specificity mechanism reference；不能外推为确认性胜者。
-- **MCR concept：历史 legacy-chain 持平。** 0.2225 与五个基线未检出差异；§14.2 显示差距主要来自片段得分，不能解释成临床完全等价率。
-- **DA concept：应退役为能力判据。** 旧值 0.2000 对部分基线显著为负，但 §14.1 表明其得分几乎全来自片段匹配；它测量 surface/family naming，而不是完整诊断正确性。
-- **当前 clinical-complete：无总体 winner。** E2 根审计中 `Collapse3c` 15.25%、`MultiStance` 15.12%、Lite 13.25%；`Collapse3c` 是 specificity-retention reference，当前安全默认仍为 Lite-like 架构。
+- **任务级：Go。** dev 与 holdout 一致，`Collapse3c` 在 3.3 次调用下不劣于任何基线；MCR 上是六者最高，DA 上与 B07 并列最高。
+- **MCR concept：持平。** 0.2225 与五个基线全部无显著差异（p=0.111–0.885）；§14.2 显示我们的 exact 命中与 Forest 相同（31 = 31），差距全在片段得分（8 vs 18）。
+- **DA concept：仍显著为负**（0.2000，对 Lite / Forest / IMPC 的 p 从 0.0018 到 1e-5），是唯一稳固的负面结论；但对同预算的 B07 不显著（p=0.636）。§14.1 表明该指标 95% 以上得分来自片段匹配、200 例里 exact 命中只有 1–4 例，它测的是族级命名而非诊断正确性。
 
-一句话结论：**原设计机制删去之后，收缩形态在当前 development 的历史任务表上达到基线档并呈 MCR 方向优势；这支持继续移植其 specificity retention，却不构成外部能力 Go。** 对原设计的 No-Go 与对收缩部件的机制保留应分开表述。
+一句话结论：**原设计的机制全部删光之后，剩下的形态在样本外达到了基线水平、在 MCR 任务级领先，成本与最便宜的基线同档。** 这既是对收缩形态的 Go，也是对原设计的彻底否证。
 
 ### 10.3 保留：结构基座
 
@@ -367,7 +363,7 @@ Lite 的优势不在任一端，而在两端同时成立：它用 4.2–4.3 个 
 1. §4.1「默认 final rank 必须是 ledger 的确定性函数」：单独造成 MCR 任务级 11pp 损失（p=1e-5），替代方案零损失。
 2. §12「层次结构的价值在于组织候选与分配搜索预算」：轴条件化使每 slot 召回降低约 25%；删掉整个轴后池召回追平 Lite 且省一个槽。
 3. §6.1 把 C2 列为**固定**槽位：三臂对照下换不到任何可测收益（四指标 p≥0.52）。
-4. §2.4「evidence、score、rank 只有一个权威来源」：让候选携带自己的证据并交给选择器，是当时 APHHM-C 历史 legacy-chain 消融中唯一观察到的有效修复（MCR 转化率 0.487 → 0.652）。
+4. §2.4「evidence、score、rank 只有一个权威来源」：让候选携带自己的证据并交给选择器，是全部实验中唯一有效的修复（MCR 转化率 0.487 → 0.652）。
 5. §6.1 把 C4 列为**固定**槽位：一旦选择器不读 ledger cell，删掉矩阵反而更好（MCR task 0.2400 → 0.2600）且省一个槽。
 
 两个可选槽同样没有产出：gap lane 触发 29% 但 `gap_concepts` 均值仅 0.32；verifier 触发 35% 却平均只修 0.13 个 cell。
@@ -574,11 +570,11 @@ MCR 只有 36% 的 gold 是复合描述，得分结构完全不同：
 
 这与承诺契约的设计意图完全一致：承诺的臂要么叫准要么落空，对冲的臂能收部分分。因此 **MCR concept 指标对「承诺 vs 对冲」这条轴不是中立的**，而 MCR task（官方 LLM judge）上 `Collapse3c` 是全表最高的 0.2900。两个 MCR 指标的分歧由此得到解释。
 
-## 15. 预留 development 切片复现与 n=400 描述性功效（七方法齐全）
+## 15. Holdout 确认与 n=400 功效（七方法齐全）
 
-`d2_heldout200b` 与 `mcr_200b` 是原协议预留切片（见 `aphhm_c_pilot200.json` 的 `protocol.holdout_reserved`），全部 APHHM-C 配置先在 DA200 / MCR200 上选出，所以本节仍分开报告它们，作为**预指定的内部复现敏感性**。但在后续端点迁移、机制挖掘与系统选择中，完整 800 例均已被使用；因此这些切片不再具有 external confirmation 或最终 untouched holdout 的地位。dev+reserved 合并的 n=400 只描述当前 development sample 的精度，不支持分布外推。
+`d2_heldout200b` 与 `mcr_200b` 是本项目预留的 holdout（见 `aphhm_c_pilot200.json` 的 `protocol.holdout_reserved`），全部 APHHM-C 配置都是在 DA200 / MCR200 上选出来的。因此 `Collapse3c` 与 `MultiStance` 在这两个切片上的成绩是**样本外证据**，单独报告；再给一份 dev+holdout 合并的 n=400 结果，仅用于功效，并标注配置选择发生在 dev 上。
 
-### 15.1 预留切片（内部 development，n=200 each，七方法齐全）
+### 15.1 Holdout（样本外，n=200 each，七方法齐全）
 
 MAC（B06）与 B07 的 holdout 产物在 `runs/paper_v1/{diagnosisarena_heldout200b_v1,medcasereasoning_mcr_val_seq200b_v1}` 下已存在，已一并接入（B07 是 3 calls 的同预算对手，MAC 是 concept 上最强的方法）。
 
@@ -592,7 +588,7 @@ MAC（B06）与 B07 的 holdout 产物在 `runs/paper_v1/{diagnosisarena_heldout
 | Forest | 4.04 / 4.09 | 0.6100 | 0.2900 | 0.2700 | 0.2450 |
 | Lite | 3.00 | 0.6050 | 0.2450 | 0.2600 | 0.2000 |
 
-（`MultiStance` 于 §17 加入本表，其单独讨论见该节；本表沿用历史端点名称与数值。）
+（`MultiStance` 于 §17 加入本表，其单独讨论见该节。）
 
 - **MCR task：`Collapse3c` 与 `MultiStance` 并列最高**（均 0.2950），对 B07 14-12（p=0.845）、MAC 12-9（p=0.664）、Forest 14-9（p=0.405）、Lite 17-10（p=0.248）、IMPC 19-12（p=0.281），全部方向占优但不显著。
 - **DA task：与 B07 打平**（0.6550 vs 0.6600，20-21，p=1.000），高于其余四个但均不显著（p=0.212–0.461）。**补上 B07 修正了上一版「两个数据集任务级都最高」的说法**——在 DA 上有一个同预算方法与它并列。
@@ -706,71 +702,56 @@ n=400（DA200 / MCR200，与全表同口径）：
 | 单取向冠军 → 三取向一致候选 | −1 例 | ±0 例 |
 | 单取向冠军 → 任何提名更多的候选 | −3 例 | +2 例 |
 
-金标候选的家族共识度（2.43）甚至略低于冠军（2.52）。**「共识度高则准确率高」是案例难度的混淆，不是可用的判别信号**——这与 §5–6 的结论一致：这两条确定性换选规则在当前池上拿不到净益。原报告据此把“拆分决赛”列为下一项检验；最新 E4/E5/E9 证据说明，仍可改变 evidence integration、typed admission、requested-object projection 与候选拓扑，故不能再说转化率“只能”由决策轮次撬动。
+金标候选的家族共识度（2.43）甚至略低于冠军（2.52）。**「共识度高则准确率高」是案例难度的混淆，不是可用的判别信号**——这与 §5–6 的结论一致：在 selector 之上再叠确定性规则拿不到东西。转化率要动只能动决策结构本身（例如把决赛拆成独立的第 6 次调用），而按 §16.4 的构成，其中约一半的「损失」并不是真损失。
 
-### 16.6 小结（已被 §17 的预留 development 切片部分修正）
+### 16.6 小结（已被 §17 的样本外结果部分推翻）
 
-`MultiStance` 在首个 development 切片上以 5.2 次调用、9 个候选把历史口径召回抬到 DA 0.625 / MCR 0.470，并在 da_concept 上对 `Collapse3c` 取得 +5.5pp（p=0.013）。**这一条没有在预留 development 切片复现**，详见 §17.1；历史口径的召回增益本身复现了。
+`MultiStance` 在 dev 上以 5.2 次调用、9 个候选把召回抬到 DA 0.625 / MCR 0.470，并在 da_concept 上对 `Collapse3c` 取得 +5.5pp（p=0.013）。**这一条没有样本外复现**，详见 §17.1；召回增益本身复现了。
 
-## 17. 预留 development 切片复现：历史召回增益与转化损失相消
+## 17. 样本外确认：召回复现了，转化率的代价也复现了，两者相消
 
 `d2_heldout200b` / `mcr_200b` 上跑满 `MultiStance`（n=400，5.13–5.17 calls），七方法齐全对照。
 
-### 17.1 §16.3 的 da_concept 增益没有在预留切片复现
+### 17.1 §16.3 的 da_concept 增益没有复现
 
 | 切片 | Collapse3c concept | MultiStance concept | 检验 |
 |---|---:|---:|:--|
 | DA200（dev，配置在此选出） | 0.1850 | 0.2400 | 3-14，**p=0.013** |
-| **DA200b（预留 development）** | 0.2150 | 0.2250 | 6-8，p=0.791 |
+| **DA200b（holdout）** | 0.2150 | 0.2250 | 6-8，p=0.791 |
 | MCR200（dev） | 0.2150 | 0.2200 | 6-7，p=1.000 |
-| **MCR200b（预留 development）** | 0.2300 | 0.2200 | — |
+| **MCR200b（holdout）** | 0.2300 | 0.2200 | — |
 
 +5.5pp 在预留切片上缩到 +1.0pp。逐项看，缺口的来源不是 `MultiStance` 在 dev 上偏高（0.240 → 0.225），而是 `Collapse3c` 在 dev 上偏低（0.185 → 0.215）。合并 n=400 仍显著（9-22，p=0.029），但那份显著性由配置被选中的那一半样本驱动，不应作为结论。
 
-预留切片上的其余对照：DA200b task `MultiStance` 0.6150 低于 `Collapse3c` 的 0.6550（26-18，p=0.291）；MCR200b task 两者并列 0.2950，为七方法历史表中最高；`MultiStance` 在 DA200b concept 上对 Forest（p=0.029）与 IMPC（p=0.024）仍显著为负。这些都是内部 development、旧端点下的描述，不是外部能力确认。
+holdout 上其余对照：DA200b task `MultiStance` 0.6150 低于 `Collapse3c` 的 0.6550（26-18，p=0.291）；**MCR200b task 两者并列 0.2950，为七方法最高**；`MultiStance` 在 DA200b concept 上对 Forest（p=0.029）与 IMPC（p=0.024）仍显著为负。
 
 ### 17.2 复现的是两个分量，而不是它们的乘积
 
-| | DA 首切片 | DA 预留切片 | MCR 首切片 | MCR 预留切片 |
+| | DA dev | DA holdout | MCR dev | MCR holdout |
 |---|---:|---:|---:|---:|
 | MultiStance 池召回 | 0.625 | **0.610** | 0.470 | **0.475** |
 | MultiStance conv\|both | 0.384 | **0.369** | 0.468 | **0.463** |
 | Collapse3c 池召回 | 0.385 | 0.400 | 0.390 | 0.360 |
 | Collapse3c conv\|both | 0.481 | 0.537 | 0.551 | 0.639 |
 
-在 legacy-chain 口径下，召回与转化率两个分量在两个 development 切片稳定到小数点后两位。**这支持 `MultiStance` 的宽池确有覆盖增益、同时伴随条件转化损失**；但两者都依赖旧 `dc.any_match`，且并非 external replication。E2 根级 clinical-complete 与 79 臂迁移后的解释见 §17.5。
+召回与转化率两个分量都稳定复现到小数点后两位。**`MultiStance` 用 1.9 次额外调用换到的 +22pp / +9pp 召回是真实且可复现的结构性收益，只是被同样真实且可复现的转化率损失（−0.14 / −0.13）几乎精确抵消。**
 
-### 17.3 历史描述性拟合与新的因果边界：存在候选干扰，但不存在通用宽度定律
+### 17.3 一般规律：转化率是候选宽度的函数，每多一个候选降约 4.6pp
 
-历史分析把全部 14 个臂（我们的 11 个 + Lite / Forest / IMPC；v0 无候选池记录）在各自可用切片上的平均 raw-pool width 与 `dc.any_match` 条件转化率放在一起回归（`diag_width_conversion.py`）。原数值保留如下：
+把全部 14 个臂（我们 11 个 + Lite / Forest / IMPC，v0 无候选池记录）在各自可用切片上的宽度与转化率放在一起回归（`diag_width_conversion.py`）：
 
-| 数据集 | historical legacy-chain arm-level OLS | R² | naive p | 相关 |
+| 数据集 | 拟合 | R² | p | 相关 |
 |---|---|---:|---:|---|
 | DA | conv = 0.736 − **0.0469**×width | 0.584 | 0.0015 | corr(width, conv) = −0.764 |
 | MCR | conv = 0.820 − **0.0453**×width | 0.522 | 0.0035 | corr(width, conv) = −0.722 |
 
-这两条线只描述观测宽度约 3.9–9.1 内的历史臂级均值。它们有五个不能通过“调整系数”修复的限制：
+两个数据集独立给出几乎相同的斜率：**每多一个候选，把金标转成 top-1 的概率降约 4.6pp**，且这条关系跨方法成立（基线也落在同一条线上）。与此同时 **corr(recall, top1) 只有 +0.38（p=0.18）/ +0.23（p=0.44），召回根本不预测 top-1**。
 
-1. `conv = dc.any_match(champion,gold) / dc.any_match(pool,gold)` 的 numerator/denominator 都是 legacy-chain/片段匹配，不是 clinical-complete；DA 中绝大多数命中是 fragment surface。
-2. 14 个点共享病例、缓存、生成器和 selector，且混合 n=200/n=400 与不同切片；普通 OLS 把相关臂当独立样本，故表中的 `p` 不是病例聚类、架构聚类或外部确认后的推断。
-3. 条件分母随扩池改变：新暴露病例通常更难，`conv` 下降可以同时包含病例构成变化和同病例候选干扰。截距在 width=0 无解释，区间外外推还会得到不可能的负概率。
-4. OLS 是条件均值线，不是 upper envelope；没有做 frontier/quantile 建模，逻辑上不能把它称为 selector 上限。
-5. 两条近似相等的 pooled slope 掩盖 benchmark、candidate type、pool topology、证据质量与 selector 的交互。旧 arm-level `corr(recall,top1)` 未显著，只能写成“n=14 时未检出相关”，不能写成“recall 根本不预测 Top-1”。
+由 top1 = recall(w) × conv(w) 可以算出扩池的盈亏平衡线：在 w=5 处，每增加一个候选必须把召回**相对**抬高 ≥9.3%（DA）/ 7.6%（MCR）才不亏。`MultiStance` 实测是 DA 每候选 +15%（越过平衡线，top-1 +3.3pp）、MCR 每候选 +7.4%（恰好落在平衡线上，top-1 −0.3pp）——**观测到的「扩池近乎白干」不是实现缺陷，是这条平衡线的直接推论。**
 
-新的证据把“数值巧合”与“可复现机制”分开了：
+这条规律也解释了本研究此前的全部宽度实验：§7 的 K4/K6/K10 扫描、§10 的 `evid_wide`、§16 的三取向并集，都是在同一条线上左右移动。**在当前这套「一次 selector 定序」的决策范式下，把池子扩到约 5 个候选以上对 top-1 是中性的。**
 
-- **E5 给出局部因果复现。** [`E5_candidate_interference/REPORT.md`](../mechanism_v2/results/E5_candidate_interference/REPORT.md) 冻结共享候选文本、ID、相对顺序和 selector payload，并保证 base width-4 pool 已含 reference。在九个 E5 臂均成功服务的同一批 162 例上，model-panel clinical-complete 从 base4 的 118/162（72.84%）降至 width8 的 89/162（54.94%）：−17.90pp/四个新增候选，即 **−4.48pp/新增候选**，与旧 pooled 斜率量级接近。这是“在这一构造、这一 selector、reference 已暴露时增加候选会干扰选择”的证据，不是普适系数。
-- **异质性是主结果而非噪声。** 同一 joint-common-served 面板中，DA width-4→8 为 −11.49pp（−2.87pp/候选），MCR 为 −25.33pp（−6.33pp/候选）；类型梯度则为 synonym +4.32pp、component −0.62pp、unrelated −4.32pp、parent −7.41pp、sibling −11.73pp。旧 safe-exact 轨迹进一步显示 DA 主要是共享候选重排，MCR 主要是新增 plausible disease 直接夺冠。synonym/component 构造仍有 relation-label 误分，故具体类型系数只是敏感性；但 raw width 明显只是候选语义拓扑的代理量。
-- **ITA 不能全归因 membership。** 模型面板迁移中 base4 served 200/200，而 width6/8 仅 166/164；修复哨兵上限后的 ITA complete 为 74.5%→50.5%→44.5%，混合了 candidate treatment 与 differential service。common-served 才是局部 membership sensitivity，部署估计仍应保留 ITA failure cost。逐类型共同服务分析更直接证明非单调：sibling −11.52pp，而 synonym complete +4.85pp、C∪P +6.67pp（独立 typed-5 Holm `q=.02954`），component 约零。
-- **model-panel 仍有假阴性边界。** 修复后的 1,173 个隐藏 E2 sentinel 上，三 reviewer 的 complete recall 为 62.16%/77.03%/81.08%，聚合 complete accuracy 为 97.70%；面板误差不会把模型多数票变成人类 root truth。E5 的大幅、同向宽度结果强化机制结论，但类型级精细系数和 clinical-complete 发生率仍需 human-root full-pool adjudication。
-- **E4 反证“conversion 是 width 的函数”。** [`E4_fixed_pool_crossover/REPORT.md`](../mechanism_v2/results/E4_fixed_pool_crossover/REPORT.md) 在同一冻结 pool/证据状态上仅换 selector，模型面板 complete 从 evidence-count 的 7.75% 变为 e7 15.25%、Forest/pairwise 17.25%。Forest 对 e7 本身未在 complete 的 Holm 家族中确认，但同宽度下 9.5pp 的 control→Forest 差异已经证明证据整合可移动 conversion。
-- **E9 反证“更宽必然净亏”。** [`E9_view_independence/REPORT.md`](../mechanism_v2/results/E9_view_independence/REPORT.md) 中真实多视图相对 single-anchor 的 model-panel complete 为 +3.25pp（16 gain/3 loss，Holm `q=.01328`），相对 duplicate 为 +3.50pp（17/3，`q=.01031`）。有独有对象/证据的扩展可以取得净增益，重复或低边际候选则不能。
-
-所以旧 `top1 = recall(w) × conv(w)` 盈亏线只可作为历史 legacy-chain 条件下的探索性预算计算；它不能推出固定 `k≈5`、coverage/conversion 必然不可兼得，或 selector 已到上限。当前更合适的估计对象是：
-
-`P(clinical-complete Top-1 | complete candidate exposed) = f(qualified width, candidate topology/type, unique evidence, requested object, order/permutation, selector, benchmark family)`。
-
-### 17.4 历史同宽度残差：DA legacy-chain surface 差异，不是临床能力差距
+### 17.4 同宽度下的残差：DA 上我们比基线差 11pp，MCR 上没有差别
 
 对上面的拟合取残差，按「我们的臂 / 基线」分组：
 
@@ -779,21 +760,19 @@ n=400（DA200 / MCR200，与全表同口径）：
 | DA | −0.024 | **+0.089** | **p=0.0055** |
 | MCR | +0.003 | −0.011 | p=0.769 |
 
-在这份历史 OLS 内，DA 上基线的平均残差比我们的臂高 11.3pp，MCR 未检出分组差异。结合 §14（DA concept 的得分 95% 以上来自片段匹配、200 例里 exact 命中只有 1–4 例），它最一致的解释仍是「基线更常停在能拿片段分的粗标签上」。但该检验同样把相关臂当独立点，且没有 clinical-complete pool census；因此它只能作为 legacy surface sensitivity，不能叫同宽度临床能力差距，也不能用于校正 §17.3 的斜率。
+**DA 上基线在同等宽度下比我们多转化 11.3pp，MCR 上两者不可区分。** 结合 §14（DA concept 的得分 95% 以上来自片段匹配、200 例里 exact 命中只有 1–4 例），这个只在 DA 出现的残差与「基线更常停在能拿片段分的粗标签上」是同一件事，而不是一项独立的诊断能力差距。
 
 ### 17.5 结论修订
 
-- **历史覆盖增益成立，能力“召回已解决”不成立。** `MultiStance` 以 5.2 次调用、约 9 个候选把 legacy-chain pool recall 提到 DA 0.618 / MCR 0.472，两个 development 切片方向一致；但旧 matcher 不能证明 clinical-complete candidate exposure，79 臂迁移又只审 Top-1，故不能宣布临床召回问题已解决。
-- **候选干扰成立，固定斜率不成立。** E5 证明 reference 已暴露时，盲目加入候选会造成直接 capture 与共享候选重排；局部 model-panel common-served 下降约 −4.48pp/候选。但 E4 的同池 selector 改善和 E9 的真实多视图净增益说明 conversion 并非 width 单变量函数。正确结论是停止 flat fixed-k fill，而不是停止候选扩展或宣布 universal sweet spot。
-- **E2 根审计显示宽覆盖没有形成净 clinical-complete 优势。** `Collapse3c` 为 122/800（15.25%），`MultiStance` 为 121/800（15.12%）；两者是 21 rescue/22 loss，差异远小于确认性要求。`Collapse3c` 应保留为 specificity-retention reference，`MultiStance` 应保留为覆盖/干扰机制臂，二者都不是已确认的总体 winner。
-- **默认决策改为 Lite-like，而非 `Collapse3c`。** 当前安全路径是两次独立 proposal + 一次冻结 pool comparator；选择 Lite-like 是因为其简单、可审计、served 稳定，而复杂替代品尚未证明净益，并不是因为 Lite 的 clinical-complete 最高。下一版把 `Collapse3c` 的 specificity retention、safe identity、typed requested object 和 unique-evidence admission 融入该 comparator。
-- **范式修订应精确到被否定的接口。** 应退役的是无类型、无证据门控、为填满 `k` 而扩张的平坦主池；最终一次冻结候选比较器仍是可保留部件。更宽 residual coverage ledger 与小型 evidence-qualified main frontier 可以并存，候选凭独有原文证据、对象层级和反证进入主比较，而不是凭 slot。
+- **召回问题已解决**：`MultiStance` 以 5.2 次调用、9.0 个候选达到 DA 0.618 / MCR 0.472 的池召回（原 APHHM 是 31.4 / 30.6 个节点换 0.555 / 0.530），样本外复现。
+- **但召回不是瓶颈**：转化率随宽度以 4.6pp/候选衰减，把这份召回增益吃掉了。§16.5 已排除在 selector 之上叠确定性规则，§17.3 说明单纯继续扩池也无用。
+- **两个配置的取舍随之简化**：`Collapse3c`（3.3 calls）在两个 holdout 的 task 上都不劣于 `MultiStance`（DA200b 0.655 对 0.615，MCR200b 并列 0.295），且便宜 1.9 次调用。**除非后续能把 conv(width) 这条线本身抬起来，否则应以 `Collapse3c` 为默认配置**，`MultiStance` 的价值在于它证明了召回可以在 5 次调用内做到 APHHM 的水平，以及它把瓶颈干净地隔离到了决策侧。
 
 ## 18. 拆开决赛（`MSplit`）：预注册验收未通过，并意外测出运行间噪声底
 
-按当时的历史解释，§17.3 把主要损失定位到决策侧，§16.5 又排除了两条确定性补丁，因此本报告选择 `MSplit` 检验“一次调用内锦标赛是否是问题”。它把锦标赛拆成两次独立调用：第一次只做每个取向提名一名决赛者（且明确告知它不选冠军、被它丢掉的候选后面看不到），第二次只做决赛——先点出真正能区分决赛者的发现，逐一写出每位决赛者解释了哪些、解释不了哪些，再定冠军。预算 6 次调用（gap lane 触发时 7），实测 6.18。最新证据下，这是一项具体实现检验，不再称“剩下的唯一杠杆”。
+§17.3 把瓶颈定位到决策侧，§16.5 排除了确定性后处理，剩下的唯一杠杆是决策结构本身。`MSplit` 把锦标赛拆成两次独立调用：第一次只做每个取向提名一名决赛者（且明确告知它不选冠军、被它丢掉的候选后面看不到），第二次只做决赛——先点出真正能区分决赛者的发现，逐一写出每位决赛者解释了哪些、解释不了哪些，再定冠军。预算 6 次调用（gap lane 触发时 7），实测 6.18。
 
-**历史预注册验收**（在运行前写进 `run_aphhm_c_multistance_split.sh`）：在同样约 9 宽的池上，legacy-chain conv 必须比 §17.3 的描述性拟合线高出比单次调用版本多 0.10 以上，即 DA conv ≥ 0.477、MCR conv ≥ 0.566。该阈值仍可判定 `MSplit` 是否达到当时承诺的工程效果，但不能把拟合线反向认证为科学上限。
+**预注册验收**（在运行前写进 `run_aphhm_c_multistance_split.sh`）：在同样约 9 宽的池上，conv 必须比 §17.3 的拟合线高出比单次调用版本多 0.10 以上，即 DA conv ≥ 0.477、MCR conv ≥ 0.566。
 
 ### 18.1 结果：未通过，且方向是反的
 
@@ -849,30 +828,20 @@ n=400（DA200 / MCR200，与全表同口径）：
 
 为什么只有 da_concept 这么不稳？与 §14.1 一致：该指标 95% 以上的得分来自片段匹配，而片段是否命中对标签措辞的微小变化极其敏感（`Lymphoma` 命中、`Primary CNS Lymphoma` 不命中）；生成阶段每次重采样都会改写一部分标签措辞，于是噪声被这个口径放大。MCR 的官方 LLM judge 对同样的措辞变化不敏感，所以 mcr_task 在两次重复之间一例不差。
 
-### 18.4 结论修正：`MSplit` 失败，不构成范式上限
+### 18.4 结论：这条线就是当前范式的上限
 
-预注册判据明确否定了这个 `MSplit` 实现：多花一次调用后，legacy-chain conversion 与 MCR task 均未达到阈值，且 MCR 提名阶段因失去跨组语境而显著回退。可以写的是“把当前锦标赛机械拆成孤立提名 + 决赛没有价值”，不能写成“所有候选比较器都受两条 OLS 直线封顶”。
-
-把旧上限主张撤回有三项直接理由：
-
-1. §17.3 的 OLS 是历史、相关臂级的条件均值，不是 upper envelope，也不是 clinical-complete estimand；`MSplit` 在同一旧指标下失败不能把描述线变成因果界。
-2. E4 在候选宽度完全固定时，证据整合/selector 可移动 model-panel clinical-complete；所以 selector 仍有可改进空间，只是 evidence-count、当前 e7 和这个 MSplit 不是答案。
-3. E9 已显示真实独有 view 能在扩展候选/证据状态时取得净 complete 增益；主动取证是可能路径之一，但不是越线的唯一逻辑路径。
-
-因此“必须修改范式”的精确版本是：**退役 flat、untyped、fixed-k、one-shot list ranking 作为唯一状态；保留一次冻结池 comparator，并在其前加入 safe identity、requested-object projection、typed candidate、unique-evidence admission，以及 residual coverage ledger / evidence-qualified main frontier 的两层状态。** selector 应做 permutation-aware 的病例特异比较，候选删除必须绑定同对象、同 episode 的更强反证。是否需要主动获取新证据由缺失 discriminator 触发，而不是因为旧 OLS 被误称为上限。
+预注册的判据已经给出答案。扩池（§17.3）、确定性后处理（§16.5）、拆分决策轮次（§18.1）三条路都试过且都无效，**「一次 selector 在候选池上定序」这个范式的转化率上限就是 conv ≈ 0.74 − 0.047×width（DA）/ 0.82 − 0.045×width（MCR）**，应当作为结论写下，而不是继续试。要越过它需要换范式（例如让决策去主动获取新证据，而不是在既有候选上比较），那超出本报告的范围。
 
 ## 19. 下一步（按信息量排序）
 
-79 臂迁移已经关闭 **Top-1 model-panel endpoint naming** 缺口，却没有关闭 clinical pool exposure、human-root ownership 或外部泛化缺口。下一步不应继续围绕旧直线微调 coefficient，而应改变 estimand 与实验设计。
+六方法齐全的样本外确认已完成，`Collapse3c` 的地位不再有数据缺口。剩下的问题集中在一个指标上。
 
-1. **先补 full-pool clinical relation census，再谈新的 conversion 系数。** 79 臂迁移的统计单位是 arm-case Top-1；它既不覆盖旧 14 臂的完整候选池，也没有为每个 pool candidate 提供 clinical-complete/compatible-partial relation，因而旧回归所需的 clinical pool exposure 分母不存在。可选择对冻结旧池做盲法 full-pool adjudication，或执行一个规模更小但预注册完整的新嵌套池实验；在此之前禁止把 79 臂 Top-1 率除以 safe/legacy pool recall 来制造“clinical conversion”。
-2. **用 human-root 复核 E5 的局部面板结论。** 新实验应保证 base pool 暴露 clinical-complete reference，而不只是 safe-exact；按 true synonym/parent/sibling/component/unrelated 分层随机加项，并随机候选位置/排列。主分析报告 ITA 与 common-served，使用病例聚类或病例随机效应模型，检验 family×type×width 交互和非线性；不能只拟合 `a−b×width`。模型面板约 −4.48pp/候选是优先复核的局部锚，不是待直接写入正文的 universal coefficient。
-3. **实现 Lite-like + specificity-retention 的下一版，而不是复活 MSplit。** 两次 proposal 相互独立；registry 仅 exact/frozen synonym 合并；候选输出 type、requested-object、独有 raw span、strongest counterevidence；主 frontier 不固定填 `k`，其余进入 append-only coverage ledger；第三次调用在冻结 payload 上做 completeness-first、permutation-aware comparator。
-4. **把 E4/E9 变成组合式可证伪实验。** 固定同一 pool、证据和 selector 分别改变 candidate membership、candidate-unique evidence 与 view provenance，至少重复若干候选排列。目标是分开估计直接 capture、共享候选 context reorder、evidence rescue、schema/service failure，而不是再把它们压成 width 一个变量。
-5. **建立真正未触碰的外部确认集。** 当前完整 800 例都属于 development。若要发表“优于基线”或给出稳定临床能力排序，应在冻结 architecture、prompt、provider policy 与统计方案之后增加未参与开发的新病例/数据集；仅把当前 n=400 扩到 n=1000 不能消除重复开发偏倚。
-6. **正式退役 DA `concept` 作为能力判据。** §18.3 的约 4pp run-to-run 波动与 §14 的片段奖励共同说明它最多是 legacy surface sensitivity。主端点用 root clinical-complete；compatible-partial/C∪P、safe-exact、legacy-chain、DA task 和 MCR task 分栏报告，不互相改名。复合 gold 若需自动分析，应另设 component/scope coverage，而不是延续 substring 二值命中。
-7. **fresh task replay 与临床迁移严格解耦。** 其完成覆盖以 [`ALL_ARM_ENDPOINT_MIGRATION/REPORT.md`](../mechanism_v2/results/ALL_ARM_ENDPOINT_MIGRATION/REPORT.md) 最新 manifest 为准；无论缓存是否最终补齐，DA mapper 与 MCR judge 都必须分族报告，非随机 partial cache 不作配对推断，也不能补足 full-pool clinical relation 缺口。
-8. **停止无结构的 prompt/固定宽度 arms，而不是停止所有生成研究。** 新臂只有在检验上述 admission、对象投影、证据唯一性、排列鲁棒性或 residual-ledger 机制时才有信息量。原设计 §10.1 的 `2^3` 因子表已不足以回答这些新 estimand，不应按旧定义机械补跑。
+1. ~~把 conv(width) 这条线抬起来~~ **已执行并否定**（§18）。拆分决赛未通过预注册验收且方向相反，范式上限已写成结论。
+2. **给全部 DA concept 比较补误差棒**。§18.3 测出该指标在 n=200 上的运行间标准差约 4pp，而报告里多处以 2–5pp 的差值下过判断。最省事的做法是对现有结论做一次筛查：凡不共用缓存、差值 <5pp 的 da_concept 比较一律降级为「不可分辨」。纯离线工作。
+3. **决定 DA concept 是否还应作为判据**。它是唯一稳固的负面结论，但 §14.1 显示它 95% 以上的得分来自片段匹配、200 例里 exact 命中只有 1–4 例，实际测量的是族级命名；而 §15 里它与 DA task 的排序几乎正交（B07 的 DA task 最高、DA concept 倒数第二）。若要保留它，应先给它一个配套口径（例如对复合 gold 记「成分覆盖率」而非二值命中）；若不改口径，就应在结论里明确它衡量的不是诊断正确性。纯离线工作，且决定后续所有 DA 比较是否有意义。
+4. **若要把 MCR task 的领先做成可发表的结论，需要更多样本**。当前 n=400 下只对 IMPC 显著（p=0.017）、对 Lite 临界（p=0.053），对 B07 / MAC / Forest 均为 p=0.16–0.34。以现有效应量（约 +2.75pp 到 +5pp）估计，要在 α=0.05 下稳定检出对 Forest / B07 的差异需要把 MCR 扩到约 n=1000 量级。这是唯一还值得花预算的运行。
+5. **不再加生成侧的臂**。已有 15 个臂；§12–§14 显示继续调 prompt 会被 DA 指标偏差误导，而 MCR 上的收益已经兑现。§16.5 进一步排除了在 selector 之上叠确定性规则这条路。唯一还剩的结构性选项是把锦标赛决赛拆成独立的第 6 次调用，但按 §16.4 的败局构成，其中约一半并非真损失，期望收益不明确。
+6. **不做** 设计 §10.1 的 `2^3` 因子实验。A（轴安全）、I（身份）、R（排序）三个主效应已分别被 §8、§2、§5–6 单独测定，A 与 R 均已证伪。
 
 ## 20. 产物
 

@@ -150,11 +150,7 @@ def download_medcasereasoning(raw: Path) -> list[dict]:
                 target,
                 source_page=f"https://huggingface.co/datasets/{repo}",
                 revision=revision,
-                license_note=(
-                    "Upstream distinguishes code (MIT) from the dataset "
-                    "(CC BY 4.0, derived from the PMC Open Access Subset); "
-                    "D1 uses the validation split only."
-                ),
+                license_note="HF card declares MIT; D1 uses validation split only.",
                 extra={"hf_repo": repo, "hf_file": rel},
             )
         )

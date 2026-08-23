@@ -52,16 +52,16 @@ history. It is now supplemented—not silently rewritten—by the exhaustive
 79-arm migration at source commit
 `6ed5ccc02caec2550e0b625915a649ad5738e473`:
 
-- 24,076 ITA rows, 23,046 served Top-1 rows and 1,030 retained failures;
-- 5,351 unique case-prediction relations: 1,693 exact-normalized E2 root
-  reuses, 251 deterministic frozen-safe identities and 3,407 new relations
+- 24,076 ITA rows, 23,035 served Top-1 rows and 1,041 retained failures;
+- 5,344 unique case-prediction relations: 1,693 exact-normalized E2 root
+  reuses, 251 deterministic frozen-safe identities and 3,400 new relations
   classified by three independent arm-hidden reviewers;
 - all 79 arms now have model-panel clinical-complete, compatible-partial and
   C∪P status, but E2 remains the only human-root capability census;
-- 152 three-way model splits remain `U`; model votes are never renamed root;
-- fresh task replay is complete: 5,839/5,839 payloads succeeded (2,975 DA
-  mapper payloads and 2,864 MCR semantic-judge payloads), with no historical
-  value imputation and no pooled DA+MCR task estimand.
+- 149 three-way model splits remain `U`; model votes are never renamed root;
+- fresh task replay is incomplete (3,337/5,832 unique payloads) after the
+  external API returned insufficient credit, so no partial-cache task
+  inference is made.
 
 The migration materially updates several owning conclusions: E9 real views
 have a small adjusted complete signal; E10 and E11 positive signals are C∪P
@@ -91,8 +91,8 @@ gap. The machine coverage audit contains 91 registered experiment-arm rows:
 the 9 E2 arms have a full blinded human-root census; 79 arms across 14
 experiments have an exhaustive blinded three-reviewer model-panel clinical
 census but remain ineligible for the root-only capability leaderboard; the 3
-E7a structural-replay arms are not applicable. The fresh task sub-endpoint is
-complete at 5,839/5,839, with DA and MCR retained as separate task families. The
+E7a structural-replay arms are not applicable. The fresh task sub-endpoint
+remains partial as documented above. The
 authoritative matrix is
 `results/ENDPOINT_COVERAGE_AUDIT/endpoint_coverage_matrix.json`; any missing or
 duplicate arm, changed report anchor, or attempt to ingest a non-E2 row into a

@@ -16,7 +16,7 @@ python scripts/download_lab_audit_datasets.py
 | Snapshot | Upstream | Terms recorded by the pinned source |
 |---|---|---|
 | `diagnosisarena/test.parquet` | [DiagnosisArena](https://huggingface.co/datasets/SII-SPIRAL-MED/DiagnosisArena) | No SPDX dataset license in the card; research and model evaluation only; citation requested. |
-| `medcasereasoning/validation.parquet` | [MedCaseReasoning](https://huggingface.co/datasets/zou-lab/MedCaseReasoning) | Dataset: CC BY 4.0, derived from the PMC Open Access Subset; code: MIT. Citation and attribution retained. |
+| `medcasereasoning/validation.parquet` | [MedCaseReasoning](https://huggingface.co/datasets/zou-lab/MedCaseReasoning) | Hugging Face metadata declares MIT; citation and attribution retained. |
 | `open_xddx/Open-XDDx.xlsx` | [Dual-Inf / Open-XDDx](https://github.com/betterzhou/Dual-Inf) | No explicit LICENSE at pinned revision `a8ea4a9`; confirm further redistribution with the authors. |
 | `rarebench/data.zip` | [RareBench](https://huggingface.co/datasets/chenxz/RareBench) | Hugging Face metadata declares Apache-2.0; citation and notices retained. |
 

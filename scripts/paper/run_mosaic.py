@@ -50,6 +50,13 @@ def main() -> int:
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--case-id", action="append", default=[])
     ap.add_argument("--score", action="store_true")
+    ap.add_argument(
+        "--legacy-containment-identity",
+        action="store_true",
+        help="Restore the pre-repair identity predicate, which folds a concept "
+        "into any concept whose name it contains. Only for replaying an archived "
+        "arm verbatim; it silently folded 561/452 concepts in Forest/IMPC",
+    )
     ap.add_argument("--mcr-judge-workers", type=int, default=50)
     args = ap.parse_args()
 
@@ -84,7 +91,11 @@ def main() -> int:
         temperature=0.0,
     )
     cached = bc.SimpleCachedLLM(client, cache_path, args.model)
-    pipe = MosaicPipeline(cached, mode=args.mode)
+    pipe = MosaicPipeline(
+        cached,
+        mode=args.mode,
+        safe_identity=not bool(args.legacy_containment_identity),
+    )
 
     _atomic_json(
         out_dir / "manifest.json",
@@ -96,6 +107,7 @@ def main() -> int:
             "model": args.model,
             "n_cases": len(cases),
             "workers": args.workers,
+            "safe_identity": pipe.safe_identity,
             "created_at": _utc(),
             "schema_version": "mosaic_v2",
         },
