@@ -1,5 +1,11 @@
 # 症状集群证据能否上线测试：就绪度调研
 
+> **历史状态说明（2026-08-25）：** 本文的“生成层是唯一还开着的路径”是 G1 前的就绪度结论；G1 已按原
+> canonical-key identity gate 关闭该生成式干预。后续逐案审计又证明该 gate 不能解释成 clinical-complete
+> recall，但并未挽救 G1 的高扰动/低命题增益实现。当前只支持另立的 candidate-blind、query-only fuzzy
+> target-profile proposal 进入受控测试；typed-subgraph matcher 与 residual lane 尚未实测；见
+> [`../../PHENOTYPE_SUBGRAPH_RETRIEVAL_ITERATION_REPORT.md`](../../PHENOTYPE_SUBGRAPH_RETRIEVAL_ITERATION_REPORT.md)。
+
 **日期**: 2026-08-21
 **性质**: 零调用调研（冻结产物 + 代码审查 + 知识资产盘点），无 LLM 调用、无 panel
 **复现**: `python3 analysis/mechanism_v2/symptom_cluster_readiness.py` → `audit.json`

@@ -1,0 +1,1357 @@
+{
+  "arms": {
+    "hpo_dense_ego": "cosine between frozen HPO atom-vector mean and target anchor plus definition-mention-vector mean; all-MiniLM vectors, not MedCPT",
+    "medcpt_target_dense": "raw vignette through pinned MedCPT Query Encoder and target ego-profile through pinned Article Encoder; raw dot product; query-only",
+    "ontology_node_lexical": "word/char TF-IDF against the card-supplied HPO anchor definition/comment/synonyms (anchor scope may differ from target) plus exact target-label Mondo identity aliases; query-only",
+    "phenotype_ego_lexical": "node lexical profile plus unverified definition-mention nodes and one-hop is_a neighbour labels",
+    "rule_lookup": "existing six Boolean whole-vignette regex matchers; candidate blind but not assertion/identity complete"
+  },
+  "artifact": "PHENOTYPE_SUBGRAPH_OFFLINE_PROBE",
+  "execution_contract": {
+    "canonical_result_files_written": 5,
+    "legacy_or_production_inputs_modified": 0,
+    "main_runtime": {
+      "numpy": "2.3.5",
+      "python": "3.12.13",
+      "scikit_learn": "1.8.0"
+    },
+    "medcpt_required_for_canonical_output": true,
+    "missing_medcpt_policy": "fail_closed",
+    "network_calls_during_probe_scoring": 0,
+    "new_llm_calls": 0,
+    "subgraph_edge_write_policy": "query_only",
+    "target_premise_fields_used_by_subgraph_arms": false
+  },
+  "known_input_limitations": {
+    "contrast": "six positive and eleven negative cases; tiny engineered set",
+    "normalized_cache": "200 cases, 212 HPO-bearing items, known numeric/entity/direction errors; not phenotype gold",
+    "parsed_positive": "two HAGMA cases selected from existing rule events; exploratory only",
+    "surface_stress": "six manual paraphrases; robustness probe, not independent clinical gold"
+  },
+  "loinc2hpo": {
+    "identity_gate": "Only IDs present and active in the frozen HPO release may route; stored labels must match the current name or synonym, and obsolete IDs are not automatically followed through replaced_by.",
+    "local_json_inactive_or_unknown_hpo_ids": [
+      "HP:0410049"
+    ],
+    "local_json_inactive_or_unknown_mapping_events": 1,
+    "local_json_loinc_keys": 112,
+    "local_json_mapping_rows": 162,
+    "local_json_mismatch_examples": [
+      {
+        "current_hpo_name": "Increased hematocrit",
+        "direction": "H",
+        "hpo_id": "HP:0001899",
+        "hpo_term": "Polycythemia",
+        "loinc_code": "789-8",
+        "property": "Qn"
+      },
+      {
+        "current_hpo_name": "Increased hematocrit",
+        "direction": "H",
+        "hpo_id": "HP:0001899",
+        "hpo_term": "Polycythemia",
+        "loinc_code": "790-6",
+        "property": "Qn"
+      },
+      {
+        "current_hpo_name": "Increased hematocrit",
+        "direction": "H",
+        "hpo_id": "HP:0001899",
+        "hpo_term": "Polycythemia",
+        "loinc_code": "718-7",
+        "property": "Qn"
+      },
+      {
+        "current_hpo_name": "Increased hematocrit",
+        "direction": "H",
+        "hpo_id": "HP:0001899",
+        "hpo_term": "Polycythemia",
+        "loinc_code": "4544-3",
+        "property": "Qn"
+      },
+      {
+        "current_hpo_name": "Increased mean corpuscular volume",
+        "direction": "H",
+        "hpo_id": "HP:0005518",
+        "hpo_term": "Macrocytosis",
+        "loinc_code": "787-2",
+        "property": "Qn"
+      },
+      {
+        "current_hpo_name": "Increased mean corpuscular volume",
+        "direction": "H",
+        "hpo_id": "HP:0005518",
+        "hpo_term": "Macrocytosis",
+        "loinc_code": "785-6",
+        "property": "Qn"
+      },
+      {
+        "current_hpo_name": "Decreased mean corpuscular hemoglobin concentration",
+        "direction": "H",
+        "hpo_id": "HP:0025547",
+        "hpo_term": "Increased MCHC",
+        "loinc_code": "786-4",
+        "property": "Qn"
+      },
+      {
+        "current_hpo_name": "Increased mean corpuscular hemoglobin concentration",
+        "direction": "L",
+        "hpo_id": "HP:0025548",
+        "hpo_term": "Decreased MCHC",
+        "loinc_code": "786-4",
+        "property": "Qn"
+      },
+      {
+        "current_hpo_name": "Abnormal platelet volume",
+        "direction": "H",
+        "hpo_id": "HP:0011876",
+        "hpo_term": "Increased mean platelet volume",
+        "loinc_code": "32623-1",
+        "property": "Qn"
+      },
+      {
+        "current_hpo_name": "Increased total leukocyte count",
+        "direction": "H",
+        "hpo_id": "HP:0001974",
+        "hpo_term": "Lymphocytosis",
+        "loinc_code": "731-0",
+        "property": "Qn"
+      }
+    ],
+    "local_json_quarantined_mapping_events": 59,
+    "local_json_stored_label_mismatch_events": 58,
+    "local_json_stored_label_mismatch_hpo_ids": [
+      "HP:0000870",
+      "HP:0001899",
+      "HP:0001974",
+      "HP:0002151",
+      "HP:0002576",
+      "HP:0002850",
+      "HP:0002910",
+      "HP:0002919",
+      "HP:0002920",
+      "HP:0003149",
+      "HP:0003215",
+      "HP:0003236",
+      "HP:0003265",
+      "HP:0003281",
+      "HP:0003467",
+      "HP:0003496",
+      "HP:0005513",
+      "HP:0005518",
+      "HP:0006254",
+      "HP:0010876",
+      "HP:0010895",
+      "HP:0011876",
+      "HP:0011900",
+      "HP:0011901",
+      "HP:0011902",
+      "HP:0011968",
+      "HP:0012230",
+      "HP:0012399",
+      "HP:0012463",
+      "HP:0012464",
+      "HP:0012622",
+      "HP:0025346",
+      "HP:0025347",
+      "HP:0025435",
+      "HP:0025547",
+      "HP:0025548",
+      "HP:0030088",
+      "HP:0030890",
+      "HP:0031185",
+      "HP:0032345",
+      "HP:0032366",
+      "HP:0032387",
+      "HP:0033106",
+      "HP:0040132",
+      "HP:0040133",
+      "HP:0040171",
+      "HP:0045017",
+      "HP:0100530",
+      "HP:0200114",
+      "HP:0410277"
+    ],
+    "role": "observation/result-category to atomic HPO routing only; it does not supply multi-finding syndrome entailment",
+    "upstream_inactive_or_unknown_hpo_ids": [
+      "HP:0005407",
+      "HP:0012611",
+      "HP:0020063",
+      "HP:0031906",
+      "HP:0040215",
+      "HP:0045080"
+    ],
+    "upstream_inactive_or_unknown_hpo_rows": 29,
+    "upstream_relevant_hpo_ids": [
+      "HP:0000093",
+      "HP:0001941",
+      "HP:0003073",
+      "HP:0003077",
+      "HP:0004360",
+      "HP:0012418",
+      "HP:0032368"
+    ],
+    "upstream_relevant_rows": 48,
+    "upstream_tsv_rows": 7415
+  },
+  "medcpt": {
+    "embeddings_exists": true,
+    "embeddings_is_lfs_pointer": true,
+    "executed_in_this_probe": true,
+    "execution": {
+      "cosine_scores": [
+        [
+          0.6424756050109863,
+          0.49782654643058777,
+          0.4593445956707001,
+          0.5030696392059326,
+          0.40547630190849304,
+          0.5388152599334717
+        ],
+        [
+          0.7164016366004944,
+          0.5412710905075073,
+          0.5410305857658386,
+          0.5570839047431946,
+          0.48660072684288025,
+          0.6001287698745728
+        ],
+        [
+          0.5526378750801086,
+          0.6072551012039185,
+          0.6480253338813782,
+          0.5791646242141724,
+          0.5177593231201172,
+          0.6237234473228455
+        ],
+        [
+          0.5212415456771851,
+          0.6070541739463806,
+          0.5865771174430847,
+          0.5567948222160339,
+          0.4972732365131378,
+          0.5863890647888184
+        ],
+        [
+          0.48394274711608887,
+          0.5086309313774109,
+          0.46743640303611755,
+          0.6897939443588257,
+          0.4447669982910156,
+          0.49516749382019043
+        ],
+        [
+          0.45876848697662354,
+          0.4851015508174896,
+          0.42041200399398804,
+          0.5984877347946167,
+          0.4352092742919922,
+          0.44938862323760986
+        ],
+        [
+          0.5135762691497803,
+          0.6210757493972778,
+          0.5050753355026245,
+          0.5106610059738159,
+          0.4937727153301239,
+          0.5545923113822937
+        ],
+        [
+          0.5550775527954102,
+          0.6412623524665833,
+          0.5461188554763794,
+          0.5687819719314575,
+          0.5289984941482544,
+          0.5822046995162964
+        ],
+        [
+          0.3740677237510681,
+          0.3894231617450714,
+          0.3490295708179474,
+          0.378445029258728,
+          0.4689161777496338,
+          0.36208316683769226
+        ],
+        [
+          0.4104069471359253,
+          0.42375725507736206,
+          0.39378613233566284,
+          0.4153045415878296,
+          0.5371198058128357,
+          0.4207075238227844
+        ],
+        [
+          0.462013304233551,
+          0.4744444489479065,
+          0.4305860698223114,
+          0.4486024081707001,
+          0.46028441190719604,
+          0.6360329389572144
+        ],
+        [
+          0.5464637279510498,
+          0.5141804814338684,
+          0.5197068452835083,
+          0.5302085876464844,
+          0.5876832008361816,
+          0.6780421733856201
+        ],
+        [
+          0.5610700249671936,
+          0.6077410578727722,
+          0.6660663485527039,
+          0.5804858207702637,
+          0.5327971577644348,
+          0.6248288154602051
+        ],
+        [
+          0.39186668395996094,
+          0.414818674325943,
+          0.37488704919815063,
+          0.39782845973968506,
+          0.5076494216918945,
+          0.3790037930011749
+        ],
+        [
+          0.44096463918685913,
+          0.4588174819946289,
+          0.45312201976776123,
+          0.6228495240211487,
+          0.3901255428791046,
+          0.44553282856941223
+        ],
+        [
+          0.7019223570823669,
+          0.562908411026001,
+          0.5542705655097961,
+          0.5718033313751221,
+          0.506500244140625,
+          0.6104496717453003
+        ],
+        [
+          0.5200467109680176,
+          0.5231330394744873,
+          0.4737280607223511,
+          0.49536222219467163,
+          0.5048065185546875,
+          0.6822188496589661
+        ],
+        [
+          0.6840534210205078,
+          0.5260007977485657,
+          0.5217565298080444,
+          0.5324649214744568,
+          0.4665871560573578,
+          0.6115175485610962
+        ],
+        [
+          0.5486851334571838,
+          0.6064324975013733,
+          0.5953282117843628,
+          0.5413810014724731,
+          0.48421916365623474,
+          0.5906623005867004
+        ],
+        [
+          0.5369855165481567,
+          0.4982745945453644,
+          0.5043004155158997,
+          0.633926272392273,
+          0.4528951048851013,
+          0.5205182433128357
+        ],
+        [
+          0.5384573936462402,
+          0.5597547292709351,
+          0.4952366352081299,
+          0.5276604294776917,
+          0.49220359325408936,
+          0.5598152875900269
+        ],
+        [
+          0.42147326469421387,
+          0.4620548188686371,
+          0.4237207770347595,
+          0.43533217906951904,
+          0.5787129402160645,
+          0.4251883029937744
+        ],
+        [
+          0.512076735496521,
+          0.48424652218818665,
+          0.4891083240509033,
+          0.43545785546302795,
+          0.4680623412132263,
+          0.6296747922897339
+        ],
+        [
+          0.47322922945022583,
+          0.463370680809021,
+          0.44485723972320557,
+          0.47918927669525146,
+          0.4167852997779846,
+          0.4969542920589447
+        ],
+        [
+          0.43054094910621643,
+          0.43543732166290283,
+          0.42953699827194214,
+          0.4457544684410095,
+          0.3833584487438202,
+          0.46791180968284607
+        ]
+      ],
+      "dot_scores": [
+        [
+          66.16593933105469,
+          50.6868896484375,
+          47.27968978881836,
+          50.995567321777344,
+          41.398834228515625,
+          53.53173065185547
+        ],
+        [
+          67.20738220214844,
+          50.201290130615234,
+          50.72715759277344,
+          51.44074630737305,
+          45.25618362426758,
+          54.31231689453125
+        ],
+        [
+          51.250152587890625,
+          55.67566680908203,
+          60.062713623046875,
+          52.86679458618164,
+          47.60222244262695,
+          55.80073928833008
+        ],
+        [
+          50.9482536315918,
+          58.662086486816406,
+          57.302520751953125,
+          53.56878662109375,
+          48.18701934814453,
+          55.29291534423828
+        ],
+        [
+          48.531742095947266,
+          50.42829513549805,
+          46.85034942626953,
+          68.08910369873047,
+          44.219017028808594,
+          47.90461730957031
+        ],
+        [
+          49.31218338012695,
+          51.550514221191406,
+          45.164146423339844,
+          63.32016372680664,
+          46.3770751953125,
+          46.59896469116211
+        ],
+        [
+          48.70244216918945,
+          58.22776412963867,
+          47.86967086791992,
+          47.665565490722656,
+          46.421329498291016,
+          50.73564529418945
+        ],
+        [
+          50.85051727294922,
+          58.07871627807617,
+          50.00196838378906,
+          51.28777313232422,
+          48.044158935546875,
+          51.452999114990234
+        ],
+        [
+          43.555686950683594,
+          44.828704833984375,
+          40.61767578125,
+          43.373416900634766,
+          54.12956619262695,
+          40.672096252441406
+        ],
+        [
+          45.00294876098633,
+          45.939212799072266,
+          43.15638732910156,
+          44.82487487792969,
+          58.39051818847656,
+          44.50410461425781
+        ],
+        [
+          44.88428497314453,
+          45.568511962890625,
+          41.8078727722168,
+          42.897098541259766,
+          44.33134460449219,
+          59.60914611816406
+        ],
+        [
+          50.83195114135742,
+          47.285797119140625,
+          48.31612014770508,
+          48.545440673828125,
+          54.19550323486328,
+          60.845069885253906
+        ],
+        [
+          51.659523010253906,
+          55.32122039794922,
+          61.29273986816406,
+          52.60793685913086,
+          48.63399887084961,
+          55.49930953979492
+        ],
+        [
+          44.68254852294922,
+          46.762474060058594,
+          42.722652435302734,
+          44.6500244140625,
+          57.38626480102539,
+          41.6904411315918
+        ],
+        [
+          46.789886474609375,
+          48.13134002685547,
+          48.05315399169922,
+          65.05155944824219,
+          41.03907012939453,
+          45.60595703125
+        ],
+        [
+          64.54086303710938,
+          51.170928955078125,
+          50.936119079589844,
+          51.75101089477539,
+          46.17108917236328,
+          54.14884567260742
+        ],
+        [
+          48.3629264831543,
+          48.09748077392578,
+          44.0308952331543,
+          45.343971252441406,
+          46.54146194458008,
+          61.20508575439453
+        ],
+        [
+          66.15911865234375,
+          50.29511260986328,
+          50.43428421020508,
+          50.689369201660156,
+          44.73805618286133,
+          57.05609130859375
+        ],
+        [
+          51.76393127441406,
+          56.562164306640625,
+          56.13304138183594,
+          50.27277755737305,
+          45.28876495361328,
+          53.75718688964844
+        ],
+        [
+          54.208316802978516,
+          49.729251861572266,
+          50.880470275878906,
+          62.989540100097656,
+          45.32582092285156,
+          50.691226959228516
+        ],
+        [
+          52.711875915527344,
+          54.17449951171875,
+          48.45384979248047,
+          50.843814849853516,
+          47.76904296875,
+          52.86832046508789
+        ],
+        [
+          43.73361587524414,
+          47.4000129699707,
+          43.942344665527344,
+          44.46236038208008,
+          59.53235626220703,
+          42.561798095703125
+        ],
+        [
+          49.533164978027344,
+          46.30916213989258,
+          47.28508758544922,
+          41.46039962768555,
+          44.885826110839844,
+          58.75849914550781
+        ],
+        [
+          46.96041488647461,
+          45.45994567871094,
+          44.120399475097656,
+          46.80516815185547,
+          41.00319290161133,
+          47.57408905029297
+        ],
+        [
+          44.60185623168945,
+          44.596839904785156,
+          44.47307586669922,
+          45.45280456542969,
+          39.37206268310547,
+          46.76231002807617
+        ]
+      ],
+      "official_representation_contract": {
+        "article": "Article Encoder [CLS], [title, body], max_length=512",
+        "cosine": "diagnostic only",
+        "model_weights": "safetensors enforced",
+        "primary_similarity": "raw dot product",
+        "query": "Query Encoder [CLS], max_length=64"
+      },
+      "provenance": {
+        "article_model": {
+          "config_sha256": "3fea00b31d018d676d6b7e2f6cddcfe1abc69bcb88f5f09f51b848212e1671d1",
+          "git_commit": "d05a736da4bb84ee4057b7f7999485be6ed85465",
+          "git_worktree_clean": true,
+          "model_safetensors_sha256": "a5d5ffe4d8666c1d0aa15f371b94fc3492ca8f927e5621abd4b3ee9fc845b0f3",
+          "path": "/tmp/MedCPT-Article-Encoder",
+          "tokenizer_assets_sha256": {
+            "added_tokens.json": "691a5ce0135045c12b8410af8d472ff8de864094df40ac9af418d6c644c7588d",
+            "special_tokens_map.json": "b6d346be366a7d1d48332dbc9fdf3bf8960b5d879522b7799ddba59e76237ee3",
+            "tokenizer.json": "6e046044df8a2fcedb10607075dca187cae61d806c0d80a96c5b81017edc90c9",
+            "tokenizer_config.json": "cabeefb4bbba68c42d40a56bfc1e73dd2e5dfb6e0ca90a66349519c375452d1e",
+            "vocab.txt": "79489a52be45e6fa033521e8ce8e4f62aedc0a742ee2aa6fc04667e5b0b1454d"
+          }
+        },
+        "query_model": {
+          "config_sha256": "3fea00b31d018d676d6b7e2f6cddcfe1abc69bcb88f5f09f51b848212e1671d1",
+          "git_commit": "d83a36cc6b8e3a5c5e9d9d6ba156808c1643dcbc",
+          "git_worktree_clean": true,
+          "model_safetensors_sha256": "19d78c0d5eaee2f81e6c47c5425bbadcc0c6af016cbb5da4a000d64e59d6e342",
+          "path": "/tmp/MedCPT-Query-Encoder",
+          "tokenizer_assets_sha256": {
+            "added_tokens.json": "691a5ce0135045c12b8410af8d472ff8de864094df40ac9af418d6c644c7588d",
+            "special_tokens_map.json": "b6d346be366a7d1d48332dbc9fdf3bf8960b5d879522b7799ddba59e76237ee3",
+            "tokenizer.json": "6e046044df8a2fcedb10607075dca187cae61d806c0d80a96c5b81017edc90c9",
+            "tokenizer_config.json": "cabeefb4bbba68c42d40a56bfc1e73dd2e5dfb6e0ca90a66349519c375452d1e",
+            "vocab.txt": "79489a52be45e6fa033521e8ce8e4f62aedc0a742ee2aa6fc04667e5b0b1454d"
+          }
+        },
+        "runtime": {
+          "python": "3.12.13",
+          "torch": "2.8.0+cpu",
+          "transformers": "4.55.2"
+        }
+      },
+      "query_ids": [
+        "hagma_positive",
+        "hagma_normal_gap_negative",
+        "hemolysis_positive",
+        "hemolysis_single_marker_negative",
+        "nephrotic_positive",
+        "nephrotic_no_proteinuria_negative",
+        "cholestatic_positive",
+        "cholestatic_case76_guard",
+        "uip_positive",
+        "uip_incomplete_negative",
+        "hypoxemia_proxy_positive",
+        "hypoxemia_symptoms_only_negative",
+        "adversarial_hemolysis_negated_markers",
+        "adversarial_uip_negated_findings",
+        "adversarial_nephrotic_wrong_subject",
+        "adversarial_hagma_mixed_time",
+        "adversarial_hypoxemia_poor_waveform",
+        "stress_hagma_surface",
+        "stress_hemolysis_surface",
+        "stress_nephrotic_surface",
+        "stress_cholestatic_surface",
+        "stress_uip_surface",
+        "stress_hypoxemia_surface",
+        "parsed_mcr_v1_2",
+        "parsed_mcr_v1_82"
+      ],
+      "schema_version": "phenotype-subgraph-medcpt-encode.v1",
+      "target_ids": [
+        "PLV1_HAGMA",
+        "PLV1_CHOLESTATIC_PATTERN",
+        "PLV1_HEMOLYTIC_PROCESS",
+        "PLV1_NEPHROTIC_SYNDROME",
+        "PLV1_UIP_PATTERN",
+        "PLV1_HYPOXEMIA_MEASUREMENT"
+      ]
+    },
+    "historical_committed_smoke": {
+      "dense_available_then": true,
+      "medcpt_query_encoder_commit": "d83a36cc6b8e3a5c5e9d9d6ba156808c1643dcbc",
+      "medcpt_query_encoder_sha256": "19d78c0d5eaee2f81e6c47c5425bbadcc0c6af016cbb5da4a000d64e59d6e342",
+      "n_queries": 5,
+      "open_first_relevant_rank_at_10": {
+        "cholestatic": 4,
+        "hagma": 1,
+        "hemolytic": 1,
+        "nephrotic": 1,
+        "uip": 5
+      },
+      "provenance": "analysis/mechanism_v2/results/PHENOTYPE_LIFT_OFFLINE_PROBE/summary.json",
+      "reuse_contract": "historical five-query downstream CPG smoke only; not recomputed and not entered into the target-level arm comparison",
+      "summary_sha256": "384a0b66eb9f6c6d692b2496c4ad1df672a047b213a2e06481dc448ff5c35380"
+    },
+    "hpo_dense_arm_is_medcpt": false,
+    "index_exists": true,
+    "index_is_lfs_pointer": true,
+    "query_encoder_found": "/tmp/MedCPT-Query-Encoder",
+    "reason": null,
+    "target_dense_contract": "raw vignette -> Query Encoder [CLS,64]; target ego-profile -> Article Encoder [CLS,512]; raw dot product; query-only"
+  },
+  "metrics": {
+    "adversarial_negative": {
+      "hpo_dense_ego": {
+        "absent_assigned_target_top1_rank_only": 3,
+        "abstention_rate": 1.0,
+        "false_positive_rate": 0.0,
+        "false_positives": 0,
+        "n_abstained": 5,
+        "n_negative": 5,
+        "n_positive": 0,
+        "n_proposed": 0
+      },
+      "medcpt_target_dense": {
+        "absent_assigned_target_top1_rank_only": 5,
+        "abstention_rate": 1.0,
+        "false_positive_rate": 0.0,
+        "false_positives": 0,
+        "n_abstained": 5,
+        "n_negative": 5,
+        "n_positive": 0,
+        "n_proposed": 0
+      },
+      "n": 5,
+      "ontology_node_lexical": {
+        "absent_assigned_target_top1_rank_only": 4,
+        "abstention_rate": 1.0,
+        "false_positive_rate": 0.0,
+        "false_positives": 0,
+        "n_abstained": 5,
+        "n_negative": 5,
+        "n_positive": 0,
+        "n_proposed": 0
+      },
+      "phenotype_ego_lexical": {
+        "absent_assigned_target_top1_rank_only": 4,
+        "abstention_rate": 1.0,
+        "false_positive_rate": 0.0,
+        "false_positives": 0,
+        "n_abstained": 5,
+        "n_negative": 5,
+        "n_positive": 0,
+        "n_proposed": 0
+      },
+      "rule_lookup": {
+        "absent_assigned_target_top1_rank_only": 5,
+        "abstention_rate": 0.0,
+        "false_positive_rate": 1.0,
+        "false_positives": 5,
+        "n_abstained": 0,
+        "n_negative": 5,
+        "n_positive": 0,
+        "n_proposed": 5
+      }
+    },
+    "parsed_positive_exploratory": {
+      "hpo_dense_ego": {
+        "correct_after_abstention": 0,
+        "n_abstained": 2,
+        "n_negative": 0,
+        "n_positive": 2,
+        "n_proposed": 0,
+        "target_recall_at_3_rank_only": 1,
+        "target_top1_rank_only": 0,
+        "wrong_target_after_abstention": 0
+      },
+      "medcpt_target_dense": {
+        "correct_after_abstention": 0,
+        "n_abstained": 2,
+        "n_negative": 0,
+        "n_positive": 2,
+        "n_proposed": 0,
+        "target_recall_at_3_rank_only": 2,
+        "target_top1_rank_only": 0,
+        "wrong_target_after_abstention": 0
+      },
+      "n": 2,
+      "ontology_node_lexical": {
+        "correct_after_abstention": 0,
+        "n_abstained": 2,
+        "n_negative": 0,
+        "n_positive": 2,
+        "n_proposed": 0,
+        "target_recall_at_3_rank_only": 2,
+        "target_top1_rank_only": 2,
+        "wrong_target_after_abstention": 0
+      },
+      "phenotype_ego_lexical": {
+        "correct_after_abstention": 0,
+        "n_abstained": 2,
+        "n_negative": 0,
+        "n_positive": 2,
+        "n_proposed": 0,
+        "target_recall_at_3_rank_only": 2,
+        "target_top1_rank_only": 2,
+        "wrong_target_after_abstention": 0
+      },
+      "rule_lookup": {
+        "correct_after_abstention": 2,
+        "n_abstained": 0,
+        "n_negative": 0,
+        "n_positive": 2,
+        "n_proposed": 2,
+        "target_recall_at_3_rank_only": 2,
+        "target_top1_rank_only": 2,
+        "wrong_target_after_abstention": 0
+      }
+    },
+    "surface_stress_positive": {
+      "hpo_dense_ego": {
+        "correct_after_abstention": 0,
+        "n_abstained": 6,
+        "n_negative": 0,
+        "n_positive": 6,
+        "n_proposed": 0,
+        "target_recall_at_3_rank_only": 4,
+        "target_top1_rank_only": 3,
+        "wrong_target_after_abstention": 0
+      },
+      "medcpt_target_dense": {
+        "correct_after_abstention": 0,
+        "n_abstained": 6,
+        "n_negative": 0,
+        "n_positive": 6,
+        "n_proposed": 0,
+        "target_recall_at_3_rank_only": 6,
+        "target_top1_rank_only": 5,
+        "wrong_target_after_abstention": 0
+      },
+      "n": 6,
+      "ontology_node_lexical": {
+        "correct_after_abstention": 0,
+        "n_abstained": 6,
+        "n_negative": 0,
+        "n_positive": 6,
+        "n_proposed": 0,
+        "target_recall_at_3_rank_only": 5,
+        "target_top1_rank_only": 5,
+        "wrong_target_after_abstention": 0
+      },
+      "phenotype_ego_lexical": {
+        "correct_after_abstention": 0,
+        "n_abstained": 6,
+        "n_negative": 0,
+        "n_positive": 6,
+        "n_proposed": 0,
+        "target_recall_at_3_rank_only": 5,
+        "target_top1_rank_only": 5,
+        "wrong_target_after_abstention": 0
+      },
+      "rule_lookup": {
+        "correct_after_abstention": 0,
+        "n_abstained": 6,
+        "n_negative": 0,
+        "n_positive": 6,
+        "n_proposed": 0,
+        "target_recall_at_3_rank_only": 0,
+        "target_top1_rank_only": 0,
+        "wrong_target_after_abstention": 0
+      }
+    },
+    "unit_negative_calibration": {
+      "hpo_dense_ego": {
+        "absent_assigned_target_top1_rank_only": 3,
+        "abstention_rate": 1.0,
+        "false_positive_rate": 0.0,
+        "false_positives": 0,
+        "n_abstained": 6,
+        "n_negative": 6,
+        "n_positive": 0,
+        "n_proposed": 0
+      },
+      "medcpt_target_dense": {
+        "absent_assigned_target_top1_rank_only": 5,
+        "abstention_rate": 1.0,
+        "false_positive_rate": 0.0,
+        "false_positives": 0,
+        "n_abstained": 6,
+        "n_negative": 6,
+        "n_positive": 0,
+        "n_proposed": 0
+      },
+      "n": 6,
+      "ontology_node_lexical": {
+        "absent_assigned_target_top1_rank_only": 3,
+        "abstention_rate": 1.0,
+        "false_positive_rate": 0.0,
+        "false_positives": 0,
+        "n_abstained": 6,
+        "n_negative": 6,
+        "n_positive": 0,
+        "n_proposed": 0
+      },
+      "phenotype_ego_lexical": {
+        "absent_assigned_target_top1_rank_only": 4,
+        "abstention_rate": 1.0,
+        "false_positive_rate": 0.0,
+        "false_positives": 0,
+        "n_abstained": 6,
+        "n_negative": 6,
+        "n_positive": 0,
+        "n_proposed": 0
+      },
+      "rule_lookup": {
+        "absent_assigned_target_top1_rank_only": 0,
+        "abstention_rate": 1.0,
+        "false_positive_rate": 0.0,
+        "false_positives": 0,
+        "n_abstained": 6,
+        "n_negative": 6,
+        "n_positive": 0,
+        "n_proposed": 0
+      }
+    },
+    "unit_positive": {
+      "hpo_dense_ego": {
+        "correct_after_abstention": 1,
+        "n_abstained": 5,
+        "n_negative": 0,
+        "n_positive": 6,
+        "n_proposed": 1,
+        "target_recall_at_3_rank_only": 3,
+        "target_top1_rank_only": 2,
+        "wrong_target_after_abstention": 0
+      },
+      "medcpt_target_dense": {
+        "correct_after_abstention": 1,
+        "n_abstained": 5,
+        "n_negative": 0,
+        "n_positive": 6,
+        "n_proposed": 1,
+        "target_recall_at_3_rank_only": 6,
+        "target_top1_rank_only": 6,
+        "wrong_target_after_abstention": 0
+      },
+      "n": 6,
+      "ontology_node_lexical": {
+        "correct_after_abstention": 0,
+        "n_abstained": 6,
+        "n_negative": 0,
+        "n_positive": 6,
+        "n_proposed": 0,
+        "target_recall_at_3_rank_only": 4,
+        "target_top1_rank_only": 4,
+        "wrong_target_after_abstention": 0
+      },
+      "phenotype_ego_lexical": {
+        "correct_after_abstention": 0,
+        "n_abstained": 6,
+        "n_negative": 0,
+        "n_positive": 6,
+        "n_proposed": 0,
+        "target_recall_at_3_rank_only": 4,
+        "target_top1_rank_only": 4,
+        "wrong_target_after_abstention": 0
+      },
+      "rule_lookup": {
+        "correct_after_abstention": 6,
+        "n_abstained": 0,
+        "n_negative": 0,
+        "n_positive": 6,
+        "n_proposed": 6,
+        "target_recall_at_3_rank_only": 6,
+        "target_top1_rank_only": 6,
+        "wrong_target_after_abstention": 0
+      }
+    }
+  },
+  "normalized_cache_proposal_screen": {
+    "active_hpo_filter": {
+      "active_id_embedding_metadata_rows": 42714,
+      "active_unique_hpo_ids": 19389,
+      "cache_cases_with_quarantined_mappings": 20,
+      "cache_excluded_mapping_events": 31,
+      "cache_label_mismatch_events": 30,
+      "cache_quarantined_unique_hpo_ids": [
+        "HP:0000870",
+        "HP:0001899",
+        "HP:0001974",
+        "HP:0002151",
+        "HP:0002576",
+        "HP:0002910",
+        "HP:0003496",
+        "HP:0010876",
+        "HP:0025435",
+        "HP:0032345",
+        "HP:0032366",
+        "HP:0045017",
+        "HP:0410049",
+        "HP:0410277"
+      ],
+      "cache_strict_quarantine_rate": 0.14486,
+      "cache_total_hpo_mapping_events": 214,
+      "excluded_inactive_or_unknown_metadata_rows": 2286,
+      "excluded_stored_label_mismatch_metadata_rows": 162,
+      "identity_valid_embedding_metadata_rows": 42552,
+      "known_example": {
+        "bad_cache_mapping": "Procalcitonin 71.6 -> HP:0410049",
+        "case_key": "mcr_v1/11",
+        "current_hpo_status": "HP:0410049 is obsolete Abnormal radial ray morphology, replaced_by HP:0006433; it is filtered before dense scoring"
+      },
+      "policy": "Only current active HPO IDs with a stored label matching the current official name or synonym enter dense scoring; mismatches are quarantined and obsolete IDs are not auto-followed through replaced_by.",
+      "raw_embedding_metadata_rows": 45000,
+      "raw_unique_hpo_ids": 19943
+    },
+    "arms": {
+      "hpo_dense_ego": {
+        "n_proposed": 3,
+        "prediction_counts": {
+          "PLV1_HEMOLYTIC_PROCESS": 2,
+          "PLV1_HYPOXEMIA_MEASUREMENT": 1
+        },
+        "proposal_rate": 0.015,
+        "top_score_quantiles": {
+          "p50": -1.0,
+          "p90": 0.67752433,
+          "p99": 0.94433987
+        }
+      },
+      "ontology_node_lexical": {
+        "n_proposed": 0,
+        "prediction_counts": {},
+        "proposal_rate": 0.0,
+        "top_score_quantiles": {
+          "p50": 0.20225814,
+          "p90": 0.25271049,
+          "p99": 0.3162216
+        }
+      },
+      "phenotype_ego_lexical": {
+        "n_proposed": 0,
+        "prediction_counts": {},
+        "proposal_rate": 0.0,
+        "top_score_quantiles": {
+          "p50": 0.18523375,
+          "p90": 0.2434001,
+          "p99": 0.32296243
+        }
+      },
+      "rule_lookup": {
+        "n_proposed": 2,
+        "prediction_counts": {
+          "PLV1_HAGMA": 2
+        },
+        "proposal_rate": 0.01,
+        "top_score_quantiles": {
+          "p50": 0.0,
+          "p90": 0.0,
+          "p99": 0.0
+        }
+      }
+    },
+    "excluded_arms": {
+      "medcpt_target_dense": "narrow target-level arm was executed on the 25 labeled/exploratory cases, including two parsed vignettes; it was not expanded to this unlabeled 200-case load screen"
+    },
+    "n_cases": 200,
+    "warning": "The 200-case normalized cache has no phenotype/syndrome target gold. Proposal counts are an abstention/load screen, not precision or false-positive rates."
+  },
+  "paired_target_separation": {
+    "hpo_dense_ego": {
+      "interpretation": "Same-target positive versus matched unit negative. A non-positive margin means target semantic score alone cannot separate presence from the frozen counterexample.",
+      "n_pairs": 6,
+      "n_positive_higher": 2,
+      "rows": [
+        {
+          "matched_negative_score": 0.05020919,
+          "positive_higher": true,
+          "positive_minus_negative": 0.01608744,
+          "positive_score": 0.06629663,
+          "rule_id": "PLV1_CHOLESTATIC_PATTERN"
+        },
+        {
+          "matched_negative_score": 0.64936447,
+          "positive_higher": false,
+          "positive_minus_negative": -0.20704287,
+          "positive_score": 0.4423216,
+          "rule_id": "PLV1_HAGMA"
+        },
+        {
+          "matched_negative_score": 0.54073584,
+          "positive_higher": false,
+          "positive_minus_negative": -0.04942438,
+          "positive_score": 0.49131146,
+          "rule_id": "PLV1_HEMOLYTIC_PROCESS"
+        },
+        {
+          "matched_negative_score": 0.36455631,
+          "positive_higher": false,
+          "positive_minus_negative": -1.36455631,
+          "positive_score": -1.0,
+          "rule_id": "PLV1_HYPOXEMIA_MEASUREMENT"
+        },
+        {
+          "matched_negative_score": 0.88522768,
+          "positive_higher": true,
+          "positive_minus_negative": 0.05167842,
+          "positive_score": 0.9369061,
+          "rule_id": "PLV1_NEPHROTIC_SYNDROME"
+        },
+        {
+          "matched_negative_score": 0.47801399,
+          "positive_higher": false,
+          "positive_minus_negative": -0.0658493,
+          "positive_score": 0.41216469,
+          "rule_id": "PLV1_UIP_PATTERN"
+        }
+      ]
+    },
+    "medcpt_target_dense": {
+      "interpretation": "Same-target positive versus matched unit negative. A non-positive margin means target semantic score alone cannot separate presence from the frozen counterexample.",
+      "n_pairs": 6,
+      "n_positive_higher": 3,
+      "rows": [
+        {
+          "matched_negative_score": 58.07871628,
+          "positive_higher": true,
+          "positive_minus_negative": 0.14904785,
+          "positive_score": 58.22776413,
+          "rule_id": "PLV1_CHOLESTATIC_PATTERN"
+        },
+        {
+          "matched_negative_score": 67.2073822,
+          "positive_higher": false,
+          "positive_minus_negative": -1.04144287,
+          "positive_score": 66.16593933,
+          "rule_id": "PLV1_HAGMA"
+        },
+        {
+          "matched_negative_score": 57.30252075,
+          "positive_higher": true,
+          "positive_minus_negative": 2.76019287,
+          "positive_score": 60.06271362,
+          "rule_id": "PLV1_HEMOLYTIC_PROCESS"
+        },
+        {
+          "matched_negative_score": 60.84506989,
+          "positive_higher": false,
+          "positive_minus_negative": -1.23592377,
+          "positive_score": 59.60914612,
+          "rule_id": "PLV1_HYPOXEMIA_MEASUREMENT"
+        },
+        {
+          "matched_negative_score": 63.32016373,
+          "positive_higher": true,
+          "positive_minus_negative": 4.76893997,
+          "positive_score": 68.0891037,
+          "rule_id": "PLV1_NEPHROTIC_SYNDROME"
+        },
+        {
+          "matched_negative_score": 58.39051819,
+          "positive_higher": false,
+          "positive_minus_negative": -4.260952,
+          "positive_score": 54.12956619,
+          "rule_id": "PLV1_UIP_PATTERN"
+        }
+      ]
+    },
+    "ontology_node_lexical": {
+      "interpretation": "Same-target positive versus matched unit negative. A non-positive margin means target semantic score alone cannot separate presence from the frozen counterexample.",
+      "n_pairs": 6,
+      "n_positive_higher": 3,
+      "rows": [
+        {
+          "matched_negative_score": 0.00539521,
+          "positive_higher": true,
+          "positive_minus_negative": 0.00096519,
+          "positive_score": 0.00636039,
+          "rule_id": "PLV1_CHOLESTATIC_PATTERN"
+        },
+        {
+          "matched_negative_score": 0.46829183,
+          "positive_higher": false,
+          "positive_minus_negative": -0.1292898,
+          "positive_score": 0.33900203,
+          "rule_id": "PLV1_HAGMA"
+        },
+        {
+          "matched_negative_score": 0.12761211,
+          "positive_higher": false,
+          "positive_minus_negative": -0.00327961,
+          "positive_score": 0.12433249,
+          "rule_id": "PLV1_HEMOLYTIC_PROCESS"
+        },
+        {
+          "matched_negative_score": 0.02231196,
+          "positive_higher": false,
+          "positive_minus_negative": -0.00073954,
+          "positive_score": 0.02157242,
+          "rule_id": "PLV1_HYPOXEMIA_MEASUREMENT"
+        },
+        {
+          "matched_negative_score": 0.26356506,
+          "positive_higher": true,
+          "positive_minus_negative": 0.13009435,
+          "positive_score": 0.39365941,
+          "rule_id": "PLV1_NEPHROTIC_SYNDROME"
+        },
+        {
+          "matched_negative_score": 0.23341541,
+          "positive_higher": true,
+          "positive_minus_negative": 0.02318342,
+          "positive_score": 0.25659883,
+          "rule_id": "PLV1_UIP_PATTERN"
+        }
+      ]
+    },
+    "phenotype_ego_lexical": {
+      "interpretation": "Same-target positive versus matched unit negative. A non-positive margin means target semantic score alone cannot separate presence from the frozen counterexample.",
+      "n_pairs": 6,
+      "n_positive_higher": 2,
+      "rows": [
+        {
+          "matched_negative_score": 0.01319899,
+          "positive_higher": false,
+          "positive_minus_negative": -0.00189527,
+          "positive_score": 0.01130371,
+          "rule_id": "PLV1_CHOLESTATIC_PATTERN"
+        },
+        {
+          "matched_negative_score": 0.43466319,
+          "positive_higher": false,
+          "positive_minus_negative": -0.15871541,
+          "positive_score": 0.27594779,
+          "rule_id": "PLV1_HAGMA"
+        },
+        {
+          "matched_negative_score": 0.1662899,
+          "positive_higher": false,
+          "positive_minus_negative": -0.01406356,
+          "positive_score": 0.15222634,
+          "rule_id": "PLV1_HEMOLYTIC_PROCESS"
+        },
+        {
+          "matched_negative_score": 0.02946533,
+          "positive_higher": false,
+          "positive_minus_negative": -0.00440585,
+          "positive_score": 0.02505948,
+          "rule_id": "PLV1_HYPOXEMIA_MEASUREMENT"
+        },
+        {
+          "matched_negative_score": 0.26200882,
+          "positive_higher": true,
+          "positive_minus_negative": 0.11360783,
+          "positive_score": 0.37561665,
+          "rule_id": "PLV1_NEPHROTIC_SYNDROME"
+        },
+        {
+          "matched_negative_score": 0.20179786,
+          "positive_higher": true,
+          "positive_minus_negative": 0.01672732,
+          "positive_score": 0.21852518,
+          "rule_id": "PLV1_UIP_PATTERN"
+        }
+      ]
+    },
+    "rule_lookup": {
+      "interpretation": "Same-target positive versus matched unit negative. A non-positive margin means target semantic score alone cannot separate presence from the frozen counterexample.",
+      "n_pairs": 6,
+      "n_positive_higher": 6,
+      "rows": [
+        {
+          "matched_negative_score": 0.0,
+          "positive_higher": true,
+          "positive_minus_negative": 1.0,
+          "positive_score": 1.0,
+          "rule_id": "PLV1_CHOLESTATIC_PATTERN"
+        },
+        {
+          "matched_negative_score": 0.0,
+          "positive_higher": true,
+          "positive_minus_negative": 1.0,
+          "positive_score": 1.0,
+          "rule_id": "PLV1_HAGMA"
+        },
+        {
+          "matched_negative_score": 0.0,
+          "positive_higher": true,
+          "positive_minus_negative": 1.0,
+          "positive_score": 1.0,
+          "rule_id": "PLV1_HEMOLYTIC_PROCESS"
+        },
+        {
+          "matched_negative_score": 0.0,
+          "positive_higher": true,
+          "positive_minus_negative": 1.0,
+          "positive_score": 1.0,
+          "rule_id": "PLV1_HYPOXEMIA_MEASUREMENT"
+        },
+        {
+          "matched_negative_score": 0.0,
+          "positive_higher": true,
+          "positive_minus_negative": 1.0,
+          "positive_score": 1.0,
+          "rule_id": "PLV1_NEPHROTIC_SYNDROME"
+        },
+        {
+          "matched_negative_score": 0.0,
+          "positive_higher": true,
+          "positive_minus_negative": 1.0,
+          "positive_score": 1.0,
+          "rule_id": "PLV1_UIP_PATTERN"
+        }
+      ]
+    }
+  },
+  "question": "Can target-centric fuzzy phenotype ego-subgraphs replace explicit symptom-to-phenotype rules for reverse retrieval without enumerating pairs/triples?",
+  "repository_head": "7e5546f22732725243fed8f1de68e2f8c8ad9bfb",
+  "schema_version": "phenotype-subgraph-offline-probe.v1",
+  "substrate": {
+    "active_embedding_unique_hpo_ids": 19389,
+    "active_id_embedding_metadata_rows": 42714,
+    "definition_mention_occurrences": 24,
+    "definition_mention_unique_target_node_edges": 14,
+    "excluded_inactive_or_unknown_embedding_rows": 2286,
+    "excluded_stored_label_mismatch_embedding_rows": 162,
+    "hpo_terms": 19389,
+    "identity_valid_embedding_metadata_rows": 42552,
+    "pairs_or_triples_enumerated": 0,
+    "raw_embedding_metadata_rows": 45000,
+    "raw_embedding_unique_hpo_ids": 19943,
+    "runtime_shape": "link m observed atoms once; retrieve target postings/profiles; no O(m^2) or O(m^3) symptom-combination materialization",
+    "targets": 6
+  },
+  "thresholds": {
+    "hpo_dense_ego": {
+      "calibration_n_negative": 6,
+      "rule": "max top score over six unit-smoke negatives plus 1e-9; abstention-first calibration, no positive labels used",
+      "threshold": 0.8852276812062988
+    },
+    "medcpt_target_dense": {
+      "calibration_n_negative": 6,
+      "rule": "max top score over six unit-smoke negatives plus 1e-9; abstention-first calibration, no positive labels used",
+      "threshold": 67.20738220314844
+    },
+    "ontology_node_lexical": {
+      "calibration_n_negative": 6,
+      "rule": "max top score over six unit-smoke negatives plus 1e-9; abstention-first calibration, no positive labels used",
+      "threshold": 0.46829182710220646
+    },
+    "phenotype_ego_lexical": {
+      "calibration_n_negative": 6,
+      "rule": "max top score over six unit-smoke negatives plus 1e-9; abstention-first calibration, no positive labels used",
+      "threshold": 0.43466319442593243
+    },
+    "rule_lookup": {
+      "calibration_n_negative": 6,
+      "rule": "fixed Boolean trigger threshold",
+      "threshold": 0.5
+    }
+  }
+}

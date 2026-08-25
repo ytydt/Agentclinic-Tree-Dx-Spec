@@ -1,5 +1,13 @@
 # 低层临床事实 → 高层 phenotype / 综合征 → 反向检索：可行性实测与落地方案
 
+> **迭代说明（2026-08-25）：** 本文保留 `7e5546f2` 首轮 6-card/CPG/MedCPT 可行性证据；关于
+> “phenotype 子图还是症状→phenotype 规则”、文本语料自制图谱、组合复杂度及新增 target-level 离线对照的
+> 现行结论，见
+> [`PHENOTYPE_SUBGRAPH_RETRIEVAL_ITERATION_REPORT.md`](PHENOTYPE_SUBGRAPH_RETRIEVAL_ITERATION_REPORT.md)。
+> 当前实测只支持 fuzzy target-profile proposal 作为 query-only 候选；automatic ego expansion 的增益证据
+> 不足。带 slot/edge、distinct-fact、T/F/U 的 typed-subgraph matcher/validator 是预注册待建假设，未来若
+> 通过验证，才可能成为 entailment/write-back 授权层。
+
 > 日期：2026-08-25
 > 冻结仓库基线：`cursor4@a945aa57ae1254c0cd24dd0ff0b04fb4e680040f`
 > 上游方案：[`PHENOTYPE_LIFT_REVERSE_RETRIEVAL_RESEARCH.md`](PHENOTYPE_LIFT_REVERSE_RETRIEVAL_RESEARCH.md)（提交 `38977314c`）
@@ -238,7 +246,7 @@ clinical gold，因为没有 offset、specimen、method、experiencer、temporal
 | 数据源 | 获取/许可 | 最适合的角色 | 明确不能承担的角色 | 本轮决定 |
 |---|---|---|---|---|
 | [HPO/HPOA](https://github.com/obophenotype/human-phenotype-ontology/releases) | 匿名 release；HPO 专用许可 | atomic phenotype、同义词、`is_a`、罕见病 association | 多 finding 充分条件、通用数值阈值 | 使用；本地 `2026-02-16`，官方最新 `2026-06-23`，先固定本地以复现 |
-| [LOINC2HPO](https://github.com/TheJacksonLaboratory/loinc2hpoAnnotation) | 匿名 Git；随上游许可/LOINC notice | 已绑定 LOINC + H/L/N/POS/NEG → 单项 HPO | 自由文本、参考范围、多项 syndrome | 已导入固定 commit + license；研究期使用 |
+| [LOINC2HPO](https://github.com/TheJacksonLaboratory/loinc2hpoAnnotation) | 匿名 Git；随上游许可/LOINC notice | 已绑定 LOINC + H/L/N/POS/NEG → 单项 HPO | 自由文本、参考范围、多项 syndrome | 上游固定 TSV 经 release/identity gate 后 conditional；当前 processed JSON 59/162 strict quarantine，重建前 NO-GO for routing |
 | [RadLex](https://radlex.org/) | 无账户但 click-through license | imaging finding/anatomy/同义词 | 影像组合判据 | 建议 P0 拉取；保留原 RID/关系，不改写 |
 | [Mondo](https://github.com/monarch-initiative/mondo/releases) / [DO](https://github.com/DiseaseOntology/HumanDiseaseOntology) | Mondo CC BY 4.0；DO CC0 | syndrome/disease target identity、crosswalk | 患者事实与组合规则 | 用作 target namespace；官方最新 Mondo `v2026-07-06` |
 | [Orphadata](https://sciences.orphadata.com/phenotypes/) | 匿名，CC BY 4.0 | ORPHA–HPO–frequency reverse DDx | 常见病与 syndrome 定义 | 推荐作为开放 rare-disease lane |
@@ -272,6 +280,12 @@ HPO 的 true-path 只允许真正的 `is_a` 传播；官方建模指南明确警
 - table SHA-256 `bb112ccf9359719bdf2c18a45d3a3e6116059a19d917cdc4473ad0642e4141e0`；
 - 原始 [`License.md`](../../data/knowledge_raw/phenotype_lift_sources/loinc2hpoAnnotation/License.md) 与
   [`README.md`](../../data/knowledge_raw/phenotype_lift_sources/loinc2hpoAnnotation/README.md) 同步保存。
+
+后续 identity audit 更新了执行边界：上游 TSV 的 7,415 rows 中有 29 rows/6 HPO IDs inactive/unknown
+（0.391%），本轮 48 target-relevant rows/7 IDs 均 active；但当前 processed
+`data/knowledge_raw/loinc2hpo_annotations.json` 的 162 mappings 有 59（36.42%）需 strict identity
+quarantine（1 inactive +58 stored-label mismatch）。因此“已拉取上游”不等于“本地处理版可路由”；后者必须
+从冻结 TSV 重建并逐 row 审计，且 obsolete ID 不自动 follow `replaced_by`。
 
 没有把 RadLex click-through、需账户的 LOINC/UMLS/SNOMED、许可不清的 PheKB/PheMA 批量内容提交；也没有
 把 DisMech 的 AI-curated YAML 复制成真值。DisMech 本轮固定审计 commit

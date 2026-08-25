@@ -1,5 +1,12 @@
 # 症状集群落地方案：把合取判别子放进生成层
 
+> **历史状态说明（2026-08-25）：** 本文记录的是 G1 生成式 conjunction 干预及其预注册关闭过程；文末仍称
+> “集群这条线还开着”的段落是 G1 执行前的历史文字，不再代表当前决策。现行裁决见
+> [`PHENOTYPE_LIFT_FEASIBILITY_AUDIT.md`](PHENOTYPE_LIFT_FEASIBILITY_AUDIT.md) 与
+> [`PHENOTYPE_SUBGRAPH_RETRIEVAL_ITERATION_REPORT.md`](PHENOTYPE_SUBGRAPH_RETRIEVAL_ITERATION_REPORT.md)：
+> 生成式 cluster rerank/打包继续 NO-GO；仅把 candidate-blind、query-only 的 fuzzy target-profile proposal
+> 送入受控测试；typed-subgraph matcher 与独立 residual lane 仍是预注册、未实测假设。
+
 > 动因文献：Auditing Evidence Use in Medical LLM Diagnosis (2607.20848)——诊断力来自 2–3 个症状构成的集群，而非单一症状
 > 取代对象：[`症状集群.md`](../../症状集群.md) 提出的"本体接地 + 依赖边图"五段流水线（其 Stage 2/3 已在本队列上被实测否决）
 > 继承对象：[`SYMPTOM_CLUSTER_READINESS/REPORT.md`](results/SYMPTOM_CLUSTER_READINESS/REPORT.md) 的 Q1–Q10、[`MCR_SELECTION_LAYER_AUDIT/REPORT.md`](results/MCR_SELECTION_LAYER_AUDIT/REPORT.md) 的选择层结案
