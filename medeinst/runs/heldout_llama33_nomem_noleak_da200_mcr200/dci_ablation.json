@@ -1,0 +1,107 @@
+{
+  "protocol": {
+    "design": "paired Table-2-style DCI ablation, CGME off",
+    "cot_arm": "intuitive pathway Top-k already recorded in llm_calls.jsonl (stage=intuitive)",
+    "dci_arm": "existing audit diagnosis / mapper top2 from the same run",
+    "not_rerun": "no extra DCI LLM calls; CoT is not a new generation",
+    "endpoints": {
+      "da": "mapper option@1 typed_llm_disagreement_rag",
+      "mcr": "prompt7 diagnostic_hit gemini-2.5-flash"
+    },
+    "paper_table2": {
+      "cot_acc_base": 0.4025,
+      "dci_acc_base": 0.5549,
+      "dataset": "MedEinst (not this repo)"
+    }
+  },
+  "override": {
+    "n_cases": 400,
+    "n_cot_from_trace": 400,
+    "n_cot_fallback_dset": 0,
+    "n_audit_eq_cot1": 235,
+    "n_audit_in_cot_list": 399,
+    "n_audit_outside_cot": 1,
+    "exact_cot1": 20,
+    "exact_dci": 16,
+    "by_slice": {
+      "da": {
+        "n": 200,
+        "audit_eq_cot1": 119,
+        "exact_cot1": 0,
+        "exact_dci": 0
+      },
+      "mcr": {
+        "n": 200,
+        "audit_eq_cot1": 116,
+        "exact_cot1": 20,
+        "exact_dci": 16
+      }
+    }
+  },
+  "cot": {
+    "da": {
+      "n": 200,
+      "mapper_mode": "typed_llm_disagreement_rag",
+      "option_top1": 0.58,
+      "option_top2": 0.655,
+      "mrr2": 0.6175
+    },
+    "mcr": {
+      "diagnostic_accuracy_single_trajectory": 0.27,
+      "n_cases": 200,
+      "n_hits": 54,
+      "judge_model": "google/gemini-2.5-flash"
+    }
+  },
+  "dci": {
+    "da": {
+      "n": 200,
+      "mapper_mode": "typed_llm_disagreement_rag",
+      "option_top1": 0.605,
+      "option_top2": 0.645,
+      "mrr2": 0.625
+    },
+    "mcr": {
+      "diagnostic_accuracy_single_trajectory": 0.22,
+      "n_cases": 200,
+      "n_hits": 44,
+      "judge_model": "google/gemini-2.5-flash",
+      "missing_gold": [],
+      "n_errors": 0
+    }
+  },
+  "paired_da_mapper_top1": {
+    "n_paired": 200,
+    "acc_cot": 0.58,
+    "acc_dci": 0.605,
+    "delta_dci_minus_cot": 0.025000000000000022,
+    "both_hit": 107,
+    "cot_only": 9,
+    "dci_only": 14,
+    "both_miss": 70,
+    "n_discordant": 23,
+    "mcnemar_exact_p": 0.405
+  },
+  "paired_mcr_prompt7": {
+    "n_paired": 200,
+    "acc_cot": 0.27,
+    "acc_dci": 0.22,
+    "delta_dci_minus_cot": -0.05000000000000002,
+    "both_hit": 36,
+    "cot_only": 18,
+    "dci_only": 8,
+    "both_miss": 138,
+    "n_discordant": 26,
+    "mcnemar_exact_p": 0.076
+  },
+  "verdict": {
+    "useful_on_this_split": false,
+    "label": "DCI_MIXED_NOT_GENERALLY_USEFUL",
+    "notes": [
+      "DA mapper@1 DCI−CoT = +0.025 (14 rescue / 9 harm, McNemar p≈0.40)",
+      "MCR Prompt7 DCI−CoT = −0.050 (8 rescue / 18 harm, McNemar p≈0.076)",
+      "audit keeps CoT rank-1 on 235/400 = 58.8% of cases",
+      "Paper Table 2 +15.2pp Acc_base on MedEinst does not transfer to this repo split"
+    ]
+  }
+}

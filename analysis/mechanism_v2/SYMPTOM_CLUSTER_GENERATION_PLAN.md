@@ -391,6 +391,20 @@ Q9 的正信号（候选层单调性）用的是仓库自己 LLM 生成的 `corr
 **独立于本方案的一项机会性工作**：`FindingNormalizer` + `loinc2hpo_annotations.json` 可把
 754 条 laboratory span 用确定性逻辑接地，零调用零泄漏。当前没有活跃实验消费它，属资产建设。
 
+> **已于 2026-08-24 实测为输入表示，不能救活本线。**
+> 见 [`NORMALIZED_INPUT_PROBE/REPORT.md`](results/NORMALIZED_INPUT_PROBE/REPORT.md)。
+> 此前只用它做**事后接地**；这次把 `VignetteParser` 冻结解析 + `FindingNormalizer`
+> 拼成完整通路，作为**输入**重估否证（200 例、零调用，缓存已冻结备复用）。
+> 规范化按预期工作（`Potassium: 6.2 mEq/L → Hyperkalemia (H)`），但三条可能提高分组
+> 分辨率的机制里两条约等于零（拆分 5 条 / 每例 0.03 原子；归一每例 0.06 次），
+> 而要修的是 0.4273 的平局质量。否证的实际理由是覆盖面：只有 **5.95%** 的 evidence
+> item 拿到规范名称，且命中沿 modality 切得极干净——`laboratory` 0.2658，而
+> **`history` / `imaging` / `pathology` 合计 1325 条（57.4%）命中数为 0**。
+> 这与本文件 §8 原有的"54.4% 的 span 不能用 HPO"是同一条硬约束。
+>
+> 该报告 §4 另记两条**不属于集群**、单独记账的方向：解析器比 C1 fact ledger 多拿
+> 22.6pp 题干 token 召回（抽取完整度，未否证）；96 条正常值可转显式排除项（阴性证据通道）。
+
 **一项缺陷登记**：`HPOIndex.resolve_fuzzy` 的双向子串匹配被 `lr_retriever.py` 与
 `marker_disambiguator.py` 调用。但 `aphhm_c.py` 完全不 import `knowledge/`，故当前全部
 实验臂不受影响；受影响的是休眠中的 `controller.py` L1/L2 树流水线。若重启该线则升为前置。

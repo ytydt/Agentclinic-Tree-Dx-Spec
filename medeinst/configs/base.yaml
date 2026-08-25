@@ -1,0 +1,99 @@
+# Configuration for MedEinst / ECR-Agent
+# Paper: https://arxiv.org/abs/2601.06636
+#
+# CONVENTION:
+#   - Lines with §X.Y cite the paper section specifying this value
+#   - Lines with [UNSPECIFIED] mark choices not stated in the paper
+#   - No official code was released ("Source code is to be released.")
+
+# ---------------------------------------------------------------------------
+# DCI / ECR-Agent
+# ---------------------------------------------------------------------------
+model:
+  # Appendix C — "Top-k candidate diagnoses with k = 5"
+  top_k: 5
+
+  # Eq. 2, Appendix A.3 — cosine merge-or-prune threshold τ = 0.9
+  merge_tau: 0.9
+
+  # §4.2.3 — S(d) = w_m N_match(d) − w_c N_conf(d) − w_s N_shadow(d)
+  # [UNSPECIFIED] numerical values of w_m, w_c, w_s are never given
+  w_match: 1.0
+  w_conflict: 1.0
+  w_shadow: 1.0
+  # Extra terms not in the paper formula. Held-out grid search did not
+  # generalize (odd-id test MCR fell back to CoT). Keep at 0 / identity.
+  w_support: 0.0
+  w_ruleout: 0.0
+  w_pivot: 0.0
+  generic_match_scale: 1.0
+  absent_match_as_conflict: false
+  score_normalize: "none"
+  disqualify_absent_pivot: false
+  # Table A9 LLM judge. Open DA/MCR: see configs/heldout_open.yaml
+  audit_mode: "llm"
+  override_margin: 0.0
+  tie_break: "cot1"
+  audit_include_intuition: true
+
+  # [UNSPECIFIED] RetrieveExemplars(M, Pobs) count not stated
+  exemplar_k: 3
+
+  # §4.2.2 — "retrieve medical knowledge from external sources (PubMed, OpenTargets)"
+  live_search_pubmed: true
+  live_search_opentargets: true
+
+  # [UNSPECIFIED] paper encoder unnamed; this repo uses NCBI MedCPT Query-Encoder
+  embedding: "medcpt"
+
+# ---------------------------------------------------------------------------
+# CGME ("training" = critic-driven graph & memory evolution, not SGD)
+# ---------------------------------------------------------------------------
+training:
+  # §4.1 / Algorithm 2 — critic loop "t < 3"
+  max_critic_rounds: 3
+
+  # §4.1 — "critic model Mcritic (GPT-5)"
+  critic_model: "openai/gpt-5"
+
+  # Appendix C — "Capped Sampling Strategy: maximum of N = 20 cases per pathology"
+  # (applies to MedEinst-Support 49 pathologies; unused for unpaired MCR400)
+  cap_per_pathology: 20
+
+  # Appendix C — Balanced Seed Subset of 853 cases (~8% of support)
+  seed_subset_size: 853
+
+# ---------------------------------------------------------------------------
+# LLM backends (paper: Qwen3-32B for ECR-Agent / relation tagging)
+# ---------------------------------------------------------------------------
+llm:
+  # Table 1 ECR-Agent (Qwen3-32B). OpenRouter currently 404s that id;
+  # live client falls back to parent Set-B qwen/qwen-2.5-72b-instruct.
+  base_model: "qwen/qwen3-32b"
+  # Appendix C — Zero-shot Chain-of-Thought
+  temperature: 0.0   # [UNSPECIFIED] decoding temperature never stated
+  max_tokens: 2048   # [UNSPECIFIED]
+  # OpenAI-compatible endpoint; keys from env or parent llm_client.py at runtime (not stored here)
+  api_base: "https://openrouter.ai/api/v1"
+  api_key_env: "OPENROUTER_API_KEY"
+
+# ---------------------------------------------------------------------------
+# Data — user substitute for unreleased MedEinst 5,383 pairs
+# ---------------------------------------------------------------------------
+data:
+  # §3.3 specifies MedEinst (DDXPlus-derived). User instruction: MCR400 instead.
+  dataset: "mcr400"
+  parent_repo_root: ".."
+  mcr_subsets:
+    - "data/benchmarks/medcasereasoning/subsets/mcr_val_seq100_v1/normalized_cases.json"
+    - "data/benchmarks/medcasereasoning/subsets/mcr_val_seq100_v2/normalized_cases.json"
+    - "data/benchmarks/medcasereasoning/subsets/mcr_val_seq200b_v1/normalized_cases.json"
+
+# ---------------------------------------------------------------------------
+# Evaluation — §3.5
+# ---------------------------------------------------------------------------
+eval:
+  # Acc_base, Acc_rob, R_bias as defined in §3.5
+  # [UNSPECIFIED] string equality vs normalized match
+  match_mode: "normalized_exact"
+  # Pair metrics require trap fields; MCR400 is unpaired → Acc_rob/R_bias = null

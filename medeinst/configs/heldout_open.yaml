@@ -1,0 +1,53 @@
+# Held-out open-diagnosis policy for this parent repo (DA + MCR).
+# Paper-faithful defaults remain in configs/base.yaml.
+#
+# Zero-call repair (same 400-case llama-3.3-70b traces):
+#   DA  → keep LLM evidence audit (mapper@1 0.605)
+#   MCR → keep intuitive CoT@1 (Prompt 7 0.270)
+# S(d) coefficient grid (53,760 configs, even-id tune / odd-id test) did not
+# beat CoT out of sample. Do not ship the train-set winner.
+
+# ---------------------------------------------------------------------------
+# DCI / ECR-Agent
+# ---------------------------------------------------------------------------
+model:
+  top_k: 5
+  merge_tau: 0.9
+  w_match: 1.0
+  w_conflict: 1.0
+  w_shadow: 1.0
+  w_support: 0.0
+  w_ruleout: 0.0
+  w_pivot: 0.0
+  generic_match_scale: 1.0
+  absent_match_as_conflict: false
+  score_normalize: "none"
+  disqualify_absent_pivot: false
+  audit_mode: "auto"
+  override_margin: 0.0
+  tie_break: "cot1"
+  audit_include_intuition: true
+  exemplar_k: 3
+  live_search_pubmed: true
+  live_search_opentargets: true
+  embedding: "medcpt"
+
+training:
+  max_critic_rounds: 3
+  critic_model: "openai/gpt-5"
+  cap_per_pathology: 20
+  seed_subset_size: 853
+
+llm:
+  base_model: "meta-llama/llama-3.3-70b-instruct"
+  temperature: 0.0
+  max_tokens: 2048
+  api_base: "https://openrouter.ai/api/v1"
+  api_key_env: "OPENROUTER_API_KEY"
+
+data:
+  dataset: "heldout200b"
+  parent_repo_root: ".."
+
+eval:
+  match_mode: "normalized_exact"
