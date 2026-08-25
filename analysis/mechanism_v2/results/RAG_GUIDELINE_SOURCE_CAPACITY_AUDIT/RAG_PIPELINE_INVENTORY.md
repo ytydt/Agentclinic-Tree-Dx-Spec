@@ -273,12 +273,12 @@ Limits:
 
 ```bash
 PYTHONPATH=src:scripts python scripts/build_merck_manual_corpus.py \
-  --pdf "/workspace/scratch/83c9adfcac6c/upload/The Merck Manual of Diagnosis and Therapy, Nineteenth Edition (Robert S. Porter, Justin L. Kaplan) (z-library.sk, 1lib.sk, z-lib.sk)(2).pdf" \
+  --pdf "<path-to-merck-19e.pdf>" \
   --start-page 63 --toc-end-page 52 --max-tokens 320
 
 PYTHONPATH=src:scripts python scripts/build_merck_manual_corpus.py \
   --chunk-only \
-  --pdf "/workspace/scratch/83c9adfcac6c/upload/The Merck Manual of Diagnosis and Therapy, Nineteenth Edition (Robert S. Porter, Justin L. Kaplan) (z-library.sk, 1lib.sk, z-lib.sk)(2).pdf" \
+  --pdf "<path-to-merck-19e.pdf>" \
   --max-tokens 320
 ```
 

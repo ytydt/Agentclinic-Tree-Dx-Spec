@@ -2,13 +2,13 @@
 
 ## Scope and source identity
 
-- Attached PDF: `/workspace/scratch/83c9adfcac6c/upload/The Merck Manual of Diagnosis and Therapy, Nineteenth Edition (Robert S. Porter, Justin L. Kaplan) (z-library.sk, 1lib.sk, z-lib.sk)(2).pdf`
+- Attached PDF: user-supplied Merck Manual 19e file (read-only; not redistributed)
 - SHA-256: `b8933f5e220df34909ed3b7e85807590ffffd8d0a6c7ebc5a3e913e772b8c4a1`
 - Repository derivatives:
-  - `/workspace/scratch/83c9adfcac6c/repo/data/corpus/merck/merck_manual_19e_extracted.txt`
-  - `/workspace/scratch/83c9adfcac6c/repo/data/corpus/merck/merck_manual_19e_toc.json`
-  - `/workspace/scratch/83c9adfcac6c/repo/data/corpus/merck/merck_manual_19e_chunks.jsonl`
-  - `/workspace/scratch/83c9adfcac6c/repo/data/corpus/merck/manifest.json`
+  - `data/corpus/merck/merck_manual_19e_extracted.txt`
+  - `data/corpus/merck/merck_manual_19e_toc.json`
+  - `data/corpus/merck/merck_manual_19e_chunks.jsonl`
+  - `data/corpus/merck/manifest.json`
 - The manifest points to the same basename without the copy suffix `(2)`. To verify identity rather than rely on the filename, pages 63, 64, 130, 668, 1200, 2000, 3000, 3665, 3674, 3705, and 4114 were freshly extracted from the attachment with the repository's `clean_page_text`; all 11 matched the stored page text exactly, character for character and by SHA-256.
 
 ## PDF-native structure
@@ -113,7 +113,7 @@ The same order-of-operations removes numeric page targets from `see p.\n2879`, a
 
 ## Separate online MSD text directory
 
-`/workspace/scratch/83c9adfcac6c/repo/data/cpg/text/merck-msd-manual/` is not the PDF derivative. It contains 32 files totaling 574,416 bytes, dated/reviewed as modern online MSD content. Thirty are specialty/site navigation or index dumps: they contain disease/subsection names but generally no article prose. Two are article-style pages: epiglottitis and laboratory reference ranges.
+`data/cpg/text/merck-msd-manual/` is not the PDF derivative. It contains 32 files totaling 574,416 bytes, dated/reviewed as modern online MSD content. Thirty are specialty/site navigation or index dumps: they contain disease/subsection names but generally no article prose. Two are article-style pages: epiglottitis and laboratory reference ranges.
 
 This directory should not be treated as a second full MSD corpus. It is useful as a hierarchy vocabulary and, for the two full pages, as an updated supplement. The epiglottitis comparison also proves that online content can contain diagnostic tables and newer terminology absent from the 19e CHM export.
 
@@ -121,13 +121,14 @@ This directory should not be treated as a second full MSD corpus. It is useful a
 
 Helper script:
 
-`/workspace/scratch/83c9adfcac6c/tmp_agent_pdf/merck_page_search.py`
+`analysis/mechanism_v2/results/RAG_GUIDELINE_SOURCE_CAPACITY_AUDIT/merck_page_search.py`
 
 Example:
 
 ```bash
-python /workspace/scratch/83c9adfcac6c/tmp_agent_pdf/merck_page_search.py \
-  "Epiglottitis" "Supraglottitis" --neighbors 1 --max-hits 20
+python analysis/mechanism_v2/results/RAG_GUIDELINE_SOURCE_CAPACITY_AUDIT/merck_page_search.py \
+  "Epiglottitis" "Supraglottitis" --pdf "<path-to-merck-19e.pdf>" \
+  --neighbors 1 --max-hits 20
 ```
 
 The script:

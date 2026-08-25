@@ -18,15 +18,8 @@ from pathlib import Path
 from pypdf import PdfReader
 
 
-DEFAULT_PDF = Path(
-    "/workspace/scratch/83c9adfcac6c/upload/"
-    "The Merck Manual of Diagnosis and Therapy, Nineteenth Edition "
-    "(Robert S. Porter, Justin L. Kaplan) (z-library.sk, 1lib.sk, z-lib.sk)(2).pdf"
-)
-DEFAULT_EXTRACTED = Path(
-    "/workspace/scratch/83c9adfcac6c/repo/data/corpus/merck/"
-    "merck_manual_19e_extracted.txt"
-)
+ROOT = Path(__file__).resolve().parents[4]
+DEFAULT_EXTRACTED = ROOT / "data/corpus/merck/merck_manual_19e_extracted.txt"
 PAGE_RE = re.compile(r"^===PAGE:(\d+)===\s*$", re.MULTILINE)
 
 
@@ -86,7 +79,7 @@ def excerpt(text: str, terms: list[str], width: int) -> str:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("terms", nargs="+", help="disease name followed by any synonyms")
-    parser.add_argument("--pdf", type=Path, default=DEFAULT_PDF)
+    parser.add_argument("--pdf", type=Path, required=True, help="path to the Merck 19e PDF")
     parser.add_argument("--extracted", type=Path, default=DEFAULT_EXTRACTED)
     parser.add_argument("--neighbors", type=int, default=1)
     parser.add_argument("--max-hits", type=int, default=20)

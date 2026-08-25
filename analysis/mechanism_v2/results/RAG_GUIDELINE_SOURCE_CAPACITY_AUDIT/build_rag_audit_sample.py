@@ -8,6 +8,7 @@ not claim that E11 estimates RAG effects inside APHHM-C or MOSAIC.
 """
 from __future__ import annotations
 
+import argparse
 import csv
 import hashlib
 import json
@@ -18,9 +19,8 @@ from pathlib import Path
 from typing import Any
 
 
-ROOT = Path("/workspace/scratch/83c9adfcac6c/repo")
-OUT = Path("/workspace/scratch/83c9adfcac6c/tmp_agent_sample")
-OUT.mkdir(parents=True, exist_ok=True)
+ROOT = Path(__file__).resolve().parents[4]
+DEFAULT_OUT = Path(__file__).resolve().parent
 
 SLICE_SPECS = (
     (
@@ -553,6 +553,11 @@ def write_sample_index(
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--out", type=Path, default=DEFAULT_OUT)
+    args = parser.parse_args()
+    args.out.mkdir(parents=True, exist_ok=True)
+
     cases, alignment = load_cases()
     rarity = load_rarity_proxy()
     e2 = load_e2_targets()
@@ -738,12 +743,12 @@ def main() -> int:
         }
     )
 
-    write_jsonl(OUT / "case_alignment_800.jsonl", compact_800)
-    write_jsonl(OUT / "rag_quadrants_e11_400.jsonl", e11_rows)
-    write_jsonl(OUT / "source_coverage_probability_sample_48.jsonl", source_sample)
-    write_jsonl(OUT / "e11_mechanism_enriched_sample_16.jsonl", mechanism_sample)
-    write_sample_index(OUT / "sample_index.tsv", source_sample, mechanism_sample)
-    (OUT / "sample_manifest.json").write_text(
+    write_jsonl(args.out / "case_alignment_800.jsonl", compact_800)
+    write_jsonl(args.out / "rag_quadrants_e11_400.jsonl", e11_rows)
+    write_jsonl(args.out / "source_coverage_probability_sample_48.jsonl", source_sample)
+    write_jsonl(args.out / "e11_mechanism_enriched_sample_16.jsonl", mechanism_sample)
+    write_sample_index(args.out / "sample_index.tsv", source_sample, mechanism_sample)
+    (args.out / "sample_manifest.json").write_text(
         json.dumps(alignment, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
