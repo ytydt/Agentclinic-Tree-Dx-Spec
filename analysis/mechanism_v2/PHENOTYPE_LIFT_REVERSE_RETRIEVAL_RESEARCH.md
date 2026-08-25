@@ -1,5 +1,13 @@
 # 从低层临床事实倒查高层 phenotype / 综合征：数据源与实现路径调研
 
+> **2026-08-25 更新：** 本文件是 `3897731` 的初步方案。基于 `a945aa57a` 新补齐轨迹、G1
+> 逐 case 语义复核、公开数据源冻结及 MedCPT 离线实测后的最终判断与实现产物，见
+> [`PHENOTYPE_LIFT_FEASIBILITY_AUDIT.md`](PHENOTYPE_LIFT_FEASIBILITY_AUDIT.md)。尤其需要修正：下文引用的
+> G1 `60/67`、`56/67` 是 canonical-key identity gate，不是 clinical-complete gate；人工复核后 arm A
+> 至少 `63/67`，arm B 至少 `60/67`，故不得继续表述为“两臂均已证明临床召回失败”。该复核为
+> retrospective、single-reviewer、非盲 exploratory audit，**不追溯性改变原预注册 identity gate 的失败状态**；
+> 如需重判须预注册 clinical-complete endpoint 并做独立盲审。
+
 > 日期：2026-08-24
 > 仓库基线：`cursor4@aba083272b1fe8f663f360da5f9e1a5d86304e84`
 > 范围：症状、体征、生命体征、检验和影像描述 → 高层 phenotype / 临床状态 / 综合征的候选检索

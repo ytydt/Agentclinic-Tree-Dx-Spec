@@ -1,0 +1,529 @@
+{
+  "schema_version": "1.0.0",
+  "title": "Phenotype-lift source audit ledger",
+  "audited_date": "2026-08-25",
+  "scope": "Authoritative or individually accessible sources for normalizing raw symptoms, signs, vitals, laboratory and imaging findings; inferring higher-order physiologic phenotypes through a separate rule layer; and performing reverse differential-diagnosis retrieval.",
+  "global_finding": "No audited source supplies a comprehensive, validated mapping from arbitrary sets of two or three findings plus thresholds, timing and exclusions to higher-order syndromes. Ontology subsumption, disease-phenotype association and syndrome-criteria satisfaction must remain separate relation types.",
+  "access_values": {
+    "anonymous": "No account or institutional purchase is required for the audited public artifact.",
+    "personal-registration": "A free or territory-dependent individual account or license is required; institutional purchase is not inherently required.",
+    "click-through": "No personal account was required in the audited path, but the user must accept source-specific terms before download or use."
+  },
+  "recommendation_tiers": {
+    "P0_core": "Recommended for the first reproducible implementation, subject to the stated redistribution guard.",
+    "P1_optional_enhancement": "Useful enhancement that must not block the anonymous/open MVP.",
+    "P2_manual_or_weak_reference": "Use for manual rule seeding, implementation examples or weak candidate generation, not as automatic truth.",
+    "excluded_as_semantic_inference_source": "May validate identifiers or labels, but is not suitable for ontology or syndrome inference."
+  },
+  "sources": [
+    {
+      "name": "Human Phenotype Ontology (HPO)",
+      "version_or_snapshot": "v2026-06-23",
+      "access": "anonymous",
+      "license": "HPO custom license terms; free access with attribution/citation, public display of date/version, and restrictions against altering distributed content or logical relationships.",
+      "best_role": [
+        "Normalize symptoms, signs and abnormal laboratory phenotypes to stable HPO identifiers",
+        "Use labels, synonyms, definitions, obsolete replacements and true is-a ancestors for lexical retrieval and safe abstraction"
+      ],
+      "not_sufficient_for": [
+        "Inferring a syndrome from co-occurring sibling findings",
+        "Encoding has-phenotype or diagnostic-criteria relations as subclass relations",
+        "Comprehensive coverage of common acute syndromes"
+      ],
+      "redistribution_guard": "Preserve source labels and logical relationships, include the HPO license/citation and exact release date, and keep local aliases or inferred rules in a separate namespace rather than modifying HPO content.",
+      "official_urls": [
+        "https://github.com/obophenotype/human-phenotype-ontology/releases/tag/v2026-06-23",
+        "http://purl.obolibrary.org/obo/hp.obo",
+        "http://purl.obolibrary.org/obo/hp.owl",
+        "https://hpo.jax.org/app/license",
+        "https://obophenotype.github.io/human-phenotype-ontology/contributing/good_structure/"
+      ],
+      "recommendation_tier": "P0_core",
+      "audited_date": "2026-08-25"
+    },
+    {
+      "name": "HPO disease annotations (phenotype.hpoa / HPOA)",
+      "version_or_snapshot": "HPO v2026-06-23 release annotation assets",
+      "access": "anonymous",
+      "license": "HPO custom license terms plus source-specific rights for underlying disease annotations; OMIM-derived IEA annotations have an explicit additional reuse warning.",
+      "best_role": [
+        "Reverse retrieval from normalized HPO findings to rare or hereditary diseases",
+        "Weight disease candidates using frequency, onset, sex, modifiers, evidence and explicit negative annotations"
+      ],
+      "not_sufficient_for": [
+        "Defining a higher-order phenotype from its component findings",
+        "Broad common-disease or acute-care syndrome coverage",
+        "Unfiltered redistribution of all annotation rows"
+      ],
+      "redistribution_guard": "Filter and retain row-level provenance. HPO documentation states that OMIM-parsed IEA annotations require contacting OMIM before reuse in other software products; prefer ORPHA, PMID-backed PCS/TAS or other reuse-safe provenance for published derivatives.",
+      "official_urls": [
+        "https://github.com/obophenotype/human-phenotype-ontology/releases/tag/v2026-06-23",
+        "https://obophenotype.github.io/human-phenotype-ontology/annotations/phenotype_hpoa/",
+        "https://obophenotype.github.io/human-phenotype-ontology/annotations/introduction/"
+      ],
+      "recommendation_tier": "P0_core",
+      "audited_date": "2026-08-25"
+    },
+    {
+      "name": "LOINC2HPO annotation data and software",
+      "version_or_snapshot": "Annotation repository HEAD c1068d6d6b80ce757ff7a26e4c38a5ac8e7c830c (2021-11-07); audited TSV: 7,415 rows, 3,118 unique LOINC codes and 827 unique HPO terms",
+      "access": "anonymous",
+      "license": "Annotation repository permission grant with required notices; incorporated LOINC-derived content remains subject to the LOINC license. The Java software is BSD-3-Clause.",
+      "best_role": [
+        "High-precision single-observation mapping from LOINC plus H/L/N, POS/NEG or selected nominal result values to HPO",
+        "Normalize already interpreted laboratory abnormalities such as low potassium to Hypokalemia"
+      ],
+      "not_sufficient_for": [
+        "Mapping uncoded free text directly",
+        "Computing laboratory reference ranges or abnormality direction",
+        "Combining multiple observations into a syndrome",
+        "Current comprehensive LOINC coverage"
+      ],
+      "redistribution_guard": "Pin the exact commit, carry the annotation license and LOINC notice, label the data as a stale 2021 snapshot, and do not represent its academic mappings as clinical diagnostic advice.",
+      "official_urls": [
+        "https://github.com/TheJacksonLaboratory/loinc2hpoAnnotation",
+        "https://github.com/TheJacksonLaboratory/loinc2hpoAnnotation/blob/master/License.md",
+        "https://github.com/monarch-initiative/loinc2hpo",
+        "https://github.com/monarch-initiative/loinc2hpo/blob/master/LICENSE"
+      ],
+      "recommendation_tier": "P0_core",
+      "audited_date": "2026-08-25"
+    },
+    {
+      "name": "RadLex",
+      "version_or_snapshot": "v4.3; official portal snapshot listed 34,446 active classes, 455 retired classes and 58,065 total terms",
+      "access": "click-through",
+      "license": "RadLex License Agreement and Terms of Use Version 2.1, last updated 2025-01-06; worldwide no-charge and royalty-free grant subject to attribution, notice and adaptation restrictions.",
+      "best_role": [
+        "Normalize radiology findings, anatomy and imaging-specific expressions",
+        "Provide exact imaging identifiers, source labels, synonyms and ontology relations"
+      ],
+      "not_sufficient_for": [
+        "General symptom normalization outside radiology",
+        "Inferring physiologic syndromes from imaging findings",
+        "Definition-based embeddings for all terms because most classes lack definitions"
+      ],
+      "redistribution_guard": "Include the license and all source notices. Do not modify clinical-term RID, names or translations, synonyms, or original ontologic relations; keep any added aliases and rules in a clearly marked adaptation layer.",
+      "official_urls": [
+        "https://radlex.org/",
+        "https://www.rsna.org/uploadedFiles/RSNA/Content/Informatics/RadLex_License_Agreement_and_Terms_of_Use_V2_Final.pdf"
+      ],
+      "recommendation_tier": "P0_core",
+      "audited_date": "2026-08-25"
+    },
+    {
+      "name": "Mondo Disease Ontology",
+      "version_or_snapshot": "v2026-07-06",
+      "access": "anonymous",
+      "license": "CC BY 4.0",
+      "best_role": [
+        "Normalize disease, syndrome and higher-order target labels",
+        "Resolve cross-database disease identifiers and synonyms"
+      ],
+      "not_sufficient_for": [
+        "Mapping component findings to syndrome criteria",
+        "Treating prose disease definitions as executable rules without curation"
+      ],
+      "redistribution_guard": "Retain attribution and exact release provenance; distinguish Mondo equivalence axioms and xrefs from locally asserted clinical rules.",
+      "official_urls": [
+        "https://github.com/monarch-initiative/mondo/releases/tag/v2026-07-06",
+        "https://mondo.monarchinitiative.org/pages/download/",
+        "http://purl.obolibrary.org/obo/mondo.obo",
+        "http://purl.obolibrary.org/obo/mondo.json"
+      ],
+      "recommendation_tier": "P0_core",
+      "audited_date": "2026-08-25"
+    },
+    {
+      "name": "Human Disease Ontology (DO)",
+      "version_or_snapshot": "Current production PURL audited 2026-08-25; July 2026 production OBO/JSON representation transition active",
+      "access": "anonymous",
+      "license": "CC0 1.0",
+      "best_role": [
+        "Supplement Mondo with common disease and syndrome target labels, definitions, synonyms and hierarchy",
+        "Provide a permissively redistributable target terminology"
+      ],
+      "not_sufficient_for": [
+        "Automatic extraction of multi-finding syndrome rules from free-text definitions",
+        "Observation-level normalization"
+      ],
+      "redistribution_guard": "Pin the exact downloaded commit or release and test the parser because the July 2026 production-format change may break older OBO/OBGraphs JSON readers.",
+      "official_urls": [
+        "https://github.com/DiseaseOntology/HumanDiseaseOntology",
+        "https://github.com/DiseaseOntology/HumanDiseaseOntology/releases",
+        "http://purl.obolibrary.org/obo/doid.owl"
+      ],
+      "recommendation_tier": "P0_core",
+      "audited_date": "2026-08-25"
+    },
+    {
+      "name": "Orphadata phenotypes associated with rare disorders",
+      "version_or_snapshot": "Orphanet knowledge-base release July 2026; English en_product4.xml dated 2026-06-23 with 4,357 disorders",
+      "access": "anonymous",
+      "license": "CC BY 4.0",
+      "best_role": [
+        "Redistributable HPO-to-rare-disease association layer",
+        "Reverse differential-diagnosis retrieval with Orphanet disorder identifiers"
+      ],
+      "not_sufficient_for": [
+        "Common acute syndrome coverage",
+        "Defining syndrome composition from raw findings"
+      ],
+      "redistribution_guard": "Retain Orphadata attribution, release date, language and source identifiers; do not merge frequency or absence semantics into an untyped binary edge.",
+      "official_urls": [
+        "https://sciences.orphadata.com/phenotypes/",
+        "https://sciences.orphadata.com/orphanet-scientific-knowledge-files/"
+      ],
+      "recommendation_tier": "P0_core",
+      "audited_date": "2026-08-25"
+    },
+    {
+      "name": "Monarch Knowledge Graph",
+      "version_or_snapshot": "Monarch KG release shown as 2026-07-14 on the official portal; source integration is updated approximately monthly",
+      "access": "anonymous",
+      "license": "Open-access integrated resource with edge-level source provenance; underlying source licenses remain applicable.",
+      "best_role": [
+        "Download the disease-to-phenotypic-feature association product for reverse differential diagnosis",
+        "Integrate HPO, Mondo, Orphanet and other source identifiers using Biolink/KGX"
+      ],
+      "not_sufficient_for": [
+        "Defining a syndrome from a component-finding set",
+        "Treating every integrated edge as equally licensed or clinically authoritative",
+        "Complete common-disease coverage"
+      ],
+      "redistribution_guard": "Preserve primary knowledge-source provenance and license metadata. Prefer the narrow association download over the full KG and source-filter any published derivative.",
+      "official_urls": [
+        "https://monarchinitiative.org/kg/downloads",
+        "https://monarchinitiative.org/kg/about",
+        "https://api.monarchinitiative.org/"
+      ],
+      "recommendation_tier": "P0_core",
+      "audited_date": "2026-08-25"
+    },
+    {
+      "name": "NCBI MedGen",
+      "version_or_snapshot": "Weekly FTP/API data, audited 2026-08-25; documentation last updated April 2026",
+      "access": "anonymous",
+      "license": "US-government-created material is public domain with requested attribution; contributed or licensed source vocabulary material remains subject to the original rights holder's terms.",
+      "best_role": [
+        "Source-filtered clinical synonym and identifier crosswalk",
+        "Use MGCONSO, MGREL, MGSTY, MedGenIDMappings and MedGen_HPO_Mapping for lexical rescue and reverse disease links",
+        "Programmatic search of multiple clinical features with Entrez esearch/esummary"
+      ],
+      "not_sufficient_for": [
+        "Unfiltered public redistribution of all source atoms",
+        "Using manifestation associations as syndrome definitions",
+        "Assuming all strings assigned to one UMLS CUI are task-equivalent"
+      ],
+      "redistribution_guard": "Filter every published derivative by SAB/source and semantic type. Exclude or separately license OMIM, SNOMED CT and other restricted atoms; retain MedGen attribution and source identifiers.",
+      "official_urls": [
+        "https://www.ncbi.nlm.nih.gov/medgen/docs/search/",
+        "https://ftp.ncbi.nlm.nih.gov/pub/medgen/README.txt",
+        "https://ftp.ncbi.nlm.nih.gov/pub/medgen/",
+        "https://ftp.ncbi.nlm.nih.gov/pub/medgen/csv/"
+      ],
+      "recommendation_tier": "P0_core",
+      "audited_date": "2026-08-25"
+    },
+    {
+      "name": "OHDSI Phenotype Library",
+      "version_or_snapshot": "R package v3.37.0 dated 2026-04-08; official 2025-04-02 usage vignette showed 703 cohort definitions",
+      "access": "anonymous",
+      "license": "Apache License 2.0 for the repository and package; terminology concepts referenced by definitions may retain their own source licenses.",
+      "best_role": [
+        "Study versioned computable cohort logic, inclusion and exclusion clauses, time windows and code-list handling",
+        "Manually select a small number of measurement-rich definitions as rule-engineering exemplars"
+      ],
+      "not_sufficient_for": [
+        "Direct short-vignette syndrome composition",
+        "A broad atomic-finding lexicon",
+        "Automatic reuse of all OMOP vocabulary content without source-license review"
+      ],
+      "redistribution_guard": "Keep cohort-definition version/DOI and review the license of every referenced OMOP source vocabulary before redistributing resolved code lists.",
+      "official_urls": [
+        "https://github.com/OHDSI/PhenotypeLibrary",
+        "https://ohdsi.github.io/PhenotypeLibrary/articles/HowToUsePhenotypeLibraryRPackage.html",
+        "https://github.com/OHDSI/PhenotypeLibrary/blob/main/DESCRIPTION"
+      ],
+      "recommendation_tier": "P1_optional_enhancement",
+      "audited_date": "2026-08-25"
+    },
+    {
+      "name": "PheKB public phenotype catalog",
+      "version_or_snapshot": "Public catalog snapshot audited 2026-08-25",
+      "access": "anonymous",
+      "license": "No clear catalog-wide machine-redistribution license was identified on the audited official public catalog; individual artifacts and contributed files may have separate rights.",
+      "best_role": [
+        "Manual review of EHR phenotype algorithms using diagnoses, laboratories, medications, vitals and NLP",
+        "Validation or design reference for a small set of named phenotypes"
+      ],
+      "not_sufficient_for": [
+        "A general symptom-to-syndrome knowledge base",
+        "Reliable repository-wide bulk download",
+        "Unreviewed bulk redistribution"
+      ],
+      "redistribution_guard": "Review artifact-specific ownership and terms before copying files. Do not scrape and commit the public catalog as though it had one open-data license.",
+      "official_urls": [
+        "https://www.phekb.org/phenotypes_old",
+        "https://www.phekb.org/"
+      ],
+      "recommendation_tier": "P2_manual_or_weak_reference",
+      "audited_date": "2026-08-25"
+    },
+    {
+      "name": "PheMA PheKB phenotypes in CQL and FHIR",
+      "version_or_snapshot": "Moving GitHub main snapshot audited 2026-08-25; repository lists 33 translated phenotypes",
+      "access": "anonymous",
+      "license": "No clear repository-wide LICENSE file or explicit bulk-content license was identified in the audited official repository.",
+      "best_role": [
+        "Study concrete CQL, FHIR ValueSet and synthetic-test implementations of selected PheKB algorithms",
+        "Reuse the testing pattern after independently authoring licensed local rules"
+      ],
+      "not_sufficient_for": [
+        "Comprehensive phenotype coverage",
+        "Automatic clinical truth",
+        "Safe bulk redistribution until licensing is clarified"
+      ],
+      "redistribution_guard": "Pin the studied commit and treat repository content as reference-only until the maintainers clarify the license; do not copy its phenotype definitions into a published data product by default.",
+      "official_urls": [
+        "https://github.com/PheMA/phekb-phenotypes"
+      ],
+      "recommendation_tier": "P2_manual_or_weak_reference",
+      "audited_date": "2026-08-25"
+    },
+    {
+      "name": "DisMech Disorder Mechanisms Knowledge Base",
+      "version_or_snapshot": "Active pre-alpha moving main snapshot audited 2026-08-25; portal listed 1,298 disorders, 2,051 subtypes, 21,000+ cited publications and 1,796 research reports",
+      "access": "anonymous",
+      "license": "Content CC BY 4.0; repository software BSD-3-Clause.",
+      "best_role": [
+        "Generate weak candidates for mechanistic bridge rules and explanations",
+        "Locate PubMed-backed pathophysiology and phenotype evidence for subsequent independent validation"
+      ],
+      "not_sufficient_for": [
+        "Hard rule activation, candidate deletion or veto",
+        "Clinical diagnosis or individual laboratory interpretation",
+        "Stable released identifiers or even coverage"
+      ],
+      "redistribution_guard": "Pin an exact git commit. Preserve evidence citations and label all derived rules as unvalidated candidates; official documentation states that most content is AI-authored, human review is not line-by-line re-derivation, and scientific errors are expected.",
+      "official_urls": [
+        "https://github.com/monarch-initiative/dismech",
+        "https://dismech.monarchinitiative.org/",
+        "https://dismech.monarchinitiative.org/elements/disclaimer/"
+      ],
+      "recommendation_tier": "P2_manual_or_weak_reference",
+      "audited_date": "2026-08-25"
+    },
+    {
+      "name": "LOINC",
+      "version_or_snapshot": "v2.83 released 2026-08-19; official FHIR terminology service still documented v2.81 on the audit date",
+      "access": "personal-registration",
+      "license": "LOINC license; free for commercial and non-commercial use, with attribution, integrity and anti-competing-standard conditions.",
+      "best_role": [
+        "Identify the observation, measurement, specimen, method, component and property",
+        "Disambiguate tests before applying result-interpretation logic"
+      ],
+      "not_sufficient_for": [
+        "Determining whether an observed result is high or low",
+        "Mapping raw prose to a clinical syndrome",
+        "Encoding multi-finding criteria"
+      ],
+      "redistribution_guard": "Carry the current LOINC license and attribution, do not modify or use the content to promulgate a competing observation standard, and do not assume third-party survey content has identical rights.",
+      "official_urls": [
+        "https://loinc.org/news/loinc-version-2-83-release-highlights",
+        "https://loinc.org/downloads",
+        "https://loinc.org/kb/license",
+        "https://loinc.org/kb/api/download",
+        "https://loinc.org/kb/api/auth",
+        "https://loinc.org/kb/api/fhir"
+      ],
+      "recommendation_tier": "P1_optional_enhancement",
+      "audited_date": "2026-08-25"
+    },
+    {
+      "name": "Unified Medical Language System (UMLS)",
+      "version_or_snapshot": "2026AA released 2026-05-04; full release 5.3 GB compressed and 40.1 GB uncompressed",
+      "access": "personal-registration",
+      "license": "Free individual UMLS Metathesaurus license and UTS account; source vocabularies may impose additional agreements, restrictions or fees; annual-use reporting normally applies.",
+      "best_role": [
+        "Lexical normalization, source-aware synonym lookup and terminology crosswalk",
+        "Use MRCONSO, semantic types and carefully source-filtered MRREL relationships for candidate retrieval"
+      ],
+      "not_sufficient_for": [
+        "Conjunctive syndrome rules",
+        "Treating all atoms in a CUI as interchangeable",
+        "Unfiltered public redistribution"
+      ],
+      "redistribution_guard": "Filter by source abbreviation and source restriction level, retain every source license, and never commit or redistribute the full UMLS release as an open project artifact.",
+      "official_urls": [
+        "https://www.nlm.nih.gov/research/umls/index.html",
+        "https://www.nlm.nih.gov/databases/umls.html",
+        "https://www.nlm.nih.gov/research/umls/licensedcontent/umlsknowledgesources.html",
+        "https://www.nlm.nih.gov/research/umls/knowledge_sources/metathesaurus/release/notes.html"
+      ],
+      "recommendation_tier": "P1_optional_enhancement",
+      "audited_date": "2026-08-25"
+    },
+    {
+      "name": "SNOMED CT International Edition",
+      "version_or_snapshot": "August 2026 International Edition released 2026-08-01",
+      "access": "personal-registration",
+      "license": "SNOMED CT Affiliate/National license. Use is normally free in member countries after registration; fees and reporting may apply in non-member territories.",
+      "best_role": [
+        "Rich clinical finding and disorder terminology with descriptions, is-a hierarchy, logical definitions and attributes",
+        "Optional high-coverage normalizer and ontology substrate in licensed deployments"
+      ],
+      "not_sufficient_for": [
+        "A generally redistributable anonymous project dependency",
+        "Automatically validated syndrome criteria including thresholds and timing",
+        "Inferring co-occurrence as a logical definition"
+      ],
+      "redistribution_guard": "Do not commit full RF2 or derived semantic subsets to a public repository without confirming Affiliate, national, territorial and downstream sublicense obligations. Pin the exact release package.",
+      "official_urls": [
+        "https://www.snomed.org/get-snomed",
+        "https://www.nlm.nih.gov/healthit/snomedct/international.html",
+        "https://docs.snomed.org/snomed-ct-practical-guides/vendor-introduction-to-snomed-ct/7-licensing"
+      ],
+      "recommendation_tier": "P1_optional_enhancement",
+      "audited_date": "2026-08-25"
+    },
+    {
+      "name": "SNOMED CT Global Patient Set (GPS)",
+      "version_or_snapshot": "2026 production package announced 2026-03-11; freeset file SnomedINTL_GPSRelease_PRODUCTION_20260101T120000Z.txt",
+      "access": "anonymous",
+      "license": "Official sources conflict: the March 2026 announcement states CC BY-ND 4.0, while the current technical guide states CC BY 4.0. The stricter CC BY-ND 4.0 interpretation is required pending clarification.",
+      "best_role": [
+        "Validate and display SNOMED CT identifiers, FSNs, US preferred terms and active/inactive status in unlicensed environments"
+      ],
+      "not_sufficient_for": [
+        "Hierarchy traversal, parent or ancestor queries, subsumption or ECL",
+        "Logical definitions, relationship-based analytics or decision support",
+        "Syndrome or phenotype inference"
+      ],
+      "redistribution_guard": "Treat identifiers as flat opaque codes, record the GPS release, avoid derivative semantic products, and apply CC BY-ND until SNOMED International resolves the official license discrepancy.",
+      "official_urls": [
+        "https://www.snomed.org/gps",
+        "https://www.snomed.org/news/snomed-international-significantly-expands-the-scope-of-the-global-patient-set",
+        "https://forums.snomed.org/t/2026-snomed-ct-global-patient-set-gps-production-release/1064",
+        "https://docs.snomed.org/implementation-guides/gps-implementation-guide/technical-application"
+      ],
+      "recommendation_tier": "excluded_as_semantic_inference_source",
+      "audited_date": "2026-08-25"
+    },
+    {
+      "name": "Clinical Quality Language (CQL) specification and tooling",
+      "version_or_snapshot": "CQL tooling release 4.8.0 dated 2026-05-08",
+      "access": "anonymous",
+      "license": "Apache License 2.0 for code and tooling; CC BY 4.0 for documentation.",
+      "best_role": [
+        "Represent and validate typed clinical rules with Boolean logic, thresholds, time windows, terminology bindings and exclusions",
+        "Compile human-readable rules to ELM and execute them deterministically"
+      ],
+      "not_sufficient_for": [
+        "Providing the medical criteria or evidence used by a rule",
+        "Lexically normalizing nonstandard vignette text",
+        "Serving as a syndrome knowledge base by itself"
+      ],
+      "redistribution_guard": "Keep medical rule content, its evidence license and terminology licenses separate from the Apache-licensed execution tooling; version every local rule independently.",
+      "official_urls": [
+        "https://github.com/cqframework/clinical_quality_language",
+        "https://github.com/cqframework/clinical_quality_language/releases/tag/v4.8.0"
+      ],
+      "recommendation_tier": "P0_core",
+      "audited_date": "2026-08-25"
+    },
+    {
+      "name": "WHO SMART Guidelines and Digital Adaptation Kits",
+      "version_or_snapshot": "Moving WHO SMART catalog and artifact-specific implementation guides audited 2026-08-25",
+      "access": "anonymous",
+      "license": "Artifact-specific WHO terms, frequently a Creative Commons IGO license; maturity and implementation permissions differ by guide and draft status.",
+      "best_role": [
+        "Authoritative domain-specific seeds for data dictionaries, decision-support logic, workflows and FHIR/CQL implementation patterns",
+        "Model provenance-rich rule packages rather than an untyped syndrome dictionary"
+      ],
+      "not_sufficient_for": [
+        "Broad cross-specialty syndrome coverage",
+        "Assuming every SMART draft is implementation-ready",
+        "Applying one catalog-wide redistribution license"
+      ],
+      "redistribution_guard": "Check the exact guide version, status and license before extraction; do not implement draft artifacts that prohibit implementation, and preserve WHO attribution plus rule-level source provenance.",
+      "official_urls": [
+        "https://smart.who.int/",
+        "https://www.who.int/teams/digital-health-and-innovation/smart-guidelines",
+        "https://github.com/WorldHealthOrganization/smart-anc",
+        "https://smart.who.int/trust/v1.5.0/decision_support.html"
+      ],
+      "recommendation_tier": "P2_manual_or_weak_reference",
+      "audited_date": "2026-08-25"
+    },
+    {
+      "name": "DiagRL-Corpus Guideline_common and Guideline_rare snapshot",
+      "version_or_snapshot": "QiaoyuZheng/DiagRL-Corpus commit 402ff97d2eb076da2da7086eed7aa2c4c897b9ea; local files are byte-identical",
+      "access": "anonymous",
+      "license": "Hugging Face dataset card declares Apache-2.0, while individual common-disease rows attribute heterogeneous third-party web sources and rare rows are described as Orphanet-derived.",
+      "best_role": [
+        "Existing exploratory disease-label and symptom-profile corpus for local retrieval smoke tests",
+        "Diagnose whether a proposed phenotype query can address a target label already present in the frozen corpus"
+      ],
+      "not_sufficient_for": [
+        "An openly redistributable medical knowledge base without transitive-source review",
+        "Clinical truth, syndrome definitions or confirmatory retrieval evaluation",
+        "Measuring end-to-end binder performance when queries are manually curated"
+      ],
+      "redistribution_guard": "Retain the pinned dataset commit and row-level source URLs. Do not assume the dataset-level Apache tag resolves copyright or terms for Mayo, WebMD, Merck or other underlying excerpts; replace or filter rows before an open production release.",
+      "official_urls": [
+        "https://huggingface.co/datasets/QiaoyuZheng/DiagRL-Corpus",
+        "https://huggingface.co/datasets/QiaoyuZheng/DiagRL-Corpus/tree/402ff97d2eb076da2da7086eed7aa2c4c897b9ea"
+      ],
+      "recommendation_tier": "P2_manual_or_weak_reference",
+      "audited_date": "2026-08-25"
+    },
+    {
+      "name": "Repository clinical-practice-guideline (CPG) chunk corpus",
+      "version_or_snapshot": "cursor4 a945aa57; 205,115 chunks from 8,038 unique articles",
+      "access": "anonymous",
+      "license": "Mixed per-chunk provenance: PMC CC BY/CC0/CC BY-NC/CC BY-ND/CC BY-NC-ND/NO-CC and author manuscripts, WikEM CC BY-SA, 3,311 purchased Merck Manual 19e chunks, plus guideline chunks with missing local license notes.",
+      "best_role": [
+        "Repository-local sparse and MedCPT retrieval smoke tests with per-chunk provenance",
+        "Build a separately filtered open-license research tranche"
+      ],
+      "not_sufficient_for": [
+        "A homogeneous open corpus",
+        "Redistribution or deployment without per-source license filtering",
+        "Clinical entailment or blinded document relevance labels"
+      ],
+      "redistribution_guard": "Use license_note as a hard gate. The conservative open replay retains only PMC CC BY, PMC CC0 and WikEM CC BY-SA; exclude purchased, NC, ND, NO-CC and missing-license chunks unless separately authorized. Add article-level deduplication and section-quality filtering.",
+      "official_urls": [
+        "https://pmc.ncbi.nlm.nih.gov/tools/openftlist/",
+        "https://creativecommons.org/licenses/by/4.0/",
+        "https://creativecommons.org/publicdomain/zero/1.0/",
+        "https://creativecommons.org/licenses/by-sa/3.0/"
+      ],
+      "recommendation_tier": "P2_manual_or_weak_reference",
+      "audited_date": "2026-08-25"
+    },
+    {
+      "name": "MedCPT Query and Article Encoders",
+      "version_or_snapshot": "Query Encoder commit d83a36cc6b8e3a5c5e9d9d6ba156808c1643dcbc; query model.safetensors SHA-256 19d78c0d5eaee2f81e6c47c5425bbadcc0c6af016cbb5da4a000d64e59d6e342",
+      "access": "anonymous",
+      "license": "Model card and bundled LICENSE identify the NCBI model as public domain; the model card includes a research/clinical-oversight disclaimer.",
+      "best_role": [
+        "Dense proposal retrieval for non-literal biomedical queries",
+        "Rank fusion with lexical retrieval after corpus-license and section-quality filters"
+      ],
+      "not_sufficient_for": [
+        "Determining thresholds, assertion, subject, time or specimen",
+        "Inferring that a syndrome or relation is clinically true",
+        "Overriding source-corpus licenses"
+      ],
+      "redistribution_guard": "Pin encoder commit and weight hash, preserve the public-domain LICENSE and model disclaimer, and treat every retrieved document under its own source license. Do not use similarity as a clinical evidence edge.",
+      "official_urls": [
+        "https://huggingface.co/ncbi/MedCPT-Query-Encoder",
+        "https://huggingface.co/ncbi/MedCPT-Article-Encoder",
+        "https://arxiv.org/abs/2307.00589"
+      ],
+      "recommendation_tier": "P1_optional_enhancement",
+      "audited_date": "2026-08-25"
+    }
+  ]
+}

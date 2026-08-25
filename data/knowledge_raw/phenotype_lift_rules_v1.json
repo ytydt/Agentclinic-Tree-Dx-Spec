@@ -1,0 +1,234 @@
+{
+  "schema_version": "phenotype-lift-rule-card/1.0",
+  "artifact_version": "2026-08-25.v1",
+  "status": "offline-feasibility-only",
+  "principles": {
+    "logic": "three-valued T/F/U; missing is unknown, never false",
+    "identity": "all required atoms must retain distinct source spans or fact IDs",
+    "write_contract": "derived labels never replace source atoms, vote, veto, or alter the base retrieval tranche",
+    "retrieval_contract": "query-expansion output enters a separately capped residual lane"
+  },
+  "rules": [
+    {
+      "rule_id": "PLV1_HAGMA",
+      "target": {
+        "id": "LOCAL:PHENO_HAGMA",
+        "label": "high-anion-gap metabolic acidosis",
+        "query_expansion_targets": ["HP:0001942"]
+      },
+      "semantics": "multi-premise physiologic pattern",
+      "write_policy": "derived_zero_vote_when_all_required_are_T",
+      "required": [
+        "acidemia or explicitly established metabolic acidosis",
+        "low serum/plasma bicarbonate",
+        "elevated measured or calculated anion gap"
+      ],
+      "contradictions": [
+        "explicit normal/non-anion-gap metabolic acidosis",
+        "measurements from incompatible time points or specimens"
+      ],
+      "quality_gates": [
+        "bind sodium, chloride and bicarbonate to the same panel when calculating the gap",
+        "retain albumin correction method if a corrected gap is used",
+        "do not infer from tachypnea or low bicarbonate alone"
+      ],
+      "population": "reference interval and albumin correction are laboratory- and population-specific",
+      "sources": [
+        {
+          "kind": "ontology-definition",
+          "uri": "https://hpo.jax.org/browse/term/HP:0001942",
+          "version": "HPO local snapshot 2026-02-16"
+        },
+        {
+          "kind": "open-clinical-review",
+          "uri": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13035296/",
+          "evidence": "anion-gap calculation and normal-vs-high-gap distinction"
+        }
+      ]
+    },
+    {
+      "rule_id": "PLV1_CHOLESTATIC_PATTERN",
+      "target": {
+        "id": "LOCAL:PHENO_CHOLESTATIC_BIOCHEMICAL_PATTERN",
+        "label": "cholestatic biochemical pattern",
+        "query_expansion_targets": ["HP:0001396"]
+      },
+      "semantics": "multi-premise laboratory pattern",
+      "write_policy": "query_expansion_only_until_reference_ranges_and_R_ratio_are_validated",
+      "required": [
+        "alkaline phosphatase above its assay upper reference limit",
+        "ALP elevation disproportionate to ALT/AST (adult R-ratio logic where applicable)",
+        "hepatic-source support such as elevated GGT or 5-prime nucleotidase"
+      ],
+      "supportive": [
+        "elevated direct bilirubin",
+        "pruritus, dark urine or pale stools"
+      ],
+      "contradictions": [
+        "ALP within the stated laboratory range",
+        "isolated bone-source ALP elevation",
+        "predominantly hepatocellular R-ratio"
+      ],
+      "quality_gates": [
+        "use the report's own upper limits before any population fallback",
+        "preserve pregnancy, age and bone-source context"
+      ],
+      "population": "adult fallback limits are proposal-only and may not write a fact",
+      "sources": [
+        {
+          "kind": "mechanism-candidate",
+          "uri": "https://github.com/monarch-initiative/dismech/blob/4056b61c01f7f9eedf60db3c863ecd697c80eb9d/kb/modules/cholestatic_liver_injury.yaml",
+          "version": "DisMech 4056b61c01f7f9eedf60db3c863ecd697c80eb9d",
+          "warning": "AI-curated pre-alpha; candidate source, not activation authority"
+        },
+        {
+          "kind": "open-review",
+          "uri": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7298429/"
+        }
+      ]
+    },
+    {
+      "rule_id": "PLV1_HEMOLYTIC_PROCESS",
+      "target": {
+        "id": "LOCAL:PHENO_HEMOLYTIC_PROCESS",
+        "label": "hemolytic process",
+        "query_expansion_targets": ["HP:0001878"]
+      },
+      "semantics": "multi-premise physiologic pattern",
+      "write_policy": "query_expansion_only_pending_clinical_gold_validation",
+      "required": [
+        "anemia or a documented hemoglobin fall",
+        "at least two independent destruction/response markers: reticulocytosis, low haptoglobin, elevated LDH, indirect hyperbilirubinemia, or schistocytes"
+      ],
+      "supportive": [
+        "jaundice",
+        "splenomegaly"
+      ],
+      "contradictions": [
+        "isolated low haptoglobin in liver disease or malnutrition",
+        "isolated LDH elevation",
+        "in-vitro sample hemolysis"
+      ],
+      "quality_gates": [
+        "test result, direction, specimen and time must remain bound",
+        "do not convert a shared marker count directly into a diagnosis score"
+      ],
+      "sources": [
+        {
+          "kind": "ontology-definition",
+          "uri": "https://hpo.jax.org/browse/term/HP:0001878",
+          "version": "HPO local snapshot 2026-02-16"
+        },
+        {
+          "kind": "mechanism-candidate",
+          "uri": "https://github.com/monarch-initiative/dismech/blob/4056b61c01f7f9eedf60db3c863ecd697c80eb9d/kb/modules/hemolytic_anemia_erythrocyte_destruction.yaml",
+          "version": "DisMech 4056b61c01f7f9eedf60db3c863ecd697c80eb9d",
+          "warning": "AI-curated pre-alpha; candidate source, not activation authority"
+        }
+      ]
+    },
+    {
+      "rule_id": "PLV1_NEPHROTIC_SYNDROME",
+      "target": {
+        "id": "HP:0000100",
+        "label": "nephrotic syndrome"
+      },
+      "semantics": "multi-premise clinical phenotype",
+      "write_policy": "derived_zero_vote_when_all_required_are_T",
+      "required": [
+        "nephrotic-range/heavy proteinuria using population-appropriate units",
+        "hypoalbuminemia",
+        "edema"
+      ],
+      "supportive": [
+        "hyperlipidemia"
+      ],
+      "contradictions": [
+        "edema plus low albumin without heavy proteinuria",
+        "protein loss from a non-renal source"
+      ],
+      "quality_gates": [
+        "retain urine collection method and units",
+        "adult and pediatric thresholds are not interchangeable"
+      ],
+      "sources": [
+        {
+          "kind": "ontology-definition",
+          "uri": "https://hpo.jax.org/browse/term/HP:0000100",
+          "version": "HPO local snapshot 2026-02-16"
+        },
+        {
+          "kind": "mechanism-candidate",
+          "uri": "https://github.com/monarch-initiative/dismech/blob/4056b61c01f7f9eedf60db3c863ecd697c80eb9d/kb/modules/nephrotic_podocyte_injury.yaml",
+          "version": "DisMech 4056b61c01f7f9eedf60db3c863ecd697c80eb9d",
+          "warning": "AI-curated pre-alpha; candidate source, not activation authority"
+        }
+      ]
+    },
+    {
+      "rule_id": "PLV1_UIP_PATTERN",
+      "target": {
+        "id": "HP:0031950",
+        "label": "usual interstitial pneumonia pattern"
+      },
+      "semantics": "multi-premise imaging pattern",
+      "write_policy": "query_expansion_only_until_radiology_context_and_alternative_features_are_bound",
+      "required": [
+        "honeycombing",
+        "traction bronchiectasis or bronchiolectasis",
+        "basal/peripheral/subpleural distribution"
+      ],
+      "contradictions": [
+        "features suggesting an alternative diagnosis",
+        "traction bronchiectasis without honeycombing or distribution support"
+      ],
+      "quality_gates": [
+        "all atoms must be from the same CT study",
+        "preserve distribution, modality and radiologist assertion"
+      ],
+      "sources": [
+        {
+          "kind": "ontology-definition",
+          "uri": "https://hpo.jax.org/browse/term/HP:0031950",
+          "version": "HPO local snapshot 2026-02-16"
+        },
+        {
+          "kind": "open-review",
+          "uri": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6164303/"
+        }
+      ]
+    },
+    {
+      "rule_id": "PLV1_HYPOXEMIA_MEASUREMENT",
+      "target": {
+        "id": "HP:0012418",
+        "label": "hypoxemia"
+      },
+      "semantics": "single-observation measurement interpretation with proxy support",
+      "write_policy": "PaO2_may_derive_after_reference_validation; SpO2_is_query_expansion_proxy_only",
+      "required": [
+        "validated low arterial PaO2, or quality-qualified low SpO2 proxy"
+      ],
+      "supportive": [
+        "dyspnea",
+        "tachypnea",
+        "cyanosis"
+      ],
+      "contradictions": [
+        "tachypnea plus dyspnea without low oxygen measurement",
+        "poor waveform, dyshemoglobinemia, incompatible altitude or supplemental-oxygen context"
+      ],
+      "quality_gates": [
+        "retain room-air/FiO2, altitude, age, waveform and device context",
+        "do not count dyspnea or tachypnea as independent votes for hypoxemia"
+      ],
+      "sources": [
+        {
+          "kind": "ontology-definition",
+          "uri": "https://hpo.jax.org/browse/term/HP:0012418",
+          "version": "HPO local snapshot 2026-02-16"
+        }
+      ]
+    }
+  ]
+}
