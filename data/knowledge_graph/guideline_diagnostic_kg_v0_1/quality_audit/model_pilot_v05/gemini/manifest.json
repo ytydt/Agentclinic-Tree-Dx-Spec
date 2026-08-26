@@ -1,0 +1,142 @@
+{
+  "pipeline": "guideline_kg_citation_bounded_residual@0.5.0",
+  "generated_at": "2026-08-26T04:23:53.803638+00:00",
+  "base_graph": "/tmp/gkg-build-all-clean-v2/graph.internal.jsonl",
+  "base_graph_sha256": "7d3c70685214afa358d6289496b7d9c0eb917a065f5867e7b7df5b3d2dd2f0f8",
+  "semantic_mode": "claim_window",
+  "legacy_passage_unit": false,
+  "semantic_input": "/tmp/gkg-production-extraction-queue-v1/claim_windows.production.internal.jsonl",
+  "semantic_input_sha256": "9739fb64d31d1342d4934a52a573f102bc1029d47ff711d575f7ef860374d231",
+  "models": [
+    "google/gemini-2.5-flash"
+  ],
+  "prompt_sha256": "41cca04ddf5fbff46c61c7e36c9bb2748acf0cc8d7e7981df5769f080134a420",
+  "structured_output": "prefer",
+  "provider_routing": {
+    "sort": "throughput",
+    "data_collection": "deny",
+    "strict_schema_require_parameters": true,
+    "provider_slug_pinned": false
+  },
+  "replay_filter": {
+    "include_unit_ids_from": [
+      "/tmp/gkg-v05-known-positive-production-units.jsonl"
+    ],
+    "selection_key": "semantic_unit_id_only",
+    "source_text_copied_from_ledger": false
+  },
+  "selected_queue_rows": 23,
+  "ready_calls": 23,
+  "semantic_calls": 23,
+  "cache_hits": 0,
+  "budget_total_tokens": 300000,
+  "concurrency": {
+    "workers": 4,
+    "scope": "physical_provider_requests_and_retries_only",
+    "stateful_processing": "main_thread_prepared_order",
+    "reservation_policy": "all model x structured-mode x retry attempts, each at its rendered input estimate plus max output",
+    "provider_jobs_planned": 23,
+    "provider_jobs_submitted": 23,
+    "provider_jobs_budget_stopped": 0,
+    "max_reserved_inflight_tokens": 59886
+  },
+  "graph_validation": {
+    "base_gate": "full_assert_valid_graph",
+    "per_semantic_call": "immutable_index_plus_atomic_delta",
+    "delta_checks": [
+      "local_shape_and_stable_id",
+      "all_domain_range_references",
+      "exact_evidence_quote",
+      "reachable_logic_cycles",
+      "immutable_existing_record"
+    ],
+    "failed_delta_policy": "rollback_all_records_from_semantic_call",
+    "final_gate": "full_assert_valid_graph"
+  },
+  "token_limits": {
+    "target_source_tokens": 3000,
+    "max_source_tokens": 6000,
+    "soft_rendered_prompt_tokens": 10000,
+    "hard_rendered_prompt_tokens": 12000,
+    "overflow_policy": "explicit_reject_never_truncate",
+    "rendered_prompt_estimation": "json_schema includes response_format schema; json_object includes the in-band full schema; worst case governs soft/hard gates, budget, and cache identity"
+  },
+  "evidence_unit_policy": {
+    "production": "primary_claim_block",
+    "sentence_subspans_retained": true,
+    "fallback": "legacy_sentence_fallback_explicitly_labeled",
+    "max_evidence_units": 160,
+    "max_sentence_subspans": 320,
+    "model_citation_contract": "mention_id + exact surface + 1-based occurrence index",
+    "absolute_offset_materialization": "deterministic main-thread exact-match projection",
+    "out_of_range_repair": "only_when_exact_surface_occurs_once_in_selected_evidence_unit"
+  },
+  "extraction_contract_normalization": {
+    "direction": "derived_from_diagnostic_role_never_model_supplied",
+    "normalizations_recorded_in_activity_or_public_rejection": true
+  },
+  "response_coverage_policy": {
+    "max_assertions_per_call": 12,
+    "coverage_status_required": true,
+    "coverage_status_values": [
+      "complete",
+      "nothing_extractable",
+      "resplit_assertion_capacity",
+      "resplit_evidence_unit",
+      "resplit_output_capacity",
+      "review_other",
+      "review_scope_ambiguity"
+    ],
+    "partial_prefix_cacheable": false,
+    "needs_resplit_ledger": "/tmp/gkg-v05-known-positive-gemini/needs_resplit.jsonl",
+    "needs_resplit_records": 0,
+    "needs_review_ledger": "/tmp/gkg-v05-known-positive-gemini/needs_review.jsonl",
+    "needs_review_records": 8,
+    "high_signal_nothing_extractable_policy": "review_other/empty_confirmation_never_cached",
+    "output_capacity_contract": {
+      "configured_max_output_tokens": 3200,
+      "envelope_reserve_tokens": 320,
+      "per_assertion_token_floor": 240,
+      "minimum_compatible_output_tokens": 3200,
+      "partial_complete_allowed": false
+    }
+  },
+  "provider_reported_tokens_used": 86858,
+  "budget_accounted_tokens_used": 86858,
+  "counts": {
+    "accepted_assertions": 6,
+    "budget_stop": 0,
+    "empty_confirmation_required": 8,
+    "model_reported_nothing_extractable": 9,
+    "needs_review": 8,
+    "normalization_direction_derived_from_diagnostic_role": 57,
+    "normalization_occurrence_index_repaired_unique_exact_surface": 1,
+    "nothing_extractable": 1,
+    "physical_attempts": 46,
+    "provider_error": 23,
+    "provider_success": 23,
+    "rejected_slots": 12,
+    "responses_rejected_atomically": 12,
+    "review_other": 8
+  },
+  "llm_records": {
+    "path": "/tmp/gkg-v05-known-positive-gemini/llm_records.jsonl",
+    "sha256": "aaee0b8bf7b103984eefb32bb3f7054ab9243278be160563ed2c2a71c7050b86",
+    "records": 19,
+    "contains_short_source_surfaces": true
+  },
+  "telemetry": {
+    "path": "/tmp/gkg-v05-known-positive-gemini/attempt_telemetry.jsonl",
+    "sha256": "2d39929fb56c13a11d593704c15eb805e6fa7a1bcc522c4ba8bf4dcddc1ea9af",
+    "contains_prompts_or_credentials": false
+  },
+  "private_rejection_audit": {
+    "enabled": true,
+    "path": "/tmp/gkg-v05-known-positive-gemini/private_rejections.jsonl",
+    "sha256": "c52dfddc7be2845fede041a3fbb3228edd2b7474168d6830209a4058afd0e9b3",
+    "mode": "0600",
+    "includes_prompts_or_evidence_inventories": false,
+    "may_contain_source_text_from_model_output": true
+  },
+  "full_graph_validation": "passed"
+}

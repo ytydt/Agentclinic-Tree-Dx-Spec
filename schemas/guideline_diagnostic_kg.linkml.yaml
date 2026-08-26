@@ -1,0 +1,694 @@
+id: https://w3id.org/agentclinic/guideline-diagnostic-kg
+name: guideline-diagnostic-kg
+title: Claim-centric Diagnostic Guideline Knowledge Graph
+description: >-
+  A source-grounded diagnostic assertion ledger. Qualifiers, negation,
+  temporality, Boolean criteria, extraction confidence, and exact evidence
+  spans are first-class data rather than annotations on lossy binary triples.
+license: Apache-2.0
+version: 1.0.0
+
+prefixes:
+  linkml: https://w3id.org/linkml/
+  gkg: https://w3id.org/agentclinic/guideline-diagnostic-kg/
+  MONDO: http://purl.obolibrary.org/obo/MONDO_
+  HP: http://purl.obolibrary.org/obo/HP_
+  UBERON: http://purl.obolibrary.org/obo/UBERON_
+  LOINC: https://loinc.org/
+  UCUM: http://unitsofmeasure.org/
+  prov: http://www.w3.org/ns/prov#
+default_prefix: gkg
+default_range: string
+imports:
+  - linkml:types
+
+enums:
+  ConceptKind:
+    permissible_values:
+      disease:
+      syndrome:
+      phenotype:
+      test:
+      anatomy:
+      substance:
+      organism:
+      population:
+      unit:
+      specimen:
+      procedure:
+      gene:
+      other:
+  FeatureType:
+    permissible_values:
+      symptom:
+      sign:
+      laboratory:
+      imaging:
+      pathology:
+      genetics:
+      procedure:
+      history:
+      demographic:
+      exposure:
+      medication:
+      course:
+      other:
+  Polarity:
+    permissible_values:
+      present:
+      absent:
+      uncertain:
+  TemporalRelation:
+    permissible_values:
+      before:
+      after:
+      during:
+      overlaps:
+      at_onset:
+      recurrent:
+      persistent:
+      resolved:
+      not_stated:
+  LogicOperator:
+    permissible_values:
+      and:
+      or:
+      not:
+      k_of_n:
+      sequence:
+  CompositionOperator:
+    permissible_values:
+      and:
+      or:
+      sequence:
+  DiagnosticRole:
+    permissible_values:
+      defining:
+      necessary:
+      sufficient:
+      supporting:
+      typical:
+      compatible:
+      argues_against:
+      excluding:
+      risk_factor:
+  Direction:
+    permissible_values:
+      supports:
+      argues_against:
+      neutral:
+  Necessity:
+    permissible_values:
+      necessary:
+      sufficient:
+      optional:
+      not_stated:
+  Favors:
+    permissible_values:
+      a:
+      b:
+      neither:
+      context_dependent:
+  AssertionStatus:
+    permissible_values:
+      asserted:
+      derived:
+      conflict:
+      rejected:
+  ReviewStatus:
+    permissible_values:
+      unreviewed:
+      accepted:
+      rejected:
+      adjudicated:
+  MappingPredicate:
+    permissible_values:
+      exact_match:
+      broad_match:
+      narrow_match:
+      related_match:
+  ExtractorType:
+    permissible_values:
+      deterministic:
+      template:
+      llm:
+      hybrid:
+      human:
+  Comparator:
+    permissible_values:
+      lt:
+      le:
+      eq:
+      ge:
+      gt:
+      between:
+      present:
+
+slots:
+  id:
+    identifier: true
+    required: true
+    pattern: ^gkg_[a-z][a-z0-9_]*_[a-f0-9]{20}$
+  record_type:
+    required: true
+  schema_version:
+    range: integer
+    required: true
+  extensions:
+    range: Any
+  label:
+  canonical_label:
+  concept_kind:
+    range: ConceptKind
+  system:
+  code:
+  synonyms:
+    multivalued: true
+  base_concept_id:
+    range: Concept
+  qualifiers:
+    range: Any
+  component_diagnosis_ids:
+    range: DiagnosisExpression
+    multivalued: true
+  composition_operator:
+    range: CompositionOperator
+  feature_type:
+    range: FeatureType
+  polarity:
+    range: Polarity
+  concept_id:
+    range: Concept
+  surface:
+  measurement:
+    range: Measurement
+    inlined: true
+  temporality:
+    range: Temporality
+    inlined: true
+  site_concept_ids:
+    range: Concept
+    multivalued: true
+  specimen_concept_id:
+    range: Concept
+  operator:
+    range: LogicOperator
+  operand_ids:
+    range: Criterion
+    multivalued: true
+  k:
+    range: integer
+    minimum_value: 1
+  temporal_window:
+    range: TemporalWindow
+    inlined: true
+  diagnosis_id:
+    range: DiagnosisExpression
+  criterion_id:
+    range: Criterion
+  diagnostic_role:
+    range: DiagnosticRole
+  direction:
+    range: Direction
+  necessity:
+    range: Necessity
+  evidence_span_ids:
+    range: EvidenceSpan
+    multivalued: true
+  assertion_confidence:
+    range: float
+    minimum_value: 0.0
+    maximum_value: 1.0
+  extraction_confidence:
+    range: float
+    minimum_value: 0.0
+    maximum_value: 1.0
+  extraction_activity_id:
+    range: ExtractionActivity
+  status:
+    range: AssertionStatus
+  review_status:
+    range: ReviewStatus
+  population_context_ids:
+    range: Concept
+    multivalued: true
+  diagnosis_a_id:
+    range: DiagnosisExpression
+  diagnosis_b_id:
+    range: DiagnosisExpression
+  discriminator_id:
+    range: Criterion
+  favors:
+    range: Favors
+  title:
+  publisher:
+  canonical_url:
+    range: uri
+  source_family:
+  license:
+  source_work_id:
+    range: SourceWork
+  version_label:
+  published_date:
+    range: date
+  content_sha256:
+    pattern: ^[a-f0-9]{64}$
+  source_uri:
+    range: uri
+  retrieved_at:
+    range: datetime
+  document_version_id:
+    range: DocumentVersion
+  heading:
+  section_path:
+    multivalued: true
+  ordinal:
+    range: integer
+    minimum_value: 0
+  section_type:
+  section_id:
+    range: Section
+  text:
+  page_start:
+    range: integer
+    minimum_value: 0
+  page_end:
+    range: integer
+    minimum_value: 0
+  passage_id:
+    range: Passage
+  start_char:
+    range: integer
+    minimum_value: 0
+  end_char:
+    range: integer
+    minimum_value: 1
+  quote:
+  pipeline_name:
+  pipeline_version:
+  extractor_type:
+    range: ExtractorType
+  input_sha256:
+    pattern: ^[a-f0-9]{64}$
+  model:
+  prompt_sha256:
+    pattern: ^[a-f0-9]{64}$
+  parameters:
+    range: Any
+  started_at:
+    range: datetime
+  subject_concept_id:
+    range: Concept
+  predicate:
+    range: MappingPredicate
+  object_concept_id:
+    range: Concept
+  mapping_confidence:
+    range: float
+    minimum_value: 0.0
+    maximum_value: 1.0
+  mapping_method:
+  reviewer:
+  comparator:
+    range: Comparator
+  value:
+    range: float
+  low:
+    range: float
+  high:
+    range: float
+  unit_concept_id:
+    range: Concept
+  relation:
+    range: TemporalRelation
+  anchor:
+  anchor_id:
+    range: Criterion
+  onset_min:
+    range: float
+    minimum_value: 0.0
+  onset_max:
+    range: float
+    minimum_value: 0.0
+  duration_min:
+    range: float
+    minimum_value: 0.0
+  duration_max:
+    range: float
+    minimum_value: 0.0
+  time_unit_concept_id:
+    range: Concept
+  maximum_duration:
+    range: float
+    minimum_value: 0.0
+
+classes:
+  KGRecord:
+    abstract: true
+    slots:
+      - id
+      - record_type
+      - schema_version
+      - extensions
+
+  Concept:
+    is_a: KGRecord
+    slots:
+      - label
+      - concept_kind
+      - system
+      - code
+      - synonyms
+    slot_usage:
+      record_type:
+        equals_string: Concept
+      label:
+        required: true
+      concept_kind:
+        required: true
+      system:
+        required: true
+
+  DiagnosisExpression:
+    is_a: KGRecord
+    description: >-
+      A disease/syndrome concept with typed qualifiers, or a composite of
+      multiple diagnosis expressions. Hierarchy and surface labels do not own
+      the diagnostic concept identity.
+    slots:
+      - canonical_label
+      - base_concept_id
+      - qualifiers
+      - component_diagnosis_ids
+      - composition_operator
+    slot_usage:
+      record_type:
+        equals_string: DiagnosisExpression
+      canonical_label:
+        required: true
+
+  FeaturePattern:
+    is_a: KGRecord
+    mixins:
+      - Criterion
+    description: >-
+      A finding/test pattern with polarity, numeric constraints, temporality,
+      anatomical scope, specimen, and other qualifiers kept together.
+    slots:
+      - canonical_label
+      - feature_type
+      - polarity
+      - concept_id
+      - surface
+      - measurement
+      - temporality
+      - site_concept_ids
+      - specimen_concept_id
+      - qualifiers
+    slot_usage:
+      record_type:
+        equals_string: FeaturePattern
+      canonical_label:
+        required: true
+      feature_type:
+        required: true
+      polarity:
+        required: true
+
+  LogicExpression:
+    is_a: KGRecord
+    mixins:
+      - Criterion
+    description: >-
+      An evaluable AND/OR/NOT/k-of-n/sequence criterion. Operands point to
+      FeaturePattern or nested LogicExpression records.
+    slots:
+      - operator
+      - operand_ids
+      - k
+      - temporal_window
+      - label
+    slot_usage:
+      record_type:
+        equals_string: LogicExpression
+      operator:
+        required: true
+      operand_ids:
+        required: true
+        minimum_cardinality: 1
+
+  Criterion:
+    mixin: true
+    description: Union target implemented by FeaturePattern or LogicExpression.
+
+  DiagnosticAssertion:
+    is_a: KGRecord
+    description: >-
+      An n-ary source assertion linking one diagnosis expression to one
+      evaluable criterion. Assertion and extraction confidence are distinct.
+    slots:
+      - diagnosis_id
+      - criterion_id
+      - diagnostic_role
+      - direction
+      - necessity
+      - evidence_span_ids
+      - assertion_confidence
+      - extraction_confidence
+      - extraction_activity_id
+      - status
+      - review_status
+      - population_context_ids
+      - qualifiers
+    slot_usage:
+      record_type:
+        equals_string: DiagnosticAssertion
+      diagnosis_id:
+        required: true
+      criterion_id:
+        required: true
+      diagnostic_role:
+        required: true
+      direction:
+        required: true
+      necessity:
+        required: true
+      evidence_span_ids:
+        required: true
+        minimum_cardinality: 1
+      assertion_confidence:
+        required: true
+      extraction_confidence:
+        required: true
+      extraction_activity_id:
+        required: true
+
+  DifferentialAssertion:
+    is_a: KGRecord
+    description: >-
+      A directional discriminator between two diagnoses under a stated feature
+      or logic pattern; unlike two unary edges it preserves the competitor.
+    slots:
+      - diagnosis_a_id
+      - diagnosis_b_id
+      - discriminator_id
+      - favors
+      - evidence_span_ids
+      - assertion_confidence
+      - extraction_confidence
+      - extraction_activity_id
+      - status
+      - review_status
+      - qualifiers
+    slot_usage:
+      record_type:
+        equals_string: DifferentialAssertion
+      diagnosis_a_id:
+        required: true
+      diagnosis_b_id:
+        required: true
+      discriminator_id:
+        required: true
+      favors:
+        required: true
+      evidence_span_ids:
+        required: true
+        minimum_cardinality: 1
+      assertion_confidence:
+        required: true
+      extraction_confidence:
+        required: true
+      extraction_activity_id:
+        required: true
+
+  SourceWork:
+    is_a: KGRecord
+    slots:
+      - title
+      - publisher
+      - canonical_url
+      - source_family
+      - license
+    slot_usage:
+      record_type:
+        equals_string: SourceWork
+      title:
+        required: true
+      publisher:
+        required: true
+      canonical_url:
+        required: true
+      source_family:
+        required: true
+
+  DocumentVersion:
+    is_a: KGRecord
+    slots:
+      - source_work_id
+      - version_label
+      - published_date
+      - content_sha256
+      - source_uri
+      - retrieved_at
+    slot_usage:
+      record_type:
+        equals_string: DocumentVersion
+      source_work_id:
+        required: true
+      version_label:
+        required: true
+      content_sha256:
+        required: true
+
+  Section:
+    is_a: KGRecord
+    slots:
+      - document_version_id
+      - heading
+      - section_path
+      - ordinal
+      - section_type
+    slot_usage:
+      record_type:
+        equals_string: Section
+      document_version_id:
+        required: true
+      heading:
+        required: true
+      section_path:
+        required: true
+        minimum_cardinality: 1
+      ordinal:
+        required: true
+
+  Passage:
+    is_a: KGRecord
+    slots:
+      - section_id
+      - ordinal
+      - text
+      - page_start
+      - page_end
+    slot_usage:
+      record_type:
+        equals_string: Passage
+      section_id:
+        required: true
+      ordinal:
+        required: true
+      text:
+        required: true
+
+  EvidenceSpan:
+    is_a: KGRecord
+    description: Immutable, exactly addressable support text within one passage.
+    slots:
+      - passage_id
+      - start_char
+      - end_char
+      - quote
+    slot_usage:
+      record_type:
+        equals_string: EvidenceSpan
+      passage_id:
+        required: true
+      start_char:
+        required: true
+      end_char:
+        required: true
+      quote:
+        required: true
+
+  ExtractionActivity:
+    is_a: KGRecord
+    slots:
+      - pipeline_name
+      - pipeline_version
+      - extractor_type
+      - input_sha256
+      - model
+      - prompt_sha256
+      - parameters
+      - started_at
+    slot_usage:
+      record_type:
+        equals_string: ExtractionActivity
+      pipeline_name:
+        required: true
+      pipeline_version:
+        required: true
+      extractor_type:
+        required: true
+      input_sha256:
+        required: true
+
+  ConceptMapping:
+    is_a: KGRecord
+    description: >-
+      SSSOM-like qualified mapping. Exact, broader, narrower, and related
+      mappings remain distinct and retain their mapping-specific confidence.
+    slots:
+      - subject_concept_id
+      - predicate
+      - object_concept_id
+      - mapping_confidence
+      - mapping_method
+      - reviewer
+      - evidence_span_ids
+    slot_usage:
+      record_type:
+        equals_string: ConceptMapping
+      subject_concept_id:
+        required: true
+      predicate:
+        required: true
+      object_concept_id:
+        required: true
+      mapping_confidence:
+        required: true
+      mapping_method:
+        required: true
+
+  Measurement:
+    slots:
+      - comparator
+      - value
+      - low
+      - high
+      - unit_concept_id
+
+  Temporality:
+    slots:
+      - relation
+      - anchor
+      - anchor_id
+      - onset_min
+      - onset_max
+      - duration_min
+      - duration_max
+      - time_unit_concept_id
+
+  TemporalWindow:
+    slots:
+      - maximum_duration
+      - time_unit_concept_id
