@@ -1,0 +1,263 @@
+{
+  "schema_version": "phenotype-typed-alignment-cases/1.0",
+  "purpose": "Mechanics-only, gold-blind stress cases for atomic posting retrieval, typed one-to-one alignment, T/F/U gates, and abstention. These synthetic cases are not clinical validation data.",
+  "gold_policy": "The expected object is consumed only after infer_case returns and is never passed to retrieval, alignment, gating, or scoring.",
+  "cases": [
+    {
+      "case_id": "hagma_entailed_same_panel",
+      "expected": {"prototype_id": "PLV2_HAGMA", "verdict": "entailed", "asserted_target_ids": ["LOCAL:PHENO_HAGMA"]},
+      "atoms": [
+        {"atom_id": "a1", "text": "blood pH 7.21", "subject": "patient", "temporality": "current", "context_id": "panel-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "blood pH", "value": 7.21}},
+        {"atom_id": "a2", "text": "bicarbonate 12", "subject": "patient", "temporality": "current", "context_id": "panel-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "bicarbonate", "value": 12}},
+        {"atom_id": "a3", "text": "anion gap 24", "subject": "patient", "temporality": "current", "context_id": "panel-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "anion gap", "value": 24}}
+      ]
+    },
+    {
+      "case_id": "hagma_unknown_mixed_panels",
+      "expected": {"prototype_id": "PLV2_HAGMA", "verdict": "unknown", "asserted_target_ids": []},
+      "atoms": [
+        {"atom_id": "a1", "text": "blood pH 7.20", "subject": "patient", "temporality": "current", "context_id": "panel-old", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "blood pH", "value": 7.20}},
+        {"atom_id": "a2", "text": "bicarbonate 11", "subject": "patient", "temporality": "current", "context_id": "panel-new", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "bicarbonate", "value": 11}},
+        {"atom_id": "a3", "text": "anion gap 23", "subject": "patient", "temporality": "current", "context_id": "panel-new", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "anion gap", "value": 23}}
+      ]
+    },
+    {
+      "case_id": "hagma_unknown_historical_gap",
+      "expected": {"prototype_id": "PLV2_HAGMA", "verdict": "unknown", "asserted_target_ids": []},
+      "atoms": [
+        {"atom_id": "a1", "text": "blood pH 7.20", "subject": "patient", "temporality": "current", "context_id": "panel-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "blood pH", "value": 7.20}},
+        {"atom_id": "a2", "text": "bicarbonate 11", "subject": "patient", "temporality": "current", "context_id": "panel-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "bicarbonate", "value": 11}},
+        {"atom_id": "a3", "text": "anion gap 23", "subject": "patient", "temporality": "past", "context_id": "panel-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "anion gap", "value": 23}}
+      ]
+    },
+    {
+      "case_id": "hagma_contradicted_normal_gap",
+      "expected": {"prototype_id": "PLV2_HAGMA", "verdict": "contradicted", "asserted_target_ids": []},
+      "atoms": [
+        {"atom_id": "a1", "text": "blood pH 7.24", "subject": "patient", "temporality": "current", "context_id": "panel-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "blood pH", "value": 7.24}},
+        {"atom_id": "a2", "text": "bicarbonate 14", "subject": "patient", "temporality": "current", "context_id": "panel-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "bicarbonate", "value": 14}},
+        {"atom_id": "a3", "text": "anion gap 8", "subject": "patient", "temporality": "current", "context_id": "panel-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "anion gap", "value": 8}}
+      ]
+    },
+    {
+      "case_id": "hagma_unknown_wrong_subject",
+      "expected": {"prototype_id": "PLV2_HAGMA", "verdict": "unknown", "asserted_target_ids": []},
+      "atoms": [
+        {"atom_id": "a1", "text": "blood pH 7.18", "subject": "family", "temporality": "current", "context_id": "panel-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "blood pH", "value": 7.18}},
+        {"atom_id": "a2", "text": "bicarbonate 10", "subject": "family", "temporality": "current", "context_id": "panel-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "bicarbonate", "value": 10}},
+        {"atom_id": "a3", "text": "anion gap 25", "subject": "family", "temporality": "current", "context_id": "panel-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "anion gap", "value": 25}}
+      ]
+    },
+    {
+      "case_id": "hemolysis_entailed_two_markers",
+      "expected": {"prototype_id": "PLV2_HEMOLYTIC_PROCESS", "verdict": "entailed", "asserted_target_ids": ["LOCAL:PHENO_HEMOLYTIC_PROCESS"]},
+      "atoms": [
+        {"atom_id": "a1", "text": "hemoglobin 8", "subject": "patient", "temporality": "current", "context_id": "episode-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "hemoglobin", "value": 8}},
+        {"atom_id": "a2", "text": "LDH 620 high LDH", "subject": "patient", "temporality": "current", "context_id": "episode-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "LDH", "value": 620}},
+        {"atom_id": "a3", "text": "undetectable haptoglobin", "subject": "patient", "temporality": "current", "context_id": "episode-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid"}
+      ]
+    },
+    {
+      "case_id": "hemolysis_entailed_sufficient_same_episode_subset",
+      "expected": {"prototype_id": "PLV2_HEMOLYTIC_PROCESS", "verdict": "entailed", "asserted_target_ids": ["LOCAL:PHENO_HEMOLYTIC_PROCESS"]},
+      "atoms": [
+        {"atom_id": "a1", "text": "hemoglobin 8", "subject": "patient", "temporality": "current", "context_id": "episode-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "hemoglobin", "value": 8}},
+        {"atom_id": "a2", "text": "LDH 620 high LDH", "subject": "patient", "temporality": "current", "context_id": "episode-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "LDH", "value": 620}},
+        {"atom_id": "a3", "text": "undetectable haptoglobin", "subject": "patient", "temporality": "current", "context_id": "episode-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid"},
+        {"atom_id": "a4", "text": "reticulocytosis", "subject": "patient", "temporality": "current", "context_id": "episode-2", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid"}
+      ]
+    },
+    {
+      "case_id": "hemolysis_unknown_one_marker",
+      "expected": {"prototype_id": "PLV2_HEMOLYTIC_PROCESS", "verdict": "unknown", "asserted_target_ids": []},
+      "atoms": [
+        {"atom_id": "a1", "text": "hemoglobin 8", "subject": "patient", "temporality": "current", "context_id": "episode-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "hemoglobin", "value": 8}},
+        {"atom_id": "a2", "text": "LDH 610 high LDH", "subject": "patient", "temporality": "current", "context_id": "episode-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "LDH", "value": 610}}
+      ]
+    },
+    {
+      "case_id": "hemolysis_contradicted_all_markers_negative",
+      "expected": {"prototype_id": "PLV2_HEMOLYTIC_PROCESS", "verdict": "contradicted", "asserted_target_ids": []},
+      "atoms": [
+        {"atom_id": "a1", "text": "hemoglobin 8", "subject": "patient", "temporality": "current", "context_id": "episode-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "hemoglobin", "value": 8}},
+        {"atom_id": "a2", "text": "reticulocytosis absent", "subject": "patient", "temporality": "current", "context_id": "episode-1", "polarity": "absent", "modality": "laboratory", "specimen": "blood", "quality": "valid"},
+        {"atom_id": "a3", "text": "low haptoglobin absent", "subject": "patient", "temporality": "current", "context_id": "episode-1", "polarity": "absent", "modality": "laboratory", "specimen": "blood", "quality": "valid"},
+        {"atom_id": "a4", "text": "LDH 140 high LDH", "subject": "patient", "temporality": "current", "context_id": "episode-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "LDH", "value": 140}},
+        {"atom_id": "a5", "text": "indirect bilirubin elevation absent", "subject": "patient", "temporality": "current", "context_id": "episode-1", "polarity": "absent", "modality": "laboratory", "specimen": "blood", "quality": "valid"},
+        {"atom_id": "a6", "text": "schistocytes absent", "subject": "patient", "temporality": "current", "context_id": "episode-1", "polarity": "absent", "modality": "smear", "quality": "valid"}
+      ]
+    },
+    {
+      "case_id": "hemolysis_unknown_one_resource_two_slots",
+      "expected": {"prototype_id": "PLV2_HEMOLYTIC_PROCESS", "verdict": "unknown", "asserted_target_ids": []},
+      "atoms": [
+        {"atom_id": "a1a", "correlation_id": "observation-1", "text": "anemia with reticulocytosis", "value_assertion": "supports", "subject": "patient", "temporality": "current", "context_id": "episode-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid"},
+        {"atom_id": "a2", "correlation_id": "observation-2", "text": "low haptoglobin", "subject": "patient", "temporality": "current", "context_id": "episode-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid"}
+      ]
+    },
+    {
+      "case_id": "nephrotic_entailed",
+      "expected": {"prototype_id": "PLV2_NEPHROTIC_SYNDROME", "verdict": "entailed", "asserted_target_ids": ["HP:0000100"]},
+      "atoms": [
+        {"atom_id": "a1", "text": "urinary protein 5 g per day heavy proteinuria", "subject": "patient", "age_group": "adult", "temporality": "current", "context_id": "episode-1", "polarity": "present", "modality": "laboratory", "specimen": "urine", "quality": "valid", "measurement": {"name": "urinary protein", "value": 5, "unit": "g per day"}},
+        {"atom_id": "a2", "text": "serum albumin 2.1 low albumin", "subject": "patient", "temporality": "current", "context_id": "episode-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "serum albumin", "value": 2.1, "unit": "g per dL"}},
+        {"atom_id": "a3", "text": "generalized edema", "subject": "patient", "temporality": "current", "context_id": "episode-1", "polarity": "present", "modality": "clinical", "quality": "valid"}
+      ]
+    },
+    {
+      "case_id": "nephrotic_contradicted_subthreshold_protein",
+      "expected": {"prototype_id": "PLV2_NEPHROTIC_SYNDROME", "verdict": "contradicted", "asserted_target_ids": []},
+      "atoms": [
+        {"atom_id": "a1", "text": "urinary protein 1 g per day heavy proteinuria", "subject": "patient", "age_group": "adult", "temporality": "current", "context_id": "episode-1", "polarity": "present", "modality": "laboratory", "specimen": "urine", "quality": "valid", "measurement": {"name": "urinary protein", "value": 1, "unit": "g per day"}},
+        {"atom_id": "a2", "text": "serum albumin 2.2 low albumin", "subject": "patient", "temporality": "current", "context_id": "episode-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "serum albumin", "value": 2.2, "unit": "g per dL"}},
+        {"atom_id": "a3", "text": "edema", "subject": "patient", "temporality": "current", "context_id": "episode-1", "polarity": "present", "modality": "clinical", "quality": "valid"}
+      ]
+    },
+    {
+      "case_id": "nephrotic_unknown_family_subject",
+      "expected": {"prototype_id": "PLV2_NEPHROTIC_SYNDROME", "verdict": "unknown", "asserted_target_ids": []},
+      "atoms": [
+        {"atom_id": "a1", "text": "urinary protein 5 g per day heavy proteinuria", "subject": "family", "age_group": "adult", "temporality": "current", "context_id": "episode-1", "polarity": "present", "modality": "laboratory", "specimen": "urine", "quality": "valid", "measurement": {"name": "urinary protein", "value": 5, "unit": "g per day"}},
+        {"atom_id": "a2", "text": "serum albumin 2 low albumin", "subject": "family", "temporality": "current", "context_id": "episode-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "serum albumin", "value": 2, "unit": "g per dL"}},
+        {"atom_id": "a3", "text": "edema", "subject": "family", "temporality": "current", "context_id": "episode-1", "polarity": "present", "modality": "clinical", "quality": "valid"}
+      ]
+    },
+    {
+      "case_id": "nephrotic_unknown_missing_edema",
+      "expected": {"prototype_id": "PLV2_NEPHROTIC_SYNDROME", "verdict": "unknown", "asserted_target_ids": []},
+      "atoms": [
+        {"atom_id": "a1", "text": "urinary protein 5 g per day heavy proteinuria", "subject": "patient", "age_group": "adult", "temporality": "current", "context_id": "episode-1", "polarity": "present", "modality": "laboratory", "specimen": "urine", "quality": "valid", "measurement": {"name": "urinary protein", "value": 5, "unit": "g per day"}},
+        {"atom_id": "a2", "text": "serum albumin 2 low albumin", "subject": "patient", "temporality": "current", "context_id": "episode-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "serum albumin", "value": 2, "unit": "g per dL"}}
+      ]
+    },
+    {
+      "case_id": "cholestatic_entailed",
+      "expected": {"prototype_id": "PLV2_CHOLESTATIC_PATTERN", "verdict": "entailed", "asserted_target_ids": ["LOCAL:PHENO_CHOLESTATIC_BIOCHEMICAL_PATTERN"]},
+      "atoms": [
+        {"atom_id": "a1", "text": "ALP 400 elevated ALP", "subject": "patient", "temporality": "current", "context_id": "panel-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "ALP", "value": 400, "uln": 120}},
+        {"atom_id": "a2", "text": "cholestatic R ratio 1.2", "subject": "patient", "temporality": "current", "context_id": "panel-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "R ratio", "value": 1.2}},
+        {"atom_id": "a3", "text": "GGT 210 high GGT", "subject": "patient", "temporality": "current", "context_id": "panel-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "GGT", "value": 210, "uln": 60}}
+      ]
+    },
+    {
+      "case_id": "cholestatic_unknown_missing_uln",
+      "expected": {"prototype_id": "PLV2_CHOLESTATIC_PATTERN", "verdict": "unknown", "asserted_target_ids": []},
+      "atoms": [
+        {"atom_id": "a1", "text": "ALP 400 elevated ALP", "subject": "patient", "temporality": "current", "context_id": "panel-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "ALP", "value": 400}},
+        {"atom_id": "a2", "text": "cholestatic R ratio 1.2", "subject": "patient", "temporality": "current", "context_id": "panel-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "R ratio", "value": 1.2}},
+        {"atom_id": "a3", "text": "GGT 210 high GGT", "subject": "patient", "temporality": "current", "context_id": "panel-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "GGT", "value": 210, "uln": 60}}
+      ]
+    },
+    {
+      "case_id": "cholestatic_contradicted_r_ratio",
+      "expected": {"prototype_id": "PLV2_CHOLESTATIC_PATTERN", "verdict": "contradicted", "asserted_target_ids": []},
+      "atoms": [
+        {"atom_id": "a1", "text": "ALP 400 elevated ALP", "subject": "patient", "temporality": "current", "context_id": "panel-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "ALP", "value": 400, "uln": 120}},
+        {"atom_id": "a2", "text": "cholestatic R ratio 4.1", "subject": "patient", "temporality": "current", "context_id": "panel-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "R ratio", "value": 4.1}},
+        {"atom_id": "a3", "text": "GGT 210 high GGT", "subject": "patient", "temporality": "current", "context_id": "panel-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "GGT", "value": 210, "uln": 60}}
+      ]
+    },
+    {
+      "case_id": "cholestatic_unknown_wrong_modality",
+      "expected": {"prototype_id": "PLV2_CHOLESTATIC_PATTERN", "verdict": "unknown", "asserted_target_ids": []},
+      "atoms": [
+        {"atom_id": "a1", "text": "elevated ALP", "subject": "patient", "temporality": "current", "context_id": "study-1", "polarity": "present", "modality": "bone scan", "quality": "valid", "value_assertion": "supports"},
+        {"atom_id": "a2", "text": "predominantly cholestatic", "subject": "patient", "temporality": "current", "context_id": "study-1", "polarity": "present", "modality": "bone scan", "quality": "valid", "value_assertion": "supports"},
+        {"atom_id": "a3", "text": "high GGT", "subject": "patient", "temporality": "current", "context_id": "study-1", "polarity": "present", "modality": "bone scan", "quality": "valid", "value_assertion": "supports"}
+      ]
+    },
+    {
+      "case_id": "uip_entailed_same_ct",
+      "expected": {"prototype_id": "PLV2_UIP_PATTERN", "verdict": "entailed", "asserted_target_ids": ["HP:0031950"]},
+      "atoms": [
+        {"atom_id": "a1", "text": "honeycombing", "subject": "patient", "temporality": "current", "context_id": "ct-1", "polarity": "present", "modality": "HRCT", "quality": "diagnostic"},
+        {"atom_id": "a2", "text": "traction bronchiectasis", "subject": "patient", "temporality": "current", "context_id": "ct-1", "polarity": "present", "modality": "HRCT", "quality": "diagnostic"},
+        {"atom_id": "a3", "text": "basal and subpleural", "subject": "patient", "temporality": "current", "context_id": "ct-1", "polarity": "present", "modality": "HRCT", "quality": "diagnostic"}
+      ]
+    },
+    {
+      "case_id": "uip_unknown_mixed_studies",
+      "expected": {"prototype_id": "PLV2_UIP_PATTERN", "verdict": "unknown", "asserted_target_ids": []},
+      "atoms": [
+        {"atom_id": "a1", "text": "honeycombing", "subject": "patient", "temporality": "current", "context_id": "ct-old", "polarity": "present", "modality": "CT", "quality": "diagnostic"},
+        {"atom_id": "a2", "text": "traction bronchiectasis", "subject": "patient", "temporality": "current", "context_id": "ct-new", "polarity": "present", "modality": "CT", "quality": "diagnostic"},
+        {"atom_id": "a3", "text": "basal subpleural", "subject": "patient", "temporality": "current", "context_id": "ct-new", "polarity": "present", "modality": "CT", "quality": "diagnostic"}
+      ]
+    },
+    {
+      "case_id": "uip_contradicted_absent_honeycombing",
+      "expected": {"prototype_id": "PLV2_UIP_PATTERN", "verdict": "contradicted", "asserted_target_ids": []},
+      "atoms": [
+        {"atom_id": "a1", "text": "honeycombing absent", "subject": "patient", "temporality": "current", "context_id": "ct-1", "polarity": "absent", "modality": "CT", "quality": "diagnostic"},
+        {"atom_id": "a2", "text": "traction bronchiectasis", "subject": "patient", "temporality": "current", "context_id": "ct-1", "polarity": "present", "modality": "CT", "quality": "diagnostic"},
+        {"atom_id": "a3", "text": "basal subpleural", "subject": "patient", "temporality": "current", "context_id": "ct-1", "polarity": "present", "modality": "CT", "quality": "diagnostic"}
+      ]
+    },
+    {
+      "case_id": "uip_unknown_chest_radiograph",
+      "expected": {"prototype_id": "PLV2_UIP_PATTERN", "verdict": "unknown", "asserted_target_ids": []},
+      "atoms": [
+        {"atom_id": "a1", "text": "honeycombing", "subject": "patient", "temporality": "current", "context_id": "xray-1", "polarity": "present", "modality": "radiograph", "quality": "diagnostic"},
+        {"atom_id": "a2", "text": "traction bronchiectasis", "subject": "patient", "temporality": "current", "context_id": "xray-1", "polarity": "present", "modality": "radiograph", "quality": "diagnostic"},
+        {"atom_id": "a3", "text": "basal subpleural", "subject": "patient", "temporality": "current", "context_id": "xray-1", "polarity": "present", "modality": "radiograph", "quality": "diagnostic"}
+      ]
+    },
+    {
+      "case_id": "hypoxemia_entailed_spo2",
+      "expected": {"prototype_id": "PLV2_HYPOXEMIA", "verdict": "entailed", "asserted_target_ids": ["HP:0012418"]},
+      "atoms": [
+        {"atom_id": "a1", "text": "SpO2 86 low SpO2", "subject": "patient", "temporality": "current", "context_id": "measurement-1", "polarity": "present", "modality": "pulse oximetry", "quality": "reliable", "oxygen_context": "room_air", "measurement": {"name": "SpO2", "value": 86, "unit": "percent"}}
+      ]
+    },
+    {
+      "case_id": "hypoxemia_entailed_pao2",
+      "expected": {"prototype_id": "PLV2_HYPOXEMIA", "verdict": "entailed", "asserted_target_ids": ["HP:0012418"]},
+      "atoms": [
+        {"atom_id": "a1", "text": "PaO2 61 low PaO2", "subject": "patient", "temporality": "current", "context_id": "abg-1", "polarity": "present", "modality": "ABG", "quality": "valid", "measurement": {"name": "PaO2", "value": 61, "unit": "mmHg"}}
+      ]
+    },
+    {
+      "case_id": "hypoxemia_unknown_symptoms_only",
+      "expected": {"prototype_id": "PLV2_HYPOXEMIA", "verdict": "unknown", "asserted_target_ids": []},
+      "atoms": [
+        {"atom_id": "a1", "text": "dyspnea", "subject": "patient", "temporality": "current", "context_id": "episode-1", "polarity": "present", "modality": "clinical", "quality": "valid"},
+        {"atom_id": "a2", "text": "tachypnea", "subject": "patient", "temporality": "current", "context_id": "episode-1", "polarity": "present", "modality": "clinical", "quality": "valid"}
+      ]
+    },
+    {
+      "case_id": "hypoxemia_unknown_poor_waveform",
+      "expected": {"prototype_id": "PLV2_HYPOXEMIA", "verdict": "unknown", "asserted_target_ids": []},
+      "atoms": [
+        {"atom_id": "a1", "text": "SpO2 82 low SpO2", "subject": "patient", "temporality": "current", "context_id": "measurement-1", "polarity": "present", "modality": "pulse oximetry", "quality": "unreliable", "oxygen_context": "room_air", "measurement": {"name": "SpO2", "value": 82, "unit": "percent"}},
+        {"atom_id": "a2", "text": "dyspnea", "subject": "patient", "temporality": "current", "context_id": "episode-1", "polarity": "present", "modality": "clinical", "quality": "valid"}
+      ]
+    },
+    {
+      "case_id": "hypoxemia_unknown_conflicting_duplicate_normalizations",
+      "expected": {"prototype_id": "PLV2_HYPOXEMIA", "verdict": "unknown", "asserted_target_ids": []},
+      "atoms": [
+        {"atom_id": "a1", "correlation_id": "spo2-observation-1", "text": "SpO2 86 low SpO2", "subject": "patient", "temporality": "current", "context_id": "measurement-1", "polarity": "present", "modality": "pulse oximetry", "quality": "reliable", "oxygen_context": "room_air", "measurement": {"name": "SpO2", "value": 86, "unit": "percent"}},
+        {"atom_id": "a2", "correlation_id": "spo2-observation-1", "text": "low SpO2 absent", "subject": "patient", "temporality": "current", "context_id": "measurement-1", "polarity": "absent", "modality": "pulse oximetry", "quality": "reliable", "oxygen_context": "room_air", "measurement": {"name": "SpO2", "value": 86, "unit": "percent"}}
+      ]
+    },
+    {
+      "case_id": "hypoxemia_contradicted_two_normal_measurements",
+      "expected": {"prototype_id": "PLV2_HYPOXEMIA", "verdict": "contradicted", "asserted_target_ids": []},
+      "atoms": [
+        {"atom_id": "a1", "text": "SpO2 98 low SpO2", "subject": "patient", "temporality": "current", "context_id": "measurement-1", "polarity": "present", "modality": "pulse oximetry", "quality": "reliable", "oxygen_context": "room_air", "measurement": {"name": "SpO2", "value": 98, "unit": "percent"}},
+        {"atom_id": "a2", "text": "PaO2 96 low PaO2", "subject": "patient", "temporality": "current", "context_id": "measurement-1", "polarity": "present", "modality": "ABG", "quality": "valid", "measurement": {"name": "PaO2", "value": 96, "unit": "mmHg"}}
+      ]
+    },
+    {
+      "case_id": "two_candidates_only_hagma_entailed",
+      "expected": {"prototype_id": "PLV2_HAGMA", "verdict": "entailed", "asserted_target_ids": ["LOCAL:PHENO_HAGMA"]},
+      "atoms": [
+        {"atom_id": "a1", "text": "blood pH 7.19", "subject": "patient", "temporality": "current", "context_id": "panel-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "blood pH", "value": 7.19}},
+        {"atom_id": "a2", "text": "bicarbonate 9", "subject": "patient", "temporality": "current", "context_id": "panel-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "bicarbonate", "value": 9}},
+        {"atom_id": "a3", "text": "anion gap 28", "subject": "patient", "temporality": "current", "context_id": "panel-1", "polarity": "present", "modality": "laboratory", "specimen": "blood", "quality": "valid", "measurement": {"name": "anion gap", "value": 28}},
+        {"atom_id": "a4", "text": "dyspnea", "subject": "patient", "temporality": "current", "context_id": "episode-1", "polarity": "present", "modality": "clinical", "quality": "valid"},
+        {"atom_id": "a5", "text": "tachypnea", "subject": "patient", "temporality": "current", "context_id": "episode-1", "polarity": "present", "modality": "clinical", "quality": "valid"}
+      ]
+    }
+  ]
+}

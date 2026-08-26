@@ -1,5 +1,12 @@
 # 从 2–3 个临床事实到高层 phenotype：target-profile 模糊检索与 typed-subgraph 假设迭代报告
 
+> **后续实测（2026-08-25）：** 本文在 `291e9800` 时尚未实现的 typed atom→slot matcher 已在
+> [`PHENOTYPE_PROTOTYPE_GRAPH_TYPED_ALIGNMENT_AUDIT.md`](PHENOTYPE_PROTOTYPE_GRAPH_TYPED_ALIGNMENT_AUDIT.md)
+> 落地并完成 29-case mechanics acceptance、200-case normalized-cache fail-closed screen，以及
+> MedlinePlus/Orphadata/HOOM/DisMech 的公开源实拉审计。新报告同时把 G1 的旧结论从“两个臂均损失
+> clinical-complete recall”纠正为“canonical identity gate 失败；生成式范式仍因候选扰动与命题不闭合
+> 保持 NO-GO”。本文的历史 rank-only 数字仍保留，不应覆盖新报告的现行判决。
+
 > 日期：2026-08-25
 > 冻结代码基线：`cursor4@7e5546f22732725243fed8f1de68e2f8c8ad9bfb`
 > 历史锚点：`38977314c`（初始方案）、`aba083272`（旧 symptom-cluster 失败线）、`59fe703a7`（MedEinst 轨迹）、`7e5546f2`（首轮 phenotype-lift 实测）

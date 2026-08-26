@@ -1,5 +1,10 @@
 # Phenotype target-profile 模糊反向检索与 typed-subgraph 假设：零调用离线对照实验
 
+> **后续实测（2026-08-25）：** typed prototype-card matcher、T/F/U gate、一对一 assignment、
+> 29-case mechanics acceptance 与 200-case parser-cache safety screen 已完成，见
+> [`PHENOTYPE_PROTOTYPE_GRAPH_TYPED_ALIGNMENT_AUDIT.md`](PHENOTYPE_PROTOTYPE_GRAPH_TYPED_ALIGNMENT_AUDIT.md)。
+> 本文仍是 `291e9800` 的历史 whole-vignette/target-profile 对照，不能用其“typed matcher 未实现”状态覆盖后续进度。
+
 > 日期：2026-08-25
 > 冻结仓库：`cursor4@7e5546f22732725243fed8f1de68e2f8c8ad9bfb`
 > 新 LLM/API 调用：**0**；probe scoring execution 网络调用：**0**（固定 MedCPT 模型的先行获取不计入 scoring）

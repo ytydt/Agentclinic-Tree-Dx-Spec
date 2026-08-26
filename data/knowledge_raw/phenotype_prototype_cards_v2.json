@@ -1,0 +1,196 @@
+{
+  "schema_version": "phenotype-prototype-card/2.0",
+  "status": "offline-reviewed-seed-pack",
+  "scope": "Six deliberately small phenotype targets for testing retrieval, typed alignment, abstention, and provenance. This is not a production clinical rule library.",
+  "global_contract": {
+    "candidate_blind": true,
+    "pair_or_triple_enumeration": false,
+    "missing_means": "unknown",
+    "preserve_atomic_findings": true,
+    "write_policy": "query-only unless all required typed slots are true and every quality gate is satisfied",
+    "dense_similarity_permission": "candidate retrieval only; never truth, vote, veto, or destructive replacement"
+  },
+  "prototypes": [
+    {
+      "prototype_id": "PLV2_HAGMA",
+      "label": "high-anion-gap metabolic acidosis",
+      "target_id": "LOCAL:PHENO_HAGMA",
+      "target_type": "physiologic_pattern",
+      "aliases": ["high anion gap metabolic acidosis", "HAGMA", "anion-gap acidosis"],
+      "ontology_anchors": ["HP:0001942", "HP:0032368"],
+      "ontology_anchor_relation": "related_query_only",
+      "context_contract": {"subject": "patient", "time": "same_current_panel", "specimen": "blood", "modality": "laboratory"},
+      "slots": [
+        {
+          "slot_id": "acidemia",
+          "role": "required",
+          "weight": 2.0,
+          "label": "acidemia or established metabolic acidosis",
+          "aliases": ["acidemia", "metabolic acidosis", "low blood pH", "acidotic"],
+          "measurement": {"names": ["pH", "blood pH"], "operator": "lt", "threshold": 7.35}
+        },
+        {
+          "slot_id": "low_bicarbonate",
+          "role": "required",
+          "weight": 2.0,
+          "label": "low serum bicarbonate",
+          "aliases": ["low bicarbonate", "decreased bicarbonate", "bicarbonate depletion", "low HCO3"],
+          "measurement": {"names": ["bicarbonate", "HCO3", "HCO3-"], "operator": "lt", "threshold": 22.0}
+        },
+        {
+          "slot_id": "high_anion_gap",
+          "role": "defining",
+          "weight": 3.0,
+          "label": "elevated anion gap",
+          "aliases": ["high anion gap", "elevated anion gap", "increased anion gap", "widened gap"],
+          "measurement": {"names": ["anion gap", "corrected anion gap"], "operator": "gt", "threshold": 12.0}
+        }
+      ],
+      "required_logic": {"all": ["acidemia", "low_bicarbonate", "high_anion_gap"]},
+      "contradictions": ["normal or non-anion-gap acidosis", "normal current pH/bicarbonate/gap after treatment", "measurements from incompatible time points"],
+      "sources": [
+        {"kind": "ontology", "uri": "https://hpo.jax.org/browse/term/HP:0001942", "release": "hp/releases/2026-02-16"},
+        {"kind": "open_review", "uri": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13035296/"}
+      ]
+    },
+    {
+      "prototype_id": "PLV2_HEMOLYTIC_PROCESS",
+      "label": "hemolytic process",
+      "target_id": "LOCAL:PHENO_HEMOLYTIC_PROCESS",
+      "target_type": "pathophysiologic_process",
+      "aliases": ["hemolysis", "hemolytic process", "hemolytic state", "red-cell destruction"],
+      "ontology_anchors": ["HP:0001878"],
+      "ontology_anchor_relation": "related_query_only",
+      "context_contract": {"subject": "patient", "time": "same_episode", "specimen": "blood", "modality": "laboratory_or_smear"},
+      "slots": [
+        {
+          "slot_id": "anemia_or_fall",
+          "role": "required",
+          "weight": 2.5,
+          "label": "anemia or documented hemoglobin fall",
+          "aliases": ["anemia", "anaemia", "hemoglobin fall", "falling hemoglobin", "red-cell count falling"],
+          "measurement": {"names": ["hemoglobin", "haemoglobin", "Hb"], "operator": "lt", "threshold": 12.0}
+        },
+        {"slot_id": "reticulocytosis", "role": "marker", "group": "destruction_markers", "weight": 1.5, "label": "reticulocytosis", "aliases": ["reticulocytosis", "high reticulocyte count", "elevated reticulocytes"]},
+        {"slot_id": "low_haptoglobin", "role": "marker", "group": "destruction_markers", "weight": 1.5, "label": "low haptoglobin", "aliases": ["low haptoglobin", "decreased haptoglobin", "undetectable haptoglobin", "haptoglobin absent"]},
+        {
+          "slot_id": "high_ldh",
+          "role": "marker",
+          "group": "destruction_markers",
+          "weight": 1.5,
+          "label": "elevated lactate dehydrogenase",
+          "aliases": ["high LDH", "elevated LDH", "increased lactate dehydrogenase"],
+          "measurement": {"names": ["LDH", "lactate dehydrogenase"], "operator": "gt", "threshold": 300.0}
+        },
+        {"slot_id": "indirect_bilirubin", "role": "marker", "group": "destruction_markers", "weight": 1.5, "label": "indirect hyperbilirubinemia", "aliases": ["indirect bilirubin elevation", "elevated indirect bilirubin", "unconjugated bilirubin increased", "unconjugated bilirubin risen"]},
+        {"slot_id": "schistocytes", "role": "marker", "group": "destruction_markers", "weight": 1.5, "label": "schistocytes or fragmented erythrocytes", "aliases": ["schistocytes", "red blood cell fragments", "fragmented erythrocytes", "fragmented red cells"]}
+      ],
+      "required_logic": {"all": ["anemia_or_fall"], "at_least": {"group": "destruction_markers", "count": 2}},
+      "contradictions": ["normal destruction markers", "isolated LDH elevation", "isolated low haptoglobin in liver disease or malnutrition", "in-vitro sample hemolysis"],
+      "sources": [
+        {"kind": "ontology", "uri": "https://hpo.jax.org/browse/term/HP:0001878", "release": "hp/releases/2026-02-16"},
+        {"kind": "text_overlay", "uri": "https://github.com/monarch-initiative/dismech/blob/93a6b51f5821868fd364b51010424e41045f2b5e/kb/modules/hemolytic_anemia_erythrocyte_destruction.yaml", "status": "CC-BY-4.0 AI-curated candidate; exact-snippet validation is not clinical appraisal"}
+      ]
+    },
+    {
+      "prototype_id": "PLV2_NEPHROTIC_SYNDROME",
+      "label": "nephrotic syndrome",
+      "target_id": "HP:0000100",
+      "target_type": "clinical_syndrome",
+      "aliases": ["nephrotic syndrome", "nephrotic state"],
+      "ontology_anchors": ["HP:0000100"],
+      "ontology_anchor_relation": "identity",
+      "context_contract": {"subject": "patient", "time": "same_episode", "specimen": "urine_and_blood", "modality": "laboratory_and_clinical"},
+      "slots": [
+        {
+          "slot_id": "heavy_proteinuria",
+          "role": "defining",
+          "weight": 3.0,
+          "label": "heavy or nephrotic-range proteinuria",
+          "aliases": ["nephrotic-range proteinuria", "heavy proteinuria", "massive proteinuria", "urinary protein loss"],
+          "measurement": {"names": ["urinary protein", "proteinuria", "urine protein"], "operator": "gte", "threshold": 3.5, "unit_family": "g_per_day_adult_only"}
+        },
+        {
+          "slot_id": "hypoalbuminemia",
+          "role": "required",
+          "weight": 2.0,
+          "label": "hypoalbuminemia",
+          "aliases": ["hypoalbuminemia", "low albumin", "depleted albumin"],
+          "measurement": {"names": ["albumin", "serum albumin"], "operator": "lt", "threshold": 3.0, "unit_family": "g_per_dL"}
+        },
+        {"slot_id": "edema", "role": "required", "weight": 1.5, "label": "edema", "aliases": ["edema", "oedema", "anasarca", "generalized swelling"]},
+        {"slot_id": "hyperlipidemia", "role": "supportive", "weight": 0.5, "label": "hyperlipidemia", "aliases": ["hyperlipidemia", "hyperlipidaemia", "high cholesterol"]}
+      ],
+      "required_logic": {"all": ["heavy_proteinuria", "hypoalbuminemia", "edema"]},
+      "contradictions": ["explicitly absent proteinuria", "protein loss from a non-renal source", "wrong family-member subject"],
+      "sources": [
+        {"kind": "ontology", "uri": "https://hpo.jax.org/browse/term/HP:0000100", "release": "hp/releases/2026-02-16"},
+        {"kind": "text_overlay", "uri": "https://github.com/monarch-initiative/dismech/blob/93a6b51f5821868fd364b51010424e41045f2b5e/kb/modules/nephrotic_podocyte_injury.yaml", "status": "CC-BY-4.0 AI-curated candidate; exact-snippet validation is not clinical appraisal"}
+      ]
+    },
+    {
+      "prototype_id": "PLV2_CHOLESTATIC_PATTERN",
+      "label": "cholestatic biochemical pattern",
+      "target_id": "LOCAL:PHENO_CHOLESTATIC_BIOCHEMICAL_PATTERN",
+      "target_type": "biochemical_pattern",
+      "aliases": ["cholestatic pattern", "cholestatic biochemical pattern", "cholestatic liver injury pattern"],
+      "ontology_anchors": ["HP:0001396"],
+      "ontology_anchor_relation": "related_query_only",
+      "context_contract": {"subject": "patient", "time": "same_panel", "specimen": "blood", "modality": "laboratory"},
+      "slots": [
+        {"slot_id": "alp_elevated", "role": "defining", "weight": 3.0, "label": "alkaline phosphatase above assay upper limit", "aliases": ["elevated alkaline phosphatase", "high alkaline phosphatase", "elevated ALP", "high ALP", "alk phos elevated"], "measurement": {"names": ["ALP", "alkaline phosphatase", "alk phos"], "operator": "gt_uln"}},
+        {"slot_id": "disproportionate_to_alt", "role": "required", "weight": 2.0, "label": "ALP elevation disproportionate to aminotransferases", "aliases": ["cholestatic R ratio", "ALP disproportionate to ALT", "predominantly cholestatic"], "derived_measurement": {"kind": "r_ratio", "operator": "lte", "threshold": 2.0}},
+        {"slot_id": "hepatic_source", "role": "required", "weight": 1.5, "label": "hepatic-source support", "aliases": ["elevated GGT", "high GGT", "elevated gamma GT", "elevated gamma-glutamyl transferase"], "measurement": {"names": ["GGT", "gamma GT", "gamma-glutamyl transferase"], "operator": "gt_uln"}}
+      ],
+      "required_logic": {"all": ["alp_elevated", "disproportionate_to_alt", "hepatic_source"]},
+      "contradictions": ["ALP within its stated range", "bone-source ALP elevation", "predominantly hepatocellular R ratio"],
+      "sources": [
+        {"kind": "ontology", "uri": "https://hpo.jax.org/browse/term/HP:0001396", "release": "hp/releases/2026-02-16"},
+        {"kind": "open_review", "uri": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7298429/"},
+        {"kind": "text_overlay", "uri": "https://github.com/monarch-initiative/dismech/blob/93a6b51f5821868fd364b51010424e41045f2b5e/kb/modules/cholestatic_liver_injury.yaml", "status": "mechanism coherence only; not an activation authority"}
+      ]
+    },
+    {
+      "prototype_id": "PLV2_UIP_PATTERN",
+      "label": "usual interstitial pneumonia pattern",
+      "target_id": "HP:0031950",
+      "target_type": "imaging_pattern",
+      "aliases": ["usual interstitial pneumonia pattern", "UIP pattern"],
+      "ontology_anchors": ["HP:0031950"],
+      "ontology_anchor_relation": "identity",
+      "context_contract": {"subject": "patient", "time": "same_study", "specimen": null, "modality": "CT_or_HRCT"},
+      "slots": [
+        {"slot_id": "honeycombing", "role": "defining", "weight": 3.0, "label": "honeycombing", "aliases": ["honeycombing", "honeycomb cysts", "honeycomb change"]},
+        {"slot_id": "traction_bronchiectasis", "role": "required", "weight": 2.0, "label": "traction bronchiectasis or bronchiolectasis", "aliases": ["traction bronchiectasis", "traction bronchiolectasis", "bronchi pulled open by traction"]},
+        {"slot_id": "basal_subpleural", "role": "required", "weight": 1.5, "label": "basal and subpleural or peripheral distribution", "aliases": ["basal subpleural", "basal and subpleural", "peripheral lung bases", "lower-lobe peripheral", "both lung bases"]}
+      ],
+      "required_logic": {"all": ["honeycombing", "traction_bronchiectasis", "basal_subpleural"]},
+      "contradictions": ["explicitly absent honeycombing", "features from different studies", "non-CT modality", "alternative-diagnosis pattern predominates"],
+      "sources": [
+        {"kind": "ontology", "uri": "https://hpo.jax.org/browse/term/HP:0031950", "release": "hp/releases/2026-02-16"},
+        {"kind": "open_review", "uri": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6164303/"}
+      ]
+    },
+    {
+      "prototype_id": "PLV2_HYPOXEMIA",
+      "label": "hypoxemia",
+      "target_id": "HP:0012418",
+      "target_type": "measurement_interpretation",
+      "aliases": ["hypoxemia", "low blood oxygen", "low arterial oxygen"],
+      "ontology_anchors": ["HP:0012418"],
+      "ontology_anchor_relation": "identity",
+      "context_contract": {"subject": "patient", "time": "current_measurement", "specimen": "arterial_blood_or_validated_pulse_oximetry", "modality": "measurement"},
+      "slots": [
+        {"slot_id": "low_pao2", "role": "defining_alternative", "group": "oxygen_measurement", "weight": 3.0, "label": "low arterial oxygen tension", "aliases": ["low PaO2", "low arterial pO2", "low arterial oxygen tension"], "measurement": {"names": ["PaO2", "arterial pO2", "arterial oxygen tension"], "operator": "lt", "threshold": 80.0, "unit_family": "mmHg"}},
+        {"slot_id": "low_spo2", "role": "proxy_alternative", "group": "oxygen_measurement", "weight": 2.5, "label": "quality-qualified low oxygen saturation", "aliases": ["low SpO2", "low oxygen saturation", "desaturation"], "measurement": {"names": ["SpO2", "oxygen saturation"], "operator": "lt", "threshold": 92.0, "unit_family": "percent"}, "quality_requires": ["reliable waveform or explicit technical validity", "room-air or recorded FiO2 context"]},
+        {"slot_id": "dyspnea", "role": "supportive", "weight": 0.25, "label": "dyspnea", "aliases": ["dyspnea", "dyspnoea", "shortness of breath"]},
+        {"slot_id": "tachypnea", "role": "supportive", "weight": 0.25, "label": "tachypnea", "aliases": ["tachypnea", "tachypnoea", "rapid breathing"]}
+      ],
+      "required_logic": {"at_least": {"group": "oxygen_measurement", "count": 1}},
+      "contradictions": ["normal oxygen measurement", "poor or unreliable waveform", "symptoms without a low oxygen measurement", "incompatible oxygen or altitude context"],
+      "sources": [
+        {"kind": "ontology", "uri": "https://hpo.jax.org/browse/term/HP:0012418", "release": "hp/releases/2026-02-16"}
+      ]
+    }
+  ]
+}
