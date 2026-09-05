@@ -1,0 +1,987 @@
+[
+  {
+    "sample_id": "S2-01",
+    "window_id": "manifest_cpg:62f29bdbb77e13081413",
+    "reviewer": "source_inventory_2 (AI source-first reviewer)",
+    "reading_note": "Read all 479 characters. No diagnostic proposition: three management recommendations. A condition qualifying treatment is not an independently asserted diagnostic rule.",
+    "non_target_source": [
+      {
+        "anchor": "consider resecting back to the compliant bowel",
+        "kind": "surgical_technique",
+        "reason": "Defines desired resection margin; softness/unthickened/uninflamed bowel describes the margin, not a diagnostic criterion."
+      },
+      {
+        "anchor": "Consider open or laparoscopic resection for elective surgery",
+        "kind": "treatment_indication",
+        "reason": "Recovery from complicated diverticulitis plus persistent symptoms/stricture/fistula is an elective-surgery indication, not proof or exclusion of diverticulitis."
+      },
+      {
+        "anchor": "Do not offer an aminosalicylate or antibiotics",
+        "kind": "recurrence_prevention",
+        "reason": "Negative prescription instruction concerns prevention, not negative disease evidence."
+      }
+    ],
+    "rules": []
+  },
+  {
+    "sample_id": "S2-02",
+    "window_id": "manifest_cpg:92d2b2d2d2825371b2ac",
+    "reviewer": "source_inventory_2 (AI source-first reviewer)",
+    "reading_note": "Read all 513 characters. Zero diagnostic criteria. MRI sequence list is one test protocol, not an AND group of disease manifestations.",
+    "non_target_source": [
+      {
+        "anchor": "Offer standard structural MRI",
+        "kind": "diagnostic_workflow",
+        "reason": "Initial test and contraindication; no MRI result pattern or condition sufficient/necessary for meningioma."
+      },
+      {
+        "anchor": "Consider CT imaging for meningioma",
+        "kind": "diagnostic_workflow",
+        "reason": "Assessment of suspected bone involvement, not assertion that bone involvement is required for meningioma."
+      },
+      {
+        "anchor": "Base management of meningioma after surgery",
+        "kind": "management",
+        "reason": "Extent of surgery and grade guide management; unavailable table 4 is not reconstructed."
+      }
+    ],
+    "rules": []
+  },
+  {
+    "sample_id": "S2-03",
+    "window_id": "merck:299b9430e1d2c4190c55",
+    "reviewer": "source_inventory_2 (AI source-first reviewer)",
+    "reading_note": "Read all 4677 characters. Stage descriptions are nonrigid association sets, not required symptom conjunctions. Missing list after “at least one” is retained as one ambiguous whole criterion group. An unattached fragment remains ambiguous. Distinct disease targets in the reversible-cause sentence are inventoried separately; repeated depression association is not counted twice.",
+    "non_target_source": [
+      {
+        "anchor": "at risk of falls or accidents",
+        "kind": "prognosis",
+        "reason": "Risk of falls, aspiration pneumonia, malnutrition, pressure ulcers, and terminal coma/death are consequences, not diagnostic requirements."
+      },
+      {
+        "anchor": "definitive diagnosis often requires postmortem",
+        "kind": "diagnostic_workflow",
+        "reason": "Often-needed pathologic confirmation of dementia subtype/cause; not a source-provided morphologic criterion."
+      },
+      {
+        "anchor": "A formal mental status examination",
+        "kind": "diagnostic_workflow",
+        "reason": "Recommendation to perform MMSE; no diagnostic score threshold supplied."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S2-03-R01",
+        "source_anchor": "family members may report strange behavior",
+        "target": "early dementia",
+        "rule_kind": "association",
+        "source_semantics": "Early dementia may preserve sociability while relatives notice strange behavior with emotional lability.",
+        "logical_form": "ASSOCIATED(early_dementia, strange_behavior WITH emotional_lability); MAY(preserved_sociability)",
+        "scope": "Early dementia; relatives’ history",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": "Preserved sociability cannot be converted into exclusion."
+      },
+      {
+        "rule_id": "S2-03-R02",
+        "source_anchor": "Patients become unable to learn and recall new information",
+        "target": "intermediate dementia",
+        "rule_kind": "association",
+        "source_semantics": "Intermediate dementia involves impaired new learning/recall, reduced but not entirely lost remote memory, loss of orientation and getting lost. ADL assistance, personality/behavior changes, psychosis and sleep disorganization may occur; ambulatory status can remain.",
+        "logical_form": "ASSOCIATION_SET(intermediate_dementia,[new_learning_and_recall_impairment,reduced_remote_memory,disorientation,getting_lost,possible_ADL_dependence,possible_personality_or_behavior_change,possible_psychosis,disorganized_sleep,retained_ambulation])",
+        "scope": "Intermediate stage; optional and typical manifestations retain their modalities",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": "Opposite personality presentations are alternatives; the list is not mandatory AND. Falls/accident risk is prognosis, documented below."
+      },
+      {
+        "rule_id": "S2-03-R03",
+        "source_anchor": "Recent and remote memory is completely lost",
+        "target": "late/severe dementia",
+        "rule_kind": "association",
+        "source_semantics": "Late dementia is described by severe ADL dependence and inability to walk or self-feed, complete recent/remote memory loss, possible incontinence or dysphagia, and eventual mutism.",
+        "logical_form": "ASSOCIATION_SET(late_dementia,[severe_ADL_dependence,nonambulatory,inability_self_feed,complete_recent_and_remote_memory_loss,possible_incontinence,possible_dysphagia,eventual_mutism])",
+        "scope": "Late/severe stage; mutism is a later progression, not present in every patient",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S2-03-R04",
+        "source_anchor": "elderly patients often\n\nhave no febrile or leukocytic response to infection",
+        "target": "infection",
+        "rule_kind": "nonexclusion_caveat",
+        "source_semantics": "Older patients with infection often lack fever or a leukocytic response; their absence is compatible with infection.",
+        "logical_form": "IN(elderly): ASSOCIATED(infection,possible_absence_of_fever_and_leukocytic_response); NOT_SUFFICIENT(absence_of_these_responses,exclude_infection)",
+        "scope": "Elderly patients, in the context of inability of advanced-dementia patients to report symptoms",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "scoped_rule",
+        "notes": "No assertion that absent fever proves infection; the caveat is a prohibition on making an absence-based exclusion, not positive exclusion evidence."
+      },
+      {
+        "rule_id": "S2-03-R05",
+        "source_anchor": "If a patient is inattentive, the\n\ndiagnosis is likely to be delirium",
+        "target": "delirium versus dementia",
+        "rule_kind": "differential_support",
+        "source_semantics": "Inattention makes delirium likely, but advanced dementia can also severely impair attention. Duration may discriminate but its values are absent in the referenced table.",
+        "logical_form": "SUPPORTS(inattention,delirium); EXCEPTION(advanced_dementia_also_impairs_attention)",
+        "scope": "Differential of cognitive impairment; not standalone confirmation; advanced dementia exception",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "scoped_rule",
+        "notes": "Do not infer a specific duration threshold from Table 175-1, which is not present."
+      },
+      {
+        "rule_id": "S2-03-R06",
+        "source_anchor": "affected people are given enough time to learn new information",
+        "target": "unidentified comparator disorder in dementia differential",
+        "rule_kind": "association",
+        "source_semantics": "A fragment says intellectual performance is good if affected people are given enough learning time; the subject and opening condition are absent.",
+        "logical_form": "IF(enough_learning_time,good_intellectual_performance); TARGET_UNKNOWN",
+        "scope": "Fragment has missing antecedent/heading",
+        "source_status": "ambiguous_source",
+        "flat_schema": "ambiguous",
+        "complexity": "scoped_rule",
+        "notes": "Do not silently bind to dementia, normal aging, or a named memory disorder."
+      },
+      {
+        "rule_id": "S2-03-R07",
+        "source_anchor": "patients with\n\ndepression make little effort to respond",
+        "target": "depression-related cognitive impairment",
+        "rule_kind": "differential_association",
+        "source_semantics": "In context, depression-associated cognitive decline is contrasted with dementia: exaggerated memory-loss report, preserved recall of important current/personal events, normal neurologic examination except psychomotor slowing, and little effort on testing. Dementia patients instead often try hard but answer incorrectly. Coexisting depression/dementia may show incomplete cognitive recovery after depression treatment.",
+        "logical_form": "ASSOCIATION_SET(depression_related_cognitive_impairment,[exaggerated_report,preserved_important_event_memory,normal_neurologic_exam_except_psychomotor_slowing,low_test_effort]); CONTRAST(dementia,effortful_incorrect_answers); IF(coexisting_depression_and_dementia,may_not_fully_restore_cognition_with_depression_treatment)",
+        "scope": "Older patients; preceding subject partially damaged but depression is explicitly named in the same paragraph; coexistence exception",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "association_set",
+        "notes": "Paragraph opener is damaged. Target is recoverable from explicit subsequent comparison, but normal examination is qualified by psychomotor slowing; response-to-treatment must retain coexistence condition."
+      },
+      {
+        "rule_id": "S2-03-R08",
+        "source_anchor": "patients with dementia forget simple information within 3 to 5 min",
+        "target": "dementia",
+        "rule_kind": "screening_association",
+        "source_semantics": "Dementia is associated with forgetting simple registered information within 3–5 minutes and difficulty naming category members compared with unaffected people.",
+        "logical_form": "ASSOCIATION_SET(dementia,[forget_simple_registered_information_within_3_to_5_minutes,difficulty_category_naming])",
+        "scope": "Screening tests, not individually sufficient diagnostic criteria; three objects is an example test protocol",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S2-03-R09",
+        "source_anchor": "diagnosis of dementia requires at least one of the following",
+        "target": "dementia",
+        "rule_kind": "necessary_criterion_group_incomplete",
+        "source_semantics": "The source requires short-term memory loss plus at least one additional cognitive deficit from an absent list. Each deficit must substantially impair function and significantly decline from previous function, and deficits cannot occur only during delirium.",
+        "logical_form": "NECESSARY(dementia,AND(short_term_memory_loss,AT_LEAST(1,MISSING_DEFICIT_DOMAIN),FOR_EACH(selected_deficit,AND(substantial_functional_impairment,significant_decline)),NOT(only_during_delirium)))",
+        "scope": "Clinical criteria; member domain missing and therefore no complete closed reference predicate can be constructed",
+        "source_status": "ambiguous_source",
+        "flat_schema": "impossible",
+        "complexity": "nested_group",
+        "notes": "One source group, zero separately counted leaves. Direction is D -> criteria, not criteria -> D unless elsewhere stated. Explicitly do not restore aphasia/apraxia/agnosia/executive deficit from external knowledge."
+      },
+      {
+        "rule_id": "S2-03-R10",
+        "source_anchor": "When delirium is absent, the presence of multiple deficits",
+        "target": "dementia",
+        "rule_kind": "conditional_support",
+        "source_semantics": "Multiple deficits suggest dementia when delirium is absent, particularly in people with average or higher education.",
+        "logical_form": "IF(AND(delirium_absent,multiple_cognitive_deficits),SUPPORTS(dementia)); QUALIFIER(stronger_or_particularly_applicable_in_average_or_higher_education)",
+        "scope": "Absence of delirium is the context of this support, not independently sufficient; no deficit count specified",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "scoped_rule",
+        "notes": ""
+      },
+      {
+        "rule_id": "S2-03-R11",
+        "source_anchor": "vitamin B\n\ndeficiency",
+        "target": "vitamin B deficiency, subtype missing",
+        "rule_kind": "causal_association",
+        "source_semantics": "A vitamin B deficiency is named as a potentially treatable cause of cognitive impairment; the vitamin number/subtype is missing.",
+        "logical_form": "MAY_CAUSE(vitamin_B_subtype_UNKNOWN_deficiency,cognitive_impairment)",
+        "scope": "Source renders vitamin B with missing subtype",
+        "source_status": "ambiguous_source",
+        "flat_schema": "ambiguous",
+        "complexity": "atomic",
+        "notes": "Do not silently recover B12."
+      },
+      {
+        "rule_id": "S2-03-R12",
+        "source_anchor": "neurosyphilis, hypothyroidism, depression",
+        "target": "neurosyphilis",
+        "rule_kind": "causal_association",
+        "source_semantics": "Neurosyphilis is named among treatable causes of cognitive impairment.",
+        "logical_form": "MAY_CAUSE(neurosyphilis,cognitive_impairment)",
+        "scope": "Example of a potentially reversible cause; not sufficient from cognitive impairment alone",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "atomic",
+        "notes": ""
+      },
+      {
+        "rule_id": "S2-03-R13",
+        "source_anchor": "neurosyphilis, hypothyroidism, depression",
+        "target": "hypothyroidism",
+        "rule_kind": "causal_association",
+        "source_semantics": "Hypothyroidism is named among treatable causes of cognitive impairment.",
+        "logical_form": "MAY_CAUSE(hypothyroidism,cognitive_impairment)",
+        "scope": "Example of a potentially reversible cause; depression already represented by R07",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "atomic",
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "sample_id": "S2-04",
+    "window_id": "merck:747184bc524207127241",
+    "reviewer": "source_inventory_2 (AI source-first reviewer)",
+    "reading_note": "Read all 1836 characters. Include disease definitions/causal identity; do not count molecular pathophysiology or eventual right-heart failure as diagnostic rules.",
+    "non_target_source": [
+      {
+        "anchor": "Pathophysiologic mechanisms that cause pulmonary hypertension",
+        "kind": "mechanism",
+        "reason": "Vascular resistance/venous pressure, vasoconstriction, remodeling, mediator activity, and local coagulation pathways are mechanism exposition, not a diagnostic requirement list."
+      },
+      {
+        "anchor": "eventually leads to right ventricular hypertrophy",
+        "kind": "prognosis",
+        "reason": "Eventual hypertrophy then dilation/failure is disease course, not baseline necessary phenotype."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S2-04-R01",
+        "source_anchor": "these cases are termed idiopathic pulmonary arterial hypertension",
+        "target": "idiopathic pulmonary arterial hypertension",
+        "rule_kind": "definition",
+        "source_semantics": "Sporadic pulmonary-hypertension cases unrelated to any identifiable disorder are termed idiopathic pulmonary arterial hypertension.",
+        "logical_form": "DEFINED_AS(IPAH,AND(pulmonary_hypertension,sporadic_occurrence,no_identifiable_associated_disorder))",
+        "scope": "Classification description; it does not specify a workup establishing absence of another disorder",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "flat_group",
+        "notes": "Not mere absence of any one named disorder; “any identifiable disorder” is a quantified etiologic scope."
+      },
+      {
+        "rule_id": "S2-04-R02",
+        "source_anchor": "the primary disorder affects the small pulmonary arterioles",
+        "target": "pulmonary arterial hypertension",
+        "rule_kind": "definition",
+        "source_semantics": "In the pulmonary arterial hypertension classification group, the primary disorder affects the small pulmonary arterioles.",
+        "logical_form": "CHARACTERIZED_BY(PAH,primary_small_pulmonary_arteriolar_disorder)",
+        "scope": "First classification group; not a unique standalone clinical criterion",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "atomic",
+        "notes": ""
+      },
+      {
+        "rule_id": "S2-04-R03",
+        "source_anchor": "pulmonary hypertension is caused by organized\n\npulmonary emboli",
+        "target": "chronic thromboembolic pulmonary hypertension",
+        "rule_kind": "causal_definition",
+        "source_semantics": "CTEPH denotes pulmonary hypertension caused by organized pulmonary emboli; focal endothelial-surface coagulation in other pulmonary hypertension must not be equated with this disease.",
+        "logical_form": "DEFINED_CAUSAL_SCOPE(CTEPH,pulmonary_hypertension CAUSED_BY organized_pulmonary_emboli); NOT_EQUIVALENT(focal_endothelial_coagulation,CTEPH)",
+        "scope": "Distinction of organized embolic etiology from secondary focal coagulation",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "scoped_rule",
+        "notes": "Presence of focal coagulation is not sufficient for CTEPH and does not itself exclude coexistence of CTEPH."
+      }
+    ]
+  },
+  {
+    "sample_id": "S2-05",
+    "window_id": "merck:8f1b0dab6810552045bb",
+    "reviewer": "source_inventory_2 (AI source-first reviewer)",
+    "reading_note": "Read all 881 characters. Clinical phenotype is one nonrigid set. Criteria are referenced but absent; non-exclusion instruction is visible while its criterion domain remains unspecified.",
+    "non_target_source": [
+      {
+        "anchor": "Clinical criteria (including a",
+        "kind": "diagnostic_performance",
+        "reason": "85% diagnostic accuracy and comparison to vascular/Lewy body dementia describe performance of unprovided criteria, not the criteria themselves."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S2-05-R01",
+        "source_anchor": "Loss of short-term memory is often the first sign",
+        "target": "Alzheimer disease",
+        "rule_kind": "association",
+        "source_semantics": "Alzheimer disease often begins with short-term memory loss, tends to impair multiple cognitive functions, progresses gradually with possible plateaus, and commonly has behavior disorders such as wandering, agitation, yelling or persecutory ideation.",
+        "logical_form": "ASSOCIATION_SET(Alzheimer_disease,[often_initial_short_term_memory_loss,multiple_cognitive_functions_affected,gradual_progression_with_possible_plateaus,common_behavior_disorders])",
+        "scope": "Features resemble other dementias and are not individually disease-specific",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S2-05-R02",
+        "source_anchor": "deviations from these criteria do not exclude a diagnosis of Alzheimer's disease",
+        "target": "Alzheimer disease",
+        "rule_kind": "nonexclusion_caveat_incomplete",
+        "source_semantics": "Deviation from the referenced but missing clinical criteria does not exclude Alzheimer disease, particularly because mixed dementia may occur.",
+        "logical_form": "NOT_SUFFICIENT(deviation_from_MISSING_CLINICAL_CRITERIA,exclude_Alzheimer_disease); EXPLANATORY_SCOPE(possible_mixed_dementia)",
+        "scope": "Criterion content is missing; non-exclusion direction is explicit",
+        "source_status": "ambiguous_source",
+        "flat_schema": "impossible",
+        "complexity": "scoped_rule",
+        "notes": "Absence of the criteria prevents complete executable correspondence, but treating nonfulfillment as exclusion would directly contradict the visible sentence."
+      }
+    ]
+  },
+  {
+    "sample_id": "S2-06",
+    "window_id": "pmc_oa:30e259f25b4715352691",
+    "reviewer": "source_inventory_2 (AI source-first reviewer)",
+    "reading_note": "Read all 1588 characters. Separate diagnostic interpretation cautions from assay procedure descriptions. No serum numeric thresholds provided.",
+    "non_target_source": [
+      {
+        "anchor": "TmP/GFR is the tubular maximum",
+        "kind": "measurement_definition",
+        "reason": "Physiologic index definition and calculator/reference standards; no disease criterion."
+      },
+      {
+        "anchor": "C-terminal assays measure both",
+        "kind": "assay_method",
+        "reason": "Intact vs C-terminal analyte coverage and recommendation to use intact assay are diagnostic workflow/measurement definitions."
+      },
+      {
+        "anchor": "iron deficiency and inflammation in the body",
+        "kind": "measurement_context",
+        "reason": "Factors requiring consideration; the direction/size of their influence is not stated. Do not infer low/high FGF23 as a diagnostic manifestation of either."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S2-06-R01",
+        "source_anchor": "patients with chronic kidney disease typically have repeatedly elevated FGF23 concentrations",
+        "target": "chronic kidney disease",
+        "rule_kind": "test_association",
+        "source_semantics": "Chronic kidney disease is typically associated with repeatedly elevated FGF23 concentrations beginning early in the disease.",
+        "logical_form": "ASSOCIATED(CKD,typically_repeatedly_elevated_FGF23_from_early_stages)",
+        "scope": "FGF23 interpretation; not sufficient for diagnosis of CKD or FGF23-mediated hypophosphatemia",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "scoped_rule",
+        "notes": ""
+      },
+      {
+        "rule_id": "S2-06-R02",
+        "source_anchor": "Interpretation of FGF23 concentrations can be challenging",
+        "target": "FGF23-independent renal hypophosphatemia",
+        "rule_kind": "interpretation_caveat",
+        "source_semantics": "FGF23 interpretation is especially challenging in FGF23-independent renal hypophosphatemia when GFR is reduced; Fanconi syndrome plus CKD during cystinosis is an example of the confounded setting.",
+        "logical_form": "INTERPRETATION_CAUTION(FGF23,AND(FGF23_independent_renal_hypophosphatemia,decreased_GFR)); EXAMPLE(AND(Fanconi_syndrome,CKD_in_cystinosis))",
+        "scope": "No direction or threshold for the misleading concentration is stated",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "nested_group",
+        "notes": "The sentence does not give a rule that FGF23-independent disease is excluded by elevated FGF23. Example combination is not a new sufficient diagnosis rule."
+      }
+    ]
+  },
+  {
+    "sample_id": "S2-07",
+    "window_id": "pmc_oa:608ec4598e70241e4ee6",
+    "reviewer": "source_inventory_2 (AI source-first reviewer)",
+    "reading_note": "Read all 830 characters. Zero adjudicable diagnostic rules. Figure captions enumerate disease labels against missing image panels; they do not expose any phenotype to inventory. Disease names are preserved as traceable provenance.",
+    "non_target_source": [
+      {
+        "anchor": "P.G. has been a consultant",
+        "kind": "conflict_of_interest",
+        "reason": "Funding/author disclosure; no clinical rule."
+      },
+      {
+        "anchor": "Differential diagnosis of the scalp psoriasis",
+        "kind": "unavailable_visual_comparison",
+        "reason": "Panel names: scalp psoriasis, seborrheic dermatitis, tinea capitis, inverse inguinal psoriasis, tinea cruris, candidiasis, nail psoriasis, traumatic onycholysis. No image observations are supplied; do not invent shared findings or pairwise sufficient/necessary relations."
+      },
+      {
+        "anchor": "Secondary syphilis (A); pityriasis rosea (B)",
+        "kind": "unavailable_visual_comparison",
+        "reason": "Other panel names: secondary syphilis, pityriasis rosea, subacute cutaneous lupus erythematosus, psoriasis, pityriasis rubra pilaris, erythrodermic mycosis fungoides. The labels alone do not provide a diagnostic proposition."
+      }
+    ],
+    "rules": []
+  },
+  {
+    "sample_id": "S2-08",
+    "window_id": "pmc_oa:7a1ffb86cb98495ed1af",
+    "reviewer": "source_inventory_2 (AI source-first reviewer)",
+    "reading_note": "Read all 2243 characters. Four generalized diagnostic claims, with clinical and CT phenotype kept as separate association sets. The surgical case captions illustrate those claims and are not independent population-level rules.",
+    "non_target_source": [
+      {
+        "anchor": "a result of obstruction to the neck of the diverticulum",
+        "kind": "mechanism",
+        "reason": "Obstruction causes and the 30% symptomatic-diverticulum proportion are etiologic/epidemiologic context; no generalized diagnostic identification rule is supplied."
+      },
+      {
+        "anchor": "Findings of Meckel’s diverticulitis with perforation were confirmed on surgery",
+        "kind": "case_illustration",
+        "reason": "Case-specific CT appearance, normal appendix, and surgical outcome corroborate above morphology, not universal required normal appendix."
+      },
+      {
+        "anchor": "A 24-year-old male",
+        "kind": "case_illustration",
+        "reason": "Patient-specific age, unvisualized appendix and mistaken CT appendicitis diagnosis; no age criterion or appendicitis exclusion rule."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S2-08-R01",
+        "source_anchor": "The patient can present with acute abdominal pain",
+        "target": "Meckel diverticulitis",
+        "rule_kind": "association",
+        "source_semantics": "Meckel diverticulitis can present with acute abdominal pain, possibly accompanied by fever and vomiting.",
+        "logical_form": "ASSOCIATION_SET(Meckel_diverticulitis,[acute_abdominal_pain,possible_fever,possible_vomiting])",
+        "scope": "Symptomatic patients; none is asserted required",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S2-08-R02",
+        "source_anchor": "it is seen as a blind-ended diverticulum in the distal small bowel",
+        "target": "Meckel diverticulitis",
+        "rule_kind": "imaging_association",
+        "source_semantics": "When identifiable on CT, it appears as a blind-ended distal-small-bowel diverticulum away from the ileocecal junction, with wall thickening/enhancement, surrounding mesenteric fat stranding and adjacent bowel inflammatory changes.",
+        "logical_form": "ASSOCIATION_SET(Meckel_diverticulitis,[blind_ended_distal_small_bowel_diverticulum,away_from_ileocecal_junction,wall_thickening,increased_wall_enhancement,mesenteric_fat_stranding,adjacent_bowel_inflammation])",
+        "scope": "If identified on CT; not a rule that all listed signs are necessary or that failure to identify excludes disease",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S2-08-R03",
+        "source_anchor": "Meckel’s diverticulum can mimic appendicitis or an appendiceal mucocele",
+        "target": "Meckel diverticulum/diverticulitis differential",
+        "rule_kind": "differential_nonexclusivity",
+        "source_semantics": "Meckel diverticulum may mimic appendicitis or appendiceal mucocele. If inflamed diverticulum is not seen, local bowel/mesentery inflammation can resemble other causes of bowel wall thickening.",
+        "logical_form": "MAY_MIMIC(Meckel_diverticulum,OR(appendicitis,appendiceal_mucocele)); IF(inflamed_diverticulum_not_identified,local_inflammatory_changes_are_nonspecific)",
+        "scope": "Imaging differential; no exclusive or standalone identifying feature asserted",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "scoped_rule",
+        "notes": ""
+      },
+      {
+        "rule_id": "S2-08-R04",
+        "source_anchor": "can be complicated by perforation, leading to localized or generalized pneumoperitoneum",
+        "target": "perforated Meckel diverticulitis",
+        "rule_kind": "association",
+        "source_semantics": "With perforation, Meckel diverticulitis may have localized or generalized pneumoperitoneum and secondary abscess formation.",
+        "logical_form": "IN(Meckel_diverticulitis_with_perforation): ASSOCIATED([OR(localized,generalized)_pneumoperitoneum,possible_secondary_abscess])",
+        "scope": "Complication subtype; symptoms of perforation cannot be generalized as necessary for uncomplicated Meckel diverticulitis",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "sample_id": "S2-09",
+    "window_id": "pmc_oa:7badff730b5f23f16338",
+    "reviewer": "source_inventory_2 (AI source-first reviewer)",
+    "reading_note": "Read all 2928 characters. One nonrigid comorbidity association set synthesized explicitly by the review. Table rows are heterogeneous study results for the same association, not separate diagnostic predicates or independent instances of the same rule.",
+    "non_target_source": [
+      {
+        "anchor": "Summary of studies analyzing the association",
+        "kind": "research_summary",
+        "reason": "Sample sizes, designs and null/positive results explain the evidence base for R01; not individual diagnostic criteria."
+      },
+      {
+        "anchor": "cardiovascular mortality",
+        "kind": "prognosis",
+        "reason": "Mortality risk is not a diagnostic sign."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S2-09-R01",
+        "source_anchor": "association of psoriasis not only with cardiovascular disease",
+        "target": "psoriasis",
+        "rule_kind": "comorbidity_association",
+        "source_semantics": "Psoriasis is associated, in the review’s overall assessment, with cardiovascular comorbidity and atherosclerotic risk-factor diseases including diabetes mellitus and obesity; cited analyses report MI/stroke risk, although some cohorts found no cardiovascular association.",
+        "logical_form": "ASSOCIATION_SET(psoriasis,[cardiovascular_disease,diabetes_mellitus,obesity]); EVIDENCE_HETEROGENEITY(some_null_studies,overall_association_supported); SUBTYPE_RESULTS(MI,stroke)",
+        "scope": "Epidemiologic association, not sufficient/necessary evidence for an individual diagnosis; severe-psoriasis subgroup is explicit only in the cited Danish study",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": "Cardiovascular mortality is prognostic and excluded from diagnostic phenotype. Do not sum 11 studies as 11 independent diagnostic rules, or convert association to exclusion of people without these comorbidities."
+      }
+    ]
+  },
+  {
+    "sample_id": "S2-10",
+    "window_id": "pmc_oa:9b85497e7424adfce8d9",
+    "reviewer": "source_inventory_2 (AI source-first reviewer)",
+    "reading_note": "Read all 657 characters. Zero diagnostic rules: surgery-associated complication incidence and comparisons, not patient-level criteria for surgical-site infection.",
+    "non_target_source": [
+      {
+        "anchor": "The overall incidence of SSIs was 1.5%",
+        "kind": "surgical_outcome_statistics",
+        "reason": "Incidences and confidence intervals by surgical technique do not define clinical SSI; reported confidence intervals themselves are inconsistent with point estimates but no correction is invented."
+      },
+      {
+        "anchor": "Forest plots illustrating the proportion of bleeding",
+        "kind": "figure_outcome_caption",
+        "reason": "Comparative bleeding outcome; no diagnostic rule."
+      }
+    ],
+    "rules": []
+  },
+  {
+    "sample_id": "S2-11",
+    "window_id": "pmc_oa:cf17335de7358673527c",
+    "reviewer": "source_inventory_2 (AI source-first reviewer)",
+    "reading_note": "Read all 1385 characters. The two table columns provide contrasting typical disease portraits, inventoried as two nonrigid association sets; rows are not a required AND criterion group. Pure VT mechanism and natural-history rows excluded.",
+    "non_target_source": [
+      {
+        "anchor": "Mechanism of VT",
+        "kind": "mechanism",
+        "reason": "Phase-2/local reentry vs scar-related macroreentry are explanatory mechanism rows, not bedside confirmation/exclusion rules."
+      },
+      {
+        "anchor": "Natural history",
+        "kind": "prognosis",
+        "reason": "Sudden death and heart failure describe outcomes; not present-at-diagnosis requirements."
+      },
+      {
+        "anchor": "AD, autosomal dominant",
+        "kind": "abbreviation_glossary",
+        "reason": "Definitions of acronyms are not additional disease rules."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S2-11-R01",
+        "source_anchor": "Brugada syndrome\tARVC",
+        "target": "Brugada syndrome",
+        "rule_kind": "differential_association",
+        "source_semantics": "Typical Brugada portrait: presentation age 30–40, male predominance 8:1, worldwide with Southeast-Asian predominance, autosomal-dominant inheritance and SCN5A association; syncope/cardiac arrest especially nocturnal; right-precordial ST elevation/T-wave inversion; RBBB/LAD; prolonged PR/HV; dynamic ECG; normal imaging or mild RVOT dilation, normal biopsy; polymorphic VT/VF; inducible VF.",
+        "logical_form": "ASSOCIATION_SET(Brugada,[typical_age_30_to_40,male_predominance_8_to_1,Southeast_Asian_enrichment,AD,SCN5A,syncope_or_cardiac_arrest_nocturnal_emphasis,right_precordial_ST_elevation_and_TWI,RBBB_or_LAD,prolonged_PR_or_HV,dynamic_ECG,normal_imaging_or_mild_RVOT_dilation,normal_biopsy,polymorphic_VT_or_VF,inducible_VF])",
+        "scope": "Differential comparison of typical features; age, sex, geography and a normal biopsy are not categorical inclusion/exclusion criteria",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": "Original abbreviations RBBB/LAD and PR/HV preserve slash ambiguity, not forced universal AND. SCN5A status is not stated necessary."
+      },
+      {
+        "rule_id": "S2-11-R02",
+        "source_anchor": "Structural RV (and LV) abnormalities",
+        "target": "arrhythmogenic right ventricular cardiomyopathy",
+        "rule_kind": "differential_association",
+        "source_semantics": "Typical ARVC portrait: age 15–30, male predominance 3:1, worldwide, AD with AR forms, desmosomal genes; palpitations/syncope/cardiac arrest; right-precordial T-wave inversion, QRS prolongation and epsilon waves; normal AV conduction; fixed ECG; structural RV and possibly LV dilation/dysfunction; fibrofatty biopsy; monomorphic VT/VF and inducible monomorphic VT or VF.",
+        "logical_form": "ASSOCIATION_SET(ARVC,[typical_age_15_to_30,male_predominance_3_to_1,worldwide,AD_or_AR,desmosomal_genes,palpitations_or_syncope_or_cardiac_arrest,right_precordial_TWI,QRS_prolongation,epsilon_waves,normal_AV_conduction,fixed_ECG,RV_with_possible_LV_structural_abnormality,global_and_regional_dilation_and_dysfunction,fibrofatty_replacement,monomorphic_VT_or_VF,inducible_monomorphic_VT_or_VF])",
+        "scope": "Typical contrasting features, not the task-force diagnostic criteria; neither one matching row nor all rows constitute a source-authorized definitive rule",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "sample_id": "S2-12",
+    "window_id": "pmc_oa:dfcbb615e493d9a35001",
+    "reviewer": "source_inventory_2 (AI source-first reviewer)",
+    "reading_note": "Read all 1262 characters. One nonrigid systemic-manifestation set. ESSDAI is explicitly an activity index; neither 12 domains nor imaging recommendations are diagnostic count criteria.",
+    "non_target_source": [
+      {
+        "anchor": "EULAR developed the ESSDAI score",
+        "kind": "disease_activity_measurement",
+        "reason": "Twelve-domain activity/severity instrument, not twelve required diagnostic findings; incomplete score algorithm is not reconstructed."
+      },
+      {
+        "anchor": "Imaging Technique",
+        "kind": "diagnostic_workflow",
+        "reason": "US/elastography, HRCT, MRI recommendations for assessing organ manifestations; not disease confirmation by mere test use."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S2-12-R01",
+        "source_anchor": "Imaging techniques used for the evaluation of systemic manifestations",
+        "target": "Sjögren syndrome",
+        "rule_kind": "manifestation_association",
+        "source_semantics": "Possible systemic manifestations include constitutional fever/night sweats/unintentional weight loss, myositis, synovitis/tenosynovitis/erosive arthritis, interstitial lung disease, CNS demyelinating lesions/neuromyelitis optica/pseudotumoral brain lesions, and lymphoma. Broader domains include glandular, muscular/articular, renal, central/peripheral neurologic, cutaneous, hematologic/biological and lymphadenopathy involvement.",
+        "logical_form": "ASSOCIATION_SET(Sjogren,[constitutional_symptoms,myositis,articular_manifestations,ILD,CNS_manifestations,lymphoma_or_lymphadenopathy,other_named_systemic_domains])",
+        "scope": "Already diagnosed Sjögren systemic involvement/activity; none of these establishes Sjögren alone",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": "RC/MCP/PIP numbers in the extracted table are footnote markers, not a 1/2/3-joint diagnostic count. No weights or ESSDAI threshold supplied."
+      }
+    ]
+  },
+  {
+    "sample_id": "S2-13",
+    "window_id": "statpearls:11bb90b5b6095bc3914a",
+    "reviewer": "source_inventory_2 (AI source-first reviewer)",
+    "reading_note": "Read all 1528 characters. Deduplicate repeated introduction. Include tumor-class definition, risk-context association and explicit etiologic association, but no inferred skin phenotype from absent subsequent sections.",
+    "non_target_source": [
+      {
+        "anchor": "Objectives: Describe the epidemiology",
+        "kind": "educational_metadata",
+        "reason": "Learning objectives, interprofessional management aims, quizzes are not source criteria."
+      },
+      {
+        "anchor": "Initially described in 1872",
+        "kind": "historical_context",
+        "reason": "Historical five-patient multifocal observation is not a universal multiplicity criterion; four forms are mentioned but not specified."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S2-13-R01",
+        "source_anchor": "Kaposi sarcoma is an interesting soft tissue tumor",
+        "target": "Kaposi sarcoma",
+        "rule_kind": "definition",
+        "source_semantics": "Kaposi sarcoma is classified here as a soft-tissue tumor occurring in distinct populations with varying presentations/courses.",
+        "logical_form": "IS_A(Kaposi_sarcoma,soft_tissue_tumor)",
+        "scope": "Taxonomic description, not sufficient identification from any soft-tissue tumor",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "atomic",
+        "notes": "Repeated verbatim introduction counted once."
+      },
+      {
+        "rule_id": "S2-13-R02",
+        "source_anchor": "Kaposi sarcoma occurs in patients with immunosuppression",
+        "target": "Kaposi sarcoma",
+        "rule_kind": "risk_association",
+        "source_semantics": "The best-known Kaposi form occurs in immunosuppressed patients, for example AIDS or post-transplant immunosuppression; other populations/forms exist.",
+        "logical_form": "ASSOCIATED(Kaposi_sarcoma,immunosuppression); EXAMPLES(OR(AIDS,post_transplant_immunosuppression)); NOT_UNIVERSAL(all_Kaposi_forms)",
+        "scope": "Best-known form only; cannot make immunosuppression/AIDs/transplant necessary for all Kaposi sarcoma",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S2-13-R03",
+        "source_anchor": "human herpesvirus/Kaposi sarcoma herpesvirus (HHV-8)",
+        "target": "Kaposi sarcoma",
+        "rule_kind": "etiologic_association",
+        "source_semantics": "HHV-8 is named as a causative agent of Kaposi sarcoma.",
+        "logical_form": "CAUSATIVE_ASSOCIATION(HHV8,Kaposi_sarcoma)",
+        "scope": "No diagnostic assay result, threshold or sufficient infection-to-tumor implication stated",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "atomic",
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "sample_id": "S2-14",
+    "window_id": "statpearls:9b3c03a2050c419a31e0",
+    "reviewer": "source_inventory_2 (AI source-first reviewer)",
+    "reading_note": "Read all 1120 characters. Explicit suspicion-trigger conjunction kept at whole-rule level for each named diagnostic target. “CRP, WBC, and or ESR” is genuinely ambiguous; it must not be silently resolved into all-of or any-of. The two suspicion rules are not confirmation criteria.",
+    "non_target_source": [
+      {
+        "anchor": "MRI will be utilized to verify disc and ligamentous injury",
+        "kind": "diagnostic_workflow",
+        "reason": "Imaging choices for injury; CT myelogram if unable to have MRI."
+      },
+      {
+        "anchor": "An MRI will evaluate for abscess, disc, and soft tissue injury",
+        "kind": "diagnostic_workflow",
+        "reason": "Targets of evaluation do not prove abscess or specify necessary disease findings."
+      },
+      {
+        "anchor": "Conservative management of acute osteoporotic compression fractures",
+        "kind": "treatment",
+        "reason": "Analgesia, rehabilitation, bed rest, bracing and underlying-disease treatment are not diagnostic predicates."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S2-14-R01",
+        "source_anchor": "Individuals who use IV drugs, who are immunocompromised, or have diabetes",
+        "target": "vertebral osteomyelitis",
+        "rule_kind": "conditional_suspicion_trigger",
+        "source_semantics": "Consider the named spinal infection in a patient with one of IV-drug use/immunocompromise/diabetes, atraumatic back or neck pain, and inflammatory-laboratory elevations. The source does not resolve whether CRP/WBC/ESR is all-of, any-of, or a mixed subset.",
+        "logical_form": "IF(AND(OR(IV_drug_use,immunocompromise,diabetes),OR(back_pain,neck_pain),NOT(traumatic_attribution),AMBIGUOUS_AND_OR(elevated_CRP,elevated_WBC,elevated_ESR)),EVALUATE_FOR(vertebral_osteomyelitis))",
+        "scope": "Suspicion/workup trigger for infectious etiology; diagnostic support only, no rule-in/out; lab connective ambiguity preserved",
+        "source_status": "ambiguous_source",
+        "flat_schema": "impossible",
+        "complexity": "nested_group",
+        "notes": "Included because the complete conditional statement directs specific differential suspicion; recommendation to obtain MRI alone is non-target. A source-label-only list of diagnoses would not suffice."
+      },
+      {
+        "rule_id": "S2-14-R02",
+        "source_anchor": "Individuals who use IV drugs, who are immunocompromised, or have diabetes",
+        "target": "discitis",
+        "rule_kind": "conditional_suspicion_trigger",
+        "source_semantics": "Consider the named spinal infection in a patient with one of IV-drug use/immunocompromise/diabetes, atraumatic back or neck pain, and inflammatory-laboratory elevations. The source does not resolve whether CRP/WBC/ESR is all-of, any-of, or a mixed subset.",
+        "logical_form": "IF(AND(OR(IV_drug_use,immunocompromise,diabetes),OR(back_pain,neck_pain),NOT(traumatic_attribution),AMBIGUOUS_AND_OR(elevated_CRP,elevated_WBC,elevated_ESR)),EVALUATE_FOR(discitis))",
+        "scope": "Suspicion/workup trigger for infectious etiology; diagnostic support only, no rule-in/out; lab connective ambiguity preserved",
+        "source_status": "ambiguous_source",
+        "flat_schema": "impossible",
+        "complexity": "nested_group",
+        "notes": "Included because the complete conditional statement directs specific differential suspicion; recommendation to obtain MRI alone is non-target. A source-label-only list of diagnoses would not suffice."
+      },
+      {
+        "rule_id": "S2-14-R03",
+        "source_anchor": "could lead to spinal instability due to bony erosion",
+        "target": "vertebral osteomyelitis",
+        "rule_kind": "structural_association",
+        "source_semantics": "The named spinal infectious etiology can cause bony erosion and resultant spinal instability; CT can show erosion.",
+        "logical_form": "MAY_MANIFEST(vertebral_osteomyelitis,[bony_erosion,secondary_spinal_instability])",
+        "scope": "Infectious spinal disease context; erosion is neither stated specific nor required",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": "Separate from the conditional suspicion group: it asserts a possible structural consequence detectable in evaluation, not an added member of the antecedent."
+      },
+      {
+        "rule_id": "S2-14-R04",
+        "source_anchor": "could lead to spinal instability due to bony erosion",
+        "target": "discitis",
+        "rule_kind": "structural_association",
+        "source_semantics": "The named spinal infectious etiology can cause bony erosion and resultant spinal instability; CT can show erosion.",
+        "logical_form": "MAY_MANIFEST(discitis,[bony_erosion,secondary_spinal_instability])",
+        "scope": "Infectious spinal disease context; erosion is neither stated specific nor required",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": "Separate from the conditional suspicion group: it asserts a possible structural consequence detectable in evaluation, not an added member of the antecedent."
+      }
+    ]
+  },
+  {
+    "sample_id": "S2-15",
+    "window_id": "textbooks:296874201877413c341e",
+    "reviewer": "source_inventory_2 (AI source-first reviewer)",
+    "reading_note": "Read all 2001 characters. Whole catatonia-specifier criterion inventoried once, including existing mental-disorder context and medical exclusions. Missing members 1–8 prevent complete reconstruction of the twelve-member domain. Tail leaves are not counted separately.",
+    "non_target_source": [
+      {
+        "anchor": "Coding note: Indicate the name of the associated mental disorder",
+        "kind": "coding_workflow",
+        "reason": "ICD codes, code-first instruction, and examples illustrate coding order, not further clinical criteria."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S2-15-R01",
+        "source_anchor": "involves at least three of the 12 diagnostic features listed in Criterion A",
+        "target": "catatonia associated with another mental disorder",
+        "rule_kind": "criterion_group_incomplete",
+        "source_semantics": "Specifier applies when catatonia criteria are met during a neurodevelopmental, psychotic, bipolar, depressive or other mental disorder, with marked psychomotor disturbance and at least three of twelve Criterion-A features; other medical causes must be ruled out before applying the specifier. Visible tail features are agitation uninfluenced by external stimuli, grimacing, echolalia and echopraxia; other members are absent.",
+        "logical_form": "APPLIES_IF(AND(catatonia_clinical_picture_with_marked_psychomotor_disturbance,AT_LEAST(3,DOMAIN_12[8_MISSING,agitation_not_influenced_by_external_stimuli,grimacing,echolalia,echopraxia]),DURING(OR(neurodevelopmental,psychotic,bipolar,depressive,other_mental_disorder)),RULE_OUT(other_medical_causes)))",
+        "scope": "Specifier for catatonia associated with another mental disorder, not all forms of catatonia; infectious/metabolic/neurologic causes examples not exhaustive",
+        "source_status": "ambiguous_source",
+        "flat_schema": "impossible",
+        "complexity": "nested_group",
+        "notes": "Do not count tail atoms as separate source rules. External knowledge must not restore the absent eight features; at-least-three cannot be evaluated on visible four as if complete domain."
+      },
+      {
+        "rule_id": "S2-15-R02",
+        "source_anchor": "the majority of catatonia cases involve individuals with depressive or bipolar disorders",
+        "target": "catatonia",
+        "rule_kind": "association",
+        "source_semantics": "Catatonia is typically diagnosed in inpatient settings; it occurs in up to 35% of people with schizophrenia, while most catatonia cases involve depressive or bipolar disorders.",
+        "logical_form": "ASSOCIATION(catatonia_cases,mostly_depressive_or_bipolar_disorders); P(catatonia|schizophrenia)<=0.35_as_stated; TYPICAL_CONTEXT(inpatient)",
+        "scope": "Different denominator for “up to 35%” versus “majority”; neither excludes other causes",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": "Do not reverse P(catatonia|schizophrenia) into P(schizophrenia|catatonia)."
+      },
+      {
+        "rule_id": "S2-15-R03",
+        "source_anchor": "Catatonia can also be a side effect of a medication",
+        "target": "medication-induced catatonia",
+        "rule_kind": "etiologic_association",
+        "source_semantics": "Medication can cause catatonia as a side effect; the cross-reference is truncated but the causal statement is complete.",
+        "logical_form": "MAY_CAUSE(medication,catatonia)",
+        "scope": "No particular medication, exposure duration or exclusion criterion given",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "atomic",
+        "notes": "This proposition remains adjudicable despite the truncated reference; cannot infer a specific causal drug."
+      }
+    ]
+  },
+  {
+    "sample_id": "S2-16",
+    "window_id": "textbooks:b7e8d343ea0765c9dad9",
+    "reviewer": "source_inventory_2 (AI source-first reviewer)",
+    "reading_note": "Read all 2843 characters. Distinct electrolyte and focal-neuropathy diagnoses explicitly named are covered; treatment-response necessities and mechanisms are non-target. Radial localization association sets retain anatomical scope; final UMN comparison is truncated and ambiguous.",
+    "non_target_source": [
+      {
+        "anchor": "usually resolve with calcium repletion",
+        "kind": "treatment_response",
+        "reason": "Treatment response described, not an explicit diagnostic challenge/dechallenge rule."
+      },
+      {
+        "anchor": "only administration of magnesium will lead to their resolution",
+        "kind": "therapeutic_necessity",
+        "reason": "Intractable seizures in known hypomagnesemia require magnesium treatment; “only” restricts effective treatment, not the diagnosis or manifestation."
+      },
+      {
+        "anchor": "Disorders of magnesium are difficult to correlate with serum levels",
+        "kind": "measurement_limitation",
+        "reason": "Total-body/extracellular magnesium limitation is context, no diagnostic comparator or threshold."
+      },
+      {
+        "anchor": "Mechanisms for perioperative mononeuropathy include",
+        "kind": "mechanism",
+        "reason": "Traction/compression/ischemia mechanisms; diagnostic examination/electrodiagnostic workflow and treatment are not clinical result criteria."
+      },
+      {
+        "anchor": "Tetany is due to spontaneous, repetitive action potentials",
+        "kind": "mechanism",
+        "reason": "Mechanistic account of tetany; its clinical association is already R01."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S2-16-R01",
+        "source_anchor": "Hypocalcemia in adults often follows surgical treatment of the thyroid or parathyroid",
+        "target": "hypocalcemia",
+        "rule_kind": "association",
+        "source_semantics": "Adult hypocalcemia often follows thyroid/parathyroid surgery and neurologically features seizures and altered mental status; tetany is a classic sign of symptomatic hypocalcemia.",
+        "logical_form": "ASSOCIATION_SET(hypocalcemia,[post_thyroid_or_parathyroid_surgery_context,seizures,altered_mental_status,classic_tetany])",
+        "scope": "Adults for postoperative association; symptomatic hypocalcemia for tetany; not a mandatory symptom conjunction",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S2-16-R02",
+        "source_anchor": "Hypomagnesemia presents neurologically with seizures, tremor, and myoclonus",
+        "target": "hypomagnesemia",
+        "rule_kind": "association",
+        "source_semantics": "Hypomagnesemia has neurologic manifestations of seizures, tremor and myoclonus.",
+        "logical_form": "ASSOCIATION_SET(hypomagnesemia,[seizures,tremor,myoclonus])",
+        "scope": "No threshold or required combination stated",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S2-16-R03",
+        "source_anchor": "Hypermagnesemia usually only occurs in the setting of renal failure or magnesium administration",
+        "target": "hypermagnesemia",
+        "rule_kind": "association",
+        "source_semantics": "High magnesium causes CNS depression; hypermagnesemia usually occurs with renal failure or magnesium administration and, when severe, may cause confusion and muscular paralysis.",
+        "logical_form": "ASSOCIATION_SET(hypermagnesemia,[CNS_depression,usual_context_OR(renal_failure,magnesium_administration),IF(severe,possible_confusion_and_muscular_paralysis)])",
+        "scope": "“usually only” is a qualified typical context, not universal necessary condition; severe-disease scope on confusion/paralysis",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S2-16-R04",
+        "source_anchor": "Polyneuropathy is a common cause of outpatient neurologic consultation",
+        "target": "polyneuropathy",
+        "rule_kind": "setting_association",
+        "source_semantics": "Polyneuropathy commonly prompts outpatient neurologic consultation.",
+        "logical_form": "COMMON_IN(polyneuropathy,outpatient_neurology_consultation)",
+        "scope": "Practice-setting frequency, not diagnostic confirmation from being outpatient",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "atomic",
+        "notes": ""
+      },
+      {
+        "rule_id": "S2-16-R05",
+        "source_anchor": "In the inpatient setting, however, mononeuropathies are more frequent",
+        "target": "mononeuropathy",
+        "rule_kind": "setting_association",
+        "source_semantics": "In inpatient practice mononeuropathies are more frequent than polyneuropathies, especially entrapments associated with procedures and medical conditions.",
+        "logical_form": "ASSOCIATED(mononeuropathy,inpatient_setting_and_procedural_or_medical_entrapment_context)",
+        "scope": "Relative practice frequency; mechanism details separately excluded",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S2-16-R06",
+        "source_anchor": "Median neuropathy at the wrist (carpal tunnel syndrome)",
+        "target": "carpal tunnel syndrome",
+        "rule_kind": "definition",
+        "source_semantics": "Median neuropathy localized to the wrist is identified parenthetically as carpal tunnel syndrome; it is the most frequent entrapment neuropathy but rarely leads to inpatient consultation.",
+        "logical_form": "IS_ALIAS(median_neuropathy_at_wrist,carpal_tunnel_syndrome); TYPICAL_FREQUENCY(most_common_entrapment,rare_inpatient_consultation)",
+        "scope": "Anatomic definition and explicit epidemiologic qualifier",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "scoped_rule",
+        "notes": "This is one definitional rule with frequency qualifier; no unprovided provocative maneuver or electrodiagnostic cutoff."
+      },
+      {
+        "rule_id": "S2-16-R07",
+        "source_anchor": "Radial nerve injury classically presents with weakness of extension of the wrist and fingers",
+        "target": "radial nerve injury",
+        "rule_kind": "association",
+        "source_semantics": "Radial nerve injury classically causes wrist/finger extension weakness (wrist drop), with or without more proximal extensor weakness depending on site, and sensory loss in radial distribution including the dorsal hand.",
+        "logical_form": "ASSOCIATION_SET(radial_nerve_injury,[wrist_and_finger_extension_weakness,site_dependent_possible_proximal_extensor_weakness,radial_distribution_sensory_loss_including_dorsal_hand])",
+        "scope": "Location-dependent pattern; proximal weakness is optional",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S2-16-R08",
+        "source_anchor": "Compression at the level of the axilla",
+        "target": "radial nerve compression at axilla",
+        "rule_kind": "localization_association",
+        "source_semantics": "Axillary radial compression, for example from crutches, produces triceps, brachioradialis and supinator weakness in addition to wrist drop.",
+        "logical_form": "ASSOCIATION_SET(axillary_radial_compression,[triceps_weakness,brachioradialis_weakness,supinator_weakness,wrist_drop]); EXAMPLE_CONTEXT(crutches)",
+        "scope": "Anatomic localization; crutches not required cause",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S2-16-R09",
+        "source_anchor": "Sparing of the triceps is the rule when the nerve is injured in this location",
+        "target": "radial nerve compression at spiral groove",
+        "rule_kind": "localization_association",
+        "source_semantics": "Spiral-groove radial compression can occur after humerus fracture or sleeping with the arm draped over a bench/chair; triceps is typically spared in this location.",
+        "logical_form": "ASSOCIATION_SET(spiral_groove_radial_compression,[typical_triceps_sparing,possible_humerus_fracture_or_arm_draped_during_sleep_context])",
+        "scope": "“this location” resolves to preceding spiral groove; no generalization of triceps sparing to axillary injury",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S2-16-R10",
+        "source_anchor": "these lesions may be mistaken for the pyramidal distribution of weakness",
+        "target": "radial nerve injury versus unspecified upper motor neuron lesion",
+        "rule_kind": "differential_mimicry_incomplete",
+        "source_semantics": "Preferential extensor weakness in radial injury may resemble a pyramidal weakness distribution accompanying an upper-motor-neuron condition; sentence truncates before completing comparator.",
+        "logical_form": "MAY_MIMIC(radial_extensor_weakness,pyramidal_distribution_in_TRUNCATED_UMN_TARGET)",
+        "scope": "Last sentence truncated; no specific central disease identified",
+        "source_status": "ambiguous_source",
+        "flat_schema": "ambiguous",
+        "complexity": "scoped_rule",
+        "notes": ""
+      }
+    ]
+  }
+]

@@ -1,0 +1,1331 @@
+[
+  {
+    "sample_id": "S3-01",
+    "window_id": "manifest_cpg:2beb31f923ac4c828642",
+    "reviewer": "source_inventory_3_AI_source_blinded",
+    "reading_note": "Read all three recommendations. The compression-neuropathy conjunction is a management eligibility condition, not a definition or an exclusion rule. The FND sentence supplies a weak descriptive association despite appearing in advice.",
+    "non_target_source": [
+      {
+        "anchor": "For adults with clear features of compression neuropathy",
+        "kind": "management_eligibility",
+        "reason": "Compression neuropathy AND no radiculopathy selects splint/review management, not a rule excluding compression neuropathy when radiculopathy is present."
+      },
+      {
+        "anchor": "review the symptoms after 6",
+        "kind": "followup",
+        "reason": "Six weeks and non-improvement determine referral; they are not diagnostic thresholds."
+      },
+      {
+        "anchor": "avoid any activity that might lead to further pressure",
+        "kind": "prevention",
+        "reason": "Advice about further compression, without a result-to-diagnosis claim."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S3-01-R01",
+        "source_anchor": "their limb or facial weakness might fluctuate and evolve over time and might increase during times of stress",
+        "target": "Functional neurological disorder",
+        "rule_kind": "descriptive_features",
+        "source_semantics": "In adults with limb or facial weakness already ascribed to FND, weakness may fluctuate/evolve and may increase during stress. Neither stress nor fluctuation is necessary or sufficient for FND.",
+        "logical_form": "FND_related_weakness IN adults -> MAY(fluctuate, evolve_over_time, increase_during_stress)",
+        "scope": "Adults; weakness already attributed to FND; modal might",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "sample_id": "S3-02",
+    "window_id": "manifest_cpg:67f837e92730aef89d20",
+    "reviewer": "source_inventory_3_AI_source_blinded",
+    "reading_note": "Read full neuroimaging/EEG window. Separate ordering from the stated interpretive role and explicit prohibition of exclusion. No particular EEG pattern is supplied.",
+    "non_target_source": [
+      {
+        "anchor": "Offer brain neuroimaging tests if an underlying structural cause is suspected",
+        "kind": "workup",
+        "reason": "Suspicion triggers imaging; no imaging result-to-diagnosis rule is given."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S3-02-R01",
+        "source_anchor": "to support diagnosis and provide information about seizure type or epilepsy syndrome",
+        "target": "Epilepsy / epileptic seizure",
+        "rule_kind": "conditional_test_support",
+        "source_semantics": "When history and examination suggest an epileptic seizure and epilepsy is suspected, routine awake EEG can provide supportive diagnostic and classification information; the source does not specify an EEG result or declare EEG sufficient.",
+        "logical_form": "IF(history_and_exam_suggest_seizure AND epilepsy_suspected) THEN MAY_USE(routine_awake_EEG, supportive_information)",
+        "scope": "Routine awake EEG in suspected epilepsy; no result threshold supplied",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "scoped_rule",
+        "notes": "This is an interpretive capability claim embedded in a workup instruction, not a positive-EEG criterion."
+      },
+      {
+        "rule_id": "S3-02-R02",
+        "source_anchor": "Do not use EEG to exclude a diagnosis of epilepsy.",
+        "target": "Epilepsy",
+        "rule_kind": "test_nonexclusion",
+        "source_semantics": "EEG must not be used to exclude epilepsy; no EEG finding, including an unremarkable result inferred as the common relevant case, is licensed here as a standalone exclusion.",
+        "logical_form": "NOT_VALID(EEG_result -> exclude(epilepsy))",
+        "scope": "Diagnostic exclusion; source does not prescribe a particular EEG finding",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "atomic",
+        "notes": "Do not rewrite as epilepsy excludes EEG or abnormal EEG excludes epilepsy."
+      }
+    ]
+  },
+  {
+    "sample_id": "S3-03",
+    "window_id": "merck:fb7823056880f5056198",
+    "reviewer": "source_inventory_3_AI_source_blinded",
+    "reading_note": "Read the abscess-management paragraphs and complete bacteremia material. Risk/organism-site associations are weak diagnostic context. Treatment and downstream complications without differential interpretation are retained as non-target provenance.",
+    "non_target_source": [
+      {
+        "anchor": "Superficial abscesses may resolve with heat and oral antibiotics.",
+        "kind": "treatment",
+        "reason": "Abscess drainage/antibiotic recommendations, including deep abscess OR cellulitis antibiotic eligibility, are not diagnostic rules."
+      },
+      {
+        "anchor": "Spontaneous rupture and drainage may occur",
+        "kind": "natural_history",
+        "reason": "Abscess resolution, sinuses, loculation and calcification are natural-history descriptions without a diagnostic target inference here."
+      },
+      {
+        "anchor": "Transient or sustained bacteremia can cause metastatic infection",
+        "kind": "complications",
+        "reason": "Generic metastatic/systemic consequences are not converted into sufficient evidence for bacteremia."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S3-03-R01",
+        "source_anchor": "Bacteremia is the presence of bacteria in the bloodstream.",
+        "target": "Bacteremia",
+        "rule_kind": "definition",
+        "source_semantics": "Bacteremia denotes bacteria present in bloodstream, without adding symptoms or requiring sepsis.",
+        "logical_form": "bacteremia := bacteria_present_in_bloodstream",
+        "scope": "",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "atomic",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-03-R02",
+        "source_anchor": "It can occur spontaneously, during",
+        "target": "Bacteremia",
+        "rule_kind": "etiologic_risk_associations",
+        "source_semantics": "Bacteremia can be spontaneous or associated with tissue infections, indwelling GU/IV catheters, and dental/GI/GU/wound-care/other procedures. These are possible contexts, not necessary conditions.",
+        "logical_form": "MAY_CONTEXT(bacteremia; spontaneous, tissue_infection, GU_or_IV_catheter, dental_or_GI_or_GU_or_wound_or_other_procedure)",
+        "scope": "Possible contexts; list open-ended",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-03-R03",
+        "source_anchor": "Transient bacteremia is",
+        "target": "Transient bacteremia",
+        "rule_kind": "descriptive_features",
+        "source_semantics": "Transient bacteremia is often asymptomatic but can cause fever. Fever is optional and absence of symptoms does not exclude it.",
+        "logical_form": "transient_bacteremia -> OFTEN(asymptomatic) AND MAY(fever)",
+        "scope": "Transient bacteremia",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-03-R04",
+        "source_anchor": "Development of other symptoms usually suggests",
+        "target": "Sepsis / septic shock",
+        "rule_kind": "support",
+        "source_semantics": "In the bacteremia discussion, symptoms beyond the asymptomatic/fever picture usually suggest more serious infection, of which sepsis and septic shock are examples. The extra symptoms are not specified.",
+        "logical_form": "bacteremia_context AND additional_symptoms -> SUPPORTS(serious_infection; examples=sepsis,septic_shock)",
+        "scope": "Symptoms unspecified; examples not an exhaustive or sufficient diagnostic list",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "scoped_rule",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-03-R05",
+        "source_anchor": "Gram-negative bacteremia secondary to infection usually originates",
+        "target": "Gram-negative bacteremia",
+        "rule_kind": "conditional_source_distribution",
+        "source_semantics": "When gram-negative bacteremia is secondary to infection, its usual origins are GU/GI infection or skin infection in patients with decubitus ulcers.",
+        "logical_form": "infectious_gram_negative_bacteremia -> USUAL_SOURCE(GU OR GI OR (skin AND decubitus_ulcers))",
+        "scope": "Conditional on infection-related bacteremia; decubitus-ulcer qualifier belongs to skin branch",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "nested_group",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-03-R06",
+        "source_anchor": "Chronically ill and immunocompromised patients have an increased risk of",
+        "target": "Gram-negative bacteremia",
+        "rule_kind": "risk_association",
+        "source_semantics": "Chronic illness and immunocompromise identify patients with increased gram-negative bacteremia risk; the wording does not establish that both must coexist.",
+        "logical_form": "chronic_illness OR immunocompromise -> increased_risk(gram_negative_bacteremia)",
+        "scope": "Risk rather than sufficient diagnosis",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": "English list of patient categories, not obligatory clinical AND."
+      },
+      {
+        "rule_id": "S3-03-R07",
+        "source_anchor": "They may also develop bacteremia with gram-positive cocci, anaerobes, and",
+        "target": "Bacteremia with gram-positive cocci/anaerobes; fungemia",
+        "rule_kind": "possible_pathogens",
+        "source_semantics": "The same chronically ill/immunocompromised patients may have bloodstream infection with gram-positive cocci, anaerobes or fungi; fungi are included by the source in this sentence without correcting its terminology.",
+        "logical_form": "chronic_illness OR immunocompromise -> MAY_BLOODSTREAM_PATHOGEN(gram_positive_cocci, anaerobes, fungi)",
+        "scope": "Preserve source terminology; non-exclusive possibilities",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-03-R08",
+        "source_anchor": "Staphylococcal bacteremia is common among injection drug users and patients with IV catheters.",
+        "target": "Staphylococcal bacteremia",
+        "rule_kind": "risk_association",
+        "source_semantics": "Staphylococcal bacteremia is common among injection drug users and among patients with IV catheters; neither exposure is required.",
+        "logical_form": "injection_drug_use OR IV_catheter -> ASSOCIATED_WITH(staphylococcal_bacteremia)",
+        "scope": "Population association",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-03-R09",
+        "source_anchor": "bacteremia may develop in patients with infections of the abdomen and the pelvis,",
+        "target": "Bacteroides bacteremia",
+        "rule_kind": "risk_association",
+        "source_semantics": "Bacteroides bacteremia may arise with abdominal/pelvic infection, particularly female genital-tract infection. This is an optional source association.",
+        "logical_form": "abdomen_or_pelvic_infection -> MAY(Bacteroides_bacteremia); emphasis=female_genital_tract",
+        "scope": "Bacteroides heading spans a blank line",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-03-R10",
+        "source_anchor": "If an infection in the abdomen causes bacteremia, the organism is",
+        "target": "Gram-negative bacillary bacteremia",
+        "rule_kind": "conditional_pathogen_support",
+        "source_semantics": "Given that an abdominal infection has caused bacteremia, the organism is most likely a gram-negative bacillus. Abdominal infection alone is not sufficient to diagnose bacteremia.",
+        "logical_form": "bacteremia AND caused_by(abdominal_infection) -> MOST_LIKELY_PATHOGEN(gram_negative_bacillus)",
+        "scope": "Requires bacteremia and causal source, not mere abdominal symptoms",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "scoped_rule",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-03-R11",
+        "source_anchor": "If an infection above the diaphragm causes bacteremia, the",
+        "target": "Gram-positive bacteremia",
+        "rule_kind": "conditional_pathogen_support",
+        "source_semantics": "Given bacteremia caused by infection above the diaphragm, gram-positive organisms are most likely.",
+        "logical_form": "bacteremia AND caused_by(infection_above_diaphragm) -> MOST_LIKELY_PATHOGEN(gram_positive)",
+        "scope": "Conditional source localization",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "scoped_rule",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-03-R12",
+        "source_anchor": "abscess formation is especially common with staphylococcal bacteremia.",
+        "target": "Staphylococcal bacteremia",
+        "rule_kind": "descriptive_complication_pattern",
+        "source_semantics": "Multiple abscess formation is especially common with staphylococcal bacteremia, a pathogen-specific pattern, not a sufficient diagnostic criterion.",
+        "logical_form": "staphylococcal_bacteremia -> ESPECIALLY_COMMON(multiple_abscesses)",
+        "scope": "Association useful as differential context",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "atomic",
+        "notes": "The full source phrase starts Multiple across a paragraph break."
+      },
+      {
+        "rule_id": "S3-03-R13",
+        "source_anchor": "most commonly with enterococcal, streptococcal, or staphylococcal bacteremia and less commonly",
+        "target": "Infective endocarditis",
+        "rule_kind": "conditional_pathogen_risk",
+        "source_semantics": "Bacteremia may cause endocarditis, most commonly enterococcal/streptococcal/staphylococcal and less commonly gram-negative bacteremia or fungemia; this comparative association is not an exclusion.",
+        "logical_form": "MAY(endocarditis | bloodstream_infection); higher_association(enterococcal,streptococcal,staphylococcal) vs lower_association(gram_negative,fungal)",
+        "scope": "Relative pathogen association without numerical likelihoods",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-03-R14",
+        "source_anchor": "Patients with structural heart disease",
+        "target": "Infective endocarditis",
+        "rule_kind": "risk_association",
+        "source_semantics": "Structural heart disease, prosthetic valves, or other intravascular prostheses predispose to endocarditis. Staphylococcal endocarditis is particularly associated with injection drug use and may involve the tricuspid valve.",
+        "logical_form": "RISK_CONTEXT(endocarditis; structural_heart_disease,prosthetic_valve,other_intravascular_prosthesis); staphylococcal_endocarditis -> PARTICULAR_CONTEXT(injection_drug_use) AND MAY(tricuspid_involvement)",
+        "scope": "General predisposition plus pathogen-specific optional pattern",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "association_set",
+        "notes": "Kept as one contiguous endocarditis risk/feature set; no sufficient condition."
+      }
+    ]
+  },
+  {
+    "sample_id": "S3-04",
+    "window_id": "pmc_oa:24af0c5d8a7a2adee908",
+    "reviewer": "source_inventory_3_AI_source_blinded",
+    "reading_note": "Read full author-response extract, retaining its genre as reviewer response rather than guideline. Definition, age association and test limitations are target claims; none is a threshold criterion.",
+    "non_target_source": [
+      {
+        "anchor": "The global prevalence of dementia has been estimated to be around 7%",
+        "kind": "population_burden",
+        "reason": "Global aggregate prevalence is not a patient-level diagnostic claim; its separate age gradient is inventoried."
+      },
+      {
+        "anchor": "require more time and expertise to administer",
+        "kind": "administration",
+        "reason": "Comparative administration burden and screening motivation do not define diagnostic rules."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S3-04-R01",
+        "source_anchor": "Dementia is a heterogeneous neurocognitive disorder that compromises the activities of daily living",
+        "target": "Dementia",
+        "rule_kind": "definition",
+        "source_semantics": "Dementia is described as a heterogeneous neurocognitive disorder compromising daily living. This brief definition does not supply a complete diagnostic standard.",
+        "logical_form": "dementia -> neurocognitive_disorder AND compromises(activities_of_daily_living)",
+        "scope": "Definition in article author response; not a full operational criterion",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-04-R02",
+        "source_anchor": "with a higher prevalence with advancing age",
+        "target": "Dementia",
+        "rule_kind": "age_association",
+        "source_semantics": "Dementia prevalence increases with age; no age cutoff or age-based exclusion is given.",
+        "logical_form": "advancing_age -> higher_prevalence(dementia)",
+        "scope": "Population association only",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "atomic",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-04-R03",
+        "source_anchor": "the ceiling effect may limit their sensitivity to subtle impairment in highly educated individuals",
+        "target": "Subtle cognitive impairment",
+        "rule_kind": "conditional_test_limitation",
+        "source_semantics": "MMSE/MoCA ceiling effects may limit sensitivity to subtle impairment in highly educated people. A good score is not licensed as exclusion in that scope.",
+        "logical_form": "high_education AND subtle_impairment -> MAY(reduced_sensitivity(MMSE_or_MoCA,ceiling_effect))",
+        "scope": "MMSE/MoCA; highly educated; subtle impairment",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "scoped_rule",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-04-R04",
+        "source_anchor": "performance measurement may misclassify cases as false-positive or false-negative absent collateral information",
+        "target": "Cognitive impairment / dementia screening",
+        "rule_kind": "conditional_test_limitation",
+        "source_semantics": "Without collateral information, objective performance testing can yield false positives and false negatives; the source does not define a specific score or guaranteed direction of error.",
+        "logical_form": "absent(collateral_information) -> MAY(false_positive OR false_negative, performance_based_test)",
+        "scope": "Performance-based assessment in dementia-screening discussion",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "scoped_rule",
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "sample_id": "S3-05",
+    "window_id": "pmc_oa:bcb8a7b010258f266da0",
+    "reviewer": "source_inventory_3_AI_source_blinded",
+    "reading_note": "Read all CT and PET material. Modality sensitivity/resolution and biopsy guidance are not operational result rules. Separate early, late and complication imaging patterns, preserving temporal qualifiers and the tuberculosis-specific calcification inference.",
+    "non_target_source": [
+      {
+        "anchor": "CT has a far higher sensitivity",
+        "kind": "modality_comparison",
+        "reason": "Sensitivity/earlier visibility comparisons lack a patient-level result criterion."
+      },
+      {
+        "anchor": "CTs are also useful for guided biopsies",
+        "kind": "workup",
+        "reason": "Biopsy guidance and cause determination are procedures, not rule conditions."
+      },
+      {
+        "anchor": "PET imaging is inherently of higher resolution",
+        "kind": "modality_comparison",
+        "reason": "PET resolution and uptake differentiation have no supplied uptake threshold or interpretable result rule."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S3-05-R01",
+        "source_anchor": "The reduction in density of the intervertebral disc can be visualized in very early stages",
+        "target": "Infectious spondylodiscitis",
+        "rule_kind": "early_imaging_features",
+        "source_semantics": "In very early infection, CT can show reduced intervertebral-disc density and thinning of paravertebral fat; these are possible findings, not requirements.",
+        "logical_form": "early(infectious_spondylodiscitis) -> MAY_CT(reduced_disc_density,thinned_paravertebral_fat)",
+        "scope": "CT; very early stage",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-05-R02",
+        "source_anchor": "Bone destruction and sequestra formation can be seen in later stages.",
+        "target": "Infectious spondylodiscitis",
+        "rule_kind": "late_imaging_features",
+        "source_semantics": "Later stages may show bone destruction and sequestra; absence in early disease cannot exclude infection.",
+        "logical_form": "late(infectious_spondylodiscitis) -> MAY_CT(bone_destruction,sequestra)",
+        "scope": "CT; later stage",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-05-R03",
+        "source_anchor": "the extension of the inflammation can be seen clearly, along with potential abscesses and epidural phlegmons",
+        "target": "Infectious spondylodiscitis",
+        "rule_kind": "imaging_extent_features",
+        "source_semantics": "CT may delineate inflammatory extension, abscesses and epidural phlegmons, with possible spinal-cord compression. These are optional extent/complication features.",
+        "logical_form": "infectious_spondylodiscitis -> MAY_CT(inflammation_extension,abscess,epidural_phlegmon); MAY_CAUSE(epidural_process,cord_compression)",
+        "scope": "Optional complications; not necessary disease features",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-05-R04",
+        "source_anchor": "the latter points towards tuberculous spondylodiscitis",
+        "target": "Tuberculous spondylodiscitis",
+        "rule_kind": "support",
+        "source_semantics": "Calcifications (the latter of sequestra and subsequent calcifications) point toward tuberculous spondylodiscitis, without standalone certainty.",
+        "logical_form": "calcifications_in_spondylodiscitis_context -> SUPPORTS(tuberculous_spondylodiscitis)",
+        "scope": "Resolve latter to calcifications, not sequestra or CT modality",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "scoped_rule",
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "sample_id": "S3-06",
+    "window_id": "statpearls:1b642e1e10f018a06cee",
+    "reviewer": "source_inventory_3_AI_source_blinded",
+    "reading_note": "Read complete histopathology extract including incidental nerve-sheath/vascular targets. The low-grade characterization is retained as written, not silently corrected from outside knowledge. Marker lists are associations/panels, never an invented all-positive requirement.",
+    "non_target_source": [
+      {
+        "anchor": "monitoring treatment efficacy and tumor recurrence",
+        "kind": "monitoring",
+        "reason": "Marker monitoring is not initial diagnostic evidence."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S3-06-R01",
+        "source_anchor": "Myxofibrosarcoma encompasses a spectrum of malignant fibroblastic tumors",
+        "target": "Myxofibrosarcoma",
+        "rule_kind": "histologic_definition_features",
+        "source_semantics": "The source describes malignant fibroblastic tumors with myxoid stroma, variable pleomorphism and curvilinear vasculature, then describes low-grade nature, fibrous/myxoid regions, whorling, low cellularity and bland fibroblasts. These descriptive features are not declared a sufficient panel.",
+        "logical_form": "DESCRIBED_FEATURE_SET(myxofibrosarcoma; malignant_fibroblastic,myxoid_stroma,variable_pleomorphism,curvilinear_vessels,low_grade,fibrous_and_myxoid,whorled,low_cellularity,bland_fibroblasts)",
+        "scope": "Preserve source low-grade wording without external clinical endorsement",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-06-R02",
+        "source_anchor": "histopathology is insufficient to distinguish fibrosarcomas from other spindle-cell sarcomas",
+        "target": "Fibrosarcoma versus other spindle-cell sarcomas",
+        "rule_kind": "test_insufficiency",
+        "source_semantics": "Histopathology alone is insufficient for this distinction; appropriate IHC markers can assist, without a named sufficient IHC panel.",
+        "logical_form": "NOT_SUFFICIENT(histopathology_alone, distinguish(fibrosarcoma,other_spindle_sarcoma)); MAY_ASSIST(appropriate_IHC)",
+        "scope": "Differential discrimination",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "scoped_rule",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-06-R03",
+        "source_anchor": "Vimentin is a marker indicative of a mesenchymal cell origin",
+        "target": "Mesenchymal cell origin",
+        "rule_kind": "marker_support",
+        "source_semantics": "Vimentin positivity indicates mesenchymal origin and is not specific for fibrosarcoma.",
+        "logical_form": "vimentin_positive -> SUPPORTS(mesenchymal_origin)",
+        "scope": "Cell-origin category",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "atomic",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-06-R04",
+        "source_anchor": "is often the only positively stained marker in the diagnosis of fibrosarcomas",
+        "target": "Fibrosarcoma",
+        "rule_kind": "marker_pattern",
+        "source_semantics": "Vimentin is often the only positive stain in fibrosarcoma, rather than always positive/always uniquely positive.",
+        "logical_form": "fibrosarcoma -> OFTEN(only_positive_stain=vimentin)",
+        "scope": "Frequency qualifier often",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "scoped_rule",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-06-R05",
+        "source_anchor": "alpha-smooth muscle actin, muscle-specific actin, and desmin",
+        "target": "Myofibroblastic differentiation",
+        "rule_kind": "marker_associations",
+        "source_semantics": "Alpha-SMA, muscle-specific actin and desmin are common myogenic markers often representing myofibroblastic differentiation; source does not require all three.",
+        "logical_form": "MARKER_ASSOCIATION(myofibroblastic_differentiation; alpha_SMA,muscle_specific_actin,desmin)",
+        "scope": "Often; no panel positivity cardinality specified",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-06-R06",
+        "source_anchor": "a positive S-100 protein marker would indicate a nerve sheath tumor",
+        "target": "Nerve sheath tumor",
+        "rule_kind": "marker_support",
+        "source_semantics": "A positive S-100 marker indicates the nerve-sheath alternative in this differential; the prose does not establish a universally sufficient standalone diagnosis.",
+        "logical_form": "S100_positive -> SUPPORTS(nerve_sheath_tumor)",
+        "scope": "Fibrosarcoma differential context",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "atomic",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-06-R07",
+        "source_anchor": "CD31, CD34, and Factor VIII non-von Willebrand factor would suggest a vascular tumor",
+        "target": "Vascular tumor",
+        "rule_kind": "marker_panel_support",
+        "source_semantics": "The named vascular markers suggest vascular tumor; no all/any positivity operator is specified for the panel.",
+        "logical_form": "POSITIVE_MARKER_PANEL_UNSPECIFIED(CD31,CD34,Factor_VIII_non_vWF) -> SUPPORTS(vascular_tumor)",
+        "scope": "Retain source factor-VIII wording; panel connective not operationally specified",
+        "source_status": "adjudicable",
+        "flat_schema": "ambiguous",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-06-R08",
+        "source_anchor": "rather than a true fibrosarcoma",
+        "target": "Fibrosarcoma",
+        "rule_kind": "relative_counterevidence",
+        "source_semantics": "Vascular-marker evidence favors a vascular tumor over true fibrosarcoma. Relative differential preference is not a universal hard exclusion.",
+        "logical_form": "vascular_marker_evidence -> RELATIVE_AGAINST(fibrosarcoma)",
+        "scope": "Same panel as preceding rule; independent opposing target/effect",
+        "source_status": "adjudicable",
+        "flat_schema": "ambiguous",
+        "complexity": "association_set",
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "sample_id": "S3-07",
+    "window_id": "statpearls:1d05f2e91e6a87e2ed2f",
+    "reviewer": "source_inventory_3_AI_source_blinded",
+    "reading_note": "Read all cells of the five-column classification table. This is a causal/category taxonomy, not criteria that diagnose PH from a listed comorbidity. Five category-level definition rules preserve ancestry and causal qualifiers; one extra vasoreactivity subdivision is not turned into IPAH proof.",
+    "non_target_source": [
+      {
+        "anchor": "The World Health Organization classifies pulmonary hypertension into 5 clinical groups",
+        "kind": "classification_metadata",
+        "reason": "The number of taxonomy groups is not a patient criterion cardinality."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S3-07-R01",
+        "source_anchor": "conditions characterized by high pulmonary pressures",
+        "target": "Pulmonary hypertension",
+        "rule_kind": "definition",
+        "source_semantics": "PH is characterized by high pulmonary pressures; the extract gives no numeric measurement cutoff.",
+        "logical_form": "pulmonary_hypertension -> high_pulmonary_pressure",
+        "scope": "No hemodynamic numeric threshold supplied",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "atomic",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-07-R02",
+        "source_anchor": "Group 1: Pulmonary Arterial Hypertension (PAH)",
+        "target": "Group 1 pulmonary arterial hypertension",
+        "rule_kind": "etiologic_subtype_taxonomy",
+        "source_semantics": "PAH category includes idiopathic, heritable, drug/toxin-induced, associated disease forms (CTD/HIV/portal hypertension/CHD/schistosomiasis), venous/capillary-involvement forms (PVOD/PCH), and persistent PH of the newborn. A listed condition alone is not sufficient for PAH.",
+        "logical_form": "SUBTYPES(PAH; idiopathic,heritable,drug_or_toxin_induced,associated_with(CTD|HIV|portal_hypertension|CHD|schistosomiasis),venous_or_capillary_involvement(PVOD|PCH),persistent_PH_newborn)",
+        "scope": "Classification within already established pulmonary-hypertension context; no comorbidity=>PAH implication",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "nested_group",
+        "notes": "Non-operational taxonomy counted as category definition; variant_of edges can preserve taxonomic ancestry without requiring a Boolean criterion group. Separate sensitivity analysis may exclude taxonomy rules."
+      },
+      {
+        "rule_id": "S3-07-R03",
+        "source_anchor": "1.1.1 Non-responders to vasoreactivity testing 1.1.2 Acute responders to vasoreactivity testing",
+        "target": "Idiopathic PAH response subtypes",
+        "rule_kind": "subtype_definition",
+        "source_semantics": "The IPAH entry has vasoreactivity nonresponder and acute-responder subtypes. Neither response pattern establishes IPAH by itself.",
+        "logical_form": "IPAH AND vasoreactivity_nonresponse -> subtype(nonresponder); IPAH AND acute_vasoreactivity_response -> subtype(acute_responder)",
+        "scope": "Conditional on IPAH; response thresholds absent",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "scoped_rule",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-07-R04",
+        "source_anchor": "Group 2: Pulmonary Hypertension due to left heart disease (PH-LHD)",
+        "target": "Group 2 PH due to left heart disease",
+        "rule_kind": "causal_subtype_definition",
+        "source_semantics": "This group is PH caused by left-heart disease: heart failure with preserved/reduced EF, valvular disease, or congenital/acquired cardiovascular conditions leading to postcapillary PH. The causal link and PH must be retained.",
+        "logical_form": "group2_PH := PH AND due_to(left_heart_disease[HF(preserved_EF|reduced_EF)|valvular|congenital_or_acquired_cardiovascular_causing_postcapillary_PH])",
+        "scope": "Classification; causal attribution required; alternatives not a necessary all-items panel",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "nested_group",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-07-R05",
+        "source_anchor": "Group 3:Pulmonary Hypertension due to Lung Diseases, Hypoxia, or Both",
+        "target": "Group 3 PH due to lung disease/hypoxia",
+        "rule_kind": "causal_subtype_definition",
+        "source_semantics": "Group 3 is PH due to lung disease, hypoxia, or both, with obstructive/restrictive/mixed lung disease, hypoventilation, hypoxia without lung disease, and developmental lung disorder subtypes.",
+        "logical_form": "group3_PH := PH AND due_to(lung_disease OR hypoxia OR both); lung_disease_subtypes=[obstructive,restrictive,mixed,developmental]; other_subtypes=[hypoventilation,hypoxia_without_lung_disease]",
+        "scope": "Causal classification, not lung-disease/hypoxia presence as sufficient PH criterion",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "nested_group",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-07-R06",
+        "source_anchor": "Group 4:Pulmonary Hypertension Due to Pulmonary Artery Obstructions",
+        "target": "Group 4 PH due to pulmonary artery obstruction",
+        "rule_kind": "causal_subtype_definition",
+        "source_semantics": "Group 4 is PH due to pulmonary artery obstruction, including chronic thromboembolic PH and other obstructions; obstruction without PH is not enough.",
+        "logical_form": "group4_PH := PH AND due_to(pulmonary_artery_obstruction[CTEPH|other])",
+        "scope": "Causal classification",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "scoped_rule",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-07-R07",
+        "source_anchor": "Group 5:Pulmonary Hypertension with Unclear or Multifactorial Mechanisms",
+        "target": "Group 5 PH with unclear/multifactorial mechanisms",
+        "rule_kind": "etiologic_subtype_taxonomy",
+        "source_semantics": "Group 5 PH has unclear or multifactorial mechanisms associated with hematological/systemic/metabolic disorders, chronic renal failure with or without dialysis, pulmonary tumor thrombotic microangiopathy, or fibrosing mediastinitis. Any one listed disease does not establish PH.",
+        "logical_form": "group5_PH := PH AND mechanism(unclear OR multifactorial); ASSOCIATED_SUBTYPES(hematologic,systemic,metabolic,chronic_renal_failure(with|without_dialysis),tumor_thrombotic_microangiopathy,fibrosing_mediastinitis)",
+        "scope": "Classification in established PH; association strength not supplied",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "nested_group",
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "sample_id": "S3-08",
+    "window_id": "statpearls:4340705a1b98115b482a",
+    "reviewer": "source_inventory_3_AI_source_blinded",
+    "reading_note": "Read all AFX material and incidental comparator diagnoses. Separate optional morphology/staining patterns from diagnosis of exclusion. Preserve exploratory nature of the Ras observation, nonspecific positive stains, sparse S100 and cytokeratin-loss exception.",
+    "non_target_source": [
+      {
+        "anchor": "The pathophysiology of atypical fibroxanthomas is poorly characterized.",
+        "kind": "mechanism",
+        "reason": "Mechanistic uncertainty and UV-repair/p53 causal explanations are not independent diagnostic criteria beyond explicitly recorded observed features."
+      },
+      {
+        "anchor": "UV-induced pyrimidine dimers in atypical fibroxanthoma lesions and mutations in the tumor suppressor gene p53",
+        "kind": "mechanistic_cell_observation",
+        "reason": "UV dimers and p53 mutations appear only as support for the UV pathogenesis explanation here. Unlike the following explicitly diagnostic Ras comparison, this sentence does not supply a diagnostic phenotype/interpretation."
+      },
+      {
+        "anchor": "various cytokeratin stains should be used",
+        "kind": "workup",
+        "reason": "The recommendation to use multiple stains is management of a test limitation, not a threshold rule."
+      },
+      {
+        "anchor": "granular cell atypical fibroxanthoma, sclerotic atypical fibroxanthoma",
+        "kind": "taxonomic_names_only",
+        "reason": "Remaining variant names provide no defining observations or diagnostic effects; not one rule per name."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S3-08-R01",
+        "source_anchor": "atypical fibroxanthoma predilection for sun-exposed areas of the body",
+        "target": "Atypical fibroxanthoma",
+        "rule_kind": "site_risk_association",
+        "source_semantics": "AFX favors sun-exposed sites and is associated with xeroderma pigmentosum and Li-Fraumeni syndrome; these are not necessary conditions.",
+        "logical_form": "AFX -> PREDILECTION(sun_exposed_site); ASSOCIATED_WITH(AFX,XP,Li_Fraumeni)",
+        "scope": "Rare genetic correlations; weak etiologic/clinical context",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-08-R02",
+        "source_anchor": "mutations of H-Ras and K-Ras genes were present in malignant fibrous histiocytoma",
+        "target": "Malignant fibrous histiocytoma",
+        "rule_kind": "research_molecular_features",
+        "source_semantics": "One study found H-Ras/K-Ras mutations in MFH; this is a study-specific positive pattern, not a universally required panel.",
+        "logical_form": "IN_ONE_STUDY(MFH -> observed(H_Ras_mutations,K_Ras_mutations))",
+        "scope": "Single-study finding; mutation co-occurrence per individual unspecified",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-08-R03",
+        "source_anchor": "but not in atypical fibroxanthoma lesions",
+        "target": "Atypical fibroxanthoma",
+        "rule_kind": "research_negative_molecular_features",
+        "source_semantics": "The same study did not find those H-Ras/K-Ras mutations in AFX; source says this may assist future diagnosis, not that a positive Ras mutation categorically excludes AFX.",
+        "logical_form": "IN_ONE_STUDY(AFX -> not_observed(H_Ras_mutations,K_Ras_mutations))",
+        "scope": "Exploratory study-specific absence, not universal hard exclusion",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-08-R04",
+        "source_anchor": "Hematoxylin and eosin stains of atypical fibroxanthoma lesions show a dermally-based tumor",
+        "target": "Atypical fibroxanthoma",
+        "rule_kind": "histologic_features",
+        "source_semantics": "AFX has a dermal pleomorphic/spindled tumor with atypical mitoses; may occasionally extend into subcutis; giant cells/solar elastosis are often seen, and peripheral mixed inflammation may occur.",
+        "logical_form": "FEATURE_SET(AFX; dermal_based,pleomorphism,atypical_mitoses,spindled); OCCASIONAL(subcutis_extension); OFTEN(giant_cells,solar_elastosis); MAY(peripheral_mixed_infiltrate)",
+        "scope": "Different frequency modifiers must remain attached to features",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-08-R05",
+        "source_anchor": "spindle cell squamous cell carcinoma variants (on the differential diagnosis) connect with the epidermis and show signs of keratinization",
+        "target": "Spindle cell squamous cell carcinoma",
+        "rule_kind": "histologic_features",
+        "source_semantics": "Spindle SCC variants connect with epidermis and exhibit keratinization, as comparative histologic features versus dermal AFX; no sufficient panel is declared.",
+        "logical_form": "spindle_SCC -> FEATURE_SET(epidermal_connection,keratinization)",
+        "scope": "Comparative histology",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-08-R06",
+        "source_anchor": "it is considered a diagnosis of exclusion histologically",
+        "target": "Atypical fibroxanthoma",
+        "rule_kind": "exclusion_based_diagnostic_process",
+        "source_semantics": "AFX is histologically a diagnosis of exclusion because positive stains are nonspecific. IHC is required to exclude competing neoplasms including spindloid SCC, melanoma and undifferentiated pleomorphic sarcoma; the named list is illustrative, not a complete sufficient negative panel.",
+        "logical_form": "histologic_AFX_diagnosis REQUIRES exclusion_of(competing_neoplasms,using_IHC); competing_neoplasms INCLUDE SCC,melanoma,UPS; NOT_SUFFICIENT(excluding_only_named_examples)",
+        "scope": "Open-ended differential domain; group-level necessity pertains to adequate exclusion, not any single negative stain",
+        "source_status": "adjudicable",
+        "flat_schema": "impossible",
+        "complexity": "nested_group",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-08-R07",
+        "source_anchor": "non-specific stains, including a cluster of differentiation 10 (CD10), p53, S100A6, vimentin, and procollagen-1",
+        "target": "Atypical fibroxanthoma",
+        "rule_kind": "nonspecific_marker_features",
+        "source_semantics": "AFX may stain positively for the named nonspecific stains; the list cannot independently confirm AFX or require every marker.",
+        "logical_form": "NONSPECIFIC_POSITIVE_STAIN_ASSOCIATIONS(AFX; CD10,p53,S100A6,vimentin,procollagen1)",
+        "scope": "Nonspecificity explicit; source list not a cardinality criterion",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-08-R08",
+        "source_anchor": "atypical fibroxanthoma stains negative for HMB-45, p40",
+        "target": "Atypical fibroxanthoma",
+        "rule_kind": "negative_marker_features",
+        "source_semantics": "AFX stains negative for HMB45, p40, desmin, pan-cytokeratin and CD31, with sparse rather than categorically absent S100 staining; this pattern may help differentiate from melanoma.",
+        "logical_form": "NEGATIVE_STAIN_FEATURES(AFX; HMB45,p40,desmin,pan_cytokeratin,CD31); SPARSE_STAIN(S100); MAY_ASSIST_DIFFERENTIATION(AFX,melanoma)",
+        "scope": "Sparse S100 must not become S100-negative; no standalone sufficient stain panel",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-08-R09",
+        "source_anchor": "p40 (often positive in squamous cell carcinoma)",
+        "target": "Squamous cell carcinoma",
+        "rule_kind": "marker_feature",
+        "source_semantics": "p40 is often positive in SCC; it is not always positive or a necessary SCC marker.",
+        "logical_form": "SCC -> OFTEN(p40_positive)",
+        "scope": "Incidental comparator target",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "atomic",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-08-R10",
+        "source_anchor": "poorly differentiated sarcomatoid carcinomas may lose cytokeratin expression",
+        "target": "Poorly differentiated sarcomatoid carcinoma",
+        "rule_kind": "marker_exception",
+        "source_semantics": "Poorly differentiated sarcomatoid carcinoma may lose cytokeratin expression; a negative cytokeratin stain cannot be converted into guaranteed carcinoma exclusion.",
+        "logical_form": "poorly_differentiated_sarcomatoid_carcinoma -> MAY(cytokeratin_expression_loss)",
+        "scope": "Subtype-specific exception",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "scoped_rule",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-08-R11",
+        "source_anchor": "pigmented atypical fibroxanthoma due to hemosiderin deposit and not actual melanin pigment",
+        "target": "Pigmented atypical fibroxanthoma",
+        "rule_kind": "causal_feature_definition",
+        "source_semantics": "Pigmentation in the named AFX variant is due to hemosiderin rather than actual melanin; pigment identity and causal binding are part of the distinction.",
+        "logical_form": "pigmented_AFX -> pigmentation_due_to(hemosiderin) AND NOT(pigmentation_due_to(actual_melanin))",
+        "scope": "AFX variant; causally bound pigment exclusion, not blanket absence of any melanin in specimen",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "scoped_rule",
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "sample_id": "S3-09",
+    "window_id": "statpearls:94a0e7d78ac882a4e41d",
+    "reviewer": "source_inventory_3_AI_source_blinded",
+    "reading_note": "Read all three management/outcomes paragraphs. Disease-on-biopsy antecedents presuppose a biopsy interpretation; they do not state novel histologic criteria. No operational disease rule is present.",
+    "non_target_source": [
+      {
+        "anchor": "an accurate history and physical should be reported to the pathologist",
+        "kind": "workup_communication",
+        "reason": "History/staining recommendations do not give diagnostic findings."
+      },
+      {
+        "anchor": "Should a cutaneous vascular malignancy such as angiosarcoma be seen on biopsy",
+        "kind": "treatment_referral",
+        "reason": "A diagnosis already seen on biopsy triggers oncology referral; not a new rule that any biopsy diagnoses angiosarcoma."
+      },
+      {
+        "anchor": "Should a Kaposi sarcoma be seen on biopsy",
+        "kind": "treatment_branch",
+        "reason": "HIV status chooses care/referral and HAART, not whether the biopsy diagnosis exists."
+      },
+      {
+        "anchor": "If Kaposi sarcoma is seen in the mucosal lining of the mouth",
+        "kind": "workup_branch",
+        "reason": "Oral KS warrants GI investigation; it does not imply gastrointestinal lesions are already present."
+      },
+      {
+        "anchor": "The outcomes of cutaneous vascular malignancies of the head and neck depend",
+        "kind": "prognosis",
+        "reason": "Metastasis/outcomes and team-care recommendations are non-target."
+      }
+    ],
+    "rules": []
+  },
+  {
+    "sample_id": "S3-10",
+    "window_id": "statpearls:9cb0587ffb892a364b62",
+    "reviewer": "source_inventory_3_AI_source_blinded",
+    "reading_note": "Read all three disease paragraphs. One weak phenotype set per independent disease; shape alternatives and optional sites are not AND or all-required groups.",
+    "non_target_source": [],
+    "rules": [
+      {
+        "rule_id": "S3-10-R01",
+        "source_anchor": "Mucosal melanomas are macular or nodular lesions with pigmented brown-to-black coloration.",
+        "target": "Oral mucosal melanoma",
+        "rule_kind": "descriptive_features",
+        "source_semantics": "Mucosal melanomas can be macular or nodular, brown-to-black pigmented, and most oral tumors measure 2–6 cm. The usual size range is not an exclusion boundary.",
+        "logical_form": "oral_mucosal_melanoma -> FEATURE_SET(macular_OR_nodular,brown_to_black_pigment); MOST(size_cm IN [2,6])",
+        "scope": "Size claim limited to oral cavity; most rather than all",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-10-R02",
+        "source_anchor": "Kaposi sarcoma presents with focal or widespread violaceous-brown patches, papules, plaques, or exophytic nodules.",
+        "target": "Kaposi sarcoma",
+        "rule_kind": "descriptive_features",
+        "source_semantics": "KS has focal or widespread violaceous-brown patches/papules/plaques/exophytic nodules and can affect mucosa, skin, nodes or viscera; alternatives are not a required joint panel.",
+        "logical_form": "KS -> FEATURE_ALTERNATIVES(distribution=focal|widespread,morphology=patch|papule|plaque|exophytic_nodule,color=violaceous_brown); MAY_SITE(mucosa,skin,node,viscera)",
+        "scope": "Possible morphology/sites",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-10-R03",
+        "source_anchor": "NHL often presents as a painless, submucosal mass",
+        "target": "Non-Hodgkin lymphoma of the palate",
+        "rule_kind": "descriptive_features",
+        "source_semantics": "Palatal NHL often presents as painless submucosal mass at the hard/soft palate junction, without ulceration and with cervical nodes. The whole pattern is typical rather than mandatory/sufficient.",
+        "logical_form": "palatal_NHL -> OFTEN_PATTERN(painless,submucosal_mass,hard_soft_palate_junction,no_ulceration,cervical_lymphadenopathy)",
+        "scope": "Palatal presentation; often",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "sample_id": "S3-11",
+    "window_id": "statpearls:e65db682bc96b6afd67a",
+    "reviewer": "source_inventory_3_AI_source_blinded",
+    "reading_note": "Read complete endothelin pathophysiology extract. Count the explicit female-predominance association; exclude molecule-to-disease mechanisms and differential drug response as non-diagnostic.",
+    "non_target_source": [
+      {
+        "anchor": "established associations with endothelin as a part of their pathophysiology",
+        "kind": "mechanism",
+        "reason": "Listing PH, HF, post-menopausal hypertension, preeclampsia, ovarian cancer and kidney disease as endothelin-mediated does not establish a diagnostic endothelin measurement rule."
+      },
+      {
+        "anchor": "increasing the vascular tone and promoting vascular remodeling",
+        "kind": "mechanism",
+        "reason": "ET-1 tone/remodeling causal mechanism without diagnostic test interpretation."
+      },
+      {
+        "anchor": "better response in women compared to that of men",
+        "kind": "treatment_response",
+        "reason": "Sex-specific drug efficacy does not make response a sufficient/necessary diagnosis."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S3-11-R01",
+        "source_anchor": "pulmonary artery hypertension (PAH) is a predominantly female disease",
+        "target": "Pulmonary arterial hypertension",
+        "rule_kind": "population_association",
+        "source_semantics": "PAH predominates among females; male sex does not exclude it.",
+        "logical_form": "PAH -> MORE_PREVALENT_IN(females)",
+        "scope": "Population tendency; no age/sex threshold",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "atomic",
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "sample_id": "S3-12",
+    "window_id": "statpearls:fd703380a6da5080f85d",
+    "reviewer": "source_inventory_3_AI_source_blinded",
+    "reading_note": "Read complete corneal-pump/FED pathophysiology window. Generic physiology/causal theories and the enzyme observation used only to support mitochondrial mechanism are non-target. No diagnostic phenotype/test interpretation is supplied, so this is a retained zero-rule window.",
+    "non_target_source": [
+      {
+        "anchor": "Endothelial cells in FED exhibit decreased cytochrome oxidase activity, particularly in areas of corneal edema.",
+        "kind": "mechanistic_cell_observation",
+        "reason": "This cellular finding is used solely to support a mitochondrial ATP mechanism, without a diagnostic phenotype, specificity claim or diagnostic assay interpretation."
+      },
+      {
+        "anchor": "Corneal transparency depends on maintaining stromal hydration below 3.5 mg of water per mg of dry tissue.",
+        "kind": "physiology",
+        "reason": "The hydration limit concerns corneal transparency, not a 3.5 threshold defining FED."
+      },
+      {
+        "anchor": "When endothelial function is compromised",
+        "kind": "generic_mechanism",
+        "reason": "Generic pump failure causing edema/hazy vision is not stated to distinguish FED from other causes."
+      },
+      {
+        "anchor": "several proposed mechanisms, including channelopathies, oxidative stress, apoptosis, and epithelial-mesenchymal transition",
+        "kind": "mechanism",
+        "reason": "Proposed pathways/genetic pump dysfunction and downstream ATP explanations are not independent diagnostic rules."
+      }
+    ],
+    "rules": []
+  },
+  {
+    "sample_id": "S3-13",
+    "window_id": "textbooks:307895d15dab91b1d0ab",
+    "reviewer": "source_inventory_3_AI_source_blinded",
+    "reading_note": "Read entire overlapping textbook window. Duplicate text is counted once. Keep conditional site/age/subtype priors; historical subtype proportions are a single descriptive distribution. The final GIST sentence is truncated before making a determinate claim.",
+    "non_target_source": [
+      {
+        "anchor": "other types of sarcoma include bone sarcomas",
+        "kind": "taxonomic_names_only",
+        "reason": "Bone subtype names supply no specific distinguishing diagnostic criteria; Ewing site statement is separately counted."
+      },
+      {
+        "anchor": "The anatomic site of a primary sarcoma influ-ences treatment and outcome.",
+        "kind": "treatment_prognosis",
+        "reason": "Multimodality treatment, recurrence/survival and fatal metastatic outcomes are not diagnosis conditions."
+      },
+      {
+        "anchor": "approximately 11,280 new cases of soft tissue sarcoma were diagnosed",
+        "kind": "population_burden",
+        "reason": "Absolute incidence, mortality and calendar trends lack patient-level diagnostic scope."
+      },
+      {
+        "anchor": "gastrointestinal stromal tumors (GISTs) likely account",
+        "kind": "truncated_nonclaim",
+        "reason": "The window ends before saying what GISTs account for; do not invent a source rule."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S3-13-R01",
+        "source_anchor": "Sarcomas are a heterogeneous group of neoplasms that arise predominantly from cells of the embryonic mesoderm.",
+        "target": "Sarcoma",
+        "rule_kind": "definition_origin",
+        "source_semantics": "Sarcomas are heterogeneous neoplasms predominantly arising from embryonic mesoderm-derived cells; predominantly must not become universally necessary.",
+        "logical_form": "sarcoma -> neoplasm AND PREDOMINANT_ORIGIN(embryonic_mesoderm)",
+        "scope": "Predominantly, not all",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-13-R02",
+        "source_anchor": "Ewing’s sarcoma/peripheral primitive neuroectodermal tumor, which can occur either in the bone or in the soft tissues.",
+        "target": "Ewing sarcoma / peripheral primitive neuroectodermal tumor",
+        "rule_kind": "site_features",
+        "source_semantics": "This entity can occur in bone or soft tissue; neither site alone is required.",
+        "logical_form": "Ewing_peripheral_PNET -> MAY_SITE(bone OR soft_tissue)",
+        "scope": "Anatomic alternatives",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-13-R03",
+        "source_anchor": "Most primary soft tissue sarco-mas originate in an extremity (50–60%)",
+        "target": "Primary soft tissue sarcoma",
+        "rule_kind": "site_distribution",
+        "source_semantics": "Primary STS usually arises in extremity (50–60%); other reported common sites are trunk (19%), retroperitoneum (15%), and head/neck (9%). These are descriptive site frequencies, not thresholds applied to an individual.",
+        "logical_form": "SITE_DISTRIBUTION(primary_STS; extremity=50_to_60_percent,trunk=19_percent,retroperitoneum=15_percent,head_neck=9_percent)",
+        "scope": "Primary soft tissue sarcoma; retain approximate source frequencies without requiring their sum to equal 100",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-13-R04",
+        "source_anchor": "Historically, the most common subtypes in adults (excluding Kaposi’s sarcoma)",
+        "target": "Adult soft tissue sarcoma subtype distribution",
+        "rule_kind": "historical_subtype_distribution",
+        "source_semantics": "Historical adult STS subtype frequencies, excluding KS, are MFH 28%, liposarcoma 15%, leiomyosarcoma 12%, synovial sarcoma 10%, and malignant peripheral nerve sheath tumor 6%. This is one scoped distribution, not sufficient age-to-subtype diagnosis.",
+        "logical_form": "HISTORICAL_DISTRIBUTION(subtype | adult_STS AND not_KS; MFH=.28,liposarcoma=.15,leiomyosarcoma=.12,synovial_sarcoma=.10,MPNST=.06)",
+        "scope": "Historical adults; excludes KS; repeated overlap counted once",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "association_set",
+        "notes": "Joint distribution unit; classify as nonrigid descriptive information rather than five rigid rules."
+      },
+      {
+        "rule_id": "S3-13-R05",
+        "source_anchor": "Today, malignant fibrous histiocytoma is classified as either",
+        "target": "Historical malignant fibrous histiocytoma label",
+        "rule_kind": "classification_redefinition",
+        "source_semantics": "The historical MFH label is reclassified, using differentiation/genetics, into leiomyosarcoma, pleomorphic undifferentiated sarcoma, myxofibrosarcoma or dedifferentiated liposarcoma. This does not make these four entities synonymous or interchangeable.",
+        "logical_form": "RECLASSIFY(historical_MFH,one_of(leiomyosarcoma,pleomorphic_undifferentiated_sarcoma,myxofibrosarcoma,dedifferentiated_liposarcoma),by=cell_differentiation_and_genetics)",
+        "scope": "Historical classification mapping; actual subtype-selection predicates absent",
+        "source_status": "adjudicable",
+        "flat_schema": "impossible",
+        "complexity": "scoped_rule",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-13-R06",
+        "source_anchor": "Embryonal/alveolar rhabdomyosarcomas are the most common soft tissue sarcomas of childhood",
+        "target": "Embryonal/alveolar rhabdomyosarcoma",
+        "rule_kind": "age_association",
+        "source_semantics": "Embryonal/alveolar RMS are the most common childhood soft tissue sarcomas; this does not exclude adults or make childhood sufficient.",
+        "logical_form": "childhood_STS -> MOST_COMMON_SUBTYPES(embryonal_RMS,alveolar_RMS)",
+        "scope": "Conditional on childhood soft tissue sarcoma",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-13-R07",
+        "source_anchor": "pleomorphic rhabdomyosar-coma occurs predominantly in adults",
+        "target": "Pleomorphic rhabdomyosarcoma",
+        "rule_kind": "age_association",
+        "source_semantics": "Pleomorphic RMS occurs predominantly in adults and should not be conflated with pediatric RMS biology based on the shared name.",
+        "logical_form": "pleomorphic_RMS -> PREDOMINANT_AGE(adult); not_equivalent_biology(pediatric_RMS)",
+        "scope": "Predominantly, not exclusive adult age",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "sample_id": "S3-14",
+    "window_id": "textbooks:8e1382d88864a6ff52ef",
+    "reviewer": "source_inventory_3_AI_source_blinded",
+    "reading_note": "Read entire fragment. Opening differentiator is source-truncated and stays ambiguous. Do not turn the severe-pain symptom list into necessary all-of epidural-abscess criteria; retain the endocarditis counterexample and source/etiology patterns.",
+    "non_target_source": [
+      {
+        "anchor": "usually necessitates urgent surgical treatment",
+        "kind": "treatment_prognosis",
+        "reason": "Urgent treatment and paraplegia/death consequences do not define the diagnostic condition."
+      },
+      {
+        "anchor": "These symptoms mandate immediate investigation by MRI",
+        "kind": "workup",
+        "reason": "Symptoms trigger investigation; they are not sufficient confirmation."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S3-14-R01",
+        "source_anchor": "bodies is one of the features that differentiates infectious from neoplastic diseases of the spine.",
+        "target": "Infectious versus neoplastic spinal disease",
+        "rule_kind": "truncated_differential",
+        "source_semantics": "A missing feature involving bodies differentiates infectious from neoplastic disease, but the affected structure/action and diagnostic direction are absent from this window.",
+        "logical_form": "UNKNOWN_FEATURE(...bodies) -> differentiates(infectious_spinal,neoplastic_spinal)",
+        "scope": "Sentence begins mid-clause; source window insufficient",
+        "source_status": "ambiguous_source",
+        "flat_schema": "ambiguous",
+        "complexity": "atomic",
+        "notes": "Do not supply spared/preserved/destroyed vertebral bodies from outside knowledge."
+      },
+      {
+        "rule_id": "S3-14-R02",
+        "source_anchor": "A paravertebral mass is often found, indicating an abscess",
+        "target": "Paravertebral abscess",
+        "rule_kind": "support",
+        "source_semantics": "In the spinal-infection discussion, a paravertebral mass often indicates abscess; it is not asserted universally sufficient.",
+        "logical_form": "spinal_infection_context AND paravertebral_mass -> SUPPORTS(abscess)",
+        "scope": "Context inherited from local spinal-infection discussion",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "scoped_rule",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-14-R03",
+        "source_anchor": "particularly in the case of tuberculosis, drain spontaneously at sites quite remote from the vertebral column",
+        "target": "Spinal/paravertebral tuberculosis-associated abscess",
+        "rule_kind": "descriptive_feature",
+        "source_semantics": "The abscess may spontaneously drain remotely from the spine, particularly with tuberculosis; remote drainage is optional.",
+        "logical_form": "spinal_abscess -> MAY(remote_spontaneous_drainage); particularly_associated(TB)",
+        "scope": "Abscess referent; optional pattern",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "scoped_rule",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-14-R04",
+        "source_anchor": "subacute bacterial endocarditis who complained of severe midline thoracic and lumbar back pain but had no evident infection of the spine",
+        "target": "Subacute bacterial endocarditis",
+        "rule_kind": "observed_symptom_counterexample",
+        "source_semantics": "Patients with subacute bacterial endocarditis have been observed with severe midline thoracolumbar pain despite no evident spinal infection. Severe back pain does not imply spinal infection in every case.",
+        "logical_form": "OBSERVED(SBE AND severe_midline_thoracolumbar_pain AND no_evident_spinal_infection)",
+        "scope": "Authors case observations; not a universal SBE phenotype",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-14-R05",
+        "source_anchor": "Tuberculous spinal infection and the resultant kyphotic deformity (Pott disease)",
+        "target": "Pott disease",
+        "rule_kind": "causal_composite_definition",
+        "source_semantics": "The passage names tuberculous spinal infection and its resultant kyphotic deformity as Pott disease. Preserve tuberculosis, spinal site and causal deformity relationship, without replacing it by any kyphosis.",
+        "logical_form": "TEXTUAL_DEFINITION(Pott_disease; tuberculous_spinal_infection AND resultant(kyphotic_deformity))",
+        "scope": "Definition as worded in this source; not an externally completed operational criterion",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "scoped_rule",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-14-R06",
+        "source_anchor": "Most often this is caused by staphylococcal infection",
+        "target": "Spinal epidural abscess",
+        "rule_kind": "etiologic_association",
+        "source_semantics": "Spinal epidural abscess is most often staphylococcal, but other/unknown sources are possible.",
+        "logical_form": "spinal_epidural_abscess -> MOST_OFTEN_PATHOGEN(staphylococcus)",
+        "scope": "This refers to preceding spinal epidural abscess; no exclusivity",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "atomic",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-14-R07",
+        "source_anchor": "Another important avenue of infection is the intravenous self-administration of drugs and use of contaminated needles.",
+        "target": "Spinal epidural abscess",
+        "rule_kind": "risk_source_associations",
+        "source_semantics": "Source contexts include a septic focus or osteomyelitic lesion, injection drug use/contaminated needles, and rarely lumbar puncture, epidural injection or laminectomy; in some cases no source is ascertainable.",
+        "logical_form": "POSSIBLE_SOURCES(spinal_epidural_abscess; septic_focus,osteomyelitis,injection_drugs_or_contaminated_needles,RARE(lumbar_puncture,epidural_injection,laminectomy),unknown)",
+        "scope": "Unknown source permitted; cannot require procedure or skin focus",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-14-R08",
+        "source_anchor": "The main symptoms are low-grade fever, leukocytosis, and persistent and severe localized pain",
+        "target": "Spinal epidural abscess",
+        "rule_kind": "descriptive_features",
+        "source_semantics": "Main features are low-grade fever, leukocytosis and persistent severe localized pain worsened by percussion/pressure over vertebral spines; radicular radiation may additionally occur. They form a descriptive set, not a necessary or sufficient all-of criterion.",
+        "logical_form": "FEATURE_SET(spinal_epidural_abscess; low_grade_fever,leukocytosis,persistent_severe_local_pain[worse_with_percussion_or_pressure]); MAY(radicular_radiation)",
+        "scope": "Pain modifiers belong to pain; optional radiation",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "sample_id": "S3-15",
+    "window_id": "textbooks:ec443df9fed2d0d9f29a",
+    "reviewer": "source_inventory_3_AI_source_blinded",
+    "reading_note": "Read donor/recipient screening extract including repeated overlap. Count explicit transmission/exposure information as weak disease-specific etiologic context; ordering screens and unspecified serology reliability remain non-target. The initial list is already truncated.",
+    "non_target_source": [
+      {
+        "anchor": "herpes-virus (KSHV); acute infection with hepatitis A virus;",
+        "kind": "truncated_screening_list",
+        "reason": "Opening donor-screening list lacks its governing clause; no result-to-diagnosis rule."
+      },
+      {
+        "anchor": "Donors should be screened, when relevant",
+        "kind": "workup",
+        "reason": "Named viruses/parasites, chest radiograph review and TB tests are recommendations to investigate, without supplied result criteria."
+      },
+      {
+        "anchor": "An investigation of the donor’s dietary habits",
+        "kind": "workup",
+        "reason": "Diet/occupation/travel history triggers additional testing but no named exposure-to-pathogen diagnostic rule is supplied."
+      },
+      {
+        "anchor": "serologic testing of the recipient may prove less reliable than usual",
+        "kind": "unspecified_test_caveat",
+        "reason": "Immune dysfunction affects unspecified serology reliability. No explicitly named disease target, direction, assay or exclusion rule is given."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S3-15-R01",
+        "source_anchor": "Creutzfeldt-Jakob disease has been transmitted through corneal transplants.",
+        "target": "Creutzfeldt-Jakob disease",
+        "rule_kind": "transmission_exposure_association",
+        "source_semantics": "Corneal transplantation is a documented CJD transmission route; this does not establish CJD in a transplant recipient. Transfused-blood transmission of ordinary CJD is stated to be unknown.",
+        "logical_form": "DOCUMENTED_ROUTE(CJD,corneal_transplant); UNKNOWN_ROUTE(CJD,transfused_blood)",
+        "scope": "Ordinary CJD; repeated source sentence counted once",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-15-R02",
+        "source_anchor": "Variant Creutzfeldt-Jakob disease can be transmitted with transfused non-leukodepleted blood",
+        "target": "Variant Creutzfeldt-Jakob disease",
+        "rule_kind": "transmission_exposure_association",
+        "source_semantics": "vCJD can be transmitted by non-leukodepleted transfused blood; the risk to transplant recipients is described as theoretical, not a proven organ-transplant route.",
+        "logical_form": "POSSIBLE_ROUTE(vCJD,transfused_non_leukodepleted_blood); THEORETICAL_RISK(vCJD,transplant_recipient)",
+        "scope": "Variant CJD; preserve blood-product qualifier and theoretical transplant scope",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "association_set",
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "sample_id": "S3-16",
+    "window_id": "wikem:4369cbdb739988501604",
+    "reviewer": "source_inventory_3_AI_source_blinded",
+    "reading_note": "Read full flattened WikEM navigation/list window. Do not reconstruct unobserved indentation from medical knowledge. Pure headings, condition names and aliases are navigation, not diagnostic criteria. Two potentially diagnostic relationships are retained as source-ambiguous rather than forced into targets.",
+    "non_target_source": [
+      {
+        "anchor": "Odontogenic Infections",
+        "kind": "navigation_taxonomy",
+        "reason": "Infection and trauma lists name entities and synonyms without patient findings or diagnostic effect. Pulpitis (dental caries) is not silently accepted as a medically exact synonym."
+      },
+      {
+        "anchor": "Maxillofacial Trauma",
+        "kind": "navigation_taxonomy",
+        "reason": "Anatomic headings and related trauma links do not diagnose any listed lesion."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S3-16-R01",
+        "source_anchor": "Vincent's angina - tonsillitis and pharyngitis",
+        "target": "Vincent's angina",
+        "rule_kind": "ambiguous_gloss",
+        "source_semantics": "A dash gloss connects Vincent angina with tonsillitis and pharyngitis, but the list does not explain whether this is a definition, presentation or linked category; it cannot safely be made a sufficient conjunction.",
+        "logical_form": "GLOSS_RELATION_UNSPECIFIED(Vincent_angina; tonsillitis,pharyngitis)",
+        "scope": "Flattened navigation list without diagnostic prose",
+        "source_status": "ambiguous_source",
+        "flat_schema": "ambiguous",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S3-16-R02",
+        "source_anchor": "Gingival hyperplasia\n Phenytoin\n Cyclosporine\n Nifedipine , Amlodipine\n Leukemia",
+        "target": "Gingival hyperplasia / listed drugs / leukemia",
+        "rule_kind": "ambiguous_list_hierarchy",
+        "source_semantics": "The listed drugs and leukemia follow gingival hyperplasia, but flattening removes whether they are child causes/associations or sibling navigation entries. No causal/diagnostic direction can be safely fixed from this window.",
+        "logical_form": "UNRESOLVED_HIERARCHY(gingival_hyperplasia; phenytoin,cyclosporine,nifedipine,amlodipine,leukemia)",
+        "scope": "Indentation/parenthood absent; no external medical reconstruction",
+        "source_status": "ambiguous_source",
+        "flat_schema": "ambiguous",
+        "complexity": "nested_group",
+        "notes": ""
+      }
+    ]
+  }
+]

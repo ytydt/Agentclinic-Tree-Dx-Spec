@@ -1,0 +1,1148 @@
+[
+  {
+    "sample_id": "S4-01",
+    "window_id": "merck:764f6341c9d816878f32",
+    "reviewer": "source_inventory_4; AI source-only close reading",
+    "reading_note": "The opening continuation appears to concern infantile spasms, named explicitly in the immediately following treatment paragraph. Preserve uncertainty for the unspecified physical findings; the neonatal-seizure heading establishes a separate target. Do not borrow features across that heading.",
+    "non_target_source": [
+      {
+        "anchor": "ACTH 20 to 60 units IM",
+        "kind": "treatment",
+        "reason": "ACTH, steroids, anticonvulsants, diet and resection are management, not diagnostic criteria."
+      },
+      {
+        "anchor": "Seizures occur in up to 1.4% of term infants and 20% of premature infants.",
+        "kind": "epidemiology",
+        "reason": "Incidence in populations is not an individual diagnostic claim."
+      },
+      {
+        "anchor": "and P, liver function tests) if a metabolic disorder is suspected",
+        "kind": "truncated workup",
+        "reason": "No test results or identifiable metabolic diagnosis are supplied."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S4-01-R01",
+        "source_anchor": "pathognomonic findings are identified except in tuberous sclerosis.",
+        "target": "Tuberous sclerosis",
+        "rule_kind": "incomplete diagnostic feature",
+        "source_semantics": "The text implies exceptional pathognomonic examination findings in tuberous sclerosis but does not identify the findings.",
+        "logical_form": "EXISTS unspecified examination finding diagnostic_of(tuberous sclerosis)",
+        "scope": "Infantile-spasm etiologic workup; opening paragraph is truncated context.",
+        "source_status": "ambiguous_source",
+        "flat_schema": "ambiguous",
+        "complexity": "atomic",
+        "notes": "Cannot invent the missing finding or equate a normal examination with absence of tuberous sclerosis."
+      },
+      {
+        "rule_id": "S4-01-R02",
+        "source_anchor": "Typically, the interictal pattern is",
+        "target": "Infantile spasms",
+        "rule_kind": "typical EEG features",
+        "source_semantics": "Interictal EEG is typically hypsarrhythmic: chaotic high-voltage polymorphic delta/theta waves with superimposed multifocal spikes. Focal/asymmetric variants are possible. Ictal patterns vary; diffuse marked attenuation is usual.",
+        "logical_form": "SOFT_FEATURE_SET(interictal hypsarrhythmia with permitted variants; ictal diffuse attenuation)",
+        "scope": "Waking/sleep EEG; interictal and ictal states differ.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": "Target inferred from local continuation, not section metadata. Do not require simultaneous ictal and interictal states or one invariant EEG pattern."
+      },
+      {
+        "rule_id": "S4-01-R03",
+        "source_anchor": "Neonatal seizures are abnormal electrical discharges in the CNS of neonates",
+        "target": "Neonatal seizure disorder",
+        "rule_kind": "definition",
+        "source_semantics": "Neonatal seizures are abnormal CNS electrical discharges occurring in neonates.",
+        "logical_form": "DEF(neonate AND abnormal CNS electrical discharges)",
+        "scope": "Neonatal age.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "flat_group",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-01-R04",
+        "source_anchor": "manifest as stereotyped muscular activity or autonomic changes.",
+        "target": "Neonatal seizure disorder",
+        "rule_kind": "typical presentation",
+        "source_semantics": "Usual visible manifestations are stereotyped muscular activity or autonomic changes; neither is universal because silent seizures are subsequently described.",
+        "logical_form": "SOFT_OR(stereotyped muscular activity, autonomic changes)",
+        "scope": "Neonates.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-01-R05",
+        "source_anchor": "EEG; testing for causes is indicated.",
+        "target": "Neonatal seizure disorder",
+        "rule_kind": "diagnostic confirmation",
+        "source_semantics": "EEG confirms suspected neonatal seizures; the source does not specify a sufficient waveform threshold in this sentence.",
+        "logical_form": "appropriate epileptiform EEG evidence => confirms(neonatal seizure)",
+        "scope": "Suspected neonatal seizures; merely performing EEG is not a positive result.",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "atomic",
+        "notes": "The preceding sentence explicitly says Diagnosis is confirmed by EEG."
+      },
+      {
+        "rule_id": "S4-01-R06",
+        "source_anchor": "Most neonatal seizures are focal",
+        "target": "Neonatal seizure disorder",
+        "rule_kind": "typical distribution",
+        "source_semantics": "Most neonatal seizures are focal; focality is a common feature, not a necessary condition.",
+        "logical_form": "SOFT_FEATURE(focal seizures)",
+        "scope": "Neonates.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "atomic",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-01-R07",
+        "source_anchor": "activity during an EEG but without any visible seizure activity",
+        "target": "Clinically silent neonatal seizure",
+        "rule_kind": "definition",
+        "source_semantics": "Epileptiform EEG activity without visible seizure activity defines clinically silent seizures in this neonatal context.",
+        "logical_form": "DEF(epileptiform EEG activity AND NOT visible seizure activity)",
+        "scope": "Neonates undergoing EEG.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "flat_group",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-01-R08",
+        "source_anchor": "activity is continuous and persists for > 20 min",
+        "target": "Electrical status epilepticus",
+        "rule_kind": "definition",
+        "source_semantics": "Continuous clinically silent epileptiform electrical activity persisting for more than 20 minutes is defined as electrical status epilepticus.",
+        "logical_form": "(silent epileptiform EEG activity AND continuous AND duration > 20 min) => defines(electrical status epilepticus)",
+        "scope": "Neonatal clinically silent EEG activity.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "flat_group",
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "sample_id": "S4-02",
+    "window_id": "merck:fb9d940b4a5116ed2c1d",
+    "reviewer": "source_inventory_4; AI source-only close reading",
+    "reading_note": "Four anatomic VSD subtypes have independent definitions. Clinical/hemodynamic and auscultatory feature sets are separated because they have different age/size/state scopes. Descriptive lists and downstream natural history do not become mandatory checklists.",
+    "non_target_source": [
+      {
+        "anchor": "The magnitude of the shunt depends on defect size and downstream resistance",
+        "kind": "mechanism",
+        "reason": "Shunt magnitude determinants alone are not a diagnostic rule; the named clinical consequences are inventoried above."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S4-02-R01",
+        "source_anchor": "Perimembranous defects (70 to 80%)",
+        "target": "Perimembranous ventricular septal defect",
+        "rule_kind": "anatomic definition",
+        "source_semantics": "A defect in the membranous septum adjacent to the tricuspid valve, extending variably into muscle; the commonest location is immediately below the aortic valve.",
+        "logical_form": "DEF(membranous septal defect adjacent tricuspid valve); TYPICAL(subaortic position)",
+        "scope": "VSD anatomic subtype; the subaortic position is common, not universal.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "scoped_rule",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-02-R02",
+        "source_anchor": "are completely surrounded by muscular tissue",
+        "target": "Trabecular muscular ventricular septal defect",
+        "rule_kind": "anatomic definition",
+        "source_semantics": "The defect is completely surrounded by muscular tissue and can occur anywhere in the septum.",
+        "logical_form": "DEF(VSD completely surrounded by muscle)",
+        "scope": "No fixed septal position is required.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "atomic",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-02-R03",
+        "source_anchor": "ventricular septum immediately under the pulmonary valve",
+        "target": "Subpulmonary outlet ventricular septal defect",
+        "rule_kind": "anatomic definition",
+        "source_semantics": "Subpulmonary outlet VSD occurs in the septum immediately under the pulmonary valve; supracristal and doubly committed subarterial are alternative labels here.",
+        "logical_form": "DEF(VSD immediately below pulmonary valve)",
+        "scope": "Anatomic subtype; synonyms retained.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "atomic",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-02-R04",
+        "source_anchor": "prolapse into the defect, causing aortic regurgitation.",
+        "target": "Subpulmonary outlet ventricular septal defect",
+        "rule_kind": "associated complication",
+        "source_semantics": "This subtype is frequently associated with aortic leaflet prolapse into the defect and resultant aortic regurgitation.",
+        "logical_form": "SOFT_ASSOC(aortic leaflet prolapse -> aortic regurgitation)",
+        "scope": "Frequent association, not required or sufficient.",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-02-R05",
+        "source_anchor": "Inlet defects (5 to 8%) are bordered superiorly by the tricuspid annulus",
+        "target": "Inlet ventricular septal defect",
+        "rule_kind": "anatomic definition",
+        "source_semantics": "Inlet VSD has a superior border at the tricuspid annulus and lies posterior to the membranous septum; it is also called an atrioventricular septal-type defect.",
+        "logical_form": "DEF(superior tricuspid-annular border AND posterior to membranous septum)",
+        "scope": "Anatomic subtype.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "flat_group",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-02-R06",
+        "source_anchor": "Small defects cause a relatively small left-to-right shunt",
+        "target": "Small ventricular septal defect",
+        "rule_kind": "hemodynamic and clinical features",
+        "source_semantics": "Small VSD has a relatively small left-to-right shunt with normal pulmonary artery pressure; HF, pulmonary hypertension and Eisenmenger syndrome do not develop. Children are typically asymptomatic with normal growth/development.",
+        "logical_form": "SOFT_FEATURE_SET(small L->R shunt, normal PA pressure, asymptomatic, normal growth); expected absence of HF/PH/Eisenmenger",
+        "scope": "Small defects, not all VSD; descriptive natural history does not create an unconditional exclusion rule.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-02-R07",
+        "source_anchor": "respiratory distress, poor weight gain, fatigue after feeding",
+        "target": "Larger ventricular septal defect",
+        "rule_kind": "age-scoped presentation",
+        "source_semantics": "With larger defects, HF manifestations such as respiratory distress, poor weight gain and postfeeding fatigue appear at 4-6 weeks as pulmonary vascular resistance falls; frequent lower respiratory infections may occur.",
+        "logical_form": "SOFT_FEATURE_SET(HF respiratory distress, poor weight gain, feeding fatigue, recurrent lower respiratory infection) GIVEN larger VSD and postnatal fall in PVR",
+        "scope": "Infants, typically 4-6 weeks; list is illustrative.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-02-R08",
+        "source_anchor": "a grade 1 to 2/6 high-pitched, short systolic murmur",
+        "target": "Small ventricular septal defect",
+        "rule_kind": "auscultatory features",
+        "source_semantics": "Small VSD typically gives a short high-pitched grade 1-2/6 systolic murmur for tiny late-closing defects OR a grade 3-4/6 holosystolic lower-left-sternal murmur, optionally with thrill. It is audible shortly after birth; precordium is not hyperactive and S2 splitting/intensity are normal.",
+        "logical_form": "SOFT_FEATURE_SET(OR(tiny-defect short systolic murmur, holosystolic LLSB murmur), early audibility, nonhyperactive precordium, normal S2)",
+        "scope": "Small VSD; two murmur alternatives must not be required together.",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-02-R09",
+        "source_anchor": "Moderate to large VSDs produce a loud holosystolic murmur",
+        "target": "Moderate to large ventricular septal defect",
+        "rule_kind": "auscultatory features",
+        "source_semantics": "Moderate/large VSD usually gives a loud holosystolic murmur by 2-3 weeks and narrowly split S2 with accentuated pulmonary component; apical diastolic rumble and HF signs may be present.",
+        "logical_form": "SOFT_FEATURE_SET(loud holosystolic murmur, narrow S2 split/loud P2, optional apical diastolic rumble and HF signs)",
+        "scope": "Moderate/large VSD; murmur age 2-3 weeks; optional tachypnea, feeding dyspnea, growth failure, gallop, crackles and hepatomegaly.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-02-R10",
+        "source_anchor": "the systolic murmur is often attenuated.",
+        "target": "Large ventricular septal defect with ventricular pressure equalization",
+        "rule_kind": "conditional feature",
+        "source_semantics": "When a large VSD equalizes left and right ventricular pressures, the systolic murmur is often attenuated.",
+        "logical_form": "(large VSD AND LV/RV pressure equalization) -> OFTEN(attenuated systolic murmur)",
+        "scope": "Pressure equalization exception to the usual loud-murmur association.",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "scoped_rule",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-02-R11",
+        "source_anchor": "leading to Eisenmenger's syndrome",
+        "target": "Eisenmenger syndrome secondary to ventricular septal defect",
+        "rule_kind": "diagnostic causal sequence",
+        "source_semantics": "In a large-shunt VSD without pulmonic stenosis, progressively increased pulmonary vascular resistance ultimately reverses the shunt from left-to-right to right-to-left, producing Eisenmenger syndrome.",
+        "logical_form": "large VSD shunt without pulmonic stenosis -> elevated pulmonary vascular resistance -> R->L reversal -> Eisenmenger",
+        "scope": "Long-term progression; neither large VSD nor pulmonary hypertension alone equals Eisenmenger.",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "scoped_rule",
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "sample_id": "S4-03",
+    "window_id": "pmc_oa:521a417864cfd949c9ee",
+    "reviewer": "source_inventory_4; AI source-only close reading",
+    "reading_note": "Source contains a true required OR group; its inner morphological-or-immunohistochemical evidence alternative can be flattened only where the same group effect and scope are preserved. The biphasic definition is an independent definition, not extra leaves to be counted again in the required OR group.",
+    "non_target_source": [
+      {
+        "anchor": "the paraffin block determined for the HER2 testing",
+        "kind": "specimen selection",
+        "reason": "Mandatory micropapillary sampling applies to HER2 testing of mixed-histology UC, not diagnosis of the subtype."
+      },
+      {
+        "anchor": "These components most probably originate from a common malignant clone.",
+        "kind": "pathogenesis",
+        "reason": "Probable clonal origin is a mechanistic hypothesis, not a patient diagnostic criterion."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S4-03-R01",
+        "source_anchor": "harbors ERBB2 gene changes (amplification and mutation) more frequently",
+        "target": "Micropapillary urothelial carcinoma",
+        "rule_kind": "comparative molecular association",
+        "source_semantics": "ERBB2 amplification/mutation occur more frequently in micropapillary UC than conventional UC or other histologic subtypes.",
+        "logical_form": "SOFT_COMPARATIVE_ASSOC(ERBB2 changes; micropapillary UC > CUC/other UC-HS)",
+        "scope": "Frequency comparison, not a requirement for ERBB2 alteration.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-03-R02",
+        "source_anchor": "Risk factors such as radiation and intravesical cyclophosphamide therapy",
+        "target": "Sarcomatoid urothelial carcinoma",
+        "rule_kind": "risk association",
+        "source_semantics": "Radiation or intravesical cyclophosphamide history predisposes to sarcomatoid UC, but neither establishes or is required for the diagnosis.",
+        "logical_form": "SOFT_RISK_ASSOC(radiation, intravesical cyclophosphamide)",
+        "scope": "Risk factors only.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-03-R03",
+        "source_anchor": "It can imitate several mesenchymal neoplasms of the urinary bladder.",
+        "target": "Sarcomatoid urothelial carcinoma",
+        "rule_kind": "differential morphology",
+        "source_semantics": "Sarcomatoid UC can morphologically mimic mesenchymal bladder neoplasms.",
+        "logical_form": "SOFT_COMPATIBLE(mesenchymal-neoplasm-like morphology)",
+        "scope": "Urinary bladder; nonspecific differential compatibility.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "atomic",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-03-R04",
+        "source_anchor": "Diagnosis of S-UC requires at least one of the following criteria:",
+        "target": "Sarcomatoid urothelial carcinoma",
+        "rule_kind": "necessary composite diagnostic criterion",
+        "source_semantics": "At least one criterion is required: epithelial origin demonstrated morphologically OR epithelial origin demonstrated by cytokeratin IHC OR GATA3 IHC expression (particularly in the sarcomatous component). No single alternative is individually required.",
+        "logical_form": "NECESSARY(ANY(epithelial morphology, epithelial-origin cytokeratin IHC, GATA3 IHC expression))",
+        "scope": "Sarcomatoid UC diagnosis; GATA3 particularly in sarcomatous component.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "flat_group",
+        "notes": "Textual OR inside an OR is associatively flattenable; do not call impossible merely because two verbal levels exist. Group-level necessary effect is essential."
+      },
+      {
+        "rule_id": "S4-03-R05",
+        "source_anchor": "a biphasic malignant tumor with both epithelial and mesenchymal components",
+        "target": "Sarcomatoid urothelial carcinoma",
+        "rule_kind": "biphasic definition",
+        "source_semantics": "The tumor is malignant and biphasic, with both epithelial and mesenchymal components identified morphologically and/or immunohistochemically.",
+        "logical_form": "DEF(malignant AND epithelial component AND mesenchymal component); identification via morphology OR IHC OR both",
+        "scope": "Both components, with alternative methods of identification.",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "nested_group",
+        "notes": "Morphology/IHC are evidence methods, not two independently mandatory components."
+      },
+      {
+        "rule_id": "S4-03-R06",
+        "source_anchor": "The epithelial component can be CUC, SCC, adenocarcinoma, or high-grade neuroendocrine carcinoma",
+        "target": "Sarcomatoid urothelial carcinoma",
+        "rule_kind": "component alternatives",
+        "source_semantics": "Its epithelial component can be conventional UC, squamous cell carcinoma, adenocarcinoma or high-grade neuroendocrine carcinoma and these may be admixed.",
+        "logical_form": "COMPONENT_COMPATIBILITY(OR(CUC, SCC, adenocarcinoma, high-grade neuroendocrine carcinoma); admixture allowed)",
+        "scope": "Component identity does not change the whole tumor target into the named component alone.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "sample_id": "S4-04",
+    "window_id": "pmc_oa:5cb1de4c957b8c4bb1c8",
+    "reviewer": "source_inventory_4; AI source-only close reading",
+    "reading_note": "Contrastive features and clinical predictors are soft associations; no text says all listed findings must coexist. Laboratory exceptions apply to the later biological-feature claims and must be retained.",
+    "non_target_source": [
+      {
+        "anchor": "CRP is more sensitive as a marker for treatment response",
+        "kind": "monitoring",
+        "reason": "50% weekly fall describes response monitoring, not initial diagnostic threshold."
+      },
+      {
+        "anchor": "In cases with negative blood cultures, discal or vertebral percutaneous CT-guided needle",
+        "kind": "workup",
+        "reason": "Conditional biopsy recommendation and procedural yield are not a specified positive diagnostic finding."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S4-04-R01",
+        "source_anchor": "Compared to pyogenic spondylitis, tuberculous spondylitis",
+        "target": "Tuberculous spondylitis",
+        "rule_kind": "comparative clinical feature set",
+        "source_semantics": "Relative to pyogenic spondylitis, TB spondylitis more often has younger age, longer symptom duration, absent fever, thoracic involvement, >3 vertebral levels and paraspinal abscess.",
+        "logical_form": "SOFT_COMPARATIVE_FEATURE_SET(younger, longer symptoms, afebrile, thoracic, vertebral levels >3, paraspinal abscess)",
+        "scope": "Comparison to pyogenic spondylitis; none stated as necessary.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-04-R02",
+        "source_anchor": "Clinical predictors for fungal discitis/osteomyelitis include",
+        "target": "Fungal discitis/osteomyelitis",
+        "rule_kind": "predictive feature set",
+        "source_semantics": "Clinical predictors include back pain >=10 weeks, antibiotic use >=1 week and IV drug abuse; the list does not specify an all-of threshold.",
+        "logical_form": "SOFT_PREDICTOR_SET(back pain duration >=10 weeks, antibiotic duration >=1 week, IV drug abuse)",
+        "scope": "No necessary conjunction or sufficient combination supplied.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-04-R03",
+        "source_anchor": "levels are almost always elevated.",
+        "target": "Spondylodiscitis",
+        "rule_kind": "laboratory feature set with exceptions",
+        "source_semantics": "ESR and CRP are almost always elevated, but such biological features may be absent in tubercular disease or infections with intracellular organisms including Brucella, Legionella and Listeria.",
+        "logical_form": "SOFT_FEATURE_SET(elevated ESR, elevated CRP) EXCEPT possible absence in TB/intracellular organisms",
+        "scope": "General spondylodiscitis context; almost always is not universal.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-04-R04",
+        "source_anchor": "White blood cell (WBC) count may be elevated or within the normal range",
+        "target": "Spondylodiscitis",
+        "rule_kind": "nondiscriminatory laboratory feature",
+        "source_semantics": "WBC may be high or normal, so it is not particularly useful diagnostically; neither state excludes disease.",
+        "logical_form": "COMPATIBLE(high WBC OR normal WBC); NONDISCRIMINATORY(WBC)",
+        "scope": "General spondylodiscitis context.",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "scoped_rule",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-04-R05",
+        "source_anchor": "Blood cultures are positive in 30–78% of cases of pyogenic spondylodiscitis.",
+        "target": "Pyogenic spondylodiscitis",
+        "rule_kind": "test sensitivity association",
+        "source_semantics": "Blood cultures are positive in 30-78% of cases; negative blood cultures therefore do not rule out pyogenic spondylodiscitis.",
+        "logical_form": "P(positive blood culture | pyogenic spondylodiscitis)=0.30..0.78",
+        "scope": "Source describes detection fraction, not posterior certainty given a positive result.",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "scoped_rule",
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "sample_id": "S4-05",
+    "window_id": "statpearls:42cf51c85397139ced24",
+    "reviewer": "source_inventory_4; AI source-only close reading",
+    "reading_note": "A diagnostic clonality passage is embedded under an erroneous Treatment/Management title. Normal B/T-cell maturation is not lymphoma evidence. Clonality is the directly established target; the text itself loosely introduces malignancy or clonality.",
+    "non_target_source": [
+      {
+        "anchor": "Antigen-specificity for B and T-cells is defined by the cell-surface receptor",
+        "kind": "normal biology",
+        "reason": "Receptor specificity and cell maturation describe normal lymphocytes, not lymphoma criteria."
+      },
+      {
+        "anchor": "Combined modality therapy, including chemotherapy with antibody-drug conjugates and radiotherapy",
+        "kind": "treatment/prognosis",
+        "reason": "Standard therapy, chemosensitivity and 86% survival are not diagnostic claims."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S4-05-R01",
+        "source_anchor": "lymphocytes expressing all kappa or lambda light chains.",
+        "target": "B-cell clonality in evaluation for B-cell lymphoma",
+        "rule_kind": "clonality diagnostic group",
+        "source_semantics": "IHC demonstrating light-chain restriction, with the sampled lymphocytes expressing exclusively kappa OR exclusively lambda light chains, shows a lymphocytic clone. It does not say the mere presence of either light chain proves lymphoma.",
+        "logical_form": "(FORALL sampled relevant lymphocytes:kappa restricted) OR (FORALL sampled relevant lymphocytes:lambda restricted) => shows B-cell clone",
+        "scope": "B-cell-lymphoma evaluation; clone is the direct result, not unconditional malignant lymphoma.",
+        "source_status": "adjudicable",
+        "flat_schema": "impossible",
+        "complexity": "nested_group",
+        "notes": "Contains quantification over cells plus disjunction across restriction classes. An all group over two positive marker names reverses the required exclusivity."
+      }
+    ]
+  },
+  {
+    "sample_id": "S4-06",
+    "window_id": "statpearls:4bea3439b79feaff84df",
+    "reviewer": "source_inventory_4; AI source-only close reading",
+    "reading_note": "Introductory disease-definition and site distribution statements are included, but learning objectives are not converted into findings. Population percentages are not individual diagnostic thresholds.",
+    "non_target_source": [
+      {
+        "anchor": "Objectives: Correlate the pathogenesis",
+        "kind": "educational objectives",
+        "reason": "Learning objectives supply no concrete criterion or result."
+      },
+      {
+        "anchor": "31% of SFTs originated within the abdominal cavity",
+        "kind": "epidemiology",
+        "reason": "Study site proportions alone are not diagnostic thresholds."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S4-06-R01",
+        "source_anchor": "rare, slow-growing fibroblastic tumors considered mesenchymal in origin",
+        "target": "Solitary fibrous tumor",
+        "rule_kind": "definition and growth phenotype",
+        "source_semantics": "SFTs are rare, generally slow-growing fibroblastic/mesenchymal neoplasms arising from fibroblast-like cells.",
+        "logical_form": "DEF(fibroblastic mesenchymal neoplasm); SOFT_FEATURE(slow growth)",
+        "scope": "Tumor class; slow growth is descriptive, not necessary.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-06-R02",
+        "source_anchor": "includes tumors previously classified as hemangiopericytomas.",
+        "target": "Solitary fibrous tumor",
+        "rule_kind": "historical classification",
+        "source_semantics": "The SFT class includes tumors historically classified as hemangiopericytomas.",
+        "logical_form": "historically classified hemangiopericytoma IN SFT class",
+        "scope": "Historical classification relation; not a symptom-based independent confirmation.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "atomic",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-06-R03",
+        "source_anchor": "including the peritoneum, liver, mediastinum, upper respiratory tract, kidney",
+        "target": "Solitary fibrous tumor",
+        "rule_kind": "anatomic distribution",
+        "source_semantics": "SFTs occur in pleura and diverse extrapleural sites including peritoneum, liver, mediastinum, upper respiratory tract, kidney, adrenal, bladder, prostate, orbit, nose and paranasal/head-neck sites; no one site is required.",
+        "logical_form": "SOFT_SITE_COMPATIBILITY(pleural OR listed extrapleural sites)",
+        "scope": "Site compatibility, not diagnosis from location alone.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "sample_id": "S4-07",
+    "window_id": "statpearls:4d15ca806ab7e30fae32",
+    "reviewer": "source_inventory_4; AI source-only close reading",
+    "reading_note": "Zero diagnostic rules: drug safety, contraindication, trial exclusion and discontinuation statements only. Their later promotion to diagnostic exclusions would be source-traceable distortion, not source-free hallucination.",
+    "non_target_source": [
+      {
+        "anchor": "four completed suicides",
+        "kind": "adverse-event report",
+        "reason": "Events and explicitly unestablished causality do not define a diagnostic criterion."
+      },
+      {
+        "anchor": "Brodalumab is contraindicated in patients with Crohn disease.",
+        "kind": "drug contraindication",
+        "reason": "Crohn disease excludes a medication choice, not vice versa and not the diagnosis."
+      },
+      {
+        "anchor": "31% experienced worsening of disease versus 9%",
+        "kind": "treatment harm",
+        "reason": "Trial progression rates concern safety, not a diagnosis rule."
+      },
+      {
+        "anchor": "Crohn disease met the exclusion criteria from the psoriasis clinical trials",
+        "kind": "research exclusion",
+        "reason": "Trial eligibility exclusion must not be converted into a medical diagnostic exclusion."
+      },
+      {
+        "anchor": "they should discontinue therapy.",
+        "kind": "management",
+        "reason": "Established new Crohn disease triggers drug discontinuation."
+      }
+    ],
+    "rules": []
+  },
+  {
+    "sample_id": "S4-08",
+    "window_id": "statpearls:ca83397bfad5e03bbd7c",
+    "reviewer": "source_inventory_4; AI source-only close reading",
+    "reading_note": "The title says epidermoid cyst but the whole input concerns mesenchymal orbital neoplasms. Targets follow body text. Morphologic definitions, component classes and weak clinical associations are preserved without claiming staghorn vessels uniquely diagnose one entity.",
+    "non_target_source": [
+      {
+        "anchor": "Dedifferentiated SFT signifies a more aggressive lesion.",
+        "kind": "prognosis",
+        "reason": "Aggressiveness is not a specified diagnostic finding of dedifferentiation."
+      },
+      {
+        "anchor": "Immunohistochemical staining is essential to rule out other neoplasms",
+        "kind": "workup",
+        "reason": "No positive/negative stain pattern is specified; performing IHC itself does not exclude schwannoma or melanoma."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S4-08-R01",
+        "source_anchor": "These include fibrous histiocytoma, hemangiopericytoma, and giant cell angiofibroma.",
+        "target": "Solitary fibrous tumor spectrum",
+        "rule_kind": "source classification",
+        "source_semantics": "This source groups fibrous histiocytoma, hemangiopericytoma and giant cell angiofibroma in the SFT morphologic spectrum.",
+        "logical_form": "INCLUDES(SFT spectrum; fibrous histiocytoma, hemangiopericytoma, giant cell angiofibroma)",
+        "scope": "Source taxonomy is audited as written, not corrected from external classification.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-08-R02",
+        "source_anchor": "\"patternless pattern\" with \"staghorn\" vessels.",
+        "target": "Solitary fibrous tumor spectrum",
+        "rule_kind": "histologic feature set",
+        "source_semantics": "The tumor spectrum has cellular/stromal components in a patternless arrangement with staghorn vessels.",
+        "logical_form": "SOFT_HISTOLOGY_SET(cellular/stromal components, patternless pattern, staghorn vessels)",
+        "scope": "Shared by the source-defined spectrum, not specific enough for individual subtype confirmation.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-08-R03",
+        "source_anchor": "fat-forming STFs contain mature adipose tissue and few to no mitotic cells.",
+        "target": "Fat-forming solitary fibrous tumor",
+        "rule_kind": "histologic subtype features",
+        "source_semantics": "The more indolent fat-forming SFT variant contains mature adipose tissue and few or no mitotic cells.",
+        "logical_form": "SUBTYPE_FEATURE_SET(mature adipose tissue, few/no mitotic cells)",
+        "scope": "Fat-forming variant; indolence does not imply universal benignity.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-08-R04",
+        "source_anchor": "is commonly diagnosed in middle-aged adults.",
+        "target": "Orbital fibrous histiocytoma",
+        "rule_kind": "clinical demographic association",
+        "source_semantics": "Orbital fibrous histiocytoma is commonly diagnosed in middle-aged adults and is most often benign, although malignant potential exists.",
+        "logical_form": "SOFT_FEATURE_SET(middle adulthood, usually benign but malignancy possible)",
+        "scope": "Orbital lesion context.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-08-R05",
+        "source_anchor": "Malignant fibrous histiocytomas should be considered in the differential",
+        "target": "Malignant orbital fibrous histiocytoma",
+        "rule_kind": "differential risk association",
+        "source_semantics": "Prior orbital radiation increases reason to consider malignant fibrous histiocytoma in the differential; the previously described shared histologic features may be present.",
+        "logical_form": "prior orbital radiation -> CONSIDER(malignant fibrous histiocytoma)",
+        "scope": "Suspicion/differential effect, not sufficient diagnosis.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "atomic",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-08-R06",
+        "source_anchor": "benign, highly-vascularized soft tissue tumors found in the head and neck region",
+        "target": "Giant cell angiofibroma",
+        "rule_kind": "definition and clinical features",
+        "source_semantics": "Giant cell angiofibromas are benign highly vascular soft-tissue tumors usually in head/neck and rarely orbit; they may be indolent or grow faster and resemble malignancy.",
+        "logical_form": "DEF(benign highly vascular soft-tissue tumor); SITE_COMPATIBILITY(head/neck, rare orbit); growth may be slow OR rapid",
+        "scope": "Fast growth or malignant appearance alone does not establish malignancy.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "sample_id": "S4-09",
+    "window_id": "statpearls:ce9732d22eb2f49ff598",
+    "reviewer": "source_inventory_4; AI source-only close reading",
+    "reading_note": "Zero diagnostic rules: the payload is only a disease/subtype name list. It establishes no phenotype, test finding, threshold, polarity or scope. Do not infer criteria from lexical labels such as nodular or lymphocyte-rich.",
+    "non_target_source": [
+      {
+        "anchor": "Nodular lymphocyte-predominant Hodgkin lymphoma",
+        "kind": "taxonomic heading/list",
+        "reason": "Bare subtype names lack a diagnostic proposition; list hierarchy itself is not a test result."
+      }
+    ],
+    "rules": []
+  },
+  {
+    "sample_id": "S4-10",
+    "window_id": "statpearls:d4370558e55b8b564477",
+    "reviewer": "source_inventory_4; AI source-only close reading",
+    "reading_note": "Type-specific PRP phenotypes are weak association sets. The warning about overlap is retained as one ambiguity/differential relation with a target set, because it gives the same shared non-discriminative effect for the entire comparison, not three independent confirmatory criteria.",
+    "non_target_source": [
+      {
+        "anchor": "Type II PRP reportedly affects 5% of patients",
+        "kind": "epidemiology",
+        "reason": "Subtype frequencies 5% and 10% are not diagnostic thresholds."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S4-10-R01",
+        "source_anchor": "with more eczematous plaques, ichthyosiform scale",
+        "target": "Type II pityriasis rubra pilaris",
+        "rule_kind": "subtype clinical features",
+        "source_semantics": "Type II PRP may resemble classical PRP but tends to have more eczematous plaques, ichthyosiform scale especially legs, coarse laminated palmoplantar keratoderma and more pronounced alopecia.",
+        "logical_form": "SOFT_FEATURE_SET(eczematous plaques, lower-extremity-predominant ichthyosiform scale, coarse laminated PPK, pronounced alopecia)",
+        "scope": "Type II; relative phenotypic comparison, not all required.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-10-R02",
+        "source_anchor": "it has a substantial overlap with erythrodermic mycosis fungoides, Sezary syndrome, and paraneoplastic phenomena.",
+        "target": "Type II pityriasis rubra pilaris versus erythrodermic mycosis fungoides / Sezary syndrome / paraneoplastic phenomena",
+        "rule_kind": "differential ambiguity",
+        "source_semantics": "The clinical phenotype of Type II PRP overlaps these alternatives, so the phenotype alone cannot reliably discriminate among them.",
+        "logical_form": "NONDISCRIMINATIVE_OVERLAP(Type II PRP phenotype; erythrodermic MF, Sezary, paraneoplastic phenomena)",
+        "scope": "Clinical overlap; not a hard exclusion of PRP or positive diagnosis of each competitor.",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "scoped_rule",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-10-R03",
+        "source_anchor": "but has a juvenile onset and less commonly results in erythroderma.",
+        "target": "Type III classic juvenile pityriasis rubra pilaris",
+        "rule_kind": "subtype clinical features",
+        "source_semantics": "Type III PRP resembles type I classical adult PRP but begins in juveniles, less often becomes erythrodermic, and most commonly features palmoplantar keratoderma with scalp, face and upper-trunk involvement.",
+        "logical_form": "SUBTYPE(juvenile onset); SOFT_FEATURE_SET(PPK, scalp/face/upper-trunk involvement); erythroderma less frequent than type I",
+        "scope": "Type III; juvenile onset is the defining subtype qualifier; other manifestations are typical.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "sample_id": "S4-11",
+    "window_id": "textbooks:539b6a8536d319cc0923",
+    "reviewer": "source_inventory_4; AI source-only close reading",
+    "reading_note": "Two unrelated textbook topics are concatenated. Pediculosis clinical diagnosis and osteomyelitis age/site/etiologic qualifiers are separate targets. Puberty and age cutoffs must not migrate between them.",
+    "non_target_source": [
+      {
+        "anchor": "Treatment consists of education regarding personal and environmental hygiene",
+        "kind": "treatment",
+        "reason": "Pediculicides and 72-hour clothing separation are management, not diagnostic thresholds."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S4-11-R01",
+        "source_anchor": "caused by infestation with Phthirus pubis",
+        "target": "Pediculosis pubis",
+        "rule_kind": "etiologic definition",
+        "source_semantics": "Pediculosis pubis is infestation by Phthirus pubis, the pubic crab louse.",
+        "logical_form": "DEF(infestation with Phthirus pubis)",
+        "scope": "Pubic lice; named organism identifies the entity.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "atomic",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-11-R02",
+        "source_anchor": "where it causes characteristic, intense pruritus",
+        "target": "Pediculosis pubis",
+        "rule_kind": "presentation",
+        "source_semantics": "The lice inhabit pubic hair and characteristically cause intense pruritus; transmission is predominantly sexual.",
+        "logical_form": "SOFT_FEATURE_SET(pubic hair involvement, intense pruritus, sexual exposure)",
+        "scope": "Sexual transmission is common, not mandatory.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-11-R03",
+        "source_anchor": "Diagnosis can be made clinically; lice are visible to the naked eye.",
+        "target": "Pediculosis pubis",
+        "rule_kind": "clinical confirmation",
+        "source_semantics": "Clinical observation of visible pubic lice can establish pediculosis pubis.",
+        "logical_form": "visible pubic lice => clinical diagnosis of pediculosis pubis",
+        "scope": "Observation of lice, not merely itch or a clinical examination.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "atomic",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-11-R04",
+        "source_anchor": "Erythematous papules and egg cases (nits) are not seen before puberty.",
+        "target": "Pediculosis pubis",
+        "rule_kind": "age-scoped negative manifestation",
+        "source_semantics": "The source says erythematous papules and nits are not seen before puberty; it does not state that pediculosis itself is impossible before puberty.",
+        "logical_form": "prepubertal -> NOT(erythematous papules OR nits) in this source description",
+        "scope": "Prepubertal manifestation statement, not disease exclusion.",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "scoped_rule",
+        "notes": "Audit source claim as written without importing external correction."
+      },
+      {
+        "rule_id": "S4-11-R05",
+        "source_anchor": "Acute hematogenous osteomyelitis is the most common manifestation",
+        "target": "Acute hematogenous osteomyelitis",
+        "rule_kind": "etiologic qualifier",
+        "source_semantics": "In children, acute hematogenous osteomyelitis develops secondary to bacteremia.",
+        "logical_form": "hematogenous bacteremic origin characterizes acute hematogenous osteomyelitis",
+        "scope": "Pediatric setting; bacteremia can precede and need not be currently culture-positive.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "scoped_rule",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-11-R06",
+        "source_anchor": "Subacute osteomyelitis usually follows local inoculation by penetrating trauma",
+        "target": "Subacute osteomyelitis",
+        "rule_kind": "etiologic and presentation association",
+        "source_semantics": "Subacute osteomyelitis usually follows local inoculation by penetrating trauma and lacks systemic symptoms in the description.",
+        "logical_form": "SOFT_FEATURE_SET(penetrating local inoculation, absence of systemic symptoms)",
+        "scope": "Usually is not a universal requirement.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-11-R07",
+        "source_anchor": "chronic osteomyelitis results from an untreated or inadequately treated",
+        "target": "Chronic osteomyelitis",
+        "rule_kind": "temporal etiologic qualifier",
+        "source_semantics": "Chronic osteomyelitis results from untreated or inadequately treated, usually subacute, osteomyelitis.",
+        "logical_form": "prior osteomyelitis AND (untreated OR inadequately treated) -> chronic infection progression",
+        "scope": "Previous infection and treatment history; not every untreated acute case is immediately chronic.",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "scoped_rule",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-11-R08",
+        "source_anchor": "In children beyond the newborn period and without hemoglobinopathies",
+        "target": "Pediatric osteomyelitis without hemoglobinopathy",
+        "rule_kind": "age/comorbidity-scoped location",
+        "source_semantics": "Beyond the newborn period, children without hemoglobinopathy have bone infections almost exclusively in long-bone metaphyses.",
+        "logical_form": "(child beyond neonatal period AND no hemoglobinopathy) -> ALMOST_ALWAYS(metaphyseal long-bone location)",
+        "scope": "Almost exclusive, not an absolute necessary criterion for every pediatric bone infection.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "scoped_rule",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-11-R09",
+        "source_anchor": "Preceding nonpenetrating trauma is often reported",
+        "target": "Pediatric osteomyelitis",
+        "rule_kind": "risk association",
+        "source_semantics": "Preceding nonpenetrating trauma is often reported and may predispose to osteomyelitis through local injury.",
+        "logical_form": "SOFT_RISK_ASSOC(preceding nonpenetrating trauma)",
+        "scope": "Pediatric bone infection; possible predisposing history, not mandatory.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "atomic",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-11-R10",
+        "source_anchor": "Bone infections in children with sickle cell disease occur in the diaphyseal portion",
+        "target": "Osteomyelitis in children with sickle cell disease",
+        "rule_kind": "comorbidity-scoped location",
+        "source_semantics": "In children with sickle cell disease, bone infections occur in long-bone diaphyses, contrasting with metaphyseal predominance in children without hemoglobinopathies.",
+        "logical_form": "child AND sickle cell disease -> described diaphyseal long-bone location",
+        "scope": "Sickle-cell context only.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "scoped_rule",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-11-R11",
+        "source_anchor": "permitting spread of infection across the epiphysis leading to suppurative arthritis",
+        "target": "Suppurative arthritis complicating infant osteomyelitis",
+        "rule_kind": "age-scoped causal spread",
+        "source_semantics": "In children younger than approximately 12-18 months, vessels crossing the growth plate permit osteomyelitis to spread across the epiphysis and cause suppurative arthritis; this is a possibility, not certainty. Older children tend to have metaphyseal containment because the vessels no longer cross.",
+        "logical_form": "age < approximate 12-18 months AND bone infection -> POSSIBLE(transphyseal spread -> suppurative arthritis); older age -> metaphyseal containment",
+        "scope": "Pediatric age-dependent vascular anatomy; approximate range is not an exact 12-month or 18-month diagnostic cutoff.",
+        "source_status": "adjudicable",
+        "flat_schema": "lossy",
+        "complexity": "scoped_rule",
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "sample_id": "S4-12",
+    "window_id": "textbooks:5b4bb23e570d5d2d6fd6",
+    "reviewer": "source_inventory_4; AI source-only close reading",
+    "reading_note": "Repeated overlap text is counted once. Risks, syndrome features, organism distributions and donor-recipient serostatus are distinct claims, not all-of infection criteria. The opening treatment continuation lacks its subject and is non-target.",
+    "non_target_source": [
+      {
+        "anchor": "they are the second most common reason",
+        "kind": "prognosis/incidence",
+        "reason": "Graft-loss ranking and relative severity do not establish infection diagnosis."
+      },
+      {
+        "anchor": "Treatment entails a prompt return to the operating room.",
+        "kind": "management",
+        "reason": "Surgical drainage, antimicrobials and donor susceptibility-based treatment concern action after suspicion/diagnosis."
+      },
+      {
+        "anchor": "Medical infections include respiratory, urinary tract, and bloodstream infections.",
+        "kind": "taxonomy",
+        "reason": "Broad category listing provides no clinical diagnostic predicates."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S4-12-R01",
+        "source_anchor": "Lengthy operations with significant blood loss",
+        "target": "Post-transplant intra-abdominal infection",
+        "rule_kind": "risk feature set",
+        "source_semantics": "Long operations, major blood loss, prolonged warm/cold ischemia, contaminated-fluid spillage, early high induction immunosuppression and anastomotic leaks predispose transplant recipients to intra-abdominal infection.",
+        "logical_form": "SOFT_RISK_SET(long operation, blood loss, prolonged ischemia, contaminated spillage, induction immunosuppression, anastomotic leak)",
+        "scope": "Post-transplant recipients; none is required or sufficient.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-12-R02",
+        "source_anchor": "fever, hypotension, ileus, and abdominal pain",
+        "target": "Post-transplant intra-abdominal infection",
+        "rule_kind": "clinical feature set with masking exception",
+        "source_semantics": "Symptoms/signs resemble peritonitis: fever, hypotension, ileus and abdominal pain, with pain potentially masked by immunosuppression.",
+        "logical_form": "SOFT_FEATURE_SET(fever,hypotension,ileus,abdominal pain); pain can be absent/masked under immunosuppression",
+        "scope": "Transplant/immunosuppressed setting; repeated source overlap counted once.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-12-R03",
+        "source_anchor": "Intra-abdominal infections are usually polymicrobial",
+        "target": "Post-transplant intra-abdominal infection",
+        "rule_kind": "microbiologic feature set",
+        "source_semantics": "These infections are usually polymicrobial; common isolates include E coli, Enterococcus, Klebsiella, Pseudomonas and Candida albicans, krusei or glabrata.",
+        "logical_form": "SOFT_MICROBIOLOGY_SET(usually polymicrobial; listed bacteria/fungi compatible)",
+        "scope": "Common etiologies, not a requirement to recover every species.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-12-R04",
+        "source_anchor": "Late infections primarily are due to chronic immunosup-pression",
+        "target": "Late post-transplant opportunistic infection",
+        "rule_kind": "temporal etiologic association",
+        "source_semantics": "Chronic immunosuppression/depressed cell-mediated immunity in the late post-transplant phase predisposes to viral, fungal and parasitic infections.",
+        "logical_form": "late transplant phase + depressed cell-mediated immunity -> SOFT_RISK(viral/fungal/parasitic infection)",
+        "scope": "Late-phase association; no specific pathogen diagnosis.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "scoped_rule",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-12-R05",
+        "source_anchor": "Members of the herpesvirus group are the most common etiologic agents",
+        "target": "Post-transplant viral infection",
+        "rule_kind": "etiologic distribution",
+        "source_semantics": "Herpesviruses, especially HSV, CMV and EBV, are the most common viral agents after transplantation.",
+        "logical_form": "SOFT_ETIOLOGIC_SET(HSV,CMV,EBV)",
+        "scope": "Virus list is differential support, not simultaneous required infections.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "association_set",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-12-R06",
+        "source_anchor": "Recipients who are seronegative for HSV, CMV, and/or EBV",
+        "target": "Post-transplant herpesvirus infection",
+        "rule_kind": "serostatus-conditioned risk",
+        "source_semantics": "A recipient seronegative for a given HSV/CMV/EBV virus has increased post-transplant infection risk, especially when the donor is seropositive for that virus. Seropositivity before transplant may confer immunity.",
+        "logical_form": "FOR relevant virus v IN {HSV,CMV,EBV}: recipient_negative(v) -> increased risk(v), accentuated by donor_positive(v)",
+        "scope": "Donor/recipient and same-virus binding must remain distinct; not all three viruses required.",
+        "source_status": "adjudicable",
+        "flat_schema": "impossible",
+        "complexity": "nested_group",
+        "notes": ""
+      },
+      {
+        "rule_id": "S4-12-R07",
+        "source_anchor": "CMV is a latent infection that can be transmitted to sero-naive recipients",
+        "target": "Post-transplant cytomegalovirus infection",
+        "rule_kind": "alternative causal routes",
+        "source_semantics": "CMV infection may be acquired by a seronaive recipient from a seropositive donor organ, may reactivate during immunosuppression, or both.",
+        "logical_form": "POSSIBLE_ROUTE(seronaive recipient AND seropositive donor organ) OR POSSIBLE_ROUTE(latent CMV reactivation during immunosuppression); both allowed",
+        "scope": "Donor transmission and reactivation are alternatives, not jointly required diagnostic conditions.",
+        "source_status": "adjudicable",
+        "flat_schema": "impossible",
+        "complexity": "nested_group",
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "sample_id": "S4-13",
+    "window_id": "textbooks:82ec07f28ad6972b0b6d",
+    "reviewer": "source_inventory_4; AI source-only close reading",
+    "reading_note": "Zero diagnostic rules: entire window is bibliography, including duplicated overlapping citations. Disease names in article titles are provenance leads, not source assertions with an evaluable condition. No cited full paper content is imported.",
+    "non_target_source": [
+      {
+        "anchor": "Hereditary generalized amyloidosis with polyneuropathy: Clinicopathological study",
+        "kind": "bibliography",
+        "reason": "Study titles do not supply diagnostic criteria; 65, 17, 19 and other counts are sample sizes."
+      },
+      {
+        "anchor": "Craniofacial and cutaneous findings expand the phenotype",
+        "kind": "bibliography",
+        "reason": "A cited title hints at phenotype, but gives no specific finding, scope or diagnostic rule."
+      }
+    ],
+    "rules": []
+  },
+  {
+    "sample_id": "S4-14",
+    "window_id": "textbooks:a90006e9ec363363c48d",
+    "reviewer": "source_inventory_4; AI source-only close reading",
+    "reading_note": "Zero diagnostic rules: bibliography-only window. Titles mention diagnostic studies but contain neither test-result conditions nor the cited consensus criteria; retrieving their full articles would be a separate source exposure.",
+    "non_target_source": [
+      {
+        "anchor": "Rapid diagnosis of herpes simplex encephalitis by nested polymerase chain reaction",
+        "kind": "bibliography",
+        "reason": "Citation title identifies a study method, not a specified positive-result diagnostic rule."
+      },
+      {
+        "anchor": "PML diagnostic criteria. Consensus statement",
+        "kind": "bibliography",
+        "reason": "Criteria are named but not present in this input; cannot count them as an extracted or omitted complete criterion group."
+      }
+    ],
+    "rules": []
+  },
+  {
+    "sample_id": "S4-15",
+    "window_id": "wikem:0c15bda69016e4a2f0c9",
+    "reviewer": "source_inventory_4; AI source-only close reading",
+    "reading_note": "Zero diagnostic rules: instructions to aspirate, admit or discharge and safety/followup are decisions about workup/disposition. Hot swollen joint prompts a procedure without naming a specific diagnosis; pending cultures with unexcluded septic arthritis prompts admission, not proof of septic arthritis.",
+    "non_target_source": [
+      {
+        "anchor": "Perform arthrocentesis on any acute hot, swollen joint unless clear alternative diagnosis",
+        "kind": "conditional workup",
+        "reason": "Universal procedure recommendation with alternative-diagnosis exception is not a disease criterion."
+      },
+      {
+        "anchor": "Overlying cellulitis is a relative contraindication",
+        "kind": "procedure contraindication",
+        "reason": "Relative contraindication applies to arthrocentesis, not diagnosis of arthritis."
+      },
+      {
+        "anchor": "Unable to rule out septic arthritis with pending cultures in high-risk patient",
+        "kind": "disposition under uncertainty",
+        "reason": "Admission under unresolved risk must not be interpreted as confirmation or necessary infection evidence."
+      },
+      {
+        "anchor": "Crystal arthropathy with adequate pain control",
+        "kind": "disposition",
+        "reason": "Pain control modifies suitability for discharge; it is not a disease diagnostic requirement."
+      }
+    ],
+    "rules": []
+  },
+  {
+    "sample_id": "S4-16",
+    "window_id": "wikem:9771d63dd1302a74f48f",
+    "reviewer": "source_inventory_4; AI source-only close reading",
+    "reading_note": "One actual sign-to-disease association: coffee-bean sign in sigmoid volvulus. Gold-standard/first-line imaging declarations are method-selection claims without a positive finding; disposition clauses are not disease criteria.",
+    "non_target_source": [
+      {
+        "anchor": "gold standard for diverticulitis, abscess, volvulus, mesenteric ischemia",
+        "kind": "workup test selection",
+        "reason": "CT is recommended as a method, but no result or finding establishing any of these diagnoses is supplied."
+      },
+      {
+        "anchor": "first-line for suspected ovarian torsion, ectopic pregnancy",
+        "kind": "workup test selection",
+        "reason": "Pelvic ultrasound first-line does not mean ultrasound performed confirms disease."
+      },
+      {
+        "anchor": "POCUS : free fluid, hydronephrosis, IUP identification",
+        "kind": "workup capability",
+        "reason": "Lists observable targets without disease-specific diagnostic effects."
+      },
+      {
+        "anchor": "Admit: complicated diverticulitis",
+        "kind": "disposition",
+        "reason": "Admission/discharge and followup decisions are not disease evidence."
+      }
+    ],
+    "rules": [
+      {
+        "rule_id": "S4-16-R01",
+        "source_anchor": "coffee bean sign in sigmoid volvulus",
+        "target": "Sigmoid volvulus",
+        "rule_kind": "radiographic association",
+        "source_semantics": "A coffee-bean sign on abdominal radiograph is a useful finding associated with sigmoid volvulus. The source does not explicitly make it necessary or independently conclusive.",
+        "logical_form": "SOFT_SUPPORT(abdominal X-ray coffee-bean sign -> sigmoid volvulus)",
+        "scope": "Plain abdominal radiograph.",
+        "source_status": "adjudicable",
+        "flat_schema": "exact",
+        "complexity": "atomic",
+        "notes": ""
+      }
+    ]
+  }
+]
