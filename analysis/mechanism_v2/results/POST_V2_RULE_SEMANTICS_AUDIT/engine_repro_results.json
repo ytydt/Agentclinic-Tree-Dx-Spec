@@ -1,0 +1,1186 @@
+{
+  "audit_kind": "synthetic deterministic semantic counterexamples",
+  "revision": "96938384655e486e8eddc0a0e7c6901de9e57aa4",
+  "production_sha256": {
+    "run_mechanical_engine.py": "6216de0b59f87a1fab4fa09f0db18436a2c208a9e7e43f7802edf3d9b429a383",
+    "gate_assertions.py": "6e18fea04eb63aa91fbadaf06d569c52dc91ef1f08a4adf96269a4dc3b03aed0",
+    "run_trial_extraction.py": "5e350b8d3958f0a3b160673e3a8d7e68bae59694caf155260e2e0e6571d017ce"
+  },
+  "n_counterexamples": 27,
+  "limitations": [
+    "Not prevalence estimates or clinical validation.",
+    "Flags isolate mechanisms; not an exact B1+S7 cohort replay.",
+    "All group tests use the same unmodified group evaluator as B1+S7.",
+    "Optional embeddings/LR/provenance loading disabled unless directly under test."
+  ],
+  "cases": [
+    {
+      "id": "E01_group_signed_literal_inverted",
+      "expected_semantics": "redsignal AND NOT bluesignal is satisfied.",
+      "observed_defect": "Negative member is treated as violated and the disease is eliminated.",
+      "evidence": {
+        "top1": "Other disease",
+        "n_assertions_bound": 2,
+        "ranking": [
+          {
+            "label": "Other disease",
+            "score": 0.0,
+            "eliminated": [],
+            "confirmed": [],
+            "contributions": []
+          },
+          {
+            "label": "Index disease",
+            "score": 0.0,
+            "eliminated": [
+              {
+                "layer": 1,
+                "rule": "criterion_group_violated",
+                "group": "all/2",
+                "missing": [
+                  "bluesignal"
+                ],
+                "satisfied": [
+                  "redsignal"
+                ],
+                "quote": "Synthetic source: redsignal."
+              }
+            ],
+            "confirmed": [],
+            "contributions": []
+          }
+        ]
+      },
+      "reproduced": true
+    },
+    {
+      "id": "E02_group_threshold_ignored",
+      "expected_semantics": "redsignal >= 10 is false at 1; necessary all-group fails.",
+      "observed_defect": "Group counts both members satisfied and adds +1.",
+      "evidence": {
+        "top1": "Index disease",
+        "n_assertions_bound": 2,
+        "ranking": [
+          {
+            "label": "Index disease",
+            "score": 1.0,
+            "eliminated": [],
+            "confirmed": [],
+            "contributions": [
+              {
+                "why": "group:all/2",
+                "delta": 1.0,
+                "n_members": 2,
+                "n_satisfied": 2,
+                "n_violated": 0,
+                "predicate": "redsignal"
+              }
+            ]
+          },
+          {
+            "label": "Other disease",
+            "score": 0.0,
+            "eliminated": [],
+            "confirmed": [],
+            "contributions": []
+          }
+        ]
+      },
+      "reproduced": true
+    },
+    {
+      "id": "E03_necessary_any_no_veto",
+      "expected_semantics": "Explicit false necessary group must register violation.",
+      "observed_defect": "No hard-rule path exists for this connective.",
+      "evidence": {
+        "top1": "Index disease",
+        "n_assertions_bound": 3,
+        "ranking": [
+          {
+            "label": "Index disease",
+            "score": 0.0,
+            "eliminated": [],
+            "confirmed": [],
+            "contributions": []
+          },
+          {
+            "label": "Other disease",
+            "score": 0.0,
+            "eliminated": [],
+            "confirmed": [],
+            "contributions": []
+          }
+        ]
+      },
+      "reproduced": true
+    },
+    {
+      "id": "E03_necessary_at_least_n_no_veto",
+      "expected_semantics": "Explicit false necessary group must register violation.",
+      "observed_defect": "No hard-rule path exists for this connective.",
+      "evidence": {
+        "top1": "Index disease",
+        "n_assertions_bound": 3,
+        "ranking": [
+          {
+            "label": "Index disease",
+            "score": 0.0,
+            "eliminated": [],
+            "confirmed": [],
+            "contributions": []
+          },
+          {
+            "label": "Other disease",
+            "score": 0.0,
+            "eliminated": [],
+            "confirmed": [],
+            "contributions": []
+          }
+        ]
+      },
+      "reproduced": true
+    },
+    {
+      "id": "E04_sufficient_group_no_confirmation",
+      "expected_semantics": "Fully satisfied sufficient group produces confirmation.",
+      "observed_defect": "Even enabled sufficient confirmation is bypassed for grouped rows; only +1.",
+      "evidence": {
+        "top1": "Index disease",
+        "n_assertions_bound": 2,
+        "ranking": [
+          {
+            "label": "Index disease",
+            "score": 1.0,
+            "eliminated": [],
+            "confirmed": [],
+            "contributions": [
+              {
+                "why": "group:all/2",
+                "delta": 1.0,
+                "n_members": 2,
+                "n_satisfied": 2,
+                "n_violated": 0,
+                "predicate": "redsignal"
+              }
+            ]
+          },
+          {
+            "label": "Other disease",
+            "score": 0.0,
+            "eliminated": [],
+            "confirmed": [],
+            "contributions": []
+          }
+        ]
+      },
+      "reproduced": true
+    },
+    {
+      "id": "E05_f4b_inverts_sufficient_into_necessary",
+      "expected_semantics": "Failure of a sufficient-only condition does not exclude.",
+      "observed_defect": "F4b makes every all-group necessary and eliminates on missing limb.",
+      "evidence": {
+        "top1": "Other disease",
+        "n_assertions_bound": 2,
+        "ranking": [
+          {
+            "label": "Other disease",
+            "score": 0.0,
+            "eliminated": [],
+            "confirmed": [],
+            "contributions": []
+          },
+          {
+            "label": "Index disease",
+            "score": 0.0,
+            "eliminated": [
+              {
+                "layer": 1,
+                "rule": "criterion_group_violated",
+                "group": "all/2",
+                "missing": [
+                  "bluesignal"
+                ],
+                "satisfied": [
+                  "redsignal"
+                ],
+                "quote": "Synthetic source: redsignal."
+              }
+            ],
+            "confirmed": [],
+            "contributions": []
+          }
+        ]
+      },
+      "reproduced": true
+    },
+    {
+      "id": "E06_satisfied_exclusion_group_rewards_subject",
+      "expected_semantics": "Satisfied exclusion antecedent excludes its subject.",
+      "observed_defect": "Grouped excludes rows bypass exclusion and add positive evidence for their subject.",
+      "evidence": {
+        "top1": "Index disease",
+        "n_assertions_bound": 2,
+        "ranking": [
+          {
+            "label": "Index disease",
+            "score": 1.0,
+            "eliminated": [],
+            "confirmed": [],
+            "contributions": [
+              {
+                "why": "group:all/2",
+                "delta": 1.0,
+                "n_members": 2,
+                "n_satisfied": 2,
+                "n_violated": 0,
+                "predicate": "redsignal"
+              }
+            ]
+          },
+          {
+            "label": "Other disease",
+            "score": 0.0,
+            "eliminated": [],
+            "confirmed": [],
+            "contributions": []
+          }
+        ]
+      },
+      "reproduced": true
+    },
+    {
+      "id": "E07_dedupe_destroys_threshold_and_order_invariance",
+      "expected_semantics": "Different thresholds are distinct rules; order cannot choose truth.",
+      "observed_defect": "Dedup omits threshold/context/source and keeps the first, reversing veto on reordering.",
+      "evidence": {
+        "low_first": {
+          "top1": "Index disease",
+          "n_assertions_bound": 1,
+          "ranking": [
+            {
+              "label": "Index disease",
+              "score": 1.5,
+              "eliminated": [],
+              "confirmed": [],
+              "contributions": [
+                {
+                  "why": "required_for/asserted/present",
+                  "delta": 1.5,
+                  "predicate": "redsignal",
+                  "finding": "redsignal",
+                  "n_claimants": 1,
+                  "threshold": "5.0 >= 3.0"
+                }
+              ]
+            },
+            {
+              "label": "Other disease",
+              "score": 0.0,
+              "eliminated": [],
+              "confirmed": [],
+              "contributions": []
+            }
+          ]
+        },
+        "high_first": {
+          "top1": "Other disease",
+          "n_assertions_bound": 1,
+          "ranking": [
+            {
+              "label": "Other disease",
+              "score": 0.0,
+              "eliminated": [],
+              "confirmed": [],
+              "contributions": []
+            },
+            {
+              "label": "Index disease",
+              "score": 0.0,
+              "eliminated": [
+                {
+                  "layer": 1,
+                  "rule": "threshold_violated",
+                  "predicate": "redsignal",
+                  "quote": "Synthetic source: redsignal.",
+                  "finding": "redsignal",
+                  "comparison": "5.0 >= 10.0"
+                }
+              ],
+              "confirmed": [],
+              "contributions": []
+            }
+          ]
+        }
+      },
+      "reproduced": true
+    },
+    {
+      "id": "E08_dedupe_erodes_shared_group_to_false_atomic_confirmation",
+      "expected_semantics": "Neither (red AND blue) nor (red AND green) is satisfied; no group can confirm.",
+      "observed_defect": "Shared red row lost; g2 becomes singleton and green alone confirms.",
+      "evidence": {
+        "top1": "Index disease",
+        "n_assertions_bound": 3,
+        "ranking": [
+          {
+            "label": "Index disease",
+            "score": 1.0,
+            "eliminated": [],
+            "confirmed": [
+              {
+                "layer": 2,
+                "predicate": "greensignal",
+                "quote": "Synthetic source: greensignal.",
+                "finding": "greensignal"
+              }
+            ],
+            "contributions": [
+              {
+                "why": "group:all/2",
+                "delta": -1.0,
+                "n_members": 2,
+                "n_satisfied": 0,
+                "n_violated": 2,
+                "predicate": "redsignal"
+              },
+              {
+                "why": "sufficient_for",
+                "delta": 2.0,
+                "predicate": "greensignal",
+                "finding": "greensignal"
+              }
+            ]
+          },
+          {
+            "label": "Other disease",
+            "score": 0.0,
+            "eliminated": [],
+            "confirmed": [],
+            "contributions": []
+          }
+        ]
+      },
+      "reproduced": true
+    },
+    {
+      "id": "E09_passage_local_group_ids_merge_across_passages",
+      "expected_semantics": "Two passage-local g1 groups retain separate identities.",
+      "observed_defect": "Group key omits passage hash/source and merges 4 members into one group.",
+      "evidence": {
+        "top1": "Index disease",
+        "n_assertions_bound": 4,
+        "ranking": [
+          {
+            "label": "Index disease",
+            "score": 1.0,
+            "eliminated": [],
+            "confirmed": [],
+            "contributions": [
+              {
+                "why": "group:all/4",
+                "delta": 1.0,
+                "n_members": 4,
+                "n_satisfied": 4,
+                "n_violated": 0,
+                "predicate": "redsignal"
+              }
+            ]
+          },
+          {
+            "label": "Other disease",
+            "score": 0.0,
+            "eliminated": [],
+            "confirmed": [],
+            "contributions": []
+          }
+        ]
+      },
+      "reproduced": true
+    },
+    {
+      "id": "E10_group_contract_inconsistency_unchecked",
+      "expected_semantics": "Mixed n values must invalidate a group rather than choose a member.",
+      "observed_defect": "First member supplies n/logic and input order changes score.",
+      "evidence": {
+        "first_n2": {
+          "top1": "Index disease",
+          "n_assertions_bound": 3,
+          "ranking": [
+            {
+              "label": "Index disease",
+              "score": 1.0,
+              "eliminated": [],
+              "confirmed": [],
+              "contributions": [
+                {
+                  "why": "group:at_least_n/2",
+                  "delta": 1.0,
+                  "n_members": 3,
+                  "n_satisfied": 2,
+                  "n_violated": 1,
+                  "predicate": "redsignal"
+                }
+              ]
+            },
+            {
+              "label": "Other disease",
+              "score": 0.0,
+              "eliminated": [],
+              "confirmed": [],
+              "contributions": []
+            }
+          ]
+        },
+        "first_n3": {
+          "top1": "Index disease",
+          "n_assertions_bound": 3,
+          "ranking": [
+            {
+              "label": "Index disease",
+              "score": 0.333,
+              "eliminated": [],
+              "confirmed": [],
+              "contributions": [
+                {
+                  "why": "group:at_least_n/3",
+                  "delta": 0.333,
+                  "n_members": 3,
+                  "n_satisfied": 2,
+                  "n_violated": 1,
+                  "predicate": "greensignal"
+                }
+              ]
+            },
+            {
+              "label": "Other disease",
+              "score": 0.0,
+              "eliminated": [],
+              "confirmed": [],
+              "contributions": []
+            }
+          ]
+        }
+      },
+      "reproduced": true
+    },
+    {
+      "id": "E11_subject_first_containment_beats_later_exact",
+      "expected_semantics": "An exact named subject takes priority over a broader parent.",
+      "observed_defect": "First candidate with any lexical hit steals the assertion; order changes binding.",
+      "evidence": {
+        "parent_first": {
+          "top1": "Infection",
+          "n_assertions_bound": 1,
+          "ranking": [
+            {
+              "label": "Infection",
+              "score": 1.0,
+              "eliminated": [],
+              "confirmed": [],
+              "contributions": [
+                {
+                  "why": "feature_of/asserted/present",
+                  "delta": 1.0,
+                  "predicate": "redsignal",
+                  "finding": "redsignal",
+                  "n_claimants": 1,
+                  "threshold": null
+                }
+              ]
+            },
+            {
+              "label": "Bacterial infection",
+              "score": 0.0,
+              "eliminated": [],
+              "confirmed": [],
+              "contributions": []
+            }
+          ]
+        },
+        "specific_first": {
+          "top1": "Bacterial infection",
+          "n_assertions_bound": 1,
+          "ranking": [
+            {
+              "label": "Bacterial infection",
+              "score": 1.0,
+              "eliminated": [],
+              "confirmed": [],
+              "contributions": [
+                {
+                  "why": "feature_of/asserted/present",
+                  "delta": 1.0,
+                  "predicate": "redsignal",
+                  "finding": "redsignal",
+                  "n_claimants": 1,
+                  "threshold": null
+                }
+              ]
+            },
+            {
+              "label": "Infection",
+              "score": 0.0,
+              "eliminated": [],
+              "confirmed": [],
+              "contributions": []
+            }
+          ]
+        }
+      },
+      "reproduced": true
+    },
+    {
+      "id": "E12_normality_not_a_universal_false_value",
+      "expected_semantics": "A finding satisfying 'normal ECG' is true, independent of token 'normal'.",
+      "observed_defect": "normal/abnormal are removed in join; finding polarity normal universally means violation.",
+      "evidence": {
+        "top1": "Other disease",
+        "n_assertions_bound": 1,
+        "ranking": [
+          {
+            "label": "Other disease",
+            "score": 0.0,
+            "eliminated": [],
+            "confirmed": [],
+            "contributions": []
+          },
+          {
+            "label": "Index disease",
+            "score": 0.0,
+            "eliminated": [
+              {
+                "layer": 1,
+                "rule": "required_but_absent",
+                "predicate": "normal ECG",
+                "quote": "Synthetic source: normal ECG.",
+                "finding": "normal ECG",
+                "finding_polarity": "normal"
+              }
+            ],
+            "confirmed": [],
+            "contributions": []
+          }
+        ]
+      },
+      "reproduced": true
+    },
+    {
+      "id": "E13_unknown_numeric_comparison_confirms",
+      "expected_semantics": "Unit mismatch is unknown and cannot establish a numeric antecedent.",
+      "observed_defect": "Even threshold-aware confirmation checks is not False, so unknown passes.",
+      "evidence": {
+        "top1": "Index disease",
+        "n_assertions_bound": 1,
+        "ranking": [
+          {
+            "label": "Index disease",
+            "score": 2.0,
+            "eliminated": [],
+            "confirmed": [
+              {
+                "layer": 2,
+                "predicate": "redsignal",
+                "quote": "Synthetic source: redsignal.",
+                "finding": "redsignal"
+              }
+            ],
+            "contributions": [
+              {
+                "why": "pathognomonic_for",
+                "delta": 2.0,
+                "predicate": "redsignal",
+                "finding": "redsignal"
+              }
+            ]
+          },
+          {
+            "label": "Other disease",
+            "score": 0.0,
+            "eliminated": [],
+            "confirmed": [],
+            "contributions": []
+          }
+        ]
+      },
+      "reproduced": true
+    },
+    {
+      "id": "E14_excludes_ignores_threshold_and_modality",
+      "expected_semantics": "Unsatisfied numeric antecedent must not trigger exclusion.",
+      "observed_defect": "Rare assertion with cutoff >=10 eliminates at value1 because present alone is used.",
+      "evidence": {
+        "top1": "Other disease",
+        "n_assertions_bound": 1,
+        "ranking": [
+          {
+            "label": "Other disease",
+            "score": 0.0,
+            "eliminated": [],
+            "confirmed": [],
+            "contributions": []
+          },
+          {
+            "label": "Index disease",
+            "score": 0.0,
+            "eliminated": [
+              {
+                "layer": 1,
+                "rule": "exclusion_triggered",
+                "predicate": "redsignal",
+                "quote": "Synthetic source: redsignal.",
+                "finding": "redsignal"
+              }
+            ],
+            "confirmed": [],
+            "contributions": []
+          }
+        ]
+      },
+      "reproduced": true
+    },
+    {
+      "id": "E15_argues_against_is_hard_exclusion",
+      "expected_semantics": "Defeasible counterevidence is not a logical contradiction.",
+      "observed_defect": "argues_against and excludes have identical unconditional veto branch.",
+      "evidence": {
+        "top1": "Other disease",
+        "n_assertions_bound": 1,
+        "ranking": [
+          {
+            "label": "Other disease",
+            "score": 0.0,
+            "eliminated": [],
+            "confirmed": [],
+            "contributions": []
+          },
+          {
+            "label": "Index disease",
+            "score": 0.0,
+            "eliminated": [
+              {
+                "layer": 1,
+                "rule": "exclusion_triggered",
+                "predicate": "redsignal",
+                "quote": "Synthetic source: redsignal.",
+                "finding": "redsignal"
+              }
+            ],
+            "confirmed": [],
+            "contributions": []
+          }
+        ]
+      },
+      "reproduced": true
+    },
+    {
+      "id": "E16_paraphrase_count_inflates_one_fact",
+      "expected_semantics": "Synonymous assertions about one fact must not create three independent evidence units.",
+      "observed_defect": "Dedup uses full normalized predicate; lexical joins collapse synonyms only after dedup, giving +3 vs +1.",
+      "evidence": {
+        "single": {
+          "top1": "Index disease",
+          "n_assertions_bound": 1,
+          "ranking": [
+            {
+              "label": "Index disease",
+              "score": 1.0,
+              "eliminated": [],
+              "confirmed": [],
+              "contributions": [
+                {
+                  "why": "feature_of/asserted/present",
+                  "delta": 1.0,
+                  "predicate": "redsignal",
+                  "finding": "redsignal",
+                  "n_claimants": 1,
+                  "threshold": null
+                }
+              ]
+            },
+            {
+              "label": "Other disease",
+              "score": 0.0,
+              "eliminated": [],
+              "confirmed": [],
+              "contributions": []
+            }
+          ]
+        },
+        "paraphrases": {
+          "top1": "Index disease",
+          "n_assertions_bound": 3,
+          "ranking": [
+            {
+              "label": "Index disease",
+              "score": 3.0,
+              "eliminated": [],
+              "confirmed": [],
+              "contributions": [
+                {
+                  "why": "feature_of/asserted/present",
+                  "delta": 1.0,
+                  "predicate": "redsignal",
+                  "finding": "redsignal",
+                  "n_claimants": 1,
+                  "threshold": null
+                },
+                {
+                  "why": "feature_of/asserted/present",
+                  "delta": 1.0,
+                  "predicate": "redsignal finding",
+                  "finding": "redsignal",
+                  "n_claimants": 1,
+                  "threshold": null
+                },
+                {
+                  "why": "feature_of/asserted/present",
+                  "delta": 1.0,
+                  "predicate": "redsignal feature",
+                  "finding": "redsignal",
+                  "n_claimants": 1,
+                  "threshold": null
+                }
+              ]
+            },
+            {
+              "label": "Other disease",
+              "score": 0.0,
+              "eliminated": [],
+              "confirmed": [],
+              "contributions": []
+            }
+          ]
+        }
+      },
+      "reproduced": true
+    },
+    {
+      "id": "E17_cardinality_counts_rows_not_distinct_criteria",
+      "expected_semantics": "One finding does not instantiate two independently required criteria by paraphrase.",
+      "observed_defect": "Two members bind to the same fact and satisfy an at_least_2 count.",
+      "evidence": {
+        "top1": "Index disease",
+        "n_assertions_bound": 2,
+        "ranking": [
+          {
+            "label": "Index disease",
+            "score": 1.0,
+            "eliminated": [],
+            "confirmed": [],
+            "contributions": [
+              {
+                "why": "group:at_least_n/2",
+                "delta": 1.0,
+                "n_members": 2,
+                "n_satisfied": 2,
+                "n_violated": 0,
+                "predicate": "redsignal"
+              }
+            ]
+          },
+          {
+            "label": "Other disease",
+            "score": 0.0,
+            "eliminated": [],
+            "confirmed": [],
+            "contributions": []
+          }
+        ]
+      },
+      "reproduced": true
+    },
+    {
+      "id": "E18_group_bypasses_soft_context_scoring_filter",
+      "expected_semantics": "The same table-row context policy should hold whether rows are grouped.",
+      "observed_defect": "Standalone table rows inert; fully soft groups still add score.",
+      "evidence": {
+        "standalone": {
+          "top1": "Index disease",
+          "n_assertions_bound": 1,
+          "ranking": [
+            {
+              "label": "Index disease",
+              "score": 0.0,
+              "eliminated": [],
+              "confirmed": [],
+              "contributions": []
+            },
+            {
+              "label": "Other disease",
+              "score": 0.0,
+              "eliminated": [],
+              "confirmed": [],
+              "contributions": []
+            }
+          ]
+        },
+        "grouped": {
+          "top1": "Index disease",
+          "n_assertions_bound": 2,
+          "ranking": [
+            {
+              "label": "Index disease",
+              "score": 1.0,
+              "eliminated": [],
+              "confirmed": [],
+              "contributions": [
+                {
+                  "why": "group:all/2",
+                  "delta": 1.0,
+                  "n_members": 2,
+                  "n_satisfied": 2,
+                  "n_violated": 0,
+                  "predicate": "redsignal"
+                }
+              ]
+            },
+            {
+              "label": "Other disease",
+              "score": 0.0,
+              "eliminated": [],
+              "confirmed": [],
+              "contributions": []
+            }
+          ]
+        }
+      },
+      "reproduced": true
+    },
+    {
+      "id": "E19_invalid_quantifier_silently_repaired_to_any",
+      "expected_semantics": "Missing numeric threshold is unresolved, not one-of.",
+      "observed_defect": "normalise_group silently changes at_least_n with missing n to any.",
+      "evidence": {
+        "after": {
+          "subject": "Index disease",
+          "predicate": "redsignal",
+          "relation": "feature_of",
+          "polarity": "asserted",
+          "modality": "obligatory",
+          "threshold": {},
+          "context_type": "criteria",
+          "quote": "Synthetic source: redsignal.",
+          "_source": "synthetic",
+          "_title": "Synthetic chapter",
+          "_section": "Criteria",
+          "_focus": "Index disease",
+          "criterion_group": {
+            "group_id": "g",
+            "logic": "any",
+            "n": null
+          }
+        },
+        "stats": {
+          "at_least_n_without_n": 1,
+          "grouped": 1
+        }
+      },
+      "reproduced": true
+    },
+    {
+      "id": "E20_numeric_parse_not_bound_to_predicate",
+      "expected_semantics": "Ignore lead-in count; each measurement owns its own cutoff.",
+      "observed_defect": "First bare number blocks later comparison; greedy prefix can consume the operator; first parsed comparison belongs to wrong measurement.",
+      "evidence": {
+        "leading_count_quote": "At least 2 criteria include redsignal >= 10 and bluesignal <= 5.",
+        "leading_count_parsed": null,
+        "short_quote": "redsignal >= 10 and bluesignal <= 5.",
+        "short_quote_parsed": null,
+        "second_measurement": {
+          "subject": "Index disease",
+          "predicate": "bluesignal",
+          "relation": "feature_of",
+          "polarity": "asserted",
+          "modality": "obligatory",
+          "threshold": {
+            "operator": ">=",
+            "value": 10.0,
+            "value_high": null,
+            "unit": null,
+            "relational": null
+          },
+          "context_type": "criteria",
+          "quote": "redsignal has a measurement which is >= 10 and bluesignal <= 5.",
+          "_source": "synthetic",
+          "_title": "Synthetic chapter",
+          "_section": "Criteria",
+          "_focus": "Index disease",
+          "criterion_group": {
+            "group_id": null,
+            "logic": null,
+            "n": null
+          },
+          "_passage_sha1": "c5640da08dbe2f15"
+        }
+      },
+      "reproduced": true
+    },
+    {
+      "id": "E21_gate_reference_range_creates_necessity_and_wrong_complement",
+      "expected_semantics": "A normal reference range alone does not license disease necessity; complement of <10 is >=10.",
+      "observed_defect": "G2 promotes to obligatory required_for and uses >10, excluding boundary10.",
+      "evidence": {
+        "subject": "Index disease",
+        "predicate": "abnormal redsignal",
+        "relation": "required_for",
+        "polarity": "asserted",
+        "modality": "obligatory",
+        "threshold": {
+          "operator": ">",
+          "value": 10.0,
+          "value_high": null,
+          "unit": "ms",
+          "relational": null
+        },
+        "context_type": "criteria",
+        "quote": "A normal redsignal is less than 10 ms.",
+        "_source": "synthetic",
+        "_title": "Synthetic chapter",
+        "_section": "Criteria",
+        "_focus": "Index disease",
+        "criterion_group": {
+          "group_id": null,
+          "logic": null,
+          "n": null
+        },
+        "_gate": "G2_reference_range"
+      },
+      "reproduced": true
+    },
+    {
+      "id": "E22_gate_rejects_valid_biconditional_by_schema",
+      "expected_semantics": "A definitional biconditional can be necessary and sufficient.",
+      "observed_defect": "G1 unconditionally demotes the pathognomonic row sharing subject/quote prefix with necessity.",
+      "evidence": [
+        {
+          "subject": "Index disease",
+          "predicate": "redsignal",
+          "relation": "required_for",
+          "polarity": "asserted",
+          "modality": "obligatory",
+          "threshold": {},
+          "context_type": "criteria",
+          "quote": "Index disease if and only if redsignal is present.",
+          "_source": "synthetic",
+          "_title": "Synthetic chapter",
+          "_section": "Criteria",
+          "_focus": "Index disease",
+          "criterion_group": {
+            "group_id": null,
+            "logic": null,
+            "n": null
+          }
+        },
+        {
+          "subject": "Index disease",
+          "predicate": "redsignal",
+          "relation": "feature_of",
+          "polarity": "asserted",
+          "modality": "obligatory",
+          "threshold": {},
+          "context_type": "criteria",
+          "quote": "Index disease if and only if redsignal is present.",
+          "_source": "synthetic",
+          "_title": "Synthetic chapter",
+          "_section": "Criteria",
+          "_focus": "Index disease",
+          "criterion_group": {
+            "group_id": null,
+            "logic": null,
+            "n": null
+          },
+          "_gate": "G1_dual_slot",
+          "_gate_prev_relation": "pathognomonic_for"
+        }
+      ],
+      "reproduced": true
+    },
+    {
+      "id": "E23_quote_membership_not_validated_for_excludes",
+      "expected_semantics": "An unalignable exclusion claim lacks evidence and must not be authorized.",
+      "observed_defect": "Gate accepts asserted excludes without quote membership or source exclusion cue.",
+      "evidence": {
+        "subject": "Index disease",
+        "predicate": "redsignal",
+        "relation": "excludes",
+        "polarity": "asserted",
+        "modality": "obligatory",
+        "threshold": {},
+        "context_type": "criteria",
+        "quote": "This invented quote never occurs in the source.",
+        "_source": "synthetic",
+        "_title": "Synthetic chapter",
+        "_section": "Criteria",
+        "_focus": "Index disease",
+        "criterion_group": {
+          "group_id": null,
+          "logic": null,
+          "n": null
+        },
+        "_passage": "Index disease is described here without an exclusion rule."
+      },
+      "reproduced": true
+    },
+    {
+      "id": "E24_tied_finding_joins_ignore_time_and_input_order",
+      "expected_semantics": "Current and historical observations have separate scope; ordering is not temporal adjudication.",
+      "observed_defect": "Equal lexical match keeps first finding; rearranging history reverses veto.",
+      "evidence": {
+        "past_first": {
+          "top1": "Other disease",
+          "n_assertions_bound": 1,
+          "ranking": [
+            {
+              "label": "Other disease",
+              "score": 0.0,
+              "eliminated": [],
+              "confirmed": [],
+              "contributions": []
+            },
+            {
+              "label": "Index disease",
+              "score": 0.0,
+              "eliminated": [
+                {
+                  "layer": 1,
+                  "rule": "required_but_absent",
+                  "predicate": "redsignal",
+                  "quote": "Synthetic source: redsignal.",
+                  "finding": "redsignal",
+                  "finding_polarity": "absent"
+                }
+              ],
+              "confirmed": [],
+              "contributions": []
+            }
+          ]
+        },
+        "current_first": {
+          "top1": "Index disease",
+          "n_assertions_bound": 1,
+          "ranking": [
+            {
+              "label": "Index disease",
+              "score": 1.0,
+              "eliminated": [],
+              "confirmed": [],
+              "contributions": [
+                {
+                  "why": "required_for/asserted/present",
+                  "delta": 1.0,
+                  "predicate": "redsignal",
+                  "finding": "redsignal",
+                  "n_claimants": 1,
+                  "threshold": null
+                }
+              ]
+            },
+            {
+              "label": "Other disease",
+              "score": 0.0,
+              "eliminated": [],
+              "confirmed": [],
+              "contributions": []
+            }
+          ]
+        }
+      },
+      "reproduced": true
+    },
+    {
+      "id": "E25_gate_mixed_boolean_expression_flattened",
+      "expected_semantics": "red AND (blue OR green) retains the mandatory red limb.",
+      "observed_defect": "Any 'and/or' in shared quote makes every matching required row one any group.",
+      "evidence": [
+        {
+          "subject": "Index disease",
+          "predicate": "redsignal",
+          "relation": "required_for",
+          "polarity": "asserted",
+          "modality": "typical",
+          "threshold": {},
+          "context_type": "criteria",
+          "quote": "Index disease requires redsignal and bluesignal and/or greensignal.",
+          "_source": "synthetic",
+          "_title": "Synthetic chapter",
+          "_section": "Criteria",
+          "_focus": "Index disease",
+          "criterion_group": {
+            "group_id": "gate_or_9458138",
+            "logic": "any",
+            "n": null
+          },
+          "_gate": "E9_and_or_merge"
+        },
+        {
+          "subject": "Index disease",
+          "predicate": "bluesignal",
+          "relation": "required_for",
+          "polarity": "asserted",
+          "modality": "typical",
+          "threshold": {},
+          "context_type": "criteria",
+          "quote": "Index disease requires redsignal and bluesignal and/or greensignal.",
+          "_source": "synthetic",
+          "_title": "Synthetic chapter",
+          "_section": "Criteria",
+          "_focus": "Index disease",
+          "criterion_group": {
+            "group_id": "gate_or_9458138",
+            "logic": "any",
+            "n": null
+          },
+          "_gate": "E9_and_or_merge"
+        },
+        {
+          "subject": "Index disease",
+          "predicate": "greensignal",
+          "relation": "required_for",
+          "polarity": "asserted",
+          "modality": "typical",
+          "threshold": {},
+          "context_type": "criteria",
+          "quote": "Index disease requires redsignal and bluesignal and/or greensignal.",
+          "_source": "synthetic",
+          "_title": "Synthetic chapter",
+          "_section": "Criteria",
+          "_focus": "Index disease",
+          "criterion_group": {
+            "group_id": "gate_or_9458138",
+            "logic": "any",
+            "n": null
+          },
+          "_gate": "E9_and_or_merge"
+        }
+      ],
+      "reproduced": true
+    },
+    {
+      "id": "E26_gate_neighbour_cue_licenses_wrong_relation",
+      "expected_semantics": "A sufficiency cue about another subject does not authorize this feature.",
+      "observed_defect": "Pathognomonic cue searches entire licensed neighbourhood without subject/predicate scope.",
+      "evidence": {
+        "subject": "Index disease",
+        "predicate": "redsignal",
+        "relation": "pathognomonic_for",
+        "polarity": "asserted",
+        "modality": "obligatory",
+        "threshold": {},
+        "context_type": "criteria",
+        "quote": "redsignal is a typical feature",
+        "_source": "synthetic",
+        "_title": "Synthetic chapter",
+        "_section": "Criteria",
+        "_focus": "Index disease",
+        "criterion_group": {
+          "group_id": null,
+          "logic": null,
+          "n": null
+        },
+        "_passage": "Index disease redsignal is a typical feature. Separate condition is diagnosed by bluesignal."
+      },
+      "reproduced": true
+    }
+  ]
+}
