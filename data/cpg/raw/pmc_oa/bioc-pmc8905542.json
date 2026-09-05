@@ -1,0 +1,2443 @@
+[
+  {
+    "bioctype": "BioCCollection",
+    "source": "PMC",
+    "date": "20260207",
+    "key": "pmc.key",
+    "version": "1.0",
+    "infons": {},
+    "documents": [
+      {
+        "bioctype": "BioCDocument",
+        "id": "PMC8905542",
+        "infons": {
+          "license": "CC BY"
+        },
+        "passages": [
+          {
+            "bioctype": "BioCPassage",
+            "offset": 0,
+            "infons": {
+              "alt-title": "Cao et al. Benchmark Study of Cell Phenotype Classification",
+              "article-id_doi": "10.3389/fgene.2022.836798",
+              "article-id_pmc": "PMC8905542",
+              "article-id_publisher-id": "836798",
+              "elocation-id": "836798",
+              "kwd": "classification gene selection ensemble algorithms machine learning single-cell RNA sequencing supervised algorithms",
+              "license": "This is an open-access article distributed under the terms of the Creative Commons Attribution License (CC BY). The use, distribution or reproduction in other forums is permitted, provided the original author(s) and the copyright owner(s) are credited and that the original publication in this journal is cited, in accordance with accepted academic practice. No use, distribution or reproduction is permitted which does not comply with these terms.",
+              "name_0": "surname:Cao;given-names:Xiaowen",
+              "name_1": "surname:Xing;given-names:Li",
+              "name_2": "surname:Majd;given-names:Elham",
+              "name_3": "surname:He;given-names:Hua",
+              "name_4": "surname:Gu;given-names:Junhua",
+              "name_5": "surname:Zhang;given-names:Xuekui",
+              "section_type": "TITLE",
+              "type": "front",
+              "volume": "13",
+              "year": "2022"
+            },
+            "text": "A Systematic Evaluation of Supervised Machine Learning Algorithms for Cell Phenotype Classification Using Single-Cell RNA Sequencing Data",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 138,
+            "infons": {
+              "section_type": "ABSTRACT",
+              "type": "abstract"
+            },
+            "text": "The new technology of single-cell RNA sequencing (scRNA-seq) can yield valuable insights into gene expression and give critical information about the cellular compositions of complex tissues. In recent years, vast numbers of scRNA-seq datasets have been generated and made publicly available, and this has enabled researchers to train supervised machine learning models for predicting or classifying various cell-level phenotypes. This has led to the development of many new methods for analyzing scRNA-seq data. Despite the popularity of such applications, there has as yet been no systematic investigation of the performance of these supervised algorithms using predictors from various sizes of scRNA-seq datasets. In this study, 13 popular supervised machine learning algorithms for cell phenotype classification were evaluated using published real and simulated datasets with diverse cell sizes. This benchmark comprises two parts. In the first, real datasets were used to assess the computing speed and cell phenotype classification performance of popular supervised algorithms. The classification performances were evaluated using the area under the receiver operating characteristic curve, F1-score, Precision, Recall, and false-positive rate. In the second part, we evaluated gene-selection performance using published simulated datasets with a known list of real genes. The results showed that ElasticNet with interactions performed the best for small and medium-sized datasets. The NaiveBayes classifier was found to be another appropriate method for medium-sized datasets. With large datasets, the performance of the XGBoost algorithm was found to be excellent. Ensemble algorithms were not found to be significantly superior to individual machine learning methods. Including interactions in the ElasticNet algorithm caused a significant performance improvement for small datasets. The linear discriminant analysis algorithm was found to be the best choice when speed is critical; it is the fastest method, it can scale to handle large sample sizes, and its performance is not much worse than the top performers.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 2262,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "title_1"
+            },
+            "text": "1 Introduction",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 2277,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Single-cell RNA-sequencing (scRNA-seq) technology enables researchers to investigate a genome at the single-cell level with high resolution, and it was named Method of the Year 2013. The analysis of scRNA-seq data has played a vital role in understanding intrinsic and extrinsic cellular processes in biological and biomedical research. The scRNA-seq technique has provided us with an opportunity to identify the cellular compositions of complex tissues, which is valuable for detecting new populations of cells, defining different cell types, and discovering rare cells that represent minor cell types. Hence, one of the most popular tasks in the analysis of scRNA-seq data is the classification of various cell-level phenotypes, such as cell-type annotation. discussed 24 recently developed cell-type annotation methods based on unsupervised and supervised machine learning algorithms. The majority of these methods are based on supervised machine learning algorithms, especially the newer ones. The standard annotation approach is clustering followed by manual annotation of each cluster. However, this not only is tedious and inefficient but also produces inconsistent results due to the subjective human decisions made in the process of annotation. A large quantity of scRNA-seq data has been generated and made publicly available recently, and this means that training supervised machine learning models is now a preferred approach.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 3716,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Since many supervised machine learning algorithms can be (and have been) applied to the popular task of cell phenotype classification, we are interested in evaluating their performance under various conditions. conducted a benchmark study to compare currently available software for cell identification, and this serves as a great resource to help users to select a software package for their analyses. Each software package has an underlying machine learning algorithm and specific add-on components or data-analysis steps, and most add-ons can be applied to other methods. Developers are mostly interested in which underlying machine learning algorithm is most suitable for scRNA-seq data analysis and should hence be used to develop their next software release. This motivated us to conduct a benchmark study to conduct a fair comparison of the currently used supervised machine learning algorithms without any add-ons.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 4639,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "The characteristics of a dataset can have a critical effect on the performance of a machine learning method. A standard scRNA-seq training dataset for cell phenotype classification consists of a genomic data matrix and class label for each cell. In the genomic data matrix, each record (row) represents a cell and each column represents a single gene’s expression level; there are tens of thousands of genes with a very complex correlation structure. The correlation structure varies between datasets, making it necessary to evaluate the performance of methods using several datasets. Each cell in the data matrix is the gene expression level, or the count of RNA fragments mapped to a given gene. Due to the limitations of the technology (dropout), there is a large proportion of zeros in these counts. However, their corresponding actual expression levels are not zero. The zero-inflated negative binomial distribution is the most popular distribution used to model expression levels in scRNA-seq data. However, a recent benchmark study showed that such a distribution does not have a clear advantage in differential expression analysis.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 5781,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "In short, most genomic data matrices share the same characteristics, as discussed above. The only key factor that could affect classification performance is the sample size of the dataset. Therefore, in our benchmark study, we investigated data of various sample sizes. First, following the protocol described for a previous benchmark study, we selected 27 datasets from the real datasets of Conquer. We considered these datasets as small-sample-size data, since more recent scRNA-seq datasets have become much larger than that used in 2018. Hence, we used datasets with larger sample sizes: four medium-sized datasets and 12 large ones. Details of the benchmark data can be found in Supplementary Tables S1–S3.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 6495,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "In this study, we considered eight individual algorithms used in software for cell phenotype classification: 1) the ElasticNet algorithm, which is used in the Garnett software package; 2) ElasticNet with interactions, to learn whether adding interaction terms improves classification performance; 3) the linear discriminant analysis (LDA) algorithm, which is used in the R library scID; 4) NaiveBayes (NB), which is used in CellO; 5) the support vector machine (SVM) algorithm, which is used in scPred; 6) the K-nearest neighbors (KNN) algorithm, which is used in scANVI package and the scClassify package; 7) the Tree algorithm, which is used in the CHETAH package; and 8) the XGBoost (XGB) algorithm, which is used in the CaSTLe package. Ensemble learning algorithms usually work better than a specific individual algorithm. Therefore, we also constructed five ensemble algorithms based on the weighted votes of the eight individual algorithms discussed above; we then evaluated their performance against the individual algorithms.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 7529,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Using all of the datasets, we compared the classification performance and running times of these methods. We found that ElasticNet with interaction terms had the best classification performance when the sample size was not large, and XGB worked best with large datasets. The LDA algorithm had reasonable classification performance and ran the fastest in most cases. When the sample size is large, ElasticNet takes a very long time to run. The NB algorithm also had great performance in the medium-sized datasets we investigated. We also evaluated the performance of these algorithms for gene selection. Such evaluation requires a list of “true” genes, so only simulated datasets were used in this part. We found that ElasticNet had the best performance in gene selection.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 8305,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "title_1"
+            },
+            "text": "2 Materials and Methods",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 8329,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "paragraph"
+            },
+            "text": "This section describes the datasets, algorithm design, evaluation criteria, classification methods, and gene selection.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 8449,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "title_2"
+            },
+            "text": "2.1 Datasets",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 8462,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "paragraph"
+            },
+            "text": "The datasets from Conquer and GSE126954 were used to evaluate all classification methods for scRNA-seq data. A total of 27 datasets from Conquer were applied as small datasets, four datasets from GSE126954 were used as medium-sized datasets, and 12 datasets from GSE126954 were considered as large ones (Supplementary Tables S1–S3). Finally, as an additional type of dataset, the simulated datasets provided by were used to evaluate gene-selection performance. For the details of these simulated datasets, see Supplementary Table S4.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 8998,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "title_3"
+            },
+            "text": "2.1.1 The 27 Datasets From Conquer",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 9033,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "paragraph"
+            },
+            "text": "The Conquer repository was developed at the University of Zurich, Switzerland. The datasets used in this research were downloaded from http://imlspenticton.uzh.ch:3838/conquer. Although Conquer contains 40 scRNA-seq datasets, we selected 27 of these with two types of cells in a specific phenotype, and there were at least 15 cells of each type (please refer to Supplementary Table S1). The predictors were carefully chosen from the top 1,000 genes with the strongest correlations. We named these datasets “small datasets.”",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 9561,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "title_3"
+            },
+            "text": "2.1.2 GSE126954 Datasets",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 9586,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "paragraph"
+            },
+            "text": "The GSE126954 datasets were presented by, and they can be downloaded from https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE126954. These datasets involve 86,024 single-cell scRNA-seq sets from Caenorhabditis elegans embryos. We divided these into two parts. The first part contained four datasets that were larger than the small datasets from Conquer; we selected four pairs of different cells to form four “medium-sized datasets.” The number of cells in our selected datasets ranged from 112 to 911 (please refer to Supplementary Table S2 for more details). The second part contained 12 datasets named “large datasets.” Additionally, this paper used two datasets based on different cell types and ten datasets according to a pairwise comparison of scRNA-seq profiles of cells from C. elegans embryos at varying developmental stages. The numbers of each type of cell ranged from 1,732 to 25,875, as described in Supplementary Table S3. These two parts of the datasets were used to choose 1,000 genes with the strongest correlations as predictors. The algorithm parameter settings were the same as those used for the small datasets.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 10731,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "title_3"
+            },
+            "text": "2.1.3 Simulated Conquer Datasets",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 10764,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "paragraph"
+            },
+            "text": "To evaluate feature selection, it is necessary to know the identity of the “real” gene. In this study, we used three simulated datasets provided by and. The simulations were conducted using the powsimR package. The simulation input parameters were learned from the three real datasets: GSE45719, GSE74596, and GSE60749-GPL13112. We used information about the real class members of each cell received from the real datasets. The simulated and real datasets can be freely downloaded. Table 1 presents more information about these simulated datasets.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 11316,
+            "infons": {
+              "file": "T1.xml",
+              "id": "T1",
+              "section_type": "TABLE",
+              "type": "table_caption"
+            },
+            "text": "Computation times of each algorithm with each dataset. Each column represents a different algorithm, and the rows indicate different datasets. The smallest computation times are illustrated by underlining.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 11522,
+            "infons": {
+              "file": "T1.xml",
+              "id": "T1",
+              "section_type": "TABLE",
+              "type": "table",
+              "xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<table frame=\"hsides\" rules=\"groups\"><thead valign=\"top\"><tr><th align=\"left\" rowspan=\"1\" colspan=\"1\">Label</th><th align=\"center\" rowspan=\"1\" colspan=\"1\">ElasticNet</th><th align=\"center\" rowspan=\"1\" colspan=\"1\">ElasticNet with interactions</th><th align=\"center\" rowspan=\"1\" colspan=\"1\">LDA</th><th align=\"center\" rowspan=\"1\" colspan=\"1\">NB</th><th align=\"center\" rowspan=\"1\" colspan=\"1\">SVM</th><th align=\"center\" rowspan=\"1\" colspan=\"1\">KNN</th><th align=\"center\" rowspan=\"1\" colspan=\"1\">Tree</th><th align=\"center\" rowspan=\"1\" colspan=\"1\">XGB</th><th align=\"center\" rowspan=\"1\" colspan=\"1\">Sample size</th></tr></thead><tbody valign=\"top\"><tr><td colspan=\"10\" align=\"left\" rowspan=\"1\">The computation time in 27 small datasets (seconds)</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 1</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">37.057</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">60.918</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>1.969</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">7.136</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">639.367</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">9.681</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">15.915</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">29.133</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">192</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 2</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">14.362</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">24.385</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>0.980</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">5.307</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">247.713</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">3.990</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">8.028</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">12.114</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">95</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 3</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">198.204</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">30.126</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>5.943</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">14.138</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">5,208.412</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">68.672</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">35.271</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">107.450</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">564</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 4</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">24.998</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">38.792</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>0.996</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">5.723</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">290.221</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">4.500</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">9.270</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">13.388</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">110</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 5</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">40.536</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">65.178</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>1.682</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">7.300</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">632.190</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">9.118</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">11.990</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">22.355</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">192</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 6</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">38.661</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">64.686</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>1.626</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">7.203</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">615.368</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">8.911</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">10.710</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">19.079</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">186</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 7</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">20.004</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">29.290</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>0.877</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">5.219</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">240.178</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">3.889</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">9.563</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">13.565</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">99</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 8</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">40.087</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">61.180</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>1.661</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">6.916</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">650.740</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">9.053</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">14.454</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">26.990</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">192</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 9</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">37.518</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">35.188</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>1.494</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">6.675</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">411.244</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">7.798</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">10.358</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">18.767</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">91</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 10</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">80.411</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">121.676</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>2.319</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">8.260</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">835.417</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">15.678</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">12.739</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">25.214</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">268</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 11</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">37.893</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">58.476</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>1.283</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">6.141</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">339.512</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">6.335</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">10.064</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">16.080</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">147</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 12</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">430.164</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">170.021</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>9.560</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">18.190</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">10 ,328.148</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">161.913</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">18.037</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">121.704</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">192</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 13</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">104.301</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">111.083</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>1.631</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">7.095</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">673.008</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">8.861</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">10.582</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">34.456</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">192</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 14</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">100.775</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">111.154</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>2.659</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">9.619</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">1,545.478</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">22.382</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">14.804</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">37.964</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">328</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 15</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">116.645</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">125.838</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>3.809</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">11.827</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">3,184.677</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">46.696</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">26.341</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">58.991</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">460</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 16</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">56.745</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">65.334</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>1.440</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">7.215</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">553.960</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">9.138</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">11.650</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">21.656</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">183</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 17</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">353.498</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">33.495</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>7.221</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">16.828</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">1,288.900</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">126.284</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">34.363</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">90.167</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">106</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 18</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">96.279</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">101.553</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>2.455</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">9.689</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">1,539.189</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">21.260</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">19.310</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">37.981</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">313</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 19</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">35.485</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">25.004</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>0.897</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">6.041</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">277.117</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">4.730</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">9.726</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">15.810</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">91</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 20</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">25.816</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">27.386</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>0.760</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">5.652</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">238.028</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">4.020</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">7.990</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">12.259</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">96</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 21</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">178.537</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">164.780</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>1.456</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">7.561</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">440.966</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">9.325</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">8.794</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">19.780</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">188</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 22</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">43.940</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">50.828</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>1.403</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">7.359</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">566.504</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">9.146</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">10.180</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">18.819</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">181</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 23</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">72.664</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">83.030</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>1.502</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">7.613</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">657.644</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">9.504</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">9.713</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">27.458</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">192</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 24</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">66.112</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">96.200</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>1.487</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">7.616</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">639.454</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">9.488</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">10.289</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">27.005</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">192</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 25</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">59.439</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">86.527</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>1.528</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">7.638</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">664.293</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">9.681</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">13.983</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">29.074</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">192</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 26</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">126.590</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">85.750</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>5.288</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">14.354</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">3,649.444</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">74.889</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">33.485</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">78.146</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">269</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 27</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">30.640</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">53.641</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>1.339</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">7.032</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">481.385</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">7.598</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">12.044</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">20.131</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">164</td></tr><tr><td colspan=\"10\" align=\"left\" rowspan=\"1\">The computation time in 4 medium datasets (seconds)</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 1</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">163.504</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">236.97</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>11.765</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">23.030</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">4,194.281</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">176.300</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">32.935</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">90.274</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">843</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 2</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">233.984</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">670.67</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>16.954</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">29.639</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">9,350.588</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">325.453</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">55.913</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">139.470</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">1,126</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 3</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">640.719</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">46.010</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>14.902</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">22.276</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">12 ,406.980</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">263.876</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">48.200</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">121.668</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">992</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 4</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">41.442</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">164.89</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>2.660</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">10.531</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">518.837</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">22.619</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">14.459</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">27.354</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">234</td></tr><tr><td colspan=\"10\" align=\"left\" rowspan=\"1\">The computation time in 12 large datasets (seconds)</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 1</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">485.537</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>247.775</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">391.010</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">724.572</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">2,566.135</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">19 ,252</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 2</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">258.447</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>249.383</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">400.039</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">676.196</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">1,792.239</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">5,328</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 3</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">2,276.346</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>282.598</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">380.155</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">920.946</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">1,910.279</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">21 ,492</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 4</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">1,932.343</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>235.466</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">405.532</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">626.151</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">2,986.626</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">22 ,661</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 5</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">9,093.946</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>165.728</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">267.974</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">357.760</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">1,150.460</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">23,718</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 6</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">9,026.280</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>510.495</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">741.520</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">1,469.216</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">7,039.001</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">20 ,213</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 7</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">31,978.390</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>370.260</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">492.451</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">913.547</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">3,274.896</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">13 ,577</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 8</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">7,256.621</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>346.646</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">520.316</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">923.122</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">2,940.168</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">33 ,043</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 9</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">10 ,807.530</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>466.657</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">667.569</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">1,163.817</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">3,267.698</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">27 ,700</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 10</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">1,961.241</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>384.110</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">551.439</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">1,242.170</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">3,313.920</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">28 ,757</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 11</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">11 ,386.465</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>233.273</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">434.554</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">829.204</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">2,607.679</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">36 ,407</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\"> 12</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">2,691.988</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">\n<underline>65.735</underline>\n</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">116.332</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">NA</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">231.935</td><td align=\"char\" char=\".\" rowspan=\"1\" colspan=\"1\">792.720</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">37 ,464</td></tr></tbody></table>\n"
+            },
+            "text": "Label\tElasticNet\tElasticNet with interactions\tLDA\tNB\tSVM\tKNN\tTree\tXGB\tSample size\t \tThe computation time in 27 small datasets (seconds)\t \t 1\t37.057\t60.918\t1.969\t7.136\t639.367\t9.681\t15.915\t29.133\t192\t \t 2\t14.362\t24.385\t0.980\t5.307\t247.713\t3.990\t8.028\t12.114\t95\t \t 3\t198.204\t30.126\t5.943\t14.138\t5,208.412\t68.672\t35.271\t107.450\t564\t \t 4\t24.998\t38.792\t0.996\t5.723\t290.221\t4.500\t9.270\t13.388\t110\t \t 5\t40.536\t65.178\t1.682\t7.300\t632.190\t9.118\t11.990\t22.355\t192\t \t 6\t38.661\t64.686\t1.626\t7.203\t615.368\t8.911\t10.710\t19.079\t186\t \t 7\t20.004\t29.290\t0.877\t5.219\t240.178\t3.889\t9.563\t13.565\t99\t \t 8\t40.087\t61.180\t1.661\t6.916\t650.740\t9.053\t14.454\t26.990\t192\t \t 9\t37.518\t35.188\t1.494\t6.675\t411.244\t7.798\t10.358\t18.767\t91\t \t 10\t80.411\t121.676\t2.319\t8.260\t835.417\t15.678\t12.739\t25.214\t268\t \t 11\t37.893\t58.476\t1.283\t6.141\t339.512\t6.335\t10.064\t16.080\t147\t \t 12\t430.164\t170.021\t9.560\t18.190\t10 ,328.148\t161.913\t18.037\t121.704\t192\t \t 13\t104.301\t111.083\t1.631\t7.095\t673.008\t8.861\t10.582\t34.456\t192\t \t 14\t100.775\t111.154\t2.659\t9.619\t1,545.478\t22.382\t14.804\t37.964\t328\t \t 15\t116.645\t125.838\t3.809\t11.827\t3,184.677\t46.696\t26.341\t58.991\t460\t \t 16\t56.745\t65.334\t1.440\t7.215\t553.960\t9.138\t11.650\t21.656\t183\t \t 17\t353.498\t33.495\t7.221\t16.828\t1,288.900\t126.284\t34.363\t90.167\t106\t \t 18\t96.279\t101.553\t2.455\t9.689\t1,539.189\t21.260\t19.310\t37.981\t313\t \t 19\t35.485\t25.004\t0.897\t6.041\t277.117\t4.730\t9.726\t15.810\t91\t \t 20\t25.816\t27.386\t0.760\t5.652\t238.028\t4.020\t7.990\t12.259\t96\t \t 21\t178.537\t164.780\t1.456\t7.561\t440.966\t9.325\t8.794\t19.780\t188\t \t 22\t43.940\t50.828\t1.403\t7.359\t566.504\t9.146\t10.180\t18.819\t181\t \t 23\t72.664\t83.030\t1.502\t7.613\t657.644\t9.504\t9.713\t27.458\t192\t \t 24\t66.112\t96.200\t1.487\t7.616\t639.454\t9.488\t10.289\t27.005\t192\t \t 25\t59.439\t86.527\t1.528\t7.638\t664.293\t9.681\t13.983\t29.074\t192\t \t 26\t126.590\t85.750\t5.288\t14.354\t3,649.444\t74.889\t33.485\t78.146\t269\t \t 27\t30.640\t53.641\t1.339\t7.032\t481.385\t7.598\t12.044\t20.131\t164\t \tThe computation time in 4 medium datasets (seconds)\t \t 1\t163.504\t236.97\t11.765\t23.030\t4,194.281\t176.300\t32.935\t90.274\t843\t \t 2\t233.984\t670.67\t16.954\t29.639\t9,350.588\t325.453\t55.913\t139.470\t1,126\t \t 3\t640.719\t46.010\t14.902\t22.276\t12 ,406.980\t263.876\t48.200\t121.668\t992\t \t 4\t41.442\t164.89\t2.660\t10.531\t518.837\t22.619\t14.459\t27.354\t234\t \tThe computation time in 12 large datasets (seconds)\t \t 1\t485.537\tNA\t247.775\t391.010\tNA\tNA\t724.572\t2,566.135\t19 ,252\t \t 2\t258.447\tNA\t249.383\t400.039\tNA\tNA\t676.196\t1,792.239\t5,328\t \t 3\t2,276.346\tNA\t282.598\t380.155\tNA\tNA\t920.946\t1,910.279\t21 ,492\t \t 4\t1,932.343\tNA\t235.466\t405.532\tNA\tNA\t626.151\t2,986.626\t22 ,661\t \t 5\t9,093.946\tNA\t165.728\t267.974\tNA\tNA\t357.760\t1,150.460\t23,718\t \t 6\t9,026.280\tNA\t510.495\t741.520\tNA\tNA\t1,469.216\t7,039.001\t20 ,213\t \t 7\t31,978.390\tNA\t370.260\t492.451\tNA\tNA\t913.547\t3,274.896\t13 ,577\t \t 8\t7,256.621\tNA\t346.646\t520.316\tNA\tNA\t923.122\t2,940.168\t33 ,043\t \t 9\t10 ,807.530\tNA\t466.657\t667.569\tNA\tNA\t1,163.817\t3,267.698\t27 ,700\t \t 10\t1,961.241\tNA\t384.110\t551.439\tNA\tNA\t1,242.170\t3,313.920\t28 ,757\t \t 11\t11 ,386.465\tNA\t233.273\t434.554\tNA\tNA\t829.204\t2,607.679\t36 ,407\t \t 12\t2,691.988\tNA\t65.735\t116.332\tNA\tNA\t231.935\t792.720\t37 ,464\t \t",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 14672,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "title_2"
+            },
+            "text": "2.2 Classification Methods",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 14699,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "paragraph"
+            },
+            "text": "We compared the results of ElasticNet, ElasticNet with interactions, LDA, NB, SVM, KNN, Tree, XGB, and five ensemble algorithms. The first eight methods repeated 100 rounds of tenfold cross-validation. The grouping of each round of cross-validation was random. The results of the classifications by the five ensemble algorithms were obtained from seven traditional algorithms: ElasticNet, LDA, NB, SVM, KNN, Tree, and XGB. We calculated the area under the receiver operating characteristic curve (AUC), F1-score, false-positive rate (FPR), Precision, and Recall of each algorithm. We also compared the computation time of each algorithm.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 15337,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "title_3"
+            },
+            "text": "2.2.1 ElasticNet",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 15354,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "paragraph"
+            },
+            "text": "As a combination of ridge regression and lasso regression, ElasticNet can not only reduce the prediction variance but also achieve coefficient shrinkage and variable selection. This algorithm involves two parameters, α and λ: ",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 15590,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "paragraph"
+            },
+            "text": "To evaluate α, we selected six values distributed evenly between 0 and 1 , and for evaluation of λ, we chose 100 values from log  10–8 to   log  105. Note that in the 12 large datasets, the parameters α and λ were changed and set using the full data to avoid the computation taking an excessively long time. The ElasticNet model was also applied to the complete dataset to select the best α and λ values from the 12 datasets, and these were then directly used in the tenfold cross-validation experiments. In the small and medium-sized datasets, we also considered ElasticNet with 200 interactions. We combined 1,000 genes in pairs to form interactions and then applied logistic regression to find the 200 interactions with the strongest correlations with the response variable.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 16395,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "title_3"
+            },
+            "text": "2.2.2 Linear Discriminant Analysis",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 16430,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "paragraph"
+            },
+            "text": "The LDA technique identifies a linear combination of predictors that maximize the between-class scatter and minimize the within-class scatter. It uses the label information to learn a discriminant projection that can enlarge the between-class distance and reduce the within-class distance to improve the classification performance. Various extensions of LDA have been developed to enhance its performance and efficiency. In this benchmark study, we used the LDA function in the R package MASS with parameters set to their default values.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 16968,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "title_3"
+            },
+            "text": "2.2.3 NaiveBayes",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 16985,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "paragraph"
+            },
+            "text": "The NB classifier defines the probability of an item belonging to a particular class. It is based on Bayes’ theorem with the assumption that the features are independent. However, this assumption may cause a problem because real-world features are generally interdependent. We used the naiveBayes function in the e1071R package with the value of Laplace set to 1.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 17351,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "title_3"
+            },
+            "text": "2.2.4 Support Vector Machine",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 17380,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "paragraph"
+            },
+            "text": "SVMs are formulated for two-class single-label problems. The appropriate kernel and its parameters selected for a specific classification problem can influence the performance of an SVM. We adopted tenfold cross-validation to select an optimal value for γ, which is a parameter that needs to be defined when the radial basis function is chosen as the kernel. This implicitly determines the distribution of the data mapped to the new feature space. The larger the value of γ, the smaller the number of support vectors; the smaller the value of γ, the larger the number of support vectors. The number of support vectors affects the speed of training and prediction. Another parameter is the cost; this is a penalty coefficient that defines the tolerance for errors. The higher the cost, the smaller the error tolerance; it is easy to overfit with higher cost values and easy to underfit with lower cost values. As such, the generalization ability of the model will become poor if the cost is either too high or too low. The range of γ was , where n represents the number of genes. The range of the cost is . Predictions were then made with the help of the optimal model.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 18565,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "title_3"
+            },
+            "text": "2.2.5 K-Nearest Neighbors",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 18591,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "paragraph"
+            },
+            "text": "The principle of the KNN algorithm is that if most of the k most-similar samples to a query point q  i  in the feature space belong to a particular category, then an inference can be made that the query point q  i  also falls into this category. The distance in the feature space can measure similarity, so this algorithm is called the KNN algorithm. A training dataset with accurate classification labels should be known at the beginning of the algorithm. Then, for a query data point q  i  whose label is not known and which is represented by a vector in feature space, the distances between it and every point in the training dataset are calculated. After sorting the results of this distance calculation, a class label for the test point q  i  can be applied according to the labels of the k nearest points in the training dataset. When the sizes of the training and test datasets are both very large, the execution time of these distance calculations may be the bottleneck of the application of the KNN algorithm.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 19610,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "title_3"
+            },
+            "text": "2.2.6 Tree",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 19621,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "paragraph"
+            },
+            "text": "The Tree algorithm is a hierarchical structure in which internal tree nodes represent splits applied to decompose the domain into regions, and terminal nodes assign class labels or class probabilities to regions believed to be sufficiently small or sufficiently uniform. In this work, pruning was carried out using tenfold cross-validation. To avoid the situation in which only one branch was left after pruning—which would lead to unpredictable classification results—pruning was not allowed if the leaf size after pruning would have been less than two.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 20180,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "title_3"
+            },
+            "text": "2.2.7 XGBoost",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 20194,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "paragraph"
+            },
+            "text": "XGBoost is a regression tree that has the same decision rules as a standard decision tree; it supports both regression and classification. This algorithm is an efficient and scalable variant of the gradient boosting machine. The XGB method can handle sparse data and can thus be implemented flexibly using distributed or parallel computing.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 20535,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "title_3"
+            },
+            "text": "2.2.8 Five Ensemble Algorithms",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 20566,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "paragraph"
+            },
+            "text": "Ensembles are achieved by generating different algorithms and combining their results into a single consensus solution. This study used five ensemble algorithms constructed from the basic results of algorithm predictions applied to classification. In this work, two of the ensemble algorithms used soft decision rules and the other three used hard decision rules.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 20930,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "paragraph"
+            },
+            "text": "We define p  n,i  as the predicted probability of the nth sample from the ith algorithm, where i is the index of the algorithm from \\(ElasticNet, LDA, NB, SVM, KNN, Tree, XGB\\). The soft ensemble rules made decisions based on the weighted average of the predicted probabilities from all methods:where w  i  represents the classification performance of each method. This study used two criteria for w  i —F1-Median and AUC-Median—to construct two ensemble approaches. The ensemble methods classified the nth sample by the weighted probability . We named the two ensemble algorithms “ensemble-weighted.AUC” and “ensemble-weighted.F1.”",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 21575,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "paragraph"
+            },
+            "text": "We denote O  n,i  as the predicted class (0 or 1) of the nth sample from the ith algorithm. In the hard ensemble rules, a decision was made based on the weighted votes from all methods:where w  i  is constant 1 or AUC-Median or F1-Median; indeed, w  i  was used to construct three hard ensemble rules. We named these three ensemble algorithms “ensemble-vote,” “ensemble-addition.AUC,” and “ensemble-addition.F1.”",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 22000,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "title_2"
+            },
+            "text": "2.3 Design of Evaluation Experiments",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 22037,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "title_3"
+            },
+            "text": "2.3.1 Cross-Validation",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 22060,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "paragraph"
+            },
+            "text": "To evaluate the classification performance of the supervised algorithms, we carried out tenfold cross-validation in 100 rounds after filtering the genes, phenotypes, and cells. The complete set of samples, which were labeled as either 0 or 1, were divided into ten groups in each round. In each of the 100 rounds of cross-validation, we applied a confusion matrix for either cell phenotype classification or gene selection. From these confusion matrices, we calculated the following parameters to compare the performance of the methods: AUC, F1-score, FPR, Precision, and Recall.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 22640,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "title_3"
+            },
+            "text": "2.3.2 Evaluation of Classification",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 22675,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "paragraph"
+            },
+            "text": "For each dataset, each sample result in 100 rounds of experiments was predicted to be either 0 or 1 (with a threshold of 0.5 dividing the predicted results into 0 and 1). The confusion matrix was constructed according to the prediction results and actual values from each algorithm. The numbers of samples were achieved with both real and predicted values of 0 (a), actual values of 0 and predicted values of 1 (b), actual values of 1 and predicted values of 0 (c), and both actual and predicted values of 1 (d). “Recall” measures the correct ratio in samples with an actual value of category 1; the calculation formula for this is d/(c + d). “Precision” measures the ratio of samples with an actual value of 1 where it should be 1; the formula for this is d/(b + d). The calculation formula for the F1-score is (2 ×Recall ×Precision)/(Recall + Precision). The FPR measures the proportion of samples with an actual value of 0 but a predicted value of 1; the calculation formula for this is b/(a + b). As noted earlier, AUC measures the area under the receiver operating characteristic curve.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 23777,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "title_3"
+            },
+            "text": "2.3.3 Evaluation for Computation Time",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 23815,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "paragraph"
+            },
+            "text": "To benchmark each algorithm according to the computation time taken for each dataset, we recorded the computation time of each algorithm for 100 rounds and calculated the average values.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 24002,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "title_3"
+            },
+            "text": "2.3.4 Evaluation of Gene Selection",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 24037,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "paragraph"
+            },
+            "text": "The algorithms considered were NB, Tree, XGB, and ElasticNet. We selected the 5,000 genes from the three simulated datasets provided by and that had the strongest correlations with the response variable. The system randomly selected 70% of the data from three simulated datasets as a training set and repeated this random selection 100 times. Then, gene selection was conducted on 100 subsets with 5,000 genes. A comparison was carried out between the selected genes and the real genes in the real datasets. We used a two-column matrix to help the calculation of each indicator; the first column contained the selected genes, and the second column contained the real genes. Finally, five criteria—AUC, F1-score, FPR, Precision, and Recall—were considered to evaluate the performance of the algorithms for gene selection.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 24862,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "paragraph"
+            },
+            "text": "For the Tree algorithm, we carried out cross-validation to prune the tree with minimum deviance. With the NB algorithm, we applied recursive feature elimination to implement gene selection. The parameter settings of the other algorithms were the same as those used for classification.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 25147,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "title_1"
+            },
+            "text": "3 Results",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 25157,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "In this section, we describe the method comparison results in detail using each of the benchmark criteria. We summarize the classification performance and computation time for all datasets with various sample sizes. We then summarize the gene-selection performance using simulated datasets.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 25448,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "title_2"
+            },
+            "text": "3.1 Classification Performance",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 25479,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "As described, in this study, the performance of different classification algorithms on three types of datasets of different of sizes was examined. In this section, the results of each classification criterion are shown to compare the performance of the methods in the subsequent subsections.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 25771,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": " Figures 1–3 show the results from the small, medium, and large datasets, respectively. In each of these figures: as three criteria for investigating the performance of the algorithms, panel A displays, from left to right, the AUC, F1-score, and FPR values of the classification outcomes; panel B shows the differences between the best single algorithm and the other algorithms. From left to right, the results in these panels display the p-values of the AUC, F1-score, and FPR. The red lines indicate the zero value of differences among the performances of algorithms. To closely examine these differences, the discrepancies between the performance of the best single algorithm and the other algorithms were investigated using an adjusted p-value cutoff of 0.05. The p-value was considered to three decimal places. Values below 0.05 are indicated in bold to highlight the significant differences.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 26671,
+            "infons": {
+              "file": "fgene-13-836798-g001.jpg",
+              "id": "F1",
+              "section_type": "FIG",
+              "type": "fig_caption"
+            },
+            "text": "Performance of 13 algorithms with the 27 small datasets. The values of three criteria (AUC, F1-score, and FPR from left to right) are shown in (A). There are 2,700 points in each box. The values of three criteria are used to represent the performance of the corresponding algorithm. (B) Differences between the best single algorithm and the other algorithms. From left to right, the results show the differences in AUC, F1, and FPR including the p-values from the Wilcoxon test; p-values  are indicated in bold, and the red lines indicate the zero value. The best single method is shown at the bottom of each box.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 27285,
+            "infons": {
+              "file": "fgene-13-836798-g002.jpg",
+              "id": "F2",
+              "section_type": "FIG",
+              "type": "fig_caption"
+            },
+            "text": "Performance of 13 algorithms with the four medium-sized datasets. The values of three criteria (AUC, F1-score, and FPR from left to right) are shown in (A). There are 400 points in each box. The values of these three criteria were used to represent the performance of the corresponding algorithm. (B) Differences between the best single algorithm and the other algorithms. From left to right, the results show the differences in AUC, F1, and FPR including the p-values from the Wilcoxon test; p-values  are indicated in bold, and the red lines indicate the zero value. The best single methods, of which there were two, are shown at the bottom of the boxes.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 27942,
+            "infons": {
+              "file": "fgene-13-836798-g003.jpg",
+              "id": "F3",
+              "section_type": "FIG",
+              "type": "fig_caption"
+            },
+            "text": "Performance of ten algorithms with the 12 large datasets. The values of three criteria (AUC, F1-score, and FPR from left to right) are shown in (A). There are 1,200 points in each box. The values of three criteria were used to represent the performance of the corresponding algorithm. (B) Differences between the best single algorithm and the other algorithms. From left to right, the results show the differences in AUC, F1, and FPR including the p values from the Wilcoxon test; p values  are indicated in bold, and the red lines indicate the zero value. The best single method is shown at the bottom of each box.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 28558,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "The interquartile range (IQR) and median values (calculated from the results of 100 experiments for each dataset) for the five criteria are also given in Supplementary Figures S1–S3. In these figures, the first column shows the performance of the algorithms according to five criteria, AUC, F1-score, FPR, Recall, and Precision. The second column shows the AUC-Median, F1-Median, FPR-Median, Recall-Median, and Precision-Median. The third column shows the AUC-IQR, F1-IQR, FPR-IQR, Recall-IQR, and Precision-IQR, from top to bottom. The IQR values were used to represent the stability of the corresponding algorithm. Supplementary Figure S1 illustrates the performance of the 27 small datasets, Supplementary Figure S2 shows the result of the four medium-sized datasets, and Supplementary Figure S3 shows the results from the 12 large datasets.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 29405,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "title_3"
+            },
+            "text": "3.1.1 Benchmarks for Each Classifier in Small Datasets",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 29460,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "The performance of 13 supervised algorithms was analyzed using 27 real datasets with relatively small sample sizes from the Conquer study, which has been used for intra-dataset evaluation. The studied datasets are relatively typically sized scRNA-seq datasets with 24 balanced datasets and three unbalanced datasets (Supplementary Table S1). The performance of the 13 algorithms (ElasticNet with and without interactions, LDA, NB, SVM, KNN, Tree, XGB, and five ensemble algorithms) considering AUC, F1-score, and FPR are shown in Figure 1. In Figure 1A, each box contains 2,700 scores, and each of these scores represents a single value from each experiment with each dataset. Overall, Figure 1 indicates that ElasticNet with interactions has better performance as a linear algorithm when compared to the others in terms of AUC, F1-score, and FPR. Considering Supplementary Figure S1, the Recall of ElasticNet was also considerably better than other non-ensemble algorithms. However, the five ensemble algorithms had higher precision than the non-ensemble algorithms (Supplementary Figure S1).",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 30554,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "As shown in Figure 1A, from the linear algorithms, the median AUC values for ElasticNet with and without interactions, LDA, NB, and SVM, were greater than 0.987. For the 27 small datasets, the median AUC value of the non-linear Tree algorithm was 0.967, and it was 0.979 for the XGB; this was higher than the value for the KNN algorithm, 0.966. Thus, in small datasets, when AUC is considered as the main criterion, the linear algorithms performed better than the non-linear ones.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 31035,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "We also used each criterion’s IQR value to indicate the stability of the algorithms. Details of these results are shown in Supplementary Figure S1. The XGB algorithm was better than Tree in terms of both performance and stability. Among the five ensemble algorithms, it seemed that weighting by AUC and F1-score played an important role in improving the results. The median AUC values for the ensemble algorithms were approximately the same, each being over 0.990. According to the outcomes, in the small datasets, ElasticNet with interactions was selected as the best single method because it had the highest AUC and lower AUC-IQR values. It also had the best performance considering F1-score and FPR.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 31740,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": " Figure 1B shows a pairwise comparison between the classification algorithms and the best selected single method (ElasticNet with interactions) under each criterion. There were significant differences among the performances of the algorithms, and these further reinforced the selection of ElasticNet as the best algorithm. Moreover, considering the AUC and F1-score criteria, the inclusion of interactions significantly improved the performance of ElasticNet. Among the single methods, the LDA, NB, SVM, Tree, and XGB algorithms performed significantly worse than ElasticNet with interactions.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 32334,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "To sum up, the investigation of the performance of the 13 algorithms revealed that ElasticNet with interactions appears to be the most practical method for small datasets. Moreover, ensemble-weighted.AUC and ensemble-weighted.F1 can be considered as the next-most-useful methods, but they are not as good as ElasticNet with interactions. In comparing linear and non-linear algorithms, the linear algorithms, including ElasticNet with and without interactions, LDA, NB, and SVM, performed better than the non-linear algorithms. Among the ensemble algorithms, those weighted by F1-score and AUC had slightly better performance.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 32960,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "title_3"
+            },
+            "text": "3.1.2 Benchmarks for Each Classifier in Medium-sized Datasets",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 33022,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "We next studied the four medium-sized datasets from; these contained fewer than 1,000 samples per label (Supplementary Table S2). The results helped us to assess how well the supervised algorithms perform with medium-sized datasets. Overall, Figure 2 confirms that the linear algorithms, in particular ElasticNet with interactions and NB, had better performance in comparison to the non-linear and ensemble algorithms.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 33441,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "As shown in Figure 2A, the performance of ElasticNet with interactions was still better than ElasticNet without interactions when considering AUC. In Supplementary Figure S2, it can also be seen that the stability of ElasticNet with interactions was better than the stability of the other algorithms. However, considering the F1-score and FPR criteria, the NB algorithm was the best single method, with median values of 0.994 and 0.010, respectively. The Recall of ElasticNet and NB were also considerably better than the Recall of the other algorithms. Therefore, in Figure 2B, we have marked these algorithm names under the F1-score and FPR standards.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 34095,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "Among the ensemble algorithms, ensemble-weighted.AUC and ensemble-addition.F1 had better performance than the other three in terms of the AUC, F1-score, Precision, and Recall criteria. These results further confirmed that the performances of ensemble-weighted.AUC and ensemble-addition.F1 were not significantly better than the best non-ensemble methods in terms of AUC and F1-score. Thus, Figure 2A reveals that ElasticNet with interactions performed the best under the AUC criterion, and NB had the best performance under the FPR and F1-score criteria. The next-most-useful methods were ensemble-weighted.AUC and ensemble-addition.F1.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 34732,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "As shown in Figure 2B, in terms of AUC, the p-value of ensemble-weighted.F1 was 0.278, that of ensemble-weighted.AUC was 0.283, and that of ElasticNet without interactions was 0.095. Thus, there were no significant differences between the AUC values of these algorithms and the AUC of ElasticNet. When the values of the F1-score and the FPR were considered, NB performed slightly better. The performance of NB was significantly better than that of all other methods, with a p-value of almost zero. The same results were achieved under the F1-score criterion for ensemble-weighted.F1 and ensemble-weighted.AUC, which indicates that these ensemble methods had approximately the same performance with the medium-sized datasets.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 35457,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "To sum up, in the medium-sized datasets, ElasticNet with interactions seems to be more practical than the other algorithms when considering the AUC criterion. The NB algorithm was the best algorithm in terms of F1-score and FPR. The ensemble-weighted.F1 and ensemble-weighted.AUC methods can also be applied as the next-most-suitable methods.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 35800,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "title_3"
+            },
+            "text": "3.1.3 Benchmarks for Each Classifier in Large Datasets",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 35855,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "Next, 12 filtered datasets were applied using the datasets of. In contrast to the medium-sized datasets, in these sets, there were over 1,000 samples of each type of cell per label, with specific values ranging from 1732 to 25,875, as described in Supplementary Table S3.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 36127,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": " Figure 3 shows the outcomes of the performance metrics for ten algorithms (ElasticNet, LDA, NB, Tree, XGB, and five ensemble algorithms) using the large datasets; three algorithms (KNN, SVM, and ElasticNet with interactions) were set aside because of the long computation time they would require. The results revealed that XGB had the best performance when compared to the other single methods. Ensemble-weighted.F1 performed the best among the five ensemble algorithms in terms of AUC, F1-score, FPR, and Recall. In terms of stability (Supplementary Figure S3), the XGB algorithm, based on the AUC and FPR criteria, was most stable; however, ensemble-weighted.F1 had the best stability in terms of F1-score. Considering Supplementary Figure S3, the Recall of XGB was also better than that of the other algorithms. However, XGB and ensemble-weighted.F1 had the same median value of Precision.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 37021,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "In more detail, the results in Figure 3A show that the median value of AUC for XGB was 0.999, which was higher than that of LDA. If the parameters of ElasticNet were set the same as those used for the medium-sized and small datasets, this would cause the computation to take too long. We thus adjusted the parameters of ElasticNet in the large datasets. Overall, in Figure 3A, if the AUC, F1-score, and FPR criteria are considered, the XGB algorithm had the best performance; in contrast, XGB was not a practical method for small datasets. Furthermore, comparing the small and medium-sized datasets, the results for ElasticNet dropped from 1.000 to 0.997 to 0.993 using the AUC criterion, and the AUC for ElasticNet with the large datasets was at least 0.425. This situation caught our attention, and this will be considered further in the Discussion section. This outcome led to the selection of XGB as the best single method for use with large datasets; a comparison between this and the ensemble and other non-ensemble methods is thus displayed in Figure 3B.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 38083,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "As shown in Figure 3B, when considering the AUC and F1-score criteria, there were significant differences between the five ensemble algorithms and the best single method (XGB); their p-values were all approximately zero. However, under the FPR criterion, there were no significant differences. Thus, the other algorithms were significantly worse than XGB in terms of AUC and F1, with p-values less than 0.05. The single methods ElasticNet, LDA, NB, and Tree performed worse than XGB on all three measures, with p-values of less than 0.05 in each case.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 38635,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "In summary, the investigation of the performance of ten algorithms revealed that XGB is the most practical method for large datasets. Additionally, ensemble-weighted.F1 can also be used as an appropriate method for large datasets.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 38866,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "title_3"
+            },
+            "text": "3.1.4 Computation Time",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 38889,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "We obtained the computation time of each algorithm for three different datasets (Table 1). For the 27 small datasets, SVM required longer to run. For the medium-sized datasets, the performance of ElasticNet, KNN, and SVM slowed notably; the computation times for these three algorithms were approximately 3.5, 24, and 10.6 times longer than the computation times for the small datasets.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 39276,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "By adding cross-validation to the medium-sized datasets, the SVM took a longer computation time: an average of 6,617.672 s. This result was similar to that for the small datasets. The LDA and NB algorithms required short computation times, with averages of 11.570 and 21.369 s, respectively. With the large datasets, the computation time of Tree grew little when compared to KNN.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 39658,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "In the measurement of each algorithm’s computation time, KNN was found to occupy too much memory with the large datasets; therefore, we could not compare the time-consuming and labor-intensive algorithms ElasticNet, KNN, and SVM. Hence, we adjusted the parameters of ElasticNet for the large datasets. For the large datasets, we calculated the computation times of five algorithms: adjusted ElasticNet, LDA, NB, Tree, and XGB (Table 1). The average computation time of XGB, as the best single method for large datasets, was 2,803.485 s.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 40198,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "title_2"
+            },
+            "text": "3.2 Gene Selection",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 40217,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "The dimensions of the gene variables in the scRNA-seq datasets were large. When we implemented the classification prediction, some algorithms automatically made gene selections for the datasets. Hence, we studied whether there was a particular relationship between gene-selection performance and classification-prediction performance. We examined four algorithms suitable for gene selection—NB, Tree, XGB, and ElasticNet—using the three simulated datasets provided by (please see the Materials and Methods section for more details).",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 40754,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "To obtain the final evaluation results, we set different randomizing seeds in each round for each dataset and performed gene selections 100 times on 100 subsets with 70% of the cells. Then, the results were compared with the genes in the real datasets GSE45719, GSE74596, and GSE60749–GPL13112 (Supplementary Table S4).",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 41076,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": " Figure 4 displays the AUC values of the four algorithms—NB, Tree, XGB, and ElasticNet—for gene selection in all experiments with the three datasets. Each panel of this figure shows 100 points corresponding to the results of 100 subsets. As shown, the median value of AUC for the four algorithms on the GSE60749-GPL13112 simulated dataset was approximately 0.500. For the other two datasets, the median values for ElasticNet were about 0.711 and 0.637. This revealed that ElasticNet had better gene-selection performance than the other three algorithms.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 41634,
+            "infons": {
+              "file": "fgene-13-836798-g004.jpg",
+              "id": "F4",
+              "section_type": "FIG",
+              "type": "fig_caption"
+            },
+            "text": "Gene-selection results from the four algorithms on 100 subsets of each simulated dataset. There are three datasets from left to right, and we have marked the dataset names at the top. Each box shows the AUC values of the four algorithms after 100 runs of gene selection on each simulated dataset. The horizontal axes are arranged by algorithm name.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 41983,
+            "infons": {
+              "section_type": "DISCUSS",
+              "type": "title_1"
+            },
+            "text": "4 Discussion",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 41996,
+            "infons": {
+              "section_type": "DISCUSS",
+              "type": "paragraph"
+            },
+            "text": "In this study, the classification performance and computation times of different algorithms for datasets of different sizes were evaluated and compared. A total of 27 real Conquer datasets provided by were used for classification as small datasets, as shown in Supplementary Table S1. Four medium-sized datasets provided by were also used, as shown in Supplementary Table S2. The 12 large datasets provided by were also used for classification, as shown in Supplementary Table S3. Three simulated datasets presented by were used to examine gene selection, as shown in Supplementary Table S4.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 42588,
+            "infons": {
+              "section_type": "DISCUSS",
+              "type": "paragraph"
+            },
+            "text": "In this study, we conducted cross-validation experiments and gene selection, comparing the performance of various algorithms in terms of their performance, stability, computation time, and gene selection. Finally, each algorithm’s performance with different sizes of dataset was considered. According to the results, ElasticNet with interactions was the most suitable for processing small and medium-sized scRNA-seq datasets. Considering the AUC criterion, the inclusion of interactions improved the performance of ElasticNet with small and medium-sized datasets; in particular, there were significant differences between ElasticNet with and without interactions in small datasets. When ElasticNet was used with large datasets with and without interactions, there were difficulties with convergence. Hence, we adjusted the parameters, but there were problems with long computation times. Therefore, with the large datasets, we only studied ElasticNet and not ElasticNet with interactions. If the F1-score and FPR are considered, the NB algorithm can also be used as a practical approach with medium-sized datasets. The results with large datasets confirmed that if the computation time is ignored, then XGB can be regarded as the best algorithm. Additionally, this study illustrated that the ensemble algorithms were not always better than the classic linear algorithms. We also found that the integrated methods did not significantly improve the performance of the single algorithms.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 44075,
+            "infons": {
+              "section_type": "DISCUSS",
+              "type": "title_2"
+            },
+            "text": "4.1 Classification With Small Datasets",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 44114,
+            "infons": {
+              "section_type": "DISCUSS",
+              "type": "paragraph"
+            },
+            "text": "With the small datasets, the performance of the 13 algorithms was evaluated and compared using five criteria: AUC, F1-score, FPR, Precision, and Recall. Considering AUC as the standard (Figure 1), we observed that ElasticNet, ElasticNet with interactions, SVM, and LDA performed well, but LDA was unstable. The computation time of the SVM method was found to be too long to be practical. ElasticNet with interactions was a little more suitable for classification than ElasticNet without interactions in terms of performance and stability; the results showed a higher median AUC value and a lower AUC-IQR value for ElasticNet with interactions. Thus, ElasticNet with interactions can be considered as the best linear algorithm for small datasets. The performance of the XGB algorithm was better than Tree in terms of AUC and AUC-IQR. Ensemble algorithms can improve the overall generalization ability when each base learner’s performance is more significant than 0.5. Therefore, it is understandable that some kinds of ensemble strategies will perform better than others. However, we found no significantly better performance for ensemble methods compared to single methods.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 45290,
+            "infons": {
+              "section_type": "DISCUSS",
+              "type": "paragraph"
+            },
+            "text": "The SVM algorithm performed poorly in terms of F1-score and FPR. It seems that this was because these criteria consider both performance and stability. Notably, SVM performed very slowly; this is perhaps unsurprising because the algorithm involves the selection of several optimal parameters. Both LDA and NB are simple linear classifiers with fast computation times, and their classification performances were good. ElasticNet and ElasticNet with interactions took longer than LDA; the median value of its computation time was seven times greater than that of NB but eleven times less than that of SVM. Like SVM, ElasticNet and ElasticNet with interactions also require the selection of optimal parameters to decrease the computation time. However, their computation times are practical for small datasets. Therefore, for small datasets, we suggest applying ElasticNet with interactions due to its high prediction performance and stability.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 46232,
+            "infons": {
+              "section_type": "DISCUSS",
+              "type": "title_2"
+            },
+            "text": "4.2 Classification With Medium-Sized Datasets",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 46278,
+            "infons": {
+              "section_type": "DISCUSS",
+              "type": "paragraph"
+            },
+            "text": "We compared the performance of the 13 algorithms with the medium-sized datasets. Using AUC as the standard, ElasticNet with interactions performed best, having higher performance and greater stability, as with the small datasets. The LDA and SVM algorithms did not perform well on these four datasets. The reason can be to focus on only four datasets, which may happen by chance. The XGB algorithm was also better than Tree in terms of both performance and stability. The two ensemble algorithms ensemble-weighted.AUC and ensemble-weighted.F1 also performed better; however, their performances were not significantly different from that of the single algorithm ElasticNet with interactions in terms of AUC. Considering the median value of AUC, KNN still performed more poorly than the other algorithms. We found that KNN is not suitable for processing scRNA-seq data because it requires a very large amount of memory. As the number of samples is increased, the number of calculations required by KNN also increases. Hence, in this study, there were problems with insufficient memory during these calculations.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 47388,
+            "infons": {
+              "section_type": "DISCUSS",
+              "type": "paragraph"
+            },
+            "text": "For the F1-score and FPR standards, the NB algorithm performed better than the other algorithms. Using the AUC criterion, the performances of the other algorithms were similar. Overall, the linear algorithms continued to outperform the non-linear algorithms with medium-sized datasets. Therefore, we suggest that ElasticNet with interactions and NB are best for application with medium-sized datasets because they have better performance and stability along with moderate computation times.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 47879,
+            "infons": {
+              "section_type": "DISCUSS",
+              "type": "title_2"
+            },
+            "text": "4.3 Classification With Large Datasets",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 47918,
+            "infons": {
+              "section_type": "DISCUSS",
+              "type": "paragraph"
+            },
+            "text": "The performances of ten algorithms were compared using large datasets (Figure 3). Using AUC as the standard, the performance and computation time of ElasticNet, KNN, and SVM took longer than others. Thus, SVM and KNN were removed, and the parameters of ElasticNet were modified. We found that XGB was the best single algorithm with large datasets. ElasticNet with interactions was not considered in the final results because of its long computation time; we also found that its performance was not suitable due to some non-convergence issues. It is worth noting that ElasticNet still performed well in the convergence experiments. Therefore, ElasticNet may also be an appropriate choice after solving the convergence issues. Two of the ensemble algorithms performed as well as they did with small datasets. The core idea of the KNN algorithm is that if most of the k nearest samples in the feature space of a sample belong to a particular category, then the sample will also belong to that category and will have its characteristics. Hence, when the size of the datasets increases, more computation is needed. In this paper, KNN was not considered for the large datasets due to out-of-memory issues.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 49118,
+            "infons": {
+              "section_type": "DISCUSS",
+              "type": "paragraph"
+            },
+            "text": "Overall, according to three criteria—AUC, F1-score, and FPR—the performance of the XGB algorithm was the best in most cases. We thus suggest XGB for large datasets because of its better performance and stability.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 49335,
+            "infons": {
+              "section_type": "DISCUSS",
+              "type": "paragraph"
+            },
+            "text": "The KNN and SVM algorithms had long computation times. Therefore, they were not considered for the large datasets. The computation-time problem for ElasticNet was improved by parameter adjustment, but it was not eliminated (Table 1). The results thus illustrate that the non-convergence issue leads to more extended computation times. Moreover, the computation time of XGB is higher than other linear classifiers (LDA and NB) because it involves complicated calculations.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 49807,
+            "infons": {
+              "section_type": "DISCUSS",
+              "type": "paragraph"
+            },
+            "text": "This study also investigated whether there was a correlation between “perfect separation” and “model non-convergence.” We collected statistics of the convergence and perfect separation in each round of 1,000 experiments for 12 large datasets. The results revealed that over 69% of the experiments showed “non-convergence and perfect separation” or “convergence without perfect separation.” Therefore, we propose that there is a relationship between perfect separation and model non-convergence. Moreover, considering their required computation time and performance, we suggest that LDA and XGB are more suitable for large datasets.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 50455,
+            "infons": {
+              "section_type": "DISCUSS",
+              "type": "paragraph"
+            },
+            "text": "Finally, we discovered that the linear algorithms were better than the non-linear algorithms for classifying the different-sized datasets. Among the algorithms, ElasticNet with interactions performed well on small and medium-sized datasets. However, NB was also practical for medium-sized datasets, and XGB worked better for large datasets. There were no clear differences in the performance of the ensemble and single methods.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 50883,
+            "infons": {
+              "section_type": "DISCUSS",
+              "type": "title_2"
+            },
+            "text": "4.4 Gene Selection on Simulated Datasets",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 50924,
+            "infons": {
+              "section_type": "DISCUSS",
+              "type": "paragraph"
+            },
+            "text": "In this study, 100 subsets of three simulated datasets provided by were used to avoid a certain level of randomness. These 100 random subsets were used with 100 experiments. The selected genes were compared with the real genes in real datasets. The results revealed that ElasticNet performed the best (Figure 4). ElasticNet achieves feature selection by regulating non-relevant predictors’ coefficients to zero, and this enhances the gene selection in scRNA-seq data; it is thus reasonable that it performed the best.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 51444,
+            "infons": {
+              "section_type": "CONCL",
+              "type": "title_1"
+            },
+            "text": "5 Conclusion",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 51457,
+            "infons": {
+              "section_type": "CONCL",
+              "type": "paragraph"
+            },
+            "text": "This paper presents the results of a comprehensive evaluation of supervised algorithms for the classification of scRNA-seq data to assess their performance with datasets of different sizes. The algorithms considered were as follows: 1) ElasticNet; 2) ElasticNet with interactions; 3) LDA; 4) NB; 5) SVM; 6) KNN; 7) Tree; 8) XGB; and 9) five ensemble algorithms based on the weights and votes given to the seven algorithms ElasticNet, LDA, NB, SVM, KNN, Tree, and XGB. Enormous differences were found in the performances of these algorithms in response to changing the input features. The computation times of the algorithms varied considerably with the numbers of cells and features and the type of algorithm.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 52167,
+            "infons": {
+              "section_type": "CONCL",
+              "type": "paragraph"
+            },
+            "text": "According to the outcomes, ElasticNet with interactions had better performance for small and medium-sized datasets, while XGB was suitable for large datasets. The gene-selection performance of ElasticNet was perfect when comparing the genes selected by the four algorithms on the three simulated datasets with the genes in the actual datasets. It was revealed that the ensemble algorithms were not always superior to classical machine learning methods in terms of performance or computation time. The results also indicated that there were significant differences between ElasticNet with and without interactions.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 52781,
+            "infons": {
+              "section_type": "CONCL",
+              "type": "paragraph"
+            },
+            "text": "We recommend ElasticNet with interactions for small and medium-sized datasets because it performs better than the other classifiers. The inclusion of interactions improved the performance of ElasticNet significantly for small datasets. The NB algorithm can also be considered as an appropriate classifier for medium-sized datasets. However, when the sample size of the datasets was large, the XGB algorithm was found to be more suitable. Although the computation time of XGB was slightly longer, its performance was relatively higher than the other methods. It seems that there is no reason to encourage the use of ensemble algorithms, as their performance was not found to be better than the performance of single methods.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 53505,
+            "infons": {
+              "section_type": "SUPPL",
+              "type": "title_1"
+            },
+            "text": "Data Availability Statement",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 53533,
+            "infons": {
+              "section_type": "SUPPL",
+              "type": "paragraph"
+            },
+            "text": "The original contributions presented in the study are included in the article/Supplementary Material, further inquiries can be directed to the corresponding author.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 53698,
+            "infons": {
+              "section_type": "AUTH_CONT",
+              "type": "title_1"
+            },
+            "text": "Author Contributions",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 53719,
+            "infons": {
+              "section_type": "AUTH_CONT",
+              "type": "paragraph"
+            },
+            "text": "LX and XZ conceptualized this study and designed the experiment. XC contributed to data processing, data analysis, and preparation of the first draft. All authors have developed drafts of the manuscript and approved the final draft of the manuscript. XZ supervised this project.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 53998,
+            "infons": {
+              "section_type": "ACK_FUND",
+              "type": "title_1"
+            },
+            "text": "Funding",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 54006,
+            "infons": {
+              "section_type": "ACK_FUND",
+              "type": "paragraph"
+            },
+            "text": "This work was supported by the Natural Sciences and Engineering Research Council Discovery Grants (RGPIN-2017-04 722 PI:XZ and RGPIN-2021-03 530 PI:LX), the Canada Research Chair (950-231 363, PI:XZ) and the National Natural Science Foundation of China Grant (61802282).",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 54277,
+            "infons": {
+              "section_type": "COMP_INT",
+              "type": "title_1"
+            },
+            "text": "Conflict of Interest",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 54298,
+            "infons": {
+              "section_type": "COMP_INT",
+              "type": "paragraph"
+            },
+            "text": "The authors declare that the research was conducted in the absence of any commercial or financial relationships that could be construed as a potential conflict of interest.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 54471,
+            "infons": {
+              "section_type": "COMP_INT",
+              "type": "title_1"
+            },
+            "text": "Publisher’s Note",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 54490,
+            "infons": {
+              "section_type": "COMP_INT",
+              "type": "paragraph"
+            },
+            "text": "All claims expressed in this article are solely those of the authors and do not necessarily represent those of their affiliated organizations, or those of the publisher, the editors, and the reviewers. Any product that may be evaluated in this article, or claim that may be made by its manufacturer, is not guaranteed or endorsed by the publisher.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 54838,
+            "infons": {
+              "section_type": "SUPPL",
+              "type": "title_1"
+            },
+            "text": "Supplementary Material",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 54861,
+            "infons": {
+              "section_type": "SUPPL",
+              "type": "paragraph"
+            },
+            "text": "The Supplementary Material for this article can be found online at: https://www.frontiersin.org/articles/10.3389/fgene.2022.836798/full#supplementary-material ",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 55021,
+            "infons": {
+              "section_type": "REF",
+              "type": "title"
+            },
+            "text": "References",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 55032,
+            "infons": {
+              "fpage": "194",
+              "name_0": "surname:Abdelaal;given-names:T.",
+              "name_1": "surname:Michielsen;given-names:L.",
+              "name_2": "surname:Cats;given-names:D.",
+              "name_3": "surname:Hoogduin;given-names:D.",
+              "name_4": "surname:Mei;given-names:H.",
+              "name_5": "surname:Reinders;given-names:M. J. T.",
+              "pub-id_doi": "10.1186/s13059-019-1795-z",
+              "pub-id_pmid": "31500660",
+              "section_type": "REF",
+              "source": "Genome Biol.",
+              "type": "ref",
+              "volume": "20",
+              "year": "2019"
+            },
+            "text": "A Comparison of Automatic Cell Identification Methods for Single-Cell Rna-Sequencing Data",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 55122,
+            "infons": {
+              "fpage": "264",
+              "name_0": "surname:Alquicira-Hernandez;given-names:J.",
+              "name_1": "surname:Sathe;given-names:A.",
+              "name_2": "surname:Ji;given-names:H. P.",
+              "name_3": "surname:Nguyen;given-names:Q.",
+              "name_4": "surname:Powell;given-names:J. E.",
+              "pub-id_doi": "10.1186/s13059-019-1862-5",
+              "pub-id_pmid": "31829268",
+              "section_type": "REF",
+              "source": "Genome Biol.",
+              "type": "ref",
+              "volume": "20",
+              "year": "2019"
+            },
+            "text": "ScPred: Accurate Supervised Method for Cell-Type Classification from Single-Cell RNA-Seq Data",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 55216,
+            "infons": {
+              "fpage": "1",
+              "name_0": "surname:Editorial",
+              "pub-id_doi": "10.1038/nmeth.2801",
+              "pub-id_pmid": "24524124",
+              "section_type": "REF",
+              "source": "Nat. Methods",
+              "type": "ref",
+              "volume": "11",
+              "year": "2014"
+            },
+            "text": "Method of the Year 2013",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 55240,
+            "infons": {
+              "fpage": "100705",
+              "name_0": "surname:Bernstein;given-names:M. N.",
+              "name_1": "surname:Dewey;given-names:C. N.",
+              "pub-id_doi": "10.1016/j.xpro.2021.100705",
+              "pub-id_pmid": "34458864",
+              "section_type": "REF",
+              "source": "STAR Protoc.",
+              "type": "ref",
+              "volume": "2",
+              "year": "2021"
+            },
+            "text": "Annotating Cell Types in Human Single-Cell RNA-Seq Data with CellO",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 55307,
+            "infons": {
+              "fpage": "100914",
+              "name_0": "surname:Boufea;given-names:K.",
+              "name_1": "surname:Seth;given-names:S.",
+              "name_2": "surname:Batada;given-names:N. N.",
+              "pub-id_doi": "10.1016/j.isci.2020.100914",
+              "pub-id_pmid": "32151972",
+              "section_type": "REF",
+              "source": "iScience",
+              "type": "ref",
+              "volume": "23",
+              "year": "2020"
+            },
+            "text": "scID Uses Discriminant Analysis to Identify Transcriptionally Equivalent Cell Types across Single-Cell RNA-Seq Data with Batch Effect",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 55441,
+            "infons": {
+              "fpage": "914",
+              "lpage": "920",
+              "name_0": "surname:Chang;given-names:Y.-C.",
+              "name_1": "surname:Chang;given-names:K.-H.",
+              "name_2": "surname:Wu;given-names:G.-J.",
+              "pub-id_doi": "10.1016/j.asoc.2018.09.029",
+              "section_type": "REF",
+              "source": "Appl. Soft Comput.",
+              "type": "ref",
+              "volume": "73",
+              "year": "2018"
+            },
+            "text": "Application of Extreme Gradient Boosting Trees in the Construction of Credit Risk Assessment Models for Financial Institutions",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 55568,
+            "infons": {
+              "fpage": "496",
+              "lpage": "499",
+              "name_0": "surname:Chen;given-names:Q.",
+              "name_1": "surname:Meng;given-names:Z.",
+              "name_2": "surname:Su;given-names:R.",
+              "pub-id_doi": "10.3389/fbioe.2020.00496",
+              "pub-id_pmid": "32548100",
+              "section_type": "REF",
+              "source": "Front. Bioeng. Biotechnol.",
+              "type": "ref",
+              "volume": "8",
+              "year": "2020"
+            },
+            "text": "Werfe: A Gene Selection Algorithm Based on Recursive Feature Elimination and Ensemble Strategy",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 55663,
+            "infons": {
+              "fpage": "1",
+              "lpage": "7",
+              "name_0": "surname:Cheng;given-names:Q.",
+              "name_1": "surname:Li;given-names:J.",
+              "name_2": "surname:Fan;given-names:F.",
+              "name_3": "surname:Cao;given-names:H.",
+              "name_4": "surname:Dai;given-names:Z. Y.",
+              "name_5": "surname:Wang;given-names:Z. Y.",
+              "pub-id_doi": "10.3389/fbioe.2020.00167",
+              "pub-id_pmid": "32039188",
+              "section_type": "REF",
+              "source": "Front. Bioeng. Biotechnol.",
+              "type": "ref",
+              "volume": "8",
+              "year": "2020"
+            },
+            "text": "Identification and Analysis of Glioblastoma Biomarkers Based on Single Cell Sequencing",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 55750,
+            "infons": {
+              "fpage": "11",
+              "lpage": "14",
+              "name_0": "surname:Chiu;given-names:D. S.",
+              "name_1": "surname:Talhouk;given-names:A.",
+              "pub-id_doi": "10.1186/s12859-017-1996-y",
+              "pub-id_pmid": "29334888",
+              "section_type": "REF",
+              "source": "BMC bioinformatics",
+              "type": "ref",
+              "volume": "19",
+              "year": "2018"
+            },
+            "text": "Dicer: An R Package for Class Discovery Using an Ensemble Driven Approach",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 55824,
+            "infons": {
+              "fpage": "e95",
+              "name_0": "surname:de Kanter;given-names:J. K.",
+              "name_1": "surname:Lijnzaad;given-names:P.",
+              "name_2": "surname:Candelli;given-names:T.",
+              "name_3": "surname:Margaritis;given-names:T.",
+              "name_4": "surname:Holstege;given-names:F. C. P.",
+              "pub-id_doi": "10.1093/nar/gkz543",
+              "pub-id_pmid": "31226206",
+              "section_type": "REF",
+              "source": "Nucleic Acids Res.",
+              "type": "ref",
+              "volume": "47",
+              "year": "2019"
+            },
+            "text": "CHETAH: A Selective, Hierarchical Cell Type Identification Method for Single-Cell RNA Sequencing",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 55921,
+            "infons": {
+              "fpage": "110",
+              "lpage": "125",
+              "name_0": "surname:Dietterich;given-names:T. G.",
+              "name_1": "surname:Arbib;given-names:M.",
+              "section_type": "REF",
+              "source": "The Handbook of Brain Theory and Neural Networks",
+              "type": "ref",
+              "volume": "2",
+              "year": "2002"
+            },
+            "text": "Ensemble Learning",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 55939,
+            "infons": {
+              "fpage": "1365",
+              "lpage": "1381",
+              "name_0": "surname:Friedman;given-names:J. H.",
+              "name_1": "surname:Meulman;given-names:J. J.",
+              "pub-id_doi": "10.1002/sim.1501",
+              "section_type": "REF",
+              "source": "Statist. Med.",
+              "type": "ref",
+              "volume": "22",
+              "year": "2003"
+            },
+            "text": "Multiple Additive Regression Trees with Application in Epidemiology",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 56007,
+            "infons": {
+              "fpage": "39",
+              "lpage": "44",
+              "name_0": "surname:Gupta;given-names:D.",
+              "name_1": "surname:Malviya;given-names:A.",
+              "name_2": "surname:Singh;given-names:S.",
+              "pub-id_doi": "10.5120/8762-2680",
+              "section_type": "REF",
+              "source": "Int. J. Comput. Appl.",
+              "type": "ref",
+              "volume": "55",
+              "year": "2012"
+            },
+            "text": "Performance Analysis of Classification Tree Learning Algorithms",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 56071,
+            "infons": {
+              "fpage": "103",
+              "lpage": "123",
+              "name_0": "surname:Hand;given-names:D. J.",
+              "pub-id_doi": "10.1007/s10994-009-5119-5",
+              "section_type": "REF",
+              "source": "Mach Learn.",
+              "type": "ref",
+              "volume": "77",
+              "year": "2009"
+            },
+            "text": "Measuring Classifier Performance: A Coherent Alternative to the Area under the Roc Curve",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 56160,
+            "infons": {
+              "fpage": "1164",
+              "lpage": "1170",
+              "name_0": "surname:Hasan;given-names:M. A. M.",
+              "name_1": "surname:Nasser;given-names:M.",
+              "name_2": "surname:Pal;given-names:B.",
+              "section_type": "REF",
+              "source": "Int. J. Electron. Commun. Comput. Eng.",
+              "type": "ref",
+              "volume": "4",
+              "year": "2013"
+            },
+            "text": "On the Kdd’99 Dataset: Support Vector Machine Based Intrusion Detection System (Ids) with Different Kernels",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 56270,
+            "infons": {
+              "fpage": "785",
+              "lpage": "795",
+              "name_0": "surname:Hasan;given-names:M. A. M.",
+              "name_1": "surname:Ahmad;given-names:S.",
+              "name_2": "surname:Molla;given-names:M. K. I.",
+              "pub-id_doi": "10.1039/c6mb00860g",
+              "pub-id_pmid": "28247893",
+              "section_type": "REF",
+              "source": "Mol. Biosyst.",
+              "type": "ref",
+              "volume": "13",
+              "year": "2017"
+            },
+            "text": "Protein Subcellular Localization Prediction Using Multiple Kernel Learning Based Support Vector Machine",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 56374,
+            "infons": {
+              "comment": "arXiv preprint arXiv:1302.4964",
+              "fpage": "338",
+              "lpage": "345",
+              "name_0": "surname:John;given-names:G. H.",
+              "name_1": "surname:Langley;given-names:P.",
+              "section_type": "REF",
+              "type": "ref",
+              "year": "2013"
+            },
+            "text": "Estimating Continuous Distributions in Bayesian Classifiers",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 56434,
+            "infons": {
+              "fpage": "7",
+              "name_0": "surname:Kozdrowski;given-names:S.",
+              "name_1": "surname:Cichosz;given-names:P.",
+              "name_2": "surname:Paziewski;given-names:P.",
+              "name_3": "surname:Sujecki;given-names:S.",
+              "section_type": "REF",
+              "source": "Entropy",
+              "type": "ref",
+              "volume": "23",
+              "year": "2021"
+            },
+            "text": "Machine Learning Algorithms for Prediction of the Quality of Transmission in Optical Networks",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 56528,
+            "infons": {
+              "fpage": "13",
+              "lpage": "23",
+              "name_0": "surname:Kramer;given-names:O.",
+              "pub-id_doi": "10.1007/978-3-642-38652-7_2",
+              "section_type": "REF",
+              "source": "Dimensionality Reduction with Unsupervised Nearest Neighbors",
+              "type": "ref",
+              "year": "2013"
+            },
+            "text": "K-nearest Neighbors",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 56548,
+            "infons": {
+              "fpage": "151",
+              "name_0": "surname:Kuang;given-names:Q.",
+              "name_1": "surname:Lei;given-names:Z.",
+              "section_type": "REF",
+              "type": "ref",
+              "year": "2009"
+            },
+            "text": "L.: A Practical Gpu Based Knn Algorithm",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 56588,
+            "infons": {
+              "fpage": "e0205499",
+              "issue": "11",
+              "name_0": "surname:Lieberman;given-names:Y.",
+              "name_1": "surname:Rokach;given-names:L.",
+              "name_2": "surname:Shay;given-names:T.",
+              "pub-id_doi": "10.1371/journal.pone.0205499",
+              "pub-id_pmid": "30304022",
+              "section_type": "REF",
+              "source": "PLoS ONE",
+              "type": "ref",
+              "volume": "13",
+              "year": "2018"
+            },
+            "text": "CaSTLe - Classification of Single Cells by Transfer Learning: Harnessing the Power of Publicly Available Single Cell RNA Sequencing Experiments to Annotate New Experiments",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 56760,
+            "infons": {
+              "fpage": "1",
+              "lpage": "16",
+              "name_0": "surname:Lin;given-names:Y.",
+              "name_1": "surname:Cao;given-names:Y.",
+              "name_2": "surname:Kim;given-names:H. J.",
+              "name_3": "surname:Salim;given-names:A.",
+              "name_4": "surname:Speed;given-names:T. P.",
+              "name_5": "surname:Lin;given-names:D. M.",
+              "pub-id_doi": "10.15252/msb.20199389",
+              "section_type": "REF",
+              "source": "Mol. Syst. Biol.",
+              "type": "ref",
+              "volume": "16",
+              "year": "2020"
+            },
+            "text": "scClassify: Sample Size Estimation and Multiscale Classification of Cells Using Single and Multiple Reference",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 56870,
+            "infons": {
+              "fpage": "13",
+              "lpage": "18",
+              "name_0": "surname:Lu;given-names:J.",
+              "name_1": "surname:Chen;given-names:M.",
+              "name_2": "surname:Qin;given-names:Y.",
+              "pub-id_doi": "10.1186/s12859-020-03949-w",
+              "pub-id_pmid": "33407085",
+              "section_type": "REF",
+              "source": "BMC bioinformatics",
+              "type": "ref",
+              "volume": "22",
+              "year": "2021"
+            },
+            "text": "Drug-Induced Cell Viability Prediction from Lincs-L1000 through Wrfen-Xgboost Algorithm",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 56958,
+            "infons": {
+              "fpage": "103761",
+              "name_0": "surname:Ma;given-names:B.",
+              "name_1": "surname:Meng;given-names:F.",
+              "name_2": "surname:Yan;given-names:G.",
+              "name_3": "surname:Yan;given-names:H.",
+              "name_4": "surname:Chai;given-names:B.",
+              "name_5": "surname:Song;given-names:F.",
+              "pub-id_doi": "10.1016/j.compbiomed.2020.103761",
+              "pub-id_pmid": "32339094",
+              "section_type": "REF",
+              "source": "Comput. Biol. Med.",
+              "type": "ref",
+              "volume": "121",
+              "year": "2020"
+            },
+            "text": "Diagnostic Classification of Cancers Using Extreme Gradient Boosting Algorithm and Multi-Omics Data",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 57058,
+            "infons": {
+              "fpage": "120",
+              "lpage": "125",
+              "name_0": "surname:Malik;given-names:V.",
+              "name_1": "surname:Kumar;given-names:A.",
+              "section_type": "REF",
+              "source": "Int. J. Recent Innovation Trends Comput. Commun.",
+              "type": "ref",
+              "volume": "6",
+              "year": "2018"
+            },
+            "text": "Sentiment Analysis of Twitter Data Using Naive Bayes Algorithm",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 57121,
+            "infons": {
+              "fpage": "1",
+              "lpage": "15",
+              "name_0": "surname:Packer;given-names:J. S.",
+              "name_1": "surname:Zhu;given-names:Q.",
+              "name_2": "surname:Huynh;given-names:C.",
+              "name_3": "surname:Sivaramakrishnan;given-names:P.",
+              "name_4": "surname:Preston;given-names:E.",
+              "name_5": "surname:Dueck;given-names:H.",
+              "pub-id_doi": "10.1126/science.aax1971",
+              "section_type": "REF",
+              "source": "Science",
+              "type": "ref",
+              "volume": "365",
+              "year": "2019"
+            },
+            "text": "A Lineage-Resolved Molecular Atlas of c. elegans Embryogenesis at Single-Cell Resolution",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 57210,
+            "infons": {
+              "fpage": "1083",
+              "lpage": "1097",
+              "name_0": "surname:Park;given-names:C. H.",
+              "name_1": "surname:Park;given-names:H.",
+              "pub-id_doi": "10.1016/j.patcog.2007.07.022",
+              "section_type": "REF",
+              "source": "Pattern Recognition",
+              "type": "ref",
+              "volume": "41",
+              "year": "2008"
+            },
+            "text": "A Comparison of Generalized Linear Discriminant Analysis Algorithms",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 57278,
+            "infons": {
+              "fpage": "961",
+              "lpage": "969",
+              "name_0": "surname:Pasquini;given-names:G.",
+              "name_1": "surname:Rojo Arias;given-names:J. E.",
+              "name_2": "surname:Schäfer;given-names:P.",
+              "name_3": "surname:Busskamp;given-names:V.",
+              "pub-id_doi": "10.1016/j.csbj.2021.01.015",
+              "pub-id_pmid": "33613863",
+              "section_type": "REF",
+              "source": "Comput. Struct. Biotechnol. J.",
+              "type": "ref",
+              "volume": "19",
+              "year": "2021"
+            },
+            "text": "Automated Methods for Cell Type Annotation on scRNA-Seq Data",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 57339,
+            "infons": {
+              "fpage": "983",
+              "lpage": "986",
+              "name_0": "surname:Pliner;given-names:H. A.",
+              "name_1": "surname:Shendure;given-names:J.",
+              "name_2": "surname:Trapnell;given-names:C.",
+              "pub-id_doi": "10.1038/s41592-019-0535-3",
+              "pub-id_pmid": "31501545",
+              "section_type": "REF",
+              "source": "Nat. Methods",
+              "type": "ref",
+              "volume": "16",
+              "year": "2019"
+            },
+            "text": "Supervised Classification Enables Rapid Annotation of Cell Atlases",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 57406,
+            "infons": {
+              "fpage": "1196",
+              "lpage": "1208",
+              "name_0": "surname:Qi;given-names:R.",
+              "name_1": "surname:Ma;given-names:A.",
+              "name_2": "surname:Ma;given-names:Q.",
+              "name_3": "surname:Zou;given-names:Q.",
+              "pub-id_doi": "10.1093/bib/bbz062",
+              "pub-id_pmid": "31271412",
+              "section_type": "REF",
+              "source": "Brief. Bioinformatics",
+              "type": "ref",
+              "volume": "21",
+              "year": "2020"
+            },
+            "text": "Clustering and Classification Methods for Single-Cell Rna-Sequencing Data",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 57480,
+            "infons": {
+              "fpage": "234",
+              "issue": "3",
+              "name_0": "surname:Salvador-Meneses;given-names:J.",
+              "name_1": "surname:Ruiz-Chavez;given-names:Z.",
+              "name_2": "surname:Garcia-Rodriguez;given-names:J.",
+              "pub-id_doi": "10.3390/e21030234",
+              "section_type": "REF",
+              "source": "Entropy",
+              "type": "ref",
+              "volume": "21",
+              "year": "2019"
+            },
+            "text": "Compressed Knn: K-Nearest Neighbors with Data Compression",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 57538,
+            "infons": {
+              "comment": "[Dataset] Available at: http://imlspenticton.uzh.ch/robinson_lab/conquer_de_comparison. (Accessed March 15, 2021",
+              "name_0": "surname:Soneson;given-names:C.",
+              "name_1": "surname:Robinson;given-names:M. D.",
+              "section_type": "REF",
+              "type": "ref",
+              "year": "2016"
+            },
+            "text": "",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 57539,
+            "infons": {
+              "fpage": "255",
+              "lpage": "261",
+              "name_0": "surname:Soneson;given-names:C.",
+              "name_1": "surname:Robinson;given-names:M. D.",
+              "pub-id_doi": "10.1038/nmeth.4612",
+              "pub-id_pmid": "29481549",
+              "section_type": "REF",
+              "source": "Nat. Methods",
+              "type": "ref",
+              "volume": "15",
+              "year": "2018"
+            },
+            "text": "Bias, Robustness and Scalability in Single-Cell Differential Expression Analysis",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 57620,
+            "infons": {
+              "fpage": "4102",
+              "lpage": "4116",
+              "name_0": "surname:Soomro;given-names:B. N.",
+              "name_1": "surname:Xiao;given-names:L.",
+              "name_2": "surname:Huang;given-names:L.",
+              "name_3": "surname:Soomro;given-names:S. H.",
+              "name_4": "surname:Molaei;given-names:M.",
+              "pub-id_doi": "10.1109/jstars.2016.2559524",
+              "section_type": "REF",
+              "source": "IEEE J. Sel. Top. Appl. Earth Observations Remote Sensing",
+              "type": "ref",
+              "volume": "9",
+              "year": "2016"
+            },
+            "text": "Bilayer Elastic Net Regression Model for Supervised Spectral-Spatial Hyperspectral Image Classification",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 57724,
+            "infons": {
+              "name_0": "surname:Steinwart;given-names:I.",
+              "name_1": "surname:Christmann;given-names:A.",
+              "section_type": "REF",
+              "source": "Support Vector Machines",
+              "type": "ref",
+              "year": "2008"
+            },
+            "text": "",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 57725,
+            "infons": {
+              "fpage": "599",
+              "lpage": "604",
+              "name_0": "surname:Svensson;given-names:V.",
+              "name_1": "surname:Vento-Tormo;given-names:R.",
+              "name_2": "surname:Teichmann;given-names:S. A.",
+              "pub-id_doi": "10.1038/nprot.2017.149",
+              "pub-id_pmid": "29494575",
+              "section_type": "REF",
+              "source": "Nat. Protoc.",
+              "type": "ref",
+              "volume": "13",
+              "year": "2018"
+            },
+            "text": "Exponential Scaling of Single-Cell Rna-Seq in the Past Decade",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 57787,
+            "infons": {
+              "fpage": "169",
+              "lpage": "190",
+              "name_0": "surname:Tharwat;given-names:A.",
+              "name_1": "surname:Gaber;given-names:T.",
+              "name_2": "surname:Ibrahim;given-names:A.",
+              "name_3": "surname:Hassanien;given-names:A. E.",
+              "pub-id_doi": "10.3233/aic-170729",
+              "section_type": "REF",
+              "source": "Aic",
+              "type": "ref",
+              "volume": "30",
+              "year": "2017"
+            },
+            "text": "Linear Discriminant Analysis: A Detailed Tutorial",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 57837,
+            "infons": {
+              "fpage": "3486",
+              "lpage": "3488",
+              "name_0": "surname:Vieth;given-names:B.",
+              "name_1": "surname:Ziegenhain;given-names:C.",
+              "name_2": "surname:Parekh;given-names:S.",
+              "name_3": "surname:Enard;given-names:W.",
+              "name_4": "surname:Hellmann;given-names:I.",
+              "pub-id_doi": "10.1093/bioinformatics/btx435",
+              "pub-id_pmid": "29036287",
+              "section_type": "REF",
+              "source": "Bioinformatics",
+              "type": "ref",
+              "volume": "33",
+              "year": "2017"
+            },
+            "text": "Powsimr: Power Analysis for Bulk and Single Cell Rna-Seq Experiments",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 57906,
+            "infons": {
+              "fpage": "2067",
+              "name_0": "surname:Wang;given-names:S.",
+              "name_1": "surname:Dong;given-names:P.",
+              "name_2": "surname:Tian;given-names:Y.",
+              "pub-id_doi": "10.3390/en10122067",
+              "section_type": "REF",
+              "source": "Energies",
+              "type": "ref",
+              "volume": "10",
+              "year": "2017"
+            },
+            "text": "A Novel Method of Statistical Line Loss Estimation for Distribution Feeders Based on Feeder Cluster and Modified Xgboost",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 58027,
+            "infons": {
+              "fpage": "40",
+              "lpage": "16",
+              "name_0": "surname:Wang;given-names:T.",
+              "name_1": "surname:Li;given-names:B.",
+              "name_2": "surname:Nelson;given-names:C. E.",
+              "name_3": "surname:Nabavi;given-names:S.",
+              "pub-id_doi": "10.1186/s12859-019-2599-6",
+              "pub-id_pmid": "30658573",
+              "section_type": "REF",
+              "source": "BMC bioinformatics",
+              "type": "ref",
+              "volume": "20",
+              "year": "2019"
+            },
+            "text": "Comparative Analysis of Differential Gene Expression Analysis Tools for Single-Cell Rna Sequencing Data",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 58131,
+            "infons": {
+              "fpage": "27",
+              "lpage": "33",
+              "name_0": "surname:Xanthopoulos;given-names:P.",
+              "name_1": "surname:Pardalos;given-names:P. M.",
+              "name_2": "surname:Trafalis;given-names:T. B.",
+              "pub-id_doi": "10.1007/978-1-4419-9878-1_4",
+              "section_type": "REF",
+              "source": "Robust Data Mining",
+              "type": "ref",
+              "year": "2013"
+            },
+            "text": "Linear Discriminant Analysis",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 58160,
+            "infons": {
+              "comment": "arXiv e-prints",
+              "fpage": "1",
+              "lpage": "12",
+              "name_0": "surname:Xing;given-names:L.",
+              "name_1": "surname:Joun;given-names:S.",
+              "name_2": "surname:Mackey;given-names:K.",
+              "name_3": "surname:Lesperance;given-names:M.",
+              "name_4": "surname:Zhang;given-names:X.",
+              "section_type": "REF",
+              "type": "ref",
+              "year": "2020"
+            },
+            "text": "Handling High Correlations in the Feature Gene Selection Using Single-Cell Rna Sequencing Data",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 58255,
+            "infons": {
+              "fpage": "e9620",
+              "name_0": "surname:Xu;given-names:C.",
+              "name_1": "surname:Lopez;given-names:R.",
+              "name_2": "surname:Mehlman;given-names:E.",
+              "name_3": "surname:Regier;given-names:J.",
+              "name_4": "surname:Jordan;given-names:M. I.",
+              "name_5": "surname:Yosef;given-names:N.",
+              "pub-id_doi": "10.15252/msb.20209620",
+              "pub-id_pmid": "33491336",
+              "section_type": "REF",
+              "source": "Mol. Syst. Biol.",
+              "type": "ref",
+              "volume": "17",
+              "year": "2021"
+            },
+            "text": "Probabilistic Harmonization and Annotation of Single-Cell Transcriptomics Data with Deep Generative Models",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 58362,
+            "infons": {
+              "fpage": "301",
+              "lpage": "320",
+              "name_0": "surname:Zou;given-names:H.",
+              "name_1": "surname:Hastie;given-names:T.",
+              "pub-id_doi": "10.1111/j.1467-9868.2005.00503.x",
+              "section_type": "REF",
+              "source": "J. R. Stat. Soc B",
+              "type": "ref",
+              "volume": "67",
+              "year": "2005"
+            },
+            "text": "Regularization and Variable Selection via the Elastic Net",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          }
+        ],
+        "annotations": [],
+        "relations": []
+      }
+    ]
+  }
+]

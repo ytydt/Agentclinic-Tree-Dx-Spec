@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import re
 from typing import Any
+from xml.etree import ElementTree as ET
 
 EUROPEPMC_DDX_QUERIES: list[tuple[str, str]] = [
     (
@@ -133,6 +134,98 @@ def classify_chunk(section_path: str, text: str, *, full_path: str | None = None
     return "background"
 
 
+# --- offline structure repair (see report S26/S29) ---------------------------
+# BioC has no list passage type: PMC flattens every <list-item> into an ordinary
+# "paragraph" passage, so the tie between a quantifier ("3 or more of the
+# following:") and its members is carried only by adjacency.  Worse, the members
+# are short, so the min_len floor below then dropped 1,357 of them outright.
+# ANNOUNCE marks a passage that promises an enumeration; the run of short
+# passages after it is treated as that enumeration's members.
+ANNOUNCE_RE = re.compile(
+    r"(following|criteri\w*|abnormalit\w*|features?|findings?|manifestations?|"
+    r"signs?|symptoms?|elements?|components?|includ\w*|compris\w*|consists?)"
+    r"[^.]{0,25}:\s*$",
+    re.I,
+)
+QUOTE_OPEN_RE = re.compile(r"^[\u201c\u0022\u2018]")
+LIST_MARKER_RE = re.compile(r"^\s*(?:[-\u2013\u2022\u25aa]|\(?[a-zA-Z0-9]{1,2}[.)])\s+")
+MAX_RUN = 12
+MAX_ITEM_CHARS = 400
+MIN_RUN = 2
+
+
+def find_criteria_runs(texts: list[str]) -> dict[int, list[int]]:
+    """Map the index of each enumeration announcement to its member indices.
+
+    The run ends at the first passage that no longer looks like a sibling item:
+    a quotation (these are block quotes, not list items), something far longer
+    than the items seen so far, or a marker break once the list turned out to be
+    explicitly marked.
+    """
+    runs: dict[int, list[int]] = {}
+    for i, t in enumerate(texts):
+        if not ANNOUNCE_RE.search(t):
+            continue
+        members: list[int] = []
+        marked: bool | None = None
+        budget = 0
+        for j in range(i + 1, min(i + 1 + MAX_RUN, len(texts))):
+            s = texts[j]
+            if not s or len(s) > MAX_ITEM_CHARS or QUOTE_OPEN_RE.match(s):
+                break
+            has_marker = bool(LIST_MARKER_RE.match(s))
+            if marked is None:
+                marked = has_marker
+            elif marked and not has_marker:
+                break
+            # a sibling item should not dwarf the ones already accepted
+            if members and len(s) > max(180, int(2.0 * budget / len(members))):
+                break
+            members.append(j)
+            budget += len(s)
+        if len(members) >= MIN_RUN:
+            runs[i] = members
+    return runs
+
+
+def render_table_xml(xml: str) -> str:
+    """Re-render a BioC table from the JATS source it carries in infons.
+
+    The BioC "text" field joins every cell of every row with tabs onto a single
+    line, so all 14,292 table passages in the local cache lost their row
+    boundaries.  infons["xml"] keeps the original <table>, so the grid is
+    recoverable without going back to the network.
+    """
+    try:
+        root = ET.fromstring(xml)
+    except ET.ParseError:
+        return ""
+
+    def cell_text(el) -> str:
+        parts = []
+        if el.text:
+            parts.append(el.text)
+        for ch in el:
+            tag = ch.tag.rsplit("}", 1)[-1]
+            if tag == "break":
+                parts.append(" ")
+            else:
+                parts.append(cell_text(ch))
+            if ch.tail:
+                parts.append(ch.tail)
+        return re.sub(r"\s+", " ", "".join(parts)).strip()
+
+    rows = []
+    for tr in root.iter():
+        if tr.tag.rsplit("}", 1)[-1] != "tr":
+            continue
+        cells = [cell_text(c) for c in tr
+                 if c.tag.rsplit("}", 1)[-1] in {"td", "th"}]
+        if any(cells):
+            rows.append("\t".join(cells))
+    return "\n".join(rows).strip()
+
+
 def should_keep_chunk(
     section_path: str,
     text: str,
@@ -140,6 +233,7 @@ def should_keep_chunk(
     *,
     section_stack: list[str] | None = None,
     article_title: str = "",
+    in_criteria_run: bool = False,
 ) -> bool:
     text = (text or "").strip()
     stack = section_stack or ([section_path] if section_path else [])
@@ -156,6 +250,10 @@ def should_keep_chunk(
         return False
 
     min_len = 30 if re.search(r"\n|•|–|\d+%|;\s", text) else 60
+    if in_criteria_run:
+        # a member of an announced enumeration is short by construction and is
+        # exactly the content the criteria extractor needs
+        min_len = 12
     if len(text) < min_len:
         return False
 
@@ -163,6 +261,8 @@ def should_keep_chunk(
     if ctype in {"differential", "red_flag", "evaluation", "other"}:
         return True
     if under_ddx_tree and ctype == "background" and len(text) >= 40:
+        return True
+    if in_criteria_run:
         return True
     return False
 
@@ -204,6 +304,9 @@ def passages_to_chunks(
     chunks: list[dict] = []
     chunk_idx = 0
 
+    # first pass: body passages in order, with tables re-rendered from their
+    # JATS source, so that adjacency is available when deciding what to keep
+    body: list[tuple[str, str, list[str]]] = []
     for passage in passages:
         infons = passage.get("infons") or {}
         ptype = str(infons.get("type") or "")
@@ -223,44 +326,72 @@ def passages_to_chunks(
             full_parts.append(text + "\n")
             continue
 
-        section_path = " > ".join([title] + section_stack) if section_stack else title
+        if ptype == "table":
+            grid = render_table_xml(infons.get("xml") or "")
+            if grid:
+                text = grid
+
         full_parts.append(text + "\n")
-        last = section_stack[-1] if section_stack else ""
+        body.append((ptype, text, list(section_stack)))
+
+    texts = [t for _, t, _ in body]
+    runs = find_criteria_runs(texts)
+    in_run = {j for members in runs.values() for j in members}
+
+    def make_chunk(content: str, stack: list[str], ptype: str, ctype: str) -> dict:
+        nonlocal chunk_idx
+        chunk_idx += 1
+        section_path = " > ".join([title] + stack) if stack else title
+        return {
+            "id": f"{source_id}__chunk_{chunk_idx:04d}",
+            "source_id": source_id,
+            "source": "PMC-OA",
+            "parent_manifest_id": source_id,
+            "entry_type": "syndrome_entry",
+            "chunk_type": ctype,
+            "content_tier": "full_text",
+            "section_path": section_path,
+            "title": title,
+            "content": content,
+            "url": url,
+            "pmcid": pmcid,
+            "pmid": pmid,
+            "syndrome_anchor": anchor,
+            "license_note": license_note or "pmc_oa",
+            "passage_type": ptype,
+            "tokens": len(content.split()),
+        }
+
+    for i, (ptype, text, stack) in enumerate(body):
+        last = stack[-1] if stack else ""
+
+        # an announced enumeration is emitted whole, in addition to its parts,
+        # so that a run whose end was misjudged cannot lose any content
+        if i in runs:
+            members = runs[i]
+            block = "\n".join(
+                [text] + [f"\u2022 {texts[j]}" if not LIST_MARKER_RE.match(texts[j])
+                          else texts[j] for j in members]
+            )
+            full_path = _path_blob(stack, title)
+            chunks.append(make_chunk(
+                block, stack, "criteria_block",
+                classify_chunk(last or title, block, full_path=full_path)))
 
         if not should_keep_chunk(
             last,
             text,
             ptype,
-            section_stack=section_stack,
+            section_stack=stack,
             article_title=title,
+            in_criteria_run=i in in_run,
         ):
             continue
 
-        full_path = _path_blob(section_stack, title)
-        chunk_type = classify_chunk(last or title, text, full_path=full_path)
-        chunk_idx += 1
-        chunk_id = f"{source_id}__chunk_{chunk_idx:04d}"
-        chunks.append(
-            {
-                "id": chunk_id,
-                "source_id": source_id,
-                "source": "PMC-OA",
-                "parent_manifest_id": source_id,
-                "entry_type": "syndrome_entry",
-                "chunk_type": chunk_type,
-                "content_tier": "full_text",
-                "section_path": section_path,
-                "title": title,
-                "content": text,
-                "url": url,
-                "pmcid": pmcid,
-                "pmid": pmid,
-                "syndrome_anchor": anchor,
-                "license_note": license_note or "pmc_oa",
-                "passage_type": ptype,
-                "tokens": len(text.split()),
-            }
-        )
+        full_path = _path_blob(stack, title)
+        chunks.append(make_chunk(
+            text, stack, ptype,
+            classify_chunk(last or title, text, full_path=full_path)))
 
     full_text = re.sub(r"\n{3,}", "\n\n", "".join(full_parts)).strip()
     return full_text, chunks

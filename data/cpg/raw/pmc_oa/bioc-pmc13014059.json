@@ -1,0 +1,1150 @@
+[
+  {
+    "bioctype": "BioCCollection",
+    "source": "PMC",
+    "date": "20260327",
+    "key": "pmc.key",
+    "version": "1.0",
+    "infons": {},
+    "documents": [
+      {
+        "bioctype": "BioCDocument",
+        "id": "PMC13014059",
+        "infons": {
+          "license": "CC BY"
+        },
+        "passages": [
+          {
+            "bioctype": "BioCPassage",
+            "offset": 0,
+            "infons": {
+              "article-id_doi": "10.1002/minf.70027",
+              "article-id_pmc": "PMC13014059",
+              "article-id_pmid": "41877557",
+              "article-id_publisher-id": "MINF70027",
+              "elocation-id": "e70027",
+              "issue": "3",
+              "kwd": "benchmarking chemical language models diffusion models drug discovery foundation models multimodal learning",
+              "license": "This is an open access article under the terms of the http://creativecommons.org/licenses/by/4.0/ License, which permits use, distribution and reproduction in any medium, provided the original work is properly cited.",
+              "name_0": "surname:Pastore;given-names:Emmanuel Pio",
+              "name_1": "surname:De Rango;given-names:Francesco",
+              "section_type": "TITLE",
+              "type": "front",
+              "volume": "45",
+              "year": "2026"
+            },
+            "text": "Foundation and Multimodal Models for Drug Discovery in Molecular Informatics: Principles, Evaluation, and Practical Guidance",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 125,
+            "infons": {
+              "section_type": "ABSTRACT",
+              "type": "abstract"
+            },
+            "text": "Foundation and multimodal models are rapidly becoming a core methodology in molecular informatics, particularly for drug discovery, by leveraging large‐scale pretraining across sequences, graphs, 3D structures, and text. This mini‐review provides practical guidance on when these models help, how to choose representations and data, and how to design pretraining and adaptation pipelines for real‐world use. We clarify what qualifies as a foundation model in chemistry; compare chemical language models, graph‐based architectures, and 3D equivariant networks; review multimodal strategies that connect molecules with proteins, pockets, and natural language; and summarize diffusion‐based generative modeling. We also emphasize rigorous evaluation, discussing realistic splitting protocols, distribution shift, activity cliffs, uncertainty calibration, and conformal prediction in the context of widely used benchmarks.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 1054,
+            "infons": {
+              "section_type": "ABSTRACT",
+              "type": "abstract"
+            },
+            "text": "The graphical abstract summarizes how foundation models pretrained on large molecular data provide transferable representations. Through multimodal learning, these representations integrate molecular structure, biological context, and text‐derived knowledge, enabling downstream drug discovery tasks such as property prediction, target interaction modeling, and molecular design. ",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 1437,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "title_1"
+            },
+            "text": "Introduction",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 1450,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "In molecular informatics, representation and data have long dictated what models are able to learn and how reliably they can generalize. Over the past decade, progress has often been driven less by architectural innovations than by the quality, scale, and consistency of the underlying molecular corpora. The recent emergence of “foundation models\", systems pretrained on broad, heterogeneous chemical and biological data and subsequently adapted to many downstream tasks, has begun to shift this balance by enabling strong cross‐domain generalization from a single backbone trained once at scale [, ]. These models integrate principles from natural‐language processing, geometry‐aware learning, and protein language modeling, creating a unified computational space in which molecules, proteins, and text‐based annotations can be treated as mutually informative modalities rather than isolated silos.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 2363,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "For chemistry and biology, the opportunity is to connect molecular strings, graphs, and three‐dimensional conformers with protein sequences, pocket structures, reaction contexts, and free‐text descriptions within a coherent pretraining and evaluation framework. Such integration allows models to exploit relationships that are implicit in experimental data, chemical series evolution, target families, shared assay formats, and protocol‐level cues, while preserving the physical constraints that govern molecular behavior. At the same time, it raises new challenges around data standardization, provenance, leakage, and the interpretability of high‐capacity architectures. Recent reviews have discussed molecular representations and their implications for generalization in molecular machine learning . This mini‐review concentrates on foundation and multimodal pretraining for drug discovery, with emphasis on evaluation under realistic splits and on reporting choices that enable fair comparisons.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 3374,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "title_1"
+            },
+            "text": "Molecular and Biological Representations That Scale and Benchmarking",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 3443,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Choice of representation fundamentally constrains what a model is able to learn, how it encodes chemical knowledge, and the types of generalization it can express. Line notations such as SMILES (Simplified Molecular Input Line Entry System) remain ubiquitous thanks to their compact syntax, direct compatibility with cheminformatics tooling, and ease of storage and exchange across databases and workflows . However, the sensitivity of SMILES to tokenization choices and the presence of multiple syntactic forms for the same molecule can introduce instabilities during pretraining or generation. This motivated the development of robust alternatives such as SELFIES, which provide a guaranteed‐valid molecular string representation and reduce the need for post‐hoc validity checks during decoding . These representations also simplify augmentation strategies, randomization, canonical/non‐canonical variants, and stereochemical perturbations, which in turn support more diverse and chemically consistent training corpora.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 4473,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Graph‐based encodings complement string approaches by operating directly on atom‐ and bond‐level structures, typically constructed with established cheminformatics toolkits such as RDKit . Graph representations expose fine‐grained connectivity, hybridization states, ring systems, and local physicochemical features that are difficult to express cleanly in sequence form. Because they are easy to canonicalize and featurize, graph encodings lend themselves well to dataset‐wide curation pipelines. These same pipelines underpin curated bioactivity resources such as ChEMBL, which provide broad assay coverage, explicit provenance, and standardized target annotations essential for pretraining and evaluation across multiple biological contexts .",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 5231,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Neural architectures have evolved alongside these representations. Message‐passing networks offer a strong and widely validated baseline for small‐molecule property prediction , while continuous‐filter and directional message‐passing architectures better capture geometry‐aware interactions and directional dependencies central to quantum‐chemical and binding‐site modeling [, ]. More recently, 3D‐equivariant neural networks have enabled direct learning on three‐dimensional structures, enforcing rotational and translational symmetries that mirror the underlying physics of molecular systems. These architectures improve pose awareness, conformational reasoning, and binding‐site sensitivity without explicitly hand‐crafting invariant features.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 6003,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Reliable benchmarking is equally dependent on representation. MoleculeNet, the OGB molecule suites, and ligand‐based design frameworks provide diverse tasks spanning quantum properties, ADMET (absorption, distribution, metabolism, excretion, toxicity) endpoints, toxicology, and bioactivity classification, accompanied by principled data splits that go beyond random partitioning [, ]. Such splits, scaffolds, chronologies, and family‐awareness, better reflect the distribution shifts encountered in medicinal chemistry practice. In parallel, virtual screening studies increasingly adopt unbiased target panels such as LIT‐PCBA to avoid artificial enrichment arising from decoy bias and to evaluate models under truly prospective‐like conditions . Common molecular machine learning tasks and their recommended public benchmarks are summarized in Table 1.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 6870,
+            "infons": {
+              "file": "minf70027-tbl-0001.xml",
+              "id": "minf70027-tbl-0001",
+              "section_type": "TABLE",
+              "type": "table_caption"
+            },
+            "text": "Drug discovery tasks and recommended benchmarking datasets (with key references).",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 6952,
+            "infons": {
+              "file": "minf70027-tbl-0001.xml",
+              "id": "minf70027-tbl-0001",
+              "section_type": "TABLE",
+              "type": "table",
+              "xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<table frame=\"hsides\" rules=\"groups\"><col align=\"left\" span=\"1\"/><col align=\"center\" span=\"1\"/><col align=\"center\" span=\"1\"/><col align=\"center\" span=\"1\"/><thead><tr style=\"border-bottom:solid 1px #000000\"><th align=\"left\" rowspan=\"1\" colspan=\"1\">Task</th><th align=\"center\" rowspan=\"1\" colspan=\"1\">Example benchmarks/datasets</th><th align=\"center\" rowspan=\"1\" colspan=\"1\">Notes</th><th align=\"center\" rowspan=\"1\" colspan=\"1\">Key ref(s)</th></tr></thead><tbody><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\">Property prediction</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">MoleculeNet; OGB‐MolHIV/MolPCBA</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">Use scaffold/time splits; report calibration and domain shift.</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">[<xref rid=\"minf70027-bib-0011\" ref-type=\"bibr\">11</xref>, <xref rid=\"minf70027-bib-0012\" ref-type=\"bibr\">12</xref>]</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\">Virtual screening</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">LIT‐PCBA</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">Prefer unbiased targets; avoid decoy bias; external structure checks.</td><td align=\"center\" rowspan=\"1\" colspan=\"1\"><xref rid=\"minf70027-bib-0013\" ref-type=\"bibr\">13</xref></td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\">De novo generation</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">GuacaMol; MOSES</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">Validity, uniqueness, novelty; multi‐objective goals; synthesizability.</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">[<xref rid=\"minf70027-bib-0014\" ref-type=\"bibr\">14</xref>, <xref rid=\"minf70027-bib-0015\" ref-type=\"bibr\">15</xref>]</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\">Conformation generation</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">GeoDiff tasks</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">RMSD and coverage; respect symmetry and chirality.</td><td align=\"center\" rowspan=\"1\" colspan=\"1\"><xref rid=\"minf70027-bib-0016\" ref-type=\"bibr\">16</xref></td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\">Text‐molecule tasks</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">MolT5 corpora</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">Captioning; text‐to‐molecule; leakage and alignment checks.</td><td align=\"center\" rowspan=\"1\" colspan=\"1\"><xref rid=\"minf70027-bib-0017\" ref-type=\"bibr\">17</xref></td></tr></tbody></table>\n"
+            },
+            "text": "Task\tExample benchmarks/datasets\tNotes\tKey ref(s)\t \tProperty prediction\tMoleculeNet; OGB‐MolHIV/MolPCBA\tUse scaffold/time splits; report calibration and domain shift.\t[, ]\t \tVirtual screening\tLIT‐PCBA\tPrefer unbiased targets; avoid decoy bias; external structure checks.\t\t \tDe novo generation\tGuacaMol; MOSES\tValidity, uniqueness, novelty; multi‐objective goals; synthesizability.\t[, ]\t \tConformation generation\tGeoDiff tasks\tRMSD and coverage; respect symmetry and chirality.\t\t \tText‐molecule tasks\tMolT5 corpora\tCaptioning; text‐to‐molecule; leakage and alignment checks.\t\t \t",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 7544,
+            "infons": {
+              "file": "minf70027-tbl-0001.xml",
+              "id": "minf70027-tbl-0001",
+              "section_type": "TABLE",
+              "type": "table_footnote"
+            },
+            "text": "Abbereviations: AUROC, area under the receiver operating characteristic curve; PR‐AUC, area under the precision–recall curve. Table 1 summarizes common task families and widely used public benchmarks in drug discovery. For each benchmark, it is good practice to cite the dataset paper and to report the exact split protocol, especially for scaffold‐based and time‐aware splits.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 7931,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "title_1"
+            },
+            "text": "What Counts as a Foundation or Multimodal Model in Chemistry?",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 7993,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Following the broader definition used in adjacent areas of machine learning, a foundation model in this domain is pretrained self‐supervised on large‐scale chemical and biological corpora and then adapted, via task heads, task conditioning, or lightweight adapters, to diverse downstream problems . The key separation is between a computationally expensive, representation‐building pretraining stage and a comparatively inexpensive adaptation phase that specializes the model for property prediction, generation, screening, or protein‐related tasks.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 8552,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "In proteins, language models trained on massive sequence sets extract functional and structural signal directly from evolutionary variation. Models in the ESM family, trained solely on sequences, provide embeddings that support end‐to‐end structure prediction and supply features for clustering, annotation transfer, and generative design workflows [, ].",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 8913,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "For small molecules, chemical language models extend these principles to SMILES/SELFIES. Masked‐token objectives, fragment‐aware masking, and data augmentation let the models internalize grammar‐level regularities and generalize across large, structurally diverse datasets . After pretraining, the backbone is adapted for property prediction, docking‐score approximation, or controlled generation with simple conditioning layers, which is helpful when labeled data are limited.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 9400,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Text‐molecule models align natural‐language descriptions with chemical representations, enabling molecular captioning, zero‐shot retrieval, and text‐conditioned design from captions, assay summaries, or medicinal‐chemistry notes . On the structural side, diffusion models formulated directly in 3D sample conformers or generate full molecules under E(3) symmetry, offering fine control over geometry and stereochemistry for conformer ensembles, scaffold elaboration, and pocket‐conditioned ligand design [, ]. A schematic overview of this multimodal pretraining and adaptation setup is shown in Figure 1. In practice, modality‐specific encoders map chemical strings, molecular graphs, protein sequences, and text into a shared representation space using masked modeling or contrastive alignment objectives. After pretraining, the same backbone can be adapted with lightweight heads or parameter‐efficient updates for classification, regression, retrieval, or generation. For example, protein language models in the ESM family provide embeddings that transfer to structure‐related tasks and target‐aware workflows [, ], while text‐molecule models such as MolT5 enable captioning and retrieval that support text‐conditioned exploration and prioritization . MolT5, for instance, supports translation between molecules and natural language and enables text‐to‐molecule retrieval as well as captioning.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 10833,
+            "infons": {
+              "file": "MINF-45-e70027-g001.jpg",
+              "id": "minf70027-fig-0001",
+              "section_type": "FIG",
+              "type": "fig_caption"
+            },
+            "text": "Pretraining and adaptation across modalities. Schematic overview of multimodal pretraining and downstream adaptation across modalities.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 10969,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "title_1"
+            },
+            "text": "Practical Multimodality: Aligning Molecules, Proteins, and Text",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 11033,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Multimodal learning is useful when each modality captures distinct aspects of molecular behavior. In structure‐based design, this often means combining ligand representations, 2D graphs, or 3D coordinates, with protein information such as pocket geometry or sequence‐derived embeddings. Adding pocket context can improve ranking, pose awareness, and sensitivity to small chemical changes, provided that ligand‐protein alignment is learned without leakage. Protein language models such as ESM‐2 and structure surrogates like ESMFold enable inclusion of protein‐level signal even when experimental structures are unavailable, offering fast approximations of binding environments [, ].",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 11728,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Beyond ligand‐protein pairs, text represents an additional and increasingly valuable modality. Assay descriptions, high‐level protocols, compound series annotations, and medicinal‐chemistry notes contain implicit constraints that are difficult to encode in structural form alone. These sources provide hints about experimental conditions, target families, readout types, and outlier‐handling conventions, all of which can influence model predictions. The ability to integrate text therefore, allows models to condition on contextual cues that are orthogonal to geometric or sequence‐based signals.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 12336,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Different modalities expose complementary strengths and limitations. Sequence‐only pretraining may miss stereochemistry, conformer preferences, and spatial motifs relevant for binding or reactivity , while 3D‐only approaches often suffer from sparse structural data, conformer uncertainty, and limited protein coverage. Multimodal schemes attempt to bridge these gaps: contrastive objectives associate molecules with captions, pocket embeddings, or assay‐level labels in a shared latent space; masked cross‐modal modeling enforces consistency between textual and structural descriptors; and cross‐attention between pocket and ligand streams captures interaction‐focused features without handcrafted terms. These strategies work best when alignment robustness is tested under distribution shift, ensuring that associations learned during pretraining remain stable as chemical series, assay types, or target classes change .",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 13273,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "title_1"
+            },
+            "text": "Generative Modeling and Diffusion in 3D",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 13313,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Deep generative chemistry has moved beyond SMILES autoregression. Score‐based and diffusion models now operate in 3D, denoising coordinates and atom types under E(3) symmetry while enforcing chemical validity by construction or by learned guidance [, ]. Such models are promising for conformation ensembles, scaffold elaboration near binding pockets, and pocket‐conditioned design, where geometry and stereochemistry matter. To be actionable, generative pipelines should report validity, uniqueness, and novelty alongside task‐oriented metrics and should verify synthesizability and stability with cheminformatics filters before expensive computation or synthesis [, ].",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 13993,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "title_1"
+            },
+            "text": "Evaluation Under Realistic Conditions",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 14031,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Reported gains often vanish outside random splits. Scaffold‐based and temporal splits better approximate medicinal‐chemistry practice by separating cores and respecting the arrow of time [, ]. Benchmarks such as MoleculeNet and OGB include such protocols, and task‐specific suites like GuacaMol, MOSES, and LIT‐PCBA help quantify generative quality and screening enrichment beyond superficial similarity . Uncertainty and calibration deserve equal billing: conformal prediction yields valid per‐prediction confidence sets under mild assumptions , while modern classifiers are often miscalibrated unless explicitly corrected . Activity cliffs, where small structural changes correspond to large potency shifts , should be audited, as average metrics can hide systematic blind spots. Target‐aware leakage (e.g., analog series spread across splits) should be checked with canonicalization, scaffold grouping, and deduplication pipelines. The overall data‐centric pipeline supporting these split strategies is summarized in Figure 2. Figure 2 summarizes a practical data‐handling pipeline that strongly influences whether evaluation is realistic. Standardization steps such as canonicalization, charge normalization, salt removal, and consistent stereochemistry are followed by deduplication and scaffold grouping to reduce analog‐series leakage across splits. The curated dataset can then be partitioned with random, scaffold‐based, or time‐aware protocols, and evaluated with metrics that capture ranking performance, calibration, and sensitivity to distribution shift. When available, time‐aware splits provide a simple proxy for prospective deployment conditions.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 15727,
+            "infons": {
+              "file": "MINF-45-e70027-g003.jpg",
+              "id": "minf70027-fig-0002",
+              "section_type": "FIG",
+              "type": "fig_caption"
+            },
+            "text": "Data‐centric pipeline supporting split strategy and evaluation. Schematic overview of a data‐centric evaluation pipeline for molecular machine learning, highlighting standardization, deduplication, split strategies, and metric selection to reduce information leakage and support realistic benchmarking.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 16034,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Here, common task families in molecular machine learning are organized by the splitting strategies, evaluation metrics, and public benchmarks most used in practice. For QSAR (quantitative structure–activity relationship) and ADMET, scaffold‐ or time‐aware splits are preferred because they limit structural leakage and capture temporal drift, while metrics such as AUROC, PR‐AUC, and calibration scores provide a fuller view of predictive reliability. Virtual‐screening tasks emphasize enrichment measures (EF1%, ROC enrichment) and typically rely on unbiased panels like LIT‐PCBA.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 16628,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Generative‐modeling tasks require chemical validity checks alongside diversity metrics; validity, uniqueness, and novelty describe basic generator behavior, while conformal prediction or uncertainty measures flag unreliable regions of chemical space. Conformation‐generation tasks focus on geometric fidelity, often summarized by RMSD and coverage. Text‐conditioned tasks, captioning, and text‐to‐molecule retrieval use retrieval@k, BLEU, or BERTScore on corpora aligned across chemical and textual modalities.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 17149,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Together, these entries provide an overview of how evaluation practices diverge across tasks and which benchmarks best represent each problem setting. In Table 2, EF1% denotes the enrichment factor at 1%, RMSD denotes root‐mean‐square deviation, and R@k denotes recall at k; BLEU and BERTScore are standard text generation metrics.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 17486,
+            "infons": {
+              "file": "minf70027-tbl-0002.xml",
+              "id": "minf70027-tbl-0002",
+              "section_type": "TABLE",
+              "type": "table_caption"
+            },
+            "text": "Evaluation landscape for common drug discovery tasks (with representative benchmarks and key references).",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 17592,
+            "infons": {
+              "file": "minf70027-tbl-0002.xml",
+              "id": "minf70027-tbl-0002",
+              "section_type": "TABLE",
+              "type": "table",
+              "xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<table frame=\"hsides\" rules=\"groups\"><col align=\"left\" span=\"1\"/><col align=\"center\" span=\"1\"/><col align=\"center\" span=\"1\"/><col align=\"center\" span=\"1\"/><thead><tr style=\"border-bottom:solid 1px #000000\"><th align=\"left\" rowspan=\"1\" colspan=\"1\">Tasks</th><th align=\"center\" rowspan=\"1\" colspan=\"1\">Recommended Splits / Metrics</th><th align=\"center\" rowspan=\"1\" colspan=\"1\">Benchmarks</th><th align=\"center\" rowspan=\"1\" colspan=\"1\">Key ref(s)</th></tr></thead><tbody><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\">QSAR</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">Scaffold/Time‐aware; AUROC · PR‐AUC; Calibration</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">MoleculeNet; OGB‐MolHIV/MolPCBA</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">[<xref rid=\"minf70027-bib-0011\" ref-type=\"bibr\">11</xref>, <xref rid=\"minf70027-bib-0012\" ref-type=\"bibr\">12</xref>]</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\">ADMET</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">Scaffold/Time‐aware; AUROC; Calibration</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">MoleculeNet</td><td align=\"center\" rowspan=\"1\" colspan=\"1\"><xref rid=\"minf70027-bib-0011\" ref-type=\"bibr\">11</xref></td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\">Virtual screening</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">EF1% · ROC enrichment; Calibration error</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">LIT‐PCBA</td><td align=\"center\" rowspan=\"1\" colspan=\"1\"><xref rid=\"minf70027-bib-0013\" ref-type=\"bibr\">13</xref></td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\">Molecule generation</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">Conformal set size; Validity · Uniqueness · Novelty</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">GuacaMol; MOSES</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">[<xref rid=\"minf70027-bib-0014\" ref-type=\"bibr\">14</xref>, <xref rid=\"minf70027-bib-0015\" ref-type=\"bibr\">15</xref>]</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\">Conformation generation</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">RMSD; Coverage</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">GeoDiff tasks</td><td align=\"center\" rowspan=\"1\" colspan=\"1\"><xref rid=\"minf70027-bib-0016\" ref-type=\"bibr\">16</xref></td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\">Text‐to‐molecule</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">Caption split; Retrieval (R@k); BLEU/BERTScore</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">MolT5 corpora</td><td align=\"center\" rowspan=\"1\" colspan=\"1\"><xref rid=\"minf70027-bib-0017\" ref-type=\"bibr\">17</xref></td></tr></tbody></table>\n"
+            },
+            "text": "Tasks\tRecommended Splits / Metrics\tBenchmarks\tKey ref(s)\t \tQSAR\tScaffold/Time‐aware; AUROC · PR‐AUC; Calibration\tMoleculeNet; OGB‐MolHIV/MolPCBA\t[, ]\t \tADMET\tScaffold/Time‐aware; AUROC; Calibration\tMoleculeNet\t\t \tVirtual screening\tEF1% · ROC enrichment; Calibration error\tLIT‐PCBA\t\t \tMolecule generation\tConformal set size; Validity · Uniqueness · Novelty\tGuacaMol; MOSES\t[, ]\t \tConformation generation\tRMSD; Coverage\tGeoDiff tasks\t\t \tText‐to‐molecule\tCaption split; Retrieval (R@k); BLEU/BERTScore\tMolT5 corpora\t\t \t",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 18129,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "title_1"
+            },
+            "text": "Data Standards, Provenance, and Reproducibility",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 18177,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "For molecular foundation and multimodal models, performance is only as reliable as the data pipelines behind them. Standardized representations, explicit provenance, and transparent curation are therefore as important as architecture. The FAIR principles, Findable, Accessible, Interoperable, Reusable, provide a practical guide: datasets should include machine‐readable metadata, stable identifiers, and clear licenses so that others can reconstruct splits and reproduce results . This requires reporting exact database releases, the cheminformatics toolkit, and settings used for standardization, and any filtering rules applied.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 18812,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Provenance is crucial when combining heterogeneous sources, public databases, internal experiments, and literature‐derived assays into large pretraining corpora. Without tracking origin, assay format, and processing history, it becomes difficult to explain differences in model behavior across targets or chemical series. Efforts such as SURF and the Open Reaction Database show how structured metadata make experimental records both human‐ and machine‐readable [, ]. Similar standards for bioactivity and structural datasets would likewise improve traceability.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 19383,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Reproducibility also depends on how data are split and evaluated. Changes in scaffold definitions, time windows, or leakage checks can shift benchmark difficulty, yet are often underreported. Fair comparisons require specifying standardization and deduplication, treatment of analog series, the splitting strategy, and random seeds. Ideally, scripts that rebuild the dataset, from raw sources to final partitions, should accompany model code. As models and datasets scale, strict bitwise reproducibility becomes less important than auditability: independent groups should recover similar trends and identify what drives improvements. This relies on clear documentation of pretraining objectives, parameter counts, adapter strategies, and compute budgets. Table 3 offers a concise reporting checklist covering splitting, provenance, and uncertainty. Reporting the data source and exact release, preprocessing settings, split strategy, and uncertainty or calibration methods is often sufficient to prevent common reproducibility failures.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 20421,
+            "infons": {
+              "file": "minf70027-tbl-0003.xml",
+              "id": "minf70027-tbl-0003",
+              "section_type": "TABLE",
+              "type": "table_caption"
+            },
+            "text": "Reporting checklist for molecular machine learning studies.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 20481,
+            "infons": {
+              "file": "minf70027-tbl-0003.xml",
+              "id": "minf70027-tbl-0003",
+              "section_type": "TABLE",
+              "type": "table",
+              "xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<table frame=\"hsides\" rules=\"groups\"><col align=\"left\" span=\"1\"/><col align=\"center\" span=\"1\"/><thead><tr style=\"border-bottom:solid 1px #000000\"><th align=\"left\" rowspan=\"1\" colspan=\"1\">Item</th><th align=\"center\" rowspan=\"1\" colspan=\"1\">What to report</th></tr></thead><tbody><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\">Data provenance</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">Source, license, exact release (e.g., ChEMBL vXX), curation steps (RDKit standardization, salt removal), exclusions.</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\">Splitting protocol</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">Random vs. scaffold vs. temporal; rationale; seeds; leak checks; duplicates removed.</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\">Model and pretraining</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">Architecture; tokenizer/featurization; unsupervised objective; parameter counts; adapter strategy; compute.</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\">Evaluation and uncertainty</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">Primary metrics; calibration; conformal prediction; activity‐cliff analysis; class imbalance handling.</td></tr><tr><td align=\"left\" rowspan=\"1\" colspan=\"1\">Reproducibility</td><td align=\"center\" rowspan=\"1\" colspan=\"1\">Code, data snapshots, scripts; environment; ablations; external test or prospective evaluation.</td></tr></tbody></table>\n"
+            },
+            "text": "Item\tWhat to report\t \tData provenance\tSource, license, exact release (e.g., ChEMBL vXX), curation steps (RDKit standardization, salt removal), exclusions.\t \tSplitting protocol\tRandom vs. scaffold vs. temporal; rationale; seeds; leak checks; duplicates removed.\t \tModel and pretraining\tArchitecture; tokenizer/featurization; unsupervised objective; parameter counts; adapter strategy; compute.\t \tEvaluation and uncertainty\tPrimary metrics; calibration; conformal prediction; activity‐cliff analysis; class imbalance handling.\t \tReproducibility\tCode, data snapshots, scripts; environment; ablations; external test or prospective evaluation.\t \t",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 21125,
+            "infons": {
+              "file": "minf70027-tbl-0003.xml",
+              "id": "minf70027-tbl-0003",
+              "section_type": "TABLE",
+              "type": "table_footnote"
+            },
+            "text": "\nNote: The key reporting items are summarized in Table 3 to support auditable comparisons across datasets, splits, and model variants. In practice, reporting the data source and release, preprocessing and standardization settings, deduplication criteria, and the exact split script is often sufficient to make results reproducible. When possible, uncertainty or calibration methods and a brief compute budget description should also be included.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 21572,
+            "infons": {
+              "section_type": "CONCL",
+              "type": "title_1"
+            },
+            "text": "Summary",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 21580,
+            "infons": {
+              "section_type": "CONCL",
+              "type": "paragraph"
+            },
+            "text": "This mini‐review examined how recent foundation and multimodal approaches are reshaping molecular informatics across representation, modeling, and evaluation. String and graph encodings, curated repositories such as ChEMBL, and standardized cheminformatics pipelines provide scalable inputs, while geometry‐aware and equivariant architectures capture stereochemistry, conformational preferences, and local spatial constraints. Large‐scale pretraining on chemical and biological corpora supports transfer to QSAR/ADMET, virtual screening, reactivity prediction, and generative design, and protein language models now supply sequence‐derived structure surrogates that integrate naturally with ligand features in structure‐based workflows. Multimodal learning aligns molecules with protein pockets, evolutionary context, and textual descriptors from assays or medicinal chemistry, improving pose awareness, retrieval, and captioning. Diffusion models extend generation to 3D, enabling conformer ensembles, scaffold elaboration, and pocket‐conditioned exploration of chemical space. Evaluation practices, scaffold and time splits, calibration, conformal prediction, activity‐cliff inspection, and unbiased benchmarks, remain central to determining whether improvements persist under distribution shift. Finally, data standards, transparent curation, and clear documentation of preprocessing and provenance are essential for reproducibility and for deploying these models across heterogeneous tasks and laboratories.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 23106,
+            "infons": {
+              "section_type": "CONCL",
+              "type": "title_1"
+            },
+            "text": "Outlook",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 23114,
+            "infons": {
+              "section_type": "CONCL",
+              "type": "paragraph"
+            },
+            "text": "Multimodal foundation training is becoming practical across chemical strings, molecular graphs, 3D conformers, protein sequences, pocket representations, and text. Future progress will depend increasingly on data governance and evaluation realism, rather than on architecture alone.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 23397,
+            "infons": {
+              "section_type": "CONCL",
+              "type": "paragraph"
+            },
+            "text": "Benchmarks should move beyond average scores by requiring leakage‐aware splits, calibration reporting, and diagnostics that expose failure modes such as activity cliffs and target‐aware leakage. Multimodal settings add further challenges, because cross‐modal duplication can silently inflate retrieval and captioning results.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 23729,
+            "infons": {
+              "section_type": "CONCL",
+              "type": "paragraph"
+            },
+            "text": "As models and datasets scale, attention should also shift to dataset provenance, licensing, and reproducibility. Transparent reporting, consistent preprocessing, and shareable split scripts are essential for translating benchmark improvements into prospective performance in drug discovery.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 24020,
+            "infons": {
+              "section_type": "COMP_INT",
+              "type": "title_1"
+            },
+            "text": "Conflicts of Interest",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 24042,
+            "infons": {
+              "section_type": "COMP_INT",
+              "type": "paragraph"
+            },
+            "text": "The authors declare no conflicts of interest.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 24088,
+            "infons": {
+              "section_type": "SUPPL",
+              "type": "title_1"
+            },
+            "text": "Data Availability Statement",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 24116,
+            "infons": {
+              "section_type": "SUPPL",
+              "type": "paragraph"
+            },
+            "text": "Data sharing not applicable to this article as no datasets were generated or analysed during the current study.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 24228,
+            "infons": {
+              "section_type": "REF",
+              "type": "title"
+            },
+            "text": "References",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 24239,
+            "infons": {
+              "pub-id_doi": "10.48550/arXiv.2108.07258",
+              "section_type": "REF",
+              "type": "ref",
+              "year": "2021"
+            },
+            "text": "On the Opportunities and Risks of Foundation Models",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 24291,
+            "infons": {
+              "fpage": "1499",
+              "lpage": "1518",
+              "pub-id_doi": "10.1021/jacsau.4c01160",
+              "pub-id_pmid": "40313808",
+              "section_type": "REF",
+              "source": "JACS Au",
+              "type": "ref",
+              "volume": "5",
+              "year": "2025"
+            },
+            "text": "A Perspective on Foundation Models in Chemistry",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 24339,
+            "infons": {
+              "fpage": "e1603",
+              "pub-id_doi": "10.1002/wcms.1603",
+              "section_type": "REF",
+              "source": "WIREs Computational Molecular Science",
+              "type": "ref",
+              "volume": "12",
+              "year": "2022"
+            },
+            "text": "A Review of Molecular Representation in the Age of Machine Learning",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 24407,
+            "infons": {
+              "fpage": "31",
+              "lpage": "36",
+              "pub-id_doi": "10.1021/ci00057a005",
+              "section_type": "REF",
+              "source": "Journal of Chemical Information and Computer Sciences",
+              "type": "ref",
+              "volume": "28",
+              "year": "1988"
+            },
+            "text": "SMILES, a Chemical Language and Information System. 1. Introduction to Methodology and Encoding Rules",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 24509,
+            "infons": {
+              "fpage": "045024",
+              "pub-id_doi": "10.1088/2632-2153/aba947",
+              "section_type": "REF",
+              "source": "Machine Learning: Science and Technology",
+              "type": "ref",
+              "volume": "1",
+              "year": "2020"
+            },
+            "text": "SELFIES and the Future of Molecular String Representations",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 24568,
+            "infons": {
+              "section_type": "REF",
+              "type": "ref"
+            },
+            "text": "RDKit: Open‐Source Cheminformatics",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 24605,
+            "infons": {
+              "fpage": "D1180",
+              "issue": "D1",
+              "lpage": "D1192",
+              "pub-id_doi": "10.1093/nar/gkad1004",
+              "pub-id_pmid": "37933841",
+              "section_type": "REF",
+              "source": "Nucleic Acids Research",
+              "type": "ref",
+              "volume": "52",
+              "year": "2024"
+            },
+            "text": "The ChEMBL Database in 2023: A Drug Discovery Platform Spanning Multiple Bioactivity Data Types and Time Periods",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 24718,
+            "infons": {
+              "pub-id_doi": "10.48550/arXiv.1704.01212",
+              "section_type": "REF",
+              "type": "ref",
+              "year": "2017"
+            },
+            "text": "Neural Message Passing for Quantum Chemistry",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 24763,
+            "infons": {
+              "pub-id_doi": "10.48550/arXiv.1706.08566",
+              "section_type": "REF",
+              "type": "ref",
+              "year": "2017"
+            },
+            "text": "SchNet: A Continuous‐Filter Convolutional Neural Network for Modeling Quantum Interactions",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 24856,
+            "infons": {
+              "pub-id_doi": "10.48550/arXiv.2003.03123",
+              "section_type": "REF",
+              "type": "ref",
+              "year": "2020"
+            },
+            "text": "Directional Message Passing for Molecular Graphs",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 24905,
+            "infons": {
+              "fpage": "513",
+              "lpage": "530",
+              "pub-id_doi": "10.1039/C7SC02664A",
+              "pub-id_pmid": "29629118",
+              "section_type": "REF",
+              "source": "Chemical Science",
+              "type": "ref",
+              "volume": "9",
+              "year": "2018"
+            },
+            "text": "MoleculeNet: a Benchmark for Molecular Machine Learning",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 24961,
+            "infons": {
+              "pub-id_doi": "10.48550/arXiv.2005.00687",
+              "section_type": "REF",
+              "type": "ref",
+              "year": "2020"
+            },
+            "text": "Open Graph Benchmark: Datasets for Machine Learning on Graphs",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 25023,
+            "infons": {
+              "fpage": "4263",
+              "lpage": "4273",
+              "pub-id_doi": "10.1021/acs.jcim.0c00155",
+              "pub-id_pmid": "32282202",
+              "section_type": "REF",
+              "source": "Journal of Chemical Information and Modeling",
+              "type": "ref",
+              "volume": "60",
+              "year": "2020"
+            },
+            "text": "LIT‐PCBA: An Unbiased Data Set for Machine Learning and Virtual Screening",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 25099,
+            "infons": {
+              "fpage": "1096",
+              "lpage": "1108",
+              "pub-id_doi": "10.1021/acs.jcim.8b00839",
+              "pub-id_pmid": "30887799",
+              "section_type": "REF",
+              "source": "Journal of Chemical Information and Modeling",
+              "type": "ref",
+              "volume": "59",
+              "year": "2019"
+            },
+            "text": "Benchmarking Models for De Novo Molecular Design",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 25148,
+            "infons": {
+              "fpage": "565644",
+              "pub-id_doi": "10.3389/fphar.2020.565644",
+              "pub-id_pmid": "33390943",
+              "section_type": "REF",
+              "source": "Frontiers in Pharmacology",
+              "type": "ref",
+              "volume": "11",
+              "year": "2020"
+            },
+            "text": "Molecular Sets (MOSES): A Benchmarking Platform for Molecular Generation Models",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 25228,
+            "infons": {
+              "pub-id_doi": "10.48550/arXiv.2203.02923",
+              "section_type": "REF",
+              "type": "ref",
+              "year": "2022"
+            },
+            "text": "GeoDiff: A Geometric Diffusion Model for Molecular Conformation Generation",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 25303,
+            "infons": {
+              "pub-id_doi": "10.48550/arXiv.2204.11817",
+              "section_type": "REF",
+              "type": "ref",
+              "year": "2022"
+            },
+            "text": "Translation between Molecules and Natural Language MolT5",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 25360,
+            "infons": {
+              "fpage": "1123",
+              "lpage": "1130",
+              "pub-id_doi": "10.1126/science.ade2574",
+              "pub-id_pmid": "36927031",
+              "section_type": "REF",
+              "source": "Science (new York, N.y.)",
+              "type": "ref",
+              "volume": "379",
+              "year": "2023"
+            },
+            "text": "Evolutionary‐Scale Prediction of Atomic‐Level Protein Structure with a Language Model",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 25450,
+            "infons": {
+              "fpage": "e2016239118",
+              "pub-id_doi": "10.1073/pnas.2016239118",
+              "section_type": "REF",
+              "source": "Proceedings of the National Academy of Sciences",
+              "type": "ref",
+              "volume": "118",
+              "year": "2021"
+            },
+            "text": "Biological Structure and Function Emerge from Scaling Unsupervised Learning to 250 Million Protein Sequences",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 25559,
+            "infons": {
+              "pub-id_doi": "10.48550/arXiv.2010.09885",
+              "section_type": "REF",
+              "type": "ref",
+              "year": "2020"
+            },
+            "text": "Large‐Scale Self‐Supervised Pretraining for Molecular Property Prediction",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 25637,
+            "infons": {
+              "pub-id_doi": "10.48550/arXiv.2203.17003",
+              "section_type": "REF",
+              "type": "ref",
+              "year": "2022"
+            },
+            "text": "",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 25638,
+            "infons": {
+              "fpage": "119",
+              "pub-id_doi": "10.1186/s13321-023-00787-9",
+              "pub-id_pmid": "38082357",
+              "section_type": "REF",
+              "source": "Journal of Cheminformatics",
+              "type": "ref",
+              "volume": "15",
+              "year": "2023"
+            },
+            "text": "SIMPD: An Algorithm for Generating Simulated Time Splits for Validating Machine Learning Approaches",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 25738,
+            "infons": {
+              "fpage": "256",
+              "lpage": "265",
+              "pub-id_doi": "10.1016/j.jmgm.2017.01.008",
+              "pub-id_pmid": "28135672",
+              "section_type": "REF",
+              "source": "Journal of Molecular Graphics and Modelling",
+              "type": "ref",
+              "volume": "72",
+              "year": "2017"
+            },
+            "text": "Binary Classification of Imbalanced Datasets Using Conformal Prediction",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 25810,
+            "infons": {
+              "fpage": "1321",
+              "lpage": "1330",
+              "pub-id_doi": "10.48550/arXiv.1706.04599",
+              "section_type": "REF",
+              "source": "Calibration of Modern Neural Networks",
+              "type": "ref",
+              "year": "2017"
+            },
+            "text": "",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 25811,
+            "infons": {
+              "fpage": "1535",
+              "pub-id_doi": "10.1021/ci060117s",
+              "pub-id_pmid": "16859285",
+              "section_type": "REF",
+              "source": "Journal of Chemical Information and Modeling",
+              "type": "ref",
+              "volume": "46",
+              "year": "2006"
+            },
+            "text": "On Outliers and Activity Cliffs‐‐Why QSAR Often Disappoints",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 25875,
+            "infons": {
+              "fpage": "160018",
+              "pub-id_doi": "10.1038/sdata.2016.18",
+              "pub-id_pmid": "26978244",
+              "section_type": "REF",
+              "source": "Scientific Data",
+              "type": "ref",
+              "volume": "3",
+              "year": "2016"
+            },
+            "text": "The FAIR Guiding Principles for Scientific Data Management and Stewardship",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 25950,
+            "infons": {
+              "fpage": "e202400361",
+              "issue": "1",
+              "pub-id_doi": "10.1002/minf.202400361",
+              "pub-id_pmid": "39846425",
+              "section_type": "REF",
+              "source": "Molecular Informatics",
+              "type": "ref",
+              "volume": "44",
+              "year": "2025"
+            },
+            "text": "Simple User‐Friendly Reaction Format",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 25989,
+            "infons": {
+              "fpage": "18820",
+              "lpage": "18826",
+              "pub-id_doi": "10.1021/jacs.1c09820",
+              "pub-id_pmid": "34727496",
+              "section_type": "REF",
+              "source": "Journal of the American Chemical Society",
+              "type": "ref",
+              "volume": "143",
+              "year": "2021"
+            },
+            "text": "The Open Reaction Database",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          }
+        ],
+        "annotations": [],
+        "relations": []
+      }
+    ]
+  }
+]

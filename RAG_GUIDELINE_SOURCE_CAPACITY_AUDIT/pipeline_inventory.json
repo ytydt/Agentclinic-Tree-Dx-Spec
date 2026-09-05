@@ -1,0 +1,327 @@
+{
+  "schema": "rag_pipeline_inventory_v1",
+  "audit_commit": "291e98002d8da619ded8e0ad833cbd1b7a0021b8",
+  "audit_branch": "cursor4",
+  "audit_date": "2026-08-25",
+  "reproducibility": {
+    "git_lfs_hydrated": false,
+    "live_retriever_constructible": false,
+    "constructor_error": "JSONDecodeError while parsing Git-LFS metadata pointer",
+    "missing_source_files": [
+      "data/cpg/processed/pmc_oa_ddx_chunks.jsonl",
+      "data/cpg/processed/cpg_chunks.jsonl",
+      "data/corpus/statpearls/statpearls_chunks.jsonl",
+      "data/corpus/textbooks/textbooks_chunks.jsonl"
+    ]
+  },
+  "sources": {
+    "open_cpg_manifest": {
+      "path": "data/cpg/manifest_latest.jsonl",
+      "rows": 9489,
+      "ok_rows": 9485,
+      "error_rows": 4,
+      "text_path_rows": 9485,
+      "major_source_rows": {
+        "PMC-OA": 5869,
+        "NICE": 1549,
+        "ACOG": 339,
+        "ACR": 300,
+        "ACC/AHA": 248,
+        "SSC/SCCM": 196,
+        "WikEM": 163,
+        "ASH": 156,
+        "ESC": 153,
+        "IDSA": 105,
+        "Merck/MSD Manual": 32
+      },
+      "online_merck_excluded_from_chunker": true,
+      "exclusion_locus": "scripts/cpg_manifest_common.py:21-22,90-96"
+    },
+    "merck_19e": {
+      "manifest": "data/corpus/merck/manifest.json",
+      "chunks_path": "data/corpus/merck/merck_manual_19e_chunks.jsonl",
+      "chunks": 9629,
+      "chapter_source_ids": 353,
+      "chapter_entry_pairs": 2529,
+      "entry_type_chunks": {
+        "disease_entry": 8345,
+        "syndrome_entry": 1284
+      },
+      "chunk_types": {
+        "background": 3532,
+        "evaluation": 3307,
+        "other": 2653,
+        "differential": 136,
+        "red_flag": 1
+      },
+      "token_mean": 173.8658,
+      "token_median": 154,
+      "token_max": 320,
+      "rows_in_cpg_index": 3311,
+      "license": "purchased_19e_internal_rag_only; redistribution prohibited",
+      "has_page_or_offset_metadata": false,
+      "has_neighbor_ids": false,
+      "source_id_granularity": "chapter"
+    },
+    "manifest_cpg_chunks": {
+      "path": "data/cpg/processed/manifest_cpg_chunks.jsonl",
+      "chunks": 39091,
+      "article_source_ids": 2270,
+      "chunk_types": {
+        "recommendation": 31260,
+        "evaluation": 7268,
+        "background": 384,
+        "red_flag": 99,
+        "differential": 80
+      },
+      "largest_sources": {
+        "NICE": 29391,
+        "ACR": 1876,
+        "IDSA": 1222,
+        "ACOG": 1082,
+        "ESC": 834,
+        "SSC/SCCM": 749,
+        "ASH": 747,
+        "ACC/AHA": 693
+      }
+    },
+    "wikem_chunks": {
+      "path": "data/cpg/processed/wikem_ddx_chunks.jsonl",
+      "chunks": 1055,
+      "article_source_ids": 149,
+      "chunk_types": {
+        "differential": 379,
+        "evaluation": 344,
+        "other": 271,
+        "red_flag": 61
+      }
+    }
+  },
+  "indexes": {
+    "rag_index": {
+      "path": "data/corpus/rag_index",
+      "backend": "faiss_IndexIVFPQ",
+      "model": "/data2/wanghongyi/models/all-MiniLM-L6-v2",
+      "dim": 384,
+      "ntotal": 493646,
+      "persisted_sources": ["statpearls", "textbooks"],
+      "merck_present": false,
+      "metadata_lfs_pointer": true,
+      "faiss_materialized": true
+    },
+    "cpg_index": {
+      "path": "data/corpus/cpg_index",
+      "backend": "tfidf",
+      "dim_max": 80000,
+      "ntotal": 205115,
+      "composition": {
+        "PMC-OA": 198996,
+        "Merck19e": 3311,
+        "society_other": 1091,
+        "NICE": 1058,
+        "WikEM": 659
+      },
+      "composition_source": "row-aligned data/corpus/cpg_medcpt_index/ids.json",
+      "metadata_lfs_pointer": true,
+      "matrix_lfs_pointer": true,
+      "vectorizer_lfs_pointer": true
+    },
+    "cpg_medcpt_index": {
+      "path": "data/corpus/cpg_medcpt_index",
+      "backend": "MedCPT_IndexFlatIP",
+      "dim": 768,
+      "ntotal": 205115,
+      "ids_materialized": true,
+      "index_lfs_pointer": true,
+      "embeddings_lfs_pointer": true
+    },
+    "cpg_diff_index": {
+      "path": "data/corpus/cpg_diff_index",
+      "ntotal": 295041,
+      "bucket_rows": {
+        "society": 1091,
+        "merck": 2240,
+        "nice": 1072,
+        "pmc": 289741,
+        "wikem": 897
+      },
+      "manifest_materialized": true,
+      "runtime_assets_lfs_pointers": true
+    },
+    "case_report_index": {
+      "path": "data/corpus/case_report_index",
+      "backend": "tfidf",
+      "ntotal": 77849,
+      "runtime_assets_lfs_pointers": true
+    }
+  },
+  "chunking": {
+    "merck_builder": "scripts/build_merck_manual_corpus.py + scripts/merck_manual_common.py",
+    "manifest_builder": "scripts/build_manifest_cpg_chunks.py + scripts/cpg_manifest_common.py",
+    "max_whitespace_tokens": 320,
+    "overlap": 0,
+    "page_metadata_retained": false,
+    "offset_metadata_retained": false,
+    "neighbor_ids_retained": false,
+    "runtime_closure": "all useful chunks sharing source_id; not adjacency",
+    "merck_closure_granularity": "whole chapter"
+  },
+  "generic_rag_contract": {
+    "function": "scripts/eval_naive_cot_rag_ablation.py:retrieve_live_bundle",
+    "indexes": ["rag_index", "cpg_index"],
+    "queries_max": 4,
+    "per_query_per_index_top_k": 3,
+    "fusion": "RRF",
+    "rrf_k": 60,
+    "max_chunks": 12,
+    "max_chunk_chars": 1600,
+    "chunk_reranker": false,
+    "source_quota": false,
+    "clinical_admission_gate": false,
+    "article_closure": false,
+    "adjacent_chunk_join": false
+  },
+  "current_methods": {
+    "collapse3c": {
+      "runner": "scripts/paper/run_aphhm_c.py",
+      "pipeline": "src/agentclinic_tree_dx/aphhm_c.py:AphhmCPipeline",
+      "diagnosis_time_rag": false
+    },
+    "multistance": {
+      "runner": "scripts/paper/run_aphhm_c.py",
+      "pipeline": "src/agentclinic_tree_dx/aphhm_c.py:AphhmCPipeline",
+      "diagnosis_time_rag": false
+    },
+    "forest": {
+      "runner": "scripts/paper/run_mosaic.py",
+      "pipeline": "src/agentclinic_tree_dx/mosaic.py:MosaicPipeline",
+      "diagnosis_time_rag": false
+    },
+    "IMPC": {
+      "runner": "scripts/paper/run_mosaic.py",
+      "pipeline": "src/agentclinic_tree_dx/mosaic.py:MosaicPipeline",
+      "diagnosis_time_rag": false
+    }
+  },
+  "evaluation_mapper": {
+    "applies_to": "DiagnosisArena evaluation only",
+    "diagnosis_time": false,
+    "mode": "typed_llm_disagreement_rag",
+    "implementation": "src/agentclinic_tree_dx/answer_projection_mapper.py:RelationAwareAnswerMapper",
+    "payload": ["vignette", "question", "all options", "predicted leaves", "disputes", "retrieved snippets"],
+    "retrieval_top_k_per_index_per_dispute": 3,
+    "max_snippets_per_dispute": 8,
+    "max_chars": 1200,
+    "risk": "raw FAISS and TF-IDF scores sorted together without calibration"
+  },
+  "usage_census": {
+    "legacy_17_case_ablation": {
+      "traces": 51,
+      "served_chunks": 612,
+      "unique_access_ids": 271,
+      "source_chunks": {
+        "rag_index": 236,
+        "PMC-OA": 260,
+        "Merck19e": 54,
+        "WikEM": 46,
+        "NICE": 16
+      },
+      "gold_present_top1_rag": 0.2142857143,
+      "gold_present_top1_no_rag": 0.2619047619,
+      "gold_present_top2_rag": 0.5952380952,
+      "gold_present_top2_no_rag": 0.5714285714
+    },
+    "paper_b01_da100_mcr400": {
+      "cases": 500,
+      "served_chunks": 6000,
+      "source_chunks": {
+        "rag_index": 2280,
+        "PMC-OA": 3099,
+        "Merck19e": 311,
+        "WikEM": 263,
+        "NICE": 38,
+        "other_cpg": 9
+      }
+    },
+    "paper_b07_da400_mcr400": {
+      "cases": 800,
+      "retrieval_on_cases": 690,
+      "served_chunks": 8268,
+      "source_chunks": {
+        "rag_index": 3667,
+        "PMC-OA": 3906,
+        "Merck19e": 318,
+        "WikEM": 306,
+        "NICE": 58,
+        "other_cpg": 13
+      }
+    }
+  },
+  "e11": {
+    "implementation": "analysis/mechanism_v2/e11_b07_factorial.py",
+    "source_commit": "bb0fbd81d38bf0ab25ec492b771f81c7ea5db6e4",
+    "development_cases": 400,
+    "families": {"DA": 200, "MCR": 200},
+    "corpus": "Merck19e only",
+    "corpus_chunks": 9629,
+    "backend": "local TF-IDF",
+    "queries": "frozen historical B07 orchestrator/runtime queries",
+    "bundle_chunks": 6,
+    "max_chunk_chars": 1400,
+    "forced_treatment": true,
+    "case_specific_relevant_chunks": 129,
+    "screened_relevant_chunks": 1950,
+    "case_specific_rate": 0.0661538462,
+    "no_fit_relevant_chunks": 1397,
+    "no_fit_rate": 0.7164102564,
+    "identifies": "forced weak lexical Merck bundle plus optional generic refine",
+    "does_not_identify": "ideal typed RAG, current production two-index RRF, adjacency, closure, or current four methods"
+  },
+  "known_implementation_risks": [
+    {
+      "severity": "critical",
+      "name": "LFS metadata pointer crash",
+      "locus": "src/agentclinic_tree_dx/knowledge/rag_retriever.py:55-62"
+    },
+    {
+      "severity": "critical",
+      "name": "current four methods have no diagnosis-time RAG",
+      "locus": "scripts/paper/run_aphhm_c.py; scripts/paper/run_mosaic.py"
+    },
+    {
+      "severity": "high",
+      "name": "guideline relevance score inverted",
+      "locus": "src/agentclinic_tree_dx/knowledge/guideline_branch_source.py:565-568,674-676,719-720"
+    },
+    {
+      "severity": "high",
+      "name": "no true adjacency and Merck chapter-wide closure",
+      "locus": "scripts/merck_manual_common.py; src/agentclinic_tree_dx/knowledge/rag_retriever.py:243-275"
+    },
+    {
+      "severity": "high",
+      "name": "generic B01/B07 has no chunk reranker or clinical admission",
+      "locus": "scripts/eval_naive_cot_rag_ablation.py:120-182"
+    },
+    {
+      "severity": "high",
+      "name": "paper traces omit served chunk text",
+      "locus": "runs/paper_v1/*/{B01-cot-rag,B07-meddxagent-complete}/replicate_01/trace.jsonl"
+    },
+    {
+      "severity": "medium_high",
+      "name": "mapper merges uncalibrated sparse/dense raw scores",
+      "locus": "src/agentclinic_tree_dx/answer_projection_mapper.py:752-755"
+    },
+    {
+      "severity": "medium_high",
+      "name": "index and metadata lengths are not asserted",
+      "locus": "src/agentclinic_tree_dx/knowledge/rag_retriever.py:314-315,331-332"
+    },
+    {
+      "severity": "medium",
+      "name": "build scripts and persisted index config drift",
+      "locus": "scripts/build_rag_index.py; data/corpus/rag_index/config.json"
+    }
+  ]
+}

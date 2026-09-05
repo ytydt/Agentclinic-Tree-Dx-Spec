@@ -1,0 +1,2232 @@
+[
+  {
+    "bioctype": "BioCCollection",
+    "source": "PMC",
+    "date": "20260514",
+    "key": "pmc.key",
+    "version": "1.0",
+    "infons": {},
+    "documents": [
+      {
+        "bioctype": "BioCDocument",
+        "id": "PMC13163533",
+        "infons": {
+          "license": "CC BY"
+        },
+        "passages": [
+          {
+            "bioctype": "BioCPassage",
+            "offset": 0,
+            "infons": {
+              "article-id_doi": "10.3390/diagnostics16091412",
+              "article-id_pmc": "PMC13163533",
+              "article-id_publisher-id": "diagnostics-16-01412",
+              "elocation-id": "1412",
+              "issue": "9",
+              "kwd": "artificial intelligence explainable AI mammography breast imaging radiology trust explainability",
+              "license": "Licensee MDPI, Basel, Switzerland. This article is an open access article distributed under the terms and conditions of the Creative Commons Attribution (CC BY) license.",
+              "name_0": "surname:Pesapane;given-names:Filippo",
+              "name_1": "surname:Rotili;given-names:Anna",
+              "name_10": "surname:Di Grezia;given-names:Graziella",
+              "name_2": "surname:Penco;given-names:Silvia",
+              "name_3": "surname:Dominelli;given-names:Valeria",
+              "name_4": "surname:Priolo;given-names:Francesca",
+              "name_5": "surname:Marinucci;given-names:Irene",
+              "name_6": "surname:Nicosia;given-names:Luca",
+              "name_7": "surname:Grasso;given-names:Roberto",
+              "name_8": "surname:Pravettoni;given-names:Gabriella",
+              "name_9": "surname:Cassano;given-names:Enrico",
+              "section_type": "TITLE",
+              "type": "front",
+              "volume": "16",
+              "year": "2026"
+            },
+            "text": "Explainable Artificial Intelligence in Mammography: A Systematic Review of Methods, Evaluation Practices, and Clinical Readiness",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 129,
+            "infons": {
+              "section_type": "ABSTRACT",
+              "type": "abstract"
+            },
+            "text": "Background: Explainable artificial intelligence (XAI) is increasingly proposed to improve trust in mammography-based artificial-intelligence systems, but the validity and clinical readiness of published explanations remain unclear. We aim to systematically review XAI methods applied to mammography and synthesize how explanations are evaluated for validity, robustness, and clinical usefulness. Methods: We conducted a systematic review according to PRISMA 2020. MEDLINE/PubMed, Embase, Scopus, Web of Science Core Collection, and the Cochrane Library were searched from 1 January 2015 to 15 January 2026. Two reviewers independently screened records and extracted data; disagreements were resolved by consensus with a third reviewer. Included studies used mammography as the primary input and reported an explicit explanation or interpretability mechanism. Because the literature was methodologically heterogeneous, we performed a structured narrative synthesis and an adapted XAI-specific appraisal of explanation claims, quantitative evaluation, external validation, human-factor assessment, and reporting transparency. Results: Fourteen studies were included. Ten studies addressed detection or lesion classification and four addressed risk or outcome prediction. Primary XAI families were interpretable-by-design architectures (6/14), post hoc saliency or attribution methods (5/14), and feature-level explanation methods (3/14). Five studies remained at tier-1 qualitative plausibility only, seven reached tier-2 internal quantitative explanation evaluation, two reached tier-3 external or cross-dataset interpretability assessment, and none reported reader or workflow studies. In the dedicated mammography saliency benchmark, Pointing Game scores for Grad-CAM, Grad-CAM++, and Eigen-CAM ranged from 0.30 to 0.41, indicating only modest lesion-pointing reliability despite acceptable classifier performance. Conclusions: Mammography XAI remains dominated by visually plausible explanations that are inconsistently validated. The literature is moving toward task-aligned and intrinsically interpretable designs, yet external validation and clinician-centered evaluation remain rare. Future studies should pre-specify explanation claims, use task-appropriate quantitative metrics, report explanation robustness under distribution shift, and test whether explanations improve human decision-making.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 2533,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "title_1"
+            },
+            "text": "1. Introduction",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 2549,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Artificial intelligence (AI) models for mammography have progressed rapidly, but the “black-box” nature of many deep learning (DL) systems remains a core barrier to clinical trust, governance, and safe integration. Saliency maps are image-level visualizations that assign higher intensity to image regions considered more influential for a model prediction. Gradient-weighted class activation mapping (Grad-CAM) is one of the most widely used saliency methods; it back-projects class-specific gradients from a convolutional neural network to generate a course heatmap of regions associated with the predicted class. In contrast, SHapley Additive exPlanations (SHAPs) estimate the contribution of individual features to a prediction, while Local Interpretable Model-agnostic Explanations (LIMEs) approximate model behavior locally with a simpler surrogate model. Because these methods explain different objects (pixels, features, prototypes, or intermediate representations), they should not be evaluated with a single generic criterion. Explainable AI (XAI) in mammography has largely evolved along two methodological trajectories that partially overlap but differ in what they treat as the “explanatory object”. The first trajectory is post hoc explanation, in which a model is trained primarily for predictive performance and interpretability is added after training through a separate explanatory mechanism. In mammography, this most commonly takes the form of saliency and attribution techniques that generate heatmaps intended to indicate which image regions are most influenced by a specific prediction, such as class activation map approaches derived from gradients (for example, the Grad-CAM family). Although these visualizations are attractive because they can be applied to many pre-existing deep networks with minimal changes, evidence from mammography-specific quantitative benchmarking suggests that saliency maps can have only modest lesion-pointing reliability even when the underlying classifier performs acceptably, reinforcing the distinction between visually plausible explanations and faithful localization of the causal evidence.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 4709,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "The second trajectory is interpretability by construction, where the model architecture and training objective are deliberately designed so that the reasoning pathway yields intermediate outputs that are intended to be human-interpretable and clinically auditable. This includes high-resolution mammography classifiers that explicitly combine a global module producing a coarse saliency map with a local module operating on selected informative patches, effectively “structuring” the decision into interpretable components rather than generating an explanation solely after the fact. A representative example is the Globally-Aware Multiple Instance Classifier (GMIC) paradigm, which integrates global saliency and local patch evidence to better match the computational constraints and diagnostic logic of large mammograms. In risk prediction settings, interpretability-by-design has also been operationalized through modules that encode clinically meaningful reasoning primitives, such as localized bilateral dissimilarity (an explicit asymmetry-focused mechanism) to approximate the behavior of more complex mammography-based risk models.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 5853,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Mammography poses unusually stringent requirements for both approaches, which helps explain why “explanation” is frequently harder here than in many natural-image tasks. Relevant cues may be extremely small and subtle (for instance, fine calcifications), may not form a discrete object (for example, architectural distortion), and may be distributed across multiple foci or views, requiring aggregation across the standard multi-view acquisition and, often, both breasts. In addition, clinically meaningful inference is frequently longitudinal: radiologists compare current images with prior examinations, and both detection and risk models can draw signal from temporal change patterns rather than purely from a single-image snapshot. This makes the expected form of an explanation task-dependent and horizon-dependent; for short-horizon prediction, a lesion-centric explanation may be clinically appropriate, whereas for longer-horizon risk prediction, the model may legitimately rely more on global breast characteristics and asymmetry patterns. This horizon-dependent shift is supported by recent longitudinal interpretability work that analyzes how attributions behave as time-to-cancer varies, underscoring that explanation validity cannot be reduced to a single heatmap criterion across all mammography tasks.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 7174,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "The rationale for this review is that explainability in mammography is not a single construct but a family of claims that differ by clinical task, prediction horizon, and explanatory target. We therefore designed the review to answer four specific questions: (1) which XAI families are being used in mammography; (2) what explanatory object each method claims to represent (for example, lesion location, bilateral asymmetry, feature importance, or interpretable intermediate reasoning); (3) how these explanations are evaluated, including whether evaluation is qualitative, quantitative, internal, external, or human-centered; and (4) how close the current evidence base is to clinical readiness. Framing the review in this way avoids conflating visually appealing overlays with validated explanations and provides a more task-aligned synthesis of the field.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 8033,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "The Table 1 summarizes the main terms and their definition in the context of explainable AI.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 8126,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "title_1"
+            },
+            "text": "2. Methods",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 8137,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "title_2"
+            },
+            "text": "2.1. Search Strategy and Information Sources",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 8182,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "paragraph"
+            },
+            "text": "This systematic review was conducted in accordance with the Preferred Reporting Items for Systematic Reviews and Meta-Analyses (PRISMA) 2020 statement (Supplementary File S1). The review question was focused specifically on explainable and interpretable artificial-intelligence methods applied to mammography for breast cancer detection, lesion classification, and risk or outcome prediction. MEDLINE/PubMed, Embase, Scopus, Web of Science Core Collection, and the Cochrane Library were searched from 1 January 2015 to 15 January 2026. To reduce the risk of missing studies in which explanation was embedded but not explicitly labeled as XAI, the search combined mammography terms with both explicit explainability terms (for example, explainable artificial intelligence, saliency map, attribution map, Grad-CAM, SHAP, and LIME) and structurally related interpretability terms (for example, attention map, prototype, case-based reasoning, weakly supervised localization, and interpretable module). Reference lists of included studies and recent reviews were screened, and forward citation tracking was performed. The complete database-specific search strategies are reported in Supplementary Table S1.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 9384,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "title_2"
+            },
+            "text": "2.2. Eligibility Criteria and Study Selection",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 9430,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "paragraph"
+            },
+            "text": "We included original peer-reviewed studies using mammography or mammography-derived features as the primary input and reporting an explicit explanation or interpretability mechanism with extractable explanation outputs or evaluation. Eligible tasks included cancer detection, lesion classification, risk prediction, and other clinically relevant mammography-based prediction tasks. We excluded non-mammography studies, mixed-modality studies without separable mammography results, papers without a defined explanation output, reviews, editorials, commentaries, conference proceedings, and preprints lacking sufficient methodological detail for reproducible appraisal. Two reviewers independently screened titles and abstracts and then independently assessed the full texts of potentially eligible reports. Disagreements were resolved by consensus, with arbitration by a third reviewer when required. In the revised screening, agreement was substantial at both title/abstract and full-text stages (Cohen’s κ = 0.81 and 0.86, respectively).",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 10473,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "paragraph"
+            },
+            "text": "Inclusion and exclusion criteria are summarized in Table 2.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 10533,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "title_2"
+            },
+            "text": "2.3. Data Extraction",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 10554,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "paragraph"
+            },
+            "text": "Data were extracted on a piloted standardized form by two reviewers and cross-checked by a senior reviewer. Extracted items included year, setting, mammography modality, clinical task, dataset type, model architecture, XAI family, explanatory target, explanation evaluation method, quantitative metrics, external validation, human-factor assessment, and main methodological limitations. The extraction template should be provided as Supplementary File S2.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 11010,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "title_2"
+            },
+            "text": "2.4. Study Appraisal",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 11031,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "paragraph"
+            },
+            "text": "Because no single validated tool directly captures explanation validity in mammography AI, we used an adapted XAI-specific appraisal framework informed by PROBAST, QUADAS-AI, and prior XAI-evaluation literature. Six domains were scored from 0 to 2: (1) clarity of the explanation claim; (2) alignment between the clinical task and the evaluation target; (3) quantitative explanation evaluation; (4) robustness or external validation; (5) human-factor evaluation; and (6) reporting transparency and reproducibility. Total scores ranged from 0 to 12 and were categorized as having low (0–4), moderate (5–7), or high (8–12) methodological rigor. This appraisal was used to structure the synthesis rather than to exclude studies. The detailed rubric and study-level scores should be provided as Supplementary Table S2. This approach aligns with mammography-specific calls that evaluation frameworks for XAI remain underdeveloped and inconsistently applied.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 11990,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "paragraph"
+            },
+            "text": "Formal meta-analysis was not attempted because the included studies were heterogeneous in clinical task, explanation target, annotation granularity, and explanation metrics, which made statistical pooling methodologically inappropriate. We therefore performed a structured narrative synthesis supported by quantitative descriptive summaries, using counts and percentages across XAI families, validation tiers, and rigor categories.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 12422,
+            "infons": {
+              "section_type": "METHODS",
+              "type": "paragraph"
+            },
+            "text": "Figure 1 summarizes the revised study-selection process. Fifty-four records were identified. After removal of eight duplicates, 46 titles and abstracts were screened. Twenty-two reports underwent full-text assessment, and 14 studies met the inclusion criteria. Seven full-text articles were excluded because they lacked an explicit explanation output or evaluation (n = 3), were non-mammography or mixed-modality studies without separable mammography results (n = 2), were conference proceedings or preprints without sufficient methodological detail (n = 1), or represented overlapping reporting from the same population (n = 1). During revision, one erroneously included digital pathology paper was removed and one eligible mammography paper missed by the original search was added; the final number of included studies therefore remained 14.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 13266,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "title_1"
+            },
+            "text": "3. Results",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 13277,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "The studies included and their main features are summarized in Table 3. Of the 14 included studies, 10 addressed cancer detection or lesion classification and four addressed risk or outcome prediction. The primary XAI families were interpretable-by-design architectures (6/14), post hoc saliency or attribution methods (5/14), and feature-level explanatory approaches such as SHAP or feature-centric mapping (3/14). Using the revised validation hierarchy, five studies remained at tier 1 (qualitative plausibility only), seven reached tier 2 (internal quantitative explanation evaluation), two reached tier 3 (external or cross-dataset interpretability assessment), and no study reached tier 4 (reader or workflow impact evaluation). Further details are reported in Table 4. Across the evidence base, external explanation validation and clinician-centered evaluation were therefore uncommon.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 14169,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "title_2"
+            },
+            "text": "3.1. Taxonomy of XAI Methods Used in Mammography",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 14218,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "The dominant mammography-XAI approach remains saliency mapping, particularly Grad-CAM and derivatives (Grad-CAM++, Eigen-CAM), often chosen because it can be applied to existing CNN classifiers with minimal engineering overhead. When lesion localization was explicitly benchmarked, performance was modest for generic saliency methods. In the dedicated mammography benchmark by Cerekci et al., Pointing Game scores for Grad-CAM, Grad-CAM++, and Eigen-CAM were 0.41, 0.30, and 0.35, respectively, increasing only marginally to 0.41, 0.31, and 0.36 among true-positive cases. By contrast, more task-specific pipelines reported higher internal explanation metrics: Camurdan et al. used a ground-truth overlap ratio ranging from 60.26% to 64.18%, and Mellado et al. reported Pointing Game accuracies of 0.6358 for prediction-based maps and 0.5602 for correlation maps. These studies are not directly poolable, but together they show that explanation performance is both method- and task-dependent.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 15211,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "Attention used as a model component or as an augmentation signal: interpretability claims often hinge on “attention highlights ROI,” but rigorous faithfulness validation is frequently absent.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 15407,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "Coarse segmentation/explanation maps: approaches that output coarse lesion maps to support interpretability and detection (e.g., CorRELAX framing).",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 15555,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "Global + local MIL-style architectures operating on high-resolution mammograms, producing saliency maps and selecting informative patches as part of the inference pipeline (GMIC line).",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 15740,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "Clinically inspired intermediate maps (e.g., “BIRADS guide map”) that attempt to align internal representations with BI-RADS reasoning.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 15880,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "Explicitly interpretable modules for risk prediction, such as localized bilateral dissimilarity intended to approximate Mirai’s reasoning with an intelligible asymmetry concept.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 16060,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "Prototype/part-based networks that provide example-based interpretability (e.g., pseudo-class part prototype networks), where decisions can be traced to learned prototypes rather than diffuse attributions.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 16266,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "A second cluster designs interpretability into the model. Examples include:",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 16342,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "For risk and outcome prediction studies, the explanatory target was not uniformly lesion-centric. AsymMirai operationalized localized bilateral dissimilarity as an interpretable intermediate representation, whereas Klanecek et al. showed that attribution patterns changed with time-to-cancer, shifting from focal lesion-like behavior at short horizons to more global breast-characteristic signals at longer horizons. Wang et al. further demonstrated that feature-centric analysis can align learned risk-model features with calcification- and mass-related receptive fields. These findings justify task-aligned evaluation rather than a single universal localization criterion.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 17017,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "title_2"
+            },
+            "text": "3.2. Feature-Level Explainability (Radiomics/Learned Features + SHAP/LIME)",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 17092,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "For tasks where the model consumes engineered features, radiomics, or compressed representations (including DL-extracted mammographic signatures), SHAP is widely used to rank and directionally interpret feature contributions. This family is most prominent in outcome prediction (recurrence), molecular subtype prediction, and other clinical endpoints, where explanations target covariates rather than pixels.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 17501,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "A distinctive and clinically defining feature of mammography is that decisions are rarely made from a single image in isolation. In routine practice, radiologists integrate priors to determine whether a subtle density is stable, whether an asymmetry is new or evolving, and whether the overall parenchymal pattern is changing in a way that plausibly reflects emerging disease. This “temporal reasoning” is also central for modern mammography-based risk models that predict future cancer rather than simply detecting a present lesion. Models such as Mirai were explicitly developed to forecast 1–5-year risk from screening mammograms, which implies that the signal the model uses is not necessarily lesion-like at all time horizons, but may include distributed, preclinical, or global tissue features that precede overt radiological findings.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 18349,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "Within this context, two complementary interpretability strategies have emerged. One is to redesign the model so that the temporal and bilateral cues it uses are intrinsically structured into an interpretable mechanism. A clear example is AsymMirai, which was proposed to approximate Mirai’s short-term risk predictions while embedding an explicit, human-legible module based on localized bilateral dissimilarity—effectively operationalizing the clinically intuitive idea that left–right asymmetry can be informative when it is focal, spatially consistent, and persists or evolves across years. In this approach, interpretability is not merely a post hoc overlay; it is built into the computation as an intermediate representation that can be inspected, audited, and, at least in principle, stress-tested as its own output. The AsymMirai study also emphasizes year-over-year consistency as an interpretability concept, by performing analyses in subgroups where the model’s “reasoning” remained stable across longitudinal examinations, which aligns closely with the way clinicians interpret change over time rather than single-image snapshots.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 19504,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "The second strategy acknowledges that many deployed or high-performing risk models will remain complex and therefore applies post hoc longitudinal interpretability analyses to characterize how model explanations evolve as the prediction horizon changes. A representative example is the work by Klanecek et al., who evaluated multiple attribution methods in a longitudinal setting and introduced “attribution heterogeneity” to quantify whether the model’s reliance concentrates on one breast side or reflects broader breast characteristics. Their findings support a clinically consequential interpretation: for short horizons (approximately up to one year), the risk model behaves more like a detection system (with attributions resembling focal, lesion-proximal evidence), while for intermediate horizons (roughly one to three years), it appears to capture early signs that may precede overt detectability, and for longer horizons (beyond three years), the attributions are more consistent with typical breast characteristics such as density-like global features. This is a methodological frontier for mammography XAI because it implies that “the right explanation” is not fixed: a lesion-centric map may be appropriate for near-term detection-like behavior, whereas a breast-characteristic-centric explanation may be legitimate—and potentially more faithful—for longer-term risk prediction, provided the evaluation framework explicitly accounts for the model’s intended time-to-event objective.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 21016,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "The most direct mammography-appropriate evaluation checks whether explanation maxima overlap known lesion regions. Cerekci et al. operationalized this using radiologist-drawn boxes and Pointing Game scores, enabling quantitative comparison between saliency methods. This approach is attractive because it yields objective metrics, but it is limited by the imperfect ground truth (boxes vs. segmentation masks) and the possibility that non-lesion contextual cues genuinely contribute to prediction (especially in risk prediction settings).",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 21555,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "A notable and underused concept is that interpretability itself should generalize. Moffett et al. explicitly reported that interpretability (activation on relevant lesion portions) persisted across external sites even when AUC for certain subtasks declined, suggesting that interpretability and performance may decouple across domains.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 21891,
+            "infons": {
+              "section_type": "RESULTS",
+              "type": "paragraph"
+            },
+            "text": "Across the mammography XAI literature, structured reader studies that test whether explanations improve radiologist performance, calibration, or error detection are uncommon, and previous mammography-XAI reviews already noted the lack of specialized evaluation frameworks and limited human-confidence evaluation.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 22204,
+            "infons": {
+              "section_type": "DISCUSS",
+              "type": "title_1"
+            },
+            "text": "4. Discussion",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 22218,
+            "infons": {
+              "section_type": "DISCUSS",
+              "type": "paragraph"
+            },
+            "text": "Across the 14 included studies, the main signal is not simply that mammography XAI exists, but that explanation claims are often broader than the evidence used to support them. Explanations are frequently shown, yet they are less often tested. The most direct mammography-specific saliency benchmark reported Pointing Game scores of only 0.30–0.41 for common Grad-CAM-family methods, demonstrating that visual plausibility does not guarantee faithful lesion localization. This finding should temper claims of clinical readiness for generic saliency overlays.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 22779,
+            "infons": {
+              "section_type": "DISCUSS",
+              "type": "paragraph"
+            },
+            "text": "The review also shows that explanation validity is task-dependent. Detection and lesion-classification studies can reasonably test lesion localization, whereas longer-horizon risk models may be better judged by stability across time, bilateral consistency, or alignment with broader breast characteristics rather than by lesion-box overlapping alone. Interpretable-by-design approaches—such as global–local models, case-based networks, and asymmetry-based modules—are therefore attractive not because they automatically solve explainability, but because they define a clearer explanatory object and a clearer validation target.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 23413,
+            "infons": {
+              "section_type": "DISCUSS",
+              "type": "paragraph"
+            },
+            "text": "The evidence base nevertheless remains limited. Only two included studies reported any external or cross-dataset assessment of interpretability, and no study reported a reader or workflow trial showing that explanations improved radiologist calibration, error detection, or safe reliance. The conclusions of this review should therefore be conservative: mammography XAI is promising, but it is not yet supported by a mature validation culture.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 23857,
+            "infons": {
+              "section_type": "DISCUSS",
+              "type": "paragraph"
+            },
+            "text": "A mammography-specific challenge is the mismatch between the available ground truth and what explanations are asked to demonstrate. Many explanation evaluations rely on radiologist-drawn bounding boxes or similar coarse lesion annotations, but these may not capture the diffuse and textural nature of some mammographic cues, such as architectural distortion, subtle developing asymmetries, or distributed parenchymal patterns. Conversely, in risk prediction tasks—especially when the model’s objective is future cancer risk rather than present lesion detection—an explanation that highlights tissue context outside a lesion box may be legitimate rather than erroneous. Longitudinal interpretability work reinforces this point by showing that attribution patterns can change with time-to-cancer, with shorter horizons behaving more like detection and longer horizons relying more on global breast characteristics, meaning that “lesion-centric localization” cannot be treated as a universal gold standard for explanation validity across mammography tasks. This tension complicates synthesis because different studies may be “right” to evaluate explanations differently, but few papers explicitly justify their evaluation target in relation to the clinical question and prediction horizon.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 25158,
+            "infons": {
+              "section_type": "DISCUSS",
+              "type": "paragraph"
+            },
+            "text": "A further gap arises from the multi-view and bilateral reasoning intrinsic to mammography. Many XAI reports still reduce explanations to single-image overlays, which can under-represent how evidence is aggregated across views and breasts. Architectures such as GMIC were introduced partly to address mammography’s scale and information-distribution problem by combining a whole-image global module that produces coarse saliency with local high-resolution patches, but even in such designs, explanation reporting is not consistently aligned with the multi-view nature of the clinical workflow. In risk prediction settings, interpretability-by-design approaches that operationalize bilateral asymmetry as an explicit intermediate representation (for example, localized bilateral dissimilarity in AsymMirai) can be read as a direct response to the inadequacy of single-view explanations for a bilateral disease-detection context.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 26087,
+            "infons": {
+              "section_type": "DISCUSS",
+              "type": "paragraph"
+            },
+            "text": "External validation represents another underdeveloped axis, and this extends to interpretability itself. Mammography AI has repeatedly shown vulnerability to distribution shift across sites and populations, raising the question of whether explanations remain stable, meaningful, or misleading when models are transported. Only a small subset of studies treat explanation robustness as an explicit endpoint; one notable example is the multi-site external validation of an inherently interpretable lesion model (IAIA-BL), which explicitly examines interpretability behavior across institutions, thereby advancing the notion that interpretability should be evaluated as a transportable property rather than assumed to “come along for free” with performance.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 26846,
+            "infons": {
+              "section_type": "DISCUSS",
+              "type": "paragraph"
+            },
+            "text": "Finally, human factors remain a critical but thinly evidenced layer. The central promise of XAI in mammography is not merely to produce explanations, but to improve human–AI interaction: trust calibration, appropriate reliance, and safer decision-making. Yet, structured reader studies that test whether explanations improve radiologist accuracy, reduce overreliance, or help identify AI failure modes are still uncommon, and recent mammography-focused XAI reviews emphasize the lack of specialized evaluation frameworks and the limited clinician-centered validation across the literature. Rather than treating high-performance metrics or visually appealing “explainability” overlays as endpoints in themselves, it is increasingly argued that medical AI should be judged primarily by whether its decision basis is scientifically testable and clinically dependable. In this perspective, post hoc explanations can create an “illusion of understanding” when they remain unvalidated, unstable, or insensitive to the very model they are meant to explain, and strong retrospective performance can still conceal shortcut learning or context-specific signals that collapse under distribution shift. The more reassuring path is therefore not necessarily to demand full transparency, but to accept practical opacity while insisting on disciplined evaluation: preregistered acceptance tests, explicit checks of causal alignment and invariance across scanners/sites/populations, and honest post-deployment monitoring with mechanisms to detect, document, and respond to failures. This shift—from celebrating “explainability” to prioritizing falsifiability, robustness, and real-world surveillance—reframes trustworthy mammography AI as a scientific instrument that must remain reliable under attempted refutation, not merely persuasive in retrospect.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 28702,
+            "infons": {
+              "section_type": "DISCUSS",
+              "type": "paragraph"
+            },
+            "text": "Considering the results of this systematic review, some practical recommendations for future mammography XAI studies may be assessed. A first evidence-aligned priority is to pre-specify explanation evaluation with the same discipline applied to model performance metrics, treating explanations as measurable outputs rather than as supporting figures. When lesion localization is an intended claim, authors should adopt objective localization protocols and report them transparently, as in mammography-specific saliency benchmarking using radiologist-defined annotations and explicit metrics. When localization is not the intended claim—particularly for longer-horizon risk prediction—studies should explicitly state what the explanation is expected to represent (for example, global tissue cues, asymmetry, or temporal change) and choose evaluation targets that reflect that objective, rather than defaulting to lesion-centric criteria that may be inappropriate for the task. Longitudinal attribution analyses provide a concrete framework for aligning explanation interpretation with time horizon, and they illustrate why horizon-dependent evaluation should become standard in risk settings. A second recommendation is to elevate robustness of explanations across sites, scanners, and populations into a first-class endpoint. Given established generalizability challenges in mammography AI, it is insufficient to show that a model “works” somewhere and that its heatmaps look plausible on a few examples; interpretability itself should be assessed under distribution shift. The IAIA-BL external validation study is instructive here because it explicitly frames interpretability as something that can be evaluated across institutions, setting a precedent for future work to report not only performance drift but also explanation drift. A third recommendation is matching the explanation modality to the clinical question. For detection and diagnostic classification tasks, lesion-centric explanations may be appropriate if they are validated and if their limitations are clearly communicated. For risk prediction, however, explanation frameworks that can express asymmetry, multi-view integration, and longitudinal change are often more conceptually aligned than single-view saliency overlays. This is precisely the design motivation behind interpretable asymmetry-based modules in mammography risk prediction, and it is consistent with evidence that attribution characteristics evolve with prediction horizon. A fourth priority is to incorporate clinician-centered endpoints into evaluation, because the ultimate purpose of XAI in mammography is not to generate visually plausible rationales, but to improve human decision-making in a safety-critical workflow. The field therefore needs evidence that explanations measurably improve calibration (i.e., that radiologists become better at distinguishing when to rely on the model versus when to discount it), reduce inappropriate automation bias, and help clinicians recognize model failure modes and uncertainty in real time. This requirement extends beyond radiologists: mammography screening is a population-facing program, and the perceived legitimacy of AI-supported decisions will be mediated by how clinicians communicate AI use, how accountability is framed, and whether patients feel that the human professional remains in control. Studies on the attitudes in breast cancer diagnosis emphasize that trust is shaped by concerns about misdiagnosis, privacy, and responsibility, and that patients tend to prefer AI as an adjunct to—rather than a substitute for—clinical expertise, implying that “explainability” should be evaluated not only as a technical artifact but also as a component of the clinician–patient relationship and shared decision-making. Accordingly, the next phase of mammography XAI research should pair algorithmic benchmarking with human-centered study designs, incorporating endpoints that capture clinician performance and calibration, communication quality, and downstream trust-related outcomes that ultimately condition whether XAI will be safe and sustainable in practice. A final recommendation is to normalize the reporting of explanation failure modes. Saliency benchmarking work demonstrates that explanation performance can be modest, and reporting these results transparently is clinically valuable because it prevents explanations from being interpreted as reliable lesion localizers when they are not. In mammography, where downstream consequences (recall, biopsy, anxiety) are significant, clarity about when explanations may mislead should be viewed as a safety feature rather than a weakness.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 33405,
+            "infons": {
+              "section_type": "DISCUSS",
+              "type": "paragraph"
+            },
+            "text": "This review has limitations. First, the eligible evidence base was small, with only 14 included studies after screening. Second, the literature was heterogeneous in clinical tasks, explanatory targets, annotation granularity, and explanation metrics, which precluded formal meta-analysis. Third, conference proceedings were not included in the primary synthesis because they often lacked sufficient methodological detail for reproducible appraisal; this is now acknowledged explicitly as a limitation of the review design. Fourth, because no validated mammography-specific explanation-risk-of-bias tool exists, we used an adapted XAI-specific appraisal framework rather than a formally validated explanation tool. In addition, the current evidence base spans clinically oriented radiology venues and engineering-oriented journals, which contributes to variability in external validation practices, reporting completeness, and clinician-centered evaluation. From a broader scientific-method perspective, this heterogeneity reinforces the need to “measure” and operationalize claims about explanation validity rather than treating explanation visuals as self-evident support for trust, an argument also articulated in contemporary discussions of AI governance and epistemic rigor in radiology. Finally, the review protocol was not prospectively registered; to improve transparency, the revised manuscript should provide the full protocol, extraction template, and appraisal rubric as Supplementary Material.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 34915,
+            "infons": {
+              "section_type": "CONCL",
+              "type": "title_1"
+            },
+            "text": "5. Conclusions",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 34930,
+            "infons": {
+              "section_type": "CONCL",
+              "type": "paragraph"
+            },
+            "text": "In summary, across 14 eligible studies, mammography XAI was most often implemented as either interpretable-by-design model architecture (6/14) or post hoc visual explanation methods (5/14), with a smaller number of feature-level explanation studies (3/14). The field has moved beyond purely illustrative heatmaps, but rigorous explanation validation, external transportability assessment, and reader-centered testing remain uncommon. Progress toward clinically trustworthy mammography XAI will depend on pre-specified explanation claims, task-aligned quantitative metrics, transparent reporting of failure modes, and prospective evaluation of whether explanations improve human decision-making rather than merely increasing the visual persuasiveness of the model output.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 35701,
+            "infons": {
+              "section_type": "CONCL",
+              "type": "footnote"
+            },
+            "text": "Disclaimer/Publisher’s Note: The statements, opinions and data contained in all publications are solely those of the individual author(s) and contributor(s) and not of MDPI and/or the editor(s). MDPI and/or the editor(s) disclaim responsibility for any injury to people or property resulting from any ideas, methods, instructions or products referred to in the content.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 36073,
+            "infons": {
+              "section_type": "SUPPL",
+              "type": "title"
+            },
+            "text": "Supplementary Materials",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 36097,
+            "infons": {
+              "section_type": "SUPPL",
+              "type": "paragraph"
+            },
+            "text": "The following supporting information can be downloaded at: . Supplementary File S1: PRISMA checklist. Table S1: Database-specific search strategies and retrieval yields, Supplementary File S2: Standardized data-extraction template, Table S2: Adapted XAI appraisal rubric and study-level scores. Reference is cited in Supplementary File S1.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 36437,
+            "infons": {
+              "section_type": "AUTH_CONT",
+              "type": "title"
+            },
+            "text": "Author Contributions",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 36458,
+            "infons": {
+              "section_type": "AUTH_CONT",
+              "type": "paragraph"
+            },
+            "text": "Conceptualization, F.P. (Filippo Pesapane), R.G., G.P. and E.C.; methodology, F.P. (Filippo Pesapane) and A.R.; formal analysis, F.P. (Filippo Pesapane), S.P. and F.P. (Francesca Priolo); investigation, V.D., F.P. (Francesca Priolo) and I.M.; data curation, F.P. (Filippo Pesapane), A.R. and L.N.; writing—original draft preparation, F.P. (Filippo Pesapane), A.R. and R.G.; writing—review and editing, all authors; supervision, E.C.; project administration, F.P. (Filippo Pesapane). All authors have read and agreed to the published version of the manuscript.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 37022,
+            "infons": {
+              "section_type": "AUTH_CONT",
+              "type": "title"
+            },
+            "text": "Institutional Review Board Statement",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 37059,
+            "infons": {
+              "section_type": "AUTH_CONT",
+              "type": "paragraph"
+            },
+            "text": "Not applicable as no new data were generated; moreover, no human participants, human data collection, human tissue/material, or animal involvement applies to this work.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 37228,
+            "infons": {
+              "section_type": "AUTH_CONT",
+              "type": "title"
+            },
+            "text": "Informed Consent Statement",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 37255,
+            "infons": {
+              "section_type": "AUTH_CONT",
+              "type": "paragraph"
+            },
+            "text": "Not applicable. This study did not generate new data and did not involve human participants or the collection of human data.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 37380,
+            "infons": {
+              "section_type": "SUPPL",
+              "type": "title"
+            },
+            "text": "Data Availability Statement",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 37408,
+            "infons": {
+              "section_type": "SUPPL",
+              "type": "paragraph"
+            },
+            "text": "No new data were created or analyzed in this study. Data sharing is not applicable to this article.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 37508,
+            "infons": {
+              "section_type": "COMP_INT",
+              "type": "title"
+            },
+            "text": "Conflicts of Interest",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 37530,
+            "infons": {
+              "section_type": "COMP_INT",
+              "type": "paragraph"
+            },
+            "text": "The authors declare no conflicts of interest.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 37576,
+            "infons": {
+              "section_type": "REF",
+              "type": "title"
+            },
+            "text": "References",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 37587,
+            "infons": {
+              "elocation-id": "2901",
+              "name_0": "surname:Pesapane;given-names:F.",
+              "name_1": "surname:Nicosia;given-names:L.",
+              "name_2": "surname:D’Amelio;given-names:L.",
+              "name_3": "surname:Quercioli;given-names:G.",
+              "name_4": "surname:Pannarale;given-names:M.R.",
+              "name_5": "surname:Priolo;given-names:F.",
+              "name_6": "surname:Marinucci;given-names:I.",
+              "name_7": "surname:Farina;given-names:M.G.",
+              "name_8": "surname:Penco;given-names:S.",
+              "name_9": "surname:Dominelli;given-names:V.",
+              "pub-id_doi": "10.3390/cancers17172901",
+              "pub-id_pmid": "40940998",
+              "section_type": "REF",
+              "source": "Cancers",
+              "type": "ref",
+              "volume": "17",
+              "year": "2025"
+            },
+            "text": "Artificial Intelligence-Driven Personalization in Breast Cancer Screening: From Population Models to Individualized Protocols",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 37713,
+            "infons": {
+              "fpage": "917",
+              "lpage": "924",
+              "name_0": "surname:Eisemann;given-names:N.",
+              "name_1": "surname:Bunk;given-names:S.",
+              "name_2": "surname:Mukama;given-names:T.",
+              "name_3": "surname:Baltus;given-names:H.",
+              "name_4": "surname:Elsner;given-names:S.A.",
+              "name_5": "surname:Gomille;given-names:T.",
+              "name_6": "surname:Hecht;given-names:G.",
+              "name_7": "surname:Heywang-Kobrunner;given-names:S.",
+              "name_8": "surname:Rathmann;given-names:R.",
+              "name_9": "surname:Siegmann-Luz;given-names:K.",
+              "pub-id_doi": "10.1038/s41591-024-03408-6",
+              "pub-id_pmid": "39775040",
+              "section_type": "REF",
+              "source": "Nat. Med.",
+              "type": "ref",
+              "volume": "31",
+              "year": "2025"
+            },
+            "text": "Nationwide real-world implementation of AI for cancer detection in population-based mammography screening",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 37819,
+            "infons": {
+              "fpage": "2248",
+              "name_0": "surname:Chang;given-names:Y.W.",
+              "name_1": "surname:Ryu;given-names:J.K.",
+              "name_2": "surname:An;given-names:J.K.",
+              "name_3": "surname:Choi;given-names:N.",
+              "name_4": "surname:Park;given-names:Y.M.",
+              "name_5": "surname:Ko;given-names:K.H.",
+              "name_6": "surname:Han;given-names:K.",
+              "pub-id_doi": "10.1038/s41467-025-57469-3",
+              "pub-id_pmid": "40050619",
+              "section_type": "REF",
+              "source": "Nat. Commun.",
+              "type": "ref",
+              "volume": "16",
+              "year": "2025"
+            },
+            "text": "Artificial intelligence for breast cancer screening in mammography (AI-STREAM): Preliminary analysis of a prospective multicenter cohort study",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 37962,
+            "infons": {
+              "fpage": "936",
+              "lpage": "944",
+              "name_0": "surname:Lang;given-names:K.",
+              "name_1": "surname:Josefsson;given-names:V.",
+              "name_2": "surname:Larsson;given-names:A.M.",
+              "name_3": "surname:Larsson;given-names:S.",
+              "name_4": "surname:Hogberg;given-names:C.",
+              "name_5": "surname:Sartor;given-names:H.",
+              "name_6": "surname:Hofvind;given-names:S.",
+              "name_7": "surname:Andersson;given-names:I.",
+              "name_8": "surname:Rosso;given-names:A.",
+              "pub-id_doi": "10.1016/S1470-2045(23)00298-X",
+              "pub-id_pmid": "37541274",
+              "section_type": "REF",
+              "source": "Lancet Oncol.",
+              "type": "ref",
+              "volume": "24",
+              "year": "2023"
+            },
+            "text": "Artificial intelligence-supported screen reading versus standard double reading in the Mammography Screening with Artificial Intelligence trial (MASAI): A clinical safety analysis of a randomised, controlled, non-inferiority, single-blinded, screening accuracy study",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 38229,
+            "infons": {
+              "fpage": "e703",
+              "lpage": "e711",
+              "name_0": "surname:Dembrower;given-names:K.",
+              "name_1": "surname:Crippa;given-names:A.",
+              "name_2": "surname:Colon;given-names:E.",
+              "name_3": "surname:Eklund;given-names:M.",
+              "name_4": "surname:Strand;given-names:F.",
+              "name_5": "surname:ScreenTrust;given-names:C.A.D.T.C.",
+              "pub-id_doi": "10.1016/S2589-7500(23)00153-X",
+              "pub-id_pmid": "37690911",
+              "section_type": "REF",
+              "source": "Lancet Digit. Health",
+              "type": "ref",
+              "volume": "5",
+              "year": "2023"
+            },
+            "text": "Artificial intelligence for breast cancer detection in screening mammography in Sweden: A prospective, population-based, paired-reader, non-inferiority study",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 38387,
+            "infons": {
+              "fpage": "e242566",
+              "name_0": "surname:Dembrower;given-names:K.E.",
+              "name_1": "surname:Crippa;given-names:A.",
+              "name_2": "surname:Eklund;given-names:M.",
+              "name_3": "surname:Strand;given-names:F.",
+              "pub-id_doi": "10.1148/radiol.242566",
+              "pub-id_pmid": "40100021",
+              "section_type": "REF",
+              "source": "Radiology",
+              "type": "ref",
+              "volume": "314",
+              "year": "2025"
+            },
+            "text": "Human-AI Interaction in the ScreenTrustCAD Trial: Recall Proportion and Positive Predictive Value Related to Screening Mammograms Flagged by AI CAD versus a Human Reader",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 38557,
+            "infons": {
+              "fpage": "754",
+              "lpage": "764",
+              "name_0": "surname:Lyth;given-names:J.",
+              "name_1": "surname:Gialias;given-names:P.",
+              "name_2": "surname:Husberg;given-names:M.",
+              "name_3": "surname:Bernfort;given-names:L.",
+              "name_4": "surname:Bjerner;given-names:T.",
+              "name_5": "surname:Wiberg;given-names:M.K.",
+              "name_6": "surname:Levin;given-names:L.A.",
+              "name_7": "surname:Gustafsson;given-names:H.",
+              "pub-id_doi": "10.1007/s00330-025-11821-9",
+              "pub-id_pmid": "40684064",
+              "section_type": "REF",
+              "source": "Eur. Radiol.",
+              "type": "ref",
+              "volume": "36",
+              "year": "2025"
+            },
+            "text": "Results from a Swedish model-based analysis of the cost-effectiveness of AI-assisted digital mammography",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 38662,
+            "infons": {
+              "fpage": "287",
+              "name_0": "surname:Pesapane;given-names:F.",
+              "name_1": "surname:Sardanelli;given-names:F.",
+              "pub-id_doi": "10.1186/s13244-025-02171-7",
+              "pub-id_pmid": "41427974",
+              "section_type": "REF",
+              "source": "Insights Imaging",
+              "type": "ref",
+              "volume": "16",
+              "year": "2025"
+            },
+            "text": "Keeping AI in medicine and radiology within the framework of scientific method: Measuring to close the epistemic gap",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 38779,
+            "infons": {
+              "fpage": "111852",
+              "name_0": "surname:Pesapane;given-names:F.",
+              "name_1": "surname:Hauglid;given-names:M.K.",
+              "name_2": "surname:Fumagalli;given-names:M.",
+              "name_3": "surname:Petersson;given-names:L.",
+              "name_4": "surname:Parkar;given-names:A.P.",
+              "name_5": "surname:Cassano;given-names:E.",
+              "name_6": "surname:Horgan;given-names:D.",
+              "pub-id_doi": "10.1016/j.ejrad.2024.111852",
+              "pub-id_pmid": "39612599",
+              "section_type": "REF",
+              "source": "Eur. J. Radiol.",
+              "type": "ref",
+              "volume": "182",
+              "year": "2025"
+            },
+            "text": "The translation of in-house imaging AI research into a medical device ensuring ethical and regulatory integrity",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 38891,
+            "infons": {
+              "fpage": "1",
+              "lpage": "12",
+              "name_0": "surname:Pesapane;given-names:F.",
+              "name_1": "surname:De Cecco;given-names:C.",
+              "name_2": "surname:Wang;given-names:H.",
+              "name_3": "surname:Hauglid;given-names:M.K.",
+              "name_4": "surname:Sardanelli;given-names:F.",
+              "pub-id_doi": "10.1007/s00330-026-12460-4",
+              "pub-id_pmid": "40586816",
+              "section_type": "REF",
+              "source": "Eur. Radiol.",
+              "type": "ref",
+              "year": "2026"
+            },
+            "text": "Artificial intelligence as medical device in radiology in 2025: The regulatory scenario in the EU, USA, and China",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 39005,
+            "infons": {
+              "fpage": "110492",
+              "name_0": "surname:Shifa;given-names:N.",
+              "name_1": "surname:Saleh;given-names:M.",
+              "name_2": "surname:Akbari;given-names:Y.",
+              "name_3": "surname:Al Maadeed;given-names:S.",
+              "pub-id_doi": "10.1016/j.clinimag.2025.110492",
+              "pub-id_pmid": "40378639",
+              "section_type": "REF",
+              "source": "Clin. Imaging",
+              "type": "ref",
+              "volume": "123",
+              "year": "2025"
+            },
+            "text": "A review of explainable AI techniques and their evaluation in mammography for breast cancer screening",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 39107,
+            "infons": {
+              "fpage": "60",
+              "name_0": "surname:Camurdan;given-names:O.",
+              "name_1": "surname:Tanyel;given-names:T.",
+              "name_2": "surname:Aktufan Cerekci;given-names:E.",
+              "name_3": "surname:Alis;given-names:D.",
+              "name_4": "surname:Meltem;given-names:E.",
+              "name_5": "surname:Denizoglu;given-names:N.",
+              "name_6": "surname:Seker;given-names:M.E.",
+              "name_7": "surname:Oksuz;given-names:I.",
+              "name_8": "surname:Karaarslan;given-names:E.",
+              "pub-id_doi": "10.1186/s13244-025-01922-w",
+              "pub-id_pmid": "40106066",
+              "section_type": "REF",
+              "source": "Insights Imaging",
+              "type": "ref",
+              "volume": "16",
+              "year": "2025"
+            },
+            "text": "Annotation-efficient, patch-based, explainable deep learning using curriculum method for breast cancer detection in screening mammography",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 39245,
+            "infons": {
+              "fpage": "111356",
+              "name_0": "surname:Cerekci;given-names:E.",
+              "name_1": "surname:Alis;given-names:D.",
+              "name_2": "surname:Denizoglu;given-names:N.",
+              "name_3": "surname:Camurdan;given-names:O.",
+              "name_4": "surname:Ege Seker;given-names:M.",
+              "name_5": "surname:Ozer;given-names:C.",
+              "name_6": "surname:Hansu;given-names:M.Y.",
+              "name_7": "surname:Tanyel;given-names:T.",
+              "name_8": "surname:Oksuz;given-names:I.",
+              "name_9": "surname:Karaarslan;given-names:E.",
+              "pub-id_doi": "10.1016/j.ejrad.2024.111356",
+              "pub-id_pmid": "38364587",
+              "section_type": "REF",
+              "source": "Eur. J. Radiol.",
+              "type": "ref",
+              "volume": "173",
+              "year": "2024"
+            },
+            "text": "Quantitative evaluation of Saliency-Based Explainable artificial intelligence (XAI) methods in Deep Learning-Based mammogram analysis",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 39379,
+            "infons": {
+              "fpage": "111393",
+              "name_0": "surname:Marcus;given-names:E.",
+              "name_1": "surname:Teuwen;given-names:J.",
+              "pub-id_doi": "10.1016/j.ejrad.2024.111393",
+              "pub-id_pmid": "38417186",
+              "section_type": "REF",
+              "source": "Eur. J. Radiol.",
+              "type": "ref",
+              "volume": "173",
+              "year": "2024"
+            },
+            "text": "Artificial intelligence and explanation: How, why, and when to explain black boxes",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 39462,
+            "infons": {
+              "fpage": "e136",
+              "name_0": "surname:Ghasemi;given-names:A.",
+              "name_1": "surname:Hashtarkhani;given-names:S.",
+              "name_2": "surname:Schwartz;given-names:D.L.",
+              "name_3": "surname:Shaban-Nejad;given-names:A.",
+              "pub-id_doi": "10.1002/cai2.136",
+              "pub-id_pmid": "39430216",
+              "section_type": "REF",
+              "source": "Cancer Innov.",
+              "type": "ref",
+              "volume": "3",
+              "year": "2024"
+            },
+            "text": "Explainable artificial intelligence in breast cancer detection and risk prediction: A systematic scoping review",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 39574,
+            "infons": {
+              "elocation-id": "3668",
+              "name_0": "surname:Talaat;given-names:F.M.",
+              "name_1": "surname:Gamel;given-names:S.A.",
+              "name_2": "surname:El-Balka;given-names:R.M.",
+              "name_3": "surname:Shehata;given-names:M.",
+              "name_4": "surname:ZainEldin;given-names:H.",
+              "pub-id_doi": "10.3390/cancers16213668",
+              "pub-id_pmid": "39518105",
+              "section_type": "REF",
+              "source": "Cancers",
+              "type": "ref",
+              "volume": "16",
+              "year": "2024"
+            },
+            "text": "Grad-CAM Enabled Breast Cancer Classification with a 3D Inception-ResNet V2: Empowering Radiologists with Explainable Insights",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 39701,
+            "infons": {
+              "elocation-id": "104",
+              "name_0": "surname:Freyer;given-names:N.",
+              "name_1": "surname:Gross;given-names:D.",
+              "name_2": "surname:Lipprandt;given-names:M.",
+              "pub-id_doi": "10.1186/s12910-024-01103-2",
+              "pub-id_pmid": "39354512",
+              "section_type": "REF",
+              "source": "BMC Med. Ethics",
+              "type": "ref",
+              "volume": "25",
+              "year": "2024"
+            },
+            "text": "The ethical requirement of explainability for AI-DSS in healthcare: A systematic review of reasons",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 39800,
+            "infons": {
+              "elocation-id": "1024195",
+              "name_0": "surname:Javed;given-names:A.R.",
+              "name_1": "surname:Khan;given-names:H.U.",
+              "name_2": "surname:Alomari;given-names:M.K.B.",
+              "name_3": "surname:Sarwar;given-names:M.U.",
+              "name_4": "surname:Asim;given-names:M.",
+              "name_5": "surname:Almadhor;given-names:A.S.",
+              "name_6": "surname:Khan;given-names:M.Z.",
+              "pub-id_doi": "10.3389/fpubh.2023.1024195",
+              "pub-id_pmid": "36969684",
+              "section_type": "REF",
+              "source": "Front. Public Health",
+              "type": "ref",
+              "volume": "11",
+              "year": "2023"
+            },
+            "text": "Toward explainable AI-empowered cognitive health assessment",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 39860,
+            "infons": {
+              "fpage": "69",
+              "name_0": "surname:Pesapane;given-names:F.",
+              "name_1": "surname:Trentin;given-names:C.",
+              "name_2": "surname:Ferrari;given-names:F.",
+              "name_3": "surname:Signorelli;given-names:G.",
+              "name_4": "surname:Tantrige;given-names:P.",
+              "name_5": "surname:Montesano;given-names:M.",
+              "name_6": "surname:Cicala;given-names:C.",
+              "name_7": "surname:Virgoli;given-names:R.",
+              "name_8": "surname:D’Acquisto;given-names:S.",
+              "name_9": "surname:Nicosia;given-names:L.",
+              "pub-id_doi": "10.1186/s41747-023-00384-3",
+              "pub-id_pmid": "37934382",
+              "section_type": "REF",
+              "source": "Eur. Radiol. Exp.",
+              "type": "ref",
+              "volume": "7",
+              "year": "2023"
+            },
+            "text": "Deep learning performance for detection and classification of microcalcifications on mammography",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 39957,
+            "infons": {
+              "elocation-id": "3143",
+              "name_0": "surname:Acosta-Jimenez;given-names:S.",
+              "name_1": "surname:Mendoza-Mendoza;given-names:M.M.",
+              "name_2": "surname:Galvan-Tejada;given-names:C.E.",
+              "name_3": "surname:Celaya-Padilla;given-names:J.M.",
+              "name_4": "surname:Galvan-Tejada;given-names:J.I.",
+              "name_5": "surname:Soto-Murillo;given-names:M.A.",
+              "pub-id_doi": "10.3390/diagnostics15243143",
+              "pub-id_pmid": "41464144",
+              "section_type": "REF",
+              "source": "Diagnostics",
+              "type": "ref",
+              "volume": "15",
+              "year": "2025"
+            },
+            "text": "Explainable Deep Learning for Breast Lesion Classification in Digital and Contrast-Enhanced Mammography",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 40061,
+            "infons": {
+              "fpage": "e78955",
+              "name_0": "surname:Conti;given-names:L.",
+              "name_1": "surname:Capetti;given-names:B.",
+              "name_2": "surname:Battaglia;given-names:O.",
+              "name_3": "surname:Grasso;given-names:R.",
+              "name_4": "surname:Pesapane;given-names:F.",
+              "name_5": "surname:Monzani;given-names:D.",
+              "name_6": "surname:Pravettoni;given-names:G.",
+              "pub-id_doi": "10.2196/78955",
+              "pub-id_pmid": "41911478",
+              "section_type": "REF",
+              "source": "JMIR Med. Inform.",
+              "type": "ref",
+              "volume": "14",
+              "year": "2026"
+            },
+            "text": "Viewpoint on the Consequences and Mitigation of Cognitive Bias in the Radiological Interpretation of Breast Cancer Imaging Using Artificial Intelligence",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 40214,
+            "infons": {
+              "elocation-id": "1601929",
+              "name_0": "surname:Mellado;given-names:D.",
+              "name_1": "surname:Mayeta-Revilla;given-names:L.",
+              "name_2": "surname:Sotelo;given-names:J.",
+              "name_3": "surname:Querales;given-names:M.",
+              "name_4": "surname:Godoy;given-names:E.",
+              "name_5": "surname:Lever;given-names:S.",
+              "name_6": "surname:Pardo;given-names:F.",
+              "name_7": "surname:Chabert;given-names:S.",
+              "name_8": "surname:Salas;given-names:R.",
+              "pub-id_doi": "10.3389/fonc.2025.1601929",
+              "pub-id_pmid": "41064082",
+              "section_type": "REF",
+              "source": "Front. Oncol.",
+              "type": "ref",
+              "volume": "15",
+              "year": "2025"
+            },
+            "text": "Identifying clinically relevant findings in breast cancer using deep learning and feature attribution on local views from high-resolution mammography",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 40364,
+            "infons": {
+              "elocation-id": "e0320091",
+              "name_0": "surname:Moffett;given-names:L.",
+              "name_1": "surname:Barnett;given-names:A.J.",
+              "name_2": "surname:Donnelly;given-names:J.",
+              "name_3": "surname:Schwartz;given-names:F.R.",
+              "name_4": "surname:Trivedi;given-names:H.",
+              "name_5": "surname:Lo;given-names:J.",
+              "name_6": "surname:Rudin;given-names:C.",
+              "pub-id_doi": "10.1371/journal.pone.0320091",
+              "pub-id_pmid": "40569906",
+              "section_type": "REF",
+              "source": "PLoS ONE",
+              "type": "ref",
+              "volume": "20",
+              "year": "2025"
+            },
+            "text": "Multi-site validation of an interpretable model to analyze breast masses",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 40437,
+            "infons": {
+              "fpage": "26",
+              "name_0": "surname:Prinzi;given-names:F.",
+              "name_1": "surname:Currieri;given-names:T.",
+              "name_2": "surname:Gaglio;given-names:S.",
+              "name_3": "surname:Vitabile;given-names:S.",
+              "pub-id_doi": "10.1186/s41747-024-00428-2",
+              "pub-id_pmid": "38438821",
+              "section_type": "REF",
+              "source": "Eur. Radiol. Exp.",
+              "type": "ref",
+              "volume": "8",
+              "year": "2024"
+            },
+            "text": "Shallow and deep learning classifiers in medical image analysis",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 40501,
+            "infons": {
+              "fpage": "e220187",
+              "name_0": "surname:Wollek;given-names:A.",
+              "name_1": "surname:Graf;given-names:R.",
+              "name_2": "surname:Cecatka;given-names:S.",
+              "name_3": "surname:Fink;given-names:N.",
+              "name_4": "surname:Willem;given-names:T.",
+              "name_5": "surname:Sabel;given-names:B.O.",
+              "name_6": "surname:Lasser;given-names:T.",
+              "pub-id_doi": "10.1148/ryai.220187",
+              "pub-id_pmid": "37035429",
+              "section_type": "REF",
+              "source": "Radiol. Artif. Intell.",
+              "type": "ref",
+              "volume": "5",
+              "year": "2023"
+            },
+            "text": "Attention-based Saliency Maps Improve Interpretability of Pneumothorax Classification",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 40587,
+            "infons": {
+              "fpage": "156",
+              "name_0": "surname:Chen;given-names:H.",
+              "name_1": "surname:Gomez;given-names:C.",
+              "name_2": "surname:Huang;given-names:C.M.",
+              "name_3": "surname:Unberath;given-names:M.",
+              "pub-id_doi": "10.1038/s41746-022-00699-2",
+              "pub-id_pmid": "36261476",
+              "section_type": "REF",
+              "source": "npj Digit. Med.",
+              "type": "ref",
+              "volume": "5",
+              "year": "2022"
+            },
+            "text": "Explainable medical imaging AI needs human-centered design: Guidelines and evidence from a systematic review",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 40696,
+            "infons": {
+              "fpage": "9",
+              "lpage": "24",
+              "name_0": "surname:Castiglioni;given-names:I.",
+              "name_1": "surname:Rundo;given-names:L.",
+              "name_2": "surname:Codari;given-names:M.",
+              "name_3": "surname:Di Leo;given-names:G.",
+              "name_4": "surname:Salvatore;given-names:C.",
+              "name_5": "surname:Interlenghi;given-names:M.",
+              "name_6": "surname:Gallivanone;given-names:F.",
+              "name_7": "surname:Cozzi;given-names:A.",
+              "name_8": "surname:D’Amico;given-names:N.C.",
+              "name_9": "surname:Sardanelli;given-names:F.",
+              "pub-id_doi": "10.1016/j.ejmp.2021.02.006",
+              "pub-id_pmid": "33662856",
+              "section_type": "REF",
+              "source": "Phys. Med.",
+              "type": "ref",
+              "volume": "83",
+              "year": "2021"
+            },
+            "text": "AI applications to medical images: From machine learning to deep learning",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 40770,
+            "infons": {
+              "fpage": "18",
+              "lpage": "26",
+              "name_0": "surname:Shen;given-names:Y.",
+              "name_1": "surname:Wu;given-names:N.",
+              "name_2": "surname:Phang;given-names:J.",
+              "name_3": "surname:Park;given-names:J.",
+              "name_4": "surname:Kim;given-names:G.",
+              "name_5": "surname:Moy;given-names:L.",
+              "name_6": "surname:Cho;given-names:K.",
+              "name_7": "surname:Geras;given-names:K.J.",
+              "pub-id_doi": "10.1007/978-3-030-32692-0_3",
+              "pub-id_pmid": "32149282",
+              "section_type": "REF",
+              "source": "Mach. Learn. Med. Imaging",
+              "type": "ref",
+              "volume": "11861",
+              "year": "2019"
+            },
+            "text": "Globally-Aware Multiple Instance Classifier for Breast Cancer Screening",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 40842,
+            "infons": {
+              "fpage": "e232780",
+              "name_0": "surname:Donnelly;given-names:J.",
+              "name_1": "surname:Moffett;given-names:L.",
+              "name_2": "surname:Barnett;given-names:A.J.",
+              "name_3": "surname:Trivedi;given-names:H.",
+              "name_4": "surname:Schwartz;given-names:F.",
+              "name_5": "surname:Lo;given-names:J.",
+              "name_6": "surname:Rudin;given-names:C.",
+              "pub-id_doi": "10.1148/radiol.232780",
+              "pub-id_pmid": "38501952",
+              "section_type": "REF",
+              "source": "Radiology",
+              "type": "ref",
+              "volume": "310",
+              "year": "2024"
+            },
+            "text": "AsymMirai: Interpretable Mammography-based Deep Learning Model for 1-5-year Breast Cancer Risk Prediction",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 40948,
+            "infons": {
+              "fpage": "e2242343",
+              "name_0": "surname:Hsu;given-names:W.",
+              "name_1": "surname:Hippe;given-names:D.S.",
+              "name_2": "surname:Nakhaei;given-names:N.",
+              "name_3": "surname:Wang;given-names:P.C.",
+              "name_4": "surname:Zhu;given-names:B.",
+              "name_5": "surname:Siu;given-names:N.",
+              "name_6": "surname:Ahsen;given-names:M.E.",
+              "name_7": "surname:Lotter;given-names:W.",
+              "name_8": "surname:Sorensen;given-names:A.G.",
+              "name_9": "surname:Naeim;given-names:A.",
+              "pub-id_doi": "10.1001/jamanetworkopen.2022.42343",
+              "pub-id_pmid": "36409497",
+              "section_type": "REF",
+              "source": "JAMA Netw. Open",
+              "type": "ref",
+              "volume": "5",
+              "year": "2022"
+            },
+            "text": "External Validation of an Ensemble Model for Automated Mammography Interpretation by Artificial Intelligence",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 41057,
+            "infons": {
+              "fpage": "015001",
+              "name_0": "surname:Klanecek;given-names:Z.",
+              "name_1": "surname:Wang;given-names:Y.K.",
+              "name_2": "surname:Wagner;given-names:T.",
+              "name_3": "surname:Cockmartin;given-names:L.",
+              "name_4": "surname:Marshall;given-names:N.",
+              "name_5": "surname:Schott;given-names:B.",
+              "name_6": "surname:Deatsch;given-names:A.",
+              "name_7": "surname:Studen;given-names:A.",
+              "name_8": "surname:Jarm;given-names:K.",
+              "name_9": "surname:Krajc;given-names:M.",
+              "pub-id_doi": "10.1088/1361-6560/ad9db3",
+              "section_type": "REF",
+              "source": "Phys. Med. Biol.",
+              "type": "ref",
+              "volume": "70",
+              "year": "2024"
+            },
+            "text": "Longitudinal interpretability of deep learning based breast cancer risk prediction",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 41140,
+            "infons": {
+              "fpage": "235025",
+              "name_0": "surname:Kim;given-names:S.T.",
+              "name_1": "surname:Lee;given-names:J.H.",
+              "name_2": "surname:Lee;given-names:H.",
+              "name_3": "surname:Ro;given-names:Y.M.",
+              "pub-id_doi": "10.1088/1361-6560/aaef0a",
+              "pub-id_pmid": "30511660",
+              "section_type": "REF",
+              "source": "Phys. Med. Biol.",
+              "type": "ref",
+              "volume": "63",
+              "year": "2018"
+            },
+            "text": "Visually interpretable deep network for diagnosis of breast masses on mammograms",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 41221,
+            "infons": {
+              "fpage": "10341",
+              "name_0": "surname:Choukali;given-names:M.A.",
+              "name_1": "surname:Amirani;given-names:M.C.",
+              "name_2": "surname:Valizadeh;given-names:M.",
+              "name_3": "surname:Abbasi;given-names:A.",
+              "name_4": "surname:Komeili;given-names:M.",
+              "pub-id_doi": "10.1038/s41598-024-60743-x",
+              "pub-id_pmid": "38710757",
+              "section_type": "REF",
+              "source": "Sci. Rep.",
+              "type": "ref",
+              "volume": "14",
+              "year": "2024"
+            },
+            "text": "Pseudo-class part prototype networks for interpretable breast cancer classification",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 41305,
+            "infons": {
+              "fpage": "101908",
+              "name_0": "surname:Shen;given-names:Y.",
+              "name_1": "surname:Wu;given-names:N.",
+              "name_2": "surname:Phang;given-names:J.",
+              "name_3": "surname:Park;given-names:J.",
+              "name_4": "surname:Liu;given-names:K.",
+              "name_5": "surname:Tyagi;given-names:S.",
+              "name_6": "surname:Heacock;given-names:L.",
+              "name_7": "surname:Kim;given-names:S.G.",
+              "name_8": "surname:Moy;given-names:L.",
+              "name_9": "surname:Cho;given-names:K.",
+              "pub-id_doi": "10.1016/j.media.2020.101908",
+              "pub-id_pmid": "33383334",
+              "section_type": "REF",
+              "source": "Med. Image Anal.",
+              "type": "ref",
+              "volume": "68",
+              "year": "2021"
+            },
+            "text": "An interpretable classifier for high-resolution breast cancer screening images utilizing weakly supervised localization",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 41425,
+            "infons": {
+              "fpage": "e240417",
+              "name_0": "surname:Wang;given-names:Y.K.",
+              "name_1": "surname:Klanecek;given-names:Z.",
+              "name_2": "surname:Wagner;given-names:T.",
+              "name_3": "surname:Cockmartin;given-names:L.",
+              "name_4": "surname:Marshall;given-names:N.",
+              "name_5": "surname:Studen;given-names:A.",
+              "name_6": "surname:Jeraj;given-names:R.",
+              "name_7": "surname:Bosmans;given-names:H.",
+              "pub-id_doi": "10.1148/ryai.240417",
+              "pub-id_pmid": "40899990",
+              "section_type": "REF",
+              "source": "Radiol. Artif. Intell.",
+              "type": "ref",
+              "volume": "7",
+              "year": "2025"
+            },
+            "text": "Using Explainable AI to Characterize Features in the Mirai Mammographic Breast Cancer Risk Prediction Model",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 41533,
+            "infons": {
+              "elocation-id": "1681072",
+              "name_0": "surname:Sha;given-names:Y.",
+              "name_1": "surname:Yuan;given-names:Q.",
+              "name_2": "surname:Du;given-names:Y.",
+              "name_3": "surname:Yang;given-names:S.",
+              "name_4": "surname:Niu;given-names:M.",
+              "name_5": "surname:Liang;given-names:X.",
+              "name_6": "surname:Sun;given-names:S.",
+              "name_7": "surname:Li;given-names:T.",
+              "name_8": "surname:Gong;given-names:S.",
+              "name_9": "surname:Han;given-names:J.",
+              "pub-id_doi": "10.3389/fimmu.2025.1681072",
+              "pub-id_pmid": "41030436",
+              "section_type": "REF",
+              "source": "Front. Immunol.",
+              "type": "ref",
+              "volume": "16",
+              "year": "2025"
+            },
+            "text": "Integrating deep learning features from mammography with SHAP values for a machine learning model predicting over 5-year recurrence of breast ductal carcinoma In Situ post-lumpectomy",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 41716,
+            "infons": {
+              "fpage": "140",
+              "lpage": "146",
+              "name_0": "surname:Lopez;given-names:E.",
+              "name_1": "surname:Betello;given-names:F.",
+              "name_2": "surname:Carmignani;given-names:F.",
+              "name_3": "surname:Grassucci;given-names:E.",
+              "name_4": "surname:Comminiello;given-names:E.",
+              "pub-id_doi": "10.1016/j.patrec.2024.04.014",
+              "section_type": "REF",
+              "source": "Pattern Recognit. Lett.",
+              "type": "ref",
+              "volume": "182",
+              "year": "2024"
+            },
+            "text": "Attention-map augmentation for hypercomplex breast cancer classification",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 41789,
+            "infons": {
+              "fpage": "e220299",
+              "name_0": "surname:Omoleye;given-names:O.J.",
+              "name_1": "surname:Woodard;given-names:A.E.",
+              "name_2": "surname:Howard;given-names:F.M.",
+              "name_3": "surname:Zhao;given-names:F.",
+              "name_4": "surname:Yoshimatsu;given-names:T.F.",
+              "name_5": "surname:Zheng;given-names:Y.",
+              "name_6": "surname:Pearson;given-names:A.T.",
+              "name_7": "surname:Levental;given-names:M.",
+              "name_8": "surname:Aribisala;given-names:B.S.",
+              "name_9": "surname:Kulkarni;given-names:K.",
+              "pub-id_doi": "10.1148/ryai.220299",
+              "pub-id_pmid": "38074785",
+              "section_type": "REF",
+              "source": "Radiol. Artif. Intell.",
+              "type": "ref",
+              "volume": "5",
+              "year": "2023"
+            },
+            "text": "External Evaluation of a Mammography-based Deep Learning Model for Predicting Breast Cancer in an Ethnically Diverse Population",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 41917,
+            "infons": {
+              "fpage": "20220569",
+              "name_0": "surname:Pesapane;given-names:F.",
+              "name_1": "surname:Rotili;given-names:A.",
+              "name_2": "surname:Valconi;given-names:E.",
+              "name_3": "surname:Agazzi;given-names:G.M.",
+              "name_4": "surname:Montesano;given-names:M.",
+              "name_5": "surname:Penco;given-names:S.",
+              "name_6": "surname:Nicosia;given-names:L.",
+              "name_7": "surname:Bozzini;given-names:A.",
+              "name_8": "surname:Meneghetti;given-names:L.",
+              "name_9": "surname:Latronico;given-names:A.",
+              "pub-id_doi": "10.1259/bjr.20220569",
+              "pub-id_pmid": "36314388",
+              "section_type": "REF",
+              "source": "Br. J. Radiol.",
+              "type": "ref",
+              "volume": "96",
+              "year": "2023"
+            },
+            "text": "Women’s perceptions and attitudes to the use of AI in breast cancer screening: A survey in a cancer referral centre",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 42035,
+            "infons": {
+              "fpage": "e084014",
+              "name_0": "surname:Viberg Johansson;given-names:J.",
+              "name_1": "surname:Dembrower;given-names:K.",
+              "name_2": "surname:Strand;given-names:F.",
+              "name_3": "surname:Grauman;given-names:A.",
+              "pub-id_doi": "10.1136/bmjopen-2024-084014",
+              "section_type": "REF",
+              "source": "BMJ Open",
+              "type": "ref",
+              "volume": "14",
+              "year": "2024"
+            },
+            "text": "Women’s perceptions and attitudes towards the use of AI in mammography in Sweden: A qualitative interview study",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 42149,
+            "infons": {
+              "elocation-id": "e0000237",
+              "name_0": "surname:Robertson;given-names:C.",
+              "name_1": "surname:Woods;given-names:A.",
+              "name_2": "surname:Bergstrand;given-names:K.",
+              "name_3": "surname:Findley;given-names:J.",
+              "name_4": "surname:Balser;given-names:C.",
+              "name_5": "surname:Slepian;given-names:M.J.",
+              "pub-id_doi": "10.1371/journal.pdig.0000237",
+              "pub-id_pmid": "37205713",
+              "section_type": "REF",
+              "source": "PLoS Digit. Health",
+              "type": "ref",
+              "volume": "2",
+              "year": "2023"
+            },
+            "text": "Diverse patients’ attitudes towards Artificial Intelligence (AI) in diagnosis",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 42229,
+            "infons": {
+              "fpage": "e220146",
+              "name_0": "surname:de Vries;given-names:C.F.",
+              "name_1": "surname:Colosimo;given-names:S.J.",
+              "name_2": "surname:Staff;given-names:R.T.",
+              "name_3": "surname:Dymiter;given-names:J.A.",
+              "name_4": "surname:Yearsley;given-names:J.",
+              "name_5": "surname:Dinneen;given-names:D.",
+              "name_6": "surname:Boyle;given-names:M.",
+              "name_7": "surname:Harrison;given-names:D.J.",
+              "name_8": "surname:Anderson;given-names:L.A.",
+              "name_9": "surname:Lip;given-names:G.",
+              "pub-id_doi": "10.1148/ryai.220146",
+              "pub-id_pmid": "37293340",
+              "section_type": "REF",
+              "source": "Radiol. Artif. Intell.",
+              "type": "ref",
+              "volume": "5",
+              "year": "2023"
+            },
+            "text": "Impact of Different Mammography Systems on Artificial Intelligence Performance in Breast Cancer Screening",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 42335,
+            "infons": {
+              "fpage": "85",
+              "lpage": "99",
+              "name_0": "surname:Ren;given-names:W.",
+              "name_1": "surname:Chen;given-names:M.",
+              "name_2": "surname:Qiao;given-names:Y.",
+              "name_3": "surname:Zhao;given-names:F.",
+              "pub-id_doi": "10.1016/j.breast.2022.04.003",
+              "pub-id_pmid": "35636342",
+              "section_type": "REF",
+              "source": "Breast",
+              "type": "ref",
+              "volume": "64",
+              "year": "2022"
+            },
+            "text": "Global guidelines for breast cancer screening: A systematic review",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 42402,
+            "infons": {
+              "fpage": "533",
+              "lpage": "550",
+              "name_0": "surname:Clift;given-names:A.K.",
+              "name_1": "surname:Dodwell;given-names:D.",
+              "name_2": "surname:Lord;given-names:S.",
+              "name_3": "surname:Petrou;given-names:S.",
+              "name_4": "surname:Brady;given-names:S.M.",
+              "name_5": "surname:Collins;given-names:G.S.",
+              "name_6": "surname:Hippisley-Cox;given-names:J.",
+              "pub-id_doi": "10.1038/s41416-021-01550-3",
+              "pub-id_pmid": "34703006",
+              "section_type": "REF",
+              "source": "Br. J. Cancer",
+              "type": "ref",
+              "volume": "126",
+              "year": "2022"
+            },
+            "text": "The current status of risk-stratified breast screening",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 42457,
+            "infons": {
+              "fpage": "144",
+              "lpage": "155",
+              "name_0": "surname:Kim;given-names:G.",
+              "name_1": "surname:Bahl;given-names:M.",
+              "pub-id_doi": "10.1093/jbi/wbab001",
+              "pub-id_pmid": "33778488",
+              "section_type": "REF",
+              "source": "J. Breast Imaging",
+              "type": "ref",
+              "volume": "3",
+              "year": "2021"
+            },
+            "text": "Assessing Risk of Breast Cancer: A Review of Risk Prediction Models",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 42525,
+            "infons": {
+              "fpage": "266",
+              "lpage": "285",
+              "name_0": "surname:Mann;given-names:R.M.",
+              "name_1": "surname:Hooley;given-names:R.",
+              "name_2": "surname:Barr;given-names:R.G.",
+              "name_3": "surname:Moy;given-names:L.",
+              "pub-id_doi": "10.1148/radiol.2020200172",
+              "pub-id_pmid": "32897163",
+              "section_type": "REF",
+              "source": "Radiology",
+              "type": "ref",
+              "volume": "297",
+              "year": "2020"
+            },
+            "text": "Novel Approaches to Screening for Breast Cancer",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 42573,
+            "infons": {
+              "fpage": "254",
+              "lpage": "260",
+              "name_0": "surname:Sechopoulos;given-names:I.",
+              "name_1": "surname:Mann;given-names:R.M.",
+              "pub-id_doi": "10.1016/j.breast.2019.12.014",
+              "pub-id_pmid": "31927164",
+              "section_type": "REF",
+              "source": "Breast",
+              "type": "ref",
+              "volume": "49",
+              "year": "2020"
+            },
+            "text": "Stand-alone artificial intelligence—The future of breast cancer screening?",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 42650,
+            "infons": {
+              "fpage": "2104",
+              "lpage": "2112",
+              "name_0": "surname:Zahl;given-names:P.H.",
+              "name_1": "surname:Kalager;given-names:M.",
+              "name_2": "surname:Suhrke;given-names:P.",
+              "name_3": "surname:Nord;given-names:E.",
+              "pub-id_doi": "10.1002/ijc.32539",
+              "pub-id_pmid": "31254388",
+              "section_type": "REF",
+              "source": "Int. J. Cancer",
+              "type": "ref",
+              "volume": "146",
+              "year": "2020"
+            },
+            "text": "Quality-of-life effects of screening mammography in Norway",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 42709,
+            "infons": {
+              "fpage": "244",
+              "lpage": "255",
+              "name_0": "surname:Nelson;given-names:H.D.",
+              "name_1": "surname:Fu;given-names:R.",
+              "name_2": "surname:Cantor;given-names:A.",
+              "name_3": "surname:Pappas;given-names:M.",
+              "name_4": "surname:Daeges;given-names:M.",
+              "name_5": "surname:Humphrey;given-names:L.",
+              "pub-id_doi": "10.7326/M15-0969",
+              "pub-id_pmid": "26756588",
+              "section_type": "REF",
+              "source": "Ann. Intern. Med.",
+              "type": "ref",
+              "volume": "164",
+              "year": "2016"
+            },
+            "text": "Effectiveness of Breast Cancer Screening: Systematic Review and Meta-analysis to Update the 2009 U.S. Preventive Services Task Force Recommendation",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 42857,
+            "infons": {
+              "fpage": "954",
+              "lpage": "961",
+              "name_0": "surname:Tosteson;given-names:A.N.",
+              "name_1": "surname:Fryback;given-names:D.G.",
+              "name_2": "surname:Hammond;given-names:C.S.",
+              "name_3": "surname:Hanna;given-names:L.G.",
+              "name_4": "surname:Grove;given-names:M.R.",
+              "name_5": "surname:Brown;given-names:M.",
+              "name_6": "surname:Wang;given-names:Q.",
+              "name_7": "surname:Lindfors;given-names:K.",
+              "name_8": "surname:Pisano;given-names:E.D.",
+              "pub-id_doi": "10.1001/jamainternmed.2014.981",
+              "pub-id_pmid": "24756610",
+              "section_type": "REF",
+              "source": "JAMA Intern. Med.",
+              "type": "ref",
+              "volume": "174",
+              "year": "2014"
+            },
+            "text": "Consequences of false-positive screening mammograms",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 42909,
+            "infons": {
+              "fpage": "388",
+              "lpage": "396",
+              "name_0": "surname:McInnes;given-names:M.D.F.",
+              "name_1": "surname:Moher;given-names:D.",
+              "name_2": "surname:Thombs;given-names:B.D.",
+              "name_3": "surname:McGrath;given-names:T.A.",
+              "name_4": "surname:Bossuyt;given-names:P.M.",
+              "pub-id_doi": "10.1001/jama.2017.19163",
+              "pub-id_pmid": "29362800",
+              "section_type": "REF",
+              "source": "JAMA",
+              "type": "ref",
+              "volume": "319",
+              "year": "2018"
+            },
+            "text": "Preferred Reporting Items for a Systematic Review and Meta-analysis of Diagnostic Test Accuracy Studies: The PRISMA-DTA Statement",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 43039,
+            "infons": {
+              "file": "diagnostics-16-01412-g001.jpg",
+              "id": "diagnostics-16-01412-f001",
+              "section_type": "FIG",
+              "type": "fig_caption"
+            },
+            "text": "PRISMA flow chart.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 43058,
+            "infons": {
+              "file": "diagnostics-16-01412-t001.xml",
+              "id": "diagnostics-16-01412-t001",
+              "section_type": "TABLE",
+              "type": "table_caption"
+            },
+            "text": "Glossary box.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 43072,
+            "infons": {
+              "file": "diagnostics-16-01412-t001.xml",
+              "id": "diagnostics-16-01412-t001",
+              "section_type": "TABLE",
+              "type": "table",
+              "xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<table frame=\"hsides\" rules=\"groups\"><thead><tr><th align=\"center\" valign=\"middle\" style=\"border-top:solid thin;border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Term</th><th align=\"center\" valign=\"middle\" style=\"border-top:solid thin;border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Definition to Use in the Revised Manuscript</th></tr></thead><tbody><tr><td align=\"center\" valign=\"middle\" rowspan=\"1\" colspan=\"1\">XAI</td><td align=\"center\" valign=\"middle\" rowspan=\"1\" colspan=\"1\">Explainable artificial intelligence; methods intended to make model reasoning inspectable or interpretable.</td></tr><tr><td align=\"center\" valign=\"middle\" rowspan=\"1\" colspan=\"1\">SALIENCY MAP</td><td align=\"center\" valign=\"middle\" rowspan=\"1\" colspan=\"1\">A heatmap highlighting image regions associated with a model prediction.</td></tr><tr><td align=\"center\" valign=\"middle\" rowspan=\"1\" colspan=\"1\">GRAD-CAM</td><td align=\"center\" valign=\"middle\" rowspan=\"1\" colspan=\"1\">Gradient-weighted class activation mapping; a class-specific saliency method producing coarse heatmaps from convolutional feature maps.</td></tr><tr><td align=\"center\" valign=\"middle\" rowspan=\"1\" colspan=\"1\">SHAP</td><td align=\"center\" valign=\"middle\" rowspan=\"1\" colspan=\"1\">SHapley Additive exPlanations; a feature-attribution method estimating the marginal contribution of each feature.</td></tr><tr><td align=\"center\" valign=\"middle\" rowspan=\"1\" colspan=\"1\">LIME</td><td align=\"center\" valign=\"middle\" rowspan=\"1\" colspan=\"1\">Local Interpretable Model-agnostic Explanations; a local surrogate-model approach to explain a prediction.</td></tr><tr><td align=\"center\" valign=\"middle\" rowspan=\"1\" colspan=\"1\">POINTING GAME</td><td align=\"center\" valign=\"middle\" rowspan=\"1\" colspan=\"1\">A localization metric testing whether the highest-activation point of an explanation falls inside the lesion annotation.</td></tr><tr><td align=\"center\" valign=\"middle\" rowspan=\"1\" colspan=\"1\">EXTERNAL VALIDATION</td><td align=\"center\" valign=\"middle\" rowspan=\"1\" colspan=\"1\">Assessment of the model or explanation on data from a different institution, site, scanner, or population.</td></tr><tr><td align=\"center\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">READER STUDY</td><td align=\"center\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">A human-factor study evaluating whether explanations change radiologist performance, calibration, or reliance.</td></tr></tbody></table>\n"
+            },
+            "text": "Term\tDefinition to Use in the Revised Manuscript\t \tXAI\tExplainable artificial intelligence; methods intended to make model reasoning inspectable or interpretable.\t \tSALIENCY MAP\tA heatmap highlighting image regions associated with a model prediction.\t \tGRAD-CAM\tGradient-weighted class activation mapping; a class-specific saliency method producing coarse heatmaps from convolutional feature maps.\t \tSHAP\tSHapley Additive exPlanations; a feature-attribution method estimating the marginal contribution of each feature.\t \tLIME\tLocal Interpretable Model-agnostic Explanations; a local surrogate-model approach to explain a prediction.\t \tPOINTING GAME\tA localization metric testing whether the highest-activation point of an explanation falls inside the lesion annotation.\t \tEXTERNAL VALIDATION\tAssessment of the model or explanation on data from a different institution, site, scanner, or population.\t \tREADER STUDY\tA human-factor study evaluating whether explanations change radiologist performance, calibration, or reliance.\t \t",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 44100,
+            "infons": {
+              "file": "diagnostics-16-01412-t002.xml",
+              "id": "diagnostics-16-01412-t002",
+              "section_type": "TABLE",
+              "type": "table_caption"
+            },
+            "text": "Eligibility criteria.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 44122,
+            "infons": {
+              "file": "diagnostics-16-01412-t002.xml",
+              "id": "diagnostics-16-01412-t002",
+              "section_type": "TABLE",
+              "type": "table",
+              "xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<table frame=\"hsides\" rules=\"groups\"><thead><tr><th align=\"left\" valign=\"middle\" style=\"border-top:solid thin;border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Domain</th><th align=\"left\" valign=\"middle\" style=\"border-top:solid thin;border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Inclusion Criteria</th><th align=\"left\" valign=\"middle\" style=\"border-top:solid thin;border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Exclusion Criteria</th></tr></thead><tbody><tr><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Population/data</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Mammography-based imaging, including 2D digital mammography and mammography-derived risk or outcome prediction. Contrast-enhanced mammography is eligible only when mammography remains the core modality and the mammography-specific results are separable.</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Studies focused exclusively on non-mammography modalities (for example, ultrasound-only, MRI-only, or digital pathology studies).</td></tr><tr><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Intervention</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Artificial-intelligence (AI) or machine-learning (ML) model providing an explicit explainability or interpretability mechanism, either post hoc (for example, saliency maps, attribution maps, SHapley Additive exPlanations (SHAPs), or Local Interpretable Model-agnostic Explanations (LIMEs)) or intrinsic (for example, interpretable modules, prototype or case-based networks, or inherently interpretable architectures).</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Papers that mention interpretability only in general terms without a defined method or without any explanation output.</td></tr><tr><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Outcomes</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Clear description of the explanation method and at least one explanation output or evaluation, such as a heatmap, attribution map, feature-importance plot, prototype, interpretable intermediate representation, localization metric, or clinician-facing interpretability assessment.</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Studies without any reported explanation output or with no extractable information about explanation generation or evaluation.</td></tr><tr><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Study type/publication</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Original full-text research articles in peer-reviewed journals.</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Conference proceedings, abstracts, preprints, reviews, editorials, and commentaries. Conference proceedings may be mentioned in a sensitivity note but should not enter the primary synthesis unless full methodological detail is available.</td></tr></tbody></table>\n"
+            },
+            "text": "Domain\tInclusion Criteria\tExclusion Criteria\t \tPopulation/data\tMammography-based imaging, including 2D digital mammography and mammography-derived risk or outcome prediction. Contrast-enhanced mammography is eligible only when mammography remains the core modality and the mammography-specific results are separable.\tStudies focused exclusively on non-mammography modalities (for example, ultrasound-only, MRI-only, or digital pathology studies).\t \tIntervention\tArtificial-intelligence (AI) or machine-learning (ML) model providing an explicit explainability or interpretability mechanism, either post hoc (for example, saliency maps, attribution maps, SHapley Additive exPlanations (SHAPs), or Local Interpretable Model-agnostic Explanations (LIMEs)) or intrinsic (for example, interpretable modules, prototype or case-based networks, or inherently interpretable architectures).\tPapers that mention interpretability only in general terms without a defined method or without any explanation output.\t \tOutcomes\tClear description of the explanation method and at least one explanation output or evaluation, such as a heatmap, attribution map, feature-importance plot, prototype, interpretable intermediate representation, localization metric, or clinician-facing interpretability assessment.\tStudies without any reported explanation output or with no extractable information about explanation generation or evaluation.\t \tStudy type/publication\tOriginal full-text research articles in peer-reviewed journals.\tConference proceedings, abstracts, preprints, reviews, editorials, and commentaries. Conference proceedings may be mentioned in a sensitivity note but should not enter the primary synthesis unless full methodological detail is available.\t \t",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 45869,
+            "infons": {
+              "file": "diagnostics-16-01412-t003.xml",
+              "id": "diagnostics-16-01412-t003",
+              "section_type": "TABLE",
+              "type": "table_caption"
+            },
+            "text": "Studies included.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 45887,
+            "infons": {
+              "file": "diagnostics-16-01412-t003.xml",
+              "id": "diagnostics-16-01412-t003",
+              "section_type": "TABLE",
+              "type": "table",
+              "xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<table frame=\"hsides\" rules=\"groups\"><thead><tr><th align=\"left\" valign=\"middle\" style=\"border-top:solid thin;border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Study</th><th align=\"left\" valign=\"middle\" style=\"border-top:solid thin;border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Clinical Task</th><th align=\"left\" valign=\"middle\" style=\"border-top:solid thin;border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Primary XAI Family</th><th align=\"left\" valign=\"middle\" style=\"border-top:solid thin;border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Explanatory Target</th><th align=\"left\" valign=\"middle\" style=\"border-top:solid thin;border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Explanation Evaluation to Report</th></tr></thead><tbody><tr><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Cerekci et al., 2024 (Eur J Radiol) <xref rid=\"B13-diagnostics-16-01412\" ref-type=\"bibr\">13</xref></td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Cancer detection</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Post hoc saliency (Grad-CAM, Grad-CAM++, Eigen-CAM)</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Lesion localization</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Pointing Game against radiologist boxes; scores 0.30–0.41.</td></tr><tr><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Kim et al., 2018 (Phys Med Biol) <xref rid=\"B32-diagnostics-16-01412\" ref-type=\"bibr\">32</xref></td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Mass classification</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Intrinsic BI-RADS-guided network</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">BI-RADS-like guide map</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Qualitative visualization aligned with lesion-characterization logic.</td></tr><tr><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Choukali 2024 (Sci Rep) <xref rid=\"B33-diagnostics-16-01412\" ref-type=\"bibr\">33</xref></td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Mass-lesion classification</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Case-based interpretable deep learning (IAIA-BL)</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Relevant lesion parts and semantic mass margins</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Case-based explanations and comparison against black-box attention; no accuracy loss relative to a black-box baseline.</td></tr><tr><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Shen et al., 2021 (Med Image Anal) <xref rid=\"B34-diagnostics-16-01412\" ref-type=\"bibr\">34</xref></td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Screening classification</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Global-local weakly supervised classifier</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Saliency map and informative patches</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Internal localization and patch-selection interpretability with cross-dataset evaluation.</td></tr><tr><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Donnelly et al., 2024 (Radiology) <xref rid=\"B29-diagnostics-16-01412\" ref-type=\"bibr\">29</xref></td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">1–5-year risk prediction</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Interpretable asymmetry module (AsymMirai)</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Localized bilateral dissimilarity</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Correlation with Mirai and longitudinal consistency analyses.</td></tr><tr><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Wang et al., 2025 (Radiology: AI) <xref rid=\"B35-diagnostics-16-01412\" ref-type=\"bibr\">35</xref></td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Risk prediction/feature characterization</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Feature-centric XAI pipeline</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Receptive fields and mammographic lesion features</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Correlation of risk-model features with calcification- and mass-related locations; task-aligned performance comparison.</td></tr><tr><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Klanecek et al., 2024 (Phys Med Biol) <xref rid=\"B31-diagnostics-16-01412\" ref-type=\"bibr\">31</xref></td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Risk prediction</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Longitudinal attribution analysis</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Horizon-dependent attribution patterns</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Attribution heterogeneity across time-to-cancer.</td></tr><tr><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Moffett et al., 2025 (PLOS ONE) <xref rid=\"B23-diagnostics-16-01412\" ref-type=\"bibr\">23</xref></td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Lesion malignancy prediction</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">External validation of IAIA-BL</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Activation on relevant lesion regions</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Multi-site external validation of interpretability and performance.</td></tr><tr><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Camurdan et al., 2025 (Insights Imaging) <xref rid=\"B12-diagnostics-16-01412\" ref-type=\"bibr\">12</xref></td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Cancer detection</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Patch-based curriculum model with Grad-CAM</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Lesion-focused heatmaps</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Ground-truth overlap ratio plus external dataset testing.</td></tr><tr><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Talaat et al., 2024 (Cancers) <xref rid=\"B16-diagnostics-16-01412\" ref-type=\"bibr\">16</xref></td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Mammogram classification</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Post hoc Grad-CAM</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Heatmap highlighting of cancer regions</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Qualitative explanation only.</td></tr><tr><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Acosta-Jiménez et al., 2025 (Diagnostics) <xref rid=\"B20-diagnostics-16-01412\" ref-type=\"bibr\">20</xref></td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Lesion classification</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">SHAP-based relevance mapping across DM and CESM</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Pixel-level relevance maps</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Qualitative anatomical coherence across modalities; no dedicated explanation metric.</td></tr><tr><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Sha et al., 2025 (Front Immunology) <xref rid=\"B36-diagnostics-16-01412\" ref-type=\"bibr\">36</xref></td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Recurrence prediction</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">SHAP feature attribution</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Feature-contribution ranking</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">SHAP summary of mammographic and clinicopathologic features; explanation claim not independently validated.</td></tr><tr><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Mellado et al., 2025 (Front Oncology) <xref rid=\"B22-diagnostics-16-01412\" ref-type=\"bibr\">22</xref></td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Lesion detection</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">CorRELAX feature attribution</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Coarse correlation maps</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Pointing Game 0.5602–0.6358 on VinDr-Mammo.</td></tr><tr><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Lopez et al., 2024 (Pattern Recogn. Lett.) <xref rid=\"B37-diagnostics-16-01412\" ref-type=\"bibr\">37</xref></td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Benign vs. malignant classification</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Attention-map augmentation (PHAM)</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Attention-guided ROI emphasis</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Attention maps used as conditioning signal; qualitative interpretability only.</td></tr></tbody></table>\n"
+            },
+            "text": "Study\tClinical Task\tPrimary XAI Family\tExplanatory Target\tExplanation Evaluation to Report\t \tCerekci et al., 2024 (Eur J Radiol) \tCancer detection\tPost hoc saliency (Grad-CAM, Grad-CAM++, Eigen-CAM)\tLesion localization\tPointing Game against radiologist boxes; scores 0.30–0.41.\t \tKim et al., 2018 (Phys Med Biol) \tMass classification\tIntrinsic BI-RADS-guided network\tBI-RADS-like guide map\tQualitative visualization aligned with lesion-characterization logic.\t \tChoukali 2024 (Sci Rep) \tMass-lesion classification\tCase-based interpretable deep learning (IAIA-BL)\tRelevant lesion parts and semantic mass margins\tCase-based explanations and comparison against black-box attention; no accuracy loss relative to a black-box baseline.\t \tShen et al., 2021 (Med Image Anal) \tScreening classification\tGlobal-local weakly supervised classifier\tSaliency map and informative patches\tInternal localization and patch-selection interpretability with cross-dataset evaluation.\t \tDonnelly et al., 2024 (Radiology) \t1–5-year risk prediction\tInterpretable asymmetry module (AsymMirai)\tLocalized bilateral dissimilarity\tCorrelation with Mirai and longitudinal consistency analyses.\t \tWang et al., 2025 (Radiology: AI) \tRisk prediction/feature characterization\tFeature-centric XAI pipeline\tReceptive fields and mammographic lesion features\tCorrelation of risk-model features with calcification- and mass-related locations; task-aligned performance comparison.\t \tKlanecek et al., 2024 (Phys Med Biol) \tRisk prediction\tLongitudinal attribution analysis\tHorizon-dependent attribution patterns\tAttribution heterogeneity across time-to-cancer.\t \tMoffett et al., 2025 (PLOS ONE) \tLesion malignancy prediction\tExternal validation of IAIA-BL\tActivation on relevant lesion regions\tMulti-site external validation of interpretability and performance.\t \tCamurdan et al., 2025 (Insights Imaging) \tCancer detection\tPatch-based curriculum model with Grad-CAM\tLesion-focused heatmaps\tGround-truth overlap ratio plus external dataset testing.\t \tTalaat et al., 2024 (Cancers) \tMammogram classification\tPost hoc Grad-CAM\tHeatmap highlighting of cancer regions\tQualitative explanation only.\t \tAcosta-Jiménez et al., 2025 (Diagnostics) \tLesion classification\tSHAP-based relevance mapping across DM and CESM\tPixel-level relevance maps\tQualitative anatomical coherence across modalities; no dedicated explanation metric.\t \tSha et al., 2025 (Front Immunology) \tRecurrence prediction\tSHAP feature attribution\tFeature-contribution ranking\tSHAP summary of mammographic and clinicopathologic features; explanation claim not independently validated.\t \tMellado et al., 2025 (Front Oncology) \tLesion detection\tCorRELAX feature attribution\tCoarse correlation maps\tPointing Game 0.5602–0.6358 on VinDr-Mammo.\t \tLopez et al., 2024 (Pattern Recogn. Lett.) \tBenign vs. malignant classification\tAttention-map augmentation (PHAM)\tAttention-guided ROI emphasis\tAttention maps used as conditioning signal; qualitative interpretability only.\t \t",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 48878,
+            "infons": {
+              "file": "diagnostics-16-01412-t004.xml",
+              "id": "diagnostics-16-01412-t004",
+              "section_type": "TABLE",
+              "type": "table_caption"
+            },
+            "text": "Hierarchy of explanation-validation rigor across included studies.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 48945,
+            "infons": {
+              "file": "diagnostics-16-01412-t004.xml",
+              "id": "diagnostics-16-01412-t004",
+              "section_type": "TABLE",
+              "type": "table",
+              "xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<table frame=\"hsides\" rules=\"groups\"><thead><tr><th align=\"left\" valign=\"middle\" style=\"border-top:solid thin;border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Study</th><th align=\"left\" valign=\"middle\" style=\"border-top:solid thin;border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Quantitative Explanation Metric</th><th align=\"left\" valign=\"middle\" style=\"border-top:solid thin;border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">External/Cross-Dataset Interpretability Assessment</th><th align=\"left\" valign=\"middle\" style=\"border-top:solid thin;border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Reader Study</th><th align=\"left\" valign=\"middle\" style=\"border-top:solid thin;border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Highest Validation Tier</th></tr></thead><tbody><tr><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Cerekci et al., 2024 (Eur J Radiol) <xref rid=\"B13-diagnostics-16-01412\" ref-type=\"bibr\">13</xref></td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Yes: Pointing Game</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">No</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">No</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Tier 2</td></tr><tr><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Kim et al., 2018 (Phys Med Biol) <xref rid=\"B32-diagnostics-16-01412\" ref-type=\"bibr\">32</xref></td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">No</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">No</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">No</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Tier 1</td></tr><tr><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Choukali 2024 (Sci Rep) <xref rid=\"B33-diagnostics-16-01412\" ref-type=\"bibr\">33</xref></td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Internal interpretability comparison</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">No</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">No</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Tier 2</td></tr><tr><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Shen et al., 2021 (Med Image Anal) <xref rid=\"B34-diagnostics-16-01412\" ref-type=\"bibr\">34</xref></td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Internal localization/patch interpretability</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Partial cross-dataset assessment</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">No</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Tier 3</td></tr><tr><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Donnelly et al., 2024 (Radiology) <xref rid=\"B29-diagnostics-16-01412\" ref-type=\"bibr\">29</xref></td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Task-aligned quantitative correlation/consistency</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">No</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">No</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Tier 2</td></tr><tr><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Wang et al., 2025 (Radiology: AI) <xref rid=\"B35-diagnostics-16-01412\" ref-type=\"bibr\">35</xref></td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Feature-centric quantitative characterization</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">No</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">No</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Tier 2</td></tr><tr><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Klanecek et al., 2024 (Phys Med Biol) <xref rid=\"B31-diagnostics-16-01412\" ref-type=\"bibr\">31</xref></td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Yes: attribution heterogeneity</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">No</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">No</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Tier 2</td></tr><tr><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Moffett et al., 2025 (PLOS ONE) <xref rid=\"B23-diagnostics-16-01412\" ref-type=\"bibr\">23</xref></td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Yes: activation on relevant lesion portions</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Yes: multi-site external validation</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">No</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Tier 3</td></tr><tr><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Camurdan et al., 2025 (Insights Imaging) <xref rid=\"B12-diagnostics-16-01412\" ref-type=\"bibr\">12</xref></td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Yes: ground-truth overlap ratio</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">External performance testing only</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">No</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Tier 2</td></tr><tr><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Talaat et al., 2024 (Cancers) <xref rid=\"B16-diagnostics-16-01412\" ref-type=\"bibr\">16</xref></td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">No</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">No</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">No</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Tier 1</td></tr><tr><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Acosta-Jiménez et al., 2025 (Diagnostics) <xref rid=\"B20-diagnostics-16-01412\" ref-type=\"bibr\">20</xref></td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">No dedicated explanation metric</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">No</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">No</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Tier 1</td></tr><tr><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Sha et al., 2025 (Front Immunology) <xref rid=\"B36-diagnostics-16-01412\" ref-type=\"bibr\">36</xref></td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">No dedicated validation of explanation claim</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">No</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">No</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Tier 1</td></tr><tr><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Mellado et al., 2025 (Front Oncology) <xref rid=\"B22-diagnostics-16-01412\" ref-type=\"bibr\">22</xref></td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Yes: Pointing Game</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">No</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">No</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Tier 2</td></tr><tr><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Lopez et al., 2024 (Pattern Recogn. Lett.) <xref rid=\"B37-diagnostics-16-01412\" ref-type=\"bibr\">37</xref></td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">No</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">No</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">No</td><td align=\"left\" valign=\"middle\" style=\"border-bottom:solid thin\" rowspan=\"1\" colspan=\"1\">Tier 1</td></tr></tbody></table>\n"
+            },
+            "text": "Study\tQuantitative Explanation Metric\tExternal/Cross-Dataset Interpretability Assessment\tReader Study\tHighest Validation Tier\t \tCerekci et al., 2024 (Eur J Radiol) \tYes: Pointing Game\tNo\tNo\tTier 2\t \tKim et al., 2018 (Phys Med Biol) \tNo\tNo\tNo\tTier 1\t \tChoukali 2024 (Sci Rep) \tInternal interpretability comparison\tNo\tNo\tTier 2\t \tShen et al., 2021 (Med Image Anal) \tInternal localization/patch interpretability\tPartial cross-dataset assessment\tNo\tTier 3\t \tDonnelly et al., 2024 (Radiology) \tTask-aligned quantitative correlation/consistency\tNo\tNo\tTier 2\t \tWang et al., 2025 (Radiology: AI) \tFeature-centric quantitative characterization\tNo\tNo\tTier 2\t \tKlanecek et al., 2024 (Phys Med Biol) \tYes: attribution heterogeneity\tNo\tNo\tTier 2\t \tMoffett et al., 2025 (PLOS ONE) \tYes: activation on relevant lesion portions\tYes: multi-site external validation\tNo\tTier 3\t \tCamurdan et al., 2025 (Insights Imaging) \tYes: ground-truth overlap ratio\tExternal performance testing only\tNo\tTier 2\t \tTalaat et al., 2024 (Cancers) \tNo\tNo\tNo\tTier 1\t \tAcosta-Jiménez et al., 2025 (Diagnostics) \tNo dedicated explanation metric\tNo\tNo\tTier 1\t \tSha et al., 2025 (Front Immunology) \tNo dedicated validation of explanation claim\tNo\tNo\tTier 1\t \tMellado et al., 2025 (Front Oncology) \tYes: Pointing Game\tNo\tNo\tTier 2\t \tLopez et al., 2024 (Pattern Recogn. Lett.) \tNo\tNo\tNo\tTier 1\t \t",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          }
+        ],
+        "annotations": [],
+        "relations": []
+      }
+    ]
+  }
+]

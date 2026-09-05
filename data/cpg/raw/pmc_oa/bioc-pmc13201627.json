@@ -1,0 +1,1882 @@
+[
+  {
+    "bioctype": "BioCCollection",
+    "source": "PMC",
+    "date": "20260528",
+    "key": "pmc.key",
+    "version": "1.0",
+    "infons": {},
+    "documents": [
+      {
+        "bioctype": "BioCDocument",
+        "id": "PMC13201627",
+        "infons": {
+          "license": "CC BY-NC-ND"
+        },
+        "passages": [
+          {
+            "bioctype": "BioCPassage",
+            "offset": 0,
+            "infons": {
+              "article-id_doi": "10.1038/s41467-026-73410-8",
+              "article-id_pmc": "PMC13201627",
+              "article-id_pmid": "42185284",
+              "article-id_publisher-id": "73410",
+              "elocation-id": "4644",
+              "kwd": "Drug discovery Drug safety",
+              "license": "Open Access This article is licensed under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License, which permits any non-commercial use, sharing, distribution and reproduction in any medium or format, as long as you give appropriate credit to the original author(s) and the source, provide a link to the Creative Commons licence, and indicate if you modified the licensed material. You do not have permission under this licence to share adapted material derived from this article or parts of it. The images or other third party material in this article are included in the article’s Creative Commons licence, unless indicated otherwise in a credit line to the material. If material is not included in the article’s Creative Commons licence and your intended use is not permitted by statutory regulation or exceeds the permitted use, you will need to obtain permission directly from the copyright holder. To view a copy of this licence, visit http://creativecommons.org/licenses/by-nc-nd/4.0/.",
+              "name_0": "surname:Fraser;given-names:James S.",
+              "name_1": "surname:Edgar;given-names:Steven",
+              "name_2": "surname:Handly;given-names:L. Naomi",
+              "name_3": "surname:Kosuri;given-names:Sriram",
+              "name_4": "surname:Chodera;given-names:John D.",
+              "name_5": "surname:Murcko;given-names:Mark",
+              "name_6": "surname:Walters;given-names:W. Patrick",
+              "section_type": "TITLE",
+              "title": "Subject terms",
+              "type": "front",
+              "volume": "17",
+              "year": "2026"
+            },
+            "text": "Mapping the avoid-ome: a systematic open-science approach to predictive ADMET",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 78,
+            "infons": {
+              "section_type": "ABSTRACT",
+              "type": "abstract"
+            },
+            "text": "Drug discovery often fails due to unpredictable ADMET issues, which account for 30% of clinical setbacks. Conventional methods lack the atomistic detail needed to navigate the “Avoid-ome”—a finite set of proteins acting as “anti-targets”. OpenADMET is an open-science initiative addressing this by creating pre-competitive, mechanistic datasets. Using high-throughput structural biology, active learning, and community challenges, it builds generalizable models grounded in structural “ground truth”. By directly studying the Avoid-ome, OpenADMET facilitates an era of rational, multi-parameter drug design.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 700,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "title_1"
+            },
+            "text": "Introduction",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 713,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Over the last 20 years, the number of new drug modalities have multiplied quickly. Despite this, the oldest modality, small molecules, still accounts for ~3/4 of drugs approved by the FDA over the last decade. Small molecules continue to dominate and even flourish for three main reasons: (1) small molecules have inherent distribution advantages with potential to reach every organ, cell, and organelle in the body; (2) modern engineering principles enable us to scale production and deliver them economically worldwide in predictable ways; and (3) our increased understanding of how small molecules engage proteins has led to a renaissance of new small molecule targeting modalities, such as covalent modifiers, correctors, allosteric modulators, induced proximity, degraders, and RNA/splicing/PPI/condensate modulators.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 1536,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "However, the ability to modulate all functions in the body also belies the challenges of dialing in unpredictable pharmacokinetic and safety properties. Drug discoverers must optimize for high potency at the target while avoiding interactions with related or idiosyncratic off-target proteins. The discovery process must also navigate problematic ADMET (Absorption, Distribution, Metabolism, Excretion, Toxicity) issues that would cause a candidate to fail in preclinical development or, worse yet, clinical trials. Thus, drug design requires a multiparameter optimization process that balances many different factors. While every new target and related off-targets are unique to every program, the ADMET properties are shared, and thus, the focused development of predictive tools would broadly enable small-molecule drug discovery. Over the last 40 years, we’ve come to understand ADMET issues are largely driven by a finite set of proteins and physicochemical properties that can be measured in individual assays. While pharmacophore models and heuristics have been created to tackle specific liabilities, the field has not taken a systematic approach to understanding and correcting ADMET liabilities. Additionally, structure-based design, which has become a key part of modern drug discovery, is seldom used beyond primary target binding.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 2882,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Despite significant progress in structure-based design and affinity prediction, ADMET properties remain the main reason for failure in drug discovery. More than 90% of molecules created during discovery fail to meet basic ADME standards. Additionally, it is estimated that about 20% of drug candidates fail in preclinical toxicity tests, and around 30% of clinical failures are due to unexpected ADMET problems. Traditional methods that focus mainly on bulk molecular properties, such as logP, solubility, or hydrogen bond donor counts, offer only vague guidance because they lack insight into the atomic-level interactions between drugs and the body’s complex systems. Several machine learning (ML) representations, including chemical fingerprints, molecular graphs, 3D geometry-based models, and protein language models, are already aiding ADMET predictions. However, two key challenges hinder breakthroughs in predictive ADMET: the data remain extremely limited, and most models lack the atomistic detail needed for mechanistic understanding. What is missing from this perspective is a systematic, detailed understanding of the “Avoid-ome”: the broad set of proteins that influence the ADME and toxicity properties of all drug molecules. By focusing the tools of modern structure-based drug design on the Avoid-ome, drug discovery practice could be transformed.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 4253,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "title_2"
+            },
+            "text": "Defining the avoid-ome",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 4276,
+            "infons": {
+              "file": "41467_2026_73410_Fig1_HTML.jpg",
+              "id": "Fig1",
+              "section_type": "FIG",
+              "type": "fig_title_caption"
+            },
+            "text": "The set of protein anti-targets that comprise the Avoid-ome.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 4337,
+            "infons": {
+              "file": "41467_2026_73410_Fig1_HTML.jpg",
+              "id": "Fig1",
+              "section_type": "FIG",
+              "type": "fig_caption"
+            },
+            "text": "These anti-targets can be categorized horizontally as essential, high-value, or comprehensive anti-targets. The colors in the plot further illustrate the mechanistic classes associated with each target.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 4540,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "The Avoid-ome consists of enzymes, transporters, receptors, and channels that determine whether a compound reaches its intended target or fails due to off-target binding. These include metabolic enzymes like cytochrome P450s (CYPs), aldehyde oxidase, UDP-glucuronosyltransferases (UGTs), and glutathione S-transferases (GSTs); transporters from the ABC and SLC families; plasma proteins such as serum albumin; xenobiotic sensors like the pregnane X receptor (PXR) and constitutive androstane receptor (CAR); and common toxicity drivers such as the hERG potassium channel, the voltage-gated sodium channel NaV1.5, and L-type calcium channels. The primary Avoid-ome targets can be divided into four groups: absorption and excretion (A/E), distribution (D), metabolism (M), and toxicity (T) (Fig. 1).",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 5339,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Importantly, the Avoid-ome is a finite set: although thousands of proteins exist in the human proteome, only on the order of 50-100 proteins occur with high frequency as mediating ADMET properties; considering less common situations, perhaps a few hundred proteins in total are responsible for the preponderance of the ADMET challenges faced by discovery teams. While this initial target list is not definitive and is intended to start a conversation among the community, this bounded scope makes the Avoid-ome problem tractable if we can systematically generate and share the correct data.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 5930,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Some Avoid-ome proteins are exploited therapeutically, such as P-gp in cancer or SGLT2 in diabetes. However, in most cases, drugs must be engineered to avoid them. Avoid-ome proteins are therefore not generally “targets” (the intended binding partner of a drug) or “off-targets” (proteins related to the intended binding partner). Instead, they are “anti-targets” (proteins that must be considered as potential confounders in most drug development projects).",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 6401,
+            "infons": {
+              "file": "41467_2026_73410_Fig2_HTML.jpg",
+              "id": "Fig2",
+              "section_type": "FIG",
+              "type": "fig_title_caption"
+            },
+            "text": "The distinction between targets, off-targets, and avoid-ome anti-targets.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 6475,
+            "infons": {
+              "file": "41467_2026_73410_Fig2_HTML.jpg",
+              "id": "Fig2",
+              "section_type": "FIG",
+              "type": "fig_caption"
+            },
+            "text": "While on-target optimization usually involves interactions at a single binding site, considering off-targets introduces selectivity challenges as the major interactions driving affinity are likely conserved. Structures of an inhibitor bound in the active sites of CDK2 (PDB:4KD1) and CDK1 (PDB: 6GU6) are highly similar, with many interactions, such as the hinge binding motif highlighted by dashed lines, nearly identical. In contrast, structure predictions of the same compound bound to anti-targets such as hERG, CYP3A4, and PXR reveal a great diversity in hydrophobic and hydrogen bond interactions within the membrane protein hERG, the heme-containing binding pocket of CYP3A4, and the fully buried ligand binding site of PXR.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 7207,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Consider an example of a kinase inhibitor to illustrate the distinctions between targets, off-targets, and anti-targets (Fig. 2). Cyclin-dependent kinase 2 (CDK2) is a vital serine/threonine protein kinase that plays a crucial role in regulating the eukaryotic cell cycle, particularly during the transition from the G1 phase to DNA synthesis (S phase). Abnormal (uncontrolled) activity of the CDK2/Cyclin E complex is commonly observed in many human cancers. This leads to increased cell proliferation and genomic instability, making CDK2 an important target for anti-cancer therapies. The primary off-targets of CDK2 inhibitors are usually other members of the CDK family because of their high similarity in ATP-binding sites. Ensuring off-target selectivity during the design of CDK2 inhibitors is essential for the safety and effectiveness of the drug. Lack of selectivity was a major reason why first-generation CDK2 inhibitors failed in early clinical trials. Additionally, anti-target selectivity against proteins such as CYPs and PXR is vital to prevent drug interactions, and avoiding the hERG ion channel is crucial in designing CDK2 inhibitors to prevent serious cardiac side effects. As the focus shifts from targets to off-targets and anti-targets, the number of binding sites and interactions to consider increases dramatically. The task of optimization is further complicated by the promiscuity of anti-targets, which have evolved to recognize a wide range of xenobiotics. This highlights the central challenge: success requires simultaneous optimization against every anti-target, yet systematic data on these interactions are almost entirely lacking.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 8876,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "title_2"
+            },
+            "text": "The case for openADMET",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 8899,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "How can we enable breakthroughs in ADMET modeling? Deep learning approaches crave data, yet very little is known about the ADMET properties of drug-like compounds. Publicly accessible databases, such as ChEMBL and the Therapeutics Data Commons, include ADMET datasets compiled from the literature. However, this data has often been extracted from dozens of papers, each using different experimental procedures. As highlighted in a recent paper by Landrum and Riniker, reported values in the literature are rarely consistent. The pharmaceutical industry could be a valuable source of ADMET data. In fact, important ADMET datasets are stored within pharmaceutical companies, and making this data publicly available would be beneficial. However, even full access to this data would still be insufficient. To gain a comprehensive understanding, we need to systematically examine the interactions between the most common Avoid-ome targets and diverse sets of ligands that broadly cover chemical space.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 9896,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "The convergence of multiple factors has created an opportunity to systematically improve ADMET optimization. Recent advances in structural biology have enabled higher-throughput data collection and will allow us to study the structures of Avoid-ome proteins on a much larger scale. Additionally, advances in mass spectrometry have made data collection more cost-effective. Finally, the availability of open-source machine learning models has provided the ability to link structural and assay data to develop new strategies for compound optimization.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 10446,
+            "infons": {
+              "file": "41467_2026_73410_Fig3_HTML.jpg",
+              "id": "Fig3",
+              "section_type": "FIG",
+              "type": "fig_title_caption"
+            },
+            "text": "This schematic illustrates the collaborative pipeline employed by OpenADMET.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 10523,
+            "infons": {
+              "file": "41467_2026_73410_Fig3_HTML.jpg",
+              "id": "Fig3",
+              "section_type": "FIG",
+              "type": "fig_caption"
+            },
+            "text": "While the process typically begins with initial HTS screening, it also allows for focused entry points via protein-ligand crystal structures to jump-start modeling or fragment screens to guide expansion. Integrated structural biology (X-ray/cryoEM) and functional data drive a continuous loop of model refinement and analog synthesis, shifting the focus from initial hits to exploring SAR (structure-activity relationship) around active compounds and resolving outliers.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 10994,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "OpenADMET (http://openadmet.org), a major international open‑science initiative initially funded by ARPA-H and the Gates Foundation, aims to leverage these scientific advances and address the ADMET data gap by developing pre-competitive, open datasets covering metabolism, transport, distribution, and toxicity. The OpenADMET consortium is a collaborative effort between the University of California, San Francisco (UCSF), Octant, and the Open Molecular Software Foundation (OMSF). We are creating platforms to make synthesizing compounds, conducting measurements, and learning from data cheaper and higher throughput. These large, openly accessible datasets will serve as a shared resource for the global research community. Our approach also leverages high-throughput structural biology to support model interpretability, identify outliers and cryptic binding modes, and ensure models are grounded in mechanistic, atomistic insights (Fig. 3).",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 11942,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "In addition to the elements described above, genetic variation-aware predictions will be needed to realize the potential of pharmacogenomic analyses. We are integrating data such as VAMPseq protein expression levels and atomistic modeling of how variants alter ADMET risk by changing interactions between the compound and the anti-target. Pre-clinical species translation is another essential component, requiring structural models that explain why compounds behave differently across rats, dogs, monkeys, and humans.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 12460,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Another often-discussed alternative approach to feeding the data needs of machine learning approaches in ADMET is federated learning, where models are trained behind a firewall that can observe data from companies without sharing the underlying molecular identities. While appealing in principle, such solutions tend to reinforce limitations: they remain confined to local chemical space, they struggle to generalize, and they rarely deliver the mechanistic clarity required to address Avoid-ome proteins. By contrast, active learning over diverse chemical space creates the conditions for truly generalizable models and deeper insights that can benefit the entire community. Freed from the constraints of having to generate molecules to “avoid” anti-targets, in OpenADMET we can synthesize and test compounds that are most informative for building predictive models. This close link between experiment and computation lets us ask, “which experiments will enable us to build the best model?”",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 13460,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Another key element of OpenADMET is the creation of blind community challenges to benchmark models using unreleased data, thereby promoting rigorous evaluation and continuous improvement. Collectively, these strategies will generate the data necessary for improved predictions and establish a framework for integrating functional data on specific anti-targets with bulk property assays, such as stability in the presence of liver microsomes, to connect mechanistic understanding with applied pharmacology.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 13966,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "title_2"
+            },
+            "text": "Assays",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 13973,
+            "infons": {
+              "file": "41467_2026_73410_Fig4_HTML.jpg",
+              "id": "Fig4",
+              "section_type": "FIG",
+              "type": "fig_title_caption"
+            },
+            "text": "The assays used to drive the current OpenADMET efforts.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 14029,
+            "infons": {
+              "file": "41467_2026_73410_Fig4_HTML.jpg",
+              "id": "Fig4",
+              "section_type": "FIG",
+              "type": "fig_caption"
+            },
+            "text": "Additional assays will be added as new targets are introduced.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 14092,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "The OpenADMET initiative requires diverse assays across many anti-targets: biochemical assays for metabolism and transport, electrophysiology for ion channels, binding assays for plasma proteins, and transcriptional readouts for xenobiotic sensors (Fig. 4). A key goal is to modernize these assays, making them cheaper, more scalable, and more translatable. We begin by characterizing individual Avoid-ome targets to understand the mechanistic basis of ADMET liabilities before progressing to integrative assays like microsomal stability.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 14632,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "For metabolism and biochemical assays, we leverage scaled mass spectrometry to enhance throughput and reduce costs. For cellular assays, we employ synthetic biology to engineer high signal-to-noise genetic reporters and routinely include counter-assays with target knockouts to mitigate PAINS effects. Our goal is affordable, quantitative, scalable methods applicable to both purified compounds and those from next-generation direct-to-biology platforms. Currently, we evaluate CYP reactivity for thousands of compounds at <$0.40 per compound using an Echo-MS+ ZenoTOF 7600 system. Luminescence and fluorescence assays cost $0.05-$0.30 per well and can screen tens of thousands of compounds weekly.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 15331,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Leveraging these high-throughput, cost-effective platforms enables us to rigorously interrogate the structure-activity relationship (SAR) landscape. Our initial screening establishes a baseline using a collection of marketed drugs alongside 10,000 diverse drug-like molecules. To explicitly identify and explore activity cliffs, which are highly valuable yet notoriously challenging to predict, we manage the scale of these experiments using an active learning workflow. This workflow incorporates a measure of model uncertainty to mathematically balance exploration and exploitation, ensuring we only assay the most informative compounds to build generalizable models. For a concrete example of this workflow’s scale, we typically begin by identifying approximately 10 commercially available analogs for each hit using an “analog by catalog” approach. When a specific property cliff requires deeper interrogation, we supplement these commercial sources with billion-scale synthesis-on-demand libraries or leverage our internal synthesis resources to design and rapidly generate focused sets of novel analogs to probe critical SAR drivers. Crucially, to maintain our high screening throughput and keep costs low during these focused iterations, our assays are robust enough to be conducted directly on crude reaction mixtures, completely bypassing time-consuming purification bottlenecks",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 16725,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "While our framework heavily emphasizes the specific protein anti-targets of the Avoid-ome, we recognize that fundamental physicochemical and integrative properties—such as aqueous solubility, membrane permeability (logD), and metabolic stability are major drivers of ADMET outcomes, particularly for absorption and excretion. Although these factors are not mediated by a single anti-target, they are critical bulk molecular properties that often dictate whether a compound succeeds or fails. To ensure a comprehensive approach, OpenADMET is explicitly tackling these non-Avoid-ome properties alongside our protein-centric assays. This commitment was demonstrated by the very first OpenADMET/ExpansionRX community competition, which focused heavily on predicting these foundational physicochemical endpoints. Ultimately, our goal is to establish a unified framework that integrates bulk property assays, such as liver microsomal clearance, with precise functional data on specific Avoid-ome targets to bridge mechanistic understanding with applied pharmacology.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 17788,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "title_2"
+            },
+            "text": "Chemistry",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 17798,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Our understanding of small-molecule Avoid-ome interactions is extremely sparse. There are, of course, existing examples of drugs known to interact with specific Avoid-ome targets. For example, terfenadine is a ~ 4 µM inhibitor of hERG and ketoconazole inhibits CYP3A4 with an IC50 of ~40nM. However, public data is usually not available for close analogs of these compounds. Furthermore, little is known about the Avoid-ome interactions that might exist within larger collections of drug-like molecules. To improve learning, we aim to quickly synthesize libraries of analogs to hits to identify activity cliffs, which are among the most valuable and challenging issues to predict over time. As with most drug discovery efforts, we have several methods to explore the structure-activity relationships (SAR) around compounds that bind to Avoid-ome targets. We can purchase compounds similar to known binders using an “analog by catalog” method, which has become a standard approach in pharmaceutical research. Starting with a library of 10,000 drug-like compounds, we typically have about 20 commercially available analogs for each one. These analogs can also be supplemented by synthesis-on-demand libraries, which currently number in the billions, or through custom synthesis at contract research organizations (CROs). An internal synthesis capability can provide an additional way to explore the SAR around Avoid-ome targets. By synthesizing and stockpiling key scaffolds and intermediates, hundreds of analogs can be rapidly generated and characterized. This process can potentially be further streamlined by avoiding time-consuming purification steps and conducting assays on crude reaction mixtures.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 19513,
+            "infons": {
+              "file": "41467_2026_73410_Fig5_HTML.jpg",
+              "id": "Fig5",
+              "section_type": "FIG",
+              "type": "fig_title_caption"
+            },
+            "text": "A diagram showing how chemistry is integrated into OpenADMET.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 19575,
+            "infons": {
+              "file": "41467_2026_73410_Fig5_HTML.jpg",
+              "id": "Fig5",
+              "section_type": "FIG",
+              "type": "fig_caption"
+            },
+            "text": "After an initial assay is conducted, an active learning workflow is employed to select compounds for synthesis or purchase. This workflow combines exploration and exploitation to find additional compounds that will improve the model’s performance.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 19825,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "In addition to running assays on diverse chemical libraries, OpenADMET is also performing follow-up chemistry (Fig. 5) to further investigate SAR for Avoid-ome targets. The ADMET model-building process begins with screening commercial libraries or marketed drugs experimentally. After collecting an assay dataset, an active learning workflow can select additional compounds for synthesis and testing, which enhances the model’s accuracy. This active learning approach employs a machine learning model that includes a measure of uncertainty, helping to balance exploration and exploitation during model development. The compounds chosen through active learning can then be synthesized using the various routes described above.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 20554,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "title_2"
+            },
+            "text": "Structural biology’s central role",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 20590,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Structural biology must also extend beyond traditional target enablement to illuminate the Avoid-ome. Examples already include solving the structures of serum albumin complexes to explain drug partitioning, cryo-EM of transporters to decode efflux liabilities, and crystallography of PXR or CYP3A4 to guide metabolic risk mitigation. To support modeling efforts enabled by our larger chemical screening datasets, active compounds identified in our assays become prime candidates for structural elucidation. The number of structures generated will depend heavily on the target and experimental modality. For soluble targets, we can achieve a highly impactful scale; for example, we have already generated more than 100 X-ray structures of small molecules bound to PXR. For membrane proteins, the breakthrough capabilities of cryo-EM will provide a mechanistic basis for many transport and toxicity targets. While the throughput of our high-throughput chemical screening will naturally be much higher than that of X-ray crystallography, and even more dramatically than that of cryo-EM, we expect the throughput of structural biology to continue to increase.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 21746,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Importantly, rather than training only our own predictive models, our goal is to empower the broader field to build multimodal models that integrate large-scale chemical screening data with this sparser, high-resolution protein-ligand interaction data. By determining the structures of active compounds and comparing them with inactive analogs, we will generate open data that enables the community to move beyond simple graph-based representations to scalable representations that accurately capture essential molecular interactions.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 22281,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "High-resolution structures provide critical insights, including snapshots of multiple protein and ligand conformations, a framework for modeling species differences and human genetic variants, and the grounding required for mechanistic understanding when machine learning predictions diverge. Structural biology is also uniquely suited to seed exploration of new regions of chemical space, whether by identifying new chemical matter and binding sites through X-ray fragment screening campaigns or by testing the outcomes of virtual screens. Determining the binding modes of compounds bound to Avoid-ome proteins is especially exciting from a structural and mechanistic perspective, precisely because they are promiscuous and often highly dynamic, able to accommodate diverse ligands in multiple poses. The promiscuity of Avoid-ome proteins makes them particularly difficult for co-folding methods (such as AlphaFold3) to discriminate binders from non-binders and to generalize to new chemical spaces with the correct binding poses. Our generated structures will therefore clarify the structural basis of outliers and activity cliffs identified by other models, providing the essential “ground truth” required to drive the field’s predictive capabilities forward.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 23550,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "title_2"
+            },
+            "text": "Computation",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 23562,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Over the past decade, there has been a notable increase in papers discussing the use of machine learning in chemistry and drug discovery. Unfortunately, the shortage of high-quality datasets has slowed progress in ADMET prediction. Most datasets used for training and benchmarking ADMET models are gathered from scientific literature. These datasets are often compiled from 20 to 50 different papers, each with distinct experimental conditions. Issues with reproducibility are demonstrated by a recent paper from Landrum and Riniker, where the authors compared IC50 values for the same compound tested against the same target in different papers. They found almost no correlation between the reported values. Given this variability, it is unrealistic to expect that datasets compiled from multiple literature sources will produce reliable machine learning models.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 24426,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "To build reliable models, we need large, consistently measured datasets of drug-like molecules that accurately reflect the data values observed in drug discovery. OpenADMET will create this data and share it with the community in a format suitable for training and evaluating machine learning models. This data will not only help train models but also promote the development of new molecular representations and algorithms. To advance the field, we must go beyond simple graph-based representations to scalable ones that accurately capture essential molecular interactions.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 25001,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "In addition to generating data, OpenADMET is developing a software framework, ANVIL, to record and codify best practices for machine learning model development. This open-source software allows users to easily test different molecular representations and machine learning algorithms. ANVIL also provides a range of tools for detailed evaluation and comparison of methods on high-quality datasets.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 25398,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "title_2"
+            },
+            "text": "Community challenges and collaboration",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 25437,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Blind prediction challenges, inspired by CASP, CACHE, and SAMPL, will be a central component of OpenADMET. These challenges evaluate predictive models using unseen, high-quality data, promote open-source methods and reproducibility, and maintain a shared scoreboard to track progress across academia and industry. Rather than viewing these challenges just as competitions, OpenADMET will use them as a catalyst to advance the current state of ADMET modeling. After each challenge, we will convene the community to discuss the most effective approaches and collaborate on computational and experimental strategies to drive further improvements.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 26081,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "The shortage of high-quality datasets has limited the field’s ability to investigate key issues related to the application of ML models in ADMET prediction and drug discovery overall. Blind challenges, along with ML model development efforts within OpenADMET, provide a unique opportunity to explore fundamental questions about machine learning in ADMET; a sample of these questions is in Box 1. OpenADMET will generate the data needed to systematically study these questions.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 26561,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "What are the limits of an applicability domain, and can better metrics than simple similarity be defined?",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 26667,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Do local models outperform global ones, and where can multitask models add value?",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 26749,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "What is the best way to fine-tune models, and do foundation models really help?",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 26829,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "How good is the data in the literature, and what are the best ways to split datasets?",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 26915,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Is it realistic to generate enough high-quality experimental data at scale to train applicable models, given the large number of Avoid-ome targets, to prioritize the enormous chemical space involved?",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 27115,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "title_2"
+            },
+            "text": "Future perspective: from avoidance to design",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 27160,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "The next decade of drug discovery will require shifting from ignoring Avoid-ome liabilities until late in drug development to embracing them early. Several broader questions will shape the field, especially as new modalities emerge. Are higher molecular weight molecules less prone to metabolism and transport because nature has not evolved to catch them? How specific are transporters – can molecules with structures quite different from the known substrates be transported? What is the Avoid-ome for antisense oligonucleotides? For proteins and peptides, at what molecular weight threshold does the body treat a drug as a peptide versus a protein? In each case, such questions can be addressed only by building and testing appropriate libraries.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 27910,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "There are also practical considerations for embedding Avoid-ome data into the discovery pipeline. For example, at what stage, hit-to-lead, lead optimization, or clinical candidate selection, should Avoid-ome predictive models or experiments be used either to triage ideas or to assist with multi-parameter optimization? Second, how can detailed Avoid-ome knowledge enable the exploitation of these anti-targets for the design of soft drugs or prodrugs? Third, can Avoid-ome efforts ever address unpredictable, rare toxicities like idiosyncratic DILI, which often only emerge late in Phase 3? Finally, how can interactions with “carrier” proteins such as serum albumin be optimized to extend drug half-life?",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 28621,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "title_2"
+            },
+            "text": "Conclusion",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 28632,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Understanding and navigating the Avoid-ome is the central universal challenge of modern drug discovery. By creating open, structural, and mechanistic datasets and benchmarking predictive models through blind challenges, OpenADMET provides a practical foundation for a new era of rational drug design. The best way to increase the effectiveness of drug discovery in the coming decade is to stop avoiding the Avoid-ome and instead study it directly.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 29080,
+            "infons": {
+              "section_type": "SUPPL",
+              "type": "title_1"
+            },
+            "text": "Supplementary information",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 29106,
+            "infons": {
+              "section_type": "SUPPL",
+              "type": "footnote"
+            },
+            "text": "Publisher’s note Springer Nature remains neutral with regard to jurisdictional claims in published maps and institutional affiliations.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 29244,
+            "infons": {
+              "section_type": "SUPPL",
+              "type": "title_1"
+            },
+            "text": "Supplementary information",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 29270,
+            "infons": {
+              "section_type": "SUPPL",
+              "type": "paragraph"
+            },
+            "text": "The online version contains supplementary material available at 10.1038/s41467-026-73410-8.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 29362,
+            "infons": {
+              "section_type": "AUTH_CONT",
+              "type": "title"
+            },
+            "text": "Author contributions",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 29383,
+            "infons": {
+              "section_type": "AUTH_CONT",
+              "type": "paragraph"
+            },
+            "text": "All authors (J.F., S.E., L.N.H., S.K., J.C., M.M., and W.P.W.) contributed to the writing, editing, and revising of the manuscript.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 29515,
+            "infons": {
+              "section_type": "ACK_FUND",
+              "type": "title"
+            },
+            "text": "Funding",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 29523,
+            "infons": {
+              "section_type": "ACK_FUND",
+              "type": "paragraph"
+            },
+            "text": "This publication was supported by the Advanced Research Projects Agency for Health (ARPA-H) under AVOID-OME, and Award Number 1AY1AX000035. The contents are those of the authors. They may not reflect the policies of the Department of Health and Human Services or the U.S. government. The content is solely the responsibility of the authors and does not necessarily represent the official views of the Advanced Research Projects Agency for Health.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 29970,
+            "infons": {
+              "section_type": "COMP_INT",
+              "type": "title"
+            },
+            "text": "Competing interests",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 29990,
+            "infons": {
+              "section_type": "COMP_INT",
+              "type": "paragraph"
+            },
+            "text": "The authors declare no competing interests.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 30034,
+            "infons": {
+              "section_type": "REF",
+              "type": "title"
+            },
+            "text": "References",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 30045,
+            "infons": {
+              "citation-alternatives": "Segall, M. D. Multi-parameter optimization: identifying high quality compounds with a balance of properties. Curr. Pharm. Des.18, 1292–1310 (2012).\n",
+              "fpage": "1292",
+              "lpage": "1310",
+              "name_0": "surname:Segall;given-names:MD",
+              "pub-id_doi": "10.2174/138161212799436430",
+              "pub-id_pmid": "22316157",
+              "section_type": "REF",
+              "source": "Curr. Pharm. Des.",
+              "type": "ref",
+              "volume": "18",
+              "year": "2012"
+            },
+            "text": "Multi-parameter optimization: identifying high quality compounds with a balance of properties",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 30139,
+            "infons": {
+              "citation-alternatives": "Murcko, M. A. What makes a great medicinal chemist? A personal perspective. J. Med. Chem.61, 7419–7424 (2018).\n",
+              "fpage": "7419",
+              "lpage": "7424",
+              "name_0": "surname:Murcko;given-names:MA",
+              "pub-id_doi": "10.1021/acs.jmedchem.7b01445",
+              "pub-id_pmid": "29745657",
+              "section_type": "REF",
+              "source": "J. Med. Chem.",
+              "type": "ref",
+              "volume": "61",
+              "year": "2018"
+            },
+            "text": "What makes a great medicinal chemist? A personal perspective",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 30200,
+            "infons": {
+              "citation-alternatives": "Kola, I. & Landis, J. Can the pharmaceutical industry reduce attrition rates? Nat. Rev. Drug Discov.3, 711–715 (2004).\n",
+              "fpage": "711",
+              "lpage": "715",
+              "name_0": "surname:Kola;given-names:I",
+              "name_1": "surname:Landis;given-names:J",
+              "pub-id_doi": "10.1038/nrd1470",
+              "pub-id_pmid": "15286737",
+              "section_type": "REF",
+              "source": "Nat. Rev. Drug Discov.",
+              "type": "ref",
+              "volume": "3",
+              "year": "2004"
+            },
+            "text": "Can the pharmaceutical industry reduce attrition rates?",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 30256,
+            "infons": {
+              "citation-alternatives": "Munson, M. et al. Lead optimization attrition analysis (LOAA): a novel and general methodology for medicinal chemistry. Drug Discov. Today20, 978–987 (2015).\n",
+              "fpage": "978",
+              "lpage": "987",
+              "name_0": "surname:Munson;given-names:M",
+              "pub-id_doi": "10.1016/j.drudis.2015.03.010",
+              "pub-id_pmid": "25814036",
+              "section_type": "REF",
+              "source": "Drug Discov. Today",
+              "type": "ref",
+              "volume": "20",
+              "year": "2015"
+            },
+            "text": "Lead optimization attrition analysis (LOAA): a novel and general methodology for medicinal chemistry",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 30357,
+            "infons": {
+              "citation-alternatives": "Roberts, R. A. et al. Reducing attrition in drug development: smart loading preclinical safety assessment. Drug Discov. Today19, 341–347 (2014).\n",
+              "fpage": "341",
+              "lpage": "347",
+              "name_0": "surname:Roberts;given-names:RA",
+              "pub-id_doi": "10.1016/j.drudis.2013.11.014",
+              "pub-id_pmid": "24269835",
+              "section_type": "REF",
+              "source": "Drug Discov. Today",
+              "type": "ref",
+              "volume": "19",
+              "year": "2014"
+            },
+            "text": "Reducing attrition in drug development: smart loading preclinical safety assessment",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 30441,
+            "infons": {
+              "citation-alternatives": "Caminero Gomes Soares, A. et al. Absorption matters: a closer look at popular oral bioavailability rules for drug approvals. Mol. Inform.42, e202300115 (2023).\n",
+              "fpage": "e202300115",
+              "name_0": "surname:Caminero Gomes Soares;given-names:A",
+              "pub-id_doi": "10.1002/minf.202300115",
+              "pub-id_pmid": "37550251",
+              "section_type": "REF",
+              "source": "Mol. Inform.",
+              "type": "ref",
+              "volume": "42",
+              "year": "2023"
+            },
+            "text": "Absorption matters: a closer look at popular oral bioavailability rules for drug approvals",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 30532,
+            "infons": {
+              "citation-alternatives": "Chuang, K. V., Gunsalus, L. M. & Keiser, M. J. Learning molecular representations for medicinal chemistry. J. Med. Chem.63, 8705–8722 (2020).\n",
+              "fpage": "8705",
+              "lpage": "8722",
+              "name_0": "surname:Chuang;given-names:KV",
+              "name_1": "surname:Gunsalus;given-names:LM",
+              "name_2": "surname:Keiser;given-names:MJ",
+              "pub-id_doi": "10.1021/acs.jmedchem.0c00385",
+              "pub-id_pmid": "32366098",
+              "section_type": "REF",
+              "source": "J. Med. Chem.",
+              "type": "ref",
+              "volume": "63",
+              "year": "2020"
+            },
+            "text": "Learning molecular representations for medicinal chemistry",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 30591,
+            "infons": {
+              "citation-alternatives": "Fraser, J. S. & Murcko, M. A. Structure is beauty, but not always truth. Cell187, 517–520 (2024).\n",
+              "fpage": "517",
+              "lpage": "520",
+              "name_0": "surname:Fraser;given-names:JS",
+              "name_1": "surname:Murcko;given-names:MA",
+              "pub-id_doi": "10.1016/j.cell.2024.01.003",
+              "pub-id_pmid": "38306978",
+              "section_type": "REF",
+              "source": "Cell",
+              "type": "ref",
+              "volume": "187",
+              "year": "2024"
+            },
+            "text": "Structure is beauty, but not always truth",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 30633,
+            "infons": {
+              "citation-alternatives": "Bowes, J. et al. Reducing safety-related drug attrition: the use of in vitro pharmacological profiling. Nat. Rev. Drug Discov.11, 909–922 (2012).\n",
+              "fpage": "909",
+              "lpage": "922",
+              "name_0": "surname:Bowes;given-names:J",
+              "pub-id_doi": "10.1038/nrd3845",
+              "pub-id_pmid": "23197038",
+              "section_type": "REF",
+              "source": "Nat. Rev. Drug Discov.",
+              "type": "ref",
+              "volume": "11",
+              "year": "2012"
+            },
+            "text": "Reducing safety-related drug attrition: the use of in vitro pharmacological profiling",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 30719,
+            "infons": {
+              "citation-alternatives": "Whitebread, S. et al. Secondary pharmacology: screening and interpretation of off-target activities – focus on translation. Drug Discov. Today1, 11 (2016).",
+              "fpage": "11",
+              "name_0": "surname:Whitebread;given-names:S",
+              "section_type": "REF",
+              "source": "Drug Discov. Today",
+              "type": "ref",
+              "volume": "1",
+              "year": "2016"
+            },
+            "text": "Secondary pharmacology: screening and interpretation of off-target activities – focus on translation",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 30822,
+            "infons": {
+              "citation-alternatives": "Denisov, I. G., Makris, T. M., Sligar, S. G. & Schlichting, I. Structure and chemistry of cytochrome P450. Chem. Rev.105, 2253–2277 (2005).\n",
+              "fpage": "2253",
+              "lpage": "2277",
+              "name_0": "surname:Denisov;given-names:IG",
+              "name_1": "surname:Makris;given-names:TM",
+              "name_2": "surname:Sligar;given-names:SG",
+              "name_3": "surname:Schlichting;given-names:I",
+              "pub-id_doi": "10.1021/cr0307143",
+              "pub-id_pmid": "15941214",
+              "section_type": "REF",
+              "source": "Chem. Rev.",
+              "type": "ref",
+              "volume": "105",
+              "year": "2005"
+            },
+            "text": "Structure and chemistry of cytochrome P450",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 30865,
+            "infons": {
+              "citation-alternatives": "Manevski, N., King, L., Pitt, W. R., Lecomte, F. & Toselli, F. Metabolism by aldehyde oxidase: Drug design and complementary approaches to challenges in drug discovery. J. Med. Chem.62, 10955–10994 (2019).\n",
+              "fpage": "10955",
+              "lpage": "10994",
+              "name_0": "surname:Manevski;given-names:N",
+              "name_1": "surname:King;given-names:L",
+              "name_2": "surname:Pitt;given-names:WR",
+              "name_3": "surname:Lecomte;given-names:F",
+              "name_4": "surname:Toselli;given-names:F",
+              "pub-id_doi": "10.1021/acs.jmedchem.9b00875",
+              "pub-id_pmid": "31385704",
+              "section_type": "REF",
+              "source": "J. Med. Chem.",
+              "type": "ref",
+              "volume": "62",
+              "year": "2019"
+            },
+            "text": "Metabolism by aldehyde oxidase: Drug design and complementary approaches to challenges in drug discovery",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 30970,
+            "infons": {
+              "citation-alternatives": "Oda, S., Fukami, T., Yokoi, T. & Nakajima, M. A comprehensive review of UDP-glucuronosyltransferase and esterases for drug development. Drug Metab. Pharmacokinet.30, 30–51 (2015).\n",
+              "fpage": "30",
+              "lpage": "51",
+              "name_0": "surname:Oda;given-names:S",
+              "name_1": "surname:Fukami;given-names:T",
+              "name_2": "surname:Yokoi;given-names:T",
+              "name_3": "surname:Nakajima;given-names:M",
+              "pub-id_doi": "10.1016/j.dmpk.2014.12.001",
+              "pub-id_pmid": "25760529",
+              "section_type": "REF",
+              "source": "Drug Metab. Pharmacokinet.",
+              "type": "ref",
+              "volume": "30",
+              "year": "2015"
+            },
+            "text": "A comprehensive review of UDP-glucuronosyltransferase and esterases for drug development",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 31059,
+            "infons": {
+              "citation-alternatives": "Aloke, C., Onisuru, O. O. & Achilonu, I. Glutathione S-transferase: A versatile and dynamic enzyme. Biochem. Biophys. Res. Commun.734, 150774 (2024).\n",
+              "fpage": "150774",
+              "name_0": "surname:Aloke;given-names:C",
+              "name_1": "surname:Onisuru;given-names:OO",
+              "name_2": "surname:Achilonu;given-names:I",
+              "pub-id_doi": "10.1016/j.bbrc.2024.150774",
+              "pub-id_pmid": "39366175",
+              "section_type": "REF",
+              "source": "Biochem. Biophys. Res. Commun.",
+              "type": "ref",
+              "volume": "734",
+              "year": "2024"
+            },
+            "text": "Glutathione S-transferase: A versatile and dynamic enzyme",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 31117,
+            "infons": {
+              "citation-alternatives": "Thomas, C. & Tampé, R. Structural and mechanistic principles of ABC transporters. Annu. Rev. Biochem.89, 605–636 (2020).\n",
+              "fpage": "605",
+              "lpage": "636",
+              "name_0": "surname:Thomas;given-names:C",
+              "name_1": "surname:Tampé;given-names:R",
+              "pub-id_doi": "10.1146/annurev-biochem-011520-105201",
+              "pub-id_pmid": "32569521",
+              "section_type": "REF",
+              "source": "Annu. Rev. Biochem.",
+              "type": "ref",
+              "volume": "89",
+              "year": "2020"
+            },
+            "text": "Structural and mechanistic principles of ABC transporters",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 31175,
+            "infons": {
+              "citation-alternatives": "Lin, L., Yee, S. W., Kim, R. B. & Giacomini, K. M. SLC transporters as therapeutic targets: emerging opportunities. Nat. Rev. Drug Discov.14, 543–560 (2015).\n",
+              "fpage": "543",
+              "lpage": "560",
+              "name_0": "surname:Lin;given-names:L",
+              "name_1": "surname:Yee;given-names:SW",
+              "name_2": "surname:Kim;given-names:RB",
+              "name_3": "surname:Giacomini;given-names:KM",
+              "pub-id_doi": "10.1038/nrd4626",
+              "pub-id_pmid": "26111766",
+              "section_type": "REF",
+              "source": "Nat. Rev. Drug Discov.",
+              "type": "ref",
+              "volume": "14",
+              "year": "2015"
+            },
+            "text": "SLC transporters as therapeutic targets: emerging opportunities",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 31239,
+            "infons": {
+              "citation-alternatives": "Ashraf, S. et al. Unraveling the versatility of human serum albumin - A comprehensive review of its biological significance and therapeutic potential. Curr. Res. Struct. Biol.6, 100114 (2023).\n",
+              "fpage": "100114",
+              "name_0": "surname:Ashraf;given-names:S",
+              "pub-id_doi": "10.1016/j.crstbi.2023.100114",
+              "pub-id_pmid": "38111902",
+              "section_type": "REF",
+              "source": "Curr. Res. Struct. Biol.",
+              "type": "ref",
+              "volume": "6",
+              "year": "2023"
+            },
+            "text": "Unraveling the versatility of human serum albumin - A comprehensive review of its biological significance and therapeutic potential",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 31371,
+            "infons": {
+              "citation-alternatives": "Ramanjulu, J. M. et al. Overcoming the pregnane X receptor liability: Rational design to eliminate PXR-mediated CYP induction. ACS Med. Chem. Lett.12, 1396–1404 (2021).\n",
+              "fpage": "1396",
+              "lpage": "1404",
+              "name_0": "surname:Ramanjulu;given-names:JM",
+              "pub-id_doi": "10.1021/acsmedchemlett.1c00187",
+              "pub-id_pmid": "34531948",
+              "section_type": "REF",
+              "source": "ACS Med. Chem. Lett.",
+              "type": "ref",
+              "volume": "12",
+              "year": "2021"
+            },
+            "text": "Overcoming the pregnane X receptor liability: Rational design to eliminate PXR-mediated CYP induction",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 31473,
+            "infons": {
+              "citation-alternatives": "Willson, T. M. & Kliewer, S. A. PXR, CAR and drug metabolism. Nat. Rev. Drug Discov.1, 259–266 (2002).\n",
+              "fpage": "259",
+              "lpage": "266",
+              "name_0": "surname:Willson;given-names:TM",
+              "name_1": "surname:Kliewer;given-names:SA",
+              "pub-id_doi": "10.1038/nrd753",
+              "pub-id_pmid": "12120277",
+              "section_type": "REF",
+              "source": "Nat. Rev. Drug Discov.",
+              "type": "ref",
+              "volume": "1",
+              "year": "2002"
+            },
+            "text": "PXR, CAR and drug metabolism",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 31502,
+            "infons": {
+              "citation-alternatives": "Garrido, A., Lepailleur, A., Mignani, S. M., Dallemagne, P. & Rochais, C. hERG toxicity assessment: Useful guidelines for drug design. Eur. J. Med. Chem.195, 112290 (2020).\n",
+              "fpage": "112290",
+              "name_0": "surname:Garrido;given-names:A",
+              "name_1": "surname:Lepailleur;given-names:A",
+              "name_2": "surname:Mignani;given-names:SM",
+              "name_3": "surname:Dallemagne;given-names:P",
+              "name_4": "surname:Rochais;given-names:C",
+              "pub-id_doi": "10.1016/j.ejmech.2020.112290",
+              "pub-id_pmid": "32283295",
+              "section_type": "REF",
+              "source": "Eur. J. Med. Chem.",
+              "type": "ref",
+              "volume": "195",
+              "year": "2020"
+            },
+            "text": "hERG toxicity assessment: Useful guidelines for drug design",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 31562,
+            "infons": {
+              "citation-alternatives": "Abriel, H. Cardiac sodium channel Na(v)1.5 and interacting proteins: Physiology and pathophysiology. J. Mol. Cell. Cardiol.48, 2–11 (2010).\n",
+              "fpage": "2",
+              "lpage": "11",
+              "name_0": "surname:Abriel;given-names:H",
+              "pub-id_doi": "10.1016/j.yjmcc.2009.08.025",
+              "pub-id_pmid": "19744495",
+              "section_type": "REF",
+              "source": "J. Mol. Cell. Cardiol.",
+              "type": "ref",
+              "volume": "48",
+              "year": "2010"
+            },
+            "text": "Cardiac sodium channel Na(v)1.5 and interacting proteins: Physiology and pathophysiology",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 31651,
+            "infons": {
+              "citation-alternatives": "Lipscombe, D., Helton, T. D. & Xu, W. L-type calcium channels: the low down. J. Neurophysiol.92, 2633–2641 (2004).\n",
+              "fpage": "2633",
+              "lpage": "2641",
+              "name_0": "surname:Lipscombe;given-names:D",
+              "name_1": "surname:Helton;given-names:TD",
+              "name_2": "surname:Xu;given-names:W",
+              "pub-id_doi": "10.1152/jn.00486.2004",
+              "pub-id_pmid": "15486420",
+              "section_type": "REF",
+              "source": "J. Neurophysiol.",
+              "type": "ref",
+              "volume": "92",
+              "year": "2004"
+            },
+            "text": "L-type calcium channels: the low down",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 31689,
+            "infons": {
+              "citation-alternatives": "Robinson, K. & Tiriveedhi, V. Perplexing role of P-glycoprotein in tumor microenvironment. Front. Oncol.10, 265 (2020).\n",
+              "fpage": "265",
+              "name_0": "surname:Robinson;given-names:K",
+              "name_1": "surname:Tiriveedhi;given-names:V",
+              "pub-id_doi": "10.3389/fonc.2020.00265",
+              "pub-id_pmid": "32195185",
+              "section_type": "REF",
+              "source": "Front. Oncol.",
+              "type": "ref",
+              "volume": "10",
+              "year": "2020"
+            },
+            "text": "Perplexing role of P-glycoprotein in tumor microenvironment",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 31749,
+            "infons": {
+              "citation-alternatives": "Hsia, D. S., Grove, O. & Cefalu, W. T. An update on sodium-glucose co-transporter-2 inhibitors for the treatment of diabetes mellitus. Curr. Opin. Endocrinol. Diabetes Obes.24, 73–79 (2017).\n",
+              "fpage": "73",
+              "lpage": "79",
+              "name_0": "surname:Hsia;given-names:DS",
+              "name_1": "surname:Grove;given-names:O",
+              "name_2": "surname:Cefalu;given-names:WT",
+              "pub-id_doi": "10.1097/MED.0000000000000311",
+              "pub-id_pmid": "27898586",
+              "section_type": "REF",
+              "source": "Curr. Opin. Endocrinol. Diabetes Obes.",
+              "type": "ref",
+              "volume": "24",
+              "year": "2017"
+            },
+            "text": "An update on sodium-glucose co-transporter-2 inhibitors for the treatment of diabetes mellitus",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 31844,
+            "infons": {
+              "citation-alternatives": "Zhang, M. et al. CDK inhibitors in cancer therapy, an overview of recent development. Am. J. Cancer Res.11, 1913–1935 (2021).\n",
+              "fpage": "1913",
+              "lpage": "1935",
+              "name_0": "surname:Zhang;given-names:M",
+              "pub-id_pmid": "34094661",
+              "section_type": "REF",
+              "source": "Am. J. Cancer Res.",
+              "type": "ref",
+              "volume": "11",
+              "year": "2021"
+            },
+            "text": "CDK inhibitors in cancer therapy, an overview of recent development",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 31912,
+            "infons": {
+              "citation-alternatives": "Chen, J. et al. Data scaling and generalization insights for medicinal chemistry deep learning models. J. Chem. Inf. Model.65, 5887–5898 (2025).\n",
+              "fpage": "5887",
+              "lpage": "5898",
+              "name_0": "surname:Chen;given-names:J",
+              "pub-id_doi": "10.1021/acs.jcim.5c00538",
+              "pub-id_pmid": "40454949",
+              "section_type": "REF",
+              "source": "J. Chem. Inf. Model.",
+              "type": "ref",
+              "volume": "65",
+              "year": "2025"
+            },
+            "text": "Data scaling and generalization insights for medicinal chemistry deep learning models",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 31998,
+            "infons": {
+              "citation-alternatives": "Gaulton, A. et al. ChEMBL: a large-scale bioactivity database for drug discovery. Nucleic Acids Res. 40, D1100–D1107 (2011).\n",
+              "fpage": "D1100",
+              "lpage": "D1107",
+              "name_0": "surname:Gaulton;given-names:A",
+              "pub-id_doi": "10.1093/nar/gkr777",
+              "pub-id_pmid": "21948594",
+              "section_type": "REF",
+              "source": "Nucleic Acids Res",
+              "type": "ref",
+              "volume": "40",
+              "year": "2011"
+            },
+            "text": "ChEMBL: a large-scale bioactivity database for drug discovery",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 32060,
+            "infons": {
+              "citation-alternatives": "Huang, K. et al. Artificial intelligence foundation for therapeutic science. Nat. Chem. Biol.18, 1033–1036 (2022).\n",
+              "fpage": "1033",
+              "lpage": "1036",
+              "name_0": "surname:Huang;given-names:K",
+              "pub-id_doi": "10.1038/s41589-022-01131-2",
+              "pub-id_pmid": "36131149",
+              "section_type": "REF",
+              "source": "Nat. Chem. Biol.",
+              "type": "ref",
+              "volume": "18",
+              "year": "2022"
+            },
+            "text": "Artificial intelligence foundation for therapeutic science",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 32119,
+            "infons": {
+              "citation-alternatives": "Landrum, G. A. & Riniker, S. Combining IC50 or Ki Values from Different Sources Is a Source of Significant Noise. J. Chem. Inf. Model.64, 1560–1567 (2024).\n",
+              "fpage": "1560",
+              "lpage": "1567",
+              "name_0": "surname:Landrum;given-names:GA",
+              "name_1": "surname:Riniker;given-names:S",
+              "pub-id_doi": "10.1021/acs.jcim.4c00049",
+              "pub-id_pmid": "38394344",
+              "section_type": "REF",
+              "source": "J. Chem. Inf. Model.",
+              "type": "ref",
+              "volume": "64",
+              "year": "2024"
+            },
+            "text": "Combining IC50 or Ki Values from Different Sources Is a Source of Significant Noise",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 32203,
+            "infons": {
+              "citation-alternatives": "Matreyek, K. A. et al. Multiplex assessment of protein variant abundance by massively parallel sequencing. Nat. Genet.50, 874–882 (2018).\n",
+              "fpage": "874",
+              "lpage": "882",
+              "name_0": "surname:Matreyek;given-names:KA",
+              "pub-id_doi": "10.1038/s41588-018-0122-z",
+              "pub-id_pmid": "29785012",
+              "section_type": "REF",
+              "source": "Nat. Genet.",
+              "type": "ref",
+              "volume": "50",
+              "year": "2018"
+            },
+            "text": "Multiplex assessment of protein variant abundance by massively parallel sequencing",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 32286,
+            "infons": {
+              "citation-alternatives": "Musther, H., Olivares-Morales, A., Hatley, O. J. D., Liu, B. & Rostami Hodjegan, A. Animal versus human oral drug bioavailability: do they correlate? Eur. J. Pharm. Sci.57, 280–291 (2014).\n",
+              "fpage": "280",
+              "lpage": "291",
+              "name_0": "surname:Musther;given-names:H",
+              "name_1": "surname:Olivares-Morales;given-names:A",
+              "name_2": "surname:Hatley;given-names:OJD",
+              "name_3": "surname:Liu;given-names:B",
+              "name_4": "surname:Rostami Hodjegan;given-names:A",
+              "pub-id_doi": "10.1016/j.ejps.2013.08.018",
+              "pub-id_pmid": "23988844",
+              "section_type": "REF",
+              "source": "Eur. J. Pharm. Sci.",
+              "type": "ref",
+              "volume": "57",
+              "year": "2014"
+            },
+            "text": "Animal versus human oral drug bioavailability: do they correlate?",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 32352,
+            "infons": {
+              "section_type": "REF",
+              "type": "ref"
+            },
+            "text": "Heyndrickx, W. et al. MELLODDY: Cross-pharma Federated Learning at Unprecedented Scale Unlocks Benefits in QSAR without Compromising Proprietary Information. J. Chem. Inf. Model. 10.1021/acs.jcim.3c00799 (2023).",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 32564,
+            "infons": {
+              "citation-alternatives": "Reker, D. Practical considerations for active machine learning in drug discovery. Drug Discov. Today Technol.32-33, 73–79 (2019).\n",
+              "fpage": "73",
+              "lpage": "79",
+              "name_0": "surname:Reker;given-names:D",
+              "pub-id_doi": "10.1016/j.ddtec.2020.06.001",
+              "pub-id_pmid": "33386097",
+              "section_type": "REF",
+              "source": "Drug Discov. Today Technol.",
+              "type": "ref",
+              "volume": "32-33",
+              "year": "2019"
+            },
+            "text": "Practical considerations for active machine learning in drug discovery",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 32635,
+            "infons": {
+              "citation-alternatives": "Fan, X., Jiao, B., Zhou, X., Zhang, W. & Ouyang, Z. Miniaturization of mass spectrometry systems: An overview of recent advancements and a perspective on future directions. Anal. Chem.97, 9111–9125 (2025).\n",
+              "fpage": "9111",
+              "lpage": "9125",
+              "name_0": "surname:Fan;given-names:X",
+              "name_1": "surname:Jiao;given-names:B",
+              "name_2": "surname:Zhou;given-names:X",
+              "name_3": "surname:Zhang;given-names:W",
+              "name_4": "surname:Ouyang;given-names:Z",
+              "pub-id_doi": "10.1021/acs.analchem.5c01223",
+              "pub-id_pmid": "40270310",
+              "section_type": "REF",
+              "source": "Anal. Chem.",
+              "type": "ref",
+              "volume": "97",
+              "year": "2025"
+            },
+            "text": "Miniaturization of mass spectrometry systems: An overview of recent advancements and a perspective on future directions",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 32755,
+            "infons": {
+              "section_type": "REF",
+              "type": "ref"
+            },
+            "text": "Kain, S. R. & Ganguly, S. Overview of genetic reporter systems. Curr. Protoc. Mol. Biol. Chapter9, Unit9.6 (2001).",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 32870,
+            "infons": {
+              "citation-alternatives": "Parrondo-Pizarro, R., Lanini, J. & Rodríguez-Pérez, R. Uncertainty quantification in molecular machine learning for property predictions under data shifts. J. Chem. Inf. Model.66, 923–935 (2026).\n",
+              "fpage": "923",
+              "lpage": "935",
+              "name_0": "surname:Parrondo-Pizarro;given-names:R",
+              "name_1": "surname:Lanini;given-names:J",
+              "name_2": "surname:Rodríguez-Pérez;given-names:R",
+              "pub-id_doi": "10.1021/acs.jcim.5c02381",
+              "pub-id_pmid": "41533656",
+              "section_type": "REF",
+              "source": "J. Chem. Inf. Model.",
+              "type": "ref",
+              "volume": "66",
+              "year": "2026"
+            },
+            "text": "Uncertainty quantification in molecular machine learning for property predictions under data shifts",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 32970,
+            "infons": {
+              "citation-alternatives": "Khalil, B., Schweighofer, K., Dyubankova, N., van Westen, G. J. P. & van Vlijmen, H. Combining Bayesian and evidential uncertainty quantification for improved bioactivity modeling. J. Chem. Inf. Model.65, 13057–13069 (2025).\n",
+              "fpage": "13057",
+              "lpage": "13069",
+              "name_0": "surname:Khalil;given-names:B",
+              "name_1": "surname:Schweighofer;given-names:K",
+              "name_2": "surname:Dyubankova;given-names:N",
+              "name_3": "surname:van Westen;given-names:GJP",
+              "name_4": "surname:van Vlijmen;given-names:H",
+              "pub-id_doi": "10.1021/acs.jcim.5c01597",
+              "pub-id_pmid": "41353755",
+              "section_type": "REF",
+              "source": "J. Chem. Inf. Model.",
+              "type": "ref",
+              "volume": "65",
+              "year": "2025"
+            },
+            "text": "Combining Bayesian and evidential uncertainty quantification for improved bioactivity modeling",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 33065,
+            "infons": {
+              "citation-alternatives": "Thouta, S., Lo, G., Grajauskas, L. & Claydon, T. Investigating the state dependence of drug binding in hERG channels using a trapped-open channel phenotype. Sci. Rep.8, 4962 (2018).\n",
+              "fpage": "4962",
+              "name_0": "surname:Thouta;given-names:S",
+              "name_1": "surname:Lo;given-names:G",
+              "name_2": "surname:Grajauskas;given-names:L",
+              "name_3": "surname:Claydon;given-names:T",
+              "pub-id_doi": "10.1038/s41598-018-23346-x",
+              "pub-id_pmid": "29563525",
+              "section_type": "REF",
+              "source": "Sci. Rep.",
+              "type": "ref",
+              "volume": "8",
+              "year": "2018"
+            },
+            "text": "Investigating the state dependence of drug binding in hERG channels using a trapped-open channel phenotype",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 33172,
+            "infons": {
+              "citation-alternatives": "Eagling, V. A., Tjia, J. F. & Back, D. J. Differential selectivity of cytochrome P450 inhibitors against probe substrates in human and rat liver microsomes. Br. J. Clin. Pharmacol.45, 107–114 (1998).\n",
+              "fpage": "107",
+              "lpage": "114",
+              "name_0": "surname:Eagling;given-names:VA",
+              "name_1": "surname:Tjia;given-names:JF",
+              "name_2": "surname:Back;given-names:DJ",
+              "pub-id_doi": "10.1046/j.1365-2125.1998.00679.x",
+              "pub-id_pmid": "9491822",
+              "section_type": "REF",
+              "source": "Br. J. Clin. Pharmacol.",
+              "type": "ref",
+              "volume": "45",
+              "year": "1998"
+            },
+            "text": "Differential selectivity of cytochrome P450 inhibitors against probe substrates in human and rat liver microsomes",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 33286,
+            "infons": {
+              "citation-alternatives": "Guha, R. & Van Drie, J. H. Structure-activity landscape index: identifying and quantifying activity cliffs. J. Chem. Inf. Model.48, 646–658 (2008).\n",
+              "fpage": "646",
+              "lpage": "658",
+              "name_0": "surname:Guha;given-names:R",
+              "name_1": "surname:Van Drie;given-names:JH",
+              "pub-id_doi": "10.1021/ci7004093",
+              "pub-id_pmid": "18303878",
+              "section_type": "REF",
+              "source": "J. Chem. Inf. Model.",
+              "type": "ref",
+              "volume": "48",
+              "year": "2008"
+            },
+            "text": "Structure-activity landscape index: identifying and quantifying activity cliffs",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 33366,
+            "infons": {
+              "section_type": "REF",
+              "type": "ref"
+            },
+            "text": "Kuan, J., Radaeva, M., Avenido, A., Cherkasov, A. & Gentile, F. Keeping pace with the explosive growth of chemical libraries with structure-based virtual screening. Wiley Interdiscip. Rev. Comput. Mol. Sci. 13, 10.1002/wcms.1678 (2023).",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 33603,
+            "infons": {
+              "citation-alternatives": "Hendrick, C. E. et al. Direct-to-biology accelerates PROTAC synthesis and the evaluation of linker effects on permeability and degradation. ACS Med. Chem. Lett.13, 1182–1190 (2022).\n",
+              "fpage": "1182",
+              "lpage": "1190",
+              "name_0": "surname:Hendrick;given-names:CE",
+              "pub-id_doi": "10.1021/acsmedchemlett.2c00124",
+              "pub-id_pmid": "35859867",
+              "section_type": "REF",
+              "source": "ACS Med. Chem. Lett.",
+              "type": "ref",
+              "volume": "13",
+              "year": "2022"
+            },
+            "text": "Direct-to-biology accelerates PROTAC synthesis and the evaluation of linker effects on permeability and degradation",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 33719,
+            "infons": {
+              "citation-alternatives": "Stoll, F., Göller, A. H. & Hillisch, A. Utility of protein structures in overcoming ADMET-related issues of drug-like compounds. Drug Discov. Today16, 530–538 (2011).\n",
+              "fpage": "530",
+              "lpage": "538",
+              "name_0": "surname:Stoll;given-names:F",
+              "name_1": "surname:Göller;given-names:AH",
+              "name_2": "surname:Hillisch;given-names:A",
+              "pub-id_doi": "10.1016/j.drudis.2011.04.008",
+              "pub-id_pmid": "21554979",
+              "section_type": "REF",
+              "source": "Drug Discov. Today",
+              "type": "ref",
+              "volume": "16",
+              "year": "2011"
+            },
+            "text": "Utility of protein structures in overcoming ADMET-related issues of drug-like compounds",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 33807,
+            "infons": {
+              "citation-alternatives": "Ash, J. R. et al. Practically significant method comparison protocols for machine Learning in small molecule drug discovery. J. Chem. Inf. Model.65, 9398–9411 (2025).\n",
+              "fpage": "9398",
+              "lpage": "9411",
+              "name_0": "surname:Ash;given-names:JR",
+              "pub-id_doi": "10.1021/acs.jcim.5c01609",
+              "pub-id_pmid": "40932128",
+              "section_type": "REF",
+              "source": "J. Chem. Inf. Model.",
+              "type": "ref",
+              "volume": "65",
+              "year": "2025"
+            },
+            "text": "Practically significant method comparison protocols for machine Learning in small molecule drug discovery",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 33913,
+            "infons": {
+              "citation-alternatives": "Gilson, M. K. et al. Assessment of pharmaceutical protein-ligand pose and affinity predictions in CASP16. Proteins94, 249–266 (2026).\n",
+              "fpage": "249",
+              "lpage": "266",
+              "name_0": "surname:Gilson;given-names:MK",
+              "pub-id_doi": "10.1002/prot.70061",
+              "pub-id_pmid": "41045049",
+              "section_type": "REF",
+              "source": "Proteins",
+              "type": "ref",
+              "volume": "94",
+              "year": "2026"
+            },
+            "text": "Assessment of pharmaceutical protein-ligand pose and affinity predictions in CASP16",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 33997,
+            "infons": {
+              "citation-alternatives": "Ackloo, S. et al. CACHE (Critical Assessment of Computational Hit-finding Experiments): A public-private partnership benchmarking initiative to enable the development of computational methods for hit-finding. Nat Rev Chem6, 287–295 (2022).\n",
+              "fpage": "287",
+              "lpage": "295",
+              "name_0": "surname:Ackloo;given-names:S",
+              "pub-id_doi": "10.1038/s41570-022-00363-z",
+              "pub-id_pmid": "35783295",
+              "section_type": "REF",
+              "source": "Nat Rev Chem",
+              "type": "ref",
+              "volume": "6",
+              "year": "2022"
+            },
+            "text": "CACHE (Critical Assessment of Computational Hit-finding Experiments): A public-private partnership benchmarking initiative to enable the development of computational methods for hit-finding",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 34187,
+            "infons": {
+              "citation-alternatives": "Amezcua, M., Setiadi, J., Ge, Y. & Mobley, D. L. An overview of the SAMPL8 host-guest binding challenge. J. Comput. Aided Mol. Des.36, 707–734 (2022).\n",
+              "fpage": "707",
+              "lpage": "734",
+              "name_0": "surname:Amezcua;given-names:M",
+              "name_1": "surname:Setiadi;given-names:J",
+              "name_2": "surname:Ge;given-names:Y",
+              "name_3": "surname:Mobley;given-names:DL",
+              "pub-id_doi": "10.1007/s10822-022-00462-5",
+              "pub-id_pmid": "36229622",
+              "section_type": "REF",
+              "source": "J. Comput. Aided Mol. Des.",
+              "type": "ref",
+              "volume": "36",
+              "year": "2022"
+            },
+            "text": "An overview of the SAMPL8 host-guest binding challenge",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          }
+        ],
+        "annotations": [],
+        "relations": []
+      }
+    ]
+  }
+]

@@ -1,0 +1,68 @@
+{
+  "purpose": "Map seven-tuple extraction error classes (E1–E14, A–F, G1–G3) onto the NL-excerpt + LLM-executor path, and name error classes that only exist on the alternative path (N1–N11). Evidence from case 74 / 326 / 56 / 179 unless noted.",
+  "pipeline_loci": {
+    "seven_tuple": "formalization: quote → closed-set relation/polarity/modality/threshold. The model must commit. A wrong commitment is executable.",
+    "nl_excerpt": "selection: passage → verbatim sentences + a disease name. No logical commitment. Errors are what got copied, to whom it was attached, and what the cap-40 ranker kept.",
+    "llm_executor": "application: (findings, selected sentences) → ranking + supported/neutral/ruled_out. The commitment that the excerpt refused is reintroduced here, opaquely."
+  },
+  "fate_of_extraction_classes": [
+    {"id": "E2", "name": "polarity inverted", "seven_tuple": "slot polarity ≠ quote", "nl_fate": "transformed", "note": "No polarity slot, so the invert cannot be stored. Hedge/negation words stay in the sentence. The executor can still invert when applying (326 gold ruled_out despite 'or')."},
+    {"id": "E3", "name": "modality inflation", "seven_tuple": "usually/may → obligatory", "nl_fate": "transformed", "note": "Modality stays as English. Executor may still treat 'usually must' as must if that sentence is shown; on 326 the Harrison usually-must sentence is unique#111 and never shown."},
+    {"id": "E4_AF", "name": "relation overclaim / false required_for A–F", "seven_tuple": "workup/advice/ICD/treatment written as diagnostic necessity", "nl_fate": "migrated_to_execute", "note": "74 CPVT: 'Exercise testing is advised, but a negative test does not exclude…' is kept WHOLE at cap40 #18 — extract-side B-class is repaired. 326: 'Diagnose Brucellosis by blood or CSF cultures' is cap40 #1 (x6) — method-as-requirement is reintroduced as the most-repeated sentence, and gold is ruled_out 2/3."},
+    {"id": "E5", "name": "this-variant deixis", "seven_tuple": "subject collapsed to parent class", "nl_fate": "shared", "note": "disease field still has to name something; fuzzy subject_match still binds hypernyms."},
+    {"id": "E7", "name": "empty predicate", "seven_tuple": "bare 'imaging' / 'typical ECG morphologies'", "nl_fate": "partially_gone", "note": "Postprocess drops <6 words; table cells and headings still survive as 'sentences'."},
+    {"id": "E8", "name": "mimic written as feature_of", "seven_tuple": "differential mimic → positive feature", "nl_fate": "transformed", "note": "The mimic sentence is copied. Executor may still read it as support rather than contrast; not gated."},
+    {"id": "E9", "name": "and/or split into independent obligatory", "seven_tuple": "326 bacteriologic AND serologic each required_for+obligatory; L1 kills gold", "nl_fate": "gone_at_extract_buried_at_select", "note": "Harrison 'bacteriologic and/or serologic' survives as one sentence at unique rank #111 — outside cap 40 and even barely inside a 100-cap of 137 unique. The split cannot fire. A different method sentence occupies #1."},
+    {"id": "E10", "name": "treatment as diagnostic", "seven_tuple": "ICD / HOCM 50 mmHg / aviation as required_for", "nl_fate": "filterable_but_not_filtered", "note": "use=treatment is labelled (LQTS cap40: 10/40 treatment). Support ranking still keeps them. Executor prompt does not drop them."},
+    {"id": "E11", "name": "off-topic but locally faithful", "seven_tuple": "not a relation error; still binds and scores", "nl_fate": "shared", "note": "Same passages, same off-topic sentences. Harm on NL is context cost; on seven-tuple it can still be a scored feature_of."},
+    {"id": "E12", "name": "tautology / signifier as signified", "seven_tuple": "LQTS pathognomonic_for 'prolonged QT' from 'termed long QT syndrome' → L2 +2 confirmation, C0 gold rank 2", "nl_fate": "transformed_harm_collapsed", "note": "Definitional sentences still excerpted (LQTS cap40 #2 TdP, #12 'characteristic arrhythmia'). They cannot fire a +2 confirmation slot. C0's ranking inversion is gone. Residual harm is ranking noise, not a hard confirm."},
+    {"id": "E13", "name": "argument swap", "seven_tuple": "sign as subject, disease as predicate", "nl_fate": "shared_via_binding", "note": "disease='ventricular tachycardia' bound onto CPVT candidate. 90/223 = 40% of CPVT-bound rules have a generic VT subject."},
+    {"id": "E14", "name": "threshold hallucination", "seven_tuple": "quote lacks the number; threshold slot invents it", "nl_fate": "gone", "note": "Threshold parsed only from the copied sentence. 216 non-verbatim spans already dropped. Cannot invent 440 ms on a sentence that does not contain it."},
+    {"id": "G1", "name": "true necessity dual-slotted as pathognomonic", "seven_tuple": "Type I 'necessary for the diagnosis' also written pathognomonic_for; L2 over-confirms", "nl_fate": "repaired_at_extract", "note": "The same sentence is Brugada cap40 #3, whole. Executor ruled Brugada out in 3/3 reps on absent Type-1 pattern. Dual-slot invention is impossible without slots."},
+    {"id": "G2", "name": "cutoff encoded as excludes+negated", "seven_tuple": "'normal QTc <440/460' never becomes required_for prolonged QTc; L1 cannot fire; 0 required_for carrying 440/460", "nl_fate": "repaired_at_extract_failed_at_execute", "note": "Same sentence is LQTS cap40 #5 (x6), plus 'QTc >0.450 sec' at #11 with program-parsed threshold. Findings include QTc interval=380ms. Executor: LQTS neutral 2/3, supported 1/3, ruled_out 0/3. The clinical miss is identical; the broken module moved from encoding to application."},
+    {"id": "G3", "name": "conjunction positive limb as feature_of", "seven_tuple": "CPVT consensus item 1 bidirectional VT all feature_of; structurally normal heart/normal ECG required_for", "nl_fate": "repaired_at_extract_buried_at_select", "note": "Consensus sentence exists verbatim in the unique set at support-rank #44 — outside cap40, inside cap100 (#44 and #47). Support ranking recreates the G3 miss: the positive limb is present in the corpus and absent from the prompt the executor sees."},
+    {"id": "O1", "name": "converse not extracted", "seven_tuple": "773 right-to-left as positive feature, no inverse", "nl_fate": "shared", "note": "Excerpter copies the sentence that exists. It cannot invent the converse any more than the seven-tuple extractor can (without F5b)."}
+  ],
+  "new_classes_nl_only": [
+    {"id": "N1", "name": "support-rank burial", "def": "Decisive diagnostic sentences exist in the unique set but lose the cap-K contest to repeated treatment/etiology sentences.", "evidence": "CPVT consensus #44; 326 Harrison and/or #111; CPVT cap40 has 9 treatment of 40."},
+    {"id": "N2", "name": "hypernym over-bind", "def": "subject_match attaches generic 'ventricular tachycardia' / 'polymorphic VT' rules onto a specific candidate.", "evidence": "74 CPVT-bound 223 rules, 90 (40%) generic VT subject. Shared matcher with the mechanical engine, amplified because NL disease names are freer."},
+    {"id": "N3", "name": "table-row as sentence", "def": "Chunked table cells copied as rules once the header is lost.", "evidence": "39-sample 9/39; CPVT cap40 #31–32 Schwartz-style score rows for bidirectional VT."},
+    {"id": "N4", "name": "dangling anaphora", "def": "A sentence-level excerpt loses the antecedent.", "evidence": "39-sample 1/39 'It is also indicated…'"},
+    {"id": "N5", "name": "treatment crowding", "def": "use=treatment is labelled but not dropped; occupies cap slots.", "evidence": "LQTS cap40 10/40 treatment, 21/40 diagnosis."},
+    {"id": "N6", "name": "executor under-firing of a recovered cutoff", "def": "The numeric rule AND the patient number are both in the prompt; the model does not mark ruled_out.", "evidence": "74 LQTS: QTc 380 ms in findings, cutoff sentence #5, verdict never ruled_out. Asymmetry: Brugada (named-pattern absence) IS ruled_out 3/3."},
+    {"id": "N7", "name": "executor over-firing / method-as-requirement", "def": "A workup sentence at high support is applied as a missing-test exclusion.", "evidence": "326 gold ruled_out 2/3 on nl_rule; cap40 #1 is 'Diagnose by blood or CSF cultures'; finding is 'blood cultures grew a Gram-negative bacillus' (not named Brucella). none arm already ranks gold 9–11 and rules it out 1/3 — parametric SEA preference plus the culture sentence."},
+    {"id": "N8", "name": "candidate-order sensitivity", "def": "Permutation of the candidate list changes the ranking more than withdrawing all rules.", "evidence": "§17.4 Kendall τ 0.33 shuffled vs 0.61 rules-vs-none. Mechanical engine is invariant to presentation order."},
+    {"id": "N9", "name": "parametric override", "def": "The executor's prior already ranks a wrong disease first; retrieved rules do not displace it.", "evidence": "56: none and nl_rule share top1 Undifferentiated Pleomorphic Sarcoma, gold rank 17 vs 19. 179: both arms top1 Pulmonary Atresia with VSD, gold rank 13 vs 11."},
+    {"id": "N10", "name": "output truncation", "def": "JSON ranking truncated; unmentioned candidates keep presented-order tail.", "evidence": "cap100, case 773: n_ranked_by_model=0 after JSON cut mid-Eisenmenger sentence; gold_rank=1 because IPAH+PFO happened to be first in the shuffled presented order. (Earlier note said 522; that was the arm-level empty_answers misread.)"},
+    {"id": "N11", "name": "soft burial without elimination", "def": "Gold is ranked 8–19 with verdict neutral — not a layer-1 kill, a coverage/prior dump.", "evidence": "nl_rule gold rank>6: 56 (8–19), 179 (11–15), 475 (13), 326 (9–11). Mechanical median rank 3; these cases stay in mid-list even when extraction is wrong."}
+  ],
+  "same_miss_different_module": {
+    "74_QTc_LQTS": {
+      "clinical": "QTc 380 ms should exclude congenital LQTS; CPVT should survive",
+      "seven_tuple": "G2 encodes the cutoff as excludes+negated (unexecutable); E12 tautology feeds L2 confirmation of LQTS. C0: LQTS top1, CPVT rank 2, gold NOT eliminated.",
+      "nl": "Cutoff sentence recovered at LQTS #5; QTc=380 ms in findings. Executor leaves LQTS neutral/supported. CPVT still ranks #1 because it is 'supported', not because LQTS was excluded. Brugada (absent Type-1) IS excluded.",
+      "reading": "NL 'wins' 74 by a different mechanism than F7. F7 stops a false L2 confirm. NL never fires the recovered exclusion either; it just does not award LQTS a pathognomonic bonus."
+    },
+    "326_and_or": {
+      "clinical": "bacteriologic and/or serologic — missing TB serology must not kill Brucellosis",
+      "seven_tuple": "E3+E9: two independent obligatory required_for. C0 gold eliminated, rank 12. C1+F7: not eliminated, rank 3.",
+      "nl": "The and/or sentence is unique#111, not shown. Surface sentence is culture-method. Gold ruled_out 2/3, rank 9–11 — statistically the same dump as the none arm.",
+      "reading": "The E9 split is gone. A method-as-requirement overclaim of class A is re-enacted at execution on a different sentence, on top of a parametric preference for spinal epidural abscess."
+    }
+  },
+  "harm_polarity": {
+    "seven_tuple": "False POSITIVES of logical force: claiming necessity/sufficiency/exclusion the quote does not license. A single false obligatory required_for is a hard kill. Detectable by cue-vs-slot gates (F7). Repair is demotion.",
+    "nl_extract": "False NEGATIVES of logical force: refusing to claim anything. Residual extract errors (N1–N5) are mostly flooding. Detectable by verbatim check and use= filter. Repair is ranking/filtering, not demotion.",
+    "nl_execute": "Uncontrolled REINTRODUCTION of logical force: under-fire (N6) and over-fire (N7), order-sensitive (N8), prior-dominated (N9). Not detectable by string gates. No F7 analogue without a second NLI/threshold engine sitting on the executor."
+  },
+  "74_executor_asymmmetry": {
+    "brugada_named_pattern": {"finding": "Brugada pattern absent", "rule_in_cap40": "type I pattern necessary for the diagnosis (#3)", "verdict": "ruled_out 3/3"},
+    "lqts_numeric_cutoff": {"finding": "QTc interval = 380 ms", "rule_in_cap40": "normal QTc men <440 / women <460 (#5)", "verdict": "ruled_out 0/3 (neutral 2, supported 1)"},
+    "reading": "The executor can apply a named-pattern absence. It does not reliably apply a numeric comparison even when both sides of the comparison are in the prompt. Mechanical layer-1 threshold_ok exists precisely for this case and was starved by G2; NL restores the inputs and still skips the comparison."
+  },
+  "cpvt_binding_overclaim": {"bound": 223, "generic_vt_subject": 90, "share": 0.40},
+  "cpvt_consensus_support_rank": 44,
+  "lqts_cutoff_cap40_rank": 5,
+  "brucella_harrison_andor_unique_rank": 111,
+  "brucella_culture_method_cap40_rank": 1
+}

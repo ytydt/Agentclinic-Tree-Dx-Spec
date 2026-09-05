@@ -1,0 +1,112 @@
+{
+  "case_key": "MCR_v1_seq100/74",
+  "source": "trial_extraction_k30all4clean_groups.json",
+  "unit": "unique (subject, relation, polarity, modality, predicate, quote[:80])",
+  "relation_error": "Closed-set relation is not licensed by the quote as that relation. E11 (off-topic but locally faithful) is NOT a relation error. E3 (modality) is NOT counted here. E14 (number) is NOT counted here.",
+  "denominators": {
+    "all_unique_assertions": 2201,
+    "unique_high_stakes": 225,
+    "pathognomonic_for": 28,
+    "required_for": 57,
+    "sufficient_for": 6,
+    "excludes": 134
+  },
+  "pathognomonic_for": {
+    "n": 28,
+    "relation_wrong": 19,
+    "rate": 0.679,
+    "ok": [
+      "epsilon wave is pathognomonic (ARVD, 2 quotes)",
+      "Type 1 Brugada pattern is pathognomonic",
+      "Type 1 is the only ECG abnormality potentially diagnostic",
+      "characteristic type 1 Brugada ECG pattern",
+      "ε sign indicative of ARVC",
+      "seizures >5 min as operational definition of status epilepticus",
+      "bidirectional VT classically pathognomonic for digoxin toxicity (2)"
+    ],
+    "wrong": [
+      "LQTS tautology cluster (8): termed/congenital/Fig.16.35/prolonged QT syndrome / prolongation of the QT segment — E12, should be required_for if cutoff licensed else feature_of",
+      "TdP characteristic arrhythmia of LQTS — hallmark of the arrhythmia, not pathognomonic of LQTS (E4)",
+      "Brugada type I pattern necessary for the diagnosis — necessity, should be required_for (E4)",
+      "Brugada coved ST>2mm / induced type 1 pattern — criterion members, not standalone pathognomonic (E4)",
+      "typical ECG morphologies — empty (E7/E4)",
+      "Epsilon wave (ARVC) bare label (E12)",
+      "ARVC fibrofatty replacement / progressive replacement quotes with no hallmark cue (E4/E12 definitional identity)",
+      "NPE commonly seen pattern (E4)",
+      "restrictive CM filling pattern; Takotsubo apical ballooning as disease name (E12/E4)"
+    ]
+  },
+  "required_for": {
+    "n": 57,
+    "relation_wrong": 42,
+    "rate": 0.737,
+    "ok_count": 15,
+    "ok_examples": [
+      "type I pattern necessary for the diagnosis",
+      "type I in ≥2 of V1–V3",
+      "CPVT structurally normal heart; CPVT normal ECG",
+      "ARVC ≥1 criterion from groups I/II",
+      "epilepsy = ≥2 unprovoked seizures",
+      "metabolic syndrome ≥3 abnormalities",
+      "takotsubo can only be made after coronary angiography",
+      "myotonia diagnosis made with clinical+EP+genetic combination"
+    ],
+    "wrong_patterns": [
+      "workup lists as obligatory required (ECG/echo/MRI/CT ‘typically includes’ / ‘primary modalities’) — E4",
+      "CPVT Holter/ILR/exercise/genetic as bare test names; ‘Exercise testing is advised’ — E4",
+      "ICD/risk rows (cardiac arrest, Type I+syncope) as diagnostic required — E4",
+      "treatment thresholds (HOCM 50 mmHg, salicylate 100, aviation grounding) — E10",
+      "genetic testing essential to identify at-risk family — screening not index diagnosis — E4"
+    ]
+  },
+  "sufficient_for": {
+    "n": 6,
+    "relation_wrong": 5,
+    "rate": 0.833,
+    "note": "5/6 quotes do not license diagnostic sufficiency. Exception: CPVT consensus item 2 'diagnosed in patients who have a pathogenic mutation' is sufficient_for (not required_for). The other five are therapy-sufficient, consider EMB, molecular autopsy request, may suggest evaluation, echo first-level imaging."
+  },
+  "excludes": {
+    "n": 134,
+    "asserted": 10,
+    "asserted_relation_wrong": 10,
+    "negated": 124,
+    "negated_relation_wrong": 124,
+    "rate": 1.0,
+    "note": "Schema excludes = finding PRESENT rules the disease out. 124/134 are polarity=negated (‘without/do not/absence/No’ table cells), which is feature_of+negated or a workup/treatment prohibition, not excludes. The 4 LQTS ‘normal QTc <440/460 ms’ rows are the cutoff that should have been required_for prolonged QTc, written as excludes+negated. Asserted 10/10 are definitional ‘in the absence of…’, inverted lists, or the opposite of the quote (channelopathies may cause SIDS)."
+  },
+  "summary": {
+    "diagnostic_slots_patho_required_sufficient": {"n": 91, "wrong": 66, "rate": 0.725, "note": "sufficient_for pathogenic-mutation row recast from wrong to OK; patho/required counts unchanged"},
+    "all_high_stakes_including_excludes": {"n": 225, "wrong": 200, "rate": 0.889},
+    "layer12_obligatory_required_plus_patho": {
+      "required_for_obligatory": {"n": 44, "wrong": 30, "rate": 0.682},
+      "pathognomonic_obligatory": {"n": 16, "wrong": 13, "rate": 0.812}
+    },
+    "required_for_with_440_or_460": 0
+  },
+  "inverse_missed_required_for": {
+    "scope": "Original semantics is diagnostic necessity, but relation is not required_for. Workup 'An ECG is required' as feature_of is NOT counted.",
+    "required_for_quotes_containing_440_or_460": 0,
+    "G1_pathognomonic_instead": [
+      "Brugada 'type I pattern necessary for the diagnosis' dual-slot: also pathognomonic_for (required_for copy is OK)",
+      "LQTS tautology cluster (8) as pathognomonic_for prolonged QT",
+      "ARVC fibrofatty replacement definition as pathognomonic_for",
+      "status epilepticus >5 min operational definition as pathognomonic_for"
+    ],
+    "G2_excludes_negated_instead": [
+      "LQTS 'A normal QTc in men/women is less than 440/460ms' (4 unique) — layer-1 pillar",
+      "alcoholic CM 'the absence of other etiologies'",
+      "HCM definitional 'in the absence of hypertension / aortic valve / storage disease'"
+    ],
+    "G3_feature_of_or_defined_as_instead": [
+      "CPVT consensus item 1: bidirectional VT / polymorphic PVCs as feature_of/typical while structurally normal heart and normal ECG are required_for",
+      "LQTS 'QTc is prolonged (>440 msec in men, >460 msec in women)' as feature_of/typical",
+      "HCM 'defined as left ventricular hypertrophy' as out-of-enum defined_as"
+    ],
+    "not_inverse": [
+      "An ECG is required / history and ECG are essential → feature_of (workup)",
+      "mechanical ventilation may be required → treated_by",
+      "mutations required for channel function → caused_by",
+      "CPVT pathogenic mutation → sufficient_for is correct (item 2 is sufficiency)"
+    ]
+  }
+}

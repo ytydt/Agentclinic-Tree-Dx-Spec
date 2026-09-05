@@ -1,0 +1,930 @@
+[
+  {
+    "bioctype": "BioCCollection",
+    "source": "PMC",
+    "date": "20260216",
+    "key": "pmc.key",
+    "version": "1.0",
+    "infons": {},
+    "documents": [
+      {
+        "bioctype": "BioCDocument",
+        "id": "PMC11255313",
+        "infons": {
+          "license": "CC BY"
+        },
+        "passages": [
+          {
+            "bioctype": "BioCPassage",
+            "offset": 0,
+            "infons": {
+              "article-id_doi": "10.1038/s42003-024-06482-1",
+              "article-id_pmc": "PMC11255313",
+              "article-id_pmid": "39020054",
+              "article-id_publisher-id": "6482",
+              "elocation-id": "873",
+              "kwd": "Computational models Statistical methods Machine learning",
+              "license": "Open Access This article is licensed under a Creative Commons Attribution 4.0 International License, which permits use, sharing, adaptation, distribution and reproduction in any medium or format, as long as you give appropriate credit to the original author(s) and the source, provide a link to the Creative Commons licence, and indicate if changes were made. The images or other third party material in this article are included in the article’s Creative Commons licence, unless indicated otherwise in a credit line to the material. If material is not included in the article’s Creative Commons licence and your intended use is not permitted by statutory regulation or exceeds the permitted use, you will need to obtain permission directly from the copyright holder. To view a copy of this licence, visit http://creativecommons.org/licenses/by/4.0/.",
+              "name_0": "surname:Wang;given-names:Lijia",
+              "name_1": "surname:Wen;given-names:Xiaoquan",
+              "name_2": "surname:Morrison;given-names:Jean",
+              "section_type": "TITLE",
+              "title": "Subject terms",
+              "type": "front",
+              "volume": "7",
+              "year": "2024"
+            },
+            "text": "Imperfect gold standard gene sets yield inaccurate evaluation of causal gene identification methods",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 100,
+            "infons": {
+              "section_type": "ABSTRACT",
+              "type": "abstract"
+            },
+            "text": "Causal gene discovery methods are often evaluated using reference sets of causal genes, which are treated as gold standards (GS) for the purposes of evaluation. However, evaluation methods typically treat genes not in the GS positive set as known negatives rather than unknowns. This leads to inaccurate estimates of sensitivity, specificity, and AUC. Labeling biases in GS gene sets can also lead to inaccurate ordering of alternative causal gene discovery methods. We argue that the evaluation of causal gene discovery methods should rely on statistical techniques like those used for variant discovery rather than on comparison with GS gene sets.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 750,
+            "infons": {
+              "section_type": "ABSTRACT",
+              "type": "abstract"
+            },
+            "text": "This perspective highlights the limitations of empirically evaluating causal gene discovery methods in the absence of completely labeled reference gene sets. It shows that sensitivity, specificity, and AUC may be critically biased, and advocate for increased reliance on probabilistic modeling.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 1045,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "title_1"
+            },
+            "text": "Introduction",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 1058,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Identifying causal genes for complex diseases can highlight disease-specific dysregulated pathways, improve disease classification, and identify drug targets. In genetic association analysis, it has become a common practice to implicate putative causal genes (PCG) computationally by linking variant-level genetic association evidence and the existing biological knowledge base. Some methods approach PCG implication as a supervised learning problem, aiming to predict unknown binary causal/non-causal gene labels for a given trait, while others rank the candidate genes by their likelihood of being PCGs, returning a continuous probability estimate or ranking for each gene. In this article, we focus on the common practice of evaluating PCG implication methods in reference to known sets of causal genes. While many papers making use of these sets for evaluation acknowledge that reference sets may be incomplete, this is rarely accounted for in evaluation techniques, where they are treated as gold-standard (GS). A critical challenge for this assessment strategy is that known causal genes may differ meaningfully from as-yet unidentified causal genes.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 2215,
+            "infons": {
+              "file": "Tab1.xml",
+              "id": "Tab1",
+              "section_type": "TABLE",
+              "type": "table_caption"
+            },
+            "text": "Methods used for construction of gold standard gene sets",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 2272,
+            "infons": {
+              "file": "Tab1.xml",
+              "id": "Tab1",
+              "section_type": "TABLE",
+              "type": "table",
+              "xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<table frame=\"hsides\" rules=\"groups\"><thead><tr><th>Construction scheme</th><th>Publication</th></tr></thead><tbody><tr><td>Genes harboring large-effect-size coding variants for selected phenotypes derived from OMIM and additional literature.</td><td>Connally et al.<sup><xref ref-type=\"bibr\" rid=\"CR12\">12</xref></sup></td></tr><tr><td>Genes that are targets of any known drug against the disease of interest (reported in Open Targets).</td><td>Picart-Armada et al.<sup><xref ref-type=\"bibr\" rid=\"CR2\">2</xref></sup></td></tr><tr><td>Genes annotated to phenotypes of interest in databases (OMIM, GO, DrugBank, literature-derived drug targets)</td><td>Greene et. al. (2015)<sup><xref ref-type=\"bibr\" rid=\"CR13\">13</xref></sup> Tranchevent et al.<sup><xref ref-type=\"bibr\" rid=\"CR14\">14</xref></sup></td></tr><tr><td>Phenotype-associated genes compiled from GWAS catalog mining, publication-based, and expert curation.</td><td>Kolosov, Daly, and Artomov<sup><xref ref-type=\"bibr\" rid=\"CR4\">4</xref></sup></td></tr><tr><td>Genes derived from expert domain knowledge, drug target-disease pairs, experimental alteration, and functional data.</td><td>Mountjoy et al.<sup><xref ref-type=\"bibr\" rid=\"CR15\">15</xref></sup></td></tr><tr><td>Genes with fine-mapped protein-coding variants within loci non-coding credible sets.</td><td>Weeks et al.<sup><xref ref-type=\"bibr\" rid=\"CR3\">3</xref></sup></td></tr><tr><td>Top 10% genes ranked by PoPS for validation.</td><td>Gazal et al.<sup><xref ref-type=\"bibr\" rid=\"CR16\">16</xref></sup></td></tr></tbody></table>\n"
+            },
+            "text": "Construction scheme\tPublication\t \tGenes harboring large-effect-size coding variants for selected phenotypes derived from OMIM and additional literature.\tConnally et al.\t \tGenes that are targets of any known drug against the disease of interest (reported in Open Targets).\tPicart-Armada et al.\t \tGenes annotated to phenotypes of interest in databases (OMIM, GO, DrugBank, literature-derived drug targets)\tGreene et. al. (2015) Tranchevent et al.\t \tPhenotype-associated genes compiled from GWAS catalog mining, publication-based, and expert curation.\tKolosov, Daly, and Artomov\t \tGenes derived from expert domain knowledge, drug target-disease pairs, experimental alteration, and functional data.\tMountjoy et al.\t \tGenes with fine-mapped protein-coding variants within loci non-coding credible sets.\tWeeks et al.\t \tTop 10% genes ranked by PoPS for validation.\tGazal et al.\t \t",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 3146,
+            "infons": {
+              "file": "Tab1.xml",
+              "id": "Tab1",
+              "section_type": "TABLE",
+              "type": "table_foot"
+            },
+            "text": "All listed methods used their constructed gold standard gene sets to compare the precision and recall of classification methods or evaluate the AUC of ranking methods. Kolosov, Daly, and Artomov makes use of both ROC curves and the PU score.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 3388,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Table 1 summarizes methods used by recent publications to identify GS-positive genes. Genes assigned as gold standard positives by these methods are often reliable and based on stringent standards for causality. However, when proposed methods are evaluated against these GS gene sets, genes not labeled as positive are implicitly treated as non-causal or negative. These genes are almost certainly contaminated by some as-yet-unidentified causal genes (thus motivating continued PCG discovery research). In fact, the more confident we are in the positive labels of a GS gene set, the more mislabeled non-causal genes we can expect. GS gene sets also tend to favor genes with particular features determined by the method of constructing the set. For example, GS gene sets derived from the set of causal coding variants favor genes that act through protein-coding changes rather than expression regulatory mechanisms. Most classification methods also have gene-feature-related biases due to the type of data they use as input. A PCG implication method will appear more accurate if it is evaluated using a GS gene set with similar feature-related biases to its own and less accurate if the GS gene set has different biases. Authors naturally select a GS gene set constructed using features they feel are important and may, therefore, unintentionally tilt the scales toward their own proposed method.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 4786,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "We show that when the GS gene set is incomplete, estimates of power, specificity, and receiver operating characteristic (ROC) are inaccurate and may even misorder the relative quality of two different classifiers. This phenomenon can occur even if the GS gene set contains no false positives. We argue that no true GS sets of labeled genes are currently available. Therefore, we urge caution in interpreting comparisons of causal gene classifiers based on existing labels.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 5259,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "title_1"
+            },
+            "text": "Effect of label contamination on evaluation metrics",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 5311,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "title_2"
+            },
+            "text": "Evaluation with PU-labeled gene sets",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 5348,
+            "infons": {
+              "file": "42003_2024_6482_Fig1_HTML.jpg",
+              "id": "Fig1",
+              "section_type": "FIG",
+              "type": "fig_title_caption"
+            },
+            "text": "Illustration of classifier performance relative to an imperfectly labeled gene set.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 5432,
+            "infons": {
+              "file": "42003_2024_6482_Fig1_HTML.jpg",
+              "id": "Fig1",
+              "section_type": "FIG",
+              "type": "fig_caption"
+            },
+            "text": "a Illustration of gene classes by reference and classifier labels. The rectangle represents the set of total genes, with columns corresponding to the three types of labeled genes: correctly labeled positive genes (blue, A/a), positive genes labeled as negatives (red, B/b), and correctly labeled negative genes (green C/c). Horizontal divisions indicate classifications, with the lower divisions (lowercase letters, darker shading) classified as positive and the upper divisions (capital letters, lighter shading) classified as negative. The classifier may not have the same performance on unlabeled positive genes as it has on labeled positive genes (red lines and arrows), which affects estimated sensitivity and specificity. b Comparison of true and estimated sensitivity, specificity, positive predictive value (PPV), and negative predictive value (NPV) when some positives are unlabeled.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 6325,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Genes outside the constructed GS set are more accurately viewed as unlabeled (U) rather than as negatives (N). Combined with accurately positively labeled genes in the GS set, the overall GS gene set should be regarded as positive-unlabeled (PU) data, a term used in semi-supervised machine learning. Using PU data to evaluate performance as though they were positive-negative (PN) labeled data results in inaccurate evaluations. A PU-labeled gene set with perfect positive labeling consists of three subsets of genes: true causal genes that are correctly identified (labeled positives), true causal genes that are not labeled and therefore assumed to be non-causal (unlabeled positives), and non-causal genes that are unlabeled and therefore correctly assumed to be non-causal (unlabeled negatives, UN) (Fig. 1a). Evaluation treating PU labels with perfect positive labeling as PN labels will always underestimate the positive predictive value (precision) and overestimate the negative predictive value (NPV) of a classifier (Fig. 1b).",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 7364,
+            "infons": {
+              "file": "42003_2024_6482_Fig2_HTML.jpg",
+              "id": "Fig2",
+              "section_type": "FIG",
+              "type": "fig_title_caption"
+            },
+            "text": "Effect of PU labeling on estimated ROC curves.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 7411,
+            "infons": {
+              "file": "42003_2024_6482_Fig2_HTML.jpg",
+              "id": "Fig2",
+              "section_type": "FIG",
+              "type": "fig_caption"
+            },
+            "text": "The rectangle in each figure represents the set of total genes, as in Fig. 1. The drawing on the right of each figure represents the expected relationship between the true and estimated ROC curve for each scenario. a Labeled positives are representative of all true positive genes. b The classifier is more sensitive to unlabeled positives than labeled positives. c The classifier is more sensitive to labeled positives than unlabeled positives. d The classifier detects a lower proportion of unlabeled positives than true negatives. Note that in scenario (c), the estimated ROC curve could be either above, below, or intersecting with the true ROC curve.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 8068,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Figure 2 shows four possibilities for the performance of the classifier on the unlabeled positive genes and the corresponding relationship between the estimated and true sensitivity, specificity, and ROC curve. The classifier may perform differently on unlabeled positive genes and labeled positive genes if these two groups differ on important features that either align with or do not align with the features used to construct the classifier.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 8514,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "In almost all scenarios, estimation with PU labels leads to underestimating specificity. To see why this is, let A, B, C, a, b, and c be defined as illustrated in Fig. 1 as the counts of labeled positive, unlabeled positive, and true negative genes that are classified as non-causal (upper-case) or causal (lower-case) by the classifier. With these definitions,  is the proportion of unlabeled genes that are truly causal. As long as the sensitivity of the classifier to unlabeled positives is higher than the probability of falsely predicting a true negative to be causal, B/(B + b) < C/(C + c), so B < αC. Therefore,This means that specificity is underestimated in all cases except for the scenario in Fig. 2d. However, sensitivity may be either over- or underestimated depending on the feature biases of the labeled positive genes. If the classifier is more sensitive to unlabeled positives than to labeled positives (Fig. 2b), the sensitivity will be underestimated. If the classifier is less sensitive to unlabeled positives than to labeled positives (Fig. 2c, d), the sensitivity will be overestimated.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 9653,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Errors in estimating sensitivity and specificity result in errors in the ROC curve and, therefore, in the area under the ROC curve (AUC). These errors also affect other measures that rely on the 2 × 2 confusion matrix, such as Matthew’s correlation coefficient and F1 score. This error applies to evaluating ranking methods as well as methods that return only hard classifications. In the special case in Fig. 2a, the classifier has an equal ability to detect labeled and unlabeled positive genes, so sensitivity is estimated accurately. Motivated by this observation, refs.  rely on a “PU score” which is analogous to the F1 score but reliant only on sensitivity and not on specificity. However, if labeled positive genes are not representative of all positive genes, the PU score will also be inaccurate.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 10472,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "In genetics research, we expect labeling biases because there are multiple molecular mechanisms by which a causal gene can affect complex diseases, and different classification and GS identification methods will favor different mechanisms. For example, as shown in Table 1, several GS gene set construction strategies focus on genes with phenotype-associated coding variants. Genes that affect phenotypes primarily through expression dysregulation may not be represented in these GS gene sets, so classifiers particularly sensitive to causal genes acting through expression changes may appear to perform poorly when using these gene sets.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 11112,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "title_2"
+            },
+            "text": "Simulated example",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 11130,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "To illustrate this issue, we consider a hypothetical example in which each gene has two continuous, measurable features, Pr and Ex. We think of these features as continuous summaries of the evidence that a gene acts on the trait through mechanisms mediated by either protein sequence (Pr) or expression level (Ex). Let Yi be a binary indicator that gene i is causal for the trait of interest. We simulate Pri and Exi from independent standard normal distributions and generate Yi asIn our simulation, the protein feature, Pr is a stronger predictor of causality than the expression feature, Ex.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 11725,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "In each simulated data set, we generate Pr, Ex, and causal status, Y for 20,000 genes that are divided into a set of 10,000 genes used for training and 10,000 genes used for testing. In the training set, we fit two classifiers, the Pr-classifier, and the Ex-classifier, by fitting a logistic regression with Y as the outcome and either Pr or Ex only as a predictor. This differs from the methods generally used to build causal gene discovery methods, as no perfectly labeled gene sets are available for training. However, this strategy provides a straightforward method to obtain classifiers based on only one of the two gene features.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 12363,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "The 10,000 genes in the testing set function as our GS gene set. We consider 3 possibilities. Either all genes are correctly labeled, positives with high levels of Pr are more likely to be correctly labeled, or positives with high levels of Ex are more likely to be correctly labeled. We refer to these as correct, Pr-enriched, and Ex-enriched labels. Let ZC,i, ZPr,i, and ZEx,i be correct, Pr-enriched, and Ex-enriched labels for gene i in the testing set. We generate these as ZC,i = Yi, ZPr,i = YiWPr,i, and ZEx,i = YiWEx,i withThe Pr-enriched labels mislabel 4.5% of all positives as negative, while the Ex-enriched labels mislabel 13.5% of all positives as negatives.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 13052,
+            "infons": {
+              "file": "42003_2024_6482_Fig3_HTML.jpg",
+              "id": "Fig3",
+              "section_type": "FIG",
+              "type": "fig_title_caption"
+            },
+            "text": "Comparison of Classifiers on True vs. Biased Labels.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 13105,
+            "infons": {
+              "file": "42003_2024_6482_Fig3_HTML.jpg",
+              "id": "Fig3",
+              "section_type": "FIG",
+              "type": "fig_caption"
+            },
+            "text": "Classifiers evaluated against true labels (solid lines) and biased labels (dotted lines). In both figures, the Pr-Classifier uses Pr values to identify causal genes and the Ex-Classifier uses Ex values. a Causal genes with large Pr values are more likely to be labeled as positive than causal genes with large Ex values. Performance of the Pr-Classifier is overestimated while performance of the Ex-classifier is underestimated. b Causal genes with large Ex values are more likely to be labeled as positive than causal genes with large Pr values. Performance of the Ex-Classifier is overestimated, making it appear more accurate than the Pr-classifier.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 13758,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "ROC curves estimated using each of the imperfect label sets are shown in Fig. 3, compared against ROC curves estimated using perfect labels. In both cases, label enrichment results in biased estimation of classifier performance. When Pr-enriched labels are used, the AUC of the Pr-classifier is overestimated, and the AUC of the Ex-classifier is underestimated. However, the accuracy of the two classifiers is correctly ordered. When the Ex-enriched labels are used, the pattern is reversed, resulting in the misordering of the two classifiers. These results align with our theoretical expectations. When using the Pr-enriched labels to evaluate the Pr-classifier or the Ex-enriched labels to evaluate the Ex-classifier, we have the scenario in Fig. 2c, where sensitivity is over-estimated, and specificity is under-estimated, pushing the ROC curve up from its true value. Conversely, when label enrichment does not favor the genes a classifier is most sensitive to, we are in the scenario in Fig. 2b, where sensitivity is under-estimated, pushing the ROC curve down.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 14829,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "title_1"
+            },
+            "text": "Outlook",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 14837,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "It is currently impossible to confidently determine a comprehensive GS gene set that includes all causal genes for any trait due to the myriad biological mechanisms leading to complex phenotypes. Several studies have acknowledged that supervised ML methods designed to classify PCGs should not be trained on non-comprehensive GS gene sets. Here, we draw attention to the fact that sensitivity and specificity estimated using non-comprehensive GS gene sets are also inaccurate, making it inappropriate to compare and evaluate methods using these or related measures such as AUC and F1 scores. However, properly evaluating PCG implication methods is critical to making progress in this field. To address a similar issue in other fields, researchers have proposed incorporating negative controls (i.e., known negatives) or weights estimating each unit’s probability of being detected based on its features. These methods do not clearly extend to the PCG implication problem. It may be possible to build a case for some negative control gene-trait pairs. However, these will likely differ meaningfully from unknown negatives, leading to similar issues of biased estimation. Using weighting in this context would require estimating the probability that the gene was labeled given its features for each labeled positive gene, which is impossible without knowledge of the feature distribution of all true positive genes.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 16253,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "An alternative approach circumventing the issue is to use a statistical model-based approach for causal gene identification. This is a common approach in the field of causal variant identification, where methods for statistical fine-mapping rely on probabilistic models, allowing them to obtain model-based measures of uncertainty, such as posterior inclusion probabilities or confidence intervals. Probabilistic methods can also be evaluated in simulations to test their robustness to violations of modeling assumptions. Using probabilistic models validated in simulations is the most practical method for obtaining defensible estimates of a method’s false discovery rate under different parameter settings.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 16964,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Incomplete GS gene sets may still play an important role in method evaluation, as they can be used to provide an empirical estimate of the sensitivity of a method at a given parameter setting corresponding to a known false discovery rate or to compute the PU score used by ref. . However, it is important to note that this is a context-specific measure of sensitivity that may not replicate in other gene sets with different features. When presenting sensitivity results, researchers should acknowledge potential feature biases of GS gene sets and evaluate their methods using multiple gene sets constructed from different information.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 17600,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "paragraph"
+            },
+            "text": "Finally, incomplete GS gene sets should not be used to construct ROC curves or compute measures such as the F1 statistic. This limitation of PU-labeled data provides an argument against the use of purely rank-based PCG implication methods. Methods that supply only a ranking and no model-based measure of false discovery rate are completely reliant on accurately labeled testing data for calibration. We have argued that no such testing data exists, meaning it is impossible to calibrate rank-only methods to a target false discovery rate. Instead, we urge researchers to develop PCG implication methods to make use of statistical approaches that provide model-based measures of label uncertainty.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 18298,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "title_2"
+            },
+            "text": "Supplementary information",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 18324,
+            "infons": {
+              "section_type": "INTRO",
+              "type": "footnote"
+            },
+            "text": "Publisher’s note Springer Nature remains neutral with regard to jurisdictional claims in published maps and institutional affiliations.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 18462,
+            "infons": {
+              "section_type": "SUPPL",
+              "type": "title_1"
+            },
+            "text": "Supplementary information",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 18488,
+            "infons": {
+              "section_type": "SUPPL",
+              "type": "paragraph"
+            },
+            "text": "The online version contains supplementary material available at 10.1038/s42003-024-06482-1.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 18580,
+            "infons": {
+              "section_type": "AUTH_CONT",
+              "type": "title"
+            },
+            "text": "Author contributions",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 18601,
+            "infons": {
+              "section_type": "AUTH_CONT",
+              "type": "paragraph"
+            },
+            "text": "L.W.: Literature review, conducting simulations, manuscript preparation, X.W.: Advising, manuscript preparation, J.M.: Advising, manuscript preparation, figure creation.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 18771,
+            "infons": {
+              "section_type": "AUTH_CONT",
+              "type": "title"
+            },
+            "text": "Peer review",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 18783,
+            "infons": {
+              "section_type": "AUTH_CONT",
+              "type": "title_1"
+            },
+            "text": "Peer review information",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 18807,
+            "infons": {
+              "section_type": "AUTH_CONT",
+              "type": "paragraph"
+            },
+            "text": "Communications Biology thanks the anonymous reviewer(s) for their contribution to the peer review of this work. Primary Handling Editors: George Inglis, Luke Grinham and Aylin Bircan. A peer review file is available.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 19024,
+            "infons": {
+              "section_type": "SUPPL",
+              "type": "title"
+            },
+            "text": "Code availability",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 19042,
+            "infons": {
+              "section_type": "SUPPL",
+              "type": "paragraph"
+            },
+            "text": "Code replicating simulations can be found in the Supplementary Data and at https://lijiaw.gitlab.io/GS-gene-sets/comparison.html.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 19173,
+            "infons": {
+              "section_type": "COMP_INT",
+              "type": "title"
+            },
+            "text": "Competing interests",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 19193,
+            "infons": {
+              "section_type": "COMP_INT",
+              "type": "paragraph"
+            },
+            "text": "The authors declare no competing interests.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 19237,
+            "infons": {
+              "section_type": "REF",
+              "type": "title"
+            },
+            "text": "References",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 19248,
+            "infons": {
+              "fpage": "i206",
+              "lpage": "i213",
+              "name_0": "surname:Hormozdiari;given-names:F",
+              "name_1": "surname:Kichaev;given-names:G",
+              "name_2": "surname:Yang;given-names:W-Y",
+              "name_3": "surname:Pasaniuc;given-names:B",
+              "name_4": "surname:Eskin;given-names:E",
+              "pub-id_doi": "10.1093/bioinformatics/btv240",
+              "pub-id_pmid": "26072484",
+              "section_type": "REF",
+              "source": "Bioinformatics",
+              "type": "ref",
+              "volume": "31",
+              "year": "2015"
+            },
+            "text": "Identification of causal genes for complex traits",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 19298,
+            "infons": {
+              "fpage": "e1007276",
+              "name_0": "surname:Picart-Armada;given-names:S",
+              "pub-id_doi": "10.1371/journal.pcbi.1007276",
+              "pub-id_pmid": "31479437",
+              "section_type": "REF",
+              "source": "PLOS Comput. Biol.",
+              "type": "ref",
+              "volume": "15",
+              "year": "2019"
+            },
+            "text": "Benchmarking network propagation methods for disease gene identification",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 19371,
+            "infons": {
+              "section_type": "REF",
+              "type": "ref"
+            },
+            "text": "Weeks, E. M. et al. Leveraging polygenic enrichments of gene features to predict genes underlying complex traits and diseases. Nat. Genet.55, 1267–1276 (2023).",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 19533,
+            "infons": {
+              "fpage": "1527",
+              "lpage": "1535",
+              "name_0": "surname:Kolosov;given-names:N",
+              "name_1": "surname:Daly;given-names:MJ",
+              "name_2": "surname:Artomov;given-names:M",
+              "pub-id_doi": "10.1038/s41431-021-00930-w",
+              "pub-id_pmid": "34276057",
+              "section_type": "REF",
+              "source": "Eur. J. Hum. Genet.",
+              "type": "ref",
+              "volume": "29",
+              "year": "2021"
+            },
+            "text": "Prioritization of disease genes from GWAS using ensemble-based positive-unlabeled learning",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 19624,
+            "infons": {
+              "fpage": "73",
+              "lpage": "84",
+              "name_0": "surname:Claesen;given-names:M",
+              "name_1": "surname:De Smet;given-names:F",
+              "name_2": "surname:Suykens;given-names:JAK",
+              "name_3": "surname:De Moor;given-names:B",
+              "pub-id_doi": "10.1016/j.neucom.2014.10.081",
+              "section_type": "REF",
+              "source": "Neurocomputing",
+              "type": "ref",
+              "volume": "160",
+              "year": "2015"
+            },
+            "text": "A robust ensemble approach to learn from positive and unlabeled data using SVM base models",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 19715,
+            "infons": {
+              "fpage": "1",
+              "lpage": "9",
+              "name_0": "surname:Duda;given-names:M",
+              "pub-id_doi": "10.1038/s41398-018-0098-6",
+              "pub-id_pmid": "29317594",
+              "section_type": "REF",
+              "source": "Transl. Psychiatry",
+              "type": "ref",
+              "volume": "8",
+              "year": "2018"
+            },
+            "text": "Brain-specific functional relationship networks inform autism spectrum disorder gene prediction",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 19811,
+            "infons": {
+              "fpage": "1454",
+              "lpage": "1462",
+              "name_0": "surname:Krishnan;given-names:A",
+              "pub-id_doi": "10.1038/nn.4353",
+              "pub-id_pmid": "27479844",
+              "section_type": "REF",
+              "source": "Nat. Neurosci.",
+              "type": "ref",
+              "volume": "19",
+              "year": "2016"
+            },
+            "text": "Genome-wide prediction and functional characterization of the genetic basis of autism spectrum disorder",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 19915,
+            "infons": {
+              "fpage": "1463",
+              "lpage": "1481",
+              "name_0": "surname:Liu;given-names:L",
+              "name_1": "surname:Peng;given-names:T",
+              "section_type": "REF",
+              "source": "J. Inf. Sci. Eng.",
+              "type": "ref",
+              "volume": "30",
+              "year": "2014"
+            },
+            "text": "Clustering-based method for positive and unlabeled text categorization enhanced by improved tfidf",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 20013,
+            "infons": {
+              "section_type": "REF",
+              "type": "ref"
+            },
+            "text": "Du Plessis, M. C., Niu, G. & Sugiyama, M. Analysis of learning from positive and unlabeled data. In Advances in Neural Information Processing Systems Vol. 27 (Curran Associates, Inc., 2014). https://proceedings.neurips.cc/paper_files/paper/2014/file/35051070e572e47d2c26c241ab88307f-Paper.pdf.",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 20307,
+            "infons": {
+              "fpage": "1493",
+              "lpage": "1501",
+              "name_0": "surname:Benner;given-names:C",
+              "pub-id_doi": "10.1093/bioinformatics/btw018",
+              "pub-id_pmid": "26773131",
+              "section_type": "REF",
+              "source": "Bioinformatics",
+              "type": "ref",
+              "volume": "32",
+              "year": "2016"
+            },
+            "text": "FINEMAP: efficient variable selection using summary data from genome-wide association studies",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 20401,
+            "infons": {
+              "fpage": "e1010299",
+              "name_0": "surname:Zou;given-names:Y",
+              "name_1": "surname:Carbonetto;given-names:P",
+              "name_2": "surname:Wang;given-names:G",
+              "name_3": "surname:Stephens;given-names:M",
+              "pub-id_doi": "10.1371/journal.pgen.1010299",
+              "pub-id_pmid": "35853082",
+              "section_type": "REF",
+              "source": "PLoS Genet.",
+              "type": "ref",
+              "volume": "18",
+              "year": "2022"
+            },
+            "text": "Fine-mapping from summary data with the “Sum of Single Effects\" model",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 20473,
+            "infons": {
+              "fpage": "e74970",
+              "name_0": "surname:Connally;given-names:NJ",
+              "pub-id_doi": "10.7554/eLife.74970",
+              "pub-id_pmid": "36515579",
+              "section_type": "REF",
+              "source": "Elife",
+              "type": "ref",
+              "volume": "11",
+              "year": "2022"
+            },
+            "text": "The missing link between genetic association and regulatory function",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 20542,
+            "infons": {
+              "fpage": "569",
+              "lpage": "576",
+              "name_0": "surname:Greene;given-names:CS",
+              "pub-id_doi": "10.1038/ng.3259",
+              "pub-id_pmid": "25915600",
+              "section_type": "REF",
+              "source": "Nat. Genet.",
+              "type": "ref",
+              "volume": "47",
+              "year": "2015"
+            },
+            "text": "Understanding multicellular function and disease with human tissue-specific networks",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 20627,
+            "infons": {
+              "fpage": "W117",
+              "lpage": "W121",
+              "name_0": "surname:Tranchevent;given-names:L-C",
+              "pub-id_doi": "10.1093/nar/gkw365",
+              "pub-id_pmid": "27131783",
+              "section_type": "REF",
+              "source": "Nucleic Acids Res.",
+              "type": "ref",
+              "volume": "44",
+              "year": "2016"
+            },
+            "text": "Candidate gene prioritization with endeavour",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 20672,
+            "infons": {
+              "fpage": "1527",
+              "lpage": "1533",
+              "name_0": "surname:Mountjoy;given-names:E",
+              "pub-id_doi": "10.1038/s41588-021-00945-5",
+              "pub-id_pmid": "34711957",
+              "section_type": "REF",
+              "source": "Nat. Genet.",
+              "type": "ref",
+              "volume": "53",
+              "year": "2021"
+            },
+            "text": "An open approach to systematically prioritize causal variants and genes at all published human gwas trait-associated loci",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          },
+          {
+            "bioctype": "BioCPassage",
+            "offset": 20794,
+            "infons": {
+              "fpage": "827",
+              "lpage": "836",
+              "name_0": "surname:Gazal;given-names:S",
+              "pub-id_doi": "10.1038/s41588-022-01087-y",
+              "pub-id_pmid": "35668300",
+              "section_type": "REF",
+              "source": "Nat. Genet.",
+              "type": "ref",
+              "volume": "54",
+              "year": "2022"
+            },
+            "text": "Combining snp-to-gene linking strategies to identify disease genes and assess disease omnigenicity",
+            "sentences": [],
+            "annotations": [],
+            "relations": []
+          }
+        ],
+        "annotations": [],
+        "relations": []
+      }
+    ]
+  }
+]

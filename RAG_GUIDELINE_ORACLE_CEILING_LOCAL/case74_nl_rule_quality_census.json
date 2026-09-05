@@ -1,0 +1,105 @@
+{
+  "case_key": "MCR_v1_seq100/74",
+  "source": "trial_nl_rules_k30all4.json",
+  "sampling": "for each of CPVT / Long QT Syndrome / Brugada syndrome / Hypertrophic Cardiomyopathy, the unique bound sentences were shuffled with seed 7 and the first 10 taken (HCM had only 9 unique); single annotator; the sample is one case, not the 11-case corpus",
+  "n_sampled": 39,
+  "what_is_counted": "Does the excerpted sentence work as a decision rule for the disease it was bound to? The seven-slot census (case74_relation_error_census.json) counted wrong RELATIONS; this path asserts no relation, so the failure mode moves to what got excerpted and to which disease it was attached.",
+
+  "automatic_over_the_whole_corpus": {
+    "n_payloads": 2683,
+    "rules_emitted": 16890,
+    "verbatim_exact": 16049,
+    "verbatim_whitespace_only": 625,
+    "verbatim_rate": 0.987,
+    "dropped_span_not_in_passage": 216,
+    "dropped_disease_not_in_passage": 261,
+    "dropped_under_six_words": 268,
+    "kept": 16145,
+    "note": "1.3% of spans were not copied from the passage and were dropped by a substring check, i.e. hallucinated excerpts are cheap to detect; a hallucinated relation is not."
+  },
+
+  "manual_sample_breakdown": {
+    "executable_diagnostic_rule": {
+      "n": 8,
+      "rate": 0.205,
+      "examples": [
+        "CPVT: 'This cascade of events can be triggered by emotional or physical stress, exertion or bathing and, although previously phenotypically silent, can lead to syncope or SCD.'",
+        "LQTS: 'In the absence of reversible or acquired causes of QT prolongation, Long QT syndrome is diagnosed.'",
+        "Brugada: 'Traditionally, a spontaneously occurring or pharmacologically induced type 1 pattern establishes the diagnosis of Brugada syndrome.'",
+        "Brugada: 'Diagnosis relies on characteristic electrocardiographic findings, including right bundle branch block and ST-segment elevations in the right precordial leads (V1-V3), sometimes unmasked by fever or pharmacologic challenge.'",
+        "HCM: 'Echocardiography is the first-level imaging exam for HCM diagnosis, showing left ventricle hypertrophy and diastolic dysfunction as main features.'"
+      ]
+    },
+    "workup_or_treatment_rule_valid_but_not_diagnostic": {
+      "n": 8,
+      "rate": 0.205,
+      "examples": [
+        "CPVT: ESC advocates restricting strenuous physical activity and competitive sports",
+        "Brugada: 'a drug challenge test may be indicated to unmask characteristic ST-segment elevations'",
+        "HCM: 'CMR can confirm morphological characteristics with higher accuracy ... than echocardiography'"
+      ],
+      "note": "the excerpter's own use= field labels most of these correctly, so they are filterable"
+    },
+    "on_subject_but_not_a_rule": {
+      "n": 10,
+      "rate": 0.256,
+      "examples": [
+        "LQTS: 'Mutations in several different genes account for the cases of long QT syndrome, with KCNQ1 being the most common'",
+        "LQTS: 'There are several false positive diagnoses of LQTS reported.'",
+        "CPVT: 'The presence of syncope is not a reliable predictive marker.'",
+        "Brugada: 'A spontaneous Brugada ECG pattern is rarely seen in children.'"
+      ]
+    },
+    "degenerate_table_row_or_form_field": {
+      "n": 9,
+      "rate": 0.231,
+      "examples": [
+        "HCM: 'High QRS voltages\tSarcomeric HCM, PRKAG2, Forbes disease, Pompe disease, Danon disease, Hurler syndrome'",
+        "HCM: 'Inverted T waves\tSarcomeric HCM, Fabry disease, mitochondrial cardiomyopathies, Noonan syndrome'",
+        "LQTS: 'Family History: (cardiomyopathy, coronary artery disease, Marfan syndrome, long QT syndrome, ...)'",
+        "CPVT: 'Anomalous coronary artery,ARVD/C,CPVT\tHistory of syncope'"
+      ],
+      "note": "chunked tables lose their header, so a row reads as a bare co-occurrence list; the seven-slot path hit the same rows and turned them into feature_of assertions"
+    },
+    "bound_to_the_wrong_disease": {
+      "n": 4,
+      "rate": 0.103,
+      "examples": [
+        "CPVT got 'Common etiologies include prior myocardial infarction or ischemia; inherited channelopathies, such as LQTS; and structural heart diseases, including HCM, Brugada syndrome, and ARVC.' because the excerpter named the subject 'ventricular tachycardia'",
+        "CPVT got the LQTS Schwartz-score row 'Baseline HR QTc \u2021 QTc \u2264 420 ms 0.5 ...' for the same reason",
+        "LQTS got 'Differential diagnoses include long QT syndrome, Wolff-Parkinson-White syndrome, pulmonary embolism, ...' which is the differential OF another disease"
+      ],
+      "note": "subject binding uses the same matcher as the mechanical engine, so this error is shared by both paths and is not fixed by dropping the slots"
+    },
+    "unusable_dangling_anaphora": {
+      "n": 1,
+      "rate": 0.026,
+      "example": "LQTS: 'It is also indicated in those who have beta-blocker-resistant symptoms or have contraindications to beta-blockers.' \u2014 'It' is resolved only in the preceding sentence, which was not excerpted"
+    },
+    "false_logical_claim": {
+      "n": 0,
+      "rate": 0.0,
+      "note": "the point of the path: with no relation / modality / polarity slot there is nothing to overclaim. Compare 42/57 wrong required_for and 19/28 wrong pathognomonic_for in case74_relation_error_census.json."
+    }
+  },
+
+  "decisive_rules_recovered": {
+    "LQTS_cutoff": {
+      "seven_slot_path": "'A normal QTc in men is less than 440ms, and in women, it is less than 460ms.' was slotted as excludes+negated, which the engine cannot execute, so LQTS was never ruled out on QTc 380 ms",
+      "nl_path": "the same sentence is carried verbatim, ranks 5th by corpus support in the LQTS block, and 'Long QT syndrome \u2013 QTc >0.450 sec' carries a program-parsed threshold {'operator': '>', 'value': 0.45, 'unit': 'sec'}"
+    },
+    "CPVT_trigger": {
+      "seven_slot_path": "split into bare test names (Holter, exercise testing, genetic testing) marked required_for+obligatory",
+      "nl_path": "'This cascade of events can be triggered by emotional or physical stress, exertion or bathing ...' survives whole, but ranks 13th by support, below five treatment sentences about magnesium and \u03b2-blockers"
+    }
+  },
+
+  "summary": {
+    "verbatim_fidelity": 0.987,
+    "executable_diagnostic_rule_rate": 0.205,
+    "any_valid_rule_rate": 0.410,
+    "wrong_subject_rate": 0.103,
+    "false_logical_claim_rate": 0.0,
+    "reading": "The alternative path removes the error class the seven-slot schema is worst at (74% wrong relations on the high-stakes diagnostic slots) and replaces it with a benign one: four fifths of the excerpts are not decision rules, but nothing in them is false about the source. The two error classes are not equally harmful \u2014 a wrong required_for hard-eliminates a hypothesis, an off-topic sentence only costs context."
+  }
+}

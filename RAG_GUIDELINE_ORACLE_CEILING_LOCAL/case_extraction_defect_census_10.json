@@ -1,0 +1,132 @@
+{
+  "scope": "Guideline-assertion extraction vs own quote for 10 cases besides 475. Join/score out of scope. Finding-extractor issues listed separately.",
+  "source": "trial_extraction_k30all4clean_groups.json",
+  "taxonomy_additions": {
+    "E12_name_tautology": "Disease name or 'the test exists' written as pathognomonic/required for its own defining word, with no usable criterion in the quote.",
+    "E13_argument_inversion": "Finding and disease occupy each other's slots (subject is a sign; predicate is the disease), or a treatment condition is written as sufficient_for a complication.",
+    "E14_threshold_hallucination": "threshold.value/operator/unit is not in the quote, or the number contradicts the quote. Percent→proportion copies of a number that IS in the quote are not E14."
+  },
+  "retained_from_475": ["E1", "E2", "E3", "E4", "E5", "E6", "E7", "E8", "E9", "E10", "E11"],
+  "not_a_tuple_defect": {
+    "O1_missing_converse": "Quote states a mechanism; the written tuple is faithful; the converse required by F5b is absent. Incompleteness, not misrepresentation.",
+    "O2_missing_extension_rule": "475 territory; L, not E."
+  },
+  "volumes_unique": {
+    "74": {"raw": 2582, "unique": 2201, "required_for": 57, "pathognomonic": 28, "sufficient_for": 6},
+    "49": {"raw": 3715, "unique": 3277, "required_for": 96, "pathognomonic": 5, "sufficient_for": 16},
+    "326": {"raw": 3338, "unique": 2735, "required_for": 69, "pathognomonic": 9, "sufficient_for": 12},
+    "119": {"raw": 3062, "unique": 2509, "required_for": 33, "pathognomonic": 14, "sufficient_for": 2},
+    "522": {"raw": 4235, "unique": 3611, "required_for": 118, "pathognomonic": 13, "sufficient_for": 15},
+    "773": {"raw": 2104, "unique": 1895, "required_for": 75, "pathognomonic": 1, "sufficient_for": 7},
+    "257": {"raw": 2610, "unique": 2003, "required_for": 52, "pathognomonic": 12, "sufficient_for": 3},
+    "56": {"raw": 3951, "unique": 3161, "required_for": 68, "pathognomonic": 12, "sufficient_for": 1},
+    "91": {"raw": 2578, "unique": 2230, "required_for": 41, "pathognomonic": 10, "sufficient_for": 9},
+    "179": {"raw": 3626, "unique": 2848, "required_for": 92, "pathognomonic": 3, "sufficient_for": 4}
+  },
+  "cases": {
+    "74": {
+      "gold": "CPVT",
+      "new_classes": ["E12", "E14"],
+      "smoking_guns": [
+        {"tags": ["E12"], "subject": "Long QT Syndrome", "relation": "pathognomonic_for", "predicate": "prolonged QT interval", "quote": "a condition termed long QT syndrome"},
+        {"tags": ["E12", "E14"], "subject": "Long QT Syndrome", "relation": "pathognomonic_for", "predicate": "prolonged QT interval", "quote": "congenital long QT syndrome", "note": "threshold >440 ms not in quote"},
+        {"tags": ["E4"], "subject": "CPVT", "relation": "required_for", "predicate": "exercise test", "quote": "Exercise testing is advised"},
+        {"tags": ["OK"], "note": "Several LQTS feature_of rows copy QTc >440/460/470/480 ms from quote; those are usable. Ranking failure uses the tautological pathognomonic rows as layer-2 confirmation."}
+      ],
+      "pathognomonic": "28 unique; LQTS name-tautology cluster ~8; Brugada type 1 and ARVC fibrofatty/epsilon largely OK; seizure/restrictive under wrong focus = E11"
+    },
+    "49": {
+      "gold": "Stump appendicitis",
+      "new_classes": [],
+      "smoking_guns": [
+        {"tags": ["OK"], "note": "Stump appendicitis caused_by incomplete resection / long stump is quote-faithful. Ranking T is case-finding omission (appendectomy, clips), not guideline-tuple logic."},
+        {"tags": ["E4", "E11"], "note": "Diverticulitis sufficient_for CT/colonoscopy; appendicitis sufficient_for Score≥7 meaning surgical consult not diagnosis."}
+      ]
+    },
+    "326": {
+      "gold": "Brucellosis",
+      "new_classes": [],
+      "smoking_guns": [
+        {"tags": ["E3", "E9"], "quote": "the clinical diagnosis usually must be supported by the results of bacteriologic and/or serologic tests", "note": "Split into TWO independent required_for/obligatory (bacteriologic tests, serologic tests). Disjunction became two necessities; usually must→obligatory. This is the gold-kill rule."},
+        {"tags": ["E9"], "quote": "Diagnose Brucellosis by blood or cerebrospinal fluid cultures", "note": "Same split: blood culture AND csf culture each obligatory."},
+        {"tags": ["E4"], "quote": "MRI as the gold standard", "note": "SEA/epidural abscess required_for MRI obligatory; gold-standard modality ≠ pathognomonic finding (also as pathognomonic_for MRI)."},
+        {"tags": ["E7"], "predicate": "high index of suspicion"}
+      ]
+    },
+    "119": {
+      "gold": "EPPP / Porokeratosis",
+      "new_classes": ["E13"],
+      "smoking_guns": [
+        {"tags": ["OK"], "note": "cornoid lamella pathognomonic_for porokeratosis is the one isomorphic success."},
+        {"tags": ["E4"], "quote": "Although it was once thought pathognomonic of porokeratosis, the feature has presented in other conditions", "relation": "distinguishes_from", "predicate": "cornoid lamella"},
+        {"tags": ["E4", "E13"], "subject": "actinic keratosis", "relation": "pathognomonic_for", "predicate": "invasive squamous cell carcinoma", "quote": "can potentially progress into invasive squamous cell carcinoma"},
+        {"tags": ["E4"], "subject": "Porokeratosis", "relation": "pathognomonic_for", "predicate": "nonmelanoma skin cancer", "quote": "will progress to nonmelanoma skin cancer in 6.9% to 30%"}
+      ]
+    },
+    "522": {
+      "gold": "Catatonia related to DLB",
+      "new_classes": [],
+      "smoking_guns": [
+        {"tags": ["OK"], "note": "DSM-5 catatonia at_least_n/3 with echopraxia members is quote-faithful; AD argues_against fluctuations/hallucinations suggesting LBD is quote-faithful."},
+        {"tags": ["E4"], "subject": "Vitamin B12 deficiency", "relation": "pathognomonic_for", "predicate": "low serum vitamin B12 level", "note": "Predicate direction is correct; engine later ignores high vs low (application, not this tuple)."},
+        {"tags": ["E4"], "quote": "a single blood test can be enough to support a diagnosis", "relation": "sufficient_for"},
+        {"tags": ["E10"], "note": "Ginkgo dose rows as sufficient_for dementia."}
+      ]
+    },
+    "773": {
+      "gold": "IPAH + PFO",
+      "new_classes": ["E12", "E14"],
+      "smoking_guns": [
+        {"tags": ["E12"], "subject": "CTEPH", "relation": "pathognomonic_for", "predicate": "pulmonary hypertension", "quote": "pulmonary hypertension in CTEPH"},
+        {"tags": ["E14"], "subject": "Eisenmenger syndrome", "predicate": "pulmonary arterial hypertension", "quote": "severe pulmonary arterial hypertension (PAH)", "threshold": ">25 mmHg not in quote"},
+        {"tags": ["OK"], "note": "Merck 'systemic pressure and resistance are higher than pulmonary' extracted as feature_of Left-to-right shunts — faithful to the stated direction."},
+        {"tags": ["O1"], "note": "No converse tuple 'right-to-left when pulmonary exceeds systemic' in this extraction file (F5b addendum not reflected here)."}
+      ]
+    },
+    "257": {
+      "gold": "collar button abscess",
+      "new_classes": [],
+      "smoking_guns": [
+        {"tags": ["E9"], "quote": "Presence of some or all of Kanavel’s cardinal signs (...)", "note": "criterion_group logic=all n=4. Quote is some-or-all; extractor used the named-set default."},
+        {"tags": ["E4"], "quote": "the Kanavel signs are important to recognize / 91 to 97% sensitive", "relation": "pathognomonic_for"},
+        {"tags": ["OK"], "note": "Schwartz four cardinal signs split into four members with all/4 is what the prompt asked; quote-faithful as a named set."}
+      ]
+    },
+    "56": {
+      "gold": "spindle cell SCC",
+      "new_classes": ["E13"],
+      "smoking_guns": [
+        {"tags": ["E13"], "subject": "Red-purplish, granular gingivitis", "relation": "pathognomonic_for", "predicate": "granulomatosis with polyangiitis", "quote": "a red-purplish, granular gingivitis (strawberry gums) is a pathognomonic sign of GPA"},
+        {"tags": ["E6"], "quote": "unlike sarcomatoid or spindle squamous cell carcinoma", "predicate": "p63 stain", "subject": "Sarcomatoid/Spindle Cell"},
+        {"tags": ["OK"], "note": "patchy p63 and pan-cytokeratin positivity as group all/2 is quote-faithful; vignette pan-CK negative is an application/L hierarchy issue, not this tuple being inverted."},
+        {"tags": ["E2", "E6"], "quote": "the exclusion of the t(X,18) rearrangement which is characteristic of synovial sarcoma", "note": "Dropped 'exclusion of'; emitted pathognomonic_for the translocation."}
+      ]
+    },
+    "91": {
+      "gold": "Angiosarcoma",
+      "new_classes": [],
+      "smoking_guns": [
+        {"tags": ["OK"], "note": "SFT NAB2-STAT6 hallmark and CD34+/STAT6+ IHC are quote-faithful. D is missing THIS vignette's CD34−/Bcl-2− vs SFT panel, not a misread of the STAT6 sentences."},
+        {"tags": ["E4", "E3"], "quote": "endothelial GLUT-1 staining is a sensitive marker for IH", "relation": "pathognomonic_for obligatory"},
+        {"tags": ["E7"], "predicate": "characteristic imaging findings on MRI"},
+        {"tags": ["E7", "E9"], "subject": "PHACE syndrome", "predicate": "major criterion / minor criterion", "quote": "one major criterion / two minor criteria", "note": "Meta-criteria dumped as vacuous predicates; count 2 lost."},
+        {"tags": ["E11"], "note": "Hydrocele/HRS cells under Lymphoma focus."}
+      ]
+    },
+    "179": {
+      "gold": "hypoxia-induced thrombocytopenia",
+      "new_classes": [],
+      "smoking_guns": [
+        {"tags": ["E4"], "quote": "platelet count (normal = 150,000 to 500,000/ml)", "relation": "required_for", "predicate": "platelet count", "note": "Reference range lifted into a diagnostic required_for."},
+        {"tags": ["E10"], "note": "ITP treatment thresholds as required_for."},
+        {"tags": ["O1/D"], "note": "Zero tuples about hypoxia–platelet covariance (probe n=0). Expected: rule not in corpus."}
+      ]
+    }
+  },
+  "finding_extractor_not_guideline": {
+    "49": "Omits laparoscopic appendectomy and surgical clips that are in the vignette.",
+    "257": "Collapses fluctuant palmar web-space mass into painful mass / swelling.",
+    "522": "Stores B12=1154.67 pmol/L as the lab existing, without high vs low.",
+    "179": "Unpairs four SaO2–platelet timepoints into independent present flags."
+  }
+}
