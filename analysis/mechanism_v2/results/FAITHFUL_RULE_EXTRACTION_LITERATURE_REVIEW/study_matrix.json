@@ -1,0 +1,1424 @@
+{
+  "scope": "35 study/standard entries, not 35 independent experimental papers",
+  "review_dates": [
+    "2026-09-05",
+    "2026-09-06"
+  ],
+  "external_projects_executed": false,
+  "source_hashes": {
+    "modern_fol_sources.json": "c6872bad9ae9869c79ce869245295c435a0f1be12638a79788785df4171cb8d9",
+    "semantic_parsing_sources.json": "c3fbfb290b3d4bc4336fdab7319f108c6ea6ce4e75ba9ebdf8935bfbf7135e38",
+    "clinical_llm_sources.json": "71f9b5a05cf3d9eba69c2f6df21e08ac433d35f72c7597621e8d39113b217f44",
+    "clinical_standards_sources.json": "f89752bd0053151888aae8e945b0a6a6405f92d9c45cf19514b8465645423b8f"
+  },
+  "studies": [
+    {
+      "review_family": "modern_fol",
+      "id": "MF01_LINC",
+      "title": "LINC: A Neurosymbolic Approach for Logical Reasoning by Combining Language Models with First-Order Logic Provers",
+      "year": 2023,
+      "url": "https://aclanthology.org/2023.emnlp-main.313/",
+      "primary_type": "EMNLP peer-reviewed paper",
+      "code_url": "https://github.com/benlipkin/linc",
+      "representation": "Prover9 FOL; premises and conclusion",
+      "method": "Few-shot NL→FOL, prover labels, ten-sample majority vote.",
+      "verification_guarantee": "Prover derivation is relative to generated formulas.",
+      "not_guaranteed": [
+        "Source fidelity",
+        "Implicit typing and predicate decomposition",
+        "Translation error independence across samples"
+      ],
+      "evaluation": {
+        "endpoint": "Final True/False/Uncertain accuracy",
+        "FOLIO": {
+          "n": 182,
+          "GPT4_LINC": 72.5,
+          "GPT4_CoT": 75.3
+        },
+        "ProofWriter": {
+          "n": 360,
+          "GPT4_LINC": 98.3,
+          "GPT4_CoT": 72.2
+        },
+        "caveat": "FOLIO removes 22 problematic examples from the historical 204; not directly comparable to other FOLIO versions.",
+        "aggregation": "Figure 3: mean accuracy from bootstrapped 10-way majority votes for LINC and comparators, including CoT."
+      },
+      "transfer_to_repo": "Useful solver baseline and explicit unknown; macro predicates and missing types resemble component loss in case 522.",
+      "source_locations": [
+        "PDF §§2–3, §4/Table 1, §5.1–5.2",
+        "https://aclanthology.org/2023.emnlp-main.313.pdf",
+        "Official repository README",
+        "PDF Figure 3: bootstrapped ten-way voting"
+      ],
+      "code_status": "Repository inspected; not executed"
+    },
+    {
+      "review_family": "modern_fol",
+      "id": "MF02_LOGIC_LM",
+      "title": "Logic-LM: Empowering Large Language Models with Symbolic Solvers for Faithful Logical Reasoning",
+      "year": 2023,
+      "url": "https://aclanthology.org/2023.findings-emnlp.248/",
+      "primary_type": "Findings EMNLP peer-reviewed paper",
+      "code_url": "https://github.com/teacherpeterpan/Logic-LLM",
+      "representation": "Task-specific logic programming, FOL, CSP, SMT",
+      "method": "Sentence/formula alignment, solver execution, error-message self-refinement, CoT fallback.",
+      "verification_guarantee": "Execution and solver checks conditional on representation.",
+      "not_guaranteed": [
+        "Executable formulas can invert direction or scope",
+        "Refinement is not guaranteed semantically monotone"
+      ],
+      "evaluation": {
+        "endpoint": "Final answer accuracy; execution rate and conditional execution accuracy",
+        "GPT4_FOLIO_before_after_SR": {
+          "execution_rate": [
+            79.9,
+            85.8
+          ],
+          "execution_accuracy": [
+            80.4,
+            79.9
+          ]
+        }
+      },
+      "transfer_to_repo": "CNF compilation can follow semantic parsing; syntax repair alone does not fix case 74 polarity or case 119 false hard confirmation.",
+      "source_locations": [
+        "PDF §3.1–3.4; §4.4/Table 3; limitations",
+        "https://aclanthology.org/2023.findings-emnlp.248.pdf",
+        "Official repository README"
+      ],
+      "code_status": "Repository inspected; not executed"
+    },
+    {
+      "review_family": "modern_fol",
+      "id": "MF03_FOLIO",
+      "title": "FOLIO: Natural Language Reasoning with First-Order Logic",
+      "year": 2024,
+      "url": "https://aclanthology.org/2024.emnlp-main.1229/",
+      "primary_type": "EMNLP peer-reviewed dataset paper; initial arXiv 2022",
+      "code_url": "https://github.com/Yale-LILY/FOLIO",
+      "representation": "Human-authored parallel NL/FOL stories and conclusions",
+      "method": "Expert annotation and formal label verification; distinct translation and inference tasks.",
+      "verification_guarantee": "Checks formal labels against supplied reference formulas.",
+      "not_guaranteed": [
+        "Conclusion accuracy is not full translation equivalence",
+        "Reference data can require corrections"
+      ],
+      "evaluation": {
+        "n_examples": 1430,
+        "n_premise_sets": 487,
+        "published_splits": [
+          1001,
+          203,
+          226
+        ],
+        "GPT4_fewshot": {
+          "syntax_validity": 93.9,
+          "execution_accuracy": 63.8
+        },
+        "endpoint": "Whole-story syntax and conclusion accuracy, not slot-level source fidelity"
+      },
+      "transfer_to_repo": "Reference-source inventory and independently annotated formulas are needed; gold rank cannot substitute for extraction fidelity.",
+      "source_locations": [
+        "PDF §4.1–4.2; §5.1–5.3/Table 5",
+        "https://aclanthology.org/2024.emnlp-main.1229.pdf",
+        "Official repository version warning"
+      ],
+      "code_status": "Data repository inspected; version drift noted"
+    },
+    {
+      "review_family": "modern_fol",
+      "id": "MF04_LOGICLLAMA",
+      "title": "Harnessing the Power of Large Language Models for Natural Language to First-Order Logic Translation",
+      "year": 2024,
+      "url": "https://aclanthology.org/2024.acl-long.375/",
+      "primary_type": "ACL peer-reviewed paper; initial arXiv 2023",
+      "code_url": "https://github.com/gblackout/LogicLLaMA",
+      "representation": "CFG-parsed FOL; MALLS parallel NL/FOL",
+      "method": "LLM-generated data with filtering and human sample review; LoRA translation/correction and reward-based correction.",
+      "verification_guarantee": "Parser checks syntax; released LE score checks literal Boolean agreement under soft matching.",
+      "not_guaranteed": [
+        "LE is not quantified FOL equivalence",
+        "Human review of a sample does not certify all synthetic pairs",
+        "Soft symbol matching may hide wrong predicates"
+      ],
+      "evaluation": {
+        "endpoint": "BLEU and LE; human data-quality sample",
+        "reported_MALLS_final_size": 28000,
+        "reported_13B_RL_correction_LE": 0.924,
+        "metric_audit": "Static reading: metrics.py uses soft_binding=True, greedy_match=True; VecRuleEvaluator.from_nltk_tree at S visits only root[-1], dropping quantifier prefix from Boolean evaluation. No dynamic execution claimed."
+      },
+      "transfer_to_repo": "Do not reward the current quantifier/scope failures with LE; benchmark typed reference formulas instead.",
+      "source_locations": [
+        "PDF §3, §4.3/Table 3",
+        "https://aclanthology.org/2024.acl-long.375.pdf",
+        "https://github.com/gblackout/LogicLLaMA/blob/785a2c08e8fe964c8b2a10bb183ce5a08867aa3b/metrics.py",
+        "https://github.com/gblackout/LogicLLaMA/blob/785a2c08e8fe964c8b2a10bb183ce5a08867aa3b/fol_parser.py"
+      ],
+      "code_status": "README and evaluator source inspected; not executed",
+      "code_revision": "785a2c08e8fe964c8b2a10bb183ce5a08867aa3b",
+      "code_source_sha256": {
+        "logicllama_metrics.py": "ace062ba0bd11f8eacc47b24e2178b0a3a9f55fd791201386b993189ea788f5e",
+        "logicllama_fol_parser.py": "a4e8ca7bba811c9e02bbb629422589be961628342d82426704f205e45a9ca1dc"
+      }
+    },
+    {
+      "review_family": "modern_fol",
+      "id": "MF05_CLOVER",
+      "title": "Divide and Translate: Compositional First-Order Logic Translation and Verification for Complex Logical Reasoning",
+      "year": 2025,
+      "url": "https://openreview.net/forum?id=09FiNmvNMw",
+      "primary_type": "ICLR peer-reviewed paper",
+      "code_url": "https://github.com/Hyun-Ryu/clover",
+      "representation": "Many-sorted FOL with logical dependency structures",
+      "method": "LLM first prepares an estimated theory and target NL sentence set from the whole problem; then decomposes into units, couplers and dependents; progressive translation; equivalence clusters; solver counter-interpretations judged against prepared NL by an LLM.",
+      "verification_guarantee": "Solver checks formula equivalence and produces distinguishing interpretations.",
+      "not_guaranteed": [
+        "NL judgment of a countermodel remains learned",
+        "Correct formula may not be in sampled candidates",
+        "Initial theory/signature may be wrong",
+        "Preprocessing fidelity and coverage: checking the prepared NL targets cannot restore an original qualifier lost in preprocessing."
+      ],
+      "evaluation": {
+        "endpoint": "Final answer accuracy, executability, conditional accuracy; annotated AR-LSAT formula analysis",
+        "FOLIO_program_accuracy": {
+          "LogicLM": 51.2,
+          "CLOVER": 62.6
+        },
+        "FOLIO_execution_rate": {
+          "LogicLM": 65.5,
+          "CLOVER": 74.9
+        },
+        "FOLIO_execution_accuracy": {
+          "LogicLM": 78.2,
+          "CLOVER": 83.6
+        }
+      },
+      "transfer_to_repo": "Directly relevant to nested connective/quantifier composition and discriminating group counterexamples; preserve source coverage outside the solver.",
+      "source_locations": [
+        "https://arxiv.org/html/2410.08047v2",
+        "§§2–3.3; §4/Tables 1–2; annotated-formula analysis",
+        "Official repository README"
+      ],
+      "code_status": "Repository inspected; not executed"
+    },
+    {
+      "review_family": "modern_fol",
+      "id": "MF06_LOGIC_LM_PP",
+      "title": "LOGIC-LM++: Multi-Step Refinement for Symbolic Formulations",
+      "year": 2024,
+      "url": "https://aclanthology.org/2024.nlrse-1.6/",
+      "primary_type": "ACL NLRSE workshop peer-reviewed paper",
+      "code_url": null,
+      "representation": "Logic-LM symbolic representations",
+      "method": "Restore source problem/question to refinement; pairwise LLM semantic comparison and backtracking.",
+      "verification_guarantee": "Existing solver checks remain; semantic edit acceptance is model-based.",
+      "not_guaranteed": [
+        "Backtracking cannot certify source equivalence",
+        "Very wrong initial formulas and weaker semantic judges remain difficult"
+      ],
+      "evaluation": {
+        "endpoint": "Final answer and execution metrics",
+        "FOLIO_GPT4_LogicLM_to_plus": [
+          78.92,
+          84.8
+        ],
+        "FOLIO_GPT35_LogicLM_to_plus": [
+          62.8,
+          62.25
+        ]
+      },
+      "transfer_to_repo": "Source-aware reversible repairs can be tested on polarity and overstatement; an accepted edit is still not a clinical certificate.",
+      "source_locations": [
+        "https://aclanthology.org/2024.nlrse-1.6.pdf",
+        "§3.2–3.3; Tables 1–2; §4.3; limitations"
+      ],
+      "code_status": "No official repository located in reviewed paper or targeted author/project searches; not proof that none exists"
+    },
+    {
+      "review_family": "modern_fol",
+      "id": "MF07_NL2FOL",
+      "title": "Autoformalizing Natural Language to First-Order Logic: A Case Study in Logical Fallacy Detection",
+      "year": 2025,
+      "url": "https://aclanthology.org/2025.findings-ijcnlp.8/",
+      "primary_type": "Findings IJCNLP-AACL peer-reviewed paper; earlier arXiv 2024",
+      "code_url": "https://github.com/lovishchopra/NL2FOL",
+      "representation": "FOL compiled to CVC4 SMT",
+      "method": "Entities, predicates, claims and conclusion; NLI-inferred background implications; validity checking and countermodel explanation.",
+      "verification_guarantee": "SMT reasoning relative to compiled theory.",
+      "not_guaranteed": [
+        "Inferred background implications are not explicit source rules",
+        "Fallacy classification is not exact formalization"
+      ],
+      "evaluation": {
+        "endpoint": "Binary fallacy classification",
+        "caveat": "Table 2 uses datasets augmented with non-fallacious negative arguments derived from SNLI entailments; the direct comparator is few-shot end-to-end classification, not the unaugmented original LOGIC task.",
+        "GPT4o_LOGIC_plus_SNLI_end_to_end_vs_NL2FOL": [
+          0.96,
+          0.78
+        ],
+        "GPT4o_LOGICCLIMATE_plus_SNLI_end_to_end_vs_NL2FOL": [
+          0.7,
+          0.8
+        ],
+        "datasets": [
+          "LOGIC+SNLI",
+          "LOGICCLIMATE+SNLI"
+        ]
+      },
+      "transfer_to_repo": "Keep inferred bridge assumptions separate from guideline provenance; countermodel explanations can expose unsupported diagnostic implications.",
+      "source_locations": [
+        "https://aclanthology.org/2025.findings-ijcnlp.8.pdf",
+        "Method pipeline and SMT construction; experimental setup/Table 2",
+        "Official repository scripts"
+      ],
+      "code_status": "Repository inspected; not executed"
+    },
+    {
+      "review_family": "modern_fol",
+      "id": "MF08_FOVER",
+      "title": "FoVer: First-Order Logic Verification for Natural Language Reasoning",
+      "year": 2025,
+      "url": "https://aclanthology.org/2025.tacl-1.61/",
+      "primary_type": "TACL peer-reviewed paper",
+      "code_url": "https://github.com/peiyu-cn/FoVer",
+      "representation": "Python functions using a custom Z3 FOL wrapper",
+      "method": "Coarse-to-fine annotated reasoning, predicate/type definitions, delayed quantifier declaration, optional separate common-knowledge statements. Algorithm 1 removes definitions in an unsatisfiable core before verifying the retained theory; this changes the theory.",
+      "verification_guarantee": "Z3 checks conclusions relative to the retained compiled theory, after any removal of conflicting auxiliary definitions.",
+      "not_guaranteed": [
+        "Correct Python is not correct NL grounding",
+        "Optional background knowledge can introduce unsupported premises",
+        "Quantifier declaration conventions do not prove semantic scope",
+        "Unsat-core removal does not certify fidelity of the removed or retained definitions to the original text, or prove a maximum-faithfulness repair."
+      ],
+      "evaluation": {
+        "endpoint": "Final reasoning accuracy",
+        "GPT4o_ProofWriter_n": 200,
+        "GPT4o_ProofWriter_no_common_to_common": [
+          95.5,
+          89.5
+        ],
+        "GPT4o_FOLIO_n": 203,
+        "GPT4o_FOLIO_CoT": 72.4,
+        "caveat": "Table 2 distinguishes single queried conclusion from all questions in a sample; paper does not establish a same-cached-formulas, scoring-only contrast, and execution rates differ. Relaxed scoring accepts True/False when the original label is Unknown. These are not source-fidelity metrics.",
+        "GPT4o_FOLIO_specific_prompt_no_common": 70.4,
+        "GPT4o_FOLIO_universal_prompt_no_common": 62.1,
+        "FOLIO_prompt_condition": "Table 3 specific prompt places entities in one Entity sort; universal prompt may infer different sorts.",
+        "GPT4o_ProofWriter_all_questions_strict_without_common": 78.5,
+        "ProofWriter_single_vs_all_strict_execution_rates": [
+          97.0,
+          98.5
+        ]
+      },
+      "transfer_to_repo": "Typed program representation and separate background channel are useful; source-only and augmented conditions need separate reporting.",
+      "source_locations": [
+        "https://aclanthology.org/2025.tacl-1.61.pdf",
+        "§3.2–3.3; Table 1; error analysis",
+        "Official repository README",
+        "§3.3 Algorithm 1: definition removal; §5.1/Table 2: strict versus relaxed; §5.2/Table 3: universal versus specific Entity-sort prompt"
+      ],
+      "code_status": "Repository inspected; not executed"
+    },
+    {
+      "review_family": "modern_fol",
+      "id": "MF09_FINE_TUNED_FOL",
+      "title": "Advancing Natural Language Formalization to First Order Logic with Fine-tuned LLMs",
+      "year": 2025,
+      "url": "https://arxiv.org/abs/2509.22338",
+      "primary_type": "Research preprint, reviewed v2 (2025-11-30)",
+      "code_url": "https://github.com/fvossel/ANLFtFOLwFLLMs",
+      "representation": "Grammar-parsed FOL, Z3 reference equivalence",
+      "method": "Fine-tune on MALLS/Willow; compare free, supplied/noisy predicates and two-stage predicate prediction; optional predicate-name matching.",
+      "verification_guarantee": "Proved unsatisfiability of negated biconditional establishes equivalence under encoded reference/signature.",
+      "not_guaranteed": [
+        "Timeout is not inequivalence",
+        "Reference equivalence assumes correct reference and symbol grounding",
+        "Oracle predicate lists do not measure end-to-end extraction"
+      ],
+      "evaluation": {
+        "endpoint": "Exact formula match and solver equivalence",
+        "GT_predicates_FlanT5XXL": {
+          "exact": 63.45,
+          "equivalent": 70.27
+        },
+        "two_stage_predicted": {
+          "exact": 25.96,
+          "equivalent": 28.26
+        },
+        "solver_timeout_seconds": 10
+      },
+      "transfer_to_repo": "Separate predicate identity from composition; clinical metric/name matching cannot safely use generic edit-distance equivalence.",
+      "source_locations": [
+        "https://arxiv.org/html/2509.22338v2",
+        "Evaluation §3.5; §4/Tables; two-stage analysis",
+        "Official repository README, currently describing later GROVES data"
+      ],
+      "code_status": "Repository inspected; current README/data description has evolved beyond paper snapshot"
+    },
+    {
+      "review_family": "modern_fol",
+      "id": "MF10_SOLT_MENTAL",
+      "title": "Are LLMs Stable Formal Logic Translators in Logical Reasoning Across Linguistically Diversified Texts?",
+      "year": 2026,
+      "url": "https://arxiv.org/abs/2506.04575",
+      "primary_type": "WWW 2026 paper; reviewed arXiv v3 (2026-01-30)",
+      "code_url": "https://github.com/qingchuanli/LinguDiver",
+      "representation": "FOL with a maintained NL-concept/logical-symbol table",
+      "method": "SoLT meaning-preserving linguistic diversification; MenTaL reuses/refines symbol mappings and compound expressions.",
+      "verification_guarantee": "Benchmark checks outcomes and symbol drift; model manages semantic identity.",
+      "not_guaranteed": [
+        "Low symbol dispersion does not rule out over-merging different concepts",
+        "Not all language rewrites have a formal source-fidelity proof",
+        "Benefits are model-dependent"
+      ],
+      "evaluation": {
+        "endpoint": "Final accuracy and Symbol Dispersion Score",
+        "SoLT_FOLIO_GPT4_direct_to_MenTaL": [
+          44.17,
+          68.33
+        ],
+        "original_FOLIO_Llama_direct_to_MenTaL": [
+          42.86,
+          23.99
+        ],
+        "caveat": "SDS tracks one concept mapped to multiple symbols, not complete predicate/argument fidelity."
+      },
+      "transfer_to_repo": "Test synonym consistency together with subtype and marker anti-merging; case 56 parent routing and case 773 metric mismatch need both.",
+      "source_locations": [
+        "https://arxiv.org/html/2506.04575v3",
+        "§3–5/Table 3; Appendices A/B/D/E/G",
+        "https://dl.acm.org/doi/10.1145/3774904.3792161",
+        "Original official URL https://github.com/wufeiwuwoshihua/LinguDiver redirects to the recorded code_url"
+      ],
+      "code_status": "Repository redirect and README inspected; not executed"
+    },
+    {
+      "review_family": "modern_fol",
+      "id": "MF11_ROBUSTNESS",
+      "title": "Robustness of Neurosymbolic Reasoners on First-Order Logic Problems",
+      "year": 2025,
+      "url": "https://aclanthology.org/2025.alta-main.1/",
+      "primary_type": "ALTA peer-reviewed paper",
+      "code_url": "https://github.com/hannahhb/counterfactual_NS_eval",
+      "representation": "FOL/Prover9 through LINC and NSCoT",
+      "method": "Counterfactual label-preserving problem rewrites; compare CoT, LINC, and CoT-before-formalization.",
+      "verification_guarantee": "Tests robustness of complete pipelines; no new source-equivalence guarantee.",
+      "not_guaranteed": [
+        "A smaller counterfactual drop does not imply higher accuracy",
+        "Unknown predictions can change apparent robustness"
+      ],
+      "evaluation": {
+        "endpoint": "Final accuracy and counterfactual performance gap",
+        "FOLIO_n": 204,
+        "counterfactual_RR_n": 81,
+        "Qwen25_32B_FOLIO": {
+          "CoT": 75.49,
+          "LINC": 68.14,
+          "NSCoT": 71.08
+        }
+      },
+      "transfer_to_repo": "Require both absolute quality and perturbation stability; stable wrong/proxy answers must not count as faithful extraction.",
+      "source_locations": [
+        "https://aclanthology.org/2025.alta-main.1.pdf",
+        "§5.2–6; counterfactual construction and results tables",
+        "Official repository README"
+      ],
+      "code_status": "Repository inspected; not executed"
+    },
+    {
+      "review_family": "semantic_parsing",
+      "id": "SP01",
+      "title": "Discourse Representation Structures for ACE 6.7 / Attempto Parsing Engine",
+      "year": 2013,
+      "url": "https://attempto.ifi.uzh.ch/site/pubs/papers/drs_report_67.pdf",
+      "primary_type": "Author technical report and official language/parser documentation",
+      "code_url": "https://github.com/Attempto/APE",
+      "representation": "Nested DRS with typed predicate arguments, implication/disjunction, classical negation, explicit modal extensions; FOL/PNF/TPTP exports for supported representations.",
+      "method": "A precisely controlled input language fixes coordination, quantifier scope and reference interpretation; parser compiles that language and exposes paraphrases and source sentence/token anchors.",
+      "verification_guarantee": "Unambiguous interpretation relative to ACE rules for accepted ACE text; deterministic compiler/export behavior is distinct from an LLM translation claim.",
+      "not_guaranteed": "Arbitrary guideline-to-ACE fidelity, intended clinical scope, author intent, corpus completeness. ACE 6.7 modal/negation-as-failure extensions must not all be mislabeled ordinary FOL.",
+      "evaluation": "Specification examples and executable parser interface, not a held-out arbitrary-guideline extraction accuracy benchmark.",
+      "transfer_to_repo": "Reference for audited controlled paraphrases, predicate/role/source anchors and distinguishing logical negation from failure-to-prove; adaptation requires independent source-to-paraphrase adjudication.",
+      "source_locations": [
+        {
+          "url": "https://attempto.ifi.uzh.ch/site/pubs/papers/drs_report_67.pdf",
+          "location": "§2.4.1–2.4.8, §2.5, §3.7; printed pp10–14,20–21",
+          "supports": "nested operators, distinct negations, source sentence/token numbers, cardinality scope"
+        },
+        {
+          "url": "https://attempto.ifi.uzh.ch/site/docs/ace_interpretationrules.html",
+          "location": "Coordination; Scope of Subordinated Sentences; Quantifiers; Anaphora Resolution",
+          "supports": "fixed interpretation and ambiguity-restricting conventions"
+        },
+        {
+          "url": "https://github.com/Attempto/APE",
+          "location": "README command-line arguments -solo, -cparaphrase, -cfol, -cpnf, -ctptp",
+          "supports": "actual parser outputs and controlled paraphrase interface"
+        }
+      ]
+    },
+    {
+      "review_family": "semantic_parsing",
+      "id": "SP02",
+      "title": "Minimal Recursion Semantics: An Introduction",
+      "year": 2005,
+      "url": "https://www.cl.cam.ac.uk/~aac10/papers/mrs.pdf",
+      "primary_type": "Author-hosted research paper, supplemented by author research and official ERG documentation",
+      "code_url": null,
+      "representation": "Elementary predications plus handles, quantifier bound variables, restrictor/body and scope constraints; underspecified predicate calculus with generalized quantifiers, not merely an unordered triple set.",
+      "method": "Compositional grammar preserves semantic arguments while factoring out scope into explicit links; unresolved scope can denote multiple compatible readings.",
+      "verification_guarantee": "Representation preserves constraints under the specified compositional formalism; it permits reconstructing scope instead of erasing it.",
+      "not_guaranteed": "Correct selection of the intended reading from arbitrary clinical prose; fully resolved scope from syntax alone; reduction of all generalized quantifiers to ordinary FOL.",
+      "evaluation": "Formal representation/composition analysis and integration with broad-coverage HPSG; no reported universal clinical extraction score.",
+      "transfer_to_repo": "Strong counterexample to predicate-bag extraction; domains, roles and scope links must survive any flat storage. Preserving ambiguity is preferable to inventing a unique clinical scope.",
+      "source_locations": [
+        {
+          "url": "https://www.cl.cam.ac.uk/~aac10/papers/mrs.pdf",
+          "location": "§2 examples(5)–(7); §3 examples(15)–(18); §4; author PDF pp3,6–7",
+          "supports": "scope-erased forms confound different universal statements; scope underspecification and restrictor/body"
+        },
+        {
+          "url": "https://aclanthology.org/W07-1210.pdf",
+          "location": "§1–2 and §6; pp73–75,80",
+          "supports": "RMRS argument underspecification, algebra constraints and need for a grammar checker"
+        },
+        {
+          "url": "https://delph-in.github.io/docs/erg/ErgSemantics_Quantification/",
+          "location": "Overview of Quantification; Predicate hierarchy",
+          "supports": "ARG0/RSTR/BODY, syntactically partial scope, generalized quantifiers including most"
+        }
+      ]
+    },
+    {
+      "review_family": "semantic_parsing",
+      "id": "SP03",
+      "title": "Wide-Coverage Semantic Analysis with Boxer",
+      "year": 2008,
+      "url": "https://aclanthology.org/W08-2222.pdf",
+      "primary_type": "Primary conference paper",
+      "code_url": null,
+      "representation": "CCG-derived DRS, event variables and thematic roles, with FOL translation.",
+      "method": "Lexical semantics plus compositional derivation, followed by separate anaphora/presupposition resolution.",
+      "verification_guarantee": "Produces formally interpretable representations for accepted parses; it does not certify the parse or lexical interpretation.",
+      "not_guaranteed": "Source faithfulness, coreference, measurement interpretation or coordination scope; author explicitly reports failures.",
+      "evaluation": ">95% newswire coverage and complete DRSs for seven shared-task texts; authors explicitly lack gold representations to quantify semantic quality.",
+      "transfer_to_repo": "Useful component separation and event-role representation; coverage must not be reported as fidelity. Clinical causation/passive-role cases need their own validation.",
+      "source_locations": [
+        {
+          "url": "https://aclanthology.org/W08-2222.pdf",
+          "location": "§2–3; §3.4 cervical-cancer example; §4–5 pp283–285",
+          "supports": "composition, unresolved pronouns, role successes, measurement failures and unavailable gold accuracy"
+        },
+        {
+          "url": "https://pmb.let.rug.nl/software.php",
+          "location": "Software list",
+          "supports": "official PMB identifies Boxer as its CCG-to-DRS component; original historical C&C source URL was not revalidated as a live download"
+        }
+      ]
+    },
+    {
+      "review_family": "semantic_parsing",
+      "id": "SP04",
+      "title": "The Parallel Meaning Bank: Towards a Multilingual Corpus of Translations Annotated with Compositional Meaning Representations",
+      "year": 2017,
+      "url": "https://aclanthology.org/E17-2039.pdf",
+      "primary_type": "Primary corpus/system paper and official data documentation",
+      "code_url": "https://pmb.let.rug.nl/software.php",
+      "representation": "Compositional DRS with layered tokenization, CCG syntax, semantic tags and normalized symbols.",
+      "method": "Automatic annotation plus persistent human corrections; conflicts with previously checked annotations are sent to expert re-adjudication.",
+      "verification_guarantee": "Explicit human-verification status and correction provenance; gold, silver and bronze do not denote the same evidence quality.",
+      "not_guaranteed": "Automatic DRS correctness; bilingual alignment always preserving meaning; generalization to multi-page clinical lists.",
+      "evaluation": "2017 corpus construction/annotation counts. Official current data page lists v5.1.0 English gold=11,987 (2024-04-25), not an automatic extractor accuracy.",
+      "transfer_to_repo": "Source-first adjudicated rule units and reviewed-vs-machine-only status are supported by a mature semantic annotation workflow; operator/domain conflicts need targeted review.",
+      "source_locations": [
+        {
+          "url": "https://aclanthology.org/E17-2039.pdf",
+          "location": "§3.1–3.5; Figure2; §5 Adding Bits of Wisdom",
+          "supports": "compositional pipeline, NOT/POS tagging, persistent corrections and annotation-conflict review"
+        },
+        {
+          "url": "https://pmb.let.rug.nl/data.php",
+          "location": "Data definition and Meaning Representations release table",
+          "supports": "human checked gold/partial silver/machine bronze and 5.1.0 counts"
+        },
+        {
+          "url": "https://pmb.let.rug.nl/software.php",
+          "location": "Software",
+          "supports": "official pipeline components and links, not a single standalone source-to-FOL guarantee"
+        }
+      ]
+    },
+    {
+      "review_family": "semantic_parsing",
+      "id": "SP05",
+      "title": "PICARD: Parsing Incrementally for Constrained Auto-Regressive Decoding from Language Models",
+      "year": 2021,
+      "url": "https://aclanthology.org/2021.emnlp-main.779.pdf",
+      "primary_type": "Primary EMNLP paper and authors' code repository",
+      "code_url": "https://github.com/servicenow/picard",
+      "representation": "SQL AST under lexical, grammar and table/alias scope guards.",
+      "method": "Incremental parser rejects inadmissible tokens during beam search; guards use declared database schema and symbol scope.",
+      "verification_guarantee": "Constraints implemented by parser/guards on successfully completed parses; output may still fail if beam search finds no valid completion.",
+      "not_guaranteed": "Correct query intent, source implication direction, all type checks, or faithful clinical interpretation. Paper leaves further type guards to future work.",
+      "evaluation": "T5-3B Spider development execution errors 12%→2%; exact-set match=75.5%, execution match=79.3%; these are separate endpoints.",
+      "transfer_to_repo": "Evidence for recursive syntax and binding guards. A syntactically valid excludes rule can still reverse the source; decoder constraints alone cannot adjudicate that.",
+      "source_locations": [
+        {
+          "url": "https://aclanthology.org/2021.emnlp-main.779.pdf",
+          "location": "§2.1–2.3; §3 metrics/results pp9897–9898",
+          "supports": "lexing/parsing/scope guards, remaining checks, incomplete beam outcomes and distinct accuracy metrics"
+        },
+        {
+          "url": "https://github.com/servicenow/picard",
+          "location": "How does PICARD work?; How well does PICARD work?",
+          "supports": "continuation parser behavior, original model links, exact/exec scores and execution error reduction"
+        },
+        {
+          "url": "https://github.com/ServiceNow/picard/blob/main/picard/src/Language/SQL/SpiderSQL/Parse.hs",
+          "location": "ParserState; alias scope comments; GuardTableColumn, GuardAliasColumn, GuardColumn; withGuards",
+          "supports": "actual stored scope/alias environment and reference guards; current code inspection is not retroactively a 2021 feature claim"
+        }
+      ]
+    },
+    {
+      "review_family": "semantic_parsing",
+      "id": "SP06",
+      "title": "Synchromesh: Reliable Code Generation from Pre-trained Language Models",
+      "year": 2022,
+      "url": "https://arxiv.org/pdf/2201.11227",
+      "primary_type": "Primary ICLR paper and Microsoft Research publication page",
+      "code_url": null,
+      "code_status": "No author-maintained implementation link established from the primary paper/publication page; the retrieved kanishkg/synchromesh repository explicitly labels itself unofficial and was not used as primary implementation evidence.",
+      "representation": "SQL, Vega-Lite and SMCalFlow programs with completion engines enforcing syntax, scope, types and context-specific constraints.",
+      "method": "Constrained Semantic Decoding plus examples retrieved by target AST similarity (TST). Guarantees are relative to implemented completion-engine constraints.",
+      "verification_guarantee": "Completed generated programs satisfy the CE constraints under the stated CE axioms/decoding assumptions.",
+      "not_guaranteed": "Conceptual fidelity to natural-language intent; §4.2 explicitly supplies a valid-but-wrong visualization counterexample. Original domains are not Turing-complete Python.",
+      "evaluation": "Table2 Codex175B SQL CSD+TST: validity85%, execution match64%; SMCalFlow validity99%, exact match63%. Validity is not intent correctness.",
+      "transfer_to_repo": "Typed/domain-aware completion and examples selected by logical form are relevant; neither certifies which connective or implication the guideline intended.",
+      "source_locations": [
+        {
+          "url": "https://arxiv.org/pdf/2201.11227",
+          "location": "§2 TST; §3.1–3.3 CE axioms/algorithm; Table2; §4.2; §6",
+          "supports": "AST example similarity, constraint guarantee, measured validity/accuracy split, explicit conceptual-error and language-scope limits"
+        },
+        {
+          "url": "https://www.microsoft.com/en-us/research/publication/synchromesh-reliable-code-generation-from-pre-trained-language-models/",
+          "location": "Publication abstract and ICLR2022 metadata",
+          "supports": "author/team provenance, target languages and public paper link"
+        }
+      ]
+    },
+    {
+      "review_family": "semantic_parsing",
+      "id": "SP07",
+      "title": "Type-Constrained Code Generation with Language Models",
+      "year": 2025,
+      "url": "https://arxiv.org/pdf/2504.09246",
+      "primary_type": "Primary PLDI paper and authors' reproduction package",
+      "code_url": "https://github.com/eth-sri/type-constrained-code-generation",
+      "representation": "Simply typed language LB and TypeScript implementation using prefix automata and a type environment.",
+      "method": "Type search checks whether a partial expression can still be completed to an expression of the required type, beyond grammar-only masking.",
+      "verification_guarantee": "Sound well-typed completion for the covered language subset and completed generation; the formal construction intentionally sacrifices completeness for type-search termination.",
+      "not_guaranteed": "All TypeScript features, higher-order type completeness, functional correctness or correspondence to natural-language specifications. Prefix completable does not guarantee that the LLM terminates or stays within token/time budgets; §6 reports loops/truncations among remaining compiler errors.",
+      "evaluation": "TypeScript HumanEval/MBPP synthesis, translation and repair; paper reports compilation errors reduced by more than half and relative functional-correctness gains3.5%–5.5% for synthesis/translation.",
+      "transfer_to_repo": "Domain/role/quantity typing can rule out impossible bindings but not a well-typed donor/recipient swap or valid-yet-reversed logical rule.",
+      "source_locations": [
+        {
+          "url": "https://arxiv.org/pdf/2504.09246",
+          "location": "§2.2; §3.1–3.4; §4 limitations; §5; AppendixA.3; §6 Remaining Compiler Errors",
+          "supports": "syntax-vs-type distinction, prefix completion, intentionally incomplete covered subset and empirical endpoints; distinction between prefix-completion guarantee and actual generation termination"
+        },
+        {
+          "url": "https://github.com/eth-sri/type-constrained-code-generation",
+          "location": "Incremental TypeScript parsing; Reproducing experiments",
+          "supports": "actual parser interface, incomplete-prefix examples and reproduction package"
+        }
+      ]
+    },
+    {
+      "review_family": "semantic_parsing",
+      "id": "SP08",
+      "title": "Combinatorial Sketching for Finite Programs",
+      "year": 2006,
+      "url": "https://people.csail.mit.edu/asolar/papers/asplos06-final.pdf",
+      "primary_type": "Primary ASPLOS research paper and author code repository",
+      "code_url": "https://github.com/asolarlez/sketch-frontend",
+      "representation": "Finite programs with holes plus a separate formal executable specification; synthesis problem uses bounded input semantics.",
+      "method": "Two SAT solvers alternate synthesis and verification; a violating input becomes a new synthesis constraint until the formal specification is met.",
+      "verification_guarantee": "Correctness relative to the supplied formal specification and finite domain; theoretical completion for a realizable sketch within the finite setup.",
+      "not_guaranteed": "That the formal specification faithfully captures an English guideline; unbounded/general-purpose correctness or practical termination within any fixed budget.",
+      "evaluation": "Finite programming kernels including AES; not text-to-FOL extraction or clinical diagnosis.",
+      "transfer_to_repo": "Counterexamples can discriminate candidate formula/executor variants only when an independently grounded reference behavior or specification exists; a self-generated specification can certify its own mistake.",
+      "source_locations": [
+        {
+          "url": "https://people.csail.mit.edu/asolar/papers/asplos06-final.pdf",
+          "location": "§1, §3 finite-program definition; §4 semantics; §5.4 Figure4; §6",
+          "supports": "formal-specification boundary, synthesize-verify counterexamples and bounded-domain guarantee"
+        },
+        {
+          "url": "https://github.com/asolarlez/sketch-frontend",
+          "location": "Repository docs/SketchManual, benchmarks, source and README",
+          "supports": "author-associated implementation availability; no claim of reproducing it in this audit"
+        }
+      ]
+    },
+    {
+      "review_family": "semantic_parsing",
+      "id": "SP09",
+      "title": "LogicNG: Normal Form Transformations",
+      "year": null,
+      "url": "https://www.logicng.org/documentation/formulas/operations/transformations/normal-form-transformations/",
+      "primary_type": "Official library documentation, accessed2026-09-05",
+      "code_url": "https://github.com/logic-ng/LogicNG",
+      "representation": "Propositional formula trees, NNF/CNF/DNF, auxiliary-variable encodings.",
+      "method": "Separate equivalent factorization from Tseitin/Plaisted-Greenbaum equisatisfiable transforms; preserve subformula definitions for SAT-oriented compilation.",
+      "verification_guarantee": "Truth-equivalent transformation or equisatisfiability as specified by the selected algorithm, assuming the input formula is correct. For full definitional Tseitin encoding with an asserted root, phi(x) iff exists z T(x,z), preserving models projected onto original variables; this is stronger than equisatisfiability alone.",
+      "not_guaranteed": "Source-to-formula fidelity; equisatisfiability alone is not pointwise equivalence over all original and auxiliary variable assignments.",
+      "evaluation": "Algorithm specification and worked examples; no extraction performance experiment.",
+      "transfer_to_repo": "CNF/DNF need not be the extraction surface form. Retain source AST/graph; canonicalization can be a downstream operation, with auxiliary-variable semantics explicit.",
+      "source_locations": [
+        {
+          "url": "https://www.logicng.org/documentation/formulas/operations/transformations/normal-form-transformations/",
+          "location": "CNF Transformations; CNF Factorization; Tseitin Transformation; Plaisted-Greenbaum Transformation",
+          "supports": "exponential expansion risk, auxiliary variables, equivalence versus equisatisfiability"
+        },
+        {
+          "url": "https://avigad.github.io/lamr/decision_procedures_for_propositional_logic.html",
+          "location": "§6.1 The Tseitin transformation",
+          "supports": "official author textbook explanation of exponential equivalent CNF versus equisatisfiable encoding; auxiliary definitions, extending assignments and projecting models"
+        }
+      ]
+    },
+    {
+      "review_family": "clinical_llm",
+      "id": "CL01",
+      "title": "CPGPrompt: Translating Clinical Guidelines into LLM-Executable Decision Support",
+      "year": 2026,
+      "url": "https://arxiv.org/html/2601.03475v1",
+      "primary_type": "primary preprint; journal publication independently identified",
+      "code_url": "https://github.com/bionlplab/CPGPrompt",
+      "representation": "JSON threshold decision tree: name, yes_action, no_node, criteria:[str], min_criteria:int.",
+      "method": "Manual passage selection; LLM local subtrees; merge; every tree manually validated, with regeneration and manual adjustment; LLM leaf queries.",
+      "verification_guarantee": "Program applies min_criteria before a group action; no source-equivalence theorem.",
+      "not_guaranteed": "No automated extraction fidelity rate; no recursive criterion AST; binary response parser lacks unknown; free-text leaf semantics remain LLM-dependent.",
+      "evaluation": "Synthetic referral/pathway evaluation. Table 2 headache binary F1 .90 and fine-grained macro F1 .44; low-back-pain set has 99/99 referral-positive cases. Vignettes were generated from validated trees; three clinicians checked 10 cases per domain, so the execution test is not an independent check of source omissions shared with those trees.",
+      "transfer_to_repo": "522: group threshold distinct from leaf support. 74/49: path and patient-query correctness remain separate. Do not copy name identity or sequential no-branch merge.",
+      "source_locations": {
+        "paper": "Sections 2.1-2.3, 3; Tables 1-3",
+        "code": [
+          "text2tree.py: Node/generate_decision_tree",
+          "merge_tree.py: merge_decision_tree_sections",
+          "traverse_tree.py: ask_gpt_for_decision/traverse_decision_tree_with_gpt"
+        ],
+        "journal": "https://academic.oup.com/jamia/article/33/4/855/8499741"
+      },
+      "code_commit": "aa6061e2f6b2e810f7c5897232f45ab223a956a2",
+      "full_text_read": true,
+      "code_read": true,
+      "accessed_at": "2026-09-05",
+      "retrieved_file_provenance": [
+        {
+          "bytes": 7298,
+          "sha256": "91ef5823e0925ddae198eca0e1cd2437d96b24738331d94dbe4a5836c04d668a",
+          "url": "https://raw.githubusercontent.com/bionlplab/CPGPrompt/main/traverse_tree.py"
+        }
+      ]
+    },
+    {
+      "review_family": "clinical_llm",
+      "id": "CL02",
+      "title": "Text2MDT: Extracting Medical Decision Trees from Medical Texts",
+      "year": 2024,
+      "url": "https://arxiv.org/html/2401.02034v1",
+      "primary_type": "primary research preprint",
+      "code_url": "https://github.com/michael-wzhu/text2dt",
+      "representation": "Binary decision tree; node Role, Triplets, Logical_Rel (AND/OR/NULL); preorder serialization.",
+      "method": "Expert-involved Chinese annotation; triples → node grouping → assembly, compared with instruction-tuned end-to-end models and CoT variants.",
+      "verification_guarantee": "Human-reference exact whole-tree accuracy and decision-path F1; these measure agreement within the supported representation.",
+      "not_guaranteed": "Authors explicitly limit node logical combinations, multi-stage action continuation, and cross-paragraph knowledge. No general quantified FOL or zero-error guarantee.",
+      "evaluation": "Table 4: Baichuan2-7B CoT-Generation-3 TreeAcc .490, DP-F1 .632; pipeline .470/.631. Table 3 assembly-subtask .748 is not end-to-end fidelity. Test set n=100; reported scores average five runs, not one run with exactly 49/100 correct.",
+      "transfer_to_repo": "522: separate atom/group/tree scores and preserve logical_rel. 56: condition and action roles cannot collapse into one disease relation. Multi-depth structure remains harder.",
+      "source_locations": {
+        "paper": "Sections 3, 5, 6.1, 6.5-6.7; Tables 3-7",
+        "code_access": "Paper-linked repo and API main/master returned unavailable/404 on access date; code not inspected."
+      },
+      "full_text_read": true,
+      "code_read": false,
+      "accessed_at": "2026-09-05",
+      "retrieved_file_provenance": [
+        {
+          "error": "HTTP Error 404: Not Found",
+          "url": "https://api.github.com/repos/michael-wzhu/text2dt/git/trees/master?recursive=1"
+        }
+      ]
+    },
+    {
+      "review_family": "clinical_llm",
+      "id": "CL03",
+      "title": "MedDM: LLM-executable clinical guidance tree for clinical decision-making",
+      "year": 2023,
+      "url": "https://arxiv.org/html/2312.02441v1",
+      "primary_type": "primary research preprint",
+      "code_url": null,
+      "representation": "Natural-language clinical guidance tree, root/condition/action nodes; hierarchical If/Elif/Else text (IEET).",
+      "method": "Flowchart shape/OCR/edge recognition, manual calibration and repair, then CGT conversion and further manual validation.",
+      "verification_guarantee": "Explicit Yes/No/Unable-to-determine interaction and inspectable flowchart paths; manual quality process, not formal equivalence proof.",
+      "not_guaranteed": "Already-structured source diagrams; no automatic source-fidelity rate or population-level diagnostic performance shown. Unknown fallback may ask LLM over subtree.",
+      "evaluation": "1202 curated trees: 443 differential diagnosis, 759 treatment. Two-pass flowchart calibration by 8 graduate students; later transformation validation by 7.",
+      "transfer_to_repo": "74/522: unknown must remain a state. Source diagram arrows aid direction; natural-language node interpretation still needs clinical audit. Cyclic workflow conversion can change semantics.",
+      "source_locations": {
+        "paper": "Sections 3.2-3.3, 4.3-4.6, 5; Table 1",
+        "code_access": "No official implementation link located in paper or targeted title/GitHub searches."
+      },
+      "full_text_read": true,
+      "code_read": false,
+      "accessed_at": "2026-09-05",
+      "retrieved_file_provenance": []
+    },
+    {
+      "review_family": "clinical_llm",
+      "id": "CL04",
+      "title": "Automatic Conversion of NICE Guidelines to an Executable Computational Model Using Large Language Models",
+      "year": 2026,
+      "url": "https://arxiv.org/pdf/2608.30022",
+      "primary_type": "primary journal paper, Learning Health Systems e70114",
+      "code_url": "https://github.com/Ashvin-Gupta/NICE-2-ASP",
+      "representation": "ASP constants, predicates, rules; Clingo executes patient facts plus normative rules; cardinality/choice constructs.",
+      "method": "D2K: constants → predicates → rules with six shared examples. K2P: LLM patient fact extraction. Three clinician reviewers compare source, ASP, controlled-language rendering.",
+      "verification_guarantee": "Executable stable-model semantics conditional on supplied rules/facts; source fidelity assessed empirically, not proven.",
+      "not_guaranteed": "Temporal procedure omissions, arity/qualifier loss, extraneous/missing patient facts, negation-as-failure on incomplete records. Hallucination definition broader than this repo audit.",
+      "evaluation": "20 pancreatic vignettes: mean recommendation F1 .825±.127; activate about64% of rules. Public reviewer CSV denominators and values differ from paper figure; separate recomputation below.",
+      "transfer_to_repo": "49/74: procedural order is not simple negation. 56/773: patient binding separated from guideline translation. Fixed source units needed before interpreting faithful/omitted percentages.",
+      "source_locations": {
+        "paper": "Sections 2.2-2.7, 3-4; Figure 6; Table 2; Appendix A",
+        "journal": "https://doi.org/10.1002/lrh2.70114",
+        "code": [
+          "src/input_files/D2K/*_prompt.txt",
+          "src/output_files/CLAUDE/reviews/human review D2K/reviewer[1-3]/*.csv"
+        ],
+        "pdf_sha256": "09a30d0eb12d43aedb56d67bac1e71f7d6a2e82fed8da16bd9c4b41faa6e84ee"
+      },
+      "code_commit": "9d9acadea2c8d4b7a4c60b5f7fff4eac5a81d57a",
+      "full_text_read": true,
+      "code_read": true,
+      "reviewer_csv_recomputation": {
+        "definition": "Mean of each of three reviewers category count / their CSV row count; categories 0 no-rule,1 correct,2 incorrect,3 missing-key-information,4 hallucination. These are row-rating percentages, not fixed-source faithful recall.",
+        "results": [
+          {
+            "cancer": "pancreatic",
+            "arm": "rulegen",
+            "reviewers": [
+              {
+                "reviewer": 1,
+                "n": 40,
+                "n_guideline_ids": 25,
+                "n_no_translation_placeholders": 2,
+                "counts": {
+                  "0": 2,
+                  "1": 32,
+                  "2": 1,
+                  "3": 5,
+                  "4": 0
+                }
+              },
+              {
+                "reviewer": 2,
+                "n": 40,
+                "n_guideline_ids": 25,
+                "n_no_translation_placeholders": 2,
+                "counts": {
+                  "0": 2,
+                  "1": 26,
+                  "2": 1,
+                  "3": 9,
+                  "4": 2
+                }
+              },
+              {
+                "reviewer": 3,
+                "n": 40,
+                "n_guideline_ids": 25,
+                "n_no_translation_placeholders": 2,
+                "counts": {
+                  "0": 2,
+                  "1": 28,
+                  "2": 3,
+                  "3": 6,
+                  "4": 1
+                }
+              }
+            ],
+            "mean_rating_percent": {
+              "0": 5.000000000000001,
+              "1": 71.66666666666667,
+              "2": 4.166666666666666,
+              "3": 16.666666666666664,
+              "4": 2.5000000000000004
+            }
+          },
+          {
+            "cancer": "pancreatic",
+            "arm": "in_context",
+            "reviewers": [
+              {
+                "reviewer": 1,
+                "n": 44,
+                "n_guideline_ids": 25,
+                "n_no_translation_placeholders": 2,
+                "counts": {
+                  "0": 4,
+                  "1": 31,
+                  "2": 1,
+                  "3": 8,
+                  "4": 0
+                }
+              },
+              {
+                "reviewer": 2,
+                "n": 44,
+                "n_guideline_ids": 25,
+                "n_no_translation_placeholders": 2,
+                "counts": {
+                  "0": 4,
+                  "1": 27,
+                  "2": 0,
+                  "3": 11,
+                  "4": 2
+                }
+              },
+              {
+                "reviewer": 3,
+                "n": 44,
+                "n_guideline_ids": 25,
+                "n_no_translation_placeholders": 2,
+                "counts": {
+                  "0": 3,
+                  "1": 30,
+                  "2": 0,
+                  "3": 9,
+                  "4": 2
+                }
+              }
+            ],
+            "mean_rating_percent": {
+              "0": 8.333333333333332,
+              "1": 66.66666666666666,
+              "2": 0.7575757575757576,
+              "3": 21.21212121212121,
+              "4": 3.0303030303030303
+            }
+          },
+          {
+            "cancer": "lung",
+            "arm": "rulegen",
+            "reviewers": [
+              {
+                "reviewer": 1,
+                "n": 56,
+                "n_guideline_ids": 36,
+                "n_no_translation_placeholders": 7,
+                "counts": {
+                  "0": 8,
+                  "1": 34,
+                  "2": 6,
+                  "3": 5,
+                  "4": 3
+                }
+              },
+              {
+                "reviewer": 2,
+                "n": 56,
+                "n_guideline_ids": 36,
+                "n_no_translation_placeholders": 7,
+                "counts": {
+                  "0": 7,
+                  "1": 32,
+                  "2": 5,
+                  "3": 10,
+                  "4": 2
+                }
+              },
+              {
+                "reviewer": 3,
+                "n": 56,
+                "n_guideline_ids": 36,
+                "n_no_translation_placeholders": 7,
+                "counts": {
+                  "0": 7,
+                  "1": 30,
+                  "2": 7,
+                  "3": 10,
+                  "4": 2
+                }
+              }
+            ],
+            "mean_rating_percent": {
+              "0": 13.095238095238097,
+              "1": 57.14285714285714,
+              "2": 10.714285714285714,
+              "3": 14.880952380952381,
+              "4": 4.166666666666666
+            }
+          },
+          {
+            "cancer": "lung",
+            "arm": "in_context",
+            "reviewers": [
+              {
+                "reviewer": 1,
+                "n": 59,
+                "n_guideline_ids": 36,
+                "n_no_translation_placeholders": 16,
+                "counts": {
+                  "0": 16,
+                  "1": 31,
+                  "2": 6,
+                  "3": 5,
+                  "4": 1
+                }
+              },
+              {
+                "reviewer": 2,
+                "n": 59,
+                "n_guideline_ids": 36,
+                "n_no_translation_placeholders": 16,
+                "counts": {
+                  "0": 16,
+                  "1": 40,
+                  "2": 3,
+                  "3": 0,
+                  "4": 0
+                }
+              },
+              {
+                "reviewer": 3,
+                "n": 59,
+                "n_guideline_ids": 36,
+                "n_no_translation_placeholders": 16,
+                "counts": {
+                  "0": 17,
+                  "1": 32,
+                  "2": 7,
+                  "3": 3,
+                  "4": 0
+                }
+              }
+            ],
+            "mean_rating_percent": {
+              "0": 27.683615819209038,
+              "1": 58.19209039548022,
+              "2": 9.03954802259887,
+              "3": 4.519774011299435,
+              "4": 0.5649717514124294
+            }
+          }
+        ]
+      },
+      "accessed_at": "2026-09-05",
+      "retrieved_file_provenance": [
+        {
+          "bytes": 20913,
+          "sha256": "d458cf1484b8f821060f9e6c779383d7f9711d320911f95ce38e204ea04adfac",
+          "url": "https://raw.githubusercontent.com/Ashvin-Gupta/NICE-2-ASP/main/src/output_files/CLAUDE/reviews/human%20review%20D2K/reviewer1/rule_review_in_context_lung_reviewer1.csv"
+        },
+        {
+          "bytes": 17779,
+          "sha256": "b5d49e5b82cd2bb9f39bb0552e9ea2e5a81e3f23a3ebb2ee3626a0951101ada1",
+          "url": "https://raw.githubusercontent.com/Ashvin-Gupta/NICE-2-ASP/main/src/output_files/CLAUDE/reviews/human%20review%20D2K/reviewer1/rule_review_in_context_pancreatic_reviewer1.csv"
+        },
+        {
+          "bytes": 20896,
+          "sha256": "1ba09c66f3f91ed31a9f290295b48abf84f4a1c46087b7310e49faccbb7df4b0",
+          "url": "https://raw.githubusercontent.com/Ashvin-Gupta/NICE-2-ASP/main/src/output_files/CLAUDE/reviews/human%20review%20D2K/reviewer1/rule_review_rulegen_lung_reviewer1.csv"
+        },
+        {
+          "bytes": 16138,
+          "sha256": "7809845bab40470f119a3eb81fc426d649c1b0c07d11f4c50b930631fd4cbaf9",
+          "url": "https://raw.githubusercontent.com/Ashvin-Gupta/NICE-2-ASP/main/src/output_files/CLAUDE/reviews/human%20review%20D2K/reviewer1/rule_review_rulegen_pancreatic_reviewer1.csv"
+        },
+        {
+          "bytes": 20705,
+          "sha256": "a30191ad1797e391b405cf81f0dffe5d7e6cd111a00dab225f5bbf866e7bca3c",
+          "url": "https://raw.githubusercontent.com/Ashvin-Gupta/NICE-2-ASP/main/src/output_files/CLAUDE/reviews/human%20review%20D2K/reviewer2/rule_review_in_context_lung_reviewer2.csv"
+        },
+        {
+          "bytes": 17622,
+          "sha256": "7d9cd4cf891ec78d5e1672afa390bc846c2db5a0f70343b815eaa25518422bb2",
+          "url": "https://raw.githubusercontent.com/Ashvin-Gupta/NICE-2-ASP/main/src/output_files/CLAUDE/reviews/human%20review%20D2K/reviewer2/rule_review_in_context_pancreatic_reviewer2.csv"
+        },
+        {
+          "bytes": 20795,
+          "sha256": "e8b9360d53790c079e60707e687dddc1f6e43b7772d25cb0340c48bd905e6499",
+          "url": "https://raw.githubusercontent.com/Ashvin-Gupta/NICE-2-ASP/main/src/output_files/CLAUDE/reviews/human%20review%20D2K/reviewer2/rule_review_rulegen_lung_reviewer2.csv"
+        },
+        {
+          "bytes": 16062,
+          "sha256": "1895fc61b64f9e47fd4a9e78298e89feeca140498a77c3a18656e0a40da1e1c8",
+          "url": "https://raw.githubusercontent.com/Ashvin-Gupta/NICE-2-ASP/main/src/output_files/CLAUDE/reviews/human%20review%20D2K/reviewer2/rule_review_rulegen_pancreatic_reviewer2.csv"
+        },
+        {
+          "bytes": 20936,
+          "sha256": "3d5f6c4ba46de5842313e8c7d7fa32e51ae174bb208b50900c2a5c105aaa1d3f",
+          "url": "https://raw.githubusercontent.com/Ashvin-Gupta/NICE-2-ASP/main/src/output_files/CLAUDE/reviews/human%20review%20D2K/reviewer3/rule_review_in_context_lung_reviewer3.csv"
+        },
+        {
+          "bytes": 17756,
+          "sha256": "f8478fe7ac6e55b4c95e147c12ee89ee49e17bfe0120e570080fd4a8801ef864",
+          "url": "https://raw.githubusercontent.com/Ashvin-Gupta/NICE-2-ASP/main/src/output_files/CLAUDE/reviews/human%20review%20D2K/reviewer3/rule_review_in_context_pancreatic_reviewer3.csv"
+        },
+        {
+          "bytes": 21005,
+          "sha256": "3a6764374d1dfcd2ad68a57615b15799379bbc69d4addc4017645d3e1c766e4a",
+          "url": "https://raw.githubusercontent.com/Ashvin-Gupta/NICE-2-ASP/main/src/output_files/CLAUDE/reviews/human%20review%20D2K/reviewer3/rule_review_rulegen_lung_reviewer3.csv"
+        },
+        {
+          "bytes": 16429,
+          "sha256": "7c46aacb8652b5ed86e846f320b8461bb7472635747d91d77c7303026ef9b36f",
+          "url": "https://raw.githubusercontent.com/Ashvin-Gupta/NICE-2-ASP/main/src/output_files/CLAUDE/reviews/human%20review%20D2K/reviewer3/rule_review_rulegen_pancreatic_reviewer3.csv"
+        }
+      ]
+    },
+    {
+      "review_family": "clinical_llm",
+      "id": "CL05",
+      "title": "From Guidelines to Code: Formalizing STOPP/START Criteria Using LLMs and RAG for Clinical Decision Support",
+      "year": 2025,
+      "url": "https://journals.sagepub.com/doi/10.3233/SHTI251492",
+      "primary_type": "primary conference proceedings paper",
+      "code_url": null,
+      "representation": "Python using expert-built Speak-PIM classes, condition presence/absence and STOPP/START actions; standardized ICD-10/LOINC/ATC entities.",
+      "method": "GPT-4o-mini extracts entities and maps retrieved codes; DeepSeek generates code with a one-shot example and framework constraints.",
+      "verification_guarantee": "Preliminary manual checks of entity extraction, mappings, class signatures and rule logic; no theorem or complete executable test suite reported.",
+      "not_guaranteed": "Only10 difficulty-selected rules; small observation count; manual framework took months; reproducibility concerns. Medication advice is not diagnosis confirmation.",
+      "evaluation": "Five STOPP/five START; reported entity extraction and framework logic correct; mapping F1 disease .92, medication .90, observation1.00.",
+      "transfer_to_repo": "56/91: ontology mapping must retain assay/concept identity. 522/773: performed test and result are different types. START/STOP action direction is distinct from diagnostic exclusion.",
+      "source_locations": {
+        "paper": "Sections 2.2, 3.2, 4; Tables 1-2",
+        "code_access": "No public pipeline implementation found in paper or targeted title/Speak-PIM searches."
+      },
+      "full_text_read": true,
+      "code_read": false,
+      "accessed_at": "2026-09-05",
+      "retrieved_file_provenance": []
+    },
+    {
+      "review_family": "clinical_llm",
+      "id": "CL06",
+      "title": "CliCARE: Grounding Large Language Models in Clinical Guidelines for Decision Support over Longitudinal Cancer Electronic Health Records",
+      "year": 2026,
+      "url": "https://arxiv.org/html/2507.22533v2",
+      "primary_type": "primary AAAI2026 paper; initial preprint2025",
+      "code_url": "https://github.com/sakurakawa1/CliCARE",
+      "representation": "Patient temporal event KG separate from normative guideline KG; path alignment and LLM recommendation generation.",
+      "method": "Timestamped event extraction/ontology linkage; guideline summarization→structured JSON→Neo4j; sum-of-max similarity path ranking, LLM rerank and expansion.",
+      "verification_guarantee": "Temporal and workflow representations are inspectable; no logical entailment or automated source-fidelity guarantee.",
+      "not_guaranteed": "KG edge presence is not AND/OR evaluation. Matching formula does not enforce distinct witnesses or order; source summarization remains lossy. Clinical output judge scores are not extractor precision.",
+      "evaluation": "CancerEHR and MIMIC-Cancer summary/recommendation evaluation using a clinician-validated LLM judge; source-rule exact fidelity not reported.",
+      "transfer_to_repo": "49/74: event timestamps and normative/descriptive separation useful. 522/773: do not inherit sum-max counting or treat stage/biomarker strings as typed predicates.",
+      "source_locations": {
+        "paper": "Sections 3.1-3.2 Eq3, 4.1-4.2; Appendix G",
+        "official_publication": "https://ojs.aaai.org/index.php/AAAI/article/view/40421/44382",
+        "code": [
+          "Process_data/KG/NCCN.py: TARGET_SCHEMA/process_chunk",
+          "Process_data/KG/build_KG.py",
+          "KG_Alignment/alignment.py"
+        ]
+      },
+      "code_commit": "6bc9be8458dfab1db1f117c173391ba82ef81f8a",
+      "full_text_read": true,
+      "code_read": true,
+      "accessed_at": "2026-09-05",
+      "retrieved_file_provenance": [
+        {
+          "bytes": 17173,
+          "sha256": "b8dba8c36b613b1d991f1bdf405855a6aae4d42f2f636b64791bc077d6247545",
+          "url": "https://raw.githubusercontent.com/sakurakawa1/CliCARE/main/Process_data/KG/NCCN.py"
+        },
+        {
+          "bytes": 22140,
+          "sha256": "70ee0422beb48345511faa4509fcdbe5edd8fc96772cd4c21fcf37436169f5bb",
+          "url": "https://raw.githubusercontent.com/sakurakawa1/CliCARE/main/Process_data/KG/build_KG.py"
+        },
+        {
+          "bytes": 46623,
+          "sha256": "3121e4a49d46345b5cbb4cabb046358156204e0b2e376982623e21c90e6b075a",
+          "url": "https://raw.githubusercontent.com/sakurakawa1/CliCARE/main/KG_Alignment/alignment.py"
+        }
+      ]
+    },
+    {
+      "review_family": "clinical_llm",
+      "id": "CL07",
+      "title": "MedGuideX: Internalizing Decision Logic from Executable Guidelines into Large Language Models for Clinical Reasoning",
+      "year": 2026,
+      "url": "https://arxiv.org/html/2605.26567v1",
+      "primary_type": "primary research preprint",
+      "code_url": null,
+      "representation": "Finite Boolean decision trees compiled to Python f(X); executable factual/counterfactual supervision for SFT/RL.",
+      "method": "Extract actionable recommendations; LLM tree validation; compile and test syntax/executability/tree consistency; execute functions for labels and rewards.",
+      "verification_guarantee": "Labels consistent with accepted executable function on evaluated inputs; no guarantee function or variable schema matches source semantics.",
+      "not_guaranteed": "No independently adjudicated source-level fidelity rate found. Complete Boolean assignments hide clinical unknowns. Counterfactual filtering discards unchanged outputs.",
+      "evaluation": "Appendix C:3796 retained recommendations→2800 LLM-validated trees→2793 executable functions. These are filtering yields, not extraction accuracy. Physician preference study evaluates30 already-correct diagnostic cases.",
+      "transfer_to_repo": "74/522: program-derived paired tests are promising; retain invariant as well as changing examples. 49/56/773: ensure source/binding oracle before self-consistent program supervision.",
+      "source_locations": {
+        "paper": "Sections 3-4, 5.4; Appendix C.2-C.3; Table4",
+        "code_access": "No official implementation link found in full text or targeted title/author searches."
+      },
+      "full_text_read": true,
+      "code_read": false,
+      "accessed_at": "2026-09-05",
+      "retrieved_file_provenance": []
+    },
+    {
+      "review_family": "clinical_llm",
+      "id": "CL08",
+      "title": "Decision Tree Extraction for Clinical Decision Support System With If-Else Pseudocode and PlanSelect Strategy",
+      "year": 2025,
+      "url": "https://doi.org/10.1109/JBHI.2025.3529682",
+      "primary_type": "primary journal abstract plus official implementation",
+      "code_url": "https://github.com/nlper-hou/TSDTE",
+      "representation": "If/elif/else pseudocode skeleton filled with extracted triples; node role C/D and logical_rel and/or/null.",
+      "method": "Pseudocode structure followed by constrained triplet selection and node logic; inspectable intermediate files and tree/path equality evaluator.",
+      "verification_guarantee": "Official evaluator includes role, logical_rel and triples in tree/path equality; no source-equivalence guarantee.",
+      "not_guaranteed": "Full publisher PDF could not be fetched; do not cite unverified comparative numerical gains. Code permits condition deletion when no triple found and compresses descendants; single node logic remains and/or.",
+      "evaluation": "Official abstract reports Text2DT/EMDT and downstream CMBClin/MedQA. Local read confirms metrics implementation, not the reported score reproducibility.",
+      "transfer_to_repo": "522: separate skeleton, leaf alignment and logic; 56/74: node-fill failure must not silently promote a decision into a broader scope. Relation type determines C/D, so relation errors remain causal.",
+      "source_locations": {
+        "abstract": "https://pubmed.ncbi.nlm.nih.gov/40030896/",
+        "publisher_pdf_attempt": "https://ieeexplore.ieee.org/iel8/6221020/10989059/10842360.pdf",
+        "code": [
+          "main_en.py",
+          "Prompt.py: prompt_logical_pred",
+          "Pseudocode.py: classify_triplet/convert_pseudocode2DT",
+          "evaluate/eval_func.py: is_tree_equal/is_path_equal"
+        ]
+      },
+      "code_commit": "299159c41f7a564cb00a70dd01f32d8cb500175d",
+      "full_text_read": false,
+      "code_read": true,
+      "accessed_at": "2026-09-05",
+      "retrieved_file_provenance": [
+        {
+          "bytes": 51286,
+          "sha256": "ca4e5e8d1f1abd25c583e32ee85d52c243b8eade4fb210c3ea5b018830cb2ed2",
+          "url": "https://raw.githubusercontent.com/nlper-hou/TSDTE/main/Prompt.py"
+        },
+        {
+          "bytes": 2940,
+          "sha256": "345f3b8db4691c5f3c797ab30b05662f5bdf5663eb9303fd3003db1ecc623d51",
+          "url": "https://raw.githubusercontent.com/nlper-hou/TSDTE/main/main_en.py"
+        },
+        {
+          "bytes": 9911,
+          "sha256": "0a29efe7dd271441f51d2466f7338bbf5d2141bd0dab456051b5f31dd5ca9991",
+          "url": "https://raw.githubusercontent.com/nlper-hou/TSDTE/main/evaluate/eval_func.py"
+        },
+        {
+          "bytes": 22191,
+          "sha256": "0567a34f02387944fbcf101418d9a4ab9ff238ebc3a98a194e7a4ab7ff544597",
+          "url": "https://raw.githubusercontent.com/nlper-hou/TSDTE/main/Pseudocode.py"
+        }
+      ]
+    },
+    {
+      "review_family": "clinical_standards",
+      "id": "CS01",
+      "title": "HL7 Clinical Quality Language / ELM 2.0.0",
+      "year": 2026,
+      "url": "https://cql.hl7.org/05-languagesemantics.html",
+      "primary_type": "official specification/full text",
+      "code_url": [
+        "https://github.com/cqframework/clinical_quality_language",
+        "https://github.com/cqframework/cql-execution"
+      ],
+      "representation": "Recursive typed AST, Boolean expressions, clinical queries, intervals and quantities",
+      "method": "CQL to ELM translation; typed data access",
+      "verification_guarantee": "Type/scope validity and specified operator semantics",
+      "not_guaranteed": "Free text fidelity; clinical data completeness; measurement identity",
+      "evaluation": "Language specification, not extraction accuracy",
+      "transfer_to_repo": "Recursive IR/data contracts; explicit guards for unknown and complete domains",
+      "source_locations": [
+        {
+          "url": "https://cql.hl7.org/05-languagesemantics.html",
+          "location": "5.1; 5.2.1-5.2.4",
+          "supports": "typed retrieval, AST, semantic validation and symbol stack"
+        },
+        {
+          "url": "https://cql.hl7.org/09-b-cqlreference.html",
+          "location": "And, AllTrue, Exists, ConvertQuantity",
+          "supports": "AllTrue ignores null and returns true on all-null; exists null false; unit capabilities"
+        },
+        {
+          "url": "https://cql.hl7.org/10-c-referenceimplementations.html",
+          "location": "CQL-ELM Translator; Execution Framework",
+          "supports": "CQL source is formal language, not arbitrary guideline prose"
+        }
+      ],
+      "accessed_at": "2026-09-06",
+      "code_status": "Official links checked; no external implementation executed"
+    },
+    {
+      "review_family": "clinical_standards",
+      "id": "CS02",
+      "title": "HL7 FHIR Clinical Practice Guidelines 2.0.0 STU2",
+      "year": 2024,
+      "url": "https://hl7.org/fhir/uv/cpg/methodology.html",
+      "primary_type": "official specification/full text",
+      "code_url": null,
+      "representation": "Narrative / semi-structured / computable / local executable artifacts",
+      "method": "Select, represent, translate, validate, expert review",
+      "verification_guarantee": "Explicit requirements and scenario validation workflow",
+      "not_guaranteed": "No guarantee of automatic arbitrary-NL translation or local clinical validity",
+      "evaluation": "Implementation methodology, not LLM extraction benchmark",
+      "transfer_to_repo": "Separate recommendation scope, action, criteria, data interfaces",
+      "source_locations": [
+        {
+          "url": "https://hl7.org/fhir/uv/cpg/methodology.html",
+          "location": "Represent, Translate, Validate, Expert Review, Unit Testing",
+          "supports": "data dictionary, pseudo-code, profiles/CQL/PlanDefinition; positive/negative scenarios"
+        },
+        {
+          "url": "https://hl7.org/fhir/uv/cpg/documentation-approach-06-01-levels-of-knowledge-representation.html",
+          "location": "L1-L4 and continuum",
+          "supports": "representation level distinction and local term mapping"
+        }
+      ],
+      "accessed_at": "2026-09-06",
+      "code_status": "Official links checked; no external implementation executed"
+    },
+    {
+      "review_family": "clinical_standards",
+      "id": "CS03",
+      "title": "PROforma syntax/semantics (2003) and practical-context evaluation (2006)",
+      "year": 2003,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/12807812/",
+      "primary_type": "2003 original abstract; 2006 original full text",
+      "code_url": null,
+      "representation": "Process, decision candidates, arguments and expressions",
+      "method": "Executable guideline modeling and qualitative developer/team evaluation",
+      "verification_guarantee": "Operational semantics relative to encoded process",
+      "not_guaranteed": "Automatic source fidelity; 2006 representation limitations remain",
+      "evaluation": "2006 qualitative, developer comments plus team consensus; not extraction accuracy",
+      "transfer_to_repo": "Separate argument/candidate/actions; track shared assertion rather than duplicating divergent copies",
+      "source_locations": [
+        {
+          "url": "https://pubmed.ncbi.nlm.nih.gov/12807812/",
+          "location": "Original abstract only",
+          "supports": "2003 syntax/operational semantics scope"
+        },
+        {
+          "url": "https://link.springer.com/article/10.1186/1472-6947-6-20",
+          "location": "Evaluation; Results/Knowledge acquisition; Notational convenience",
+          "supports": "qualitative methodology, mutual-exclusion/structured-data limits, argument duplication"
+        }
+      ],
+      "accessed_at": "2026-09-06",
+      "code_status": "Official links checked; no external implementation executed"
+    },
+    {
+      "review_family": "clinical_standards",
+      "id": "CS04",
+      "title": "Asbru intention language (1996); Combining diagnosis and treatment using ASBRU (2002)",
+      "year": 1996,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/8947735/",
+      "primary_type": "1996 original abstract; 2002 primary full paper",
+      "code_url": null,
+      "representation": "Temporal plans, patient state abstractions, conditions and plan lifecycle",
+      "method": "Manual clinical guideline modeling with filter, suspend, restart, complete and abort",
+      "verification_guarantee": "Explicit plan-state and time relationships",
+      "not_guaranteed": "Automatic NL extraction or causal disease exclusion from workflow failure",
+      "evaluation": "2002 modeling examples; not source-level accuracy",
+      "transfer_to_repo": "Keep scope eligibility distinct from disease truth; time-qualified state and response",
+      "source_locations": [
+        {
+          "url": "https://pubmed.ncbi.nlm.nih.gov/8947735/",
+          "location": "Original abstract",
+          "supports": "intention and time-based representation"
+        },
+        {
+          "url": "https://www.protocure.org/old/Documents/Papers/IJMI02.pdf",
+          "location": "5-7; pp52-56",
+          "supports": "eligibility, treatment choice, lifecycle and temporal measurement abstraction"
+        }
+      ],
+      "accessed_at": "2026-09-06",
+      "code_status": "Official links checked; no external implementation executed"
+    },
+    {
+      "review_family": "clinical_standards",
+      "id": "CS05",
+      "title": "GLIF3 representation format",
+      "year": 2004,
+      "url": "https://pubmed.ncbi.nlm.nih.gov/15196480/",
+      "primary_type": "Primary abstracts / author institution metadata only",
+      "code_url": null,
+      "representation": "Conceptual, computable, institution-implementable guideline levels",
+      "method": "Formalized criteria and local system interface separation",
+      "verification_guarantee": "Abstract describes computable logical-consistency/completeness checks",
+      "not_guaranteed": "Specific operator/unknown semantics not verified this round; no automatic extraction rate",
+      "evaluation": "Original abstracts only; full-text fetch unsuccessful",
+      "transfer_to_repo": "Use different acceptance endpoints for readable, computable and correctly interfaced artifacts",
+      "source_locations": [
+        {
+          "url": "https://pubmed.ncbi.nlm.nih.gov/15196480/",
+          "location": "Abstract",
+          "supports": "three levels and intended integration"
+        },
+        {
+          "url": "https://cris.haifa.ac.il/en/publications/glif3-the-evolution-of-a-guideline-representation-format/",
+          "location": "2000 authors institutional abstract",
+          "supports": "historical three-level motivation"
+        }
+      ],
+      "accessed_at": "2026-09-06",
+      "code_status": "Official links checked; no external implementation executed"
+    },
+    {
+      "review_family": "clinical_standards",
+      "id": "CS06",
+      "title": "OWL 2 Web Ontology Language Primer, Second Edition",
+      "year": 2012,
+      "url": "https://www.w3.org/TR/owl2-primer/",
+      "primary_type": "official specification/full text",
+      "code_url": null,
+      "representation": "Nested class expressions, property restrictions, existential/universal/cardinality semantics",
+      "method": "Ontology axioms and entailment under open-world semantics",
+      "verification_guarantee": "Consequences of asserted axioms under specified semantics",
+      "not_guaranteed": "Triple presence is not full clinical evidence; no automatic NL fidelity; no unique-name assumption",
+      "evaluation": "Official W3C specification examples",
+      "transfer_to_repo": "Preserve restriction nodes and identity; parent-child not synonym; missing is not disease false",
+      "source_locations": [
+        {
+          "url": "https://www.w3.org/TR/owl2-primer/",
+          "location": "Introduction; Individuals; Property Restrictions",
+          "supports": "open world, no unique-name assumption, nested complex restrictions"
+        }
+      ],
+      "accessed_at": "2026-09-06",
+      "code_status": "Official links checked; no external implementation executed"
+    },
+    {
+      "review_family": "clinical_standards",
+      "id": "CS07",
+      "title": "Shapes Constraint Language (SHACL)",
+      "year": 2017,
+      "url": "https://www.w3.org/TR/shacl/",
+      "primary_type": "official specification/full text",
+      "code_url": null,
+      "representation": "Shapes constraints on a supplied RDF data graph",
+      "method": "Conformance checking with minCount and logical combinations",
+      "verification_guarantee": "Conformance to shapes for given data graph/processor",
+      "not_guaranteed": "Missing value is not clinical absence; recursive-shape validation undefined in 2017 spec",
+      "evaluation": "Official W3C specification examples",
+      "transfer_to_repo": "Validate structural completeness separately from patient truth; distinguish finite nesting from recursive cycles",
+      "source_locations": [
+        {
+          "url": "https://www.w3.org/TR/shacl/",
+          "location": "3.4.3 recursive shapes; 3.5; 4.2.1 minCount; 4.6 logical constraints",
+          "supports": "conformance, count and recursion boundary"
+        }
+      ],
+      "accessed_at": "2026-09-06",
+      "code_status": "Official links checked; no external implementation executed"
+    }
+  ]
+}

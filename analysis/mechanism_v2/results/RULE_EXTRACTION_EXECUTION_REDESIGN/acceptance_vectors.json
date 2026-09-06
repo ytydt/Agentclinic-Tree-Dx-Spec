@@ -1,0 +1,2569 @@
+{
+  "schema_version": "semantic-contract-draft-0.1",
+  "purpose": "Finite synthetic acceptance assignments and expected root actions only. No vignette, guideline fidelity, production behavior or clinical performance claim.",
+  "truth_semantics": "Strong Kleene values plus separately propagated conflict; no closed-world inference for absent facts.",
+  "vectors": [
+    {
+      "id": "V01",
+      "category": "nested_CNF",
+      "mode": "expression",
+      "description": "CNF has one FALSE clause even though another atom is TRUE; leaf truth does not satisfy root.",
+      "expression": {
+        "op": "and",
+        "children": [
+          {
+            "op": "or",
+            "children": [
+              {
+                "op": "atom",
+                "predicate": "A",
+                "args": []
+              },
+              {
+                "op": "atom",
+                "predicate": "B",
+                "args": []
+              }
+            ]
+          },
+          {
+            "op": "or",
+            "children": [
+              {
+                "op": "atom",
+                "predicate": "C",
+                "args": []
+              },
+              {
+                "op": "atom",
+                "predicate": "D",
+                "args": []
+              }
+            ]
+          }
+        ]
+      },
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "A_positive",
+            "fact_id": "A_positive",
+            "predicate": "A",
+            "args": [],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "B_negative",
+            "fact_id": "B_negative",
+            "predicate": "B",
+            "args": [],
+            "sign": "negative"
+          },
+          {
+            "assertion_id": "C_negative",
+            "fact_id": "C_negative",
+            "predicate": "C",
+            "args": [],
+            "sign": "negative"
+          },
+          {
+            "assertion_id": "D_negative",
+            "fact_id": "D_negative",
+            "predicate": "D",
+            "args": [],
+            "sign": "negative"
+          }
+        ]
+      },
+      "expected": {
+        "value": "false",
+        "conflict": "none"
+      }
+    },
+    {
+      "id": "V02",
+      "category": "nested_DNF",
+      "mode": "expression",
+      "description": "DNF has a complete TRUE branch; FALSE atoms in the other branch do not veto it.",
+      "expression": {
+        "op": "or",
+        "children": [
+          {
+            "op": "and",
+            "children": [
+              {
+                "op": "atom",
+                "predicate": "A",
+                "args": []
+              },
+              {
+                "op": "atom",
+                "predicate": "B",
+                "args": []
+              }
+            ]
+          },
+          {
+            "op": "and",
+            "children": [
+              {
+                "op": "atom",
+                "predicate": "C",
+                "args": []
+              },
+              {
+                "op": "atom",
+                "predicate": "D",
+                "args": []
+              }
+            ]
+          }
+        ]
+      },
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "A_positive",
+            "fact_id": "A_positive",
+            "predicate": "A",
+            "args": [],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "B_negative",
+            "fact_id": "B_negative",
+            "predicate": "B",
+            "args": [],
+            "sign": "negative"
+          },
+          {
+            "assertion_id": "C_positive",
+            "fact_id": "C_positive",
+            "predicate": "C",
+            "args": [],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "D_positive",
+            "fact_id": "D_positive",
+            "predicate": "D",
+            "args": [],
+            "sign": "positive"
+          }
+        ]
+      },
+      "expected": {
+        "value": "true",
+        "conflict": "none"
+      }
+    },
+    {
+      "id": "V03",
+      "category": "deeper_nesting",
+      "mode": "expression",
+      "description": "Recursive NOT/OR/AND keeps the intended parenthesis structure.",
+      "expression": {
+        "op": "not",
+        "child": {
+          "op": "or",
+          "children": [
+            {
+              "op": "and",
+              "children": [
+                {
+                  "op": "atom",
+                  "predicate": "A",
+                  "args": []
+                },
+                {
+                  "op": "atom",
+                  "predicate": "B",
+                  "args": []
+                }
+              ]
+            },
+            {
+              "op": "not",
+              "child": {
+                "op": "atom",
+                "predicate": "C",
+                "args": []
+              }
+            }
+          ]
+        }
+      },
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "A_positive",
+            "fact_id": "A_positive",
+            "predicate": "A",
+            "args": [],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "B_negative",
+            "fact_id": "B_negative",
+            "predicate": "B",
+            "args": [],
+            "sign": "negative"
+          },
+          {
+            "assertion_id": "C_positive",
+            "fact_id": "C_positive",
+            "predicate": "C",
+            "args": [],
+            "sign": "positive"
+          }
+        ]
+      },
+      "expected": {
+        "value": "true",
+        "conflict": "none"
+      }
+    },
+    {
+      "id": "V04",
+      "category": "unknown_NOT",
+      "mode": "expression",
+      "description": "Missing observation remains UNKNOWN after NOT.",
+      "expression": {
+        "op": "not",
+        "child": {
+          "op": "atom",
+          "predicate": "A",
+          "args": []
+        }
+      },
+      "context": {
+        "facts": []
+      },
+      "expected": {
+        "value": "unknown",
+        "conflict": "none"
+      }
+    },
+    {
+      "id": "V05",
+      "category": "sound_short_circuit",
+      "mode": "expression",
+      "description": "FALSE AND UNKNOWN is definitively FALSE without evaluating an unknown as false.",
+      "expression": {
+        "op": "and",
+        "children": [
+          {
+            "op": "atom",
+            "predicate": "A",
+            "args": []
+          },
+          {
+            "op": "atom",
+            "predicate": "B",
+            "args": []
+          }
+        ]
+      },
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "A_negative",
+            "fact_id": "A_negative",
+            "predicate": "A",
+            "args": [],
+            "sign": "negative"
+          }
+        ]
+      },
+      "expected": {
+        "value": "false",
+        "conflict": "none"
+      }
+    },
+    {
+      "id": "V06",
+      "category": "sound_short_circuit",
+      "mode": "expression",
+      "description": "TRUE OR UNKNOWN is definitively TRUE; the root semantics, not every leaf being known, is decisive.",
+      "expression": {
+        "op": "or",
+        "children": [
+          {
+            "op": "atom",
+            "predicate": "A",
+            "args": []
+          },
+          {
+            "op": "atom",
+            "predicate": "B",
+            "args": []
+          }
+        ]
+      },
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "A_positive",
+            "fact_id": "A_positive",
+            "predicate": "A",
+            "args": [],
+            "sign": "positive"
+          }
+        ]
+      },
+      "expected": {
+        "value": "true",
+        "conflict": "none"
+      }
+    },
+    {
+      "id": "V07",
+      "category": "all_unknown",
+      "mode": "expression",
+      "description": "All unobserved required members stay UNKNOWN; no filtering to an empty AllTrue list.",
+      "expression": {
+        "op": "and",
+        "children": [
+          {
+            "op": "atom",
+            "predicate": "A",
+            "args": []
+          },
+          {
+            "op": "atom",
+            "predicate": "B",
+            "args": []
+          }
+        ]
+      },
+      "context": {
+        "facts": []
+      },
+      "expected": {
+        "value": "unknown",
+        "conflict": "none"
+      }
+    },
+    {
+      "id": "V08",
+      "category": "contradictory_assertions",
+      "mode": "expression",
+      "description": "Positive and negative observations of the same proposition produce UNKNOWN plus conflict.",
+      "expression": {
+        "op": "atom",
+        "predicate": "A",
+        "args": []
+      },
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "A_positive",
+            "fact_id": "A_positive",
+            "predicate": "A",
+            "args": [],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "A_negative",
+            "fact_id": "A_negative",
+            "predicate": "A",
+            "args": [],
+            "sign": "negative"
+          }
+        ]
+      },
+      "expected": {
+        "value": "unknown",
+        "conflict": "present"
+      }
+    },
+    {
+      "id": "V09",
+      "category": "conflict_with_decisive_branch",
+      "mode": "expression",
+      "description": "Root OR is TRUE but unresolved conflict remains explicitly visible.",
+      "expression": {
+        "op": "or",
+        "children": [
+          {
+            "op": "atom",
+            "predicate": "A",
+            "args": []
+          },
+          {
+            "op": "atom",
+            "predicate": "B",
+            "args": []
+          }
+        ]
+      },
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "A_positive",
+            "fact_id": "A_positive",
+            "predicate": "A",
+            "args": [],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "B_positive",
+            "fact_id": "B_positive",
+            "predicate": "B",
+            "args": [],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "B_negative",
+            "fact_id": "B_negative",
+            "predicate": "B",
+            "args": [],
+            "sign": "negative"
+          }
+        ]
+      },
+      "expected": {
+        "value": "true",
+        "conflict": "present"
+      }
+    },
+    {
+      "id": "V10",
+      "category": "quantifier_order",
+      "mode": "expression",
+      "description": "Each person has an event, which may differ by person: forall p exists e is TRUE.",
+      "expression": {
+        "op": "forall",
+        "var": "p",
+        "domain_id": "persons",
+        "body": {
+          "op": "exists",
+          "var": "e",
+          "domain_id": "events",
+          "body": {
+            "op": "atom",
+            "predicate": "linked",
+            "args": [
+              "$p",
+              "$e"
+            ]
+          }
+        }
+      },
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "p1_e1",
+            "fact_id": "p1_e1",
+            "predicate": "linked",
+            "args": [
+              "p1",
+              "e1"
+            ],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "p1_e2",
+            "fact_id": "p1_e2",
+            "predicate": "linked",
+            "args": [
+              "p1",
+              "e2"
+            ],
+            "sign": "negative"
+          },
+          {
+            "assertion_id": "p2_e1",
+            "fact_id": "p2_e1",
+            "predicate": "linked",
+            "args": [
+              "p2",
+              "e1"
+            ],
+            "sign": "negative"
+          },
+          {
+            "assertion_id": "p2_e2",
+            "fact_id": "p2_e2",
+            "predicate": "linked",
+            "args": [
+              "p2",
+              "e2"
+            ],
+            "sign": "positive"
+          }
+        ],
+        "domains": {
+          "persons": {
+            "members": [
+              {
+                "id": "p1"
+              },
+              {
+                "id": "p2"
+              }
+            ],
+            "complete": true
+          },
+          "events": {
+            "members": [
+              {
+                "id": "e1"
+              },
+              {
+                "id": "e2"
+              }
+            ],
+            "complete": true
+          }
+        }
+      },
+      "expected": {
+        "value": "true",
+        "conflict": "none"
+      }
+    },
+    {
+      "id": "V11",
+      "category": "quantifier_order",
+      "mode": "expression",
+      "description": "The same finite model has no single event for all persons: exists e forall p is FALSE.",
+      "expression": {
+        "op": "exists",
+        "var": "e",
+        "domain_id": "events",
+        "body": {
+          "op": "forall",
+          "var": "p",
+          "domain_id": "persons",
+          "body": {
+            "op": "atom",
+            "predicate": "linked",
+            "args": [
+              "$p",
+              "$e"
+            ]
+          }
+        }
+      },
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "p1_e1",
+            "fact_id": "p1_e1",
+            "predicate": "linked",
+            "args": [
+              "p1",
+              "e1"
+            ],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "p1_e2",
+            "fact_id": "p1_e2",
+            "predicate": "linked",
+            "args": [
+              "p1",
+              "e2"
+            ],
+            "sign": "negative"
+          },
+          {
+            "assertion_id": "p2_e1",
+            "fact_id": "p2_e1",
+            "predicate": "linked",
+            "args": [
+              "p2",
+              "e1"
+            ],
+            "sign": "negative"
+          },
+          {
+            "assertion_id": "p2_e2",
+            "fact_id": "p2_e2",
+            "predicate": "linked",
+            "args": [
+              "p2",
+              "e2"
+            ],
+            "sign": "positive"
+          }
+        ],
+        "domains": {
+          "persons": {
+            "members": [
+              {
+                "id": "p1"
+              },
+              {
+                "id": "p2"
+              }
+            ],
+            "complete": true
+          },
+          "events": {
+            "members": [
+              {
+                "id": "e1"
+              },
+              {
+                "id": "e2"
+              }
+            ],
+            "complete": true
+          }
+        }
+      },
+      "expected": {
+        "value": "false",
+        "conflict": "none"
+      }
+    },
+    {
+      "id": "V12",
+      "category": "open_domain",
+      "mode": "expression",
+      "description": "All observed members satisfy P, but an incomplete domain prevents forall TRUE.",
+      "expression": {
+        "op": "forall",
+        "var": "p",
+        "domain_id": "persons",
+        "body": {
+          "op": "atom",
+          "predicate": "P",
+          "args": [
+            "$p"
+          ]
+        }
+      },
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "P_positive",
+            "fact_id": "P_positive",
+            "predicate": "P",
+            "args": [
+              "p1"
+            ],
+            "sign": "positive"
+          }
+        ],
+        "domains": {
+          "persons": {
+            "members": [
+              {
+                "id": "p1"
+              }
+            ],
+            "complete": false
+          }
+        }
+      },
+      "expected": {
+        "value": "unknown",
+        "conflict": "none"
+      }
+    },
+    {
+      "id": "V13",
+      "category": "counterexample",
+      "mode": "expression",
+      "description": "One explicit counterexample refutes forall even when remaining domain members are unknown.",
+      "expression": {
+        "op": "forall",
+        "var": "p",
+        "domain_id": "persons",
+        "body": {
+          "op": "atom",
+          "predicate": "P",
+          "args": [
+            "$p"
+          ]
+        }
+      },
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "P_negative",
+            "fact_id": "P_negative",
+            "predicate": "P",
+            "args": [
+              "p1"
+            ],
+            "sign": "negative"
+          }
+        ],
+        "domains": {
+          "persons": {
+            "members": [
+              {
+                "id": "p1"
+              }
+            ],
+            "complete": false
+          }
+        }
+      },
+      "expected": {
+        "value": "false",
+        "conflict": "none"
+      }
+    },
+    {
+      "id": "V14",
+      "category": "open_domain",
+      "mode": "expression",
+      "description": "No positive among observed members does not refute exists over an incomplete domain.",
+      "expression": {
+        "op": "exists",
+        "var": "p",
+        "domain_id": "persons",
+        "body": {
+          "op": "atom",
+          "predicate": "P",
+          "args": [
+            "$p"
+          ]
+        }
+      },
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "P_negative",
+            "fact_id": "P_negative",
+            "predicate": "P",
+            "args": [
+              "p1"
+            ],
+            "sign": "negative"
+          }
+        ],
+        "domains": {
+          "persons": {
+            "members": [
+              {
+                "id": "p1"
+              }
+            ],
+            "complete": false
+          }
+        }
+      },
+      "expected": {
+        "value": "unknown",
+        "conflict": "none"
+      }
+    },
+    {
+      "id": "V15",
+      "category": "existential_witness",
+      "mode": "expression",
+      "description": "A known positive witness proves exists without closing the entire domain.",
+      "expression": {
+        "op": "exists",
+        "var": "p",
+        "domain_id": "persons",
+        "body": {
+          "op": "atom",
+          "predicate": "P",
+          "args": [
+            "$p"
+          ]
+        }
+      },
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "P_positive",
+            "fact_id": "P_positive",
+            "predicate": "P",
+            "args": [
+              "p1"
+            ],
+            "sign": "positive"
+          }
+        ],
+        "domains": {
+          "persons": {
+            "members": [
+              {
+                "id": "p1"
+              }
+            ],
+            "complete": false
+          }
+        }
+      },
+      "expected": {
+        "value": "true",
+        "conflict": "none"
+      }
+    },
+    {
+      "id": "V16",
+      "category": "empty_closed_domain",
+      "mode": "expression",
+      "description": "Classical forall over an explicitly empty, complete domain is vacuously TRUE; clinical applicability needs a separate nonempty/eligibility guard.",
+      "expression": {
+        "op": "forall",
+        "var": "p",
+        "domain_id": "persons",
+        "body": {
+          "op": "atom",
+          "predicate": "P",
+          "args": [
+            "$p"
+          ]
+        }
+      },
+      "context": {
+        "facts": [],
+        "domains": {
+          "persons": {
+            "members": [],
+            "complete": true
+          }
+        }
+      },
+      "expected": {
+        "value": "true",
+        "conflict": "none"
+      }
+    },
+    {
+      "id": "V17",
+      "category": "empty_open_domain",
+      "mode": "expression",
+      "description": "An empty list of observed members is not a complete empty domain.",
+      "expression": {
+        "op": "forall",
+        "var": "p",
+        "domain_id": "persons",
+        "body": {
+          "op": "atom",
+          "predicate": "P",
+          "args": [
+            "$p"
+          ]
+        }
+      },
+      "context": {
+        "facts": [],
+        "domains": {
+          "persons": {
+            "members": [],
+            "complete": false
+          }
+        }
+      },
+      "expected": {
+        "value": "unknown",
+        "conflict": "none"
+      }
+    },
+    {
+      "id": "V18",
+      "category": "count_distinct",
+      "mode": "expression",
+      "description": "Two retrieved rows describing the same criterion identity count once.",
+      "expression": {
+        "op": "countDistinct",
+        "var": "c",
+        "domain_id": "criteria",
+        "distinct_by": "criterion_id",
+        "comparison": "at_least",
+        "threshold": 2,
+        "body": {
+          "op": "atom",
+          "predicate": "criterion_present",
+          "args": [
+            "$c.criterion_id"
+          ]
+        }
+      },
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "a1",
+            "fact_id": "a1",
+            "predicate": "criterion_present",
+            "args": [
+              "echo_action"
+            ],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "a2",
+            "fact_id": "a2",
+            "predicate": "criterion_present",
+            "args": [
+              "echo_action"
+            ],
+            "sign": "positive"
+          }
+        ],
+        "domains": {
+          "criteria": {
+            "members": [
+              {
+                "id": "entry1",
+                "criterion_id": "echo_action"
+              },
+              {
+                "id": "entry2",
+                "criterion_id": "echo_action"
+              }
+            ],
+            "complete": true
+          }
+        }
+      },
+      "expected": {
+        "value": "false",
+        "conflict": "none",
+        "lower": 1,
+        "upper": 1
+      }
+    },
+    {
+      "id": "V19",
+      "category": "count_missing_witness",
+      "mode": "expression",
+      "description": "Evidence for echo_action does not create a witness for a separate echo_speech category.",
+      "expression": {
+        "op": "countDistinct",
+        "var": "c",
+        "domain_id": "criteria",
+        "distinct_by": "criterion_id",
+        "comparison": "at_least",
+        "threshold": 2,
+        "body": {
+          "op": "atom",
+          "predicate": "criterion_present",
+          "args": [
+            "$c.criterion_id"
+          ]
+        }
+      },
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "criterion_present_positive",
+            "fact_id": "criterion_present_positive",
+            "predicate": "criterion_present",
+            "args": [
+              "echo_action"
+            ],
+            "sign": "positive"
+          }
+        ],
+        "domains": {
+          "criteria": {
+            "members": [
+              {
+                "id": "entry1",
+                "criterion_id": "echo_action"
+              },
+              {
+                "id": "entry2",
+                "criterion_id": "echo_speech"
+              }
+            ],
+            "complete": true
+          }
+        }
+      },
+      "expected": {
+        "value": "unknown",
+        "conflict": "none",
+        "lower": 1,
+        "upper": 2
+      }
+    },
+    {
+      "id": "V20",
+      "category": "composite_observation",
+      "mode": "expression",
+      "description": "One observation can independently assert two different criteria; do not globally deduplicate by fact_id.",
+      "expression": {
+        "op": "countDistinct",
+        "var": "c",
+        "domain_id": "criteria",
+        "distinct_by": "criterion_id",
+        "comparison": "at_least",
+        "threshold": 2,
+        "body": {
+          "op": "atom",
+          "predicate": "criterion_present",
+          "args": [
+            "$c.criterion_id"
+          ]
+        }
+      },
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "assertion_action",
+            "fact_id": "composite_observation_1",
+            "predicate": "criterion_present",
+            "args": [
+              "echo_action"
+            ],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "assertion_speech",
+            "fact_id": "composite_observation_1",
+            "predicate": "criterion_present",
+            "args": [
+              "echo_speech"
+            ],
+            "sign": "positive"
+          }
+        ],
+        "domains": {
+          "criteria": {
+            "members": [
+              {
+                "id": "entry1",
+                "criterion_id": "echo_action"
+              },
+              {
+                "id": "entry2",
+                "criterion_id": "echo_speech"
+              }
+            ],
+            "complete": true
+          }
+        }
+      },
+      "expected": {
+        "value": "true",
+        "conflict": "none",
+        "lower": 2,
+        "upper": 2
+      }
+    },
+    {
+      "id": "V21",
+      "category": "count_partial_domain",
+      "mode": "expression",
+      "description": "One positive in an incomplete domain leaves an unbounded possible count; missing members are not removed.",
+      "expression": {
+        "op": "countDistinct",
+        "var": "c",
+        "domain_id": "criteria",
+        "distinct_by": "criterion_id",
+        "comparison": "at_least",
+        "threshold": 2,
+        "body": {
+          "op": "atom",
+          "predicate": "criterion_present",
+          "args": [
+            "$c.criterion_id"
+          ]
+        }
+      },
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "assertion_action",
+            "fact_id": "composite_observation_1",
+            "predicate": "criterion_present",
+            "args": [
+              "echo_action"
+            ],
+            "sign": "positive"
+          }
+        ],
+        "domains": {
+          "criteria": {
+            "members": [
+              {
+                "id": "entry1",
+                "criterion_id": "echo_action"
+              }
+            ],
+            "complete": false
+          }
+        }
+      },
+      "expected": {
+        "value": "unknown",
+        "conflict": "none",
+        "lower": 1,
+        "upper": null
+      }
+    },
+    {
+      "id": "V22",
+      "category": "count_monotone_witness",
+      "mode": "expression",
+      "description": "Two distinct positive witnesses establish at-least-two despite unobserved additional members.",
+      "expression": {
+        "op": "countDistinct",
+        "var": "c",
+        "domain_id": "criteria",
+        "distinct_by": "criterion_id",
+        "comparison": "at_least",
+        "threshold": 2,
+        "body": {
+          "op": "atom",
+          "predicate": "criterion_present",
+          "args": [
+            "$c.criterion_id"
+          ]
+        }
+      },
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "assertion_action",
+            "fact_id": "composite_observation_1",
+            "predicate": "criterion_present",
+            "args": [
+              "echo_action"
+            ],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "assertion_speech",
+            "fact_id": "composite_observation_1",
+            "predicate": "criterion_present",
+            "args": [
+              "echo_speech"
+            ],
+            "sign": "positive"
+          }
+        ],
+        "domains": {
+          "criteria": {
+            "members": [
+              {
+                "id": "entry1",
+                "criterion_id": "echo_action"
+              },
+              {
+                "id": "entry2",
+                "criterion_id": "echo_speech"
+              }
+            ],
+            "complete": false
+          }
+        }
+      },
+      "expected": {
+        "value": "true",
+        "conflict": "none",
+        "lower": 2,
+        "upper": null
+      }
+    },
+    {
+      "id": "V23",
+      "category": "count_exact",
+      "mode": "expression",
+      "description": "Exactly-two is not established by two witnesses in an incomplete domain.",
+      "expression": {
+        "op": "countDistinct",
+        "var": "c",
+        "domain_id": "criteria",
+        "distinct_by": "criterion_id",
+        "comparison": "exactly",
+        "threshold": 2,
+        "body": {
+          "op": "atom",
+          "predicate": "criterion_present",
+          "args": [
+            "$c.criterion_id"
+          ]
+        }
+      },
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "assertion_action",
+            "fact_id": "composite_observation_1",
+            "predicate": "criterion_present",
+            "args": [
+              "echo_action"
+            ],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "assertion_speech",
+            "fact_id": "composite_observation_1",
+            "predicate": "criterion_present",
+            "args": [
+              "echo_speech"
+            ],
+            "sign": "positive"
+          }
+        ],
+        "domains": {
+          "criteria": {
+            "members": [
+              {
+                "id": "entry1",
+                "criterion_id": "echo_action"
+              },
+              {
+                "id": "entry2",
+                "criterion_id": "echo_speech"
+              }
+            ],
+            "complete": false
+          }
+        }
+      },
+      "expected": {
+        "value": "unknown",
+        "conflict": "none",
+        "lower": 2,
+        "upper": null
+      }
+    },
+    {
+      "id": "V24",
+      "category": "specimen_identity",
+      "mode": "expression",
+      "description": "A tissue observation does not satisfy a blood predicate even for the same marker and patient.",
+      "expression": {
+        "op": "atom",
+        "predicate": "marker_present",
+        "args": [
+          "patient"
+        ],
+        "qualifiers": {
+          "specimen": "blood"
+        }
+      },
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "marker_present_positive",
+            "fact_id": "marker_present_positive",
+            "predicate": "marker_present",
+            "args": [
+              "patient"
+            ],
+            "sign": "positive",
+            "qualifiers": {
+              "specimen": "tissue"
+            }
+          }
+        ]
+      },
+      "expected": {
+        "value": "unknown",
+        "conflict": "none"
+      }
+    },
+    {
+      "id": "V25",
+      "category": "person_role",
+      "mode": "expression",
+      "description": "A relative's phenotype is not the patient's phenotype.",
+      "expression": {
+        "op": "atom",
+        "predicate": "phenotype_present",
+        "args": [
+          "patient"
+        ]
+      },
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "phenotype_present_positive",
+            "fact_id": "phenotype_present_positive",
+            "predicate": "phenotype_present",
+            "args": [
+              "father"
+            ],
+            "sign": "positive"
+          }
+        ]
+      },
+      "expected": {
+        "value": "unknown",
+        "conflict": "none"
+      }
+    },
+    {
+      "id": "V26",
+      "category": "unit_conversion",
+      "mode": "expression",
+      "description": "The same metric with a supported explicit unit conversion satisfies a synthetic threshold.",
+      "expression": {
+        "op": "numeric_compare",
+        "subject": "patient",
+        "metric_id": "mean_PAP",
+        "unit": "kPa",
+        "comparison": "gt",
+        "threshold": 6,
+        "qualifiers": {
+          "measurement_context": "synthetic_rest"
+        }
+      },
+      "context": {
+        "facts": [],
+        "measurements": [
+          {
+            "subject": "patient",
+            "metric_id": "mean_PAP",
+            "value": 50,
+            "unit": "mmHg",
+            "qualifiers": {
+              "measurement_context": "synthetic_rest"
+            }
+          }
+        ]
+      },
+      "expected": {
+        "value": "true",
+        "conflict": "none"
+      }
+    },
+    {
+      "id": "V27",
+      "category": "metric_identity",
+      "mode": "expression",
+      "description": "PASP and mean_PAP are not interchangeable merely because both use mmHg.",
+      "expression": {
+        "op": "numeric_compare",
+        "subject": "patient",
+        "metric_id": "mean_PAP",
+        "unit": "kPa",
+        "comparison": "gt",
+        "threshold": 6,
+        "qualifiers": {
+          "measurement_context": "synthetic_rest"
+        }
+      },
+      "context": {
+        "facts": [],
+        "measurements": [
+          {
+            "subject": "patient",
+            "metric_id": "PASP",
+            "value": 50,
+            "unit": "mmHg",
+            "qualifiers": {
+              "measurement_context": "synthetic_rest"
+            }
+          }
+        ]
+      },
+      "expected": {
+        "value": "unknown",
+        "conflict": "none"
+      }
+    },
+    {
+      "id": "V28",
+      "category": "unit_dimension",
+      "mode": "expression",
+      "description": "Matching metric text with an incompatible unit is not a valid comparison.",
+      "expression": {
+        "op": "numeric_compare",
+        "subject": "patient",
+        "metric_id": "mean_PAP",
+        "unit": "kPa",
+        "comparison": "gt",
+        "threshold": 6,
+        "qualifiers": {
+          "measurement_context": "synthetic_rest"
+        }
+      },
+      "context": {
+        "facts": [],
+        "measurements": [
+          {
+            "subject": "patient",
+            "metric_id": "mean_PAP",
+            "value": 50,
+            "unit": "mg/dL",
+            "qualifiers": {
+              "measurement_context": "synthetic_rest"
+            }
+          }
+        ]
+      },
+      "expected": {
+        "value": "unknown",
+        "conflict": "none"
+      }
+    },
+    {
+      "id": "V29",
+      "category": "ratio_identity",
+      "mode": "expression",
+      "description": "TAPSE/PASP is not PASP; a ratio label cannot be shortened before binding.",
+      "expression": {
+        "op": "numeric_compare",
+        "subject": "patient",
+        "metric_id": "TAPSE_over_PASP",
+        "unit": "mm/mmHg",
+        "comparison": "gt",
+        "threshold": 0.5,
+        "qualifiers": {
+          "measurement_context": "synthetic_rest"
+        }
+      },
+      "context": {
+        "facts": [],
+        "measurements": [
+          {
+            "subject": "patient",
+            "metric_id": "PASP",
+            "value": 50,
+            "unit": "mmHg",
+            "qualifiers": {
+              "measurement_context": "synthetic_rest"
+            }
+          }
+        ]
+      },
+      "expected": {
+        "value": "unknown",
+        "conflict": "none"
+      }
+    },
+    {
+      "id": "V30",
+      "category": "temporal_direction",
+      "mode": "expression",
+      "description": "Synthetic event_B occurs strictly after event_A within seven days.",
+      "expression": {
+        "op": "temporal_compare",
+        "subject": "patient",
+        "left_event": "event_A",
+        "right_event": "event_B",
+        "comparison": "before_within_days",
+        "maximum_days": 7
+      },
+      "context": {
+        "facts": [],
+        "events": [
+          {
+            "subject": "patient",
+            "event_id": "event_A",
+            "day": 2
+          },
+          {
+            "subject": "patient",
+            "event_id": "event_B",
+            "day": 8
+          }
+        ]
+      },
+      "expected": {
+        "value": "true",
+        "conflict": "none"
+      }
+    },
+    {
+      "id": "V31",
+      "category": "temporal_direction",
+      "mode": "expression",
+      "description": "Reversing event times does not preserve the before relation.",
+      "expression": {
+        "op": "temporal_compare",
+        "subject": "patient",
+        "left_event": "event_A",
+        "right_event": "event_B",
+        "comparison": "before_within_days",
+        "maximum_days": 7
+      },
+      "context": {
+        "facts": [],
+        "events": [
+          {
+            "subject": "patient",
+            "event_id": "event_A",
+            "day": 8
+          },
+          {
+            "subject": "patient",
+            "event_id": "event_B",
+            "day": 2
+          }
+        ]
+      },
+      "expected": {
+        "value": "false",
+        "conflict": "none"
+      }
+    },
+    {
+      "id": "V32",
+      "category": "temporal_missing",
+      "mode": "expression",
+      "description": "A missing event date remains UNKNOWN.",
+      "expression": {
+        "op": "temporal_compare",
+        "subject": "patient",
+        "left_event": "event_A",
+        "right_event": "event_B",
+        "comparison": "before_within_days",
+        "maximum_days": 7
+      },
+      "context": {
+        "facts": [],
+        "events": [
+          {
+            "subject": "patient",
+            "event_id": "event_A",
+            "day": 2
+          }
+        ]
+      },
+      "expected": {
+        "value": "unknown",
+        "conflict": "none"
+      }
+    },
+    {
+      "id": "V33",
+      "category": "signed_score",
+      "mode": "expression",
+      "description": "Positive and negative feature weights both contribute with their declared signs.",
+      "expression": {
+        "op": "signed_score",
+        "scale_id": "synthetic_score_not_likelihood",
+        "terms": [
+          {
+            "feature_id": "feature_A",
+            "weight": 2,
+            "condition": {
+              "op": "atom",
+              "predicate": "A",
+              "args": []
+            }
+          },
+          {
+            "feature_id": "feature_B",
+            "weight": -3,
+            "condition": {
+              "op": "atom",
+              "predicate": "B",
+              "args": []
+            }
+          }
+        ]
+      },
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "A_positive",
+            "fact_id": "A_positive",
+            "predicate": "A",
+            "args": [],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "B_positive",
+            "fact_id": "B_positive",
+            "predicate": "B",
+            "args": [],
+            "sign": "positive"
+          }
+        ]
+      },
+      "expected": {
+        "value": -1,
+        "conflict": "none",
+        "lower": -1,
+        "upper": -1
+      }
+    },
+    {
+      "id": "V34",
+      "category": "signed_score_unknown",
+      "mode": "expression",
+      "description": "An unknown negative-weight feature yields a score interval, not zero contribution.",
+      "expression": {
+        "op": "signed_score",
+        "scale_id": "synthetic_score_not_likelihood",
+        "terms": [
+          {
+            "feature_id": "feature_A",
+            "weight": 2,
+            "condition": {
+              "op": "atom",
+              "predicate": "A",
+              "args": []
+            }
+          },
+          {
+            "feature_id": "feature_B",
+            "weight": -3,
+            "condition": {
+              "op": "atom",
+              "predicate": "B",
+              "args": []
+            }
+          }
+        ]
+      },
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "A_positive",
+            "fact_id": "A_positive",
+            "predicate": "A",
+            "args": [],
+            "sign": "positive"
+          }
+        ]
+      },
+      "expected": {
+        "value": "unknown",
+        "conflict": "none",
+        "lower": -1,
+        "upper": 2
+      }
+    },
+    {
+      "id": "V35",
+      "category": "sufficient_false",
+      "mode": "rule",
+      "description": "FALSE of a sufficient condition does not exclude the target.",
+      "rule_id": "S_SUFFICIENT",
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "eligible_positive",
+            "fact_id": "eligible_positive",
+            "predicate": "eligible",
+            "args": [
+              "patient"
+            ],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "A_negative",
+            "fact_id": "A_negative",
+            "predicate": "A",
+            "args": [],
+            "sign": "negative"
+          },
+          {
+            "assertion_id": "B_negative",
+            "fact_id": "B_negative",
+            "predicate": "B",
+            "args": [],
+            "sign": "negative"
+          },
+          {
+            "assertion_id": "C_negative",
+            "fact_id": "C_negative",
+            "predicate": "C",
+            "args": [],
+            "sign": "negative"
+          }
+        ],
+        "false_is_decisive": true
+      },
+      "expected": {
+        "value": "false",
+        "conflict": "none",
+        "action": "none"
+      }
+    },
+    {
+      "id": "V36",
+      "category": "necessary_false",
+      "mode": "rule",
+      "description": "A definite FALSE necessary conjunct can exclude when scope, source and authority are established.",
+      "rule_id": "S_NECESSARY",
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "eligible_positive",
+            "fact_id": "eligible_positive",
+            "predicate": "eligible",
+            "args": [
+              "patient"
+            ],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "A_negative",
+            "fact_id": "A_negative",
+            "predicate": "A",
+            "args": [],
+            "sign": "negative"
+          }
+        ],
+        "false_is_decisive": true
+      },
+      "expected": {
+        "value": "false",
+        "conflict": "none",
+        "action": "exclude"
+      }
+    },
+    {
+      "id": "V37",
+      "category": "necessary_unknown",
+      "mode": "rule",
+      "description": "Missing a necessary observation does not establish that the condition is FALSE.",
+      "rule_id": "S_NECESSARY",
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "eligible_positive",
+            "fact_id": "eligible_positive",
+            "predicate": "eligible",
+            "args": [
+              "patient"
+            ],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "A_positive",
+            "fact_id": "A_positive",
+            "predicate": "A",
+            "args": [],
+            "sign": "positive"
+          }
+        ],
+        "false_is_decisive": true
+      },
+      "expected": {
+        "value": "unknown",
+        "conflict": "none",
+        "action": "none"
+      }
+    },
+    {
+      "id": "V38",
+      "category": "scope_unknown",
+      "mode": "rule",
+      "description": "A FALSE necessary condition cannot exclude when target applicability has not been established.",
+      "rule_id": "S_NECESSARY",
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "A_negative",
+            "fact_id": "A_negative",
+            "predicate": "A",
+            "args": [],
+            "sign": "negative"
+          }
+        ],
+        "false_is_decisive": true
+      },
+      "expected": {
+        "value": "false",
+        "conflict": "none",
+        "action": "none",
+        "reason": "scope_not_established"
+      }
+    },
+    {
+      "id": "V39",
+      "category": "authority_missing",
+      "mode": "rule",
+      "description": "A plausible necessary condition is not automatically authorized for hard exclusion.",
+      "rule_id": "S_NECESSARY",
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "eligible_positive",
+            "fact_id": "eligible_positive",
+            "predicate": "eligible",
+            "args": [
+              "patient"
+            ],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "A_negative",
+            "fact_id": "A_negative",
+            "predicate": "A",
+            "args": [],
+            "sign": "negative"
+          }
+        ],
+        "false_is_decisive": true
+      },
+      "expected": {
+        "value": "false",
+        "conflict": "none",
+        "action": "none",
+        "reason": "hard_effect_not_authorized"
+      },
+      "overrides": {
+        "authority": {
+          "fixture_hard_effect_authorized": false
+        }
+      }
+    },
+    {
+      "id": "V40",
+      "category": "incomplete_source_group",
+      "mode": "rule",
+      "description": "Two TRUE visible members cannot certify an incompletely extracted group; raw preview is kept separate.",
+      "rule_id": "S_NECESSARY",
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "eligible_positive",
+            "fact_id": "eligible_positive",
+            "predicate": "eligible",
+            "args": [
+              "patient"
+            ],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "A_positive",
+            "fact_id": "A_positive",
+            "predicate": "A",
+            "args": [],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "B_positive",
+            "fact_id": "B_positive",
+            "predicate": "B",
+            "args": [],
+            "sign": "positive"
+          }
+        ]
+      },
+      "expected": {
+        "value": "unknown",
+        "conflict": "none",
+        "action": "none",
+        "preview_value": "true",
+        "reason": "incomplete_rule_contract"
+      },
+      "overrides": {
+        "completeness": {
+          "criterion_members_complete": false,
+          "expected_member_ids": [
+            "A",
+            "B",
+            "C"
+          ],
+          "emitted_member_ids": [
+            "A",
+            "B"
+          ]
+        }
+      }
+    },
+    {
+      "id": "V41",
+      "category": "root_not_leaf",
+      "mode": "rule",
+      "description": "One satisfied atom does not satisfy an AND-containing exclusion group.",
+      "rule_id": "S_EXCLUSION",
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "eligible_positive",
+            "fact_id": "eligible_positive",
+            "predicate": "eligible",
+            "args": [
+              "patient"
+            ],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "A_positive",
+            "fact_id": "A_positive",
+            "predicate": "A",
+            "args": [],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "B_negative",
+            "fact_id": "B_negative",
+            "predicate": "B",
+            "args": [],
+            "sign": "negative"
+          },
+          {
+            "assertion_id": "C_negative",
+            "fact_id": "C_negative",
+            "predicate": "C",
+            "args": [],
+            "sign": "negative"
+          },
+          {
+            "assertion_id": "D_positive",
+            "fact_id": "D_positive",
+            "predicate": "D",
+            "args": [],
+            "sign": "positive"
+          }
+        ]
+      },
+      "expected": {
+        "value": "false",
+        "conflict": "none",
+        "action": "none"
+      }
+    },
+    {
+      "id": "V42",
+      "category": "root_exclusion",
+      "mode": "rule",
+      "description": "A complete TRUE disjunct legitimately satisfies the exclusion root even if the other disjunct fails.",
+      "rule_id": "S_EXCLUSION",
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "eligible_positive",
+            "fact_id": "eligible_positive",
+            "predicate": "eligible",
+            "args": [
+              "patient"
+            ],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "A_positive",
+            "fact_id": "A_positive",
+            "predicate": "A",
+            "args": [],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "B_positive",
+            "fact_id": "B_positive",
+            "predicate": "B",
+            "args": [],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "C_negative",
+            "fact_id": "C_negative",
+            "predicate": "C",
+            "args": [],
+            "sign": "negative"
+          },
+          {
+            "assertion_id": "D_negative",
+            "fact_id": "D_negative",
+            "predicate": "D",
+            "args": [],
+            "sign": "negative"
+          }
+        ]
+      },
+      "expected": {
+        "value": "true",
+        "conflict": "none",
+        "action": "exclude"
+      }
+    },
+    {
+      "id": "V43",
+      "category": "permission_policy",
+      "mode": "rule",
+      "description": "Not allowed to exclude sets an inference permission; it does not assert disease truth.",
+      "rule_id": "S_POLICY",
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "eligible_positive",
+            "fact_id": "eligible_positive",
+            "predicate": "eligible",
+            "args": [
+              "patient"
+            ],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "uses_evidence_X_for_exclusion_positive",
+            "fact_id": "uses_evidence_X_for_exclusion_positive",
+            "predicate": "uses_evidence_X_for_exclusion",
+            "args": [
+              "patient"
+            ],
+            "sign": "positive"
+          }
+        ]
+      },
+      "expected": {
+        "value": "true",
+        "conflict": "none",
+        "action": "deny_exclusion_permission"
+      }
+    },
+    {
+      "id": "V44",
+      "category": "permission_gate",
+      "mode": "rule",
+      "description": "An exclusion permission denial blocks an otherwise triggered exclusion.",
+      "rule_id": "S_NECESSARY",
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "eligible_positive",
+            "fact_id": "eligible_positive",
+            "predicate": "eligible",
+            "args": [
+              "patient"
+            ],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "A_negative",
+            "fact_id": "A_negative",
+            "predicate": "A",
+            "args": [],
+            "sign": "negative"
+          }
+        ],
+        "false_is_decisive": true,
+        "exclusion_permission": "denied"
+      },
+      "expected": {
+        "value": "false",
+        "conflict": "none",
+        "action": "none",
+        "reason": "exclusion_permission_denied"
+      }
+    },
+    {
+      "id": "V45",
+      "category": "conflict_gate",
+      "mode": "rule",
+      "description": "A TRUE disjunct does not hide a contradictory observation in the evaluated rule; hard effect waits for resolution.",
+      "rule_id": "S_EXCLUSION",
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "eligible_positive",
+            "fact_id": "eligible_positive",
+            "predicate": "eligible",
+            "args": [
+              "patient"
+            ],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "A_positive",
+            "fact_id": "A_positive",
+            "predicate": "A",
+            "args": [],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "B_positive",
+            "fact_id": "B_positive",
+            "predicate": "B",
+            "args": [],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "C_positive",
+            "fact_id": "C_positive",
+            "predicate": "C",
+            "args": [],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "C_negative",
+            "fact_id": "C_negative",
+            "predicate": "C",
+            "args": [],
+            "sign": "negative"
+          },
+          {
+            "assertion_id": "D_positive",
+            "fact_id": "D_positive",
+            "predicate": "D",
+            "args": [],
+            "sign": "positive"
+          }
+        ]
+      },
+      "expected": {
+        "value": "true",
+        "conflict": "present",
+        "action": "none",
+        "reason": "unresolved_conflict"
+      }
+    },
+    {
+      "id": "V46",
+      "category": "signed_score_action",
+      "mode": "rule",
+      "description": "A score result is emitted as a score, not a confirmation or exclusion.",
+      "rule_id": "S_SCORE",
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "eligible_positive",
+            "fact_id": "eligible_positive",
+            "predicate": "eligible",
+            "args": [
+              "patient"
+            ],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "A_positive",
+            "fact_id": "A_positive",
+            "predicate": "A",
+            "args": [],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "B_positive",
+            "fact_id": "B_positive",
+            "predicate": "B",
+            "args": [],
+            "sign": "positive"
+          }
+        ]
+      },
+      "expected": {
+        "value": -1,
+        "conflict": "none",
+        "lower": -1,
+        "upper": -1,
+        "action": "emit_score_interval"
+      }
+    },
+    {
+      "id": "V47",
+      "category": "certified_necessary_projection",
+      "mode": "rule",
+      "description": "A separately certified D implies A rule can be derived from D implies A AND B while inheriting parent scope and authority.",
+      "rule_id": "S_NECESSARY_A_DERIVED",
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "eligible_positive",
+            "fact_id": "eligible_positive",
+            "predicate": "eligible",
+            "args": [
+              "patient"
+            ],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "A_negative",
+            "fact_id": "A_negative",
+            "predicate": "A",
+            "args": [],
+            "sign": "negative"
+          }
+        ],
+        "false_is_decisive": true
+      },
+      "expected": {
+        "value": "false",
+        "conflict": "none",
+        "action": "exclude"
+      }
+    },
+    {
+      "id": "V48",
+      "category": "permission_not_material_negation",
+      "mode": "expression",
+      "description": "The truth-functional formula NOT(A implies NOT D) happens to be TRUE for A=TRUE,D=TRUE; this says nothing about permission to exclude. Policy V43 is a different output type.",
+      "expression": {
+        "op": "not",
+        "child": {
+          "op": "implies",
+          "antecedent": {
+            "op": "atom",
+            "predicate": "A",
+            "args": []
+          },
+          "consequent": {
+            "op": "not",
+            "child": {
+              "op": "atom",
+              "predicate": "D",
+              "args": []
+            }
+          }
+        }
+      },
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "A_positive",
+            "fact_id": "A_positive",
+            "predicate": "A",
+            "args": [],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "D_positive",
+            "fact_id": "D_positive",
+            "predicate": "D",
+            "args": [],
+            "sign": "positive"
+          }
+        ]
+      },
+      "expected": {
+        "value": "true",
+        "conflict": "none"
+      }
+    },
+    {
+      "id": "V49",
+      "category": "positive_negative_pair",
+      "mode": "rule",
+      "description": "Explicit opposite observations of a required proposition cannot be silently resolved by weighting or last-write-wins.",
+      "rule_id": "S_NECESSARY",
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "eligible_positive",
+            "fact_id": "eligible_positive",
+            "predicate": "eligible",
+            "args": [
+              "patient"
+            ],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "A_positive",
+            "fact_id": "A_positive",
+            "predicate": "A",
+            "args": [],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "A_negative",
+            "fact_id": "A_negative",
+            "predicate": "A",
+            "args": [],
+            "sign": "negative"
+          },
+          {
+            "assertion_id": "B_positive",
+            "fact_id": "B_positive",
+            "predicate": "B",
+            "args": [],
+            "sign": "positive"
+          }
+        ],
+        "false_is_decisive": true
+      },
+      "expected": {
+        "value": "unknown",
+        "conflict": "present",
+        "action": "none",
+        "reason": "unresolved_conflict"
+      }
+    },
+    {
+      "id": "V50",
+      "category": "false_not_decisive",
+      "mode": "rule",
+      "description": "A runtime without certified decisive-negative evidence is not allowed to use a necessary FALSE for hard exclusion.",
+      "rule_id": "S_NECESSARY",
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "eligible_positive",
+            "fact_id": "eligible_positive",
+            "predicate": "eligible",
+            "args": [
+              "patient"
+            ],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "A_negative",
+            "fact_id": "A_negative",
+            "predicate": "A",
+            "args": [],
+            "sign": "negative"
+          }
+        ]
+      },
+      "expected": {
+        "value": "false",
+        "conflict": "none",
+        "action": "none"
+      }
+    },
+    {
+      "id": "V51",
+      "category": "leaf_effect_rejected",
+      "mode": "invalid_structure",
+      "description": "No atomic member may acquire a different relation/effect within this Rule.",
+      "expression": {
+        "op": "atom",
+        "predicate": "A",
+        "args": [],
+        "relation": "excludes"
+      },
+      "expected_error": "leaf_or_group_has_independent_effect"
+    },
+    {
+      "id": "V52",
+      "category": "free_variable_rejected",
+      "mode": "invalid_structure",
+      "description": "Quantified arguments require an explicit bound variable and domain.",
+      "expression": {
+        "op": "atom",
+        "predicate": "P",
+        "args": [
+          "$x"
+        ]
+      },
+      "expected_error": "unbound_variable"
+    },
+    {
+      "id": "V53",
+      "category": "score_duplicate_rejected",
+      "mode": "invalid_structure",
+      "description": "Repeated retrieval of the same score feature cannot create a second score term.",
+      "expression": {
+        "op": "signed_score",
+        "terms": [
+          {
+            "feature_id": "feature_A",
+            "weight": 2,
+            "condition": {
+              "op": "atom",
+              "predicate": "A",
+              "args": []
+            }
+          },
+          {
+            "feature_id": "feature_A",
+            "weight": 2,
+            "condition": {
+              "op": "atom",
+              "predicate": "A",
+              "args": []
+            }
+          }
+        ]
+      },
+      "expected_error": "duplicate_score_feature"
+    },
+    {
+      "id": "V54",
+      "category": "permission_policy",
+      "mode": "rule",
+      "description": "The same permission policy still prohibits the specified inference when an independent D-negative assertion is supplied; policy does not decide D truth.",
+      "rule_id": "S_POLICY",
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "eligible_positive",
+            "fact_id": "eligible_positive",
+            "predicate": "eligible",
+            "args": [
+              "patient"
+            ],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "uses_evidence_X_for_exclusion_positive",
+            "fact_id": "uses_evidence_X_for_exclusion_positive",
+            "predicate": "uses_evidence_X_for_exclusion",
+            "args": [
+              "patient"
+            ],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "D_negative",
+            "fact_id": "D_negative",
+            "predicate": "D",
+            "args": [],
+            "sign": "negative"
+          }
+        ]
+      },
+      "expected": {
+        "value": "true",
+        "conflict": "none",
+        "action": "deny_exclusion_permission"
+      }
+    },
+    {
+      "id": "V55",
+      "category": "permission_not_material_negation",
+      "mode": "expression",
+      "description": "For A=TRUE,D=FALSE, NOT(A implies NOT D) is FALSE, while the permission policy in V54 still applies. This distinguishes the output layers.",
+      "expression": {
+        "op": "not",
+        "child": {
+          "op": "implies",
+          "antecedent": {
+            "op": "atom",
+            "predicate": "A",
+            "args": []
+          },
+          "consequent": {
+            "op": "not",
+            "child": {
+              "op": "atom",
+              "predicate": "D",
+              "args": []
+            }
+          }
+        }
+      },
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "A_positive",
+            "fact_id": "A_positive",
+            "predicate": "A",
+            "args": [],
+            "sign": "positive"
+          },
+          {
+            "assertion_id": "D_positive",
+            "fact_id": "D_positive",
+            "predicate": "D",
+            "args": [],
+            "sign": "negative"
+          }
+        ]
+      },
+      "expected": {
+        "value": "false",
+        "conflict": "none"
+      }
+    },
+    {
+      "id": "V56",
+      "category": "classical_equivalence_not_K3_equivalence",
+      "mode": "expression",
+      "description": "For unobserved A, A OR NOT A is UNKNOWN under K3; classical tautology elimination would change runtime behavior.",
+      "expression": {
+        "op": "or",
+        "children": [
+          {
+            "op": "atom",
+            "predicate": "A",
+            "args": []
+          },
+          {
+            "op": "not",
+            "child": {
+              "op": "atom",
+              "predicate": "A",
+              "args": []
+            }
+          }
+        ]
+      },
+      "context": {
+        "facts": []
+      },
+      "expected": {
+        "value": "unknown",
+        "conflict": "none"
+      }
+    },
+    {
+      "id": "V57",
+      "category": "classical_equivalence_not_K3_equivalence",
+      "mode": "expression",
+      "description": "For the same empty observation model, literal TRUE is TRUE. V56/V57 are the cross-profile equivalence counterexample.",
+      "expression": {
+        "op": "literal",
+        "value": "true"
+      },
+      "context": {
+        "facts": []
+      },
+      "expected": {
+        "value": "true",
+        "conflict": "none"
+      }
+    },
+    {
+      "id": "V58",
+      "category": "classical_equivalence_not_K3_equivalence",
+      "mode": "expression",
+      "description": "With A explicitly positive, A OR NOT A is TRUE; the unknown counterexample does not deny its classical tautology status.",
+      "expression": {
+        "op": "or",
+        "children": [
+          {
+            "op": "atom",
+            "predicate": "A",
+            "args": []
+          },
+          {
+            "op": "not",
+            "child": {
+              "op": "atom",
+              "predicate": "A",
+              "args": []
+            }
+          }
+        ]
+      },
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "A_positive",
+            "fact_id": "A_positive",
+            "predicate": "A",
+            "args": [],
+            "sign": "positive"
+          }
+        ]
+      },
+      "expected": {
+        "value": "true",
+        "conflict": "none"
+      }
+    },
+    {
+      "id": "V59",
+      "category": "classical_equivalence_not_K3_equivalence",
+      "mode": "expression",
+      "description": "With A explicitly negative, A OR NOT A is also TRUE; the classical comparison quantifies complete two-valued assignments.",
+      "expression": {
+        "op": "or",
+        "children": [
+          {
+            "op": "atom",
+            "predicate": "A",
+            "args": []
+          },
+          {
+            "op": "not",
+            "child": {
+              "op": "atom",
+              "predicate": "A",
+              "args": []
+            }
+          }
+        ]
+      },
+      "context": {
+        "facts": [
+          {
+            "assertion_id": "A_negative",
+            "fact_id": "A_negative",
+            "predicate": "A",
+            "args": [],
+            "sign": "negative"
+          }
+        ]
+      },
+      "expected": {
+        "value": "true",
+        "conflict": "none"
+      }
+    }
+  ],
+  "logic_profile_id": "strong_kleene_3_with_conflict_v1"
+}

@@ -1,0 +1,261 @@
+{
+  "review_date": "2026-09-05",
+  "scope": "Primary-source review of controlled language, compositional semantics, constrained decoding and formal synthesis; no source-to-clinical-formula accuracy claims transferred from code or general-language benchmarks.",
+  "sources": [
+    {
+      "id": "SP01",
+      "title": "Discourse Representation Structures for ACE 6.7 / Attempto Parsing Engine",
+      "year": 2013,
+      "url": "https://attempto.ifi.uzh.ch/site/pubs/papers/drs_report_67.pdf",
+      "primary_type": "Author technical report and official language/parser documentation",
+      "code_url": "https://github.com/Attempto/APE",
+      "representation": "Nested DRS with typed predicate arguments, implication/disjunction, classical negation, explicit modal extensions; FOL/PNF/TPTP exports for supported representations.",
+      "method": "A precisely controlled input language fixes coordination, quantifier scope and reference interpretation; parser compiles that language and exposes paraphrases and source sentence/token anchors.",
+      "verification_guarantee": "Unambiguous interpretation relative to ACE rules for accepted ACE text; deterministic compiler/export behavior is distinct from an LLM translation claim.",
+      "not_guaranteed": "Arbitrary guideline-to-ACE fidelity, intended clinical scope, author intent, corpus completeness. ACE 6.7 modal/negation-as-failure extensions must not all be mislabeled ordinary FOL.",
+      "evaluation": "Specification examples and executable parser interface, not a held-out arbitrary-guideline extraction accuracy benchmark.",
+      "transfer_to_repo": "Reference for audited controlled paraphrases, predicate/role/source anchors and distinguishing logical negation from failure-to-prove; adaptation requires independent source-to-paraphrase adjudication.",
+      "source_locations": [
+        {
+          "url": "https://attempto.ifi.uzh.ch/site/pubs/papers/drs_report_67.pdf",
+          "location": "§2.4.1–2.4.8, §2.5, §3.7; printed pp10–14,20–21",
+          "supports": "nested operators, distinct negations, source sentence/token numbers, cardinality scope"
+        },
+        {
+          "url": "https://attempto.ifi.uzh.ch/site/docs/ace_interpretationrules.html",
+          "location": "Coordination; Scope of Subordinated Sentences; Quantifiers; Anaphora Resolution",
+          "supports": "fixed interpretation and ambiguity-restricting conventions"
+        },
+        {
+          "url": "https://github.com/Attempto/APE",
+          "location": "README command-line arguments -solo, -cparaphrase, -cfol, -cpnf, -ctptp",
+          "supports": "actual parser outputs and controlled paraphrase interface"
+        }
+      ]
+    },
+    {
+      "id": "SP02",
+      "title": "Minimal Recursion Semantics: An Introduction",
+      "year": 2005,
+      "url": "https://www.cl.cam.ac.uk/~aac10/papers/mrs.pdf",
+      "primary_type": "Author-hosted research paper, supplemented by author research and official ERG documentation",
+      "code_url": null,
+      "representation": "Elementary predications plus handles, quantifier bound variables, restrictor/body and scope constraints; underspecified predicate calculus with generalized quantifiers, not merely an unordered triple set.",
+      "method": "Compositional grammar preserves semantic arguments while factoring out scope into explicit links; unresolved scope can denote multiple compatible readings.",
+      "verification_guarantee": "Representation preserves constraints under the specified compositional formalism; it permits reconstructing scope instead of erasing it.",
+      "not_guaranteed": "Correct selection of the intended reading from arbitrary clinical prose; fully resolved scope from syntax alone; reduction of all generalized quantifiers to ordinary FOL.",
+      "evaluation": "Formal representation/composition analysis and integration with broad-coverage HPSG; no reported universal clinical extraction score.",
+      "transfer_to_repo": "Strong counterexample to predicate-bag extraction; domains, roles and scope links must survive any flat storage. Preserving ambiguity is preferable to inventing a unique clinical scope.",
+      "source_locations": [
+        {
+          "url": "https://www.cl.cam.ac.uk/~aac10/papers/mrs.pdf",
+          "location": "§2 examples(5)–(7); §3 examples(15)–(18); §4; author PDF pp3,6–7",
+          "supports": "scope-erased forms confound different universal statements; scope underspecification and restrictor/body"
+        },
+        {
+          "url": "https://aclanthology.org/W07-1210.pdf",
+          "location": "§1–2 and §6; pp73–75,80",
+          "supports": "RMRS argument underspecification, algebra constraints and need for a grammar checker"
+        },
+        {
+          "url": "https://delph-in.github.io/docs/erg/ErgSemantics_Quantification/",
+          "location": "Overview of Quantification; Predicate hierarchy",
+          "supports": "ARG0/RSTR/BODY, syntactically partial scope, generalized quantifiers including most"
+        }
+      ]
+    },
+    {
+      "id": "SP03",
+      "title": "Wide-Coverage Semantic Analysis with Boxer",
+      "year": 2008,
+      "url": "https://aclanthology.org/W08-2222.pdf",
+      "primary_type": "Primary conference paper",
+      "code_url": null,
+      "representation": "CCG-derived DRS, event variables and thematic roles, with FOL translation.",
+      "method": "Lexical semantics plus compositional derivation, followed by separate anaphora/presupposition resolution.",
+      "verification_guarantee": "Produces formally interpretable representations for accepted parses; it does not certify the parse or lexical interpretation.",
+      "not_guaranteed": "Source faithfulness, coreference, measurement interpretation or coordination scope; author explicitly reports failures.",
+      "evaluation": ">95% newswire coverage and complete DRSs for seven shared-task texts; authors explicitly lack gold representations to quantify semantic quality.",
+      "transfer_to_repo": "Useful component separation and event-role representation; coverage must not be reported as fidelity. Clinical causation/passive-role cases need their own validation.",
+      "source_locations": [
+        {
+          "url": "https://aclanthology.org/W08-2222.pdf",
+          "location": "§2–3; §3.4 cervical-cancer example; §4–5 pp283–285",
+          "supports": "composition, unresolved pronouns, role successes, measurement failures and unavailable gold accuracy"
+        },
+        {
+          "url": "https://pmb.let.rug.nl/software.php",
+          "location": "Software list",
+          "supports": "official PMB identifies Boxer as its CCG-to-DRS component; original historical C&C source URL was not revalidated as a live download"
+        }
+      ]
+    },
+    {
+      "id": "SP04",
+      "title": "The Parallel Meaning Bank: Towards a Multilingual Corpus of Translations Annotated with Compositional Meaning Representations",
+      "year": 2017,
+      "url": "https://aclanthology.org/E17-2039.pdf",
+      "primary_type": "Primary corpus/system paper and official data documentation",
+      "code_url": "https://pmb.let.rug.nl/software.php",
+      "representation": "Compositional DRS with layered tokenization, CCG syntax, semantic tags and normalized symbols.",
+      "method": "Automatic annotation plus persistent human corrections; conflicts with previously checked annotations are sent to expert re-adjudication.",
+      "verification_guarantee": "Explicit human-verification status and correction provenance; gold, silver and bronze do not denote the same evidence quality.",
+      "not_guaranteed": "Automatic DRS correctness; bilingual alignment always preserving meaning; generalization to multi-page clinical lists.",
+      "evaluation": "2017 corpus construction/annotation counts. Official current data page lists v5.1.0 English gold=11,987 (2024-04-25), not an automatic extractor accuracy.",
+      "transfer_to_repo": "Source-first adjudicated rule units and reviewed-vs-machine-only status are supported by a mature semantic annotation workflow; operator/domain conflicts need targeted review.",
+      "source_locations": [
+        {
+          "url": "https://aclanthology.org/E17-2039.pdf",
+          "location": "§3.1–3.5; Figure2; §5 Adding Bits of Wisdom",
+          "supports": "compositional pipeline, NOT/POS tagging, persistent corrections and annotation-conflict review"
+        },
+        {
+          "url": "https://pmb.let.rug.nl/data.php",
+          "location": "Data definition and Meaning Representations release table",
+          "supports": "human checked gold/partial silver/machine bronze and 5.1.0 counts"
+        },
+        {
+          "url": "https://pmb.let.rug.nl/software.php",
+          "location": "Software",
+          "supports": "official pipeline components and links, not a single standalone source-to-FOL guarantee"
+        }
+      ]
+    },
+    {
+      "id": "SP05",
+      "title": "PICARD: Parsing Incrementally for Constrained Auto-Regressive Decoding from Language Models",
+      "year": 2021,
+      "url": "https://aclanthology.org/2021.emnlp-main.779.pdf",
+      "primary_type": "Primary EMNLP paper and authors' code repository",
+      "code_url": "https://github.com/servicenow/picard",
+      "representation": "SQL AST under lexical, grammar and table/alias scope guards.",
+      "method": "Incremental parser rejects inadmissible tokens during beam search; guards use declared database schema and symbol scope.",
+      "verification_guarantee": "Constraints implemented by parser/guards on successfully completed parses; output may still fail if beam search finds no valid completion.",
+      "not_guaranteed": "Correct query intent, source implication direction, all type checks, or faithful clinical interpretation. Paper leaves further type guards to future work.",
+      "evaluation": "T5-3B Spider development execution errors 12%→2%; exact-set match=75.5%, execution match=79.3%; these are separate endpoints.",
+      "transfer_to_repo": "Evidence for recursive syntax and binding guards. A syntactically valid excludes rule can still reverse the source; decoder constraints alone cannot adjudicate that.",
+      "source_locations": [
+        {
+          "url": "https://aclanthology.org/2021.emnlp-main.779.pdf",
+          "location": "§2.1–2.3; §3 metrics/results pp9897–9898",
+          "supports": "lexing/parsing/scope guards, remaining checks, incomplete beam outcomes and distinct accuracy metrics"
+        },
+        {
+          "url": "https://github.com/servicenow/picard",
+          "location": "How does PICARD work?; How well does PICARD work?",
+          "supports": "continuation parser behavior, original model links, exact/exec scores and execution error reduction"
+        },
+        {
+          "url": "https://github.com/ServiceNow/picard/blob/main/picard/src/Language/SQL/SpiderSQL/Parse.hs",
+          "location": "ParserState; alias scope comments; GuardTableColumn, GuardAliasColumn, GuardColumn; withGuards",
+          "supports": "actual stored scope/alias environment and reference guards; current code inspection is not retroactively a 2021 feature claim"
+        }
+      ]
+    },
+    {
+      "id": "SP06",
+      "title": "Synchromesh: Reliable Code Generation from Pre-trained Language Models",
+      "year": 2022,
+      "url": "https://arxiv.org/pdf/2201.11227",
+      "primary_type": "Primary ICLR paper and Microsoft Research publication page",
+      "code_url": null,
+      "code_status": "No author-maintained implementation link established from the primary paper/publication page; the retrieved kanishkg/synchromesh repository explicitly labels itself unofficial and was not used as primary implementation evidence.",
+      "representation": "SQL, Vega-Lite and SMCalFlow programs with completion engines enforcing syntax, scope, types and context-specific constraints.",
+      "method": "Constrained Semantic Decoding plus examples retrieved by target AST similarity (TST). Guarantees are relative to implemented completion-engine constraints.",
+      "verification_guarantee": "Completed generated programs satisfy the CE constraints under the stated CE axioms/decoding assumptions.",
+      "not_guaranteed": "Conceptual fidelity to natural-language intent; §4.2 explicitly supplies a valid-but-wrong visualization counterexample. Original domains are not Turing-complete Python.",
+      "evaluation": "Table2 Codex175B SQL CSD+TST: validity85%, execution match64%; SMCalFlow validity99%, exact match63%. Validity is not intent correctness.",
+      "transfer_to_repo": "Typed/domain-aware completion and examples selected by logical form are relevant; neither certifies which connective or implication the guideline intended.",
+      "source_locations": [
+        {
+          "url": "https://arxiv.org/pdf/2201.11227",
+          "location": "§2 TST; §3.1–3.3 CE axioms/algorithm; Table2; §4.2; §6",
+          "supports": "AST example similarity, constraint guarantee, measured validity/accuracy split, explicit conceptual-error and language-scope limits"
+        },
+        {
+          "url": "https://www.microsoft.com/en-us/research/publication/synchromesh-reliable-code-generation-from-pre-trained-language-models/",
+          "location": "Publication abstract and ICLR2022 metadata",
+          "supports": "author/team provenance, target languages and public paper link"
+        }
+      ]
+    },
+    {
+      "id": "SP07",
+      "title": "Type-Constrained Code Generation with Language Models",
+      "year": 2025,
+      "url": "https://arxiv.org/pdf/2504.09246",
+      "primary_type": "Primary PLDI paper and authors' reproduction package",
+      "code_url": "https://github.com/eth-sri/type-constrained-code-generation",
+      "representation": "Simply typed language LB and TypeScript implementation using prefix automata and a type environment.",
+      "method": "Type search checks whether a partial expression can still be completed to an expression of the required type, beyond grammar-only masking.",
+      "verification_guarantee": "Sound well-typed completion for the covered language subset and completed generation; the formal construction intentionally sacrifices completeness for type-search termination.",
+      "not_guaranteed": "All TypeScript features, higher-order type completeness, functional correctness or correspondence to natural-language specifications. Prefix completable does not guarantee that the LLM terminates or stays within token/time budgets; §6 reports loops/truncations among remaining compiler errors.",
+      "evaluation": "TypeScript HumanEval/MBPP synthesis, translation and repair; paper reports compilation errors reduced by more than half and relative functional-correctness gains3.5%–5.5% for synthesis/translation.",
+      "transfer_to_repo": "Domain/role/quantity typing can rule out impossible bindings but not a well-typed donor/recipient swap or valid-yet-reversed logical rule.",
+      "source_locations": [
+        {
+          "url": "https://arxiv.org/pdf/2504.09246",
+          "location": "§2.2; §3.1–3.4; §4 limitations; §5; AppendixA.3; §6 Remaining Compiler Errors",
+          "supports": "syntax-vs-type distinction, prefix completion, intentionally incomplete covered subset and empirical endpoints; distinction between prefix-completion guarantee and actual generation termination"
+        },
+        {
+          "url": "https://github.com/eth-sri/type-constrained-code-generation",
+          "location": "Incremental TypeScript parsing; Reproducing experiments",
+          "supports": "actual parser interface, incomplete-prefix examples and reproduction package"
+        }
+      ]
+    },
+    {
+      "id": "SP08",
+      "title": "Combinatorial Sketching for Finite Programs",
+      "year": 2006,
+      "url": "https://people.csail.mit.edu/asolar/papers/asplos06-final.pdf",
+      "primary_type": "Primary ASPLOS research paper and author code repository",
+      "code_url": "https://github.com/asolarlez/sketch-frontend",
+      "representation": "Finite programs with holes plus a separate formal executable specification; synthesis problem uses bounded input semantics.",
+      "method": "Two SAT solvers alternate synthesis and verification; a violating input becomes a new synthesis constraint until the formal specification is met.",
+      "verification_guarantee": "Correctness relative to the supplied formal specification and finite domain; theoretical completion for a realizable sketch within the finite setup.",
+      "not_guaranteed": "That the formal specification faithfully captures an English guideline; unbounded/general-purpose correctness or practical termination within any fixed budget.",
+      "evaluation": "Finite programming kernels including AES; not text-to-FOL extraction or clinical diagnosis.",
+      "transfer_to_repo": "Counterexamples can discriminate candidate formula/executor variants only when an independently grounded reference behavior or specification exists; a self-generated specification can certify its own mistake.",
+      "source_locations": [
+        {
+          "url": "https://people.csail.mit.edu/asolar/papers/asplos06-final.pdf",
+          "location": "§1, §3 finite-program definition; §4 semantics; §5.4 Figure4; §6",
+          "supports": "formal-specification boundary, synthesize-verify counterexamples and bounded-domain guarantee"
+        },
+        {
+          "url": "https://github.com/asolarlez/sketch-frontend",
+          "location": "Repository docs/SketchManual, benchmarks, source and README",
+          "supports": "author-associated implementation availability; no claim of reproducing it in this audit"
+        }
+      ]
+    },
+    {
+      "id": "SP09",
+      "title": "LogicNG: Normal Form Transformations",
+      "year": null,
+      "url": "https://www.logicng.org/documentation/formulas/operations/transformations/normal-form-transformations/",
+      "primary_type": "Official library documentation, accessed2026-09-05",
+      "code_url": "https://github.com/logic-ng/LogicNG",
+      "representation": "Propositional formula trees, NNF/CNF/DNF, auxiliary-variable encodings.",
+      "method": "Separate equivalent factorization from Tseitin/Plaisted-Greenbaum equisatisfiable transforms; preserve subformula definitions for SAT-oriented compilation.",
+      "verification_guarantee": "Truth-equivalent transformation or equisatisfiability as specified by the selected algorithm, assuming the input formula is correct. For full definitional Tseitin encoding with an asserted root, phi(x) iff exists z T(x,z), preserving models projected onto original variables; this is stronger than equisatisfiability alone.",
+      "not_guaranteed": "Source-to-formula fidelity; equisatisfiability alone is not pointwise equivalence over all original and auxiliary variable assignments.",
+      "evaluation": "Algorithm specification and worked examples; no extraction performance experiment.",
+      "transfer_to_repo": "CNF/DNF need not be the extraction surface form. Retain source AST/graph; canonicalization can be a downstream operation, with auxiliary-variable semantics explicit.",
+      "source_locations": [
+        {
+          "url": "https://www.logicng.org/documentation/formulas/operations/transformations/normal-form-transformations/",
+          "location": "CNF Transformations; CNF Factorization; Tseitin Transformation; Plaisted-Greenbaum Transformation",
+          "supports": "exponential expansion risk, auxiliary variables, equivalence versus equisatisfiability"
+        },
+        {
+          "url": "https://avigad.github.io/lamr/decision_procedures_for_propositional_logic.html",
+          "location": "§6.1 The Tseitin transformation",
+          "supports": "official author textbook explanation of exponential equivalent CNF versus equisatisfiable encoding; auxiliary definitions, extending assignments and projecting models"
+        }
+      ]
+    }
+  ]
+}

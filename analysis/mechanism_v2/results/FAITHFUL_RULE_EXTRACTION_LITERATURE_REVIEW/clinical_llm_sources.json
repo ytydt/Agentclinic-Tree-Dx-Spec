@@ -1,0 +1,528 @@
+{
+  "scope": "Focused clinical literature review; eight sources, seven full papers plus one abstract/official-code study. Not systematic-review prevalence estimation.",
+  "sources": [
+    {
+      "id": "CL01",
+      "title": "CPGPrompt: Translating Clinical Guidelines into LLM-Executable Decision Support",
+      "year": 2026,
+      "url": "https://arxiv.org/html/2601.03475v1",
+      "primary_type": "primary preprint; journal publication independently identified",
+      "code_url": "https://github.com/bionlplab/CPGPrompt",
+      "representation": "JSON threshold decision tree: name, yes_action, no_node, criteria:[str], min_criteria:int.",
+      "method": "Manual passage selection; LLM local subtrees; merge; every tree manually validated, with regeneration and manual adjustment; LLM leaf queries.",
+      "verification_guarantee": "Program applies min_criteria before a group action; no source-equivalence theorem.",
+      "not_guaranteed": "No automated extraction fidelity rate; no recursive criterion AST; binary response parser lacks unknown; free-text leaf semantics remain LLM-dependent.",
+      "evaluation": "Synthetic referral/pathway evaluation. Table 2 headache binary F1 .90 and fine-grained macro F1 .44; low-back-pain set has 99/99 referral-positive cases. Vignettes were generated from validated trees; three clinicians checked 10 cases per domain, so the execution test is not an independent check of source omissions shared with those trees.",
+      "transfer_to_repo": "522: group threshold distinct from leaf support. 74/49: path and patient-query correctness remain separate. Do not copy name identity or sequential no-branch merge.",
+      "source_locations": {
+        "paper": "Sections 2.1-2.3, 3; Tables 1-3",
+        "code": [
+          "text2tree.py: Node/generate_decision_tree",
+          "merge_tree.py: merge_decision_tree_sections",
+          "traverse_tree.py: ask_gpt_for_decision/traverse_decision_tree_with_gpt"
+        ],
+        "journal": "https://academic.oup.com/jamia/article/33/4/855/8499741"
+      },
+      "code_commit": "aa6061e2f6b2e810f7c5897232f45ab223a956a2",
+      "full_text_read": true,
+      "code_read": true,
+      "accessed_at": "2026-09-05",
+      "retrieved_file_provenance": [
+        {
+          "bytes": 7298,
+          "sha256": "91ef5823e0925ddae198eca0e1cd2437d96b24738331d94dbe4a5836c04d668a",
+          "url": "https://raw.githubusercontent.com/bionlplab/CPGPrompt/main/traverse_tree.py"
+        }
+      ]
+    },
+    {
+      "id": "CL02",
+      "title": "Text2MDT: Extracting Medical Decision Trees from Medical Texts",
+      "year": 2024,
+      "url": "https://arxiv.org/html/2401.02034v1",
+      "primary_type": "primary research preprint",
+      "code_url": "https://github.com/michael-wzhu/text2dt",
+      "representation": "Binary decision tree; node Role, Triplets, Logical_Rel (AND/OR/NULL); preorder serialization.",
+      "method": "Expert-involved Chinese annotation; triples → node grouping → assembly, compared with instruction-tuned end-to-end models and CoT variants.",
+      "verification_guarantee": "Human-reference exact whole-tree accuracy and decision-path F1; these measure agreement within the supported representation.",
+      "not_guaranteed": "Authors explicitly limit node logical combinations, multi-stage action continuation, and cross-paragraph knowledge. No general quantified FOL or zero-error guarantee.",
+      "evaluation": "Table 4: Baichuan2-7B CoT-Generation-3 TreeAcc .490, DP-F1 .632; pipeline .470/.631. Table 3 assembly-subtask .748 is not end-to-end fidelity. Test set n=100; reported scores average five runs, not one run with exactly 49/100 correct.",
+      "transfer_to_repo": "522: separate atom/group/tree scores and preserve logical_rel. 56: condition and action roles cannot collapse into one disease relation. Multi-depth structure remains harder.",
+      "source_locations": {
+        "paper": "Sections 3, 5, 6.1, 6.5-6.7; Tables 3-7",
+        "code_access": "Paper-linked repo and API main/master returned unavailable/404 on access date; code not inspected."
+      },
+      "full_text_read": true,
+      "code_read": false,
+      "accessed_at": "2026-09-05",
+      "retrieved_file_provenance": [
+        {
+          "error": "HTTP Error 404: Not Found",
+          "url": "https://api.github.com/repos/michael-wzhu/text2dt/git/trees/master?recursive=1"
+        }
+      ]
+    },
+    {
+      "id": "CL03",
+      "title": "MedDM: LLM-executable clinical guidance tree for clinical decision-making",
+      "year": 2023,
+      "url": "https://arxiv.org/html/2312.02441v1",
+      "primary_type": "primary research preprint",
+      "code_url": null,
+      "representation": "Natural-language clinical guidance tree, root/condition/action nodes; hierarchical If/Elif/Else text (IEET).",
+      "method": "Flowchart shape/OCR/edge recognition, manual calibration and repair, then CGT conversion and further manual validation.",
+      "verification_guarantee": "Explicit Yes/No/Unable-to-determine interaction and inspectable flowchart paths; manual quality process, not formal equivalence proof.",
+      "not_guaranteed": "Already-structured source diagrams; no automatic source-fidelity rate or population-level diagnostic performance shown. Unknown fallback may ask LLM over subtree.",
+      "evaluation": "1202 curated trees: 443 differential diagnosis, 759 treatment. Two-pass flowchart calibration by 8 graduate students; later transformation validation by 7.",
+      "transfer_to_repo": "74/522: unknown must remain a state. Source diagram arrows aid direction; natural-language node interpretation still needs clinical audit. Cyclic workflow conversion can change semantics.",
+      "source_locations": {
+        "paper": "Sections 3.2-3.3, 4.3-4.6, 5; Table 1",
+        "code_access": "No official implementation link located in paper or targeted title/GitHub searches."
+      },
+      "full_text_read": true,
+      "code_read": false,
+      "accessed_at": "2026-09-05",
+      "retrieved_file_provenance": []
+    },
+    {
+      "id": "CL04",
+      "title": "Automatic Conversion of NICE Guidelines to an Executable Computational Model Using Large Language Models",
+      "year": 2026,
+      "url": "https://arxiv.org/pdf/2608.30022",
+      "primary_type": "primary journal paper, Learning Health Systems e70114",
+      "code_url": "https://github.com/Ashvin-Gupta/NICE-2-ASP",
+      "representation": "ASP constants, predicates, rules; Clingo executes patient facts plus normative rules; cardinality/choice constructs.",
+      "method": "D2K: constants → predicates → rules with six shared examples. K2P: LLM patient fact extraction. Three clinician reviewers compare source, ASP, controlled-language rendering.",
+      "verification_guarantee": "Executable stable-model semantics conditional on supplied rules/facts; source fidelity assessed empirically, not proven.",
+      "not_guaranteed": "Temporal procedure omissions, arity/qualifier loss, extraneous/missing patient facts, negation-as-failure on incomplete records. Hallucination definition broader than this repo audit.",
+      "evaluation": "20 pancreatic vignettes: mean recommendation F1 .825±.127; activate about64% of rules. Public reviewer CSV denominators and values differ from paper figure; separate recomputation below.",
+      "transfer_to_repo": "49/74: procedural order is not simple negation. 56/773: patient binding separated from guideline translation. Fixed source units needed before interpreting faithful/omitted percentages.",
+      "source_locations": {
+        "paper": "Sections 2.2-2.7, 3-4; Figure 6; Table 2; Appendix A",
+        "journal": "https://doi.org/10.1002/lrh2.70114",
+        "code": [
+          "src/input_files/D2K/*_prompt.txt",
+          "src/output_files/CLAUDE/reviews/human review D2K/reviewer[1-3]/*.csv"
+        ],
+        "pdf_sha256": "09a30d0eb12d43aedb56d67bac1e71f7d6a2e82fed8da16bd9c4b41faa6e84ee"
+      },
+      "code_commit": "9d9acadea2c8d4b7a4c60b5f7fff4eac5a81d57a",
+      "full_text_read": true,
+      "code_read": true,
+      "reviewer_csv_recomputation": {
+        "definition": "Mean of each of three reviewers category count / their CSV row count; categories 0 no-rule,1 correct,2 incorrect,3 missing-key-information,4 hallucination. These are row-rating percentages, not fixed-source faithful recall.",
+        "results": [
+          {
+            "cancer": "pancreatic",
+            "arm": "rulegen",
+            "reviewers": [
+              {
+                "reviewer": 1,
+                "n": 40,
+                "n_guideline_ids": 25,
+                "n_no_translation_placeholders": 2,
+                "counts": {
+                  "0": 2,
+                  "1": 32,
+                  "2": 1,
+                  "3": 5,
+                  "4": 0
+                }
+              },
+              {
+                "reviewer": 2,
+                "n": 40,
+                "n_guideline_ids": 25,
+                "n_no_translation_placeholders": 2,
+                "counts": {
+                  "0": 2,
+                  "1": 26,
+                  "2": 1,
+                  "3": 9,
+                  "4": 2
+                }
+              },
+              {
+                "reviewer": 3,
+                "n": 40,
+                "n_guideline_ids": 25,
+                "n_no_translation_placeholders": 2,
+                "counts": {
+                  "0": 2,
+                  "1": 28,
+                  "2": 3,
+                  "3": 6,
+                  "4": 1
+                }
+              }
+            ],
+            "mean_rating_percent": {
+              "0": 5.000000000000001,
+              "1": 71.66666666666667,
+              "2": 4.166666666666666,
+              "3": 16.666666666666664,
+              "4": 2.5000000000000004
+            }
+          },
+          {
+            "cancer": "pancreatic",
+            "arm": "in_context",
+            "reviewers": [
+              {
+                "reviewer": 1,
+                "n": 44,
+                "n_guideline_ids": 25,
+                "n_no_translation_placeholders": 2,
+                "counts": {
+                  "0": 4,
+                  "1": 31,
+                  "2": 1,
+                  "3": 8,
+                  "4": 0
+                }
+              },
+              {
+                "reviewer": 2,
+                "n": 44,
+                "n_guideline_ids": 25,
+                "n_no_translation_placeholders": 2,
+                "counts": {
+                  "0": 4,
+                  "1": 27,
+                  "2": 0,
+                  "3": 11,
+                  "4": 2
+                }
+              },
+              {
+                "reviewer": 3,
+                "n": 44,
+                "n_guideline_ids": 25,
+                "n_no_translation_placeholders": 2,
+                "counts": {
+                  "0": 3,
+                  "1": 30,
+                  "2": 0,
+                  "3": 9,
+                  "4": 2
+                }
+              }
+            ],
+            "mean_rating_percent": {
+              "0": 8.333333333333332,
+              "1": 66.66666666666666,
+              "2": 0.7575757575757576,
+              "3": 21.21212121212121,
+              "4": 3.0303030303030303
+            }
+          },
+          {
+            "cancer": "lung",
+            "arm": "rulegen",
+            "reviewers": [
+              {
+                "reviewer": 1,
+                "n": 56,
+                "n_guideline_ids": 36,
+                "n_no_translation_placeholders": 7,
+                "counts": {
+                  "0": 8,
+                  "1": 34,
+                  "2": 6,
+                  "3": 5,
+                  "4": 3
+                }
+              },
+              {
+                "reviewer": 2,
+                "n": 56,
+                "n_guideline_ids": 36,
+                "n_no_translation_placeholders": 7,
+                "counts": {
+                  "0": 7,
+                  "1": 32,
+                  "2": 5,
+                  "3": 10,
+                  "4": 2
+                }
+              },
+              {
+                "reviewer": 3,
+                "n": 56,
+                "n_guideline_ids": 36,
+                "n_no_translation_placeholders": 7,
+                "counts": {
+                  "0": 7,
+                  "1": 30,
+                  "2": 7,
+                  "3": 10,
+                  "4": 2
+                }
+              }
+            ],
+            "mean_rating_percent": {
+              "0": 13.095238095238097,
+              "1": 57.14285714285714,
+              "2": 10.714285714285714,
+              "3": 14.880952380952381,
+              "4": 4.166666666666666
+            }
+          },
+          {
+            "cancer": "lung",
+            "arm": "in_context",
+            "reviewers": [
+              {
+                "reviewer": 1,
+                "n": 59,
+                "n_guideline_ids": 36,
+                "n_no_translation_placeholders": 16,
+                "counts": {
+                  "0": 16,
+                  "1": 31,
+                  "2": 6,
+                  "3": 5,
+                  "4": 1
+                }
+              },
+              {
+                "reviewer": 2,
+                "n": 59,
+                "n_guideline_ids": 36,
+                "n_no_translation_placeholders": 16,
+                "counts": {
+                  "0": 16,
+                  "1": 40,
+                  "2": 3,
+                  "3": 0,
+                  "4": 0
+                }
+              },
+              {
+                "reviewer": 3,
+                "n": 59,
+                "n_guideline_ids": 36,
+                "n_no_translation_placeholders": 16,
+                "counts": {
+                  "0": 17,
+                  "1": 32,
+                  "2": 7,
+                  "3": 3,
+                  "4": 0
+                }
+              }
+            ],
+            "mean_rating_percent": {
+              "0": 27.683615819209038,
+              "1": 58.19209039548022,
+              "2": 9.03954802259887,
+              "3": 4.519774011299435,
+              "4": 0.5649717514124294
+            }
+          }
+        ]
+      },
+      "accessed_at": "2026-09-05",
+      "retrieved_file_provenance": [
+        {
+          "bytes": 20913,
+          "sha256": "d458cf1484b8f821060f9e6c779383d7f9711d320911f95ce38e204ea04adfac",
+          "url": "https://raw.githubusercontent.com/Ashvin-Gupta/NICE-2-ASP/main/src/output_files/CLAUDE/reviews/human%20review%20D2K/reviewer1/rule_review_in_context_lung_reviewer1.csv"
+        },
+        {
+          "bytes": 17779,
+          "sha256": "b5d49e5b82cd2bb9f39bb0552e9ea2e5a81e3f23a3ebb2ee3626a0951101ada1",
+          "url": "https://raw.githubusercontent.com/Ashvin-Gupta/NICE-2-ASP/main/src/output_files/CLAUDE/reviews/human%20review%20D2K/reviewer1/rule_review_in_context_pancreatic_reviewer1.csv"
+        },
+        {
+          "bytes": 20896,
+          "sha256": "1ba09c66f3f91ed31a9f290295b48abf84f4a1c46087b7310e49faccbb7df4b0",
+          "url": "https://raw.githubusercontent.com/Ashvin-Gupta/NICE-2-ASP/main/src/output_files/CLAUDE/reviews/human%20review%20D2K/reviewer1/rule_review_rulegen_lung_reviewer1.csv"
+        },
+        {
+          "bytes": 16138,
+          "sha256": "7809845bab40470f119a3eb81fc426d649c1b0c07d11f4c50b930631fd4cbaf9",
+          "url": "https://raw.githubusercontent.com/Ashvin-Gupta/NICE-2-ASP/main/src/output_files/CLAUDE/reviews/human%20review%20D2K/reviewer1/rule_review_rulegen_pancreatic_reviewer1.csv"
+        },
+        {
+          "bytes": 20705,
+          "sha256": "a30191ad1797e391b405cf81f0dffe5d7e6cd111a00dab225f5bbf866e7bca3c",
+          "url": "https://raw.githubusercontent.com/Ashvin-Gupta/NICE-2-ASP/main/src/output_files/CLAUDE/reviews/human%20review%20D2K/reviewer2/rule_review_in_context_lung_reviewer2.csv"
+        },
+        {
+          "bytes": 17622,
+          "sha256": "7d9cd4cf891ec78d5e1672afa390bc846c2db5a0f70343b815eaa25518422bb2",
+          "url": "https://raw.githubusercontent.com/Ashvin-Gupta/NICE-2-ASP/main/src/output_files/CLAUDE/reviews/human%20review%20D2K/reviewer2/rule_review_in_context_pancreatic_reviewer2.csv"
+        },
+        {
+          "bytes": 20795,
+          "sha256": "e8b9360d53790c079e60707e687dddc1f6e43b7772d25cb0340c48bd905e6499",
+          "url": "https://raw.githubusercontent.com/Ashvin-Gupta/NICE-2-ASP/main/src/output_files/CLAUDE/reviews/human%20review%20D2K/reviewer2/rule_review_rulegen_lung_reviewer2.csv"
+        },
+        {
+          "bytes": 16062,
+          "sha256": "1895fc61b64f9e47fd4a9e78298e89feeca140498a77c3a18656e0a40da1e1c8",
+          "url": "https://raw.githubusercontent.com/Ashvin-Gupta/NICE-2-ASP/main/src/output_files/CLAUDE/reviews/human%20review%20D2K/reviewer2/rule_review_rulegen_pancreatic_reviewer2.csv"
+        },
+        {
+          "bytes": 20936,
+          "sha256": "3d5f6c4ba46de5842313e8c7d7fa32e51ae174bb208b50900c2a5c105aaa1d3f",
+          "url": "https://raw.githubusercontent.com/Ashvin-Gupta/NICE-2-ASP/main/src/output_files/CLAUDE/reviews/human%20review%20D2K/reviewer3/rule_review_in_context_lung_reviewer3.csv"
+        },
+        {
+          "bytes": 17756,
+          "sha256": "f8478fe7ac6e55b4c95e147c12ee89ee49e17bfe0120e570080fd4a8801ef864",
+          "url": "https://raw.githubusercontent.com/Ashvin-Gupta/NICE-2-ASP/main/src/output_files/CLAUDE/reviews/human%20review%20D2K/reviewer3/rule_review_in_context_pancreatic_reviewer3.csv"
+        },
+        {
+          "bytes": 21005,
+          "sha256": "3a6764374d1dfcd2ad68a57615b15799379bbc69d4addc4017645d3e1c766e4a",
+          "url": "https://raw.githubusercontent.com/Ashvin-Gupta/NICE-2-ASP/main/src/output_files/CLAUDE/reviews/human%20review%20D2K/reviewer3/rule_review_rulegen_lung_reviewer3.csv"
+        },
+        {
+          "bytes": 16429,
+          "sha256": "7c46aacb8652b5ed86e846f320b8461bb7472635747d91d77c7303026ef9b36f",
+          "url": "https://raw.githubusercontent.com/Ashvin-Gupta/NICE-2-ASP/main/src/output_files/CLAUDE/reviews/human%20review%20D2K/reviewer3/rule_review_rulegen_pancreatic_reviewer3.csv"
+        }
+      ]
+    },
+    {
+      "id": "CL05",
+      "title": "From Guidelines to Code: Formalizing STOPP/START Criteria Using LLMs and RAG for Clinical Decision Support",
+      "year": 2025,
+      "url": "https://journals.sagepub.com/doi/10.3233/SHTI251492",
+      "primary_type": "primary conference proceedings paper",
+      "code_url": null,
+      "representation": "Python using expert-built Speak-PIM classes, condition presence/absence and STOPP/START actions; standardized ICD-10/LOINC/ATC entities.",
+      "method": "GPT-4o-mini extracts entities and maps retrieved codes; DeepSeek generates code with a one-shot example and framework constraints.",
+      "verification_guarantee": "Preliminary manual checks of entity extraction, mappings, class signatures and rule logic; no theorem or complete executable test suite reported.",
+      "not_guaranteed": "Only10 difficulty-selected rules; small observation count; manual framework took months; reproducibility concerns. Medication advice is not diagnosis confirmation.",
+      "evaluation": "Five STOPP/five START; reported entity extraction and framework logic correct; mapping F1 disease .92, medication .90, observation1.00.",
+      "transfer_to_repo": "56/91: ontology mapping must retain assay/concept identity. 522/773: performed test and result are different types. START/STOP action direction is distinct from diagnostic exclusion.",
+      "source_locations": {
+        "paper": "Sections 2.2, 3.2, 4; Tables 1-2",
+        "code_access": "No public pipeline implementation found in paper or targeted title/Speak-PIM searches."
+      },
+      "full_text_read": true,
+      "code_read": false,
+      "accessed_at": "2026-09-05",
+      "retrieved_file_provenance": []
+    },
+    {
+      "id": "CL06",
+      "title": "CliCARE: Grounding Large Language Models in Clinical Guidelines for Decision Support over Longitudinal Cancer Electronic Health Records",
+      "year": 2026,
+      "url": "https://arxiv.org/html/2507.22533v2",
+      "primary_type": "primary AAAI2026 paper; initial preprint2025",
+      "code_url": "https://github.com/sakurakawa1/CliCARE",
+      "representation": "Patient temporal event KG separate from normative guideline KG; path alignment and LLM recommendation generation.",
+      "method": "Timestamped event extraction/ontology linkage; guideline summarization→structured JSON→Neo4j; sum-of-max similarity path ranking, LLM rerank and expansion.",
+      "verification_guarantee": "Temporal and workflow representations are inspectable; no logical entailment or automated source-fidelity guarantee.",
+      "not_guaranteed": "KG edge presence is not AND/OR evaluation. Matching formula does not enforce distinct witnesses or order; source summarization remains lossy. Clinical output judge scores are not extractor precision.",
+      "evaluation": "CancerEHR and MIMIC-Cancer summary/recommendation evaluation using a clinician-validated LLM judge; source-rule exact fidelity not reported.",
+      "transfer_to_repo": "49/74: event timestamps and normative/descriptive separation useful. 522/773: do not inherit sum-max counting or treat stage/biomarker strings as typed predicates.",
+      "source_locations": {
+        "paper": "Sections 3.1-3.2 Eq3, 4.1-4.2; Appendix G",
+        "official_publication": "https://ojs.aaai.org/index.php/AAAI/article/view/40421/44382",
+        "code": [
+          "Process_data/KG/NCCN.py: TARGET_SCHEMA/process_chunk",
+          "Process_data/KG/build_KG.py",
+          "KG_Alignment/alignment.py"
+        ]
+      },
+      "code_commit": "6bc9be8458dfab1db1f117c173391ba82ef81f8a",
+      "full_text_read": true,
+      "code_read": true,
+      "accessed_at": "2026-09-05",
+      "retrieved_file_provenance": [
+        {
+          "bytes": 17173,
+          "sha256": "b8dba8c36b613b1d991f1bdf405855a6aae4d42f2f636b64791bc077d6247545",
+          "url": "https://raw.githubusercontent.com/sakurakawa1/CliCARE/main/Process_data/KG/NCCN.py"
+        },
+        {
+          "bytes": 22140,
+          "sha256": "70ee0422beb48345511faa4509fcdbe5edd8fc96772cd4c21fcf37436169f5bb",
+          "url": "https://raw.githubusercontent.com/sakurakawa1/CliCARE/main/Process_data/KG/build_KG.py"
+        },
+        {
+          "bytes": 46623,
+          "sha256": "3121e4a49d46345b5cbb4cabb046358156204e0b2e376982623e21c90e6b075a",
+          "url": "https://raw.githubusercontent.com/sakurakawa1/CliCARE/main/KG_Alignment/alignment.py"
+        }
+      ]
+    },
+    {
+      "id": "CL07",
+      "title": "MedGuideX: Internalizing Decision Logic from Executable Guidelines into Large Language Models for Clinical Reasoning",
+      "year": 2026,
+      "url": "https://arxiv.org/html/2605.26567v1",
+      "primary_type": "primary research preprint",
+      "code_url": null,
+      "representation": "Finite Boolean decision trees compiled to Python f(X); executable factual/counterfactual supervision for SFT/RL.",
+      "method": "Extract actionable recommendations; LLM tree validation; compile and test syntax/executability/tree consistency; execute functions for labels and rewards.",
+      "verification_guarantee": "Labels consistent with accepted executable function on evaluated inputs; no guarantee function or variable schema matches source semantics.",
+      "not_guaranteed": "No independently adjudicated source-level fidelity rate found. Complete Boolean assignments hide clinical unknowns. Counterfactual filtering discards unchanged outputs.",
+      "evaluation": "Appendix C:3796 retained recommendations→2800 LLM-validated trees→2793 executable functions. These are filtering yields, not extraction accuracy. Physician preference study evaluates30 already-correct diagnostic cases.",
+      "transfer_to_repo": "74/522: program-derived paired tests are promising; retain invariant as well as changing examples. 49/56/773: ensure source/binding oracle before self-consistent program supervision.",
+      "source_locations": {
+        "paper": "Sections 3-4, 5.4; Appendix C.2-C.3; Table4",
+        "code_access": "No official implementation link found in full text or targeted title/author searches."
+      },
+      "full_text_read": true,
+      "code_read": false,
+      "accessed_at": "2026-09-05",
+      "retrieved_file_provenance": []
+    },
+    {
+      "id": "CL08",
+      "title": "Decision Tree Extraction for Clinical Decision Support System With If-Else Pseudocode and PlanSelect Strategy",
+      "year": 2025,
+      "url": "https://doi.org/10.1109/JBHI.2025.3529682",
+      "primary_type": "primary journal abstract plus official implementation",
+      "code_url": "https://github.com/nlper-hou/TSDTE",
+      "representation": "If/elif/else pseudocode skeleton filled with extracted triples; node role C/D and logical_rel and/or/null.",
+      "method": "Pseudocode structure followed by constrained triplet selection and node logic; inspectable intermediate files and tree/path equality evaluator.",
+      "verification_guarantee": "Official evaluator includes role, logical_rel and triples in tree/path equality; no source-equivalence guarantee.",
+      "not_guaranteed": "Full publisher PDF could not be fetched; do not cite unverified comparative numerical gains. Code permits condition deletion when no triple found and compresses descendants; single node logic remains and/or.",
+      "evaluation": "Official abstract reports Text2DT/EMDT and downstream CMBClin/MedQA. Local read confirms metrics implementation, not the reported score reproducibility.",
+      "transfer_to_repo": "522: separate skeleton, leaf alignment and logic; 56/74: node-fill failure must not silently promote a decision into a broader scope. Relation type determines C/D, so relation errors remain causal.",
+      "source_locations": {
+        "abstract": "https://pubmed.ncbi.nlm.nih.gov/40030896/",
+        "publisher_pdf_attempt": "https://ieeexplore.ieee.org/iel8/6221020/10989059/10842360.pdf",
+        "code": [
+          "main_en.py",
+          "Prompt.py: prompt_logical_pred",
+          "Pseudocode.py: classify_triplet/convert_pseudocode2DT",
+          "evaluate/eval_func.py: is_tree_equal/is_path_equal"
+        ]
+      },
+      "code_commit": "299159c41f7a564cb00a70dd01f32d8cb500175d",
+      "full_text_read": false,
+      "code_read": true,
+      "accessed_at": "2026-09-05",
+      "retrieved_file_provenance": [
+        {
+          "bytes": 51286,
+          "sha256": "ca4e5e8d1f1abd25c583e32ee85d52c243b8eade4fb210c3ea5b018830cb2ed2",
+          "url": "https://raw.githubusercontent.com/nlper-hou/TSDTE/main/Prompt.py"
+        },
+        {
+          "bytes": 2940,
+          "sha256": "345f3b8db4691c5f3c797ab30b05662f5bdf5663eb9303fd3003db1ecc623d51",
+          "url": "https://raw.githubusercontent.com/nlper-hou/TSDTE/main/main_en.py"
+        },
+        {
+          "bytes": 9911,
+          "sha256": "0a29efe7dd271441f51d2466f7338bbf5d2141bd0dab456051b5f31dd5ca9991",
+          "url": "https://raw.githubusercontent.com/nlper-hou/TSDTE/main/evaluate/eval_func.py"
+        },
+        {
+          "bytes": 22191,
+          "sha256": "0567a34f02387944fbcf101418d9a4ab9ff238ebc3a98a194e7a4ab7ff544597",
+          "url": "https://raw.githubusercontent.com/nlper-hou/TSDTE/main/Pseudocode.py"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,403 @@
+[
+  {
+    "id": "MF01_LINC",
+    "title": "LINC: A Neurosymbolic Approach for Logical Reasoning by Combining Language Models with First-Order Logic Provers",
+    "year": 2023,
+    "url": "https://aclanthology.org/2023.emnlp-main.313/",
+    "primary_type": "EMNLP peer-reviewed paper",
+    "code_url": "https://github.com/benlipkin/linc",
+    "representation": "Prover9 FOL; premises and conclusion",
+    "method": "Few-shot NL→FOL, prover labels, ten-sample majority vote.",
+    "verification_guarantee": "Prover derivation is relative to generated formulas.",
+    "not_guaranteed": [
+      "Source fidelity",
+      "Implicit typing and predicate decomposition",
+      "Translation error independence across samples"
+    ],
+    "evaluation": {
+      "endpoint": "Final True/False/Uncertain accuracy",
+      "FOLIO": {
+        "n": 182,
+        "GPT4_LINC": 72.5,
+        "GPT4_CoT": 75.3
+      },
+      "ProofWriter": {
+        "n": 360,
+        "GPT4_LINC": 98.3,
+        "GPT4_CoT": 72.2
+      },
+      "caveat": "FOLIO removes 22 problematic examples from the historical 204; not directly comparable to other FOLIO versions.",
+      "aggregation": "Figure 3: mean accuracy from bootstrapped 10-way majority votes for LINC and comparators, including CoT."
+    },
+    "transfer_to_repo": "Useful solver baseline and explicit unknown; macro predicates and missing types resemble component loss in case 522.",
+    "source_locations": [
+      "PDF §§2–3, §4/Table 1, §5.1–5.2",
+      "https://aclanthology.org/2023.emnlp-main.313.pdf",
+      "Official repository README",
+      "PDF Figure 3: bootstrapped ten-way voting"
+    ],
+    "code_status": "Repository inspected; not executed"
+  },
+  {
+    "id": "MF02_LOGIC_LM",
+    "title": "Logic-LM: Empowering Large Language Models with Symbolic Solvers for Faithful Logical Reasoning",
+    "year": 2023,
+    "url": "https://aclanthology.org/2023.findings-emnlp.248/",
+    "primary_type": "Findings EMNLP peer-reviewed paper",
+    "code_url": "https://github.com/teacherpeterpan/Logic-LLM",
+    "representation": "Task-specific logic programming, FOL, CSP, SMT",
+    "method": "Sentence/formula alignment, solver execution, error-message self-refinement, CoT fallback.",
+    "verification_guarantee": "Execution and solver checks conditional on representation.",
+    "not_guaranteed": [
+      "Executable formulas can invert direction or scope",
+      "Refinement is not guaranteed semantically monotone"
+    ],
+    "evaluation": {
+      "endpoint": "Final answer accuracy; execution rate and conditional execution accuracy",
+      "GPT4_FOLIO_before_after_SR": {
+        "execution_rate": [
+          79.9,
+          85.8
+        ],
+        "execution_accuracy": [
+          80.4,
+          79.9
+        ]
+      }
+    },
+    "transfer_to_repo": "CNF compilation can follow semantic parsing; syntax repair alone does not fix case 74 polarity or case 119 false hard confirmation.",
+    "source_locations": [
+      "PDF §3.1–3.4; §4.4/Table 3; limitations",
+      "https://aclanthology.org/2023.findings-emnlp.248.pdf",
+      "Official repository README"
+    ],
+    "code_status": "Repository inspected; not executed"
+  },
+  {
+    "id": "MF03_FOLIO",
+    "title": "FOLIO: Natural Language Reasoning with First-Order Logic",
+    "year": 2024,
+    "url": "https://aclanthology.org/2024.emnlp-main.1229/",
+    "primary_type": "EMNLP peer-reviewed dataset paper; initial arXiv 2022",
+    "code_url": "https://github.com/Yale-LILY/FOLIO",
+    "representation": "Human-authored parallel NL/FOL stories and conclusions",
+    "method": "Expert annotation and formal label verification; distinct translation and inference tasks.",
+    "verification_guarantee": "Checks formal labels against supplied reference formulas.",
+    "not_guaranteed": [
+      "Conclusion accuracy is not full translation equivalence",
+      "Reference data can require corrections"
+    ],
+    "evaluation": {
+      "n_examples": 1430,
+      "n_premise_sets": 487,
+      "published_splits": [
+        1001,
+        203,
+        226
+      ],
+      "GPT4_fewshot": {
+        "syntax_validity": 93.9,
+        "execution_accuracy": 63.8
+      },
+      "endpoint": "Whole-story syntax and conclusion accuracy, not slot-level source fidelity"
+    },
+    "transfer_to_repo": "Reference-source inventory and independently annotated formulas are needed; gold rank cannot substitute for extraction fidelity.",
+    "source_locations": [
+      "PDF §4.1–4.2; §5.1–5.3/Table 5",
+      "https://aclanthology.org/2024.emnlp-main.1229.pdf",
+      "Official repository version warning"
+    ],
+    "code_status": "Data repository inspected; version drift noted"
+  },
+  {
+    "id": "MF04_LOGICLLAMA",
+    "title": "Harnessing the Power of Large Language Models for Natural Language to First-Order Logic Translation",
+    "year": 2024,
+    "url": "https://aclanthology.org/2024.acl-long.375/",
+    "primary_type": "ACL peer-reviewed paper; initial arXiv 2023",
+    "code_url": "https://github.com/gblackout/LogicLLaMA",
+    "representation": "CFG-parsed FOL; MALLS parallel NL/FOL",
+    "method": "LLM-generated data with filtering and human sample review; LoRA translation/correction and reward-based correction.",
+    "verification_guarantee": "Parser checks syntax; released LE score checks literal Boolean agreement under soft matching.",
+    "not_guaranteed": [
+      "LE is not quantified FOL equivalence",
+      "Human review of a sample does not certify all synthetic pairs",
+      "Soft symbol matching may hide wrong predicates"
+    ],
+    "evaluation": {
+      "endpoint": "BLEU and LE; human data-quality sample",
+      "reported_MALLS_final_size": 28000,
+      "reported_13B_RL_correction_LE": 0.924,
+      "metric_audit": "Static reading: metrics.py uses soft_binding=True, greedy_match=True; VecRuleEvaluator.from_nltk_tree at S visits only root[-1], dropping quantifier prefix from Boolean evaluation. No dynamic execution claimed."
+    },
+    "transfer_to_repo": "Do not reward the current quantifier/scope failures with LE; benchmark typed reference formulas instead.",
+    "source_locations": [
+      "PDF §3, §4.3/Table 3",
+      "https://aclanthology.org/2024.acl-long.375.pdf",
+      "https://github.com/gblackout/LogicLLaMA/blob/785a2c08e8fe964c8b2a10bb183ce5a08867aa3b/metrics.py",
+      "https://github.com/gblackout/LogicLLaMA/blob/785a2c08e8fe964c8b2a10bb183ce5a08867aa3b/fol_parser.py"
+    ],
+    "code_status": "README and evaluator source inspected; not executed",
+    "code_revision": "785a2c08e8fe964c8b2a10bb183ce5a08867aa3b",
+    "code_source_sha256": {
+      "logicllama_metrics.py": "ace062ba0bd11f8eacc47b24e2178b0a3a9f55fd791201386b993189ea788f5e",
+      "logicllama_fol_parser.py": "a4e8ca7bba811c9e02bbb629422589be961628342d82426704f205e45a9ca1dc"
+    }
+  },
+  {
+    "id": "MF05_CLOVER",
+    "title": "Divide and Translate: Compositional First-Order Logic Translation and Verification for Complex Logical Reasoning",
+    "year": 2025,
+    "url": "https://openreview.net/forum?id=09FiNmvNMw",
+    "primary_type": "ICLR peer-reviewed paper",
+    "code_url": "https://github.com/Hyun-Ryu/clover",
+    "representation": "Many-sorted FOL with logical dependency structures",
+    "method": "LLM first prepares an estimated theory and target NL sentence set from the whole problem; then decomposes into units, couplers and dependents; progressive translation; equivalence clusters; solver counter-interpretations judged against prepared NL by an LLM.",
+    "verification_guarantee": "Solver checks formula equivalence and produces distinguishing interpretations.",
+    "not_guaranteed": [
+      "NL judgment of a countermodel remains learned",
+      "Correct formula may not be in sampled candidates",
+      "Initial theory/signature may be wrong",
+      "Preprocessing fidelity and coverage: checking the prepared NL targets cannot restore an original qualifier lost in preprocessing."
+    ],
+    "evaluation": {
+      "endpoint": "Final answer accuracy, executability, conditional accuracy; annotated AR-LSAT formula analysis",
+      "FOLIO_program_accuracy": {
+        "LogicLM": 51.2,
+        "CLOVER": 62.6
+      },
+      "FOLIO_execution_rate": {
+        "LogicLM": 65.5,
+        "CLOVER": 74.9
+      },
+      "FOLIO_execution_accuracy": {
+        "LogicLM": 78.2,
+        "CLOVER": 83.6
+      }
+    },
+    "transfer_to_repo": "Directly relevant to nested connective/quantifier composition and discriminating group counterexamples; preserve source coverage outside the solver.",
+    "source_locations": [
+      "https://arxiv.org/html/2410.08047v2",
+      "§§2–3.3; §4/Tables 1–2; annotated-formula analysis",
+      "Official repository README"
+    ],
+    "code_status": "Repository inspected; not executed"
+  },
+  {
+    "id": "MF06_LOGIC_LM_PP",
+    "title": "LOGIC-LM++: Multi-Step Refinement for Symbolic Formulations",
+    "year": 2024,
+    "url": "https://aclanthology.org/2024.nlrse-1.6/",
+    "primary_type": "ACL NLRSE workshop peer-reviewed paper",
+    "code_url": null,
+    "representation": "Logic-LM symbolic representations",
+    "method": "Restore source problem/question to refinement; pairwise LLM semantic comparison and backtracking.",
+    "verification_guarantee": "Existing solver checks remain; semantic edit acceptance is model-based.",
+    "not_guaranteed": [
+      "Backtracking cannot certify source equivalence",
+      "Very wrong initial formulas and weaker semantic judges remain difficult"
+    ],
+    "evaluation": {
+      "endpoint": "Final answer and execution metrics",
+      "FOLIO_GPT4_LogicLM_to_plus": [
+        78.92,
+        84.8
+      ],
+      "FOLIO_GPT35_LogicLM_to_plus": [
+        62.8,
+        62.25
+      ]
+    },
+    "transfer_to_repo": "Source-aware reversible repairs can be tested on polarity and overstatement; an accepted edit is still not a clinical certificate.",
+    "source_locations": [
+      "https://aclanthology.org/2024.nlrse-1.6.pdf",
+      "§3.2–3.3; Tables 1–2; §4.3; limitations"
+    ],
+    "code_status": "No official repository located in reviewed paper or targeted author/project searches; not proof that none exists"
+  },
+  {
+    "id": "MF07_NL2FOL",
+    "title": "Autoformalizing Natural Language to First-Order Logic: A Case Study in Logical Fallacy Detection",
+    "year": 2025,
+    "url": "https://aclanthology.org/2025.findings-ijcnlp.8/",
+    "primary_type": "Findings IJCNLP-AACL peer-reviewed paper; earlier arXiv 2024",
+    "code_url": "https://github.com/lovishchopra/NL2FOL",
+    "representation": "FOL compiled to CVC4 SMT",
+    "method": "Entities, predicates, claims and conclusion; NLI-inferred background implications; validity checking and countermodel explanation.",
+    "verification_guarantee": "SMT reasoning relative to compiled theory.",
+    "not_guaranteed": [
+      "Inferred background implications are not explicit source rules",
+      "Fallacy classification is not exact formalization"
+    ],
+    "evaluation": {
+      "endpoint": "Binary fallacy classification",
+      "caveat": "Table 2 uses datasets augmented with non-fallacious negative arguments derived from SNLI entailments; the direct comparator is few-shot end-to-end classification, not the unaugmented original LOGIC task.",
+      "GPT4o_LOGIC_plus_SNLI_end_to_end_vs_NL2FOL": [
+        0.96,
+        0.78
+      ],
+      "GPT4o_LOGICCLIMATE_plus_SNLI_end_to_end_vs_NL2FOL": [
+        0.7,
+        0.8
+      ],
+      "datasets": [
+        "LOGIC+SNLI",
+        "LOGICCLIMATE+SNLI"
+      ]
+    },
+    "transfer_to_repo": "Keep inferred bridge assumptions separate from guideline provenance; countermodel explanations can expose unsupported diagnostic implications.",
+    "source_locations": [
+      "https://aclanthology.org/2025.findings-ijcnlp.8.pdf",
+      "Method pipeline and SMT construction; experimental setup/Table 2",
+      "Official repository scripts"
+    ],
+    "code_status": "Repository inspected; not executed"
+  },
+  {
+    "id": "MF08_FOVER",
+    "title": "FoVer: First-Order Logic Verification for Natural Language Reasoning",
+    "year": 2025,
+    "url": "https://aclanthology.org/2025.tacl-1.61/",
+    "primary_type": "TACL peer-reviewed paper",
+    "code_url": "https://github.com/peiyu-cn/FoVer",
+    "representation": "Python functions using a custom Z3 FOL wrapper",
+    "method": "Coarse-to-fine annotated reasoning, predicate/type definitions, delayed quantifier declaration, optional separate common-knowledge statements. Algorithm 1 removes definitions in an unsatisfiable core before verifying the retained theory; this changes the theory.",
+    "verification_guarantee": "Z3 checks conclusions relative to the retained compiled theory, after any removal of conflicting auxiliary definitions.",
+    "not_guaranteed": [
+      "Correct Python is not correct NL grounding",
+      "Optional background knowledge can introduce unsupported premises",
+      "Quantifier declaration conventions do not prove semantic scope",
+      "Unsat-core removal does not certify fidelity of the removed or retained definitions to the original text, or prove a maximum-faithfulness repair."
+    ],
+    "evaluation": {
+      "endpoint": "Final reasoning accuracy",
+      "GPT4o_ProofWriter_n": 200,
+      "GPT4o_ProofWriter_no_common_to_common": [
+        95.5,
+        89.5
+      ],
+      "GPT4o_FOLIO_n": 203,
+      "GPT4o_FOLIO_CoT": 72.4,
+      "caveat": "Table 2 distinguishes single queried conclusion from all questions in a sample; paper does not establish a same-cached-formulas, scoring-only contrast, and execution rates differ. Relaxed scoring accepts True/False when the original label is Unknown. These are not source-fidelity metrics.",
+      "GPT4o_FOLIO_specific_prompt_no_common": 70.4,
+      "GPT4o_FOLIO_universal_prompt_no_common": 62.1,
+      "FOLIO_prompt_condition": "Table 3 specific prompt places entities in one Entity sort; universal prompt may infer different sorts.",
+      "GPT4o_ProofWriter_all_questions_strict_without_common": 78.5,
+      "ProofWriter_single_vs_all_strict_execution_rates": [
+        97.0,
+        98.5
+      ]
+    },
+    "transfer_to_repo": "Typed program representation and separate background channel are useful; source-only and augmented conditions need separate reporting.",
+    "source_locations": [
+      "https://aclanthology.org/2025.tacl-1.61.pdf",
+      "§3.2–3.3; Table 1; error analysis",
+      "Official repository README",
+      "§3.3 Algorithm 1: definition removal; §5.1/Table 2: strict versus relaxed; §5.2/Table 3: universal versus specific Entity-sort prompt"
+    ],
+    "code_status": "Repository inspected; not executed"
+  },
+  {
+    "id": "MF09_FINE_TUNED_FOL",
+    "title": "Advancing Natural Language Formalization to First Order Logic with Fine-tuned LLMs",
+    "year": 2025,
+    "url": "https://arxiv.org/abs/2509.22338",
+    "primary_type": "Research preprint, reviewed v2 (2025-11-30)",
+    "code_url": "https://github.com/fvossel/ANLFtFOLwFLLMs",
+    "representation": "Grammar-parsed FOL, Z3 reference equivalence",
+    "method": "Fine-tune on MALLS/Willow; compare free, supplied/noisy predicates and two-stage predicate prediction; optional predicate-name matching.",
+    "verification_guarantee": "Proved unsatisfiability of negated biconditional establishes equivalence under encoded reference/signature.",
+    "not_guaranteed": [
+      "Timeout is not inequivalence",
+      "Reference equivalence assumes correct reference and symbol grounding",
+      "Oracle predicate lists do not measure end-to-end extraction"
+    ],
+    "evaluation": {
+      "endpoint": "Exact formula match and solver equivalence",
+      "GT_predicates_FlanT5XXL": {
+        "exact": 63.45,
+        "equivalent": 70.27
+      },
+      "two_stage_predicted": {
+        "exact": 25.96,
+        "equivalent": 28.26
+      },
+      "solver_timeout_seconds": 10
+    },
+    "transfer_to_repo": "Separate predicate identity from composition; clinical metric/name matching cannot safely use generic edit-distance equivalence.",
+    "source_locations": [
+      "https://arxiv.org/html/2509.22338v2",
+      "Evaluation §3.5; §4/Tables; two-stage analysis",
+      "Official repository README, currently describing later GROVES data"
+    ],
+    "code_status": "Repository inspected; current README/data description has evolved beyond paper snapshot"
+  },
+  {
+    "id": "MF10_SOLT_MENTAL",
+    "title": "Are LLMs Stable Formal Logic Translators in Logical Reasoning Across Linguistically Diversified Texts?",
+    "year": 2026,
+    "url": "https://arxiv.org/abs/2506.04575",
+    "primary_type": "WWW 2026 paper; reviewed arXiv v3 (2026-01-30)",
+    "code_url": "https://github.com/qingchuanli/LinguDiver",
+    "representation": "FOL with a maintained NL-concept/logical-symbol table",
+    "method": "SoLT meaning-preserving linguistic diversification; MenTaL reuses/refines symbol mappings and compound expressions.",
+    "verification_guarantee": "Benchmark checks outcomes and symbol drift; model manages semantic identity.",
+    "not_guaranteed": [
+      "Low symbol dispersion does not rule out over-merging different concepts",
+      "Not all language rewrites have a formal source-fidelity proof",
+      "Benefits are model-dependent"
+    ],
+    "evaluation": {
+      "endpoint": "Final accuracy and Symbol Dispersion Score",
+      "SoLT_FOLIO_GPT4_direct_to_MenTaL": [
+        44.17,
+        68.33
+      ],
+      "original_FOLIO_Llama_direct_to_MenTaL": [
+        42.86,
+        23.99
+      ],
+      "caveat": "SDS tracks one concept mapped to multiple symbols, not complete predicate/argument fidelity."
+    },
+    "transfer_to_repo": "Test synonym consistency together with subtype and marker anti-merging; case 56 parent routing and case 773 metric mismatch need both.",
+    "source_locations": [
+      "https://arxiv.org/html/2506.04575v3",
+      "§3–5/Table 3; Appendices A/B/D/E/G",
+      "https://dl.acm.org/doi/10.1145/3774904.3792161",
+      "Original official URL https://github.com/wufeiwuwoshihua/LinguDiver redirects to the recorded code_url"
+    ],
+    "code_status": "Repository redirect and README inspected; not executed"
+  },
+  {
+    "id": "MF11_ROBUSTNESS",
+    "title": "Robustness of Neurosymbolic Reasoners on First-Order Logic Problems",
+    "year": 2025,
+    "url": "https://aclanthology.org/2025.alta-main.1/",
+    "primary_type": "ALTA peer-reviewed paper",
+    "code_url": "https://github.com/hannahhb/counterfactual_NS_eval",
+    "representation": "FOL/Prover9 through LINC and NSCoT",
+    "method": "Counterfactual label-preserving problem rewrites; compare CoT, LINC, and CoT-before-formalization.",
+    "verification_guarantee": "Tests robustness of complete pipelines; no new source-equivalence guarantee.",
+    "not_guaranteed": [
+      "A smaller counterfactual drop does not imply higher accuracy",
+      "Unknown predictions can change apparent robustness"
+    ],
+    "evaluation": {
+      "endpoint": "Final accuracy and counterfactual performance gap",
+      "FOLIO_n": 204,
+      "counterfactual_RR_n": 81,
+      "Qwen25_32B_FOLIO": {
+        "CoT": 75.49,
+        "LINC": 68.14,
+        "NSCoT": 71.08
+      }
+    },
+    "transfer_to_repo": "Require both absolute quality and perturbation stability; stable wrong/proxy answers must not count as faithful extraction.",
+    "source_locations": [
+      "https://aclanthology.org/2025.alta-main.1.pdf",
+      "§5.2–6; counterfactual construction and results tables",
+      "Official repository README"
+    ],
+    "code_status": "Repository inspected; not executed"
+  }
+]
