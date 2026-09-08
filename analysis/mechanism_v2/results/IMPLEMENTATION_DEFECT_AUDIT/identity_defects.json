@@ -1,0 +1,411 @@
+{
+  "schema_version": 1,
+  "input_commit": "bbc036e8a6ec93583be915a4609fe86278ed062c",
+  "defects": [
+    {
+      "id": "IDN-01",
+      "title": "Destructive normalization erases qualifiers and literal constraints",
+      "fix_class": "hybrid_semantic",
+      "anchors": [
+        {
+          "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+          "function": "norm",
+          "line": 39
+        },
+        {
+          "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+          "function": "tokens",
+          "line": 46
+        }
+      ],
+      "prior_migration_ids": [
+        "M10",
+        "M15",
+        "M16"
+      ],
+      "reproduction_ids": [
+        "IDR01",
+        "IDR02",
+        "IDR03"
+      ],
+      "historical_status": "historical_case_support_plus_synthetic",
+      "proposal": "Preserve raw text; use safe Unicode/space formatting only for lookup, separately parse qualifiers and polarity. Never infer semantic identity from stopword-stripped containment.",
+      "limits": "Parsing a parenthesis as alias versus subtype is a semantic decision. Existing structured polarity can protect a correctly parsed row, but matching itself does not verify this.",
+      "evidence": "Cases 56/74/773; parenthetical and with/without toy cases are mechanism probes, not claimed historical occurrences.",
+      "prior_coverage": "covered_at_goal_level; see semantic_identity.md for newly specified implementation subcases",
+      "implementation_status": "proposal_only_production_unchanged"
+    },
+    {
+      "id": "IDN-02",
+      "title": "First-hit subject routing defeats global exact identity",
+      "fix_class": "code_only",
+      "anchors": [
+        {
+          "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+          "function": "run_case subject binding",
+          "line": 363
+        }
+      ],
+      "prior_migration_ids": [
+        "M11"
+      ],
+      "reproduction_ids": [
+        "IDR04",
+        "IDR05"
+      ],
+      "historical_status": "observed_in_frozen_11",
+      "proposal": "Collect candidate matches globally; resolve verified canonical exact first; never let earlier parent containment steal an exact subtype. Emit ambiguous/unbound for unresolved ties.",
+      "limits": "Does not repair source subject hallucination or validate untrusted aliases. Names can be homonymous even when exact.",
+      "evidence": "Case56 full SCC has exact raw subjects but zero bound assertions in all four arms.",
+      "prior_coverage": "covered_at_goal_level; see semantic_identity.md for newly specified implementation subcases",
+      "implementation_status": "proposal_only_production_unchanged"
+    },
+    {
+      "id": "IDN-03",
+      "title": "Raw labels and unvalidated alias unions corrupt candidate identity",
+      "fix_class": "hybrid_semantic",
+      "anchors": [
+        {
+          "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/build_trial_tasks.py",
+          "function": "main.slot_for",
+          "line": 121
+        },
+        {
+          "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/build_trial_tasks.py",
+          "function": "main alias union",
+          "line": 139
+        },
+        {
+          "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/build_trial_tasks.py",
+          "function": "main sorted candidates",
+          "line": 175
+        },
+        {
+          "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+          "function": "run_case subject binding",
+          "line": 359
+        }
+      ],
+      "prior_migration_ids": [
+        "M10",
+        "M11",
+        "M24"
+      ],
+      "reproduction_ids": [
+        "IDR06",
+        "IDR07"
+      ],
+      "historical_status": "observed_in_frozen_11",
+      "proposal": "Merge only safe format-equivalent candidate identities; retain all source labels and methods; validate alias relation before concept-cluster union; canonical exact outranks untrusted alias.",
+      "limits": "Unknown equivalence, granularity and benign/malignant compatibility require terminology/context; no alias from gold evaluation may enter online ranking.",
+      "evidence": "Case74 active CPVT and empty case duplicate; case91 Angiosarcoma alias attached to Hemangioma.",
+      "prior_coverage": "covered_at_goal_level; see semantic_identity.md for newly specified implementation subcases",
+      "implementation_status": "proposal_only_production_unchanged"
+    },
+    {
+      "id": "IDN-04",
+      "title": "Symmetric lexical containment conflates equivalence with hierarchy",
+      "fix_class": "hybrid_semantic",
+      "anchors": [
+        {
+          "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+          "function": "concept_match",
+          "line": 235
+        },
+        {
+          "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+          "function": "subject_match",
+          "line": 258
+        }
+      ],
+      "prior_migration_ids": [
+        "M11",
+        "M18"
+      ],
+      "reproduction_ids": [
+        "IDR08"
+      ],
+      "historical_status": "observed_in_frozen_11",
+      "proposal": "Separate equivalent, narrower, broader, related, causal/component and unrelated classes; exact binding first; inherit only via typed relation and a scope-preserving proof permitted for that rule direction.",
+      "limits": "General PH rows may legitimately describe a parent syndrome. Non-native subject counts are not automatically clinical-error counts.",
+      "evidence": "Case773 CTEPH 417 rows/6 same-name, 411 non-native not all wrong.",
+      "prior_coverage": "covered_at_goal_level; see semantic_identity.md for newly specified implementation subcases",
+      "implementation_status": "proposal_only_production_unchanged"
+    },
+    {
+      "id": "IDN-05",
+      "title": "Medical stemming treats organism-to-disease relation as identity",
+      "fix_class": "hybrid_semantic",
+      "anchors": [
+        {
+          "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+          "function": "med_stem",
+          "line": 143
+        },
+        {
+          "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+          "function": "subject_match FIX_ORGANISM",
+          "line": 266
+        }
+      ],
+      "prior_migration_ids": [
+        "M10",
+        "M11"
+      ],
+      "reproduction_ids": [
+        "IDR09"
+      ],
+      "historical_status": "enabled_legacy_flag_mechanism_not_independent_effect_estimate",
+      "proposal": "Prevent cross-kind same-as; encode organism causes disease explicitly; transfer only a correctly scoped predicate that the relation licenses.",
+      "limits": "A dictionary can solve known pairs without a new model; unknown relation typing needs semantic evidence. Brucella and Brucellosis are not synonyms.",
+      "evidence": "F3 bounded reproduction, related to case326; no isolated historical MRR effect claimed.",
+      "prior_coverage": "covered_at_goal_level; see semantic_identity.md for newly specified implementation subcases",
+      "implementation_status": "proposal_only_production_unchanged"
+    },
+    {
+      "id": "IDN-06",
+      "title": "Canonical early-break and first-tie finding selection are order dependent",
+      "fix_class": "hybrid_semantic",
+      "anchors": [
+        {
+          "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+          "function": "run_case predicate binding",
+          "line": 401
+        },
+        {
+          "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+          "function": "run_case best finding comparison",
+          "line": 407
+        }
+      ],
+      "prior_migration_ids": [
+        "M15"
+      ],
+      "reproduction_ids": [
+        "IDR10",
+        "IDR11"
+      ],
+      "historical_status": "new_synthetic_mechanism_with_historical_join_risk",
+      "proposal": "Evaluate every representation of each candidate finding; preserve all equally eligible observation events; use event/scope constraints, otherwise emit unresolved conflict instead of choosing the first.",
+      "limits": "Removing the early break is code-only. Determining relevant time/site/person from raw prose still requires faithful fact extraction.",
+      "evidence": "Canonical early-break and tie test are new technical counterexamples; not claimed as counted 11-case events.",
+      "prior_coverage": "covered_at_goal_level; see semantic_identity.md for newly specified implementation subcases",
+      "implementation_status": "proposal_only_production_unchanged"
+    },
+    {
+      "id": "IDN-07",
+      "title": "Marker equality conflates result polarity while true aliases remain unreachable",
+      "fix_class": "hybrid_semantic",
+      "anchors": [
+        {
+          "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+          "function": "markers",
+          "line": 133
+        },
+        {
+          "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+          "function": "predicate_match",
+          "line": 273
+        }
+      ],
+      "prior_migration_ids": [
+        "M10",
+        "M15",
+        "M16"
+      ],
+      "reproduction_ids": [
+        "IDR12",
+        "IDR13",
+        "IDR14"
+      ],
+      "historical_status": "observed_missing_alias_plus_synthetic_marker_polarity",
+      "proposal": "Use a versioned analyte/marker concept dictionary and evaluate value/polarity separately; verified PECAM-1/CD31 maps only the marker, never the expressing disease.",
+      "limits": "Embedding cosine and common alphanumeric marker are not a literal truth certificate. Marker alias presence does not establish full disease source coverage.",
+      "evidence": "Case91 four-arm PECAM-1 rules bind Kaposi but do not join CD31; marker-off IDR13 is a correct negative control.",
+      "prior_coverage": "covered_at_goal_level; see semantic_identity.md for newly specified implementation subcases",
+      "implementation_status": "proposal_only_production_unchanged"
+    },
+    {
+      "id": "IDN-08",
+      "title": "Numeric comparator lacks dimensional identity and robust value validation",
+      "fix_class": "hybrid_semantic",
+      "anchors": [
+        {
+          "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+          "function": "threshold_ok",
+          "line": 316
+        },
+        {
+          "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+          "function": "threshold_ok units",
+          "line": 327
+        },
+        {
+          "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+          "function": "threshold_ok range",
+          "line": 343
+        }
+      ],
+      "prior_migration_ids": [
+        "M07",
+        "M15",
+        "M16"
+      ],
+      "reproduction_ids": [
+        "IDR15",
+        "IDR16",
+        "IDR17",
+        "IDR18",
+        "IDR19"
+      ],
+      "historical_status": "historical_typed_measurement_errors_plus_new_numeric_edge_probes",
+      "proposal": "Check finite values and both interval endpoints; return typed invalid/unknown; preserve UCUM case and convert units; establish measurand/system/method/time compatibility before comparing.",
+      "limits": "Robust arithmetic and dimension rejection are code-only; identifying absent/incorrect measurand metadata needs semantic parsing. Same units do not make PASP and mPAP interchangeable.",
+      "evidence": "Case773 wrong measurements are historical; Mg/mg, NaN and malformed high endpoint are synthetic reachability tests.",
+      "prior_coverage": "covered_at_goal_level; see semantic_identity.md for newly specified implementation subcases",
+      "implementation_status": "proposal_only_production_unchanged"
+    },
+    {
+      "id": "IDN-09",
+      "title": "Atomic dedup conflates thresholds and fabricates cross-record modality",
+      "fix_class": "code_only",
+      "anchors": [
+        {
+          "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+          "function": "run_case assertion dedupe",
+          "line": 380
+        },
+        {
+          "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+          "function": "run_case dedupe key",
+          "line": 384
+        },
+        {
+          "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+          "function": "run_case modality upgrade",
+          "line": 391
+        }
+      ],
+      "prior_migration_ids": [
+        "M12",
+        "M13"
+      ],
+      "reproduction_ids": [
+        "IDR20"
+      ],
+      "historical_status": "observed_in_frozen_11_and_previous_engine_audit",
+      "proposal": "Create occurrence/member identity before semantic storage sharing; include all literal slots in identity; retain conflicting thresholds/versions; never copy maximum modality into another source row.",
+      "limits": "Code can preserve declared members and slot distinctions. Proving unknown paraphrases equivalent is outside this core fix; evidence dedup must not erase membership.",
+      "evidence": "Prior E07/E08 plus case522; IDR20 changes score 1.5 vs0.5 solely by threshold-row order.",
+      "prior_coverage": "covered_at_goal_level; see semantic_identity.md for newly specified implementation subcases",
+      "implementation_status": "proposal_only_production_unchanged"
+    },
+    {
+      "id": "IDN-10",
+      "title": "Surface dedup misses equivalent paraphrases and repeated patient votes",
+      "fix_class": "hybrid_semantic",
+      "anchors": [
+        {
+          "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+          "function": "run_case dedupe key",
+          "line": 384
+        },
+        {
+          "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+          "function": "run_case layer3 scoring",
+          "line": 591
+        }
+      ],
+      "prior_migration_ids": [
+        "M12",
+        "M20"
+      ],
+      "reproduction_ids": [
+        "IDR21"
+      ],
+      "historical_status": "observed_repeat_votes_plus_synthetic_paraphrase",
+      "proposal": "Separate occurrence, semantic expression, source support and observation event identities; collapse certified duplicate evidence without deleting rule membership.",
+      "limits": "Distinct observations or explicitly different criteria can use a shared concept. Global one-vote-per-label and semantic-similarity clustering are not universal solutions.",
+      "evidence": "Historical repeated-vote ledger; IDR21 fever/presence-of-fever produces two votes1.6.",
+      "prior_coverage": "covered_at_goal_level; see semantic_identity.md for newly specified implementation subcases",
+      "implementation_status": "proposal_only_production_unchanged"
+    },
+    {
+      "id": "IDN-11",
+      "title": "Existing observed value text is invisible to finding binding",
+      "fix_class": "hybrid_semantic",
+      "anchors": [
+        {
+          "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+          "function": "run_case predicate binding",
+          "line": 401
+        },
+        {
+          "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_trial_extraction.py",
+          "function": "CASE_PROMPT",
+          "line": 215
+        }
+      ],
+      "prior_migration_ids": [
+        "M14",
+        "M15"
+      ],
+      "reproduction_ids": [
+        "IDR22"
+      ],
+      "historical_status": "observed_in_frozen_11",
+      "proposal": "Compile value.text into typed observation result with analyte/test/result fields and provenance; bind all represented information.",
+      "limits": "Reading the field is code-only. Blindly concatenating result text into the lexical label may create false joins and does not parse relational meaning.",
+      "evidence": "Case326 pathogen result stored in value.text; synthetic Brucella positive value not matched.",
+      "prior_coverage": "covered_at_goal_level; see semantic_identity.md for newly specified implementation subcases",
+      "implementation_status": "proposal_only_production_unchanged"
+    },
+    {
+      "id": "IDN-12",
+      "title": "Existing feature types and qualifier fields are not consulted by joins",
+      "fix_class": "hybrid_semantic",
+      "anchors": [
+        {
+          "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+          "function": "run_case predicate binding",
+          "line": 396
+        },
+        {
+          "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_trial_extraction.py",
+          "function": "ASSERTION_PROMPT predicate_kind",
+          "line": 57
+        },
+        {
+          "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_trial_extraction.py",
+          "function": "CASE_PROMPT kind and qualifiers",
+          "line": 220
+        }
+      ],
+      "prior_migration_ids": [
+        "M14",
+        "M15"
+      ],
+      "reproduction_ids": [
+        "IDR23"
+      ],
+      "historical_status": "observed_in_frozen_11",
+      "proposal": "Apply compatibility guards to predicate_kind/kind and explicit site/time/laterality before similarity; preserve unknown if crucial metadata missing; require per-join proof.",
+      "limits": "Existing fields may be wrong or coarse. New slots for specimen/method/role plus semantic extraction remain necessary to cover all cases.",
+      "evidence": "Case49 tissue versus blood neutrophils; case773 ratio/pressure distinctions; existing kinds are ignored in synthetic IDR23.",
+      "prior_coverage": "covered_at_goal_level; see semantic_identity.md for newly specified implementation subcases",
+      "implementation_status": "proposal_only_production_unchanged"
+    }
+  ],
+  "production_hashes": {
+    "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py": "6216de0b59f87a1fab4fa09f0db18436a2c208a9e7e43f7802edf3d9b429a383",
+    "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/build_trial_tasks.py": "0613fd7229f4eafc8375c8855bf99e24ca42e62473a4cf88b311d5dc6f64d0c5",
+    "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_trial_extraction.py": "5e350b8d3958f0a3b160673e3a8d7e68bae59694caf155260e2e0e6571d017ce"
+  },
+  "separate_kg_blob_hashes": {
+    "src/agentclinic_tree_dx/knowledge/guideline_kg_schema.py": "83ee04a3504ae5039b0eb3f9312618126f6df96912792fef3db68a2151a73fe8",
+    "src/agentclinic_tree_dx/knowledge/guideline_kg_extraction.py": "c01e993a15d5ba86b8c8e6a4dc0679b114e7129b086d49799dfd4cbe1e8a6c82"
+  },
+  "new_ml_calls": 0,
+  "production_modified": false,
+  "scope": "Identity/binding/dedup subset; not exhaustive whole-engine audit; 23 synthetic checks, prior frozen case evidence."
+}

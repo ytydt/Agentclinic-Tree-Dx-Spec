@@ -1,0 +1,50 @@
+{
+  "baseline_commit": "bbc036e8a6ec93583be915a4609fe86278ed062c",
+  "defects": [
+    {
+      "id": "AUX-01",
+      "title": "configure 未复位后来加入的七项全局配置",
+      "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/sweep_fixes.py",
+      "functions": ["configure"],
+      "lines": [81, 100],
+      "observed_behavior": "实际 configure(B1,{}) 保留预先启用的四个 RIGID、NONCRITERION_INERT、FINDING_POOL_BETA、LAYER3_DROP",
+      "fix_class": "code_only",
+      "historical_status": "同进程复用风险；冻结44条重放已完整复位，不归因为历史退化",
+      "prior_migration_ids": ["M25"],
+      "prior_coverage": "partial_acceptance_detail_added",
+      "reproduction_ids": ["AUX-R01"],
+      "proposal": "不可变完整 EngineConfig；所有运行阶段显式传参；A-B-A与独立A一致性验收",
+      "limits": "不能由静态配置遗漏推断历史运行实际受污染"
+    },
+    {
+      "id": "AUX-02",
+      "title": "病例候选集相对 corpus lift 用不含候选集的全局键覆盖",
+      "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/build_corpus_lift.py",
+      "functions": ["main", "run_mechanical_engine.lr_weight"],
+      "lines": [187, 195],
+      "observed_behavior": "实际main将Alpha/marker的病例相对值.5306和.0606写入同一键，最终值依赖病例顺序",
+      "fix_class": "code_only",
+      "historical_status": "B1/S7读取该表；现存输入中5个潜在共享查询键；没有复算历史数值差及排名因果",
+      "prior_migration_ids": ["M19", "M20", "M25"],
+      "prior_coverage": "partial_new_specific_key_defect",
+      "reproduction_ids": ["AUX-R02", "AUX-R03"],
+      "proposal": "保存原始计数并按当前候选集求值，或在读写两端绑定候选集/统计模型/语料版本；固定总体参考是另一个需要声明的规格",
+      "limits": "代码修复键不能证明词面比例具有临床判别力"
+    },
+    {
+      "id": "AUX-03",
+      "title": "词表外限定被丢弃，部分词计数冒充完整疾病/事实统计",
+      "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/build_corpus_lift.py",
+      "functions": ["main.mention_chunks", "main.chunks_with_all"],
+      "lines": [122, 151],
+      "observed_behavior": "未知亚型与未知事实限定均被跳过，仍在完整标签键下保存与父类相同的lift",
+      "fix_class": "hybrid_semantic",
+      "historical_status": "现有生成器路径；真实语料发生率未测；实际main合成反例成立",
+      "prior_migration_ids": ["M10", "M15", "M19"],
+      "prior_coverage": "partial_new_corpus_statistic_manifestation",
+      "reproduction_ids": ["AUX-R04", "AUX-R05", "AUX-R06"],
+      "proposal": "代码记录OOV及覆盖，不将部分匹配记为完整身份；术语与限定语义判别决定哪些降格有合法许可",
+      "limits": "不要求全部OOV绝对拒绝；不宣称取消该路径会改善MRR"
+    }
+  ]
+}

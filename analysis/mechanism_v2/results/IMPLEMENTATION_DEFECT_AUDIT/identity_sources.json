@@ -1,0 +1,172 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-09-08",
+  "scope": "Targeted research for identity, semantic binding and typed dedup; not systematic exhaustive review or clinical model evaluation",
+  "sources": [
+    {
+      "id": "ID-S01",
+      "title": "Biomedical Entity Representations with Synonym Marginalization",
+      "year": 2020,
+      "kind": "primary_paper",
+      "url": "https://aclanthology.org/2020.acl-main.335.pdf",
+      "primary_access": "full PDF including Methods and §6.2 Error Analysis",
+      "claims_used": [
+        "Sparse/dense candidate retrieval, synonym marginalization and iterative candidate updating.",
+        "Reported error categories include contextual entity, overlap, abbreviations and hierarchy."
+      ],
+      "proposed_use": "candidate retrieval, not same-as or rule-effect certification",
+      "limits": "Entity normalization benchmark does not establish clinical rule fidelity or hard action safety."
+    },
+    {
+      "id": "ID-S02",
+      "title": "Self-Alignment Pretraining for Biomedical Entity Representations (SapBERT)",
+      "year": 2021,
+      "kind": "primary_author_camera_ready",
+      "url": "https://arxiv.org/html/2010.11784v2",
+      "canonical_url": "https://aclanthology.org/2021.naacl-main.334/",
+      "primary_access": "full author camera-ready HTML; ACL PDF fetch failed, canonical ACL abstract verified",
+      "claims_used": [
+        "Metric learning aligns same-concept UMLS names with hard pairs.",
+        "The task explicitly excludes mention context and uses nearest-neighbor prediction."
+      ],
+      "proposed_use": "biomedical synonym candidate retrieval baseline",
+      "limits": "Similarity is not verified identity, scope, or diagnostic implication."
+    },
+    {
+      "id": "ID-S03",
+      "title": "BELHD: Improving Biomedical Entity Linking with Homonym Disambiguation",
+      "year": 2024,
+      "kind": "primary_author_manuscript",
+      "url": "https://arxiv.org/html/2401.05125v1",
+      "canonical_url": "https://doi.org/10.1093/bioinformatics/btae474",
+      "primary_access": "full January 2024 author manuscript; final publisher metadata crosschecked, PMC fetch challenged; no claim numerical results identical across versions",
+      "claims_used": [
+        "KB homonyms augmented with disambiguating names.",
+        "Contextual mention encoding and candidate sharing.",
+        "Experiments use in-KB gold mention spans, and nonunique predictions are incorrect."
+      ],
+      "proposed_use": "context-aware relation disambiguation and homonym handling",
+      "limits": "Unique KB names are not guaranteed correct mention linking; NIL behavior is not demonstrated by this setting."
+    },
+    {
+      "id": "ID-S04",
+      "title": "A Simple Algorithm for Identifying Abbreviation Definitions in Biomedical Text",
+      "year": 2003,
+      "kind": "primary_author_pdf",
+      "url": "https://people.ischool.berkeley.edu/~hearst/papers/psb03.pdf",
+      "primary_access": "full author PDF §§3–4",
+      "claims_used": [
+        "Local short-form/long-form definition extraction.",
+        "96% precision and 82% recall on the authors standard evaluation; scope of definition extraction differs from disambiguation."
+      ],
+      "proposed_use": "source-local abbreviation table with definition provenance",
+      "limits": "Unstated definitions, partial matches and cross-document sense differences remain."
+    },
+    {
+      "id": "ID-S05",
+      "title": "SNOMED CT Data Analytics Guide: SNOMED CT Overview",
+      "year": null,
+      "kind": "official_standard_guide",
+      "url": "https://docs.snomed.org/snomed-ct-practical-guides/snomed-ct-data-analytics-guide/4-snomed-ct-overview",
+      "primary_access": "official page, Description Logic Features",
+      "claims_used": [
+        "Subsumption and equivalence are separate formal comparisons."
+      ],
+      "proposed_use": "typed mapping classes and explicit directed inheritance proofs",
+      "limits": "Retrieval subsumption does not authorize arbitrary diagnostic criterion transfer."
+    },
+    {
+      "id": "ID-S06",
+      "title": "LOINC Users Guide: Major Parts of a LOINC Term",
+      "year": null,
+      "kind": "official_standard_guide",
+      "url": "https://loinc.org/kb/users-guide/major-parts-of-a-loinc-term",
+      "primary_access": "official six-axis guide updated August 17, 2026",
+      "claims_used": [
+        "Component, Property, Time, System, Scale, and Method distinguish observations."
+      ],
+      "proposed_use": "typed observation identity before numeric or marker joins",
+      "limits": "Observation coding does not imply performed testing, positive result, or disease confirmation."
+    },
+    {
+      "id": "ID-S07",
+      "title": "UCUM Specification",
+      "year": null,
+      "kind": "official_standard",
+      "url": "https://ucum.org/ucum",
+      "primary_access": "official specification, syntax and prefix/unit definitions",
+      "claims_used": [
+        "UCUM distinguishes case-sensitive symbols from separately specified case-insensitive symbols.",
+        "Units admit formal dimensional interpretation and conversions."
+      ],
+      "proposed_use": "unit parser/converter plus robust invalid state",
+      "limits": "Dimensional compatibility cannot identify the measurand, specimen or temporal scope."
+    },
+    {
+      "id": "ID-S08",
+      "title": "NLM UCUM Unit Conversion Web Service",
+      "year": null,
+      "kind": "official_api_documentation",
+      "url": "https://ucum.nlm.nih.gov/ucum-service.html",
+      "primary_access": "official API description; no endpoint executed",
+      "claims_used": [
+        "NLM exposes UCUM unit conversion APIs."
+      ],
+      "proposed_use": "reference interface for deterministic conversion rather than ad hoc unit aliases",
+      "limits": "API is a conversion aid, not a clinical observation equivalence checker."
+    }
+  ],
+  "n_sources": 8,
+  "searches": [
+    {
+      "query": "SapBERT self alignment pretraining biomedical entity representations ACL 2021 official",
+      "selected": [
+        "ID-S02"
+      ]
+    },
+    {
+      "query": "BioSyn biomedical entity representations synonym marginalization ACL 2020",
+      "selected": [
+        "ID-S01"
+      ]
+    },
+    {
+      "query": "SNOMED CT concept model subsumption equivalence official",
+      "selected": [
+        "ID-S05"
+      ]
+    },
+    {
+      "query": "site.loinc.org six axes component property time system scale method",
+      "selected": [
+        "ID-S06"
+      ]
+    },
+    {
+      "query": "site.ucum.org ucum case sensitive units specification",
+      "selected": [
+        "ID-S07",
+        "ID-S08"
+      ]
+    },
+    {
+      "query": "Schwartz Hearst 2003 simple algorithm identifying abbreviation definitions biomedical text primary",
+      "selected": [
+        "ID-S04"
+      ]
+    },
+    {
+      "query": "BELHD PMC",
+      "selected": [
+        "ID-S03"
+      ]
+    }
+  ],
+  "reading_limits": [
+    "SapBERT ACL PDF failed; author camera-ready v2 full HTML succeeded.",
+    "BELHD publisher redirect and PMC challenge prevented clean final-text reading; full author January 2024 manuscript read and version stated.",
+    "External entity-linking models and unit APIs were not executed."
+  ],
+  "external_model_calls": 0,
+  "production_modified": false
+}

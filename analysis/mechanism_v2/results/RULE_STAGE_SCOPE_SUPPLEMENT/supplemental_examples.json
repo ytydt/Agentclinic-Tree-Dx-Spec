@@ -1,0 +1,1402 @@
+{
+  "schema_version": "stage_scope_supplement_0.2",
+  "logic_profile_id": "strong_kleene_3_stage_scope_fixture_v1",
+  "clinical_use_authorized": false,
+  "description": "All concepts, ages, thresholds and medical effects are synthetic. Scope and source authority are manually stipulated for finite contract checks. No real-world diagnosis standards are asserted.",
+  "rules": [
+    {
+      "rule_id": "S_RECOMMEND_TEST",
+      "care_process_stages": [
+        "investigation"
+      ],
+      "semantic_intent": "recommend_action",
+      "target": {
+        "type": "test",
+        "id": "TEST_X"
+      },
+      "effect": {
+        "kind": "recommend",
+        "fixture_effect_authorized": true
+      },
+      "applicability": {
+        "op": "const",
+        "value": "TRUE"
+      },
+      "condition": {
+        "op": "fact",
+        "key": "symptom_C"
+      },
+      "disease_context": [],
+      "disease_context_status": "not_mentioned",
+      "classification_status": "reviewed_fixture",
+      "provenance": {
+        "source_kind": "synthetic",
+        "source_bundle_id": "S_RECOMMEND_TEST",
+        "source_anchor": "manually_authored_fixture_not_guideline",
+        "scope_source_status": "complete_fixture"
+      },
+      "normative_strength": "mandatory_action_only",
+      "clinical_use_authorized": false
+    },
+    {
+      "rule_id": "S_RESULT_DIAG",
+      "care_process_stages": [
+        "investigation",
+        "diagnosis"
+      ],
+      "semantic_intent": "diagnostic_inference",
+      "target": {
+        "type": "disease",
+        "id": "DISEASE_D"
+      },
+      "effect": {
+        "kind": "sufficient_for_target",
+        "fixture_effect_authorized": true
+      },
+      "applicability": {
+        "op": "const",
+        "value": "TRUE"
+      },
+      "condition": {
+        "op": "and",
+        "children": [
+          {
+            "op": "eq",
+            "key": "test_X.result_status",
+            "value": "final"
+          },
+          {
+            "op": "eq",
+            "key": "test_X.result_value",
+            "value": "positive"
+          }
+        ]
+      },
+      "disease_context": [
+        "DISEASE_D"
+      ],
+      "disease_context_status": "resolved",
+      "classification_status": "reviewed_fixture",
+      "provenance": {
+        "source_kind": "synthetic",
+        "source_bundle_id": "S_RESULT_DIAG",
+        "source_anchor": "manually_authored_fixture_not_guideline",
+        "scope_source_status": "complete_fixture"
+      },
+      "normative_strength": null,
+      "clinical_use_authorized": false
+    },
+    {
+      "rule_id": "S_TREAT_ELIGIBILITY",
+      "care_process_stages": [
+        "treatment"
+      ],
+      "semantic_intent": "action_eligibility",
+      "target": {
+        "type": "treatment",
+        "id": "TREATMENT_T"
+      },
+      "effect": {
+        "kind": "eligibility_complete_definition",
+        "fixture_effect_authorized": true,
+        "complete_eligibility_basis_source_authorized": true
+      },
+      "applicability": {
+        "op": "const",
+        "value": "TRUE"
+      },
+      "condition": {
+        "op": "and",
+        "children": [
+          {
+            "op": "fact",
+            "key": "diagnosis_D_already_established"
+          },
+          {
+            "op": "fact",
+            "key": "eligibility_C"
+          }
+        ]
+      },
+      "disease_context": [
+        "DISEASE_D"
+      ],
+      "disease_context_status": "resolved",
+      "classification_status": "reviewed_fixture",
+      "provenance": {
+        "source_kind": "synthetic",
+        "source_bundle_id": "S_TREAT_ELIGIBILITY",
+        "source_anchor": "manually_authored_fixture_not_guideline",
+        "scope_source_status": "complete_fixture"
+      },
+      "normative_strength": null,
+      "clinical_use_authorized": false
+    },
+    {
+      "rule_id": "S_TREAT_PROHIBIT",
+      "care_process_stages": [
+        "treatment"
+      ],
+      "semantic_intent": "recommend_action",
+      "target": {
+        "type": "treatment",
+        "id": "TREATMENT_T"
+      },
+      "effect": {
+        "kind": "prohibit",
+        "fixture_effect_authorized": true
+      },
+      "applicability": {
+        "op": "const",
+        "value": "TRUE"
+      },
+      "condition": {
+        "op": "fact",
+        "key": "contraindication_C"
+      },
+      "disease_context": [
+        "DISEASE_D"
+      ],
+      "disease_context_status": "resolved",
+      "classification_status": "reviewed_fixture",
+      "provenance": {
+        "source_kind": "synthetic",
+        "source_bundle_id": "S_TREAT_PROHIBIT",
+        "source_anchor": "manually_authored_fixture_not_guideline",
+        "scope_source_status": "complete_fixture"
+      },
+      "normative_strength": null,
+      "clinical_use_authorized": false
+    },
+    {
+      "rule_id": "S_TEST_PROHIBIT",
+      "care_process_stages": [
+        "investigation"
+      ],
+      "semantic_intent": "recommend_action",
+      "target": {
+        "type": "test",
+        "id": "TEST_X"
+      },
+      "effect": {
+        "kind": "prohibit",
+        "fixture_effect_authorized": true
+      },
+      "applicability": {
+        "op": "const",
+        "value": "TRUE"
+      },
+      "condition": {
+        "op": "fact",
+        "key": "contraindication_C"
+      },
+      "disease_context": [],
+      "disease_context_status": "not_mentioned",
+      "classification_status": "reviewed_fixture",
+      "provenance": {
+        "source_kind": "synthetic",
+        "source_bundle_id": "S_TEST_PROHIBIT",
+        "source_anchor": "manually_authored_fixture_not_guideline",
+        "scope_source_status": "complete_fixture"
+      },
+      "normative_strength": null,
+      "clinical_use_authorized": false
+    },
+    {
+      "rule_id": "S_TEST_NOT_RECOMMENDED",
+      "care_process_stages": [
+        "investigation"
+      ],
+      "semantic_intent": "recommend_action",
+      "target": {
+        "type": "test",
+        "id": "TEST_X"
+      },
+      "effect": {
+        "kind": "not_recommended",
+        "fixture_effect_authorized": true
+      },
+      "applicability": {
+        "op": "const",
+        "value": "TRUE"
+      },
+      "condition": {
+        "op": "fact",
+        "key": "low_yield_context"
+      },
+      "disease_context": [],
+      "disease_context_status": "not_mentioned",
+      "classification_status": "reviewed_fixture",
+      "provenance": {
+        "source_kind": "synthetic",
+        "source_bundle_id": "S_TEST_NOT_RECOMMENDED",
+        "source_anchor": "manually_authored_fixture_not_guideline",
+        "scope_source_status": "complete_fixture"
+      },
+      "normative_strength": null,
+      "clinical_use_authorized": false
+    },
+    {
+      "rule_id": "S_RESPONSE_DIAG",
+      "care_process_stages": [
+        "treatment",
+        "diagnosis"
+      ],
+      "semantic_intent": "diagnostic_inference",
+      "target": {
+        "type": "disease",
+        "id": "DISEASE_D"
+      },
+      "effect": {
+        "kind": "sufficient_for_target",
+        "fixture_effect_authorized": true
+      },
+      "applicability": {
+        "op": "const",
+        "value": "TRUE"
+      },
+      "condition": {
+        "op": "and",
+        "children": [
+          {
+            "op": "eq",
+            "key": "treatment_T.state",
+            "value": "completed"
+          },
+          {
+            "op": "fact",
+            "key": "response_R_observed"
+          },
+          {
+            "op": "fact",
+            "key": "response_time_window_valid"
+          }
+        ]
+      },
+      "disease_context": [
+        "DISEASE_D"
+      ],
+      "disease_context_status": "resolved",
+      "classification_status": "reviewed_fixture",
+      "provenance": {
+        "source_kind": "synthetic",
+        "source_bundle_id": "S_RESPONSE_DIAG",
+        "source_anchor": "manually_authored_fixture_not_guideline",
+        "scope_source_status": "complete_fixture"
+      },
+      "normative_strength": null,
+      "clinical_use_authorized": false
+    },
+    {
+      "rule_id": "S_CHILD_NECESSARY",
+      "care_process_stages": [
+        "diagnosis"
+      ],
+      "semantic_intent": "diagnostic_inference",
+      "target": {
+        "type": "disease",
+        "id": "DISEASE_D"
+      },
+      "effect": {
+        "kind": "necessary_for_target",
+        "fixture_effect_authorized": true
+      },
+      "applicability": {
+        "op": "compare",
+        "key": "patient.age_years_at_index",
+        "comparator": "lt",
+        "value": 12
+      },
+      "condition": {
+        "op": "fact",
+        "key": "marker_A"
+      },
+      "disease_context": [
+        "DISEASE_D"
+      ],
+      "disease_context_status": "resolved",
+      "classification_status": "reviewed_fixture",
+      "provenance": {
+        "source_kind": "synthetic",
+        "source_bundle_id": "S_CHILD_NECESSARY",
+        "source_anchor": "manually_authored_fixture_not_guideline",
+        "scope_source_status": "complete_fixture"
+      },
+      "normative_strength": null,
+      "clinical_use_authorized": false
+    },
+    {
+      "rule_id": "S_ELDER_SUFFICIENT",
+      "care_process_stages": [
+        "diagnosis"
+      ],
+      "semantic_intent": "diagnostic_inference",
+      "target": {
+        "type": "disease",
+        "id": "DISEASE_D"
+      },
+      "effect": {
+        "kind": "sufficient_for_target",
+        "fixture_effect_authorized": true
+      },
+      "applicability": {
+        "op": "compare",
+        "key": "patient.age_years_at_index",
+        "comparator": "ge",
+        "value": 70
+      },
+      "condition": {
+        "op": "fact",
+        "key": "marker_B"
+      },
+      "disease_context": [
+        "DISEASE_D"
+      ],
+      "disease_context_status": "resolved",
+      "classification_status": "reviewed_fixture",
+      "provenance": {
+        "source_kind": "synthetic",
+        "source_bundle_id": "S_ELDER_SUFFICIENT",
+        "source_anchor": "manually_authored_fixture_not_guideline",
+        "scope_source_status": "complete_fixture"
+      },
+      "normative_strength": null,
+      "clinical_use_authorized": false
+    },
+    {
+      "rule_id": "S_GLOBAL_SUFFICIENT",
+      "care_process_stages": [
+        "diagnosis"
+      ],
+      "semantic_intent": "diagnostic_inference",
+      "target": {
+        "type": "disease",
+        "id": "DISEASE_D"
+      },
+      "effect": {
+        "kind": "sufficient_for_target",
+        "fixture_effect_authorized": true
+      },
+      "applicability": {
+        "op": "const",
+        "value": "TRUE"
+      },
+      "condition": {
+        "op": "fact",
+        "key": "marker_A"
+      },
+      "disease_context": [
+        "DISEASE_D"
+      ],
+      "disease_context_status": "resolved",
+      "classification_status": "reviewed_fixture",
+      "provenance": {
+        "source_kind": "synthetic",
+        "source_bundle_id": "S_GLOBAL_SUFFICIENT",
+        "source_anchor": "manually_authored_fixture_not_guideline",
+        "scope_source_status": "complete_fixture"
+      },
+      "normative_strength": null,
+      "clinical_use_authorized": false
+    },
+    {
+      "rule_id": "S_CONFIRMATION_WORKFLOW",
+      "care_process_stages": [
+        "diagnosis",
+        "investigation"
+      ],
+      "semantic_intent": "action_eligibility",
+      "target": {
+        "type": "workflow",
+        "id": "ESTABLISH_D_BY_PROTOCOL"
+      },
+      "effect": {
+        "kind": "eligibility_complete_definition",
+        "fixture_effect_authorized": true,
+        "complete_eligibility_basis_source_authorized": true
+      },
+      "applicability": {
+        "op": "const",
+        "value": "TRUE"
+      },
+      "condition": {
+        "op": "eq",
+        "key": "test_X.result_status",
+        "value": "final"
+      },
+      "disease_context": [
+        "DISEASE_D"
+      ],
+      "disease_context_status": "resolved",
+      "classification_status": "reviewed_fixture",
+      "provenance": {
+        "source_kind": "synthetic",
+        "source_bundle_id": "S_CONFIRMATION_WORKFLOW",
+        "source_anchor": "manually_authored_fixture_not_guideline",
+        "scope_source_status": "complete_fixture"
+      },
+      "normative_strength": null,
+      "clinical_use_authorized": false
+    },
+    {
+      "rule_id": "S_PROPOSE_DIAGNOSIS",
+      "care_process_stages": [
+        "diagnosis"
+      ],
+      "semantic_intent": "recommend_action",
+      "target": {
+        "type": "disease",
+        "id": "DISEASE_D"
+      },
+      "effect": {
+        "kind": "propose_diagnosis",
+        "fixture_effect_authorized": true
+      },
+      "applicability": {
+        "op": "const",
+        "value": "TRUE"
+      },
+      "condition": {
+        "op": "fact",
+        "key": "symptom_C"
+      },
+      "disease_context": [
+        "DISEASE_D"
+      ],
+      "disease_context_status": "resolved",
+      "classification_status": "reviewed_fixture",
+      "provenance": {
+        "source_kind": "synthetic",
+        "source_bundle_id": "S_PROPOSE_DIAGNOSIS",
+        "source_anchor": "manually_authored_fixture_not_guideline",
+        "scope_source_status": "complete_fixture"
+      },
+      "normative_strength": null,
+      "clinical_use_authorized": false
+    },
+    {
+      "rule_id": "S_METHOD_PERMISSION",
+      "care_process_stages": [
+        "diagnosis",
+        "investigation"
+      ],
+      "semantic_intent": "inference_permission",
+      "target": {
+        "type": "inference_action",
+        "id": "EXCLUDE_D_USING_X"
+      },
+      "effect": {
+        "kind": "not_allowed_to_exclude",
+        "fixture_effect_authorized": true
+      },
+      "applicability": {
+        "op": "const",
+        "value": "TRUE"
+      },
+      "condition": {
+        "op": "fact",
+        "key": "method_X_under_consideration"
+      },
+      "disease_context": [
+        "DISEASE_D"
+      ],
+      "disease_context_status": "resolved",
+      "classification_status": "reviewed_fixture",
+      "provenance": {
+        "source_kind": "synthetic",
+        "source_bundle_id": "S_METHOD_PERMISSION",
+        "source_anchor": "manually_authored_fixture_not_guideline",
+        "scope_source_status": "complete_fixture"
+      },
+      "normative_strength": null,
+      "clinical_use_authorized": false
+    },
+    {
+      "rule_id": "S_MULTI_TEST",
+      "care_process_stages": [
+        "investigation"
+      ],
+      "semantic_intent": "recommend_action",
+      "target": {
+        "type": "test",
+        "id": "TEST_Y"
+      },
+      "effect": {
+        "kind": "recommend",
+        "fixture_effect_authorized": true
+      },
+      "applicability": {
+        "op": "const",
+        "value": "TRUE"
+      },
+      "condition": {
+        "op": "fact",
+        "key": "marker_A"
+      },
+      "disease_context": [],
+      "disease_context_status": "not_mentioned",
+      "classification_status": "reviewed_fixture",
+      "provenance": {
+        "source_kind": "synthetic",
+        "source_bundle_id": "SOURCE_WITH_TWO_EXPLICIT_CONCLUSIONS",
+        "source_anchor": "manually_authored_fixture_not_guideline",
+        "scope_source_status": "complete_fixture"
+      },
+      "normative_strength": null,
+      "clinical_use_authorized": false
+    },
+    {
+      "rule_id": "S_MULTI_DIAG",
+      "care_process_stages": [
+        "diagnosis"
+      ],
+      "semantic_intent": "diagnostic_inference",
+      "target": {
+        "type": "disease",
+        "id": "DISEASE_E"
+      },
+      "effect": {
+        "kind": "sufficient_for_target",
+        "fixture_effect_authorized": true
+      },
+      "applicability": {
+        "op": "const",
+        "value": "TRUE"
+      },
+      "condition": {
+        "op": "fact",
+        "key": "marker_B"
+      },
+      "disease_context": [
+        "DISEASE_E"
+      ],
+      "disease_context_status": "resolved",
+      "classification_status": "reviewed_fixture",
+      "provenance": {
+        "source_kind": "synthetic",
+        "source_bundle_id": "SOURCE_WITH_TWO_EXPLICIT_CONCLUSIONS",
+        "source_anchor": "manually_authored_fixture_not_guideline",
+        "scope_source_status": "complete_fixture"
+      },
+      "normative_strength": null,
+      "clinical_use_authorized": false
+    },
+    {
+      "rule_id": "S_REFERRAL",
+      "care_process_stages": [
+        "diagnosis",
+        "investigation"
+      ],
+      "semantic_intent": "recommend_action",
+      "target": {
+        "type": "referral_service",
+        "id": "SERVICE_Z"
+      },
+      "effect": {
+        "kind": "recommend",
+        "fixture_effect_authorized": true
+      },
+      "applicability": {
+        "op": "const",
+        "value": "TRUE"
+      },
+      "condition": {
+        "op": "fact",
+        "key": "unresolved_problem"
+      },
+      "disease_context": [],
+      "disease_context_status": "not_mentioned",
+      "classification_status": "reviewed_fixture",
+      "provenance": {
+        "source_kind": "synthetic",
+        "source_bundle_id": "S_REFERRAL",
+        "source_anchor": "manually_authored_fixture_not_guideline",
+        "scope_source_status": "complete_fixture"
+      },
+      "normative_strength": null,
+      "clinical_use_authorized": false
+    },
+    {
+      "rule_id": "S_GUARDED_NECESSARY",
+      "care_process_stages": [
+        "diagnosis"
+      ],
+      "semantic_intent": "diagnostic_inference",
+      "target": {
+        "type": "disease",
+        "id": "DISEASE_D"
+      },
+      "effect": {
+        "kind": "necessary_for_target",
+        "fixture_effect_authorized": true
+      },
+      "applicability": {
+        "op": "fact",
+        "key": "G"
+      },
+      "condition": {
+        "op": "fact",
+        "key": "C"
+      },
+      "disease_context": [
+        "DISEASE_D"
+      ],
+      "disease_context_status": "resolved",
+      "classification_status": "reviewed_fixture",
+      "provenance": {
+        "source_kind": "synthetic",
+        "source_bundle_id": "S_GUARDED_NECESSARY",
+        "source_anchor": "manually_authored_fixture_not_guideline",
+        "scope_source_status": "complete_fixture"
+      },
+      "normative_strength": null,
+      "clinical_use_authorized": false
+    },
+    {
+      "rule_id": "S_GUARDED_SUFFICIENT",
+      "care_process_stages": [
+        "diagnosis"
+      ],
+      "semantic_intent": "diagnostic_inference",
+      "target": {
+        "type": "disease",
+        "id": "DISEASE_D"
+      },
+      "effect": {
+        "kind": "sufficient_for_target",
+        "fixture_effect_authorized": true
+      },
+      "applicability": {
+        "op": "fact",
+        "key": "G"
+      },
+      "condition": {
+        "op": "fact",
+        "key": "C"
+      },
+      "disease_context": [
+        "DISEASE_D"
+      ],
+      "disease_context_status": "resolved",
+      "classification_status": "reviewed_fixture",
+      "provenance": {
+        "source_kind": "synthetic",
+        "source_bundle_id": "S_GUARDED_SUFFICIENT",
+        "source_anchor": "manually_authored_fixture_not_guideline",
+        "scope_source_status": "complete_fixture"
+      },
+      "normative_strength": null,
+      "clinical_use_authorized": false
+    },
+    {
+      "rule_id": "S_SCOPED_TIME",
+      "care_process_stages": [
+        "diagnosis"
+      ],
+      "semantic_intent": "diagnostic_inference",
+      "target": {
+        "type": "disease",
+        "id": "DISEASE_D"
+      },
+      "effect": {
+        "kind": "sufficient_for_target",
+        "fixture_effect_authorized": true
+      },
+      "applicability": {
+        "op": "and",
+        "children": [
+          {
+            "op": "eq",
+            "key": "scope_person_role",
+            "value": "patient"
+          },
+          {
+            "op": "eq",
+            "key": "scope_event_epoch",
+            "value": "index"
+          }
+        ]
+      },
+      "condition": {
+        "op": "fact",
+        "key": "marker_A"
+      },
+      "disease_context": [
+        "DISEASE_D"
+      ],
+      "disease_context_status": "resolved",
+      "classification_status": "reviewed_fixture",
+      "provenance": {
+        "source_kind": "synthetic",
+        "source_bundle_id": "S_SCOPED_TIME",
+        "source_anchor": "manually_authored_fixture_not_guideline",
+        "scope_source_status": "complete_fixture"
+      },
+      "normative_strength": null,
+      "clinical_use_authorized": false
+    },
+    {
+      "rule_id": "S_SOFT_RESPONSE",
+      "care_process_stages": [
+        "treatment",
+        "diagnosis"
+      ],
+      "semantic_intent": "diagnostic_inference",
+      "target": {
+        "type": "disease",
+        "id": "DISEASE_D"
+      },
+      "effect": {
+        "kind": "defeasible_support",
+        "fixture_effect_authorized": true
+      },
+      "applicability": {
+        "op": "const",
+        "value": "TRUE"
+      },
+      "condition": {
+        "op": "fact",
+        "key": "response_R_observed"
+      },
+      "disease_context": [
+        "DISEASE_D"
+      ],
+      "disease_context_status": "resolved",
+      "classification_status": "reviewed_fixture",
+      "provenance": {
+        "source_kind": "synthetic",
+        "source_bundle_id": "S_SOFT_RESPONSE",
+        "source_anchor": "manually_authored_fixture_not_guideline",
+        "scope_source_status": "complete_fixture"
+      },
+      "normative_strength": null,
+      "clinical_use_authorized": false
+    },
+    {
+      "rule_id": "S_ELIGIBILITY_SUFFICIENT",
+      "care_process_stages": [
+        "treatment"
+      ],
+      "semantic_intent": "action_eligibility",
+      "target": {
+        "type": "treatment",
+        "id": "TREATMENT_T"
+      },
+      "effect": {
+        "kind": "eligibility_sufficient",
+        "fixture_effect_authorized": true
+      },
+      "applicability": {
+        "op": "const",
+        "value": "TRUE"
+      },
+      "condition": {
+        "op": "and",
+        "children": [
+          {
+            "op": "fact",
+            "key": "diagnosis_D_already_established"
+          },
+          {
+            "op": "fact",
+            "key": "eligibility_C"
+          }
+        ]
+      },
+      "disease_context": [
+        "DISEASE_D"
+      ],
+      "disease_context_status": "resolved",
+      "classification_status": "reviewed_fixture",
+      "provenance": {
+        "source_kind": "synthetic",
+        "source_bundle_id": "S_ELIGIBILITY_SUFFICIENT",
+        "source_anchor": "manually_authored_fixture_not_guideline",
+        "scope_source_status": "complete_fixture"
+      },
+      "normative_strength": null,
+      "clinical_use_authorized": false
+    },
+    {
+      "rule_id": "S_ELIGIBILITY_NECESSARY",
+      "care_process_stages": [
+        "treatment"
+      ],
+      "semantic_intent": "action_eligibility",
+      "target": {
+        "type": "treatment",
+        "id": "TREATMENT_T"
+      },
+      "effect": {
+        "kind": "eligibility_necessary",
+        "fixture_effect_authorized": true
+      },
+      "applicability": {
+        "op": "const",
+        "value": "TRUE"
+      },
+      "condition": {
+        "op": "and",
+        "children": [
+          {
+            "op": "fact",
+            "key": "diagnosis_D_already_established"
+          },
+          {
+            "op": "fact",
+            "key": "eligibility_C"
+          }
+        ]
+      },
+      "disease_context": [
+        "DISEASE_D"
+      ],
+      "disease_context_status": "resolved",
+      "classification_status": "reviewed_fixture",
+      "provenance": {
+        "source_kind": "synthetic",
+        "source_bundle_id": "S_ELIGIBILITY_NECESSARY",
+        "source_anchor": "manually_authored_fixture_not_guideline",
+        "scope_source_status": "complete_fixture"
+      },
+      "normative_strength": null,
+      "clinical_use_authorized": false
+    },
+    {
+      "rule_id": "S_GLOBAL_EXCLUSION",
+      "care_process_stages": [
+        "diagnosis"
+      ],
+      "semantic_intent": "diagnostic_inference",
+      "target": {
+        "type": "disease",
+        "id": "DISEASE_D"
+      },
+      "effect": {
+        "kind": "sufficient_for_exclusion",
+        "fixture_effect_authorized": true
+      },
+      "applicability": {
+        "op": "const",
+        "value": "TRUE"
+      },
+      "condition": {
+        "op": "fact",
+        "key": "marker_B"
+      },
+      "disease_context": [
+        "DISEASE_D"
+      ],
+      "disease_context_status": "resolved",
+      "classification_status": "reviewed_fixture",
+      "provenance": {
+        "source_kind": "synthetic",
+        "source_bundle_id": "S_GLOBAL_EXCLUSION",
+        "source_anchor": "manually_authored_fixture_not_guideline",
+        "scope_source_status": "complete_fixture"
+      },
+      "normative_strength": null,
+      "clinical_use_authorized": false
+    },
+    {
+      "rule_id": "S_CHILD_HOSPITAL_NECESSARY",
+      "care_process_stages": [
+        "diagnosis"
+      ],
+      "semantic_intent": "diagnostic_inference",
+      "target": {
+        "type": "disease",
+        "id": "DISEASE_D"
+      },
+      "effect": {
+        "kind": "necessary_for_target",
+        "fixture_effect_authorized": true
+      },
+      "applicability": {
+        "op": "and",
+        "children": [
+          {
+            "op": "compare",
+            "key": "patient.age_years_at_index",
+            "comparator": "lt",
+            "value": 12
+          },
+          {
+            "op": "fact",
+            "key": "hospital_scope"
+          }
+        ]
+      },
+      "condition": {
+        "op": "fact",
+        "key": "marker_A"
+      },
+      "disease_context": [
+        "DISEASE_D"
+      ],
+      "disease_context_status": "resolved",
+      "classification_status": "reviewed_fixture",
+      "provenance": {
+        "source_kind": "synthetic",
+        "source_bundle_id": "S_CHILD_HOSPITAL_NECESSARY",
+        "source_anchor": "manually_authored_fixture_not_guideline",
+        "scope_source_status": "complete_fixture"
+      },
+      "normative_strength": null,
+      "clinical_use_authorized": false
+    }
+  ],
+  "branch_sets": [
+    {
+      "branch_set_id": "B_AGE_GAP",
+      "policy": "exclusive",
+      "parent_scope": {
+        "op": "const",
+        "value": "TRUE"
+      },
+      "branches": [
+        {
+          "branch_id": "CHILD",
+          "guard": {
+            "op": "compare",
+            "key": "patient.age_years_at_index",
+            "comparator": "lt",
+            "value": 12
+          },
+          "rule_ref": "S_CHILD_NECESSARY",
+          "guard_review_status": "reviewed_fixture"
+        },
+        {
+          "branch_id": "ELDER",
+          "guard": {
+            "op": "compare",
+            "key": "patient.age_years_at_index",
+            "comparator": "ge",
+            "value": 70
+          },
+          "rule_ref": "S_ELDER_SUFFICIENT",
+          "guard_review_status": "reviewed_fixture"
+        }
+      ],
+      "coverage_status": "reviewed_partial_fixture",
+      "clinical_use_authorized": false,
+      "source_kind": "synthetic",
+      "classification_status": "reviewed_fixture",
+      "source_structure_complete": true,
+      "cardinality": "at_most_one"
+    },
+    {
+      "branch_set_id": "B_AGE_ELSE",
+      "policy": "exclusive",
+      "parent_scope": {
+        "op": "const",
+        "value": "TRUE"
+      },
+      "branches": [
+        {
+          "branch_id": "CHILD",
+          "guard": {
+            "op": "compare",
+            "key": "patient.age_years_at_index",
+            "comparator": "lt",
+            "value": 12
+          },
+          "rule_ref": "S_CHILD_NECESSARY",
+          "guard_review_status": "reviewed_fixture"
+        },
+        {
+          "branch_id": "ELDER",
+          "guard": {
+            "op": "compare",
+            "key": "patient.age_years_at_index",
+            "comparator": "ge",
+            "value": 70
+          },
+          "rule_ref": "S_ELDER_SUFFICIENT",
+          "guard_review_status": "reviewed_fixture"
+        }
+      ],
+      "coverage_status": "reviewed_exhaustive_fixture",
+      "clinical_use_authorized": false,
+      "source_kind": "synthetic",
+      "else_rule_ref": "S_GLOBAL_SUFFICIENT",
+      "else_source_authorized": true,
+      "classification_status": "reviewed_fixture",
+      "source_structure_complete": true,
+      "cardinality": "at_most_one",
+      "else_guard": {
+        "op": "not",
+        "child": {
+          "op": "or",
+          "children": [
+            {
+              "op": "compare",
+              "key": "patient.age_years_at_index",
+              "comparator": "lt",
+              "value": 12
+            },
+            {
+              "op": "compare",
+              "key": "patient.age_years_at_index",
+              "comparator": "ge",
+              "value": 70
+            }
+          ]
+        }
+      },
+      "else_guard_review_status": "reviewed_fixture",
+      "else_source_basis": "Source otherwise refers to age guards only, not any later execution eligibility of branch roots."
+    },
+    {
+      "branch_set_id": "B_OVERLAP_EXCLUSIVE",
+      "policy": "exclusive",
+      "parent_scope": {
+        "op": "const",
+        "value": "TRUE"
+      },
+      "branches": [
+        {
+          "branch_id": "LE20",
+          "guard": {
+            "op": "compare",
+            "key": "patient.age_years_at_index",
+            "comparator": "le",
+            "value": 20
+          },
+          "rule_ref": "S_GLOBAL_SUFFICIENT",
+          "guard_review_status": "reviewed_fixture"
+        },
+        {
+          "branch_id": "GE10",
+          "guard": {
+            "op": "compare",
+            "key": "patient.age_years_at_index",
+            "comparator": "ge",
+            "value": 10
+          },
+          "rule_ref": "S_MULTI_DIAG",
+          "guard_review_status": "reviewed_fixture"
+        }
+      ],
+      "coverage_status": "reviewed_partial_fixture",
+      "clinical_use_authorized": false,
+      "source_kind": "synthetic",
+      "classification_status": "reviewed_fixture",
+      "source_structure_complete": true,
+      "cardinality": "at_most_one"
+    },
+    {
+      "branch_set_id": "B_OVERLAP_COLLECT",
+      "policy": "all_applicable",
+      "parent_scope": {
+        "op": "const",
+        "value": "TRUE"
+      },
+      "branches": [
+        {
+          "branch_id": "LE20",
+          "guard": {
+            "op": "compare",
+            "key": "patient.age_years_at_index",
+            "comparator": "le",
+            "value": 20
+          },
+          "rule_ref": "S_GLOBAL_SUFFICIENT",
+          "guard_review_status": "reviewed_fixture"
+        },
+        {
+          "branch_id": "GE10",
+          "guard": {
+            "op": "compare",
+            "key": "patient.age_years_at_index",
+            "comparator": "ge",
+            "value": 10
+          },
+          "rule_ref": "S_MULTI_DIAG",
+          "guard_review_status": "reviewed_fixture"
+        }
+      ],
+      "coverage_status": "reviewed_partial_fixture",
+      "clinical_use_authorized": false,
+      "source_kind": "synthetic",
+      "classification_status": "reviewed_fixture",
+      "source_structure_complete": true,
+      "cardinality": "any_number"
+    },
+    {
+      "branch_set_id": "B_EXPLICIT_PRIORITY",
+      "policy": "source_priority",
+      "parent_scope": {
+        "op": "const",
+        "value": "TRUE"
+      },
+      "branches": [
+        {
+          "branch_id": "EXCEPTION",
+          "guard": {
+            "op": "fact",
+            "key": "exception_guard"
+          },
+          "rule_ref": "S_GLOBAL_SUFFICIENT",
+          "guard_review_status": "reviewed_fixture"
+        },
+        {
+          "branch_id": "GENERAL",
+          "guard": {
+            "op": "fact",
+            "key": "general_guard"
+          },
+          "rule_ref": "S_GLOBAL_EXCLUSION",
+          "guard_review_status": "reviewed_fixture"
+        }
+      ],
+      "coverage_status": "reviewed_partial_fixture",
+      "clinical_use_authorized": false,
+      "source_kind": "synthetic",
+      "priority_source_authorized": true,
+      "classification_status": "reviewed_fixture",
+      "source_structure_complete": true,
+      "cardinality": "at_most_one",
+      "source_declared_order": [
+        "EXCEPTION",
+        "GENERAL"
+      ],
+      "override_domain": {
+        "target_type": "disease",
+        "target_id": "DISEASE_D",
+        "effect_family": "diagnostic_decision"
+      }
+    },
+    {
+      "branch_set_id": "B_PARENT_AND_LOCAL",
+      "policy": "exclusive",
+      "parent_scope": {
+        "op": "fact",
+        "key": "parent_population"
+      },
+      "branches": [
+        {
+          "branch_id": "ENTRY",
+          "guard": {
+            "op": "fact",
+            "key": "entry_guard"
+          },
+          "rule_ref": "S_CHILD_NECESSARY",
+          "guard_review_status": "reviewed_fixture"
+        }
+      ],
+      "coverage_status": "reviewed_partial_fixture",
+      "clinical_use_authorized": false,
+      "source_kind": "synthetic",
+      "classification_status": "reviewed_fixture",
+      "source_structure_complete": true,
+      "cardinality": "at_most_one"
+    },
+    {
+      "branch_set_id": "B_COLLECT_UNKNOWNS",
+      "policy": "all_applicable",
+      "parent_scope": {
+        "op": "const",
+        "value": "TRUE"
+      },
+      "branches": [
+        {
+          "branch_id": "A",
+          "guard": {
+            "op": "fact",
+            "key": "guard_A"
+          },
+          "rule_ref": "S_GLOBAL_SUFFICIENT",
+          "guard_review_status": "reviewed_fixture"
+        },
+        {
+          "branch_id": "B",
+          "guard": {
+            "op": "fact",
+            "key": "guard_B"
+          },
+          "rule_ref": "S_MULTI_DIAG",
+          "guard_review_status": "reviewed_fixture"
+        }
+      ],
+      "coverage_status": "reviewed_partial_fixture",
+      "clinical_use_authorized": false,
+      "source_kind": "synthetic",
+      "classification_status": "reviewed_fixture",
+      "source_structure_complete": true,
+      "cardinality": "any_number"
+    },
+    {
+      "branch_set_id": "B_ACTION_CONFLICT",
+      "policy": "all_applicable",
+      "parent_scope": {
+        "op": "const",
+        "value": "TRUE"
+      },
+      "branches": [
+        {
+          "branch_id": "A",
+          "guard": {
+            "op": "fact",
+            "key": "guard_A"
+          },
+          "rule_ref": "S_GLOBAL_SUFFICIENT",
+          "guard_review_status": "reviewed_fixture"
+        },
+        {
+          "branch_id": "B",
+          "guard": {
+            "op": "fact",
+            "key": "guard_B"
+          },
+          "rule_ref": "S_GLOBAL_EXCLUSION",
+          "guard_review_status": "reviewed_fixture"
+        }
+      ],
+      "coverage_status": "reviewed_partial_fixture",
+      "clinical_use_authorized": false,
+      "source_kind": "synthetic",
+      "classification_status": "reviewed_fixture",
+      "source_structure_complete": true,
+      "cardinality": "any_number"
+    },
+    {
+      "branch_set_id": "B_PRIORITY_WITH_LOCAL_SCOPE",
+      "policy": "source_priority",
+      "parent_scope": {
+        "op": "const",
+        "value": "TRUE"
+      },
+      "branches": [
+        {
+          "branch_id": "EXCEPTION",
+          "guard": {
+            "op": "fact",
+            "key": "exception_guard"
+          },
+          "rule_ref": "S_CHILD_NECESSARY",
+          "guard_review_status": "reviewed_fixture"
+        },
+        {
+          "branch_id": "GENERAL",
+          "guard": {
+            "op": "fact",
+            "key": "general_guard"
+          },
+          "rule_ref": "S_GLOBAL_EXCLUSION",
+          "guard_review_status": "reviewed_fixture"
+        }
+      ],
+      "coverage_status": "reviewed_partial_fixture",
+      "clinical_use_authorized": false,
+      "source_kind": "synthetic",
+      "priority_source_authorized": true,
+      "classification_status": "reviewed_fixture",
+      "source_structure_complete": true,
+      "cardinality": "at_most_one",
+      "source_declared_order": [
+        "EXCEPTION",
+        "GENERAL"
+      ],
+      "override_domain": {
+        "target_type": "disease",
+        "target_id": "DISEASE_D",
+        "effect_family": "diagnostic_decision"
+      }
+    },
+    {
+      "branch_set_id": "B_SOURCE_ELSE_BASIS",
+      "policy": "exclusive",
+      "parent_scope": {
+        "op": "const",
+        "value": "TRUE"
+      },
+      "branches": [
+        {
+          "branch_id": "CHILD",
+          "guard": {
+            "op": "compare",
+            "key": "patient.age_years_at_index",
+            "comparator": "lt",
+            "value": 12
+          },
+          "rule_ref": "S_CHILD_HOSPITAL_NECESSARY",
+          "guard_review_status": "reviewed_fixture"
+        },
+        {
+          "branch_id": "ELDER",
+          "guard": {
+            "op": "compare",
+            "key": "patient.age_years_at_index",
+            "comparator": "ge",
+            "value": 70
+          },
+          "rule_ref": "S_ELDER_SUFFICIENT",
+          "guard_review_status": "reviewed_fixture"
+        }
+      ],
+      "coverage_status": "reviewed_exhaustive_fixture",
+      "clinical_use_authorized": false,
+      "source_kind": "synthetic",
+      "else_rule_ref": "S_GLOBAL_SUFFICIENT",
+      "else_source_authorized": true,
+      "classification_status": "reviewed_fixture",
+      "source_structure_complete": true,
+      "cardinality": "at_most_one",
+      "else_guard": {
+        "op": "not",
+        "child": {
+          "op": "or",
+          "children": [
+            {
+              "op": "compare",
+              "key": "patient.age_years_at_index",
+              "comparator": "lt",
+              "value": 12
+            },
+            {
+              "op": "compare",
+              "key": "patient.age_years_at_index",
+              "comparator": "ge",
+              "value": 70
+            }
+          ]
+        }
+      },
+      "else_guard_review_status": "reviewed_fixture",
+      "else_source_basis": "Source otherwise refers to age guards only, not any later execution eligibility of branch roots."
+    }
+  ],
+  "primary_references": [
+    {
+      "url": "https://hl7.org/fhir/R5/workflow.html",
+      "claim": "Definition, Request and Event are distinct; request does not guarantee fulfillment.",
+      "version": "FHIR R5 5.0.0",
+      "reviewed_on": "2026-09-08"
+    },
+    {
+      "url": "https://hl7.org/fhir/R5/servicerequest.html",
+      "claim": "Service request is separate from resulting procedure/report/observation.",
+      "version": "FHIR R5 5.0.0",
+      "reviewed_on": "2026-09-08"
+    },
+    {
+      "url": "https://hl7.org/fhir/R5/plandefinition-definitions.html",
+      "claim": "Action conditions distinguish applicability, start, stop; workflow action relationships are explicit.",
+      "version": "FHIR R5 5.0.0",
+      "reviewed_on": "2026-09-08"
+    },
+    {
+      "url": "https://cql.hl7.org/03-developersguide.html#conditional-expressions",
+      "claim": "CQL if/case null condition is treated as false; unknown-safe routing requires explicit lowering.",
+      "version": "CQL 2.0.0",
+      "reviewed_on": "2026-09-08"
+    },
+    {
+      "url": "https://www.hl7.org/fhir/uv/cpg/methodology.html",
+      "claim": "Computable CPG methodology includes representation, translation, testing and review; it does not guarantee automatic NLP fidelity.",
+      "version": "CPG 2.0.0",
+      "reviewed_on": "2026-09-08"
+    }
+  ]
+}

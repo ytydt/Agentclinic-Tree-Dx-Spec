@@ -1,0 +1,98 @@
+{
+  "date": "2026-09-08",
+  "review_scope": "Historical independent counterexamples found during review of the NEW synthetic supplemental checker; none is a new production experiment or clinical error count. Current regression results are in review_checks.json.",
+  "initial_snapshot": {
+    "snapshot_sha256": "4214813fd1405591051900a237935d93a6c81228c75ff08c8e948935034fa9ee",
+    "scope": "reviewed initial supplemental finite checker, not production",
+    "findings": [
+      {
+        "id": "initial_unknown_eq",
+        "actual": {
+          "status": "FIRED",
+          "scope": "TRUE",
+          "condition": "FALSE",
+          "channel": "diagnostic",
+          "action": "EXCLUDE"
+        },
+        "expectation": "UNKNOWN or explicit type rejection, never EXCLUDE"
+      },
+      {
+        "id": "initial_unreviewed_priority_run",
+        "actual": {
+          "route": {
+            "status": "SELECTED",
+            "selected": [
+              "child"
+            ],
+            "pending": [],
+            "parent_scope": "TRUE"
+          },
+          "executions": {
+            "child": {
+              "status": "FIRED",
+              "scope": "TRUE",
+              "condition": "FALSE",
+              "channel": "diagnostic",
+              "action": "EXCLUDE"
+            }
+          }
+        },
+        "expectation": "no diagnostic emission before branch/source validation"
+      },
+      {
+        "id": "initial_eligibility_direction",
+        "actual": {
+          "status": "DECIDED",
+          "scope": "TRUE",
+          "condition": "FALSE",
+          "channel": "workflow",
+          "action": "NOT_ELIGIBLE"
+        },
+        "expectation": "NOT_ELIGIBLE requires explicit necessary or complete eligibility authority"
+      }
+    ]
+  },
+  "intermediate_else_basis_snapshot": {
+    "snapshot_sha256": "bf2dcf838ffbac95c3ee5d5424ef2b8ca81d9d2b800e539b7aa6592c361e6140",
+    "scope": "reviewed intermediate supplemental finite checker, not production",
+    "review_case": "else complement of original age guards must not change when branch-local hospital scope is false",
+    "facts": {
+      "patient.age_years_at_index": 10,
+      "hospital_scope": false,
+      "marker_A": true
+    },
+    "actual": {
+      "route": {
+        "status": "SELECTED_ELSE",
+        "selected": [
+          "ELSE"
+        ],
+        "pending": [],
+        "parent_scope": "TRUE"
+      },
+      "executions": {
+        "ELSE": {
+          "status": "FIRED",
+          "scope": "TRUE",
+          "condition": "TRUE",
+          "channel": "diagnostic",
+          "action": "CONFIRM",
+          "conflict": false
+        }
+      },
+      "status": "NO_ACTION_CONFLICT",
+      "conflicts": [],
+      "admitted_actions": [
+        {
+          "branch_id": "ELSE",
+          "target": {
+            "type": "disease",
+            "id": "DISEASE_D"
+          },
+          "channel": "diagnostic",
+          "action": "CONFIRM"
+        }
+      ]
+    }
+  }
+}

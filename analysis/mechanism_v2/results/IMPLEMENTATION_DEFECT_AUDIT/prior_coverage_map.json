@@ -1,0 +1,816 @@
+{
+  "schema_version": 1,
+  "frozen_commit": "bbc036e8a6ec93583be915a4609fe86278ed062c",
+  "evidence_date": "2026-09-08",
+  "scope": "prior-design coverage and selected internal reuse; not exhaustive separate KG audit",
+  "coverage_items": [
+    {
+      "id": "PC01",
+      "concern": "错误疾病主语/首个模糊命中抢走后续精确命中",
+      "prior_migration_ids": [
+        "M10",
+        "M11"
+      ],
+      "prior_coverage": "explicit",
+      "anchors": [
+        {
+          "path": "analysis/mechanism_v2/results/RULE_EXTRACTION_EXECUTION_REDESIGN/REPORT.md",
+          "line": 24,
+          "excerpt": "- **正确原始subject仍会被程序送错候选**：56的完整SCC原子存在，却先给Carcinoma；773的IPAH内容奖励CTEPH。"
+        },
+        {
+          "path": "analysis/mechanism_v2/results/RULE_EXTRACTION_EXECUTION_REDESIGN/REPORT.md",
+          "line": 107,
+          "excerpt": "- 同义名、父子关系、病因/病灶/表现、良恶性近邻分不同边类型；不能用一个alias表混合。"
+        }
+      ],
+      "remaining_delivery_requirement": "拆分列表顺序/身份键等可确定代码错误与未知术语等价、父子继承、因果组件的语义问题；建立反合并及真别名正例。",
+      "classification": "code_defect_plus_semantic_linking_limitation",
+      "prior_implementation_status": "proposal_not_implemented",
+      "migration_anchors": [
+        {
+          "id": "M10",
+          "title": "全局ConceptRegistry与双向别名约束",
+          "minimum_fix": "先合并安全格式等价候选并保留all_labels/methods；别名白名单须有依据与类型/解剖/病因/良恶性兼容检查，source→alias和alias→candidate两端均校验，不能任一方向containment即同义。"
+        },
+        {
+          "id": "M11",
+          "title": "主体全局精确优先及显式继承",
+          "minimum_fix": "所有候选先查canonical ID/exact/verified alias，再考虑父类；禁列表顺序first-hit。保留unbound/ambiguous，不将无exact自动交给最近父类。"
+        }
+      ]
+    },
+    {
+      "id": "PC02",
+      "concern": "不同源窗口的规则组意外合并",
+      "prior_migration_ids": [
+        "M13"
+      ],
+      "prior_coverage": "explicit",
+      "anchors": [
+        {
+          "path": "analysis/mechanism_v2/results/RULE_EXTRACTION_EXECUTION_REDESIGN/EXTRACTION_PROTOCOL.md",
+          "line": 65,
+          "excerpt": "- 组稳定ID及成员引用；跨窗口局部ID不能合并；shared leaf不删除occurrence。"
+        }
+      ],
+      "remaining_delivery_requirement": "证明组合键各字段如何造成碰撞；区分原始subject不同与错归同一候选，不把所有冲突称为跨疾病组自动合并。",
+      "classification": "identity_and_referential_integrity_defect",
+      "prior_implementation_status": "proposal_not_implemented",
+      "migration_anchors": [
+        {
+          "id": "M13",
+          "title": "组ID命名空间、一致性及singleton身份",
+          "minimum_fix": "group instance ID由source版本+完整输入hash+extraction artifact ID+local root ID构造，focus/run来源单独保留；不以标题或Python hash命名。根logic/n只能存在一处，成员不得各写一份决定执行。"
+        }
+      ]
+    },
+    {
+      "id": "PC03",
+      "concern": "原子去重删掉组成员，未将成员边重定向到共享规范原子",
+      "prior_migration_ids": [
+        "M12",
+        "M13"
+      ],
+      "prior_coverage": "explicit",
+      "anchors": [
+        {
+          "path": "analysis/mechanism_v2/results/RULE_EXTRACTION_EXECUTION_REDESIGN/REPORT.md",
+          "line": 37,
+          "excerpt": "组应是独立RuleUnit，子式可以由引用复用。若同一个叶命题用于两个真实组，应保留两处成员引用和各自出处；不能因原子去重删掉其中一组的成员。源文一个条件控制多个结论时，可以共享根表达式、建立多个经审定的RuleUnit；不能让成员随意继承不同效果。"
+        },
+        {
+          "path": "analysis/mechanism_v2/results/RULE_EXTRACTION_EXECUTION_REDESIGN/EXTRACTION_PROTOCOL.md",
+          "line": 65,
+          "excerpt": "- 组稳定ID及成员引用；跨窗口局部ID不能合并；shared leaf不删除occurrence。"
+        }
+      ],
+      "remaining_delivery_requirement": "对共享叶、singleton退化、成员计数、后继组动作分别提供最小复现；明确当前是删除边而非保留显式空占位。",
+      "classification": "ordering_and_referential_integrity_defect",
+      "prior_implementation_status": "proposal_not_implemented",
+      "migration_anchors": [
+        {
+          "id": "M12",
+          "title": "去重保留规则出现、共享叶与所有出处",
+          "minimum_fix": "先建立raw occurrence及membership，再去重表达式存储；完整命题相同才共享leaf语义对象，所有member edges和source支持仍保留。不做跨记录最大modality覆盖。"
+        },
+        {
+          "id": "M13",
+          "title": "组ID命名空间、一致性及singleton身份",
+          "minimum_fix": "group instance ID由source版本+完整输入hash+extraction artifact ID+local root ID构造，focus/run来源单独保留；不以标题或Python hash命名。根logic/n只能存在一处，成员不得各写一份决定执行。"
+        }
+      ]
+    },
+    {
+      "id": "PC04",
+      "concern": "谓词字符串去重不足，同时阈值/范围不同的规则可能误去重",
+      "prior_migration_ids": [
+        "M12",
+        "M20"
+      ],
+      "prior_coverage": "explicit",
+      "anchors": [
+        {
+          "path": "analysis/mechanism_v2/results/RULE_EXTRACTION_EXECUTION_REDESIGN/SEMANTIC_CONTRACT.md",
+          "line": 20,
+          "excerpt": "| `deduplication` | 源规则身份、语义等价/派生关系、重复曝光记录 | 把重复抽取的每行都再加一次分 |"
+        }
+      ],
+      "remaining_delivery_requirement": "完整命题结构的确定性去重与自由文本语义等价识别分开；同义扩充须有反向检验，不能只提升合并召回。",
+      "classification": "code_defect_plus_semantic_equivalence_limitation",
+      "prior_implementation_status": "proposal_not_implemented",
+      "migration_anchors": [
+        {
+          "id": "M12",
+          "title": "去重保留规则出现、共享叶与所有出处",
+          "minimum_fix": "先建立raw occurrence及membership，再去重表达式存储；完整命题相同才共享leaf语义对象，所有member edges和source支持仍保留。不做跨记录最大modality覆盖。"
+        },
+        {
+          "id": "M20",
+          "title": "跨L2/L3/L4的证据聚合及复制不变性",
+          "minimum_fix": "统一EvidenceLedger标root rule、criterion、patient witness、support family和effect；严格重复证据只保一次状态/票。保留真正不同临床观测，不用“一finding平均”强行抹平。"
+        }
+      ]
+    },
+    {
+      "id": "PC05",
+      "concern": "竞争语句条数被当定向反证条数",
+      "prior_migration_ids": [
+        "M20",
+        "M22"
+      ],
+      "prior_coverage": "explicit",
+      "anchors": [
+        {
+          "path": "analysis/mechanism_v2/results/RULE_EXTRACTION_EXECUTION_REDESIGN/REPORT.md",
+          "line": 143,
+          "excerpt": "L4不应遍历一个含`distinguishes`标签的原子就广播处罚。比较规则必须给出两个准确目标、真正的鉴别条件、方向、适用范围及根证据；某病出现在DDx名单只说明需考虑，不产生−0.5。56和179的实际差量要求比较通道单独验收，而非只修L1硬否决。"
+        }
+      ],
+      "remaining_delivery_requirement": "复现无真正discriminator、否定/阈值未满足、跨组、重复与不合格上下文如何仍产生L4；合法定向对比须保留正例。",
+      "classification": "invalid_directional_scoring_policy_and_missing_admission_checks",
+      "prior_implementation_status": "proposal_not_implemented",
+      "migration_anchors": [
+        {
+          "id": "M20",
+          "title": "跨L2/L3/L4的证据聚合及复制不变性",
+          "minimum_fix": "统一EvidenceLedger标root rule、criterion、patient witness、support family和effect；严格重复证据只保一次状态/票。保留真正不同临床观测，不用“一finding平均”强行抹平。"
+        },
+        {
+          "id": "M22",
+          "title": "L4只执行已证明的定向对比",
+          "minimum_fix": "仅admitted ContrastRule进入L4；保存favor_target、against_target、condition和scope。DDx_list、mimic、同段共现保留为检索导航，不生成扣分。"
+        }
+      ]
+    },
+    {
+      "id": "PC06",
+      "concern": "无直接得分行通过claimants改写其他候选权重",
+      "prior_migration_ids": [
+        "M19"
+      ],
+      "prior_coverage": "explicit",
+      "anchors": [
+        {
+          "path": "analysis/mechanism_v2/results/RULE_EXTRACTION_EXECUTION_REDESIGN/REPORT.md",
+          "line": 131,
+          "excerpt": "只有适用且有效的证据映射才能进入计分依赖集合。49的epidemiology行无直接分值却进入claimants，说明当前准入顺序需要改变。排除/隔离的原子及不可执行的组不能通过隐藏通道影响其他候选票权；历史回放仍保留这种路径以供对照。"
+        }
+      ],
+      "remaining_delivery_requirement": "以不合格行插入不变性检查隐藏影响，另报合法证据删除后的全候选重加权。",
+      "classification": "admission_ordering_defect",
+      "prior_implementation_status": "proposal_not_implemented",
+      "migration_anchors": [
+        {
+          "id": "M19",
+          "title": "先证据准入，再建claimants和计算权重",
+          "minimum_fix": "先生成AdmittedEvidence事件，再建正支持claimants；quarantined、unknown、workflow、未适用、无合法literal/根动作的行不能claim。反证单独计，不混正支持集合。"
+        }
+      ]
+    },
+    {
+      "id": "PC07",
+      "concern": "去重保留前行出处却升级为后行最大模态",
+      "prior_migration_ids": [
+        "M12"
+      ],
+      "prior_coverage": "explicit",
+      "anchors": [
+        {
+          "path": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+          "line": 393,
+          "excerpt": "                    prev[\"modality\"] = a.get(\"modality\")"
+        }
+      ],
+      "remaining_delivery_requirement": "新增能改变执行效力的顺序置换复现，原始出处不可因最大模态产生合成证据。",
+      "classification": "cross_record_mutation_defect",
+      "prior_implementation_status": "proposal_not_implemented",
+      "migration_anchors": [
+        {
+          "id": "M12",
+          "title": "去重保留规则出现、共享叶与所有出处",
+          "minimum_fix": "先建立raw occurrence及membership，再去重表达式存储；完整命题相同才共享leaf语义对象，所有member edges和source支持仍保留。不做跨记录最大modality覆盖。"
+        }
+      ]
+    },
+    {
+      "id": "PC08",
+      "concern": "组根效力缺失、all混同必要性、成员真值不一致",
+      "prior_migration_ids": [
+        "M04",
+        "M16",
+        "M17",
+        "M18"
+      ],
+      "prior_coverage": "explicit",
+      "anchors": [
+        {
+          "path": "analysis/mechanism_v2/results/RULE_EXTRACTION_EXECUTION_REDESIGN/REPORT.md",
+          "line": 33,
+          "excerpt": "**连词、量词、模态与诊断效果是不同维度。** `all` 可以表示所有条件同时满足，不等于“每位患病者必有这些条件”；`any` 也可以属于一个有效的充分判据。组中正、负原子可以共存，例如“A阳性且B阴性”，这不应被当作关系冲突。真正需要禁止的是让每个成员独立决定对疾病的确认/排除动作，同时又没有根表达式的统一语义。"
+        },
+        {
+          "path": "analysis/mechanism_v2/results/RULE_EXTRACTION_EXECUTION_REDESIGN/REPORT.md",
+          "line": 35,
+          "excerpt": "历史实现已有浅层 `all/any` 与计数组合，不能说它完全没有连词；问题是这些槽位混合量化/必要性、缺少递归结构、作用域及组级效果。原始 `all,n=1` 又会被归一化重写，不能把原始字段直接当执行时语义。修复必须针对完整链路，而不是只检查原始JSON。[前次语义审计](../POST_V2_RULE_SEMANTICS_AUDIT/REPORT.md)、[能力普查](../V2_RULE_EXTRACTION_CAPABILITY_CENSUS/REPORT.md)"
+        }
+      ],
+      "remaining_delivery_requirement": "先描述现有启用profile再证明执行违例；关闭有意消融不等于修复全部组语义。",
+      "classification": "specification_gap_plus_execution_defect",
+      "prior_implementation_status": "proposal_not_implemented",
+      "migration_anchors": [
+        {
+          "id": "M04",
+          "title": "完整规则及递归表达式成为抽取对象",
+          "minimum_fix": "新schema至少增加Rule对象、expr节点和rule_effect；叶子不再承载继承自根的relation。旧组无法唯一迁移时留legacy_unresolved，禁自动默认为any或necessary。"
+        },
+        {
+          "id": "M16",
+          "title": "统一literal真值与数值关系解释",
+          "minimum_fix": "单一eval_literal返回true/false/unknown/conflict及proof；所有消费者只读该结果。阈值是完整条件，比较不适用或缺单位不以presence补正票。"
+        },
+        {
+          "id": "M17",
+          "title": "递归组求值与distinct计数",
+          "minimum_fix": "停用all⇒necessary；按根expr递归调用eval_literal。有限k-of-n按criterion类别及有效witness计数；未决成员给上下界：T≥k真，T+U<k假，否则unknown，conflict另列。"
+        },
+        {
+          "id": "M18",
+          "title": "根级动作授权与硬软分离",
+          "minimum_fix": "集中apply_effect(rule, truth, applicability, completeness, verification)；necessary仅在适用且E明确假时否定D，sufficient在E真时确认D，exclusion在E真时否定D。against仅soft。"
+        }
+      ]
+    },
+    {
+      "id": "PC09",
+      "concern": "治疗、检查、诊断没有完整用途/动作类型",
+      "prior_migration_ids": [
+        "M05",
+        "M08",
+        "M18",
+        "M19"
+      ],
+      "prior_coverage": "explicit_principle_partial_executable_contract",
+      "anchors": [
+        {
+          "path": "analysis/mechanism_v2/results/RULE_EXTRACTION_EXECUTION_REDESIGN/REPORT.md",
+          "line": 79,
+          "excerpt": "| 检查、治疗、工作流 | 产生相应建议或路径状态 | 依该工作流处理 | 不自动改疾病真值 |"
+        },
+        {
+          "path": "analysis/mechanism_v2/results/RULE_EXTRACTION_EXECUTION_REDESIGN/EXTRACTION_PROTOCOL.md",
+          "line": 26,
+          "excerpt": "2. 原文所指对象与任务：诊断、分类、关联、评分、建议检查、治疗、资格/路径、推断权限或背景。"
+        }
+      ],
+      "remaining_delivery_requirement": "补充规则用途、动作客体、行动模态、临床事实状态、消费者准入矩阵与未知用途政策；不是首次提出阶段分离。",
+      "classification": "typed_action_contract_gap",
+      "prior_implementation_status": "proposal_not_implemented",
+      "migration_anchors": [
+        {
+          "id": "M05",
+          "title": "决策种类、箭头方向与知识背景分离",
+          "minimum_fix": "仅枚举拼写别名可归一；risk、cause、test_recommendation、treatment、classification、diagnostic_effect单列。停用未明示反向规则的自动抽取；若保留推演，放独立derived知识通道。"
+        },
+        {
+          "id": "M08",
+          "title": "取消自动硬升级与诊断降权式洗白",
+          "minimum_fix": "gate改为validate/admit/quarantine，不重写根效力；quote未对齐、对象不符、非诊断任务不得通过改feature复活。合法soft证据须有独立source warrant。"
+        },
+        {
+          "id": "M18",
+          "title": "根级动作授权与硬软分离",
+          "minimum_fix": "集中apply_effect(rule, truth, applicability, completeness, verification)；necessary仅在适用且E明确假时否定D，sufficient在E真时确认D，exclusion在E真时否定D。against仅soft。"
+        },
+        {
+          "id": "M19",
+          "title": "先证据准入，再建claimants和计算权重",
+          "minimum_fix": "先生成AdmittedEvidence事件，再建正支持claimants；quarantined、unknown、workflow、未适用、无合法literal/根动作的行不能claim。反证单独计，不混正支持集合。"
+        }
+      ]
+    },
+    {
+      "id": "PC10",
+      "concern": "建议检查与实际阳性结果混同",
+      "prior_migration_ids": [
+        "M05",
+        "M14",
+        "M18"
+      ],
+      "prior_coverage": "explicit_principle_partial_executable_contract",
+      "anchors": [
+        {
+          "path": "analysis/mechanism_v2/results/RULE_EXTRACTION_EXECUTION_REDESIGN/SEMANTIC_CONTRACT.md",
+          "line": 72,
+          "excerpt": "本稿例子采用 Strong Kleene 三值表。缺失观察为 UNKNOWN；明确阴性可为 FALSE；同一时段、主体、指标及条件下的正反断言为 UNKNOWN 加 conflict。病例说“安排了某项检查”只产生一个检查事件，不能变成该结果为真。把“没有记录阳性”当成阴性必须有明确的封闭性许可，不能作为默认行为。"
+        },
+        {
+          "path": "analysis/mechanism_v2/results/RULE_EXTRACTION_EXECUTION_REDESIGN/REPORT.md",
+          "line": 100,
+          "excerpt": "建议EvidenceRecord至少包含：主体人物、事件、概念/测量身份、value及单位、标本、部位、方法、时间/相对事件、极性、确定性和原始跨度。一个检查被做过、检查异常、某项具体结果为阳性，应是不同命题。"
+        }
+      ],
+      "remaining_delivery_requirement": "细化recommended/ordered/performed/result_observed的证据类型、target非疾病时的结构以及禁反向诊断桥接。",
+      "classification": "event_status_and_action_type_gap",
+      "prior_implementation_status": "proposal_not_implemented",
+      "migration_anchors": [
+        {
+          "id": "M05",
+          "title": "决策种类、箭头方向与知识背景分离",
+          "minimum_fix": "仅枚举拼写别名可归一；risk、cause、test_recommendation、treatment、classification、diagnostic_effect单列。停用未明示反向规则的自动抽取；若保留推演，放独立derived知识通道。"
+        },
+        {
+          "id": "M14",
+          "title": "病例事实读取完整值、事件和角色",
+          "minimum_fix": "对每个finding核验quote跨度，value、unit、specimen、method、site、timing、experiencer、status独立存；已有label但缺value可补齐并记录，不靠label关键词判全部已覆盖。"
+        },
+        {
+          "id": "M18",
+          "title": "根级动作授权与硬软分离",
+          "minimum_fix": "集中apply_effect(rule, truth, applicability, completeness, verification)；necessary仅在适用且E明确假时否定D，sufficient在E真时确认D，exclusion在E真时否定D。against仅soft。"
+        }
+      ]
+    },
+    {
+      "id": "PC11",
+      "concern": "人群、场景、时间适用范围未执行",
+      "prior_migration_ids": [
+        "M04",
+        "M14",
+        "M18"
+      ],
+      "prior_coverage": "explicit_principle_partial_executable_contract",
+      "anchors": [
+        {
+          "path": "analysis/mechanism_v2/results/RULE_EXTRACTION_EXECUTION_REDESIGN/SEMANTIC_CONTRACT.md",
+          "line": 14,
+          "excerpt": "| `applicability` | 人群、场景、时段、取样/测量条件等的独立表达式 | 默认所有患者、所有时间均适用 |"
+        },
+        {
+          "path": "analysis/mechanism_v2/results/RULE_EXTRACTION_EXECUTION_REDESIGN/EXTRACTION_PROTOCOL.md",
+          "line": 28,
+          "excerpt": "4. 人群、人物角色、部位、时间、方法和条件适用范围。"
+        }
+      ],
+      "remaining_delivery_requirement": "补充scope继承、缺省范围、未知年龄、范围不适用与疾病false的区别；不能把既有applicability槽位写成新发明。",
+      "classification": "runtime_scope_interpreter_gap",
+      "prior_implementation_status": "proposal_not_implemented",
+      "migration_anchors": [
+        {
+          "id": "M04",
+          "title": "完整规则及递归表达式成为抽取对象",
+          "minimum_fix": "新schema至少增加Rule对象、expr节点和rule_effect；叶子不再承载继承自根的relation。旧组无法唯一迁移时留legacy_unresolved，禁自动默认为any或necessary。"
+        },
+        {
+          "id": "M14",
+          "title": "病例事实读取完整值、事件和角色",
+          "minimum_fix": "对每个finding核验quote跨度，value、unit、specimen、method、site、timing、experiencer、status独立存；已有label但缺value可补齐并记录，不靠label关键词判全部已覆盖。"
+        },
+        {
+          "id": "M18",
+          "title": "根级动作授权与硬软分离",
+          "minimum_fix": "集中apply_effect(rule, truth, applicability, completeness, verification)；necessary仅在适用且E明确假时否定D，sufficient在E真时确认D，exclusion在E真时否定D。against仅soft。"
+        }
+      ]
+    },
+    {
+      "id": "PC12",
+      "concern": "儿童/成人等分支、重叠范围和else策略",
+      "prior_migration_ids": [
+        "M04",
+        "M18"
+      ],
+      "prior_coverage": "partial",
+      "anchors": [
+        {
+          "path": "analysis/mechanism_v2/results/RULE_EXTRACTION_EXECUTION_REDESIGN/EXTRACTION_PROTOCOL.md",
+          "line": 22,
+          "excerpt": "先识别每一个具有独立条件和结论/用途的规则单元。规则组、完整评分表、工作流分支都作为整体保留；同时记录其子式跨度。"
+        },
+        {
+          "path": "analysis/mechanism_v2/results/RULE_EXTRACTION_EXECUTION_REDESIGN/SEMANTIC_CONTRACT.md",
+          "line": 119,
+          "excerpt": "AND applicability = TRUE 且无相关未解冲突"
+        }
+      ],
+      "remaining_delivery_requirement": "原提案未完整定义分支选择、未知guard、显式优先级、互斥/覆盖检查、默认分支来源及相互冲突动作，需独立补充。",
+      "classification": "branch_dispatch_and_policy_specification_gap",
+      "prior_implementation_status": "proposal_not_implemented",
+      "migration_anchors": [
+        {
+          "id": "M04",
+          "title": "完整规则及递归表达式成为抽取对象",
+          "minimum_fix": "新schema至少增加Rule对象、expr节点和rule_effect；叶子不再承载继承自根的relation。旧组无法唯一迁移时留legacy_unresolved，禁自动默认为any或necessary。"
+        },
+        {
+          "id": "M18",
+          "title": "根级动作授权与硬软分离",
+          "minimum_fix": "集中apply_effect(rule, truth, applicability, completeness, verification)；necessary仅在适用且E明确假时否定D，sufficient在E真时确认D，exclusion在E真时否定D。against仅soft。"
+        }
+      ]
+    },
+    {
+      "id": "PC13",
+      "concern": "规则群中病例事实/阈值/角色错接",
+      "prior_migration_ids": [
+        "M07",
+        "M14",
+        "M15",
+        "M16",
+        "M21"
+      ],
+      "prior_coverage": "explicit",
+      "anchors": [
+        {
+          "path": "analysis/mechanism_v2/results/RULE_EXTRACTION_EXECUTION_REDESIGN/REPORT.md",
+          "line": 94,
+          "excerpt": "必须区分：QTc 380与异常区间，TAPSE/PASP比值与PASP，PA直径与PA压力，血中性粒百分比与绝对数，组织浸润与血检，platelet count与MPV/IPF。数值类型与单位只阻止一部分错误；mPAP/PASP单位相同仍需测量身份检查。"
+        }
+      ],
+      "remaining_delivery_requirement": "类型、单位、数值比较可独立代码修复；概念同一性、标本/时序信息提取仍需新方法或人工词典与测评。",
+      "classification": "code_defect_plus_information_loss_and_semantic_matching",
+      "prior_implementation_status": "proposal_not_implemented",
+      "migration_anchors": [
+        {
+          "id": "M07",
+          "title": "数值、阈值所属指标与评分权重分离",
+          "minimum_fix": "数字parser返回带span和measurement anchor的全部候选；禁止整quote首值覆盖；删除G2自动必要性；区分criterion_count/score_weight/threshold/age/ratio。"
+        },
+        {
+          "id": "M14",
+          "title": "病例事实读取完整值、事件和角色",
+          "minimum_fix": "对每个finding核验quote跨度，value、unit、specimen、method、site、timing、experiencer、status独立存；已有label但缺value可补齐并记录，不靠label关键词判全部已覆盖。"
+        },
+        {
+          "id": "M15",
+          "title": "Typed join及多见证消歧",
+          "minimum_fix": "匹配先判concept、对象、方法、标本、时点和方向兼容，再匹配字词/verified alias；embedding仅召回候选pair。多个适用观测不首个胜出，保留witness集合或ambiguous。"
+        },
+        {
+          "id": "M16",
+          "title": "统一literal真值与数值关系解释",
+          "minimum_fix": "单一eval_literal返回true/false/unknown/conflict及proof；所有消费者只读该结果。阈值是完整条件，比较不适用或缺单位不以presence补正票。"
+        },
+        {
+          "id": "M21",
+          "title": "评分表是有符号程序，不是诊断关系",
+          "minimum_fix": "引入ScoreProgram类型：每行condition、signed_weight、互斥档/组、总分规则和输出类别；原始负分不编译成exclusion。未知项目不能静默按0而把总分当确定。"
+        }
+      ]
+    },
+    {
+      "id": "PC14",
+      "concern": "出处、缓存、解析失败和隐式全局配置",
+      "prior_migration_ids": [
+        "M01",
+        "M02",
+        "M03",
+        "M06",
+        "M09",
+        "M25"
+      ],
+      "prior_coverage": "explicit",
+      "anchors": [
+        {
+          "path": "analysis/mechanism_v2/results/RULE_EXTRACTION_EXECUTION_REDESIGN/REPORT.md",
+          "line": 149,
+          "excerpt": "函数级变更详见 [MIGRATION_MAP.md](MIGRATION_MAP.md)、[migration_matrix.json](migration_matrix.json)。建议先冻结历史解释器，再建立新合同的并行路径，逐阶段双跑和比较；不得一边改旧缓存语义一边沿用旧缓存键。"
+        },
+        {
+          "path": "analysis/mechanism_v2/results/RULE_EXTRACTION_EXECUTION_REDESIGN/REPORT.md",
+          "line": 155,
+          "excerpt": "本轮设计阶段的静态阅读还发现可选NLI路径的极性/缓存键等风险；这些作为迁移项记录，**没有把未启用路径冒充本11例性能下降原因**。版本升级后用固定内容、固定候选和固定患者事实重放，再逐步开放真正端到端评测。"
+        }
+      ],
+      "remaining_delivery_requirement": "精确列默认运行与可选未启用路径；缓存键和异常状态可修，但完整来源及源句语义仍是另外验收对象。",
+      "classification": "provenance_and_reproducibility_defect",
+      "prior_implementation_status": "proposal_not_implemented",
+      "migration_anchors": [
+        {
+          "id": "M01",
+          "title": "运行配置与实际来源绑定",
+          "minimum_fix": "将SourceResolver作为run_case显式参数；由该臂job manifest按完整内容hash构建。缺hash或歧义时记unresolved，不按标题回填；保存实际许可source_ref。"
+        },
+        {
+          "id": "M02",
+          "title": "保留源布局和诊断完整单元",
+          "minimum_fix": "递归读取全部容器并保留原XML路径/列表层级；从正文前置信息选择标题；表格保存单元格坐标及跨格信息，不先删除空格单元。"
+        },
+        {
+          "id": "M03",
+          "title": "检索窗口作为结构闭包而非邻块串接",
+          "minimum_fix": "截断前检测列表/表/脚注边界，分块时重复必要引导且记录成员全集引用；未闭合单元不得直接发布刚性规则。"
+        },
+        {
+          "id": "M06",
+          "title": "归一化只改语法，不猜缺失语义",
+          "minimum_fix": "仅null/大小写/确定枚举别名做无损归一；n缺失、组逻辑冲突进入unresolved。删除自动flat any和双槽互斥的语义判定，输出诊断而不覆盖raw。"
+        },
+        {
+          "id": "M09",
+          "title": "验证器审完整语义，不以NLI标签充当证明",
+          "minimum_fix": "F8输出只作风险信号，区分not_run、neutral、contradiction；不经其标签直接加硬权或feature化。若继续NLI，verbalize完整根表达式并保存生成句。"
+        },
+        {
+          "id": "M25",
+          "title": "分层缓存版本化与失败状态",
+          "minimum_fix": "key加入实际prompt/schema/完整payload/model/provider配置；cache entry区分success_empty、success_nonempty、transport_error、parse_error、incomplete。错误可有TTL或重试策略，不能计为“来源无规则”。"
+        }
+      ]
+    },
+    {
+      "id": "PC15",
+      "concern": "trace/终点/proxy以及干预口径",
+      "prior_migration_ids": [
+        "M23",
+        "M24"
+      ],
+      "prior_coverage": "explicit",
+      "anchors": [
+        {
+          "path": "analysis/mechanism_v2/results/RULE_EXTRACTION_EXECUTION_REDESIGN/REPORT.md",
+          "line": 145,
+          "excerpt": "排序结果须分别报告完整目标、组件/父类、候选生成缺失、绑定后暴露、硬状态和软分；mapper独立评价，不回写诊断排名。稳定tie-break只能提供复现，不能为91那样的零证据代理名次赋予医学意义。"
+        }
+      ],
+      "remaining_delivery_requirement": "修观察器与指标不等于运行引擎临床错误修复；proxy历史约定保留，新增完整终点不可偷偷覆盖历史值。",
+      "classification": "observability_defect_or_evaluation_convention",
+      "prior_implementation_status": "proposal_not_implemented",
+      "migration_anchors": [
+        {
+          "id": "M23",
+          "title": "诊断状态与排序，confirmed不是计数竞赛",
+          "minimum_fix": "每concept一个状态：unresolved/eligible/confirmed/excluded/conflicted等与score独立；confirmed保持布尔合法状态及proof集合，不以数量排序。冲突先显式标注并阻止自动无争议硬裁定。"
+        },
+        {
+          "id": "M24",
+          "title": "完整审计账本与正确终点保持",
+          "minimum_fix": "生成不截断的raw→rewrite→binding→truth→effect→claimant→score→rank账本，UI可截断但持久数据不截断；干预明确phase/目标/root/member并保存实际命中。"
+        }
+      ]
+    }
+  ],
+  "internal_reuse": [
+    {
+      "id": "KR01",
+      "capability": "typed terminology mappings and typed concept roles",
+      "anchors": [
+        {
+          "path": "src/agentclinic_tree_dx/knowledge/guideline_kg_schema.py",
+          "line": 103,
+          "excerpt": "MAPPING_PREDICATES = {"
+        },
+        {
+          "path": "src/agentclinic_tree_dx/knowledge/guideline_kg_schema.py",
+          "line": 495,
+          "excerpt": "class ConceptMapping(_KGRecord):"
+        },
+        {
+          "path": "src/agentclinic_tree_dx/knowledge/guideline_kg_schema.py",
+          "line": 330,
+          "excerpt": "class DiagnosisExpression(_KGRecord):"
+        }
+      ],
+      "reuse": "stable identities, exact/broad/narrow/related edge distinctions and structure validators",
+      "not_guaranteed": "unknown aliases are not clinically certified by schema; related/broad/narrow cannot become equality"
+    },
+    {
+      "id": "KR02",
+      "capability": "recursive logic with references and cycle validation",
+      "anchors": [
+        {
+          "path": "src/agentclinic_tree_dx/knowledge/guideline_kg_schema.py",
+          "line": 85,
+          "excerpt": "LOGIC_OPERATORS = {\"and\", \"or\", \"not\", \"k_of_n\", \"sequence\"}"
+        },
+        {
+          "path": "src/agentclinic_tree_dx/knowledge/guideline_kg_schema.py",
+          "line": 1065,
+          "excerpt": "def _validate_logic_cycles("
+        },
+        {
+          "path": "src/agentclinic_tree_dx/knowledge/guideline_kg_schema.py",
+          "line": 709,
+          "excerpt": "            errors.append(\"operand_ids: duplicate operands are not allowed\")"
+        }
+      ],
+      "reuse": "dangling-reference, typed operand, duplicate-member, operator arity and cycle checks",
+      "not_guaranteed": "no finite/general quantifier binding, runtime K3, member-source completeness or distinct clinical witnesses is established"
+    },
+    {
+      "id": "KR03",
+      "capability": "population, measurement, specimen and temporal qualifiers",
+      "anchors": [
+        {
+          "path": "src/agentclinic_tree_dx/knowledge/guideline_kg_schema.py",
+          "line": 386,
+          "excerpt": "    population_context_ids: tuple[str, ...] = ()"
+        },
+        {
+          "path": "src/agentclinic_tree_dx/knowledge/guideline_kg_schema.py",
+          "line": 343,
+          "excerpt": "class FeaturePattern(_KGRecord):"
+        },
+        {
+          "path": "src/agentclinic_tree_dx/knowledge/guideline_kg_schema.py",
+          "line": 1000,
+          "excerpt": "                    f\"{prefix}.population_context_ids: concept must be population\")"
+        }
+      ],
+      "reuse": "typed record fields and cross-record domain/range checks",
+      "not_guaranteed": "population list is not an evaluated applicability expression; no age cutoff/branch priority/unknown guard semantics follows"
+    },
+    {
+      "id": "KR04",
+      "capability": "differential list membership kept separate from directional evidence",
+      "anchors": [
+        {
+          "path": "src/agentclinic_tree_dx/knowledge/guideline_kg_extraction.py",
+          "line": 660,
+          "excerpt": "    \"\"\"Compile WikEM link lists as candidate-membership, never as criteria.\"\"\""
+        },
+        {
+          "path": "src/agentclinic_tree_dx/knowledge/guideline_kg_extraction.py",
+          "line": 699,
+          "excerpt": "                \"enumeration_only\": True,"
+        }
+      ],
+      "reuse": "enumeration_only/ranking_eligible=false authoring contract; separate non-ranking export lane",
+      "not_guaranteed": "flags must be honored at every runtime consumer; generated clinical assertion correctness is not certified"
+    },
+    {
+      "id": "KR05",
+      "capability": "reference and evidence graph integrity",
+      "anchors": [
+        {
+          "path": "src/agentclinic_tree_dx/knowledge/guideline_kg_schema.py",
+          "line": 1096,
+          "excerpt": "def validate_graph(records: Iterable[Mapping[str, Any] | Any]) -> list[str]:"
+        },
+        {
+          "path": "src/agentclinic_tree_dx/knowledge/guideline_kg_schema.py",
+          "line": 903,
+          "excerpt": "def _validate_cross_record("
+        },
+        {
+          "path": "src/agentclinic_tree_dx/knowledge/guideline_kg_schema.py",
+          "line": 1128,
+          "excerpt": "class GraphValidationIndex:"
+        }
+      ],
+      "reuse": "deterministic shape/reference/evidence-offset validation and atomic delta validation",
+      "not_guaranteed": "quote exactness is not entailment; complete graph shape is not faithful extraction or approved diagnostic action"
+    }
+  ],
+  "mechanical_integration_scan": [
+    {
+      "path": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_trial_extraction.py",
+      "searched_tokens": [
+        "guideline_kg_schema",
+        "LogicExpression",
+        "DiagnosticAssertion",
+        "population_context_ids",
+        "ranking_eligible"
+      ],
+      "hits": []
+    },
+    {
+      "path": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+      "searched_tokens": [
+        "guideline_kg_schema",
+        "LogicExpression",
+        "DiagnosticAssertion",
+        "population_context_ids",
+        "ranking_eligible"
+      ],
+      "hits": []
+    },
+    {
+      "path": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/gate_assertions.py",
+      "searched_tokens": [
+        "guideline_kg_schema",
+        "LogicExpression",
+        "DiagnosticAssertion",
+        "population_context_ids",
+        "ranking_eligible"
+      ],
+      "hits": []
+    },
+    {
+      "path": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/score_2x2_engine.py",
+      "searched_tokens": [
+        "guideline_kg_schema",
+        "LogicExpression",
+        "DiagnosticAssertion",
+        "population_context_ids",
+        "ranking_eligible"
+      ],
+      "hits": []
+    },
+    {
+      "path": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_trial_retrieval.py",
+      "searched_tokens": [
+        "guideline_kg_schema",
+        "LogicExpression",
+        "DiagnosticAssertion",
+        "population_context_ids",
+        "ranking_eligible"
+      ],
+      "hits": []
+    },
+    {
+      "path": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/trial_retriever.py",
+      "searched_tokens": [
+        "guideline_kg_schema",
+        "LogicExpression",
+        "DiagnosticAssertion",
+        "population_context_ids",
+        "ranking_eligible"
+      ],
+      "hits": []
+    }
+  ],
+  "integration_scan_limit": "No references in the six named frozen runtime files; not a claim about every repository consumer.",
+  "sources": [
+    {
+      "path": "analysis/mechanism_v2/results/RULE_EXTRACTION_EXECUTION_REDESIGN/REPORT.md",
+      "sha256": "bc0ac73d38c5897708de48a00f34e91201f94d818640d5edd82034960f184042",
+      "read_via": "git_blob_at_frozen_commit"
+    },
+    {
+      "path": "analysis/mechanism_v2/results/RULE_EXTRACTION_EXECUTION_REDESIGN/EXTRACTION_PROTOCOL.md",
+      "sha256": "aba87e9c26a53775afe5a6e48558db847877fe6f2b10d29935ca04f742279546",
+      "read_via": "git_blob_at_frozen_commit"
+    },
+    {
+      "path": "analysis/mechanism_v2/results/RULE_EXTRACTION_EXECUTION_REDESIGN/SEMANTIC_CONTRACT.md",
+      "sha256": "fdd96ccce9d5deb7d43d242e63b1b24d056dc990297f19623e08dfca9b91d115",
+      "read_via": "git_blob_at_frozen_commit"
+    },
+    {
+      "path": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+      "sha256": "6216de0b59f87a1fab4fa09f0db18436a2c208a9e7e43f7802edf3d9b429a383",
+      "read_via": "git_blob_at_frozen_commit"
+    },
+    {
+      "path": "analysis/mechanism_v2/results/RULE_EXTRACTION_EXECUTION_REDESIGN/migration_matrix.json",
+      "sha256": "195f4c91c883e7531c053b5f3ec1d2339c8a516fd25afe316d903dca0e9b2df5",
+      "read_via": "git_blob_at_frozen_commit"
+    },
+    {
+      "path": "src/agentclinic_tree_dx/knowledge/guideline_kg_schema.py",
+      "sha256": "83ee04a3504ae5039b0eb3f9312618126f6df96912792fef3db68a2151a73fe8",
+      "read_via": "git_blob_at_frozen_commit"
+    },
+    {
+      "path": "src/agentclinic_tree_dx/knowledge/guideline_kg_extraction.py",
+      "sha256": "c01e993a15d5ba86b8c8e6a4dc0679b114e7129b086d49799dfd4cbe1e8a6c82",
+      "read_via": "git_blob_at_frozen_commit"
+    },
+    {
+      "path": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_trial_extraction.py",
+      "sha256": "5e350b8d3958f0a3b160673e3a8d7e68bae59694caf155260e2e0e6571d017ce",
+      "read_via": "git_blob_at_frozen_commit"
+    },
+    {
+      "path": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/gate_assertions.py",
+      "sha256": "6e18fea04eb63aa91fbadaf06d569c52dc91ef1f08a4adf96269a4dc3b03aed0",
+      "read_via": "git_blob_at_frozen_commit"
+    },
+    {
+      "path": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/score_2x2_engine.py",
+      "sha256": "23a7b0b8d8784a51329af842e975be1cd50d8ea7c44631edb059f5c389fa7611",
+      "read_via": "git_blob_at_frozen_commit"
+    },
+    {
+      "path": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_trial_retrieval.py",
+      "sha256": "a2e1bf185a3f7ec133f40ed1593babbf42c77dfd70df272c4715cc488d336ee4",
+      "read_via": "git_blob_at_frozen_commit"
+    },
+    {
+      "path": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/trial_retriever.py",
+      "sha256": "ffd8e2c68203edbd820b93ff27204efc6a9b4e4d0e58a23012a34b14b0b9d7ed",
+      "read_via": "git_blob_at_frozen_commit"
+    }
+  ]
+}

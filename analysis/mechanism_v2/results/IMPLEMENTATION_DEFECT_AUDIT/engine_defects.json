@@ -1,0 +1,756 @@
+{
+  "schema_version": 1,
+  "baseline_commit": "bbc036e8a6ec93583be915a4609fe86278ed062c",
+  "scope": "Mechanical executor structures, literal consumers, evidence/score paths and logging. Disease identity/measurement parser have separate IDN catalogue.",
+  "defects": [
+    {
+      "id": "ENG-01",
+      "title": "组身份只用标题/章节/focus/局部ID/归一主语，跨来源窗口碰撞",
+      "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+      "functions": [
+        "run_case"
+      ],
+      "line_anchors": [
+        {
+          "start": 43,
+          "end": 48
+        },
+        {
+          "start": 432,
+          "end": 446
+        }
+      ],
+      "observed_behavior": "不同passage-local g1在相同其余key下合成一个根；括号限定被norm删除也可令adult/child主语同key。不同norm(subject)本身仍分别建组，不能说任意不同疾病无条件合并。",
+      "fix_class": "code_only",
+      "historical_status": "44冻结包组跨cache计数old_old/free_old/old_v2/free_v2=11/3/11/8；522已人工溯源DSM/Walter真实错并。",
+      "prior_migration_ids": [
+        "M01",
+        "M12",
+        "M13"
+      ],
+      "prior_coverage": "already_explicit",
+      "reproduction_ids": [
+        "S01",
+        "S02",
+        "S03"
+      ],
+      "proposal": "从来源版本、完整输入hash、抽取artifact、local root构造稳定root occurrence；保留原主语与资格字段；跨窗口续组必须有显式continuation/equivalence。",
+      "limits": "强身份修复可纯代码保分离；判断不同窗口是否同一临床组需要语义依据，不能用hash自动证明等价。"
+    },
+    {
+      "id": "ENG-02",
+      "title": "先原子去重后建组删除membership，singleton回落原子执行",
+      "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+      "functions": [
+        "run_case"
+      ],
+      "line_anchors": [
+        {
+          "start": 380,
+          "end": 394
+        },
+        {
+          "start": 432,
+          "end": 446
+        },
+        {
+          "start": 517,
+          "end": 519
+        }
+      ],
+      "observed_behavior": "去重移除后出现的共享原子行且不保留它所属的第二组边；并没有存储一个null空白成员。剩余组不足2行则组对象被删除，成员独立进入L1/L2/L3。",
+      "fix_class": "code_only",
+      "historical_status": "522的mutism成员被更早组夺走已历史确认；冻结raw occurrence两行以上却不足2代表数199/154/210/184，此数量含重复曝光，不能当临床组损坏率。",
+      "prior_migration_ids": [
+        "M12",
+        "M13",
+        "M18"
+      ],
+      "prior_coverage": "already_explicit",
+      "reproduction_ids": [
+        "S04"
+      ],
+      "proposal": "先保存occurrence和root membership，再intern不可变语义叶；多个组各自引用同叶，禁止删边；已抽取但不完整组保持root和incomplete，不能落为独立疾病充分条件。",
+      "limits": "仅给旧dedupe key加入group/source避免丢边会增加重复投票，须与证据聚合分开实施；旧已删边需回raw恢复。"
+    },
+    {
+      "id": "ENG-03",
+      "title": "去重忽略完整命题槽并嫁接最大modality，造成顺序选择与混合出处",
+      "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+      "functions": [
+        "run_case"
+      ],
+      "line_anchors": [
+        {
+          "start": 380,
+          "end": 394
+        }
+      ],
+      "observed_behavior": "key只含norm(predicate)/relation/polarity，忽略threshold、subject、comparator、context、group和source；首行保阈值/出处，后行仅升级modality。不同对比目标被选一、组身份被选一。",
+      "fix_class": "code_only",
+      "historical_status": "四臂实际modality升级514/488/573/461；comparator不同的dedupe桶174/219/290/329。槽差只是机械标志，包含null/None等非语义差异。",
+      "prior_migration_ids": [
+        "M12"
+      ],
+      "prior_coverage": "already_explicit",
+      "reproduction_ids": [
+        "S05",
+        "S06"
+      ],
+      "proposal": "不可变完整RuleOccurrence；语义相同才共享semantic node；保留全部source支持，禁止跨来源max-modality覆盖。完整schema canonical hash仅做已知结构相等，不冒充语义等价。",
+      "limits": "纯代码能停止有损合并；同义阈值/不同人群真实关系仍需受审规则及语义归并。"
+    },
+    {
+      "id": "ENG-04",
+      "title": "字符串去重不足与不同relation复述造成同证据多票",
+      "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+      "functions": [
+        "run_case"
+      ],
+      "line_anchors": [
+        {
+          "start": 384,
+          "end": 384
+        },
+        {
+          "start": 605,
+          "end": 618
+        },
+        {
+          "start": 630,
+          "end": 644
+        }
+      ],
+      "observed_behavior": "redsignal、redsignal finding、redsignal feature为三个key，却接同一患者事实；同一原子改relation亦可保留多行。exact复制通常已去重，_support本身不乘分。",
+      "fix_class": "hybrid_semantic",
+      "historical_status": "前轮全44臂同fact重复票账本和522/74/49/179逐例已确认；本轮S07/S20分离L3和L4复制路径。",
+      "prior_migration_ids": [
+        "M12",
+        "M15",
+        "M20"
+      ],
+      "prior_coverage": "already_explicit",
+      "reproduction_ids": [
+        "S07",
+        "S20"
+      ],
+      "proposal": "存储去重与证据去重分开：semantic predicate/完整rule/患者witness/evidence family各有身份；结构exact去重纯代码；同义词用受审词表/本体等价/类型约束候选对及源文验证，不以embedding阈值直接合并。",
+      "limits": "同一事实可合法满足不同独立criterion；也有不同时间/检测的新事实，不能一律按finding字符串平均。技术方案须同时测欠合并和过合并。"
+    },
+    {
+      "id": "ENG-05",
+      "title": "root logic/n冗余存每成员且执行只读首成员",
+      "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+      "functions": [
+        "run_case"
+      ],
+      "line_anchors": [
+        {
+          "start": 438,
+          "end": 441
+        },
+        {
+          "start": 462,
+          "end": 465
+        },
+        {
+          "start": 488,
+          "end": 509
+        }
+      ],
+      "observed_behavior": "成员all/any/count或n不一致不会被拒绝，首个存活成员决定整根逻辑；换输入顺序即可从完整满足变部分计分。",
+      "fix_class": "code_only",
+      "historical_status": "44包mixed logic=5/3/5/6，mixed n=1/1/1/4；这些是原样组对象内部结构冲突计数。",
+      "prior_migration_ids": [
+        "M04",
+        "M13"
+      ],
+      "prior_coverage": "already_explicit",
+      "reproduction_ids": [
+        "S08"
+      ],
+      "proposal": "根槽只存一次；legacy adapter验证同组根槽一致，冲突返回invalid并保留raw，不能首行或多数票决定。",
+      "limits": "验证冲突能纯代码完成；选择与指南一致的正确logic/n须回原文，不能自动猜。"
+    },
+    {
+      "id": "ENG-06",
+      "title": "组literal求值忽略成员否定和数值条件",
+      "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+      "functions": [
+        "run_case"
+      ],
+      "line_anchors": [
+        {
+          "start": 466,
+          "end": 469
+        },
+        {
+          "start": 488,
+          "end": 509
+        }
+      ],
+      "observed_behavior": "sat/vio仅按患者present/absent/normal分箱，无视成员polarity及threshold；NOT B且B absent反算vio，A=1却算A>=10满足。",
+      "fix_class": "code_only",
+      "historical_status": "实际组present被算sat但成员negated=4/6/5/6；数值阈值明确False仍算sat=2/1/6/4。并非所有此类组都改变了最终名次。",
+      "prior_migration_ids": [
+        "M16",
+        "M17"
+      ],
+      "prior_coverage": "already_explicit",
+      "reproduction_ids": [
+        "S09"
+      ],
+      "proposal": "eval_literal统一读取完整signed condition，所有消费者只读true/false/unknown/conflict及witness；规范清楚的现有数值/否定字段即可确定性修复。",
+      "limits": "修复仅保证给定结构输入的语义；谓词错抽、患者错连、未表示的scope仍是独立问题。"
+    },
+    {
+      "id": "ENG-07",
+      "title": "完整组丢失充分/排除/必要效果；不同logic执行能力不对称",
+      "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+      "functions": [
+        "run_case"
+      ],
+      "line_anchors": [
+        {
+          "start": 476,
+          "end": 477
+        },
+        {
+          "start": 488,
+          "end": 519
+        }
+      ],
+      "observed_behavior": "all/any/count分支仅产分；all借任一required叶触发veto，any/count没有必要失败动作；已满足excludes组反给疾病加分，充分组无确认路径。",
+      "fix_class": "design_policy",
+      "historical_status": "旧审计E03/E04/E06及本轮S11；组效果缺失静态覆盖全部组路径，实际每组正确根关系仍须source裁定。",
+      "prior_migration_ids": [
+        "M04",
+        "M05",
+        "M17",
+        "M18"
+      ],
+      "prior_coverage": "already_explicit",
+      "reproduction_ids": [
+        "S04",
+        "S11"
+      ],
+      "proposal": "根Rule明确effect/target/permission，expr求值之后统一apply_effect；legacy混合relation组先保留未决，不从某个叶猜根。",
+      "limits": "不能通过把成员relation全部强制相同来恢复根语义；合法异质叶关系可能属于前提结构，需要明确表达式与根动作。"
+    },
+    {
+      "id": "ENG-08",
+      "title": "count按保留行数而非criterion或事件身份，导致同fact多次满足",
+      "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+      "functions": [
+        "run_case"
+      ],
+      "line_anchors": [
+        {
+          "start": 466,
+          "end": 469
+        },
+        {
+          "start": 490,
+          "end": 509
+        }
+      ],
+      "observed_behavior": "两个近义predicate命中同fact仍len(sat)=2，可误达k-of-n；原文域大小和缺失成员均不独立存储。",
+      "fix_class": "hybrid_semantic",
+      "historical_status": "同归一finding被组计数多次13/6/22/17；522的echolalia/echopraxia共用echopraxia已临床语义审阅。",
+      "prior_migration_ids": [
+        "M15",
+        "M17",
+        "M20"
+      ],
+      "prior_coverage": "already_explicit",
+      "reproduction_ids": [
+        "S10"
+      ],
+      "proposal": "criterion_id/domain member/witness分离，count_distinct按源定义的计数单位；计数算法纯代码，但同义criterion和同一事实是否支持两类需术语/源文关系验证。",
+      "limits": "按fact ID一刀切去重会损害合法的复合证据；计数key必须是规则合同一部分。"
+    },
+    {
+      "id": "ENG-09",
+      "title": "ALL connective自动变为疾病必要条件",
+      "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+      "functions": [
+        "run_case"
+      ],
+      "line_anchors": [
+        {
+          "start": 476,
+          "end": 484
+        }
+      ],
+      "observed_behavior": "GROUP_ALL_IS_REQUIRED把任何all设required=True；充分路径缺一项也被排除。",
+      "fix_class": "design_policy",
+      "historical_status": "B1/S7历史四臂启用该开关；上一轮全局关闭对top3变化小不证明组执行正确。",
+      "prior_migration_ids": [
+        "M05",
+        "M17",
+        "M18"
+      ],
+      "prior_coverage": "already_explicit",
+      "reproduction_ids": [
+        "S12"
+      ],
+      "proposal": "移除all=>necessary推断；仅在根明确D=>E且作用域成立、E决定性为假时排除D。",
+      "limits": "关闭开关是有界止损，不恢复来源里真正必要组的根效果；需可表示的root semantics。"
+    },
+    {
+      "id": "ENG-10",
+      "title": "组通道绕过soft context和F9非判据准入；混合组可借一临床成员硬化",
+      "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+      "functions": [
+        "run_case"
+      ],
+      "line_anchors": [
+        {
+          "start": 472,
+          "end": 486
+        },
+        {
+          "start": 497,
+          "end": 515
+        },
+        {
+          "start": 574,
+          "end": 576
+        }
+      ],
+      "observed_behavior": "soft_group只限制all veto，不阻止group加分；F9 NONCRITERION_INERT仅原子L3检查；ctxs<=SOFT_CONTEXTS使一个非soft成员能解除整个混合组的硬保护。",
+      "fix_class": "code_only",
+      "historical_status": "四臂全soft组65/49/74/66，其中实际非零贡献另列计数；mixed soft/nonsoft组1/1/1/2。F9历史默认关闭，其绕过是可选开关风险。",
+      "prior_migration_ids": [
+        "M08",
+        "M18",
+        "M19"
+      ],
+      "prior_coverage": "covered_principle_new_bypass_detail",
+      "reproduction_ids": [
+        "S13",
+        "S14"
+      ],
+      "proposal": "对已明示的inert/eligibility在建claimants与所有组/原子/contrast动作前统一检查；不把context字符串当完整阶段语义，阶段补充另由任务2解决。",
+      "limits": "真正有方向的differential规则不应因章节名一律丢弃；本代码修复只确保已确定的准入判定不被其他路径绕过。"
+    },
+    {
+      "id": "ENG-11",
+      "title": "CLOSED_WORLD对全未知组被提前continue绕过，开关行为不一致",
+      "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+      "functions": [
+        "run_case"
+      ],
+      "line_anchors": [
+        {
+          "start": 470,
+          "end": 471
+        },
+        {
+          "start": 491,
+          "end": 496
+        }
+      ],
+      "observed_behavior": "全部成员未接到事实时直接continue；同样闭世界开关下只要有一present，其他未接成员才变vio。",
+      "fix_class": "code_only",
+      "historical_status": "S15实际run_case复现；四臂CLOSED_WORLD=False，不能归因此次历史MRR下降。",
+      "prior_migration_ids": [
+        "M16",
+        "M17",
+        "M18"
+      ],
+      "prior_coverage": "new_specific_controlflow",
+      "reproduction_ids": [
+        "S15"
+      ],
+      "proposal": "在明确的逻辑profile下集中解释未知及域完整性；去掉潜藏控制流差异。诊断推荐保留unknown，禁用闭世界，不是把全缺测也补成否决。",
+      "limits": "修复开关契约与采用何种缺测语义是两件事；迁移应显式废弃危险开关或只在真实封闭域使用。"
+    },
+    {
+      "id": "ENG-12",
+      "title": "claimants建立早于准入，零分/反证行也作为正向认领重加权",
+      "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+      "functions": [
+        "run_case"
+      ],
+      "line_anchors": [
+        {
+          "start": 421,
+          "end": 426
+        },
+        {
+          "start": 571,
+          "end": 603
+        }
+      ],
+      "observed_behavior": "asserted且有join即可claim，包括treatment/epidemiology、阈值失败、excludes以及随后淘汰者；一个无自身分的条目可改变别人IDF。",
+      "fix_class": "code_only",
+      "historical_status": "病例49的TB比例epidemiology错接血中neutrophils无自身票但改变其他候选权重已配对证实；S16复现。",
+      "prior_migration_ids": [
+        "M19",
+        "M20"
+      ],
+      "prior_coverage": "already_explicit",
+      "reproduction_ids": [
+        "S16"
+      ],
+      "proposal": "先产经准入的正支持Evidence事件，再计算claimants；零分的未准入工作流条目、反对事件不得混入正支持集合。",
+      "limits": "已合法且后来淘汰候选是否参与相对权重要独立冻结设计；不能循环删除survivor claimant来选择有利自洽解。"
+    },
+    {
+      "id": "ENG-13",
+      "title": "重复candidate label被verdict覆盖却计入IDF分母",
+      "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+      "functions": [
+        "run_case"
+      ],
+      "line_anchors": [
+        {
+          "start": 357,
+          "end": 365
+        },
+        {
+          "start": 452,
+          "end": 454
+        },
+        {
+          "start": 474,
+          "end": 475
+        },
+        {
+          "start": 598,
+          "end": 603
+        },
+        {
+          "start": 620,
+          "end": 626
+        }
+      ],
+      "observed_behavior": "字典以label为key覆盖重复候选，claimants也是label集合，但len(candidates)仍按原始列表长度；相同最终可见候选集合得不同权重。",
+      "fix_class": "code_only",
+      "historical_status": "S17复现；未声称11例存在完全同label重复，case74 case-only duplicate属于另一种近似身份缺陷。",
+      "prior_migration_ids": [
+        "M10",
+        "M19"
+      ],
+      "prior_coverage": "new_specific_denominator_overwrite",
+      "reproduction_ids": [
+        "S17"
+      ],
+      "proposal": "输入阶段校验unique candidate_id并显式处置label collision；所有计数和排序使用同一ConceptRegistry。最小修补可对完全重复ID拒绝或规范合并，且输出冲突记录。",
+      "limits": "不同实体共享label不得随意合并；完整临床concept resolution由主体绑定技术方案处理。"
+    },
+    {
+      "id": "ENG-14",
+      "title": "L4把竞争条目数量变成定向证据数量，且绕过条件/root/阶段",
+      "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+      "functions": [
+        "run_case"
+      ],
+      "line_anchors": [
+        {
+          "start": 630,
+          "end": 644
+        }
+      ],
+      "observed_behavior": "有comparator、两种relation及patient present就给每个匹配target扣0.5；不查polarity/context/threshold/完整group/方向授权。一个组原子present即使全根未满足也扣对手。",
+      "fix_class": "hybrid_semantic",
+      "historical_status": "实际L4处罚93/87/154/188，其中negated条目3/1/3/1、group成员5/5/21/32、soft context来源86/72/141/167；soft context不是错误率，合法鉴别也可在其中。",
+      "prior_migration_ids": [
+        "M18",
+        "M20",
+        "M22"
+      ],
+      "prior_coverage": "already_explicit",
+      "reproduction_ids": [
+        "S06",
+        "S18",
+        "S19",
+        "S20",
+        "S21"
+      ],
+      "proposal": "无歧义错误检查可纯代码堵住；充分解决需ContrastRule(favor/against/condition/scope/stage/source license)+Binder proof；DDx/mimic保导航，不能自动生成方向。每个已证明对比只入证据账本一次。",
+      "limits": "不能仅禁differential章节，也不能把所有comparator方向默认为subject支持/other反对；需语义验证技术与显式多疾病共存权限。"
+    },
+    {
+      "id": "ENG-15",
+      "title": "F10仅平均原子L3，组/确认/L4及跨层复用仍重复",
+      "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+      "functions": [
+        "run_case"
+      ],
+      "line_anchors": [
+        {
+          "start": 459,
+          "end": 459
+        },
+        {
+          "start": 510,
+          "end": 515
+        },
+        {
+          "start": 563,
+          "end": 568
+        },
+        {
+          "start": 605,
+          "end": 618
+        },
+        {
+          "start": 630,
+          "end": 644
+        }
+      ],
+      "observed_behavior": "FINDING_POOL_BETA不影响group贡献、L2+2/confirmed次数或L4-0.5；打开平均并不构成全引擎反复制保证。",
+      "fix_class": "design_policy",
+      "historical_status": "历史F10探针四臂结果有增有减，不能作为验证修复；S20/S28展示旁路。",
+      "prior_migration_ids": [
+        "M20"
+      ],
+      "prior_coverage": "already_explicit",
+      "reproduction_ids": [
+        "S20",
+        "S28"
+      ],
+      "proposal": "所有路径先输出统一EvidenceLedger条目，以root、criterion、witness、support-family做去重再动作/评分；确定独立性后再校准权重。",
+      "limits": "平均不同强度真实证据并不保证合理；同一root叶和根不可双计，而不同正确规则共享事实未必重复。"
+    },
+    {
+      "id": "ENG-16",
+      "title": "弱argues_against当hard exclusion，且comparator目标解释受context影响",
+      "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+      "functions": [
+        "run_case"
+      ],
+      "line_anchors": [
+        {
+          "start": 527,
+          "end": 551
+        },
+        {
+          "start": 629,
+          "end": 644
+        }
+      ],
+      "observed_behavior": "rare/occasional的argues_against只要present即淘汰主体；在soft context主体不淘汰却可让同一行向comparator扣分，改变的是所反对对象。",
+      "fix_class": "code_only",
+      "historical_status": "74/773/475历史错误veto与L4交互见前轮病例；S21/S23隔离程序路径，不把所有历史against统一判错抽取。",
+      "prior_migration_ids": [
+        "M05",
+        "M18",
+        "M22"
+      ],
+      "prior_coverage": "already_explicit",
+      "reproduction_ids": [
+        "S21",
+        "S23"
+      ],
+      "proposal": "已经明示的弱against不执行硬veto；关系方向和目标必须固定在规则对象，不由soft context和survivor条件间接选择。",
+      "limits": "旧行到底表达against subject或favor subject against comparator可能有语义歧义；此部分需ENG-14的ContrastRule验证。"
+    },
+    {
+      "id": "ENG-17",
+      "title": "L4依赖来源候选是否survive，局部错否决可删除对其他候选的比较",
+      "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+      "functions": [
+        "run_case"
+      ],
+      "line_anchors": [
+        {
+          "start": 628,
+          "end": 644
+        }
+      ],
+      "observed_behavior": "源候选一旦被任意L1排除，其所有L4条目停止；目标candidate被排除也不接收对比。故释放错误否决会同时改变多个其他候选分，无法用局部减分解释。",
+      "fix_class": "design_policy",
+      "historical_status": "773、119等前轮案例已验证survivor交互；S22明确一条独立排除怎样使DiseaseBeta从-0.5到0。",
+      "prior_migration_ids": [
+        "M19",
+        "M22",
+        "M23"
+      ],
+      "prior_coverage": "already_explicit",
+      "reproduction_ids": [
+        "S22"
+      ],
+      "proposal": "明确对比条件是否依赖A为真/可行，还是直接观察F就支持B相对A；独立于排序先求Admitted ContrastEvidence，所需依赖在proof内表达。",
+      "limits": "不能笼统要求所有淘汰者继续发对比，或全部停止；需由对比规则前提裁定，这是设计合同。"
+    },
+    {
+      "id": "ENG-18",
+      "title": "原子literal在硬/软通道解释不一致：假阈值仍支持、未知可确认、正常必否决",
+      "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+      "functions": [
+        "run_case"
+      ],
+      "line_anchors": [
+        {
+          "start": 527,
+          "end": 597
+        }
+      ],
+      "observed_behavior": "excludes不检查threshold；threshold-aware confirmation以is not False放过None；L3 present先加w，阈值false仅减0.5w；negated threshold却仍按原threshold加减；normal一律视required absent；否定必要/排除条件未走合法硬方向。",
+      "fix_class": "code_only",
+      "historical_status": "522低B12高值仍加分、74 QT380区间重复、49数值错接有历史支持；S23–S26分别固定正确join后隔离consumer错误。",
+      "prior_migration_ids": [
+        "M16",
+        "M18"
+      ],
+      "prior_coverage": "already_explicit",
+      "reproduction_ids": [
+        "S23",
+        "S24",
+        "S25",
+        "S26",
+        "S34"
+      ],
+      "proposal": "一个typed signed literal evaluator返回T/F/U/conflict；条件False不进入正证据，Unknown不确认；negation先作用条件真值，root effect再读结果。",
+      "limits": "前提是结构condition及事实绑定正确；normal含义/测量实体需IDN和任务2合同，不能把所有normal反过来当True。"
+    },
+    {
+      "id": "ENG-20",
+      "title": "confirmed按条数优先排序，确认/否决冲突无显式状态",
+      "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+      "functions": [
+        "run_case"
+      ],
+      "line_anchors": [
+        {
+          "start": 455,
+          "end": 456
+        },
+        {
+          "start": 563,
+          "end": 568
+        },
+        {
+          "start": 620,
+          "end": 625
+        },
+        {
+          "start": 666,
+          "end": 667
+        }
+      ],
+      "observed_behavior": "重复pathognomonic复述可增加确认计数，排序优先确认条数后score；同一候选可同时confirmed和eliminated，最终按eliminated放后，无conflicted决策。",
+      "fix_class": "design_policy",
+      "historical_status": "119错误IgA确认与真实cornoid确认交互已病例验证；全44臂去确认优先未改指标不等于该计数语义正确。",
+      "prior_migration_ids": [
+        "M20",
+        "M23"
+      ],
+      "prior_coverage": "already_explicit",
+      "reproduction_ids": [
+        "S28",
+        "S29"
+      ],
+      "proposal": "confirmed为有来源的状态/证明集，不按证书数量增优先；同时支持/排除保留conflicted及上下游原因；排序目标和未知/冲突响应明示。",
+      "limits": "若多个来源确有独立证据，可信度可校准但不等于硬确认次数；改排序不能修错规则与错绑定。"
+    },
+    {
+      "id": "ENG-21",
+      "title": "贡献账本截断且F10记录的是pool前delta，不能从输出复算",
+      "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+      "functions": [
+        "run_case"
+      ],
+      "line_anchors": [
+        {
+          "start": 611,
+          "end": 618
+        },
+        {
+          "start": 624,
+          "end": 625
+        },
+        {
+          "start": 641,
+          "end": 644
+        }
+      ],
+      "observed_behavior": "生产只存contributions[:25]；F10时行delta仍为pool前、最终score为pool后；L4日志缺原文、阈值和target proof。组对分数按三位舍入、原子后舍入进一步需显式residual。",
+      "fix_class": "code_only",
+      "historical_status": "上一轮需要内存插桩才能完整重构696候选分数；S30/S31重现pool后1而三行各1、以及30分却只25行。",
+      "prior_migration_ids": [
+        "M24"
+      ],
+      "prior_coverage": "already_explicit",
+      "reproduction_ids": [
+        "S30",
+        "S31"
+      ],
+      "proposal": "持久完整机器账本，UI可单独截断；存raw_delta/applied_delta/pool family/source/proof/rounding residual；总分断言与实际rank字段一起输出。",
+      "limits": "记账修复只提升可审计性，不改变临床性能；不要误称复算精确意味着临床机制正确。"
+    },
+    {
+      "id": "ENG-22",
+      "title": "--discriminative-only开关未被执行器使用",
+      "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+      "functions": [
+        "main",
+        "run_case"
+      ],
+      "line_anchors": [
+        {
+          "start": 54,
+          "end": 55
+        },
+        {
+          "start": 694,
+          "end": 695
+        },
+        {
+          "start": 712,
+          "end": 724
+        }
+      ],
+      "observed_behavior": "变量和CLI参数被设置、tag被加_disc，却无消费分支。两候选都claim的事实即使开关True仍给双方1分，违背help中只计唯一claim的说明。",
+      "fix_class": "code_only",
+      "historical_status": "S32和静态读写扫描复现；冻结B1使用WEIGHT_SCHEME=idf、DISCRIMINATIVE_ONLY=False，不能用此死开关解释历史v2下降。",
+      "prior_migration_ids": [
+        "M01",
+        "M24"
+      ],
+      "prior_coverage": "new_unimplemented_option",
+      "reproduction_ids": [
+        "S32"
+      ],
+      "proposal": "明确支持的唯一claim策略则实现到统一准入/权重层，或废弃此开关并报不支持；禁止输出tag暗示运行了未运行的方法。",
+      "limits": "唯一claim本身不是临床正确性保证；本项修参数契约和实验可追溯性，不建议默认启用binary specificity。"
+    },
+    {
+      "id": "ENG-23",
+      "title": "同状态同分排序继承candidate输入顺序且未标出tie",
+      "file": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+      "functions": [
+        "run_case"
+      ],
+      "line_anchors": [
+        {
+          "start": 666,
+          "end": 667
+        }
+      ],
+      "observed_behavior": "Python稳定sort使完全相同key按输入candidate顺序排名；输入可能来自方法遍历顺序或注册表顺序。",
+      "fix_class": "design_policy",
+      "historical_status": "S33固定相同规则/事实、只换candidate次序即换top1；前轮报告已说明此键和默认稳定顺序。",
+      "prior_migration_ids": [
+        "M23",
+        "M24"
+      ],
+      "prior_coverage": "already_explicit",
+      "reproduction_ids": [
+        "S33"
+      ],
+      "proposal": "显式记录tie group和最终tie policy；可用稳定concept ID仅作展示顺序，报告并列排名端点；是否允许额外证据验证为独立实验。",
+      "limits": "稳定tie-break本身不是编程bug，未声明对实验口径的影响才是审计缺陷；不可声称某tie-break提高医学能力。"
+    }
+  ],
+  "classification_contract": {
+    "code_only": "Given trustworthy existing structural fields, deterministic code can enforce the stated invariant; does not recover missing or incorrect medical semantics.",
+    "hybrid_semantic": "A deterministic containment fix exists, but complete restoration needs independently checked semantic identities or source licenses; new LLM use is not logically mandatory.",
+    "design_policy": "The current representation/contract or evidence policy must be decided and made explicit, not silently changed as an implementation detail."
+  },
+  "count": 22,
+  "numeric_validation_cross_reference": "S27 cross-check maps to IDN-08; ENG-19 is intentionally unallocated to avoid duplicate defect accounting."
+}

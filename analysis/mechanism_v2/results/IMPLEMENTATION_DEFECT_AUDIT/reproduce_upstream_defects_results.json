@@ -1,0 +1,1045 @@
+{
+  "schema_version": "upstream_reproductions/1",
+  "baseline_commit": "bbc036e8a6ec93583be915a4609fe86278ed062c",
+  "status": "observed_defects_reproduced_not_fixed",
+  "network_calls": 0,
+  "production_modifications": 0,
+  "reproductions": [
+    {
+      "id": "UP-R01-run_trial_extraction",
+      "description": "Prompt and module omitted from cache key",
+      "observed": {
+        "client_calls": [
+          [
+            "module_A",
+            "prompt_A"
+          ]
+        ],
+        "first": {
+          "assertions": [
+            {
+              "subject": "prompt_A",
+              "predicate": "module_A"
+            }
+          ]
+        },
+        "second": {
+          "assertions": [
+            {
+              "subject": "prompt_A",
+              "predicate": "module_A"
+            }
+          ]
+        }
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R01-extract_nl_rules",
+      "description": "Prompt and module omitted from cache key",
+      "observed": {
+        "client_calls": [
+          [
+            "module_A",
+            "prompt_A"
+          ]
+        ],
+        "first": {
+          "assertions": [
+            {
+              "subject": "prompt_A",
+              "predicate": "module_A"
+            }
+          ]
+        },
+        "second": {
+          "assertions": [
+            {
+              "subject": "prompt_A",
+              "predicate": "module_A"
+            }
+          ]
+        }
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R02",
+      "description": "Transport failure persists as valid empty cached extraction",
+      "observed": {
+        "first": {},
+        "second": {},
+        "recovery_calls": [],
+        "cache_content": "{}"
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R03",
+      "description": "Simultaneous identical payloads both call transport and write same cache path",
+      "observed": {
+        "calls": 2,
+        "distinct_results": 2,
+        "cache_files": 1
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R04",
+      "description": "A half-written cache file aborts the extraction worker before retry",
+      "observed": {
+        "error": "JSONDecodeError"
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R05",
+      "description": "Trailing-comma repair rewrites quoted source text",
+      "observed": {
+        "raw": "{\"quote\":\"A,}\", \"assertions\":[],}",
+        "parsed": {
+          "quote": "A}",
+          "assertions": []
+        }
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R06",
+      "description": "Duplicate JSON keys silently select last semantic value",
+      "observed": {
+        "raw": "{\"threshold\":{\"value\":480,\"value\":48},\"assertions\":[]}",
+        "parsed": {
+          "threshold": {
+            "value": 48
+          },
+          "assertions": []
+        }
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R07",
+      "description": "Syntactically valid empty object and invalid parse share {} sentinel",
+      "observed": {
+        "completion_calls_for_valid_empty_object": 3,
+        "returned": {}
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R08",
+      "description": "Invalid count silently weakens to any; floats/bools accepted as integers",
+      "observed": [
+        {
+          "input_n": null,
+          "normalized": {
+            "group_id": "g",
+            "logic": "any",
+            "n": null
+          },
+          "stats": {
+            "at_least_n_without_n": 1,
+            "grouped": 1
+          }
+        },
+        {
+          "input_n": "n/a",
+          "normalized": {
+            "group_id": "g",
+            "logic": "any",
+            "n": null
+          },
+          "stats": {
+            "at_least_n_without_n": 1,
+            "grouped": 1
+          }
+        },
+        {
+          "input_n": 2.9,
+          "normalized": {
+            "group_id": "g",
+            "logic": "at_least_n",
+            "n": 2
+          },
+          "stats": {
+            "grouped": 1
+          }
+        },
+        {
+          "input_n": true,
+          "normalized": {
+            "group_id": "g",
+            "logic": "at_least_n",
+            "n": 1
+          },
+          "stats": {
+            "grouped": 1
+          }
+        },
+        {
+          "input_n": false,
+          "normalized": {
+            "group_id": "g",
+            "logic": "any",
+            "n": null
+          },
+          "stats": {
+            "at_least_n_without_n": 1,
+            "grouped": 1
+          }
+        },
+        {
+          "input_n": "2.9",
+          "normalized": {
+            "group_id": "g",
+            "logic": "any",
+            "n": null
+          },
+          "stats": {
+            "dropped_n": 1,
+            "at_least_n_without_n": 1,
+            "grouped": 1
+          }
+        },
+        {
+          "input_n": -2,
+          "normalized": {
+            "group_id": "g",
+            "logic": "any",
+            "n": null
+          },
+          "stats": {
+            "at_least_n_without_n": 1,
+            "grouped": 1
+          }
+        }
+      ],
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R09",
+      "description": "Legal normalized relation returns original unnormalized enum",
+      "observed": {
+        "input": " REQUIRED_FOR ",
+        "output": " REQUIRED_FOR "
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R41",
+      "description": "Enum aliases infer causation, hierarchy or positive feature from weaker/unknown relation",
+      "observed": {
+        "risk_factor_for": "caused_by",
+        "includes": "variant_of",
+        "unspecified_relation": "feature_of"
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R10",
+      "description": "Grounded subject gate accepts scattered word recombination and unverifiable quote",
+      "observed": {
+        "passage": "Pulmonary edema is present. Arterial pressure is measured. Hypertension has other causes.",
+        "kept": [
+          {
+            "subject": "Pulmonary arterial hypertension",
+            "predicate": "fever",
+            "relation": "feature_of",
+            "polarity": "asserted",
+            "modality": "typical",
+            "context_type": "criteria",
+            "quote": "An invented source quote states fever.",
+            "threshold": {},
+            "criterion_group": {
+              "group_id": null,
+              "logic": null,
+              "n": null
+            },
+            "_passage_sha1": "4e6f18373e2004a4"
+          }
+        ]
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R11",
+      "description": "Threshold parser selects first numeral/range, ignores later explicit comparison",
+      "observed": {
+        "In 2020, QTc > 480 ms established the criterion.": null,
+        "QTc > 480 ms established the criterion.": null,
+        "QTc > 480 msec established the criterion.": null,
+        "A reading is from 10 to 20 msec.": {
+          "operator": "range",
+          "value": 10.0,
+          "value_high": 20.0,
+          "unit": "ms",
+          "relational": null
+        },
+        "This is a very long label for QTc > 480 ms": {
+          "operator": ">",
+          "value": 480.0,
+          "value_high": null,
+          "unit": "ms",
+          "relational": null
+        },
+        "Patients aged 12-18 years require QTc > 480 ms.": {
+          "operator": "range",
+          "value": 12.0,
+          "value_high": 18.0,
+          "unit": null,
+          "relational": null
+        },
+        "A temperature of -5 to -1 C was recorded.": null
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R12",
+      "description": "Unit alternatives truncate msec as ms and omit signs on numeric bounds",
+      "observed": {
+        "msec": {
+          "operator": "range",
+          "value": 10.0,
+          "value_high": 20.0,
+          "unit": "ms",
+          "relational": null
+        },
+        "negative": null
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R39",
+      "description": "Greedy nonnumeric regex consumes comparator unless prefix-length limit happens to stop it",
+      "observed": {
+        "short": null,
+        "long": {
+          "operator": ">",
+          "value": 480.0,
+          "value_high": null,
+          "unit": "ms",
+          "relational": null
+        }
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R13",
+      "description": "Numeric license accepts substrings/scaling and leaves upper bound/operator/unit unchecked",
+      "observed": {
+        "numeric_membership": {
+          "48 in 1480 patients": true,
+          "480 in 48 patients": true,
+          "5 in 15 patients": true
+        },
+        "gated_threshold": {
+          "operator": "range",
+          "value": 5,
+          "value_high": 9999,
+          "unit": "unmentioned"
+        }
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R14",
+      "description": "Unaligned fabricated quote falls back to short passage and borrows unrelated hallmark cue",
+      "observed": {
+        "passage": "Disease Alpha has a rare marker. Marker A is pathognomonic for another condition.",
+        "quote": "Disease Alpha has fever; this is fabricated.",
+        "licensed": "Disease Alpha has a rare marker. Marker A is pathognomonic for another condition.",
+        "output_relation": "pathognomonic_for"
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R15",
+      "description": "Any necessity cue inside broad quote licenses unrelated predicate without predicate scope",
+      "observed": {
+        "broad_relation": "required_for",
+        "narrow_relation": "feature_of"
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R16",
+      "description": "G1 assumes necessary and sufficient relations cannot coexist, removes valid biconditional half",
+      "observed": [
+        {
+          "relation": "required_for",
+          "gate": null
+        },
+        {
+          "relation": "feature_of",
+          "gate": "G1_dual_slot"
+        }
+      ],
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R17",
+      "description": "Complement of normal x<5 becomes x>5, losing equality; recode also invents disease necessity",
+      "observed": {
+        "input": {
+          "subject": "Disease Alpha",
+          "predicate": "normal marker",
+          "relation": "excludes",
+          "polarity": "negated",
+          "modality": "typical",
+          "context_type": "criteria",
+          "quote": "Normal marker values are below 5 units.",
+          "threshold": {},
+          "criterion_group": {
+            "group_id": null,
+            "logic": null,
+            "n": null
+          }
+        },
+        "output": {
+          "subject": "Disease Alpha",
+          "predicate": "abnormal marker",
+          "relation": "required_for",
+          "polarity": "asserted",
+          "modality": "obligatory",
+          "context_type": "criteria",
+          "quote": "Normal marker values are below 5 units.",
+          "threshold": {
+            "operator": ">",
+            "value": 5.0,
+            "value_high": null,
+            "unit": "units",
+            "relational": null
+          },
+          "criterion_group": {
+            "group_id": null,
+            "logic": null,
+            "n": null
+          }
+        },
+        "missing_boundary_value": 5
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R18",
+      "description": "G3 upgrades a disjunction member to required_for without connective checking",
+      "observed": {
+        "input_passage": "Disease Alpha is diagnosed in the presence of fever or rash.",
+        "output": {
+          "subject": "Disease Alpha",
+          "predicate": "fever",
+          "relation": "required_for",
+          "polarity": "asserted",
+          "modality": "typical",
+          "context_type": "criteria",
+          "quote": "Disease Alpha is diagnosed in the presence of fever or rash.",
+          "threshold": {},
+          "criterion_group": {
+            "group_id": null,
+            "logic": null,
+            "n": null
+          },
+          "_passage": "Disease Alpha is diagnosed in the presence of fever or rash.",
+          "_gate": "G3_presence_conjunction"
+        }
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R19",
+      "description": "F7 default source table uses old window despite actual-arm hash; cached index ignores later env change",
+      "observed": {
+        "actual_window": "Common opening text. No disease-specific rule follows.",
+        "resolved": "Common opening text. Marker X is pathognomonic for Disease Alpha.",
+        "after_env_update": "Common opening text. Marker X is pathognomonic for Disease Alpha."
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R20",
+      "description": "Hash of truncated extraction payload cannot match full-window hash and falls back to full source",
+      "observed": {
+        "payload_length": 6000,
+        "resolved_length": 6057,
+        "prefix_hash": "b192f2ee57095484",
+        "full_hash": "1d553a35b3ce32ef"
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R21",
+      "description": "Process-salted hash changes derived group ID for identical source/rows",
+      "observed": {
+        "PYTHONHASHSEED_1": "gate_or_9323967",
+        "PYTHONHASHSEED_2": "gate_or_6466754"
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R22",
+      "description": "Grounded regex backfill ignores negation and hardcodes right-iliac site",
+      "observed": [
+        {
+          "vignette": "No laparoscopic appendectomy had been performed.",
+          "findings": [
+            {
+              "label": "laparoscopic appendectomy",
+              "canonical": "prior appendectomy",
+              "kind": "course",
+              "polarity": "present",
+              "qualifiers": {
+                "timing": null,
+                "site": null,
+                "laterality": null
+              },
+              "quote": "laparoscopic appendectomy",
+              "_backfill": "vignette_regex",
+              "value": {
+                "number": null,
+                "unit": null,
+                "text": null
+              }
+            }
+          ]
+        },
+        {
+          "vignette": "Surgical clips are present in the left axilla.",
+          "findings": [
+            {
+              "label": "surgical clips",
+              "canonical": "surgical clips in right iliac fossa",
+              "kind": "imaging",
+              "polarity": "present",
+              "qualifiers": {
+                "timing": null,
+                "site": null,
+                "laterality": null
+              },
+              "quote": "Surgical clips",
+              "_backfill": "vignette_regex",
+              "value": {
+                "number": null,
+                "unit": null,
+                "text": null
+              }
+            }
+          ]
+        },
+        {
+          "vignette": "The lesion was not fluctuant.",
+          "findings": [
+            {
+              "label": "fluctuant mass",
+              "canonical": "fluctuant mass",
+              "kind": "sign",
+              "polarity": "present",
+              "qualifiers": {
+                "timing": null,
+                "site": null,
+                "laterality": null
+              },
+              "quote": "fluctuant",
+              "_backfill": "vignette_regex",
+              "value": {
+                "number": null,
+                "unit": null,
+                "text": null
+              }
+            }
+          ]
+        }
+      ],
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R23",
+      "description": "Independent ordinal indexing fabricates shared SaO2/platelet timepoint",
+      "observed": {
+        "vignette": "Initially SaO2 60%. Later platelet count 10000/mm3 and SaO2 80%.",
+        "findings": [
+          {
+            "label": "SaO2 60%",
+            "canonical": "oxygen saturation",
+            "kind": "lab",
+            "polarity": "present",
+            "value": {
+              "number": 60.0,
+              "unit": "%",
+              "text": "SaO2 60%"
+            },
+            "qualifiers": {
+              "timing": "timepoint_1",
+              "site": null,
+              "laterality": null
+            },
+            "quote": "SaO2 60%",
+            "_backfill": "vignette_regex_sao2"
+          },
+          {
+            "label": "SaO2 80%",
+            "canonical": "oxygen saturation",
+            "kind": "lab",
+            "polarity": "present",
+            "value": {
+              "number": 80.0,
+              "unit": "%",
+              "text": "SaO2 80%"
+            },
+            "qualifiers": {
+              "timing": "timepoint_2",
+              "site": null,
+              "laterality": null
+            },
+            "quote": "SaO2 80%",
+            "_backfill": "vignette_regex_sao2"
+          },
+          {
+            "label": "platelet count 10000/mm3",
+            "canonical": "platelet count",
+            "kind": "lab",
+            "polarity": "present",
+            "value": {
+              "number": 10000.0,
+              "unit": "/mm3",
+              "text": "platelet count 10000/mm"
+            },
+            "qualifiers": {
+              "timing": "timepoint_1",
+              "site": null,
+              "laterality": null
+            },
+            "quote": "platelet count 10000/mm",
+            "_backfill": "vignette_regex_platelet"
+          }
+        ]
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R24",
+      "description": "Existing one SaO2 label suppresses all missing serial platelet/saturation backfill",
+      "observed": {
+        "input": [
+          {
+            "label": "SaO2 60%",
+            "canonical": "oxygen saturation",
+            "polarity": "present"
+          }
+        ],
+        "output": [
+          {
+            "label": "SaO2 60%",
+            "canonical": "oxygen saturation",
+            "polarity": "present"
+          }
+        ]
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R25",
+      "description": "NL excerpt path drops a complete five-word diagnostic sentence solely by word count",
+      "observed": {
+        "sentence": "A synthetic marker confirms DiseaseAlpha.",
+        "kept": [],
+        "stats": {
+          "verbatim_exact": 1,
+          "dropped_too_short": 1,
+          "kept": 0
+        }
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R26",
+      "description": "NL excerpt accepts fabricated multiword disease identity and arbitrary use enum",
+      "observed": {
+        "kept": [
+          {
+            "disease": "Pulmonary arterial hypertension",
+            "sentence": "Pulmonary edema is present. Arterial pressure is measured.",
+            "use": "unexpected_stage",
+            "threshold": {},
+            "verbatim": "exact"
+          }
+        ],
+        "stats": {
+          "verbatim_exact": 1,
+          "kept": 1
+        }
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R27",
+      "description": "Opposite assertion polarity reuses NLI verdict although verbalized hypotheses differ",
+      "observed": {
+        "positive_hypothesis": "fever is required for the diagnosis of Disease Alpha",
+        "negative_hypothesis": "it is not the case that fever is required for the diagnosis of Disease Alpha",
+        "labels": [
+          "entailment",
+          "entailment"
+        ],
+        "predict_calls": [
+          "fever is required for the diagnosis of Disease Alpha"
+        ]
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R28",
+      "description": "NLI negates whole necessity relation instead of predicate inside relation",
+      "observed": {
+        "schema_intention": "Absence of fever is required for diagnosis of Disease Alpha",
+        "actual_hypothesis": "it is not the case that fever is required for the diagnosis of Disease Alpha"
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R29",
+      "description": "Generic transformer id2label overrides known model mapping and entailment is silently neutral",
+      "observed": {
+        "argmax_index": 1,
+        "id2label": {
+          "0": "LABEL_0",
+          "1": "LABEL_1",
+          "2": "LABEL_2"
+        },
+        "returned_label": "neutral"
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R30",
+      "description": "NLI unavailable/missing quote leaves high-stakes rule active without per-row unverified status",
+      "observed": {
+        "kept": [
+          {
+            "subject": "Disease Alpha",
+            "predicate": "fever",
+            "relation": "required_for",
+            "polarity": "asserted",
+            "modality": "typical",
+            "context_type": "criteria",
+            "quote": "The absence of fever is required for diagnosis of Disease Alpha.",
+            "threshold": {},
+            "criterion_group": {
+              "group_id": null,
+              "logic": null,
+              "n": null
+            }
+          }
+        ]
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R31",
+      "description": "Grounded and ungrounded extraction main overwrite identical output path",
+      "observed": {
+        "output_name": "trial_extraction_testclean_groups.json",
+        "first_kind": "guideline_groups",
+        "second_kind": "guideline_groups_grounded",
+        "other_output_names": [
+          "trial_extraction_testclean_groups.json"
+        ]
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R40",
+      "description": "--only-case writes partial extraction over full-arm output without completeness marker",
+      "observed": {
+        "same_output_path": "trial_extraction_testclean_groups.json",
+        "before_cases": 2,
+        "after_cases": 1
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R32",
+      "description": "Engine CLI configuration changes overwrite identical pathname without manifest",
+      "observed": {
+        "output_name": "trial_engine_test.json",
+        "first_mock_observation": [
+          {
+            "case_key": "fixture/1",
+            "top1": "Disease Alpha",
+            "top1_is_gold": false,
+            "gold_rank": null,
+            "gold_eliminated": [],
+            "join_stats": {
+              "matched": 0,
+              "unmatched": 0
+            },
+            "fixture_seen_weight": "none",
+            "fixture_seen_groups": false,
+            "fixture_seen_nli": false,
+            "fixture_seen_quote_gate": false
+          }
+        ],
+        "second_mock_observation": [
+          {
+            "case_key": "fixture/1",
+            "top1": "Disease Alpha",
+            "top1_is_gold": false,
+            "gold_rank": null,
+            "gold_eliminated": [],
+            "join_stats": {
+              "matched": 0,
+              "unmatched": 0
+            },
+            "fixture_seen_weight": "idf",
+            "fixture_seen_groups": true,
+            "fixture_seen_nli": true,
+            "fixture_seen_quote_gate": false
+          }
+        ]
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R35",
+      "description": "Programmatic configure accepts textual false as a truthy enabled group flag",
+      "observed": {
+        "stored_value": "false",
+        "effective_bool": true
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R36",
+      "description": "Blank article_id causes neighbour assembly across different articles",
+      "observed": {
+        "gid": 0,
+        "window_gids": [
+          0,
+          1
+        ],
+        "source": "fixture",
+        "doc_key": "fixture|",
+        "title": "Disease Alpha",
+        "section_path": "",
+        "text": "Disease Alpha has fever.\nDisease Beta has rash."
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R37",
+      "description": "Parenthetical modifier becomes stand-alone subject alias and anchors unrelated passage",
+      "observed": {
+        "forms": [
+          "Disease Alpha",
+          "Disease Alpha (severe)",
+          "severe"
+        ],
+        "match": "exact_form"
+      },
+      "defect_reproduced": true
+    },
+    {
+      "id": "UP-R38",
+      "description": "Dense topk forwards requested pool without min(pool,n), unlike sparse path",
+      "observed": {
+        "requests": [
+          {
+            "k": 200,
+            "available": 2
+          }
+        ],
+        "error": "fixture top-k contract: k exceeds available dimension",
+        "execution": "actual _dense_ranks with lightweight tensor/top-k contract stand-in; no dense model"
+      },
+      "defect_reproduced": true
+    }
+  ],
+  "reproduction_count": 40,
+  "all_assertions_passed": true,
+  "controls": [
+    {
+      "id": "UP-C01",
+      "description": "--nli independently invokes gate: rejected audit false positive",
+      "observed": {
+        "actual_run_case_gate_calls": [
+          {
+            "apply_nli": true,
+            "rows": 0
+          }
+        ],
+        "actual_guard": "if FIX_QUOTE_GATE or FIX_NLI"
+      },
+      "defect_reproduced": false,
+      "expected_behavior_verified": true
+    }
+  ],
+  "control_count": 1,
+  "source_manifest": [
+    {
+      "path": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_trial_extraction.py",
+      "sha256": "5e350b8d3958f0a3b160673e3a8d7e68bae59694caf155260e2e0e6571d017ce"
+    },
+    {
+      "path": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/gate_assertions.py",
+      "sha256": "6e18fea04eb63aa91fbadaf06d569c52dc91ef1f08a4adf96269a4dc3b03aed0"
+    },
+    {
+      "path": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/nli_verify_assertions.py",
+      "sha256": "daec39a1c960e2dc530e1e7ccbf05ce1f3196b9cfe253df6289122a6780607f9"
+    },
+    {
+      "path": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/extract_nl_rules.py",
+      "sha256": "0372a2517e8cb6ccfabb13015b3f7859bcaa3c3a2e4f899f535db184d52bfe5d"
+    },
+    {
+      "path": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py",
+      "sha256": "6216de0b59f87a1fab4fa09f0db18436a2c208a9e7e43f7802edf3d9b429a383"
+    },
+    {
+      "path": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/sweep_fixes.py",
+      "sha256": "ab910608392a050fd5f2f6a9cfed61dee7d3e3672aae73e4967ef4a9ead79013"
+    },
+    {
+      "path": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/trial_retriever.py",
+      "sha256": "ffd8e2c68203edbd820b93ff27204efc6a9b4e4d0e58a23012a34b14b0b9d7ed"
+    },
+    {
+      "path": "analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_trial_retrieval.py",
+      "sha256": "a2e1bf185a3f7ec133f40ed1593babbf42c77dfd70df272c4715cc488d336ee4"
+    },
+    {
+      "path": "src/agentclinic_tree_dx/llm_client.py",
+      "git_revision": "bbc036e8a6ec93583be915a4609fe86278ed062c",
+      "sha256": "21322be946e5cc35bc476a3463c9581c2217f2969a80e171cc52aad182eeb5cb",
+      "execution_mode": "original_methods_AST_without_transport_imports"
+    }
+  ],
+  "historical_census": {
+    "definition": "serialization and exposure counts only; no new clinical fidelity denominator",
+    "arms": {
+      "old_old": {
+        "counts": {
+          "assertions": 34338,
+          "has__passage_sha1": 0,
+          "has__passage": 0,
+          "has__cache_key": 0,
+          "has__source_gid": 0,
+          "has__focus": 34338,
+          "has__title": 34338,
+          "group_member_rows": 2365,
+          "rows_with_upper_threshold": 870,
+          "group_member_without_logic": 44,
+          "findings": 280,
+          "regex_backfilled_findings": 0,
+          "noncanonical_polarity": 4
+        },
+        "examples": {
+          "noncanonical_polarity": {
+            "case_key": "MCR_seq200b/326",
+            "raw_index": 1850,
+            "polarity": "null"
+          }
+        },
+        "sha256": "28e7e83ad105a5567a60e075afa0dd894df3910d25fd1b9cdea1b694e5915b2a"
+      },
+      "free_old": {
+        "counts": {
+          "assertions": 33533,
+          "has__passage_sha1": 0,
+          "has__passage": 0,
+          "has__cache_key": 0,
+          "has__source_gid": 0,
+          "has__focus": 33533,
+          "has__title": 33533,
+          "group_member_rows": 1782,
+          "rows_with_upper_threshold": 791,
+          "group_member_without_logic": 5,
+          "findings": 280,
+          "regex_backfilled_findings": 0,
+          "noncanonical_polarity": 1
+        },
+        "examples": {
+          "noncanonical_polarity": {
+            "case_key": "MCR_seq200b/475",
+            "raw_index": 152,
+            "polarity": null
+          }
+        },
+        "sha256": "1c09daec620ae5cf3e7fc76e5034e67aa0e3441f0d7dc47bc19e048767c0ab96"
+      },
+      "old_v2": {
+        "counts": {
+          "assertions": 36837,
+          "has__passage_sha1": 0,
+          "has__passage": 0,
+          "has__cache_key": 0,
+          "has__source_gid": 0,
+          "has__focus": 36837,
+          "has__title": 36837,
+          "group_member_rows": 2889,
+          "rows_with_upper_threshold": 797,
+          "group_member_without_logic": 57,
+          "findings": 280,
+          "regex_backfilled_findings": 0,
+          "noncanonical_polarity": 2
+        },
+        "examples": {
+          "noncanonical_polarity": {
+            "case_key": "MCR_seq200b/326",
+            "raw_index": 1978,
+            "polarity": "null"
+          }
+        },
+        "sha256": "c8f15567950e55cb9d3b2e7496e4bfbcf2478d20d23bc4d6ff5f0a18d5abb70a"
+      },
+      "free_v2": {
+        "counts": {
+          "assertions": 35944,
+          "has__passage_sha1": 0,
+          "has__passage": 0,
+          "has__cache_key": 0,
+          "has__source_gid": 0,
+          "has__focus": 35944,
+          "has__title": 35944,
+          "group_member_rows": 2535,
+          "rows_with_upper_threshold": 742,
+          "group_member_without_logic": 6,
+          "findings": 280,
+          "regex_backfilled_findings": 0,
+          "noncanonical_polarity": 1
+        },
+        "examples": {
+          "noncanonical_polarity": {
+            "case_key": "MCR_seq200b/475",
+            "raw_index": 148,
+            "polarity": null
+          }
+        },
+        "sha256": "6541134484400e6211f7023b5e5d74dda22c452e827da8bd267e99827a477201"
+      }
+    },
+    "retrieval": {
+      "oldidx": {
+        "exposures": 3842,
+        "over_6000_chars": 15,
+        "unique_jobs": 3746,
+        "repeated_job_exposures": 96,
+        "repeated_payloads": 96
+      },
+      "v2idx": {
+        "exposures": 3927,
+        "over_6000_chars": 16,
+        "unique_jobs": 3826,
+        "repeated_job_exposures": 101,
+        "repeated_payloads": 101
+      }
+    }
+  },
+  "limits": [
+    "Synthetic defect witnesses do not estimate prevalence or clinical effect.",
+    "Dense top-k witness invokes implementation with a lightweight tensor contract stand-in; no torch/model loaded.",
+    "Cache race proves duplicate dispatch, not historical cache corruption.",
+    "NLI, grounded backfill and NL excerpts are outside frozen B1/S7 historical four arms.",
+    "No proposed repair or clinical diagnosis accuracy is validated."
+  ]
+}

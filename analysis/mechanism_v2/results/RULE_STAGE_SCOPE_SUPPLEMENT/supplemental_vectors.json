@@ -1,0 +1,1981 @@
+{
+  "schema_version": "stage_scope_supplement_0.2",
+  "clinical_use_authorized": false,
+  "vectors": [
+    {
+      "vector_id": "SS001",
+      "kind": "rule",
+      "category": "stage_state",
+      "description": "Mandatory recommendation with no disease target produces only test proposal.",
+      "rule_id": "S_RECOMMEND_TEST",
+      "facts": {
+        "symptom_C": true
+      },
+      "expected": {
+        "status": "FIRED",
+        "action": "PROPOSE",
+        "channel": "workflow"
+      }
+    },
+    {
+      "vector_id": "SS002",
+      "kind": "rule",
+      "category": "stage_state",
+      "description": "No recommendation condition; no disease exclusion.",
+      "rule_id": "S_RECOMMEND_TEST",
+      "facts": {
+        "symptom_C": false
+      },
+      "expected": {
+        "status": "NOT_TRIGGERED",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS003",
+      "kind": "rule",
+      "category": "stage_state",
+      "description": "Missing recommendation condition remains unknown.",
+      "rule_id": "S_RECOMMEND_TEST",
+      "facts": {},
+      "expected": {
+        "status": "NEEDS_EVIDENCE",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS004",
+      "kind": "rule",
+      "category": "stage_state",
+      "description": "Check recommended without final result cannot establish positive evidence.",
+      "rule_id": "S_RESULT_DIAG",
+      "facts": {
+        "test_X.state": "recommended"
+      },
+      "expected": {
+        "status": "NEEDS_EVIDENCE",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS005",
+      "kind": "rule",
+      "category": "stage_state",
+      "description": "Check ordered without final result cannot establish positive evidence.",
+      "rule_id": "S_RESULT_DIAG",
+      "facts": {
+        "test_X.state": "ordered"
+      },
+      "expected": {
+        "status": "NEEDS_EVIDENCE",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS006",
+      "kind": "rule",
+      "category": "stage_state",
+      "description": "Check performed without final result cannot establish positive evidence.",
+      "rule_id": "S_RESULT_DIAG",
+      "facts": {
+        "test_X.state": "performed"
+      },
+      "expected": {
+        "status": "NEEDS_EVIDENCE",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS007",
+      "kind": "rule",
+      "category": "stage_state",
+      "description": "Check completed without final result cannot establish positive evidence.",
+      "rule_id": "S_RESULT_DIAG",
+      "facts": {
+        "test_X.state": "completed"
+      },
+      "expected": {
+        "status": "NEEDS_EVIDENCE",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS008",
+      "kind": "rule",
+      "category": "stage_state",
+      "description": "This synthetic rule explicitly requires final status; preliminary value cannot satisfy it.",
+      "rule_id": "S_RESULT_DIAG",
+      "facts": {
+        "test_X.result_status": "preliminary",
+        "test_X.result_value": "positive"
+      },
+      "expected": {
+        "status": "NOT_TRIGGERED",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS009",
+      "kind": "rule",
+      "category": "stage_state",
+      "description": "Final status with missing value remains unknown.",
+      "rule_id": "S_RESULT_DIAG",
+      "facts": {
+        "test_X.result_status": "final"
+      },
+      "expected": {
+        "status": "NEEDS_EVIDENCE",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS010",
+      "kind": "rule",
+      "category": "stage_state",
+      "description": "Explicit final positive result triggers independently authorized fixture.",
+      "rule_id": "S_RESULT_DIAG",
+      "facts": {
+        "test_X.result_status": "final",
+        "test_X.result_value": "positive"
+      },
+      "expected": {
+        "status": "FIRED",
+        "action": "CONFIRM",
+        "channel": "diagnostic"
+      }
+    },
+    {
+      "vector_id": "SS011",
+      "kind": "rule",
+      "category": "stage_state",
+      "description": "False sufficient condition does not exclude diagnosis.",
+      "rule_id": "S_RESULT_DIAG",
+      "facts": {
+        "test_X.result_status": "final",
+        "test_X.result_value": "negative"
+      },
+      "expected": {
+        "status": "NOT_TRIGGERED",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS012",
+      "kind": "rule",
+      "category": "stage_state",
+      "description": "Treatment eligibility is not a new confirmation of D.",
+      "rule_id": "S_TREAT_ELIGIBILITY",
+      "facts": {
+        "diagnosis_D_already_established": true,
+        "eligibility_C": true
+      },
+      "expected": {
+        "status": "DECIDED",
+        "action": "ELIGIBLE",
+        "channel": "workflow"
+      }
+    },
+    {
+      "vector_id": "SS013",
+      "kind": "rule",
+      "category": "stage_state",
+      "description": "Ineligible treatment does not exclude D.",
+      "rule_id": "S_TREAT_ELIGIBILITY",
+      "facts": {
+        "diagnosis_D_already_established": true,
+        "eligibility_C": false
+      },
+      "expected": {
+        "status": "DECIDED",
+        "action": "NOT_ELIGIBLE",
+        "channel": "workflow"
+      }
+    },
+    {
+      "vector_id": "SS014",
+      "kind": "rule",
+      "category": "stage_state",
+      "description": "Treatment and response do not invert treatment indication into disease truth.",
+      "rule_id": "S_TREAT_ELIGIBILITY",
+      "facts": {
+        "treatment_T.state": "completed",
+        "response_R_observed": true
+      },
+      "expected": {
+        "status": "NEEDS_EVIDENCE",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS015",
+      "kind": "rule",
+      "category": "stage_state",
+      "description": "Contraindication targets action, not disease.",
+      "rule_id": "S_TREAT_PROHIBIT",
+      "facts": {
+        "contraindication_C": true
+      },
+      "expected": {
+        "status": "FIRED",
+        "action": "PROHIBIT",
+        "channel": "workflow"
+      }
+    },
+    {
+      "vector_id": "SS016",
+      "kind": "rule",
+      "category": "stage_state",
+      "description": "False contraindication does not recommend treatment or confirm disease.",
+      "rule_id": "S_TREAT_PROHIBIT",
+      "facts": {
+        "contraindication_C": false
+      },
+      "expected": {
+        "status": "NOT_TRIGGERED",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS017",
+      "kind": "rule",
+      "category": "stage_state",
+      "description": "Contraindication targets action, not disease.",
+      "rule_id": "S_TEST_PROHIBIT",
+      "facts": {
+        "contraindication_C": true
+      },
+      "expected": {
+        "status": "FIRED",
+        "action": "PROHIBIT",
+        "channel": "workflow"
+      }
+    },
+    {
+      "vector_id": "SS018",
+      "kind": "rule",
+      "category": "stage_state",
+      "description": "False contraindication does not recommend treatment or confirm disease.",
+      "rule_id": "S_TEST_PROHIBIT",
+      "facts": {
+        "contraindication_C": false
+      },
+      "expected": {
+        "status": "NOT_TRIGGERED",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS019",
+      "kind": "rule",
+      "category": "stage_state",
+      "description": "Not recommended is represented separately from prohibited.",
+      "rule_id": "S_TEST_NOT_RECOMMENDED",
+      "facts": {
+        "low_yield_context": true
+      },
+      "expected": {
+        "status": "FIRED",
+        "action": "NOT_RECOMMENDED",
+        "channel": "workflow"
+      }
+    },
+    {
+      "vector_id": "SS020",
+      "kind": "rule",
+      "category": "stage_state",
+      "description": "Treatment-stage observation retained under separate explicit synthetic diagnostic license.",
+      "rule_id": "S_RESPONSE_DIAG",
+      "facts": {
+        "treatment_T.state": "completed",
+        "response_R_observed": true,
+        "response_time_window_valid": true
+      },
+      "expected": {
+        "status": "FIRED",
+        "action": "CONFIRM",
+        "channel": "diagnostic"
+      }
+    },
+    {
+      "vector_id": "SS021",
+      "kind": "rule",
+      "category": "stage_state",
+      "description": "Nonresponse does not invert a sufficient rule into exclusion.",
+      "rule_id": "S_RESPONSE_DIAG",
+      "facts": {
+        "treatment_T.state": "completed",
+        "response_R_observed": false,
+        "response_time_window_valid": true
+      },
+      "expected": {
+        "status": "NOT_TRIGGERED",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS022",
+      "kind": "rule",
+      "category": "stage_state",
+      "description": "Temporal response condition not available; no hard action.",
+      "rule_id": "S_RESPONSE_DIAG",
+      "facts": {
+        "treatment_T.state": "completed",
+        "response_R_observed": true
+      },
+      "expected": {
+        "status": "NEEDS_EVIDENCE",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS023",
+      "kind": "rule",
+      "category": "stage_state",
+      "description": "Observed response does not license diagnosis without independent effect authority.",
+      "rule_id": "S_RESPONSE_DIAG",
+      "facts": {
+        "treatment_T.state": "completed",
+        "response_R_observed": true,
+        "response_time_window_valid": true
+      },
+      "patch": {
+        "effect.fixture_effect_authorized": false
+      },
+      "expected": {
+        "status": "UNAUTHORIZED_EFFECT",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS024",
+      "kind": "rule",
+      "category": "stage_state",
+      "description": "Cross-stage evidence retains its source soft effect; not auto hard.",
+      "rule_id": "S_SOFT_RESPONSE",
+      "facts": {
+        "response_R_observed": true
+      },
+      "expected": {
+        "status": "FIRED",
+        "action": "SOFT_SUPPORT",
+        "channel": "diagnostic"
+      }
+    },
+    {
+      "vector_id": "SS025",
+      "kind": "rule",
+      "category": "stage_state",
+      "description": "Proposed disease is not a confirmed disease.",
+      "rule_id": "S_PROPOSE_DIAGNOSIS",
+      "facts": {
+        "symptom_C": true
+      },
+      "expected": {
+        "status": "FIRED",
+        "action": "PROPOSE_DIAGNOSIS",
+        "channel": "workflow"
+      }
+    },
+    {
+      "vector_id": "SS026",
+      "kind": "rule",
+      "category": "stage_state",
+      "description": "Missing required diagnostic procedure blocks protocol eligibility, not disease existence.",
+      "rule_id": "S_CONFIRMATION_WORKFLOW",
+      "facts": {
+        "test_X.result_status": "not_performed"
+      },
+      "expected": {
+        "status": "DECIDED",
+        "action": "NOT_ELIGIBLE",
+        "channel": "workflow"
+      }
+    },
+    {
+      "vector_id": "SS027",
+      "kind": "rule",
+      "category": "stage_state",
+      "description": "Undocumented diagnostic procedure remains unknown.",
+      "rule_id": "S_CONFIRMATION_WORKFLOW",
+      "facts": {},
+      "expected": {
+        "status": "NEEDS_EVIDENCE",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS028",
+      "kind": "rule",
+      "category": "stage_state",
+      "description": "Method-specific exclusion restriction neither confirms disease nor globally blocks all exclusion methods.",
+      "rule_id": "S_METHOD_PERMISSION",
+      "facts": {
+        "method_X_under_consideration": true
+      },
+      "expected": {
+        "status": "FIRED",
+        "action": "LIMIT_EXCLUSION_METHOD",
+        "channel": "permission"
+      }
+    },
+    {
+      "vector_id": "SS029",
+      "kind": "rule",
+      "category": "stage_state",
+      "description": "Shared source first conclusion recommends test independently.",
+      "rule_id": "S_MULTI_TEST",
+      "facts": {
+        "marker_A": true,
+        "marker_B": false
+      },
+      "expected": {
+        "status": "FIRED",
+        "action": "PROPOSE",
+        "channel": "workflow"
+      }
+    },
+    {
+      "vector_id": "SS030",
+      "kind": "rule",
+      "category": "stage_state",
+      "description": "Shared-source test recommendation does not satisfy independent diagnostic condition.",
+      "rule_id": "S_MULTI_DIAG",
+      "facts": {
+        "marker_A": true,
+        "marker_B": false
+      },
+      "expected": {
+        "status": "NOT_TRIGGERED",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS031",
+      "kind": "rule",
+      "category": "stage_state",
+      "description": "Second source conclusion has independent target and condition.",
+      "rule_id": "S_MULTI_DIAG",
+      "facts": {
+        "marker_A": false,
+        "marker_B": true
+      },
+      "expected": {
+        "status": "FIRED",
+        "action": "CONFIRM",
+        "channel": "diagnostic"
+      }
+    },
+    {
+      "vector_id": "SS032",
+      "kind": "rule",
+      "category": "stage_state",
+      "description": "Referral may lack disease target without schema failure.",
+      "rule_id": "S_REFERRAL",
+      "facts": {
+        "unresolved_problem": true
+      },
+      "expected": {
+        "status": "FIRED",
+        "action": "PROPOSE",
+        "channel": "workflow"
+      }
+    },
+    {
+      "vector_id": "SS033",
+      "kind": "rule",
+      "category": "scope",
+      "description": "Synthetic child scoped necessity at age 8.",
+      "rule_id": "S_CHILD_NECESSARY",
+      "facts": {
+        "patient.age_years_at_index": 8,
+        "marker_A": false
+      },
+      "expected": {
+        "status": "FIRED",
+        "action": "EXCLUDE",
+        "channel": "diagnostic"
+      }
+    },
+    {
+      "vector_id": "SS034",
+      "kind": "rule",
+      "category": "scope",
+      "description": "Synthetic child scoped necessity at age 8.",
+      "rule_id": "S_CHILD_NECESSARY",
+      "facts": {
+        "patient.age_years_at_index": 8,
+        "marker_A": true
+      },
+      "expected": {
+        "status": "NOT_TRIGGERED",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS035",
+      "kind": "rule",
+      "category": "scope",
+      "description": "Synthetic child scoped necessity at age 15.",
+      "rule_id": "S_CHILD_NECESSARY",
+      "facts": {
+        "patient.age_years_at_index": 15,
+        "marker_A": false
+      },
+      "expected": {
+        "status": "NOT_APPLICABLE",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS036",
+      "kind": "rule",
+      "category": "scope",
+      "description": "Synthetic child scoped necessity at age 70.",
+      "rule_id": "S_CHILD_NECESSARY",
+      "facts": {
+        "patient.age_years_at_index": 70,
+        "marker_A": false
+      },
+      "expected": {
+        "status": "NOT_APPLICABLE",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS037",
+      "kind": "rule",
+      "category": "scope",
+      "description": "Unknown age cannot be treated as child, adult, false criterion or else.",
+      "rule_id": "S_CHILD_NECESSARY",
+      "facts": {
+        "marker_A": false
+      },
+      "expected": {
+        "status": "DEFER_SCOPE",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS038",
+      "kind": "rule",
+      "category": "scope",
+      "description": "Known scope but unknown necessary criterion does not exclude.",
+      "rule_id": "S_CHILD_NECESSARY",
+      "facts": {
+        "patient.age_years_at_index": 8
+      },
+      "expected": {
+        "status": "NEEDS_EVIDENCE",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS039",
+      "kind": "rule",
+      "category": "scope",
+      "description": "Boundary included only in explicit elder guard.",
+      "rule_id": "S_ELDER_SUFFICIENT",
+      "facts": {
+        "patient.age_years_at_index": 70,
+        "marker_B": true
+      },
+      "expected": {
+        "status": "FIRED",
+        "action": "CONFIRM",
+        "channel": "diagnostic"
+      }
+    },
+    {
+      "vector_id": "SS040",
+      "kind": "rule",
+      "category": "scope",
+      "description": "Boundary below threshold is not a disease exclusion.",
+      "rule_id": "S_ELDER_SUFFICIENT",
+      "facts": {
+        "patient.age_years_at_index": 69.999,
+        "marker_B": true
+      },
+      "expected": {
+        "status": "NOT_APPLICABLE",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS041",
+      "kind": "rule",
+      "category": "scope",
+      "description": "False sufficient condition within scope still does not exclude.",
+      "rule_id": "S_ELDER_SUFFICIENT",
+      "facts": {
+        "patient.age_years_at_index": 70,
+        "marker_B": false
+      },
+      "expected": {
+        "status": "NOT_TRIGGERED",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS042",
+      "kind": "rule",
+      "category": "scope_formula",
+      "description": "Guard false must stop action even when material implication G→C is true.",
+      "rule_id": "S_GUARDED_NECESSARY",
+      "facts": {
+        "G": false,
+        "C": false,
+        "D": true
+      },
+      "expected": {
+        "status": "NOT_APPLICABLE",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS043",
+      "kind": "rule",
+      "category": "scope_formula",
+      "description": "True criterion does not replace unknown guard.",
+      "rule_id": "S_GUARDED_NECESSARY",
+      "facts": {
+        "C": true
+      },
+      "expected": {
+        "status": "DEFER_SCOPE",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS044",
+      "kind": "rule",
+      "category": "scope_formula",
+      "description": "Guard false must stop action even when material implication G→C is true.",
+      "rule_id": "S_GUARDED_SUFFICIENT",
+      "facts": {
+        "G": false,
+        "C": false,
+        "D": true
+      },
+      "expected": {
+        "status": "NOT_APPLICABLE",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS045",
+      "kind": "rule",
+      "category": "scope_formula",
+      "description": "True criterion does not replace unknown guard.",
+      "rule_id": "S_GUARDED_SUFFICIENT",
+      "facts": {
+        "C": true
+      },
+      "expected": {
+        "status": "DEFER_SCOPE",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS046",
+      "kind": "expression",
+      "category": "scope_formula",
+      "description": "Correct conditional necessity (G AND D) implies C is true outside guard.",
+      "expression": {
+        "op": "implies",
+        "antecedent": {
+          "op": "and",
+          "children": [
+            {
+              "op": "fact",
+              "key": "G"
+            },
+            {
+              "op": "fact",
+              "key": "D"
+            }
+          ]
+        },
+        "consequent": {
+          "op": "fact",
+          "key": "C"
+        }
+      },
+      "facts": {
+        "G": false,
+        "D": true,
+        "C": false
+      },
+      "expected": {
+        "truth": "TRUE"
+      }
+    },
+    {
+      "vector_id": "SS047",
+      "kind": "expression",
+      "category": "scope_formula",
+      "description": "Wrong D implies (G AND C) rejects disease solely outside guard.",
+      "expression": {
+        "op": "implies",
+        "antecedent": {
+          "op": "fact",
+          "key": "D"
+        },
+        "consequent": {
+          "op": "and",
+          "children": [
+            {
+              "op": "fact",
+              "key": "G"
+            },
+            {
+              "op": "fact",
+              "key": "C"
+            }
+          ]
+        }
+      },
+      "facts": {
+        "G": false,
+        "D": true,
+        "C": false
+      },
+      "expected": {
+        "truth": "FALSE"
+      }
+    },
+    {
+      "vector_id": "SS048",
+      "kind": "expression",
+      "category": "scope_formula",
+      "description": "G implies C is vacuously true outside scope and must never be used alone to trigger D.",
+      "expression": {
+        "op": "implies",
+        "antecedent": {
+          "op": "fact",
+          "key": "G"
+        },
+        "consequent": {
+          "op": "fact",
+          "key": "C"
+        }
+      },
+      "facts": {
+        "G": false,
+        "C": false
+      },
+      "expected": {
+        "truth": "TRUE"
+      }
+    },
+    {
+      "vector_id": "SS049",
+      "kind": "expression",
+      "category": "scope_formula",
+      "description": "Actual sufficient evidence root G AND C is false outside scope.",
+      "expression": {
+        "op": "and",
+        "children": [
+          {
+            "op": "fact",
+            "key": "G"
+          },
+          {
+            "op": "fact",
+            "key": "C"
+          }
+        ]
+      },
+      "facts": {
+        "G": false,
+        "C": false
+      },
+      "expected": {
+        "truth": "FALSE"
+      }
+    },
+    {
+      "vector_id": "SS050",
+      "kind": "rule",
+      "category": "scope",
+      "description": "Person role and event epoch are part of applicability.",
+      "rule_id": "S_SCOPED_TIME",
+      "facts": {
+        "scope_person_role": "patient",
+        "scope_event_epoch": "index",
+        "marker_A": true
+      },
+      "expected": {
+        "status": "FIRED",
+        "action": "CONFIRM",
+        "channel": "diagnostic"
+      }
+    },
+    {
+      "vector_id": "SS051",
+      "kind": "rule",
+      "category": "scope",
+      "description": "Person role and event epoch are part of applicability.",
+      "rule_id": "S_SCOPED_TIME",
+      "facts": {
+        "scope_person_role": "family_member",
+        "scope_event_epoch": "index",
+        "marker_A": true
+      },
+      "expected": {
+        "status": "NOT_APPLICABLE",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS052",
+      "kind": "rule",
+      "category": "scope",
+      "description": "Person role and event epoch are part of applicability.",
+      "rule_id": "S_SCOPED_TIME",
+      "facts": {
+        "scope_person_role": "patient",
+        "scope_event_epoch": "prior_episode",
+        "marker_A": true
+      },
+      "expected": {
+        "status": "NOT_APPLICABLE",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS053",
+      "kind": "rule",
+      "category": "scope",
+      "description": "Unknown event epoch cannot reuse prior or current scope.",
+      "rule_id": "S_SCOPED_TIME",
+      "facts": {
+        "scope_person_role": "patient",
+        "marker_A": true
+      },
+      "expected": {
+        "status": "DEFER_SCOPE",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS054",
+      "kind": "rule",
+      "category": "typing",
+      "description": "Unresolved sentence function cannot be laundered into diagnosis.",
+      "rule_id": "S_GLOBAL_SUFFICIENT",
+      "facts": {
+        "marker_A": true
+      },
+      "patch": {
+        "classification_status": "unresolved"
+      },
+      "expected": {
+        "status": "QUARANTINED_CLASSIFICATION",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS055",
+      "kind": "branch",
+      "category": "branch_routing",
+      "description": "Synthetic partition boundary/gap at age 0.",
+      "branch_set_id": "B_AGE_GAP",
+      "facts": {
+        "patient.age_years_at_index": 0
+      },
+      "expected": {
+        "status": "SELECTED",
+        "selected": [
+          "CHILD"
+        ]
+      }
+    },
+    {
+      "vector_id": "SS056",
+      "kind": "branch",
+      "category": "branch_routing",
+      "description": "Synthetic partition boundary/gap at age 11.999.",
+      "branch_set_id": "B_AGE_GAP",
+      "facts": {
+        "patient.age_years_at_index": 11.999
+      },
+      "expected": {
+        "status": "SELECTED",
+        "selected": [
+          "CHILD"
+        ]
+      }
+    },
+    {
+      "vector_id": "SS057",
+      "kind": "branch",
+      "category": "branch_routing",
+      "description": "Synthetic partition boundary/gap at age 12.",
+      "branch_set_id": "B_AGE_GAP",
+      "facts": {
+        "patient.age_years_at_index": 12
+      },
+      "expected": {
+        "status": "NO_APPLICABLE_BRANCH",
+        "selected": []
+      }
+    },
+    {
+      "vector_id": "SS058",
+      "kind": "branch",
+      "category": "branch_routing",
+      "description": "Synthetic partition boundary/gap at age 69.999.",
+      "branch_set_id": "B_AGE_GAP",
+      "facts": {
+        "patient.age_years_at_index": 69.999
+      },
+      "expected": {
+        "status": "NO_APPLICABLE_BRANCH",
+        "selected": []
+      }
+    },
+    {
+      "vector_id": "SS059",
+      "kind": "branch",
+      "category": "branch_routing",
+      "description": "Synthetic partition boundary/gap at age 70.",
+      "branch_set_id": "B_AGE_GAP",
+      "facts": {
+        "patient.age_years_at_index": 70
+      },
+      "expected": {
+        "status": "SELECTED",
+        "selected": [
+          "ELDER"
+        ]
+      }
+    },
+    {
+      "vector_id": "SS060",
+      "kind": "branch",
+      "category": "branch_routing",
+      "description": "Unknown age selects no branch.",
+      "branch_set_id": "B_AGE_GAP",
+      "facts": {},
+      "expected": {
+        "status": "DEFER_BRANCH",
+        "selected": [],
+        "pending": [
+          "CHILD",
+          "ELDER"
+        ]
+      }
+    },
+    {
+      "vector_id": "SS061",
+      "kind": "branch",
+      "category": "branch_routing",
+      "description": "Source-authorized else applies only when previous guards are known false.",
+      "branch_set_id": "B_AGE_ELSE",
+      "facts": {
+        "patient.age_years_at_index": 40
+      },
+      "expected": {
+        "status": "SELECTED_ELSE",
+        "selected": [
+          "ELSE"
+        ]
+      }
+    },
+    {
+      "vector_id": "SS062",
+      "kind": "branch",
+      "category": "branch_routing",
+      "description": "Unknown is not else, unlike backend default if None.",
+      "branch_set_id": "B_AGE_ELSE",
+      "facts": {},
+      "expected": {
+        "status": "DEFER_BRANCH",
+        "selected": [],
+        "pending": [
+          "CHILD",
+          "ELDER",
+          "ELSE"
+        ]
+      }
+    },
+    {
+      "vector_id": "SS063",
+      "kind": "branch",
+      "category": "branch_routing",
+      "description": "Two true exclusive guards are a conflict; list order does not choose.",
+      "branch_set_id": "B_OVERLAP_EXCLUSIVE",
+      "facts": {
+        "patient.age_years_at_index": 15
+      },
+      "expected": {
+        "status": "BRANCH_CONFLICT",
+        "selected": []
+      }
+    },
+    {
+      "vector_id": "SS064",
+      "kind": "branch",
+      "category": "branch_routing",
+      "description": "Independent all-applicable policy retains overlapping branches.",
+      "branch_set_id": "B_OVERLAP_COLLECT",
+      "facts": {
+        "patient.age_years_at_index": 15
+      },
+      "expected": {
+        "status": "SELECTED",
+        "selected": [
+          "LE20",
+          "GE10"
+        ]
+      }
+    },
+    {
+      "vector_id": "SS065",
+      "kind": "branch",
+      "category": "branch_routing",
+      "description": "Independent true branch retained; unknown branch remains explicit pending.",
+      "branch_set_id": "B_COLLECT_UNKNOWNS",
+      "facts": {
+        "guard_A": true
+      },
+      "expected": {
+        "status": "PARTIAL",
+        "selected": [
+          "A"
+        ],
+        "pending": [
+          "B"
+        ]
+      }
+    },
+    {
+      "vector_id": "SS066",
+      "kind": "branch",
+      "category": "branch_routing",
+      "description": "Only source-authorized priority chooses exception.",
+      "branch_set_id": "B_EXPLICIT_PRIORITY",
+      "facts": {
+        "exception_guard": true,
+        "general_guard": true
+      },
+      "expected": {
+        "status": "SELECTED",
+        "selected": [
+          "EXCEPTION"
+        ]
+      }
+    },
+    {
+      "vector_id": "SS067",
+      "kind": "branch",
+      "category": "branch_routing",
+      "description": "Known-false exception permits general branch.",
+      "branch_set_id": "B_EXPLICIT_PRIORITY",
+      "facts": {
+        "exception_guard": false,
+        "general_guard": true
+      },
+      "expected": {
+        "status": "SELECTED",
+        "selected": [
+          "GENERAL"
+        ]
+      }
+    },
+    {
+      "vector_id": "SS068",
+      "kind": "branch",
+      "category": "branch_routing",
+      "description": "Unknown higher-priority exception blocks lower candidate route.",
+      "branch_set_id": "B_EXPLICIT_PRIORITY",
+      "facts": {
+        "general_guard": true
+      },
+      "expected": {
+        "status": "DEFER_PRIORITY",
+        "selected": [],
+        "pending": [
+          "EXCEPTION"
+        ]
+      }
+    },
+    {
+      "vector_id": "SS069",
+      "kind": "branch",
+      "category": "branch_routing",
+      "description": "Parent scope false blocks routing before local guard.",
+      "branch_set_id": "B_PARENT_AND_LOCAL",
+      "facts": {
+        "parent_population": false,
+        "entry_guard": true
+      },
+      "expected": {
+        "status": "NOT_APPLICABLE",
+        "selected": []
+      }
+    },
+    {
+      "vector_id": "SS070",
+      "kind": "branch",
+      "category": "branch_routing",
+      "description": "Unknown parent scope cannot be replaced by true local guard.",
+      "branch_set_id": "B_PARENT_AND_LOCAL",
+      "facts": {
+        "entry_guard": true
+      },
+      "expected": {
+        "status": "DEFER_SCOPE",
+        "selected": []
+      }
+    },
+    {
+      "vector_id": "SS071",
+      "kind": "branch_run",
+      "category": "scope_composition",
+      "description": "Effective local scope is included before routing, so an inapplicable branch is not selected.",
+      "branch_set_id": "B_PARENT_AND_LOCAL",
+      "facts": {
+        "parent_population": true,
+        "entry_guard": true,
+        "patient.age_years_at_index": 70,
+        "marker_A": false
+      },
+      "expected": {
+        "route": {
+          "status": "NO_APPLICABLE_BRANCH",
+          "selected": []
+        },
+        "executions": {}
+      }
+    },
+    {
+      "vector_id": "SS072",
+      "kind": "branch_run",
+      "category": "scope_composition",
+      "description": "Parent, branch and local scope all true permit decisive necessary counterexample.",
+      "branch_set_id": "B_PARENT_AND_LOCAL",
+      "facts": {
+        "parent_population": true,
+        "entry_guard": true,
+        "patient.age_years_at_index": 8,
+        "marker_A": false
+      },
+      "expected": {
+        "executions": {
+          "ENTRY": {
+            "status": "FIRED",
+            "channel": "diagnostic",
+            "action": "EXCLUDE"
+          }
+        }
+      }
+    },
+    {
+      "vector_id": "SS073",
+      "kind": "branch_run",
+      "category": "scope_composition",
+      "description": "Explicit else produces no inference beyond its own full root.",
+      "branch_set_id": "B_AGE_ELSE",
+      "facts": {
+        "patient.age_years_at_index": 40,
+        "marker_A": false
+      },
+      "expected": {
+        "route": {
+          "status": "SELECTED_ELSE"
+        },
+        "executions": {
+          "ELSE": {
+            "status": "NOT_TRIGGERED",
+            "channel": "none",
+            "action": null
+          }
+        }
+      }
+    },
+    {
+      "vector_id": "SS074",
+      "kind": "reject_rule",
+      "category": "schema_rejection",
+      "description": "Recommendation intent cannot carry diagnostic effect.",
+      "rule_id": "S_RECOMMEND_TEST",
+      "patch": {
+        "effect.kind": "sufficient_for_target"
+      },
+      "expected": {
+        "rejected": true
+      }
+    },
+    {
+      "vector_id": "SS075",
+      "kind": "reject_rule",
+      "category": "schema_rejection",
+      "description": "Disease confirmation cannot target a test.",
+      "rule_id": "S_GLOBAL_SUFFICIENT",
+      "patch": {
+        "target.type": "test"
+      },
+      "expected": {
+        "rejected": true
+      }
+    },
+    {
+      "vector_id": "SS076",
+      "kind": "reject_rule",
+      "category": "schema_rejection",
+      "description": "Unresolved disease target cannot compile.",
+      "rule_id": "S_GLOBAL_SUFFICIENT",
+      "patch": {
+        "target.id": null
+      },
+      "expected": {
+        "rejected": true
+      }
+    },
+    {
+      "vector_id": "SS077",
+      "kind": "reject_rule",
+      "category": "schema_rejection",
+      "description": "Not-mentioned disease slot cannot silently contain a fabricated disease.",
+      "rule_id": "S_RECOMMEND_TEST",
+      "patch": {
+        "disease_context": [
+          "INVENTED_D"
+        ]
+      },
+      "expected": {
+        "rejected": true
+      }
+    },
+    {
+      "vector_id": "SS078",
+      "kind": "reject_rule",
+      "category": "schema_rejection",
+      "description": "Missing historical scope is not global true.",
+      "rule_id": "S_GLOBAL_SUFFICIENT",
+      "patch": {
+        "applicability": "__DELETE__"
+      },
+      "expected": {
+        "rejected": true
+      }
+    },
+    {
+      "vector_id": "SS079",
+      "kind": "reject_rule",
+      "category": "schema_rejection",
+      "description": "Missing stage classification requires re-review.",
+      "rule_id": "S_GLOBAL_SUFFICIENT",
+      "patch": {
+        "care_process_stages": []
+      },
+      "expected": {
+        "rejected": true
+      }
+    },
+    {
+      "vector_id": "SS080",
+      "kind": "reject_rule",
+      "category": "schema_rejection",
+      "description": "Leaf may not carry independent root action.",
+      "rule_id": "S_GLOBAL_SUFFICIENT",
+      "patch": {
+        "condition": {
+          "op": "fact",
+          "key": "marker_A",
+          "effect": "exclude"
+        }
+      },
+      "expected": {
+        "rejected": true
+      }
+    },
+    {
+      "vector_id": "SS081",
+      "kind": "reject_rule",
+      "category": "schema_rejection",
+      "description": "Synthetic fixtures cannot authorize clinical deployment.",
+      "rule_id": "S_GLOBAL_SUFFICIENT",
+      "patch": {
+        "clinical_use_authorized": true
+      },
+      "expected": {
+        "rejected": true
+      }
+    },
+    {
+      "vector_id": "SS082",
+      "kind": "reject_branch",
+      "category": "schema_rejection",
+      "description": "Else needs source license.",
+      "branch_set_id": "B_AGE_ELSE",
+      "patch": {
+        "else_source_authorized": false
+      },
+      "expected": {
+        "rejected": true
+      }
+    },
+    {
+      "vector_id": "SS083",
+      "kind": "reject_branch",
+      "category": "schema_rejection",
+      "description": "Else coverage cannot be assumed.",
+      "branch_set_id": "B_AGE_ELSE",
+      "patch": {
+        "coverage_status": "unresolved"
+      },
+      "expected": {
+        "rejected": true
+      }
+    },
+    {
+      "vector_id": "SS084",
+      "kind": "reject_branch",
+      "category": "schema_rejection",
+      "description": "First-match priority needs source license.",
+      "branch_set_id": "B_EXPLICIT_PRIORITY",
+      "patch": {
+        "priority_source_authorized": false
+      },
+      "expected": {
+        "rejected": true
+      }
+    },
+    {
+      "vector_id": "SS085",
+      "kind": "rule",
+      "category": "independent_review_regression",
+      "description": "False sufficient eligibility condition does not prove ineligibility.",
+      "rule_id": "S_ELIGIBILITY_SUFFICIENT",
+      "facts": {
+        "diagnosis_D_already_established": true,
+        "eligibility_C": false
+      },
+      "expected": {
+        "status": "NOT_TRIGGERED",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS086",
+      "kind": "rule",
+      "category": "independent_review_regression",
+      "description": "True sufficient eligibility criterion permits eligibility.",
+      "rule_id": "S_ELIGIBILITY_SUFFICIENT",
+      "facts": {
+        "diagnosis_D_already_established": true,
+        "eligibility_C": true
+      },
+      "expected": {
+        "status": "DECIDED",
+        "action": "ELIGIBLE",
+        "channel": "workflow"
+      }
+    },
+    {
+      "vector_id": "SS087",
+      "kind": "rule",
+      "category": "independent_review_regression",
+      "description": "True necessary eligibility condition alone does not establish eligibility.",
+      "rule_id": "S_ELIGIBILITY_NECESSARY",
+      "facts": {
+        "diagnosis_D_already_established": true,
+        "eligibility_C": true
+      },
+      "expected": {
+        "status": "NOT_TRIGGERED",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS088",
+      "kind": "rule",
+      "category": "independent_review_regression",
+      "description": "False necessary eligibility condition establishes only workflow ineligibility.",
+      "rule_id": "S_ELIGIBILITY_NECESSARY",
+      "facts": {
+        "diagnosis_D_already_established": true,
+        "eligibility_C": false
+      },
+      "expected": {
+        "status": "DECIDED",
+        "action": "NOT_ELIGIBLE",
+        "channel": "workflow"
+      }
+    },
+    {
+      "vector_id": "SS089",
+      "kind": "reject_rule",
+      "category": "independent_review_regression",
+      "description": "Bidirectional eligibility definition needs an explicitly complete source basis.",
+      "rule_id": "S_TREAT_ELIGIBILITY",
+      "patch": {
+        "effect.complete_eligibility_basis_source_authorized": false
+      },
+      "expected": {
+        "rejected": true
+      }
+    },
+    {
+      "vector_id": "SS090",
+      "kind": "rule",
+      "category": "independent_review_regression",
+      "description": "Reserved UNKNOWN string in typed value stays unknown, not false.",
+      "rule_id": "S_RESULT_DIAG",
+      "facts": {
+        "test_X.result_status": "final",
+        "test_X.result_value": "UNKNOWN"
+      },
+      "expected": {
+        "status": "NEEDS_EVIDENCE",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS091",
+      "kind": "rule",
+      "category": "independent_review_regression",
+      "description": "True value plus independent conflict does not trigger hard action.",
+      "rule_id": "S_GLOBAL_SUFFICIENT",
+      "facts": {
+        "marker_A": {
+          "value": true,
+          "conflict": true
+        }
+      },
+      "expected": {
+        "status": "DEFER_EVIDENCE_CONFLICT",
+        "condition": "TRUE",
+        "conflict": true,
+        "action": null
+      }
+    },
+    {
+      "vector_id": "SS092",
+      "kind": "rule",
+      "category": "independent_review_regression",
+      "description": "Conflicted guard cannot activate exclusion.",
+      "rule_id": "S_GUARDED_NECESSARY",
+      "facts": {
+        "G": {
+          "value": true,
+          "conflict": true
+        },
+        "C": false
+      },
+      "expected": {
+        "status": "DEFER_SCOPE_CONFLICT",
+        "conflict": true,
+        "action": null
+      }
+    },
+    {
+      "vector_id": "SS093",
+      "kind": "rule",
+      "category": "independent_review_regression",
+      "description": "Unreviewed source scope cannot default to global applicability.",
+      "rule_id": "S_GLOBAL_SUFFICIENT",
+      "facts": {
+        "marker_A": true
+      },
+      "patch": {
+        "provenance.scope_source_status": "unresolved"
+      },
+      "expected": {
+        "status": "QUARANTINED_SOURCE_SCOPE",
+        "action": null
+      }
+    },
+    {
+      "vector_id": "SS094",
+      "kind": "branch_run",
+      "category": "independent_review_regression",
+      "description": "Unreviewed branch routing cannot make hard rules reachable.",
+      "branch_set_id": "B_PARENT_AND_LOCAL",
+      "facts": {
+        "parent_population": true,
+        "entry_guard": true,
+        "patient.age_years_at_index": 8,
+        "marker_A": false
+      },
+      "patch": {
+        "classification_status": "unresolved"
+      },
+      "expected": {
+        "route": {
+          "status": "QUARANTINED_BRANCH",
+          "selected": []
+        },
+        "admitted_actions": []
+      }
+    },
+    {
+      "vector_id": "SS095",
+      "kind": "branch_run",
+      "category": "independent_review_regression",
+      "description": "Incomplete source branch structure is quarantined.",
+      "branch_set_id": "B_PARENT_AND_LOCAL",
+      "facts": {
+        "parent_population": true,
+        "entry_guard": true,
+        "patient.age_years_at_index": 8,
+        "marker_A": false
+      },
+      "patch": {
+        "source_structure_complete": false
+      },
+      "expected": {
+        "route": {
+          "status": "QUARANTINED_BRANCH",
+          "selected": []
+        },
+        "admitted_actions": []
+      }
+    },
+    {
+      "vector_id": "SS096",
+      "kind": "branch_run",
+      "category": "independent_review_regression",
+      "description": "Unreviewed guard does not inherit review status from root.",
+      "branch_set_id": "B_PARENT_AND_LOCAL",
+      "facts": {
+        "parent_population": true,
+        "entry_guard": true,
+        "patient.age_years_at_index": 8,
+        "marker_A": false
+      },
+      "patch": {
+        "branches": [
+          {
+            "branch_id": "ENTRY",
+            "guard": {
+              "op": "fact",
+              "key": "entry_guard"
+            },
+            "rule_ref": "S_CHILD_NECESSARY",
+            "guard_review_status": "unresolved"
+          }
+        ]
+      },
+      "expected": {
+        "route": {
+          "status": "QUARANTINED_BRANCH"
+        },
+        "admitted_actions": []
+      }
+    },
+    {
+      "vector_id": "SS097",
+      "kind": "reject_branch_run",
+      "category": "independent_review_regression",
+      "description": "Runtime rejects unauthorized priority instead of bypassing compile checks.",
+      "branch_set_id": "B_EXPLICIT_PRIORITY",
+      "facts": {
+        "exception_guard": true,
+        "general_guard": true,
+        "marker_A": true,
+        "marker_B": true
+      },
+      "patch": {
+        "priority_source_authorized": false
+      },
+      "expected": {
+        "rejected": true
+      }
+    },
+    {
+      "vector_id": "SS098",
+      "kind": "reject_branch_run",
+      "category": "independent_review_regression",
+      "description": "Array order is not a source-declared priority.",
+      "branch_set_id": "B_EXPLICIT_PRIORITY",
+      "facts": {
+        "exception_guard": true,
+        "general_guard": true,
+        "marker_A": true,
+        "marker_B": true
+      },
+      "patch": {
+        "source_declared_order": []
+      },
+      "expected": {
+        "rejected": true
+      }
+    },
+    {
+      "vector_id": "SS099",
+      "kind": "reject_branch_run",
+      "category": "independent_review_regression",
+      "description": "Priority cannot suppress different-target rules outside audited override domain.",
+      "branch_set_id": "B_EXPLICIT_PRIORITY",
+      "facts": {
+        "exception_guard": true,
+        "general_guard": true,
+        "marker_A": true,
+        "marker_B": true
+      },
+      "patch": {
+        "override_domain.target_id": "DISEASE_E"
+      },
+      "expected": {
+        "rejected": true
+      }
+    },
+    {
+      "vector_id": "SS100",
+      "kind": "branch",
+      "category": "independent_review_regression",
+      "description": "Reversing storage order preserves explicitly declared source priority.",
+      "branch_set_id": "B_EXPLICIT_PRIORITY",
+      "facts": {
+        "exception_guard": true,
+        "general_guard": true
+      },
+      "patch": {
+        "branches": [
+          {
+            "branch_id": "GENERAL",
+            "guard": {
+              "op": "fact",
+              "key": "general_guard"
+            },
+            "rule_ref": "S_GLOBAL_EXCLUSION",
+            "guard_review_status": "reviewed_fixture"
+          },
+          {
+            "branch_id": "EXCEPTION",
+            "guard": {
+              "op": "fact",
+              "key": "exception_guard"
+            },
+            "rule_ref": "S_GLOBAL_SUFFICIENT",
+            "guard_review_status": "reviewed_fixture"
+          }
+        ]
+      },
+      "expected": {
+        "status": "SELECTED",
+        "selected": [
+          "EXCEPTION"
+        ]
+      }
+    },
+    {
+      "vector_id": "SS101",
+      "kind": "branch",
+      "category": "independent_review_regression",
+      "description": "Exactly-one exhaustive scope with all branches false is a coverage conflict.",
+      "branch_set_id": "B_AGE_GAP",
+      "facts": {
+        "patient.age_years_at_index": 40
+      },
+      "patch": {
+        "cardinality": "exactly_one",
+        "coverage_status": "reviewed_exhaustive_fixture"
+      },
+      "expected": {
+        "status": "COVERAGE_CONFLICT",
+        "selected": []
+      }
+    },
+    {
+      "vector_id": "SS102",
+      "kind": "branch_run",
+      "category": "independent_review_regression",
+      "description": "Conflicting independently true same-target roots retain proofs but emit neither opposing hard action.",
+      "branch_set_id": "B_ACTION_CONFLICT",
+      "facts": {
+        "guard_A": true,
+        "guard_B": true,
+        "marker_A": true,
+        "marker_B": true
+      },
+      "expected": {
+        "status": "ACTION_CONFLICT",
+        "admitted_actions": [],
+        "executions": {
+          "A": {
+            "action": "CONFIRM"
+          },
+          "B": {
+            "action": "EXCLUDE"
+          }
+        }
+      }
+    },
+    {
+      "vector_id": "SS103",
+      "kind": "branch",
+      "category": "independent_review_regression",
+      "description": "Known-false local applicability of high-priority branch allows eligible lower branch.",
+      "branch_set_id": "B_PRIORITY_WITH_LOCAL_SCOPE",
+      "facts": {
+        "exception_guard": true,
+        "general_guard": true,
+        "patient.age_years_at_index": 70
+      },
+      "expected": {
+        "status": "SELECTED",
+        "selected": [
+          "GENERAL"
+        ]
+      }
+    },
+    {
+      "vector_id": "SS104",
+      "kind": "branch",
+      "category": "independent_review_regression",
+      "description": "Unknown local applicability of high-priority branch defers lower branch.",
+      "branch_set_id": "B_PRIORITY_WITH_LOCAL_SCOPE",
+      "facts": {
+        "exception_guard": true,
+        "general_guard": true
+      },
+      "expected": {
+        "status": "DEFER_PRIORITY",
+        "selected": []
+      }
+    },
+    {
+      "vector_id": "SS105",
+      "kind": "branch",
+      "category": "independent_review_regression",
+      "description": "Conflicted branch guard does not pick a route.",
+      "branch_set_id": "B_COLLECT_UNKNOWNS",
+      "facts": {
+        "guard_A": {
+          "value": true,
+          "conflict": true
+        },
+        "guard_B": false
+      },
+      "expected": {
+        "status": "DEFER_BRANCH_CONFLICT",
+        "selected": []
+      }
+    },
+    {
+      "vector_id": "SS106",
+      "kind": "rule",
+      "category": "independent_review_regression",
+      "description": "Effect authority also governs workflow prohibitions, eligibility decisions and permission constraints.",
+      "rule_id": "S_TREAT_PROHIBIT",
+      "facts": {
+        "contraindication_C": true
+      },
+      "patch": {
+        "effect.fixture_effect_authorized": false
+      },
+      "expected": {
+        "status": "UNAUTHORIZED_EFFECT",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS107",
+      "kind": "rule",
+      "category": "independent_review_regression",
+      "description": "Effect authority also governs workflow prohibitions, eligibility decisions and permission constraints.",
+      "rule_id": "S_TREAT_ELIGIBILITY",
+      "facts": {
+        "diagnosis_D_already_established": true,
+        "eligibility_C": false
+      },
+      "patch": {
+        "effect.fixture_effect_authorized": false
+      },
+      "expected": {
+        "status": "UNAUTHORIZED_EFFECT",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS108",
+      "kind": "rule",
+      "category": "independent_review_regression",
+      "description": "Effect authority also governs workflow prohibitions, eligibility decisions and permission constraints.",
+      "rule_id": "S_METHOD_PERMISSION",
+      "facts": {
+        "method_X_under_consideration": true
+      },
+      "patch": {
+        "effect.fixture_effect_authorized": false
+      },
+      "expected": {
+        "status": "UNAUTHORIZED_EFFECT",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS109",
+      "kind": "reject_rule",
+      "category": "independent_review_regression",
+      "description": "Non-Boolean authority may not become true through language truthiness.",
+      "rule_id": "S_GLOBAL_SUFFICIENT",
+      "patch": {
+        "effect.fixture_effect_authorized": "false"
+      },
+      "expected": {
+        "rejected": true
+      }
+    },
+    {
+      "vector_id": "SS110",
+      "kind": "reject_rule",
+      "category": "independent_review_regression",
+      "description": "Non-Boolean authority may not become true through language truthiness.",
+      "rule_id": "S_GLOBAL_SUFFICIENT",
+      "patch": {
+        "effect.fixture_effect_authorized": 1
+      },
+      "expected": {
+        "rejected": true
+      }
+    },
+    {
+      "vector_id": "SS111",
+      "kind": "rule",
+      "category": "independent_review_regression",
+      "description": "Unknown typed value remains unknown even for a necessary condition, so it cannot exclude.",
+      "rule_id": "S_RESULT_DIAG",
+      "facts": {
+        "test_X.result_status": "final",
+        "test_X.result_value": "UNKNOWN"
+      },
+      "patch": {
+        "effect.kind": "necessary_for_target"
+      },
+      "expected": {
+        "status": "NEEDS_EVIDENCE",
+        "action": null,
+        "channel": "none"
+      }
+    },
+    {
+      "vector_id": "SS112",
+      "kind": "reject_branch",
+      "category": "independent_review_regression",
+      "description": "Exactly-one routing cannot be asserted over unresolved or partial coverage.",
+      "branch_set_id": "B_AGE_GAP",
+      "patch": {
+        "cardinality": "exactly_one"
+      },
+      "expected": {
+        "rejected": true
+      }
+    },
+    {
+      "vector_id": "SS113",
+      "kind": "branch_run",
+      "category": "independent_review_regression",
+      "description": "False extra hospital applicability does not transform a child into the source age-else population.",
+      "branch_set_id": "B_SOURCE_ELSE_BASIS",
+      "facts": {
+        "patient.age_years_at_index": 8,
+        "hospital_scope": false,
+        "marker_A": true
+      },
+      "expected": {
+        "route": {
+          "status": "NO_APPLICABLE_BRANCH",
+          "selected": []
+        },
+        "admitted_actions": []
+      }
+    },
+    {
+      "vector_id": "SS114",
+      "kind": "branch_run",
+      "category": "independent_review_regression",
+      "description": "Unknown extra hospital scope defers child root; it does not activate age else.",
+      "branch_set_id": "B_SOURCE_ELSE_BASIS",
+      "facts": {
+        "patient.age_years_at_index": 8,
+        "marker_A": true
+      },
+      "expected": {
+        "route": {
+          "status": "DEFER_BRANCH",
+          "selected": [],
+          "pending": [
+            "CHILD"
+          ]
+        },
+        "admitted_actions": []
+      }
+    },
+    {
+      "vector_id": "SS115",
+      "kind": "reject_branch",
+      "category": "independent_review_regression",
+      "description": "Else cannot be auto-derived from effective-scope complement when source basis is missing.",
+      "branch_set_id": "B_AGE_ELSE",
+      "patch": {
+        "else_guard": "__DELETE__"
+      },
+      "expected": {
+        "rejected": true
+      }
+    },
+    {
+      "vector_id": "SS116",
+      "kind": "branch_run",
+      "category": "independent_review_regression",
+      "description": "Unreviewed source otherwise scope remains quarantined.",
+      "branch_set_id": "B_AGE_ELSE",
+      "facts": {
+        "patient.age_years_at_index": 40,
+        "marker_A": true
+      },
+      "patch": {
+        "else_guard_review_status": "unresolved"
+      },
+      "expected": {
+        "route": {
+          "status": "QUARANTINED_BRANCH"
+        },
+        "admitted_actions": []
+      }
+    }
+  ]
+}
