@@ -215,6 +215,31 @@ VARIANT_CUE = re.compile(
 SOME_OR_ALL = re.compile(r"\b(some or all|one or more|any of)\b", re.I)
 AND_OR = re.compile(r"\band/or\b|\bor\b", re.I)
 MIMIC = re.compile(r"\b(mimic|misidentif|misdiagnos|mistaken for)\b", re.I)
+# E17: the wording a text uses when it actually rules a diagnosis out.  Layer 1
+# treats `excludes` as an unconditional veto, so a row that claims one has to
+# show the phrase that licenses it.
+EXCLUSION_CUE = re.compile(
+    r"\b(?:in the absence of|absence of|without evidence of|"
+    r"exclude[sd]?|excluding|exclusion|rules? out|ruled out|"
+    r"argues? against|speaks? against|incompatible with|"
+    r"inconsistent with|not consistent with|preclud\w+|"
+    r"makes? .{0,24}\b(?:unlikely|untenable)|"
+    r"cannot be (?:made|diagnosed)|"
+    r"is not (?:a |an )?(?:feature|finding|sign|symptom|criterion|"
+    r"characteristic|typical|seen|present|associated|compatible|consistent))",
+    re.I,
+)
+# one switch for all three E17 branches, so an A/B can turn the whole rule off
+# rather than only the branch a regex happens to control
+E17_ENABLED = True
+# a quote that excludes *papers* rather than *diagnoses*.  These carry the cue
+# word but license nothing clinical, and S30.4 measured them as a live source
+# of contamination in this corpus.
+STUDY_EXCLUSION = re.compile(
+    r"\b(?:stud(?:y|ies)|article|paper|patient|participant|record|report|"
+    r"case|subject)s?\b[^.]{0,70}\b(?:were|was|are|is)?\s*"
+    r"(?:excluded|included|eligib\w+|enrolled)|"
+    r"\b(?:inclusion|exclusion|eligibility)\s+criteri", re.I)
 DISEASEY = re.compile(
     r"\b(syndrome|disease|carcinoma|sarcoma|vasculitis|deficiency|"
     r"abscess|dementia|catatonia|psoriasis|amyotroph|brucellosis|"
@@ -756,6 +781,31 @@ def gate_one(a: dict) -> dict | None:
         rel = "feature_of"
         reasons.append("E16_excludes_negated")
 
+    # E17: an asserted `excludes` whose quote never says anything is excluded.
+    # The census of every exclusion that fired in the S34 2x2 (7 firings, all
+    # wrong) found 6 whose quote licenses no exclusion at all: study inclusion
+    # criteria ("Children under 18 years of age with cellulitis"), a section
+    # heading ("Known or suspected infectious discitis"), a guideline's own
+    # question ("should abdominal US or CT be obtained"), and plain feature
+    # statements.  Layer 1 vetoes on these unconditionally, so two of them
+    # eliminated the gold.  Demote rather than drop: the content is still
+    # usable at layer 3, it just may not veto.
+    if rel == "excludes" and pol == "asserted" and E17_ENABLED:
+        subj_l = (subj or "").strip().lower()
+        pred_l = str(a.get("predicate") or "").strip().lower()
+        why = None
+        if subj_l and subj_l == pred_l:
+            # "Intra-abdominal abscess excludes intra-abdominal abscess"
+            why = "E17_excludes_tautology"
+        elif STUDY_EXCLUSION.search(quote):
+            why = "E17_excludes_study_criterion"
+        elif not EXCLUSION_CUE.search(quote):
+            why = "E17_excludes_no_cue"
+        if why:
+            a = _demote(a, why, "feature_of")
+            rel = "feature_of"
+            reasons.append(why)
+
     # G3: a limb of a stated diagnostic conjunction.  Only the relation is
     # corrected -- the strength stays whatever the extractor read, so this can
     # never invent a hard layer-1 constraint out of a typical feature.
@@ -1233,6 +1283,44 @@ def _self_test() -> None:
               quote="the presence of acid-fast bacilli excludes sarcoidosis",
               context_type="diagnosis", threshold={}),
          "excludes", "od_e16_asserted_excludes_kept"),
+        # E17: an asserted `excludes` whose quote is a study inclusion
+        # criterion licenses no exclusion at all
+        (dict(subject="Cellulitis", relation="excludes", polarity="asserted",
+              modality="obligatory", predicate="age under 18 years",
+              quote="Children under 18 years of age with cellulitis in the "
+                    "maxillofacial area.",
+              context_type="diagnosis", threshold={}),
+         "feature_of", "od_e17_excludes_no_cue"),
+        # ... and one whose quote does state the exclusion survives
+        (dict(subject="Cardiomyopathy", relation="excludes", polarity="asserted",
+              modality="obligatory", predicate="congenital heart disease",
+              quote="in the absence of coronary artery disease, hypertension, "
+                    "valvular disease, or congenital heart diseases",
+              context_type="diagnosis", threshold={}),
+         "excludes", "od_e17_excludes_cue_kept"),
+        # E17: the cue word is there but it excludes papers, not diagnoses
+        (dict(subject="intestinal obstruction", relation="excludes",
+              polarity="asserted", modality="obligatory",
+              predicate="incomplete records",
+              quote="Patients with incomplete records for the variables or "
+                    "lost records were excluded",
+              context_type="diagnosis", threshold={}),
+         "feature_of", "od_e17_study_criterion"),
+        # E17: "is not recommended" is a treatment statement, not an exclusion
+        (dict(subject="cavernous malformation", relation="excludes",
+              polarity="asserted", modality="obligatory",
+              predicate="asymptomatic",
+              quote="surgical resection is not recommended for asymptomatic "
+                    "cavernous malformations.",
+              context_type="diagnosis", threshold={}),
+         "feature_of", "od_e17_is_not_recommended"),
+        # E17: subject and predicate are the same string
+        (dict(subject="Severe generalized peritonitis", relation="excludes",
+              polarity="asserted", modality="obligatory",
+              predicate="Severe generalized peritonitis",
+              quote="Severe generalized peritonitis",
+              context_type="diagnosis", threshold={}),
+         "feature_of", "od_e17_tautology"),
         # morphology, not judgement: plural agreement and an intervening adverb
         # must not decide whether a cue fires
         (dict(subject="Giardiasis", relation="pathognomonic_for",

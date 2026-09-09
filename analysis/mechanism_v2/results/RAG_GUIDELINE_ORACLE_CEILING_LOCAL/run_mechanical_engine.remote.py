@@ -81,12 +81,6 @@ RIGID_REQUIRED_ANY_MODALITY = False   # veto on required_for regardless of modal
 RIGID_SUFFICIENT_CONFIRMS = False     # sufficient_for + present -> layer 2
 RIGID_PATHO_READS_THRESHOLD = False   # a violated cutoff blocks the confirmation
 RIGID_REQUIRED_CLOSED_WORLD = False   # a necessity that never joined counts as absent
-EXCLUDES_NEEDS_EXACT_JOIN = False     # S36: a veto only on an exact predicate match
-EXACT_JOINS = {"exact"}
-# S37: set to a Counter to record where criterion groups are lost between the
-# extraction file and the score.  Off by default and read-only for the engine.
-GROUP_FUNNEL = None
-DEDUPE_PREFERS_GROUP = False   # S37: a collision keeps the criterion-group row
 FIX_NLI = False           # F8: NLI entailment check on high-stakes relations
 
 # F9. When the gate rules that a predicate names a procedure or a treatment
@@ -352,30 +346,6 @@ def threshold_ok(assertion: dict, finding: dict) -> tuple[bool | None, str]:
     return bool(ok), f"{fv}{unit_f} {op} {val}{unit_a}"
 
 
-def _funnel_count(stage: str, rows: list[tuple], legal_only: bool = False) -> None:
-    """Count criterion groups of >=2 members still present in `rows`.
-
-    `rows` is a list of (candidate_label, assertion).  The label has to be part
-    of the key from the binding stage onwards, because the engine groups per
-    candidate: one extracted group whose subject binds to two candidates
-    becomes two groups there, and a funnel keyed without the label would show a
-    spurious rise at that step.  Stage A passes a constant label since nothing
-    is bound yet.
-    """
-    seen: dict[tuple, int] = defaultdict(int)
-    for label, a in rows:
-        cg = a.get("criterion_group") or {}
-        gid = cg.get("group_id")
-        if not gid:
-            continue
-        if legal_only and cg.get("logic") not in {"all", "any", "at_least_n"}:
-            continue
-        seen[(label, a.get("_title"), a.get("_section"), a.get("_focus"), gid,
-              norm(a.get("subject") or ""))] += 1
-    GROUP_FUNNEL[stage] += sum(1 for n in seen.values() if n >= 2)
-    GROUP_FUNNEL[stage + "_members"] += sum(n for n in seen.values() if n >= 2)
-
-
 def run_case(task: dict, extraction: dict) -> dict:
     findings = [f for f in extraction["findings"] if isinstance(f, dict) and f.get("label")]
     assertions = [a for a in extraction["assertions"] if isinstance(a, dict)]
@@ -407,12 +377,6 @@ def run_case(task: dict, extraction: dict) -> dict:
         a["_bind"] = hit[1]
         bound[hit[0]].append(a)
 
-    if GROUP_FUNNEL is not None:
-        _funnel_count("A_extracted", [("", a) for a in assertions])
-        _labelled = [(lbl, a) for lbl, v in bound.items() for a in v]
-        _funnel_count("B_bound", _labelled)
-        _funnel_count("B2_legal_logic", _labelled, legal_only=True)
-
     # ---- dedupe at assertion level, not passage level --------------------
     for label, items in list(bound.items()):
         seen: dict[tuple, dict] = {}
@@ -427,19 +391,6 @@ def run_case(task: dict, extraction: dict) -> dict:
                 if MODALITY_W.get(a.get("modality"), DEFAULT_W) > \
                         MODALITY_W.get(prev.get("modality"), DEFAULT_W):
                     prev["modality"] = a.get("modality")
-                # S37: the key is (predicate, relation, polarity), which knows
-                # nothing about criterion groups, so an ungrouped row met first
-                # keeps the slot and its group loses a member -- 31% of groups
-                # die here.  Keeping the grouped row instead costs nothing:
-                # both carry the same predicate, and the group still scores
-                # once, because grouped members are skipped by the per-
-                # assertion loop.
-                if DEDUPE_PREFERS_GROUP and \
-                        not (prev.get("criterion_group") or {}).get("group_id") and \
-                        (a.get("criterion_group") or {}).get("group_id"):
-                    a["_support"] = prev["_support"]
-                    a["modality"] = prev.get("modality")
-                    seen[k] = a
         bound[label] = list(seen.values())
 
     # ---- bind predicates to findings -------------------------------------
@@ -474,11 +425,6 @@ def run_case(task: dict, extraction: dict) -> dict:
             if f is not None and (a.get("polarity") or "asserted") == "asserted":
                 claimants[norm(f.get("label"))].add(label)
 
-    if GROUP_FUNNEL is not None:
-        _funnel_count("C_after_dedupe",
-                      [(lbl, a) for lbl, v in bound.items() for a in v],
-                      legal_only=True)
-
     # ---- criterion groups -------------------------------------------------
     # Members of one criterion set are evaluated together and contribute once,
     # instead of once each: summing them is what let a well-documented
@@ -497,8 +443,6 @@ def run_case(task: dict, extraction: dict) -> dict:
             for key in list(groups[label]):
                 if len(groups[label][key]) < 2:
                     del groups[label][key]
-        if GROUP_FUNNEL is not None:
-            GROUP_FUNNEL["E_two_members_left"] += sum(len(v) for v in groups.values())
         grouped_ids = {id(a) for label in groups for key in groups[label] for a in groups[label][key]}
     else:
         grouped_ids = set()
@@ -514,13 +458,6 @@ def run_case(task: dict, extraction: dict) -> dict:
         contributions: list[dict] = []
         pooled: dict[str, tuple[float, int]] = {}   # F10: layer-3 votes per finding
 
-        if GROUP_FUNNEL is not None:
-            for a in items:
-                if id(a) in grouped_ids:
-                    continue
-                GROUP_FUNNEL["ungrouped_assertions"] += 1
-                GROUP_FUNNEL["ungrouped_joined"] += 1 if a.get("_finding") else 0
-
         for key, members in groups.get(label, {}).items():
             cg = members[0].get("criterion_group") or {}
             logic = cg.get("logic")
@@ -530,14 +467,6 @@ def run_case(task: dict, extraction: dict) -> dict:
                    if m.get("_finding") and m["_finding"].get("polarity") == "present"]
             vio = [m for m in members
                    if m.get("_finding") and m["_finding"].get("polarity") in {"absent", "normal"}]
-            if GROUP_FUNNEL is not None:
-                # over every group reaching this point, not just the ones that
-                # pass, so the join rate is not conditioned on joining
-                GROUP_FUNNEL["grouped_members"] += size
-                GROUP_FUNNEL["grouped_members_joined"] += sum(
-                    1 for m in members if m.get("_finding"))
-                GROUP_FUNNEL["F_member_joined" if (sat or vio)
-                             else "lost_F_no_member_joined"] += 1
             if not sat and not vio:
                 continue
             w = max(MODALITY_W.get((m.get("modality") or "").lower(), DEFAULT_W) for m in members)
@@ -578,10 +507,6 @@ def run_case(task: dict, extraction: dict) -> dict:
                 delta = w * spec * (1.0 if len(sat) >= target else len(sat) / target * 0.5)
             else:                                   # "any"
                 delta = w * spec * (1.0 if sat else 0.0)
-            if GROUP_FUNNEL is not None:
-                GROUP_FUNNEL["G_scored" if delta else "lost_G_zero_delta"] += 1
-                GROUP_FUNNEL[f"logic_scored:{logic}" if delta
-                             else f"logic_zero:{logic}"] += 1
             if delta:
                 score += round(delta, 3)
                 contributions.append({"why": f"group:{logic}/{need or size}", "delta": round(delta, 3),
@@ -620,20 +545,10 @@ def run_case(task: dict, extraction: dict) -> dict:
                                            "predicate": a["predicate"], "quote": a.get("quote")})
                         continue
                 if rel in {"excludes", "argues_against"} and f is not None:
-                    # a veto must not ride on an approximate join.  None of the
-                    # seven exclusions that fired in the S34 2x2 joined exactly;
-                    # they matched `pulse` to "congenital heart diseases" and
-                    # `ventricular fibrillation` to "ambulatory ventricular
-                    # ectopy" through loose/embed similarity (S36.2).
-                    if EXCLUDES_NEEDS_EXACT_JOIN and \
-                            a.get("_join") not in EXACT_JOINS:
-                        pass
-                    elif f.get("polarity") == "present":
+                    if f.get("polarity") == "present":
                         eliminated.append({"layer": 1, "rule": "exclusion_triggered",
                                            "predicate": a["predicate"], "quote": a.get("quote"),
-                                           "finding": f["label"],
-                                           "modality": a.get("modality"),
-                                           "join": a.get("_join")})
+                                           "finding": f["label"]})
                         continue
 
             # layer 2: confirmation

@@ -91,6 +91,8 @@ def configure(base: dict, fix: dict) -> None:
     eng.FIX_ANCHOR_EMBED = cfg.get("anchor_embed", False)
     eng.GROUP_ALL_IS_REQUIRED = cfg.get("group_all_required", False)
     eng.FIX_QUOTE_GATE = cfg.get("quote_gate", False)
+    eng.EXCLUDES_NEEDS_EXACT_JOIN = cfg.get("excl_exact_join", False)
+    eng.DEDUPE_PREFERS_GROUP = cfg.get("dedupe_prefers_group", False)
     eng.FIX_NLI = cfg.get("nli", False)
     eng.LR_CLIP = cfg.get("lr_clip", 1.0)
     lr = cfg.get("corpus_lr")

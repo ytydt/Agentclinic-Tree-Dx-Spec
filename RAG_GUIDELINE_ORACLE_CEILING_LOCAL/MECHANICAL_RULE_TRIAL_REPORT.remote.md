@@ -5,14 +5,6 @@
 
 > **2026-09-05 独立再审计更新：** 本文历史记录保留，但§34–35关于“逻辑保真改善”“抽取已达可用程度”“不是判据组的锅”及例74全局删除排除规则的因果解释，需要按[最新v2规则语义再审计](../analysis/mechanism_v2/results/POST_V2_RULE_SEMANTICS_AUDIT/REPORT.md)修订。新审计从原始缓存精确复原140,652条断言，检查组合/原子语义、程序执行、真实病例与测量误差。例74有证据的CPVT实际第10，报告第4来自空重复标签；仅删除其特定错误否决，两v2臂均恢复第1，全局删除却另行复活LQTS。旧top1/MRR是存在实体/粒度错误的`gold_labels_in_set`代理，不是clinical-complete。证据账本、确定性反例与复算脚本已随新报告提交。
 
-> **2026-09-09 本地接手与核验：** 上面两条远端提示的内容已由本方逐条回到数据与代码核验，结果、交汇点与撤回清单见 **§38**，重排后的计划见 **§39**。三条必须随身携带的口径：
->
-> 1. **全文 top-1 / top-3 / MRR 都是代理口径。** 判定依据 `gold_labels_in_set` 接受父类、组件、乃至错误实体（例 91 用良性 Hemangioma 顶替恶性 Angiosarcoma）。按严格的完整标签口径，四臂 top-1 为 **1/1/0/0**、top-3 为 **4/4/3/3**，且 **11 例中只有 5 例的候选池里存在与金标对应的完整标签**。
-> 2. **排名不是分数的单调函数。** 排序键是「是否被淘汰 → 确认条目数 → 分数」，0 分候选可以排在 25 分但已淘汰的候选之前。
-> 3. **重复候选普遍存在。** 11 例中 9 例含仅大小写不同的重复候选（共 23 组，10 组出现证据分裂），证据只落到先匹配的那个，另一个成为占位的 0 分空壳。多处报告的金标名次来自空壳。
->
-> §23.3、§34.4、§34.6、§35.2–35.5、§36、§37.6 已就地加注撤回或收窄说明。
-
 上一轮 `MECHANICAL_RULE_FEASIBILITY.md` 是纯理论核验（无模型调用）。本轮把那套设计真的跑了一遍：在与审计完全同一份语料上重建索引，按假设条件化检索，用 LLM 按 schema 抽取断言与病例发现，再用**不含任何模型调用**的四层规则引擎给候选假设排序（层一硬排除、层二确诊确认、层三加权符合、层四幸存者定向比较；定义见 **§5.0**），最后把 26 条人工断言逐条追踪到它死在哪一级。候选集固定为 collapse3c 与 multistance 两方法实际提出的假设并集。
 
 结论先行：**理论核验的检索侧预测被证实，表示侧预测被证伪。** 必要切片确实取得到（k=30 时 21/26，注入 oracle 后 25/26），LLM 也确实能把段落转成 schema（1,941 段 → 15,588 条断言，含 280 条 required_for/obligatory 与 297 条 excludes/obligatory）。但机械引擎在最优配置下只有 3/11 命中，默认配置 0/11；且**把检索换成完美 oracle，结果一格都没变**。失败不在检索，在三处：断言与病例发现之间的接合、"排除"在真实指南里根本不以排除形式书写、以及**断言之间没有任何显式连词**——指南原文里的合取 / 析取 / 条件 / m-of-n 只活在 `quote` 里，schema 一个都没保留。
@@ -3270,8 +3262,6 @@ E 轴的分布相对 §14 大变：`required_for` 的假必要曾是 74 例 57 �
 
 ### 23.3 失真度：TVD 0.617，`any` 被高估 4.7 倍
 
-> **§38.6 撤回**：TVD 与 logic 保真率**已退役**。这套指标的分母是正则选出的「判据段落」，而对 v2 同族样本的逐段人工筛查显示 41 段里只有 8 段真是诊断判据、26 段根本不是逻辑组合（`v2_criteria_manual_screen.json`）。所以 0.617 度量的是「LLM 与正则在一批大多不是判据的文字上是否一致」，**不能读作逻辑抽取的失真度**。本小节的分类表仍可作为定性线索（`at_least_n` 大量落成 NO_GROUP 或 `any` 这个方向，与后续独立证据一致），但数值不再引用。
-
 按段落为单位（文本一段只声明一次 logic，抽取器却逐成员出一行；按行数会让长 `any` 列表压过短 `at_least_n` 列表）：
 
 | 文本声明 | 抽取器产出 | n |
@@ -4443,8 +4433,6 @@ StatPearls 自身从 0.02% 升到 0.10%，绝对量可忽略。**合并列表没
 
 ### 34.4 logic 分布与 TVD
 
-> **§38.6 撤回**：本小节的 TVD 与 logic 保真率**已退役，不再作为抽取质量的证据引用**。选片段的正则命中的 41 段里，经逐段人工筛查只有 8 段真是诊断判据，26 段根本不是逻辑组合（`v2_criteria_manual_screen.json`）。这把尺子量的是「LLM 与正则在一批大多不是判据的文字上是否一致」，不是逻辑抽取的正确率。下表数字本身没算错，但它们回答的不是本小节声称的那个问题。
-
 | | `all` | `any` | `at_least_n` | 无 logic |
 |---|---:|---:|---:|---:|
 | 旧提示词 / 旧索引 | 30.9% | 64.8% | 2.2% | 2.0% |
@@ -4472,8 +4460,6 @@ StatPearls 自身从 0.02% 升到 0.10%，绝对量可忽略。**合并列表没
 新提示词同时做了第二件事：明写忽略文献纳排标准（§30.4 的污染）。这会**减少**组数，所以组数从 540→390、612→500 不能读成成组能力退化。但它只解释一小部分：落在文献纳排 passage 里的组，旧索引 26→15、v2 索引 22→12，即 −11 与 −10，而总降幅是 −150 与 −112（`audit_prompt_confound.py`）。**其余降幅来自成组判据本身收紧**：新提示词的组更少但更大（每组成员 4.34→4.53、4.68→5.02），且跨行率大幅上升。要把这两件事彻底分开，需要再跑一臂「只放开单句限制、不加文献过滤」，目前没跑。
 
 ### 34.6 结论与下一步
-
-> **§38.6 收窄**：以下第一条与第四条依赖 TVD / logic 保真率，随该指标退役而**降级为产量描述**。跨行成组率本身（37/40/119/158）经远端审计独立复核，数字与归因均一致，可以保留；但「logic 分布推向文本方向」不能再读作语义正确率提升。同期的来源侧普查给出的完整规则忠实率是 **15.68%**，新旧提示词之差仅 3.07 个百分点（配对区间 −0.60 至 +6.60，**不能宣称改善**）。
 
 - 「单句」限制确实是真限制，放开它让跨行成组率从 6.9%/19.4% 升到 10.3%/31.6%，并把 logic 分布推向文本方向；但**只有在语料已经把成员渲染成独立行之后，这个改动才达到显著**。
 - 语料修复（§29）是更大的杠杆，且它的收益此前被提示词限制盖住了——这正是 §32.5 坚持「先改提示词再重跑」的理由，若按原顺序，测到的会是一个被压低的语料效应。
@@ -4512,8 +4498,6 @@ StatPearls 自身从 0.02% 升到 0.10%，绝对量可忽略。**合并列表没
 
 ### 35.2 不是判据组的锅
 
-> **§38.6 撤回**：本小节标题的结论**不成立**。F4b 消融无变化只排除了「`all` 组当否决」这一条特定路径的大效应，**不排除**组被错误抽出、组在去重时被破坏、以及组根本没有被正确求值。远端审计的 E01/E02 反例证明组求值只看病人侧是否 present，**完全不读成员自己的 polarity 和 threshold**——所以「组没造成伤害」只是因为组几乎没有在做逻辑。详见 §38.4。
-
 两个探针都指向组之外：
 
 - **`at_least_n` 组几乎进不了分数。** 抽取侧 `at_least_n` 占比翻倍（2.2%→5.1%、2.0%→4.4%），但真正进到打分的 `at_least_n` 组只有 3 / 3 / 5 / 5 个。绝大多数组要么没绑定到候选，要么成员没接合到病人发现。
@@ -4545,14 +4529,6 @@ StatPearls 自身从 0.02% 升到 0.10%，绝对量可忽略。**合并列表没
 
 金标淘汰归零，top-3 全面回升，MRR 部分回收。**但 top-1 一个没变。** 例 74 是唯一在 v2 上丢掉 top-1 的例：带 `excludes` 时金标被淘汰、名次 4，去掉后回到名次 **2**——仍不是 1。所以 `excludes` 否决解释了 4→2 那一段，剩下 2→1 那一段是别的东西：v2 让更多文本进入窗口，也给竞争候选提供了更多证据。
 
-> **§38.6 推翻（两处）。**
->
-> 其一，上一段最后一句的推论**是错的**。`--drop-excludes` 是全局消融，它同时删掉了**其他候选**的排除依据，从而**额外复活了竞争者 LQTS**——「2→1 那一段是别的东西」测到的是这个副作用，不是金标自身还差一段。按病因的定点纠正（E17 降级那一条无排除依据的规则）让两个 v2 臂的 CPVT **直接回到第 1**。远端审计以手工删单行独立得到同一结果，我已复现。
->
-> 其二，全节把 `--drop-excludes` 当作「排除修复的上界」也**要撤回**：它的 estimand 与定点修复不同，两者不可互换。
->
-> 另需注意：本表与 35.1 表中例 74 的「名次 4」来自一个**0 分空壳重复候选**；真正拿到 22.07 分的那个 CPVT 在第 10 名且已被淘汰。详见 §38.2。
-
 ### 35.4 一个意外的正向发现：新提示词把高权关系捞回来了
 
 新提示词只改了成组范围，但高权 relation 的产量明显上升：
@@ -4566,13 +4542,9 @@ StatPearls 自身从 0.02% 升到 0.10%，绝对量可忽略。**合并列表没
 
 在断言总数**下降**的同时，`required_for` 升 26%/38%、`sufficient_for` 升 43%/46%。这正是 §23.4 记录的那个缺陷的反向：文本里判据集是刚性身份（21.3% 明写 must/required、3.2% 明写 establishes），抽取器却把它降成 `feature_of`。把成组范围放到整个 passage 之后，模型能读到引导句里的量词与效力词，并把它施加到成员上。**§23.4 的降级问题被这次提示词修改部分修复了，这是本轮唯一在抽取侧有净收益且方向明确的一项。**
 
-> **§38.6 撤回**：上面这句话**不成立**——产量不是净收益。远端审计对例 74 逐条读了新增的高权关系，发现同一次提示词修改**同时新增了新的错误**：「年龄 > 40 岁单独充分」、评分表的负分项被编译成硬排除、替代诊断路径被写成普遍必要条件。产量上升与正确率上升**不是同一件事**，本小节把前者当作后者的证据。来源侧普查给出的完整规则忠实率是 15.68%，新旧提示词之差 3.07 个百分点、配对区间跨零。
-
 顺带一提，新提示词把 `excludes` 压低了（1,374→1,255、1,574→1,368），方向对，但不足以抵消 v2 带来的增量。
 
 ### 35.5 结论：瓶颈从「抽不出复合判据」移到了「层一太刚」
-
-> **§38.6 撤回**：下面第 1 条**不成立**。「解决到可用程度」的判据是产量指标（成组率、logic 分布、高权关系数），而这三项此后分别被证明为：TVD/保真率的尺子无效（41 段里只有 8 段真是判据）、产量上升伴随新错误、完整规则忠实率仅 **15.68%**。第 2、3 条关于层一的部分成立，且已由 §36 落实。
 
 把 §34 与本节合起来读：
 
@@ -4583,11 +4555,7 @@ StatPearls 自身从 0.02% 升到 0.10%，绝对量可忽略。**合并列表没
 ### 35.6 下一步
 
 - **优先级最高：给 `excludes` 加约束**，而不是给它加权重。可选路径：只让 `obligatory` 情态的 `excludes` 进层一；要求排除项与病人发现的接合是精确匹配而非嵌入近似；或在有多条相反证据时降级为扣分而非淘汰。本节的 `--drop-excludes` 消融给出了这条路径的上界（金标淘汰 2→0、top-3 6→7）。
-
-  > §36 已做。普查结论推翻了上面第一条：情态区分不出对错（7 次错误开火里 4 次是 `obligatory`）。落地的是 E17 引语授权闸 + exact-join 两条，E17 单独即撤销了本节的回退。
 - **其次：查组为什么进不了分数。** 500 个组只有 5 个 `at_least_n` 进到打分，中间的绑定与接合损耗尚未定位，这是把 §34 的抽取收益变现的前提。
-
-  > §37 已做。损耗定位在两处：不认识 group_id 的谓词去重（约 30%）与全引擎 17% 的接合率（约 30%）。前者修好后组存活率 20%→26%，排名仍不变；后者对成组与未成组一视同仁，不是组机制的缺陷。「只有 5 个 `at_least_n`」是基数效应，非歧视——按 logic 分算存活率三者相当。
 - **不要再用 11 例做排名级判定。** 本节四臂的差异全部在噪声内。要判定这些修改对排名的净效应，需要扩到 §18 那种规模的样本外集合。
 
 ### 35.7 本节产物
@@ -4598,428 +4566,8 @@ StatPearls 自身从 0.02% 升到 0.10%，绝对量可忽略。**合并列表没
 | `trial_engine_x2.json` | 主配置四臂结果 |
 | `trial_engine_x2_noexcl.json` | 去掉 `excludes`/`argues_against` 的消融结果 |
 
-## 36 层一 `excludes` 普查：七次开火，七次都是错的
+## 产物
 
-§35.3 定位到金标淘汰全部走 `exclusion_triggered`。本节不看排名，先把开火逐条读完。
-
-> **§38.3 口径更正（本节结论加强，数字不变）。** 本节报告的「top-1 从 1/11 回到 2/11」在代理口径下没算错，但基线的例 74 `gold_rank=4` 来自一个 **0 分空壳重复候选**。按概念身份看，E17 的实际效果比本节写的更强：真正拿到证据的那个 CPVT 从「第 10 名且已被淘汰」变成「第 1 名且未被淘汰」，两个 v2 臂皆然。
->
-> 另有两处独立佐证：(1) 远端审计以手工删除例 74 断言下标 1017 达成同一结果，而那一行正是本节 36.2 表里的**第 6 条**；(2) 该审计把同一缺陷登记为其反例 **E23**，在当前代码上 E23 已不复现（关掉 `E17_ENABLED` 则 27/27 全部复现）。**这也意味着 E17 只覆盖了 27 个引擎反例中的 1 个。**
-
-### 36.1 一个先于普查就存在的不对称
-
-层一对 `required_for` 要求 `obligatory` 情态才放行，对 `excludes` **不检查情态**：
-
-```547:552:analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py
-                if rel in {"excludes", "argues_against"} and f is not None:
-                    if f.get("polarity") == "present":
-                        eliminated.append({"layer": 1, "rule": "exclusion_triggered",
-                                           "predicate": a["predicate"], "quote": a.get("quote"),
-                                           "finding": f["label"]})
-                        continue
-```
-
-F7 门闸也只处理了 `excludes`+`negated`（E16），**从未检查一条 asserted `excludes` 的引语是否真的说了排除**。
-
-### 36.2 普查：新提示词 / v2 索引臂的全部 7 次开火
-
-| # | 例 | 候选 | 情态 | 接合 | 引语 | 判读 |
-|---:|---|---|---|---|---|---|
-| 1 | 773 | **金标** PFO | typical | loose | "minor decompression sickness symptoms (ie, joint pain" | 讲的是减压病**症状**，非 PFO 排除关节痛；且「joint pain」接到「post-activity chest pain」 |
-| 2 | 257 | Cellulitis | obligatory | containment | "Children under 18 years of age **with** cellulitis in the maxillofacial area." | 文献**纳入**人群，读成「蜂窝织炎排除未成年」，方向反 |
-| 3 | 326 | Discitis | obligatory | embed | "Known or suspected infectious discitis" | 标题短语；感染性椎间盘炎**就是**椎间盘炎 |
-| 4 | 49 | Abscess | obligatory | loose | "Intra-abdominal abscess" | 主语＝谓词，「脓肿排除脓肿」 |
-| 5 | 49 | Abscess | typical | containment | "should abdominal US or CT be obtained as the initial imaging modality?" | 指南自己的**提问句** |
-| 6 | 74 | **金标** CPVT | typical | loose | "Ambulatory ventricular ectopy (>2% of total beats)" | 是 CPVT 的**诊断特征**，读成排除；且接到「ventricular fibrillation」 |
-| 7 | 74 | ARVC | obligatory | loose | "in the absence of coronary artery disease, hypertension, valvular disease, or congenital heart diseases" | 引语**是**真排除子句，但接到病人发现「pulse」 |
-
-**7 次开火，7 次都是错的。** 两个结论直接推翻了最自然的那个修法：
-
-- **情态区分不出对错。** 4 条错的是 `obligatory`。照搬 `required_for` 的对称化修法（要求 obligatory）只会挡掉两次金标误杀，留下 4 条同样错误、恰好打在非金标上的开火——那会让排名变好而正确性没变，正是不能用排名当代理的典型情形。
-- **没有一条走 exact 接合**（4 loose、2 containment、1 embed）。硬否决全部骑在近似匹配上。
-
-失败集中在两处且互相独立：**6 条的引语根本没有授权任何排除**（#1–#6），**唯一引语合格的那条错在接合**（#7）。
-
-### 36.3 两条按病因下的约束
-
-**E17（门闸侧，`gate_assertions.py`）**：asserted `excludes` 若满足以下任一条，降级为 `feature_of`——
-1. 主语与谓词是同一个字符串（#4 那种退化断言）；
-2. 引语命中 `STUDY_EXCLUSION`（讲的是排除**文献/病例**而非诊断，§30.4 的污染）；
-3. 引语不含 `EXCLUSION_CUE`（"in the absence of"、"rules out"、"excludes"、"incompatible with" 等）。
-
-降级而非丢弃：内容仍可供层三使用，只是不再有否决权。
-
-**exact-join（引擎侧，`EXCLUDES_NEEDS_EXACT_JOIN`）**：谓词与病人发现必须精确匹配，硬否决不得骑在 loose/embed 相似度上。
-
-### 36.4 人工核验降级本身，不看排名
-
-对新提示词/v2 臂的 256 条 asserted `excludes`（另有 1,112 条 negated 由 E16 处理），E17 降级 179 条（69.9%）：no-cue 169、tautology 8、study-criterion 2。
-
-**降级侧抽样 14 条**：13 条明确正确——裸片段（"normal-appearing radiographs"、"abnormal kidney function"）、手术禁忌而非诊断排除（"Inability to tolerate general anesthesia"）、共现陈述（"Up to 60% of patients with medial epicondylitis experience concomitant ulnar neuropathy"，与排除正相反）、主谓同词的退化断言。**1 条误降**：路易体痴呆的「1 年规则」（"If the patient has Parkinson disease for 12 months or longer before any cognitive impairment is noticed"）是真排除，但引语被截断、没带上后件——按「引语必须授权」的口径这个降级是对的，缺陷在上游的引语截断。
-
-**放行侧抽样 16 条**：15 条是真正的鉴别排除（"The following conditions should be properly ruled out:"、"A normal V/Q scan accurately excludes chronic thromboembolic disease"、"The diagnosis of UPS is one of exclusion..."）。1 条误放：「Intra-abdominal Abscess ⊣ rash」，引语 "Diagnosis of exclusion includes rash and peripheral eosinophilia" 讲的是另一个病——这是主语误挂，E17 管不到，属于绑定层的问题。
-
-第一版 E17 的放行侧还有两类误放，已在本轮收紧：文献纳排标准（"Patients with incomplete records ... were excluded" 被 `excluded` 命中）与过松的 `is not` 分支（命中 "is not recommended" 这类治疗建议）。`precludes?` 也补成 `preclud\w+` 以覆盖 "precluding"。
-
-### 36.5 回归
-
-`gate_assertions.py` 自检 **44 条全过**（新增 5 条 E17 标本：无线索降级、有线索保留、文献纳排、"is not recommended"、主谓同词）。§16 机制检查在 `k30oracleclean` 臂上 **7 PASS / 2 FAIL**，与改动前**逐字相同**；两个 FAIL（`119_cornoid_patho_survives` 的 `n_raw=0`、`74_ga_true_required_kept` 的 `kept_arvc=False`）在关闭 E17 的对照运行中同样出现，是该抽取臂本身的问题，与本节改动无关。
-
-### 36.6 四臂 × 四配置
-
-对照臂由 `gate.E17_ENABLED` 显式关闭整条规则得到。（初版用「让 `EXCLUSION_CUE` 匹配一切」来关，只关掉了 no-cue 一支，tautology 与 study-criterion 两支仍在生效，导致「修前」少算一次开火；换成显式开关后新提示词/v2 臂的修前回到 7 次，与 36.2 的普查一致。）
-
-| 臂 | 配置 | 开火 | 误杀金标 | top-1 | top-3 | MRR |
-|---|---|---:|---:|---:|---:|---:|
-| 旧提示词 / 旧索引 | 修前 | 5 | 1 | 2/11 | 7/11 | 0.427 |
-| | +E17 | 3 | 1 | 2/11 | 7/11 | 0.427 |
-| | +exact join | 0 | 0 | 2/11 | 7/11 | 0.412 |
-| | +两者 | 0 | 0 | 2/11 | 7/11 | 0.412 |
-| 新提示词 / 旧索引 | 修前 | 5 | 1 | 2/11 | 6/11 | 0.413 |
-| | **+E17** | 2 | **0** | **3/11** | 7/11 | **0.481** |
-| | +exact join | 0 | 0 | 2/11 | 7/11 | 0.436 |
-| | +两者 | 0 | 0 | 2/11 | 7/11 | 0.436 |
-| 旧提示词 / v2 索引 | 修前 | 6 | 2 | 1/11 | 6/11 | 0.367 |
-| | **+E17** | 3 | 1 | **2/11** | 7/11 | **0.430** |
-| | +exact join | 0 | 0 | 2/11 | 7/11 | 0.430 |
-| | +两者 | 0 | 0 | 2/11 | 7/11 | 0.430 |
-| 新提示词 / v2 索引 | 修前 | 7 | 2 | 1/11 | 4/11 | 0.307 |
-| | **+E17** | 1 | **0** | **2/11** | 7/11 | **0.411** |
-| | +exact join | 0 | 0 | 2/11 | 6/11 | 0.403 |
-| | +两者 | 0 | 0 | 2/11 | 7/11 | 0.411 |
-
-- **E17 撤销了 §35 那次回退。** 两个 v2 臂从 1/11 回到 2/11，top-3 从 6/11、4/11 回到 7/11；新提示词/旧索引臂到 **3/11、MRR 0.481**，是本轮全部配置里的最好值。
-- **E17 是选择性的，exact-join 是钝器。** E17 按病因留下引语合格的那一条（新/v2 剩 1 次开火、0 次误杀）；exact-join 把四臂开火全部清零——因为本样本无一条 exact 接合。两者叠加不优于 E17 单独。
-- **两条必须挂出的保留。** 其一，n=11，四臂的排名差异全部在 §35.1 那个噪声量级内，这些数字**不构成** E17 有效的证据；E17 的依据是 36.2 的普查与 36.4 的人工核验，排名只是记录。其二，本样本 7 次开火全错，**没有一条正确开火可供保护**，因此「清零」在这里无法被惩罚——要真正把 E17 与 exact-join 区分开，需要一个含真排除开火的样本。
-
-### 36.7 本节产物
-
-| 文件 | 内容 |
-|---|---|
-| `dump_exclusions.py` | 逐条导出层一排除开火：情态、接合方式、引语、出处、接合到的发现 |
-| `exclusion_census_all_newv2.json` / `_gold_newv2.json` | 冻结的 7 条普查 |
-| `gate_assertions.py` | E17 三分支 + `EXCLUSION_CUE` / `STUDY_EXCLUSION`，`E17_ENABLED` 开关，5 条新标本 |
-| `run_mechanical_engine.py` | `EXCLUDES_NEEDS_EXACT_JOIN`；层一排除记录补 `modality`/`join` 溯源字段 |
-| `sweep_fixes.py` | `excl_exact_join` 配置键 |
-| `audit_e17_demotions.py` | 不看排名的降级/放行抽样审计 |
-| `measure_exclusion_fix.py` / `exclusion_fix_sweep.json` | 四臂 × {修前, +E17, +exact join, +两者} 的开火数与排名 |
-
-## 37 判据组的接合损耗：500 个组只有 100 个进得了分数
-
-§35.2 记下一个没解释的数字：新提示词/v2 臂抽出约 500 个判据组，最后只有约 100 个对分数有贡献。本节把一个组从抽取文件走到分数要过的关卡逐个计数。
-
-### 37.1 一把先修正过的尺子
-
-初版漏斗在 D 段出现 +44～+66 的**上升**，不可能是真的。原因是我自己的计数不一致：绑定前按不含候选标签的键计组，绑定后引擎**按候选分桶**成组，一个主语绑到两个候选的组在那里变成两个组；且 D 段计的是「≥2 成员」过滤**之前**的桶。改成绑定后一律把候选标签计入键、并统一只计 ≥2 成员之后，漏斗单调。下表是修正后的。
-
-### 37.2 漏斗
-
-| 阶段 | 旧/旧 | 新/旧 | 旧/v2 | 新/v2 |
-|---|---:|---:|---:|---:|
-| A 抽取文件中，≥2 成员 | 559 | 412 | 619 | 506 |
-| B 主语绑定到某候选 | 466 | 348 | 509 | 424 |
-| B2 logic ∈ {all, any, at_least_n} | 455 | 348 | 495 | 424 |
-| **C 通过谓词去重** | **299** | **227** | **329** | **269** |
-| E 组内仍 ≥2 成员 | 299 | 227 | 329 | 269 |
-| **F 至少一个成员接合到病人发现** | **143** | **100** | **156** | **115** |
-| G 产生非零贡献 | 124 | 84 | 136 | 102 |
-| 端到端存活率 | 22.2% | 20.4% | 22.0% | 20.2% |
-
-四臂高度一致：**约五分之一的组能进分数**，损耗集中在两个互不相干的地方，各吃掉约 30%——**去重**（C）与**接合**（F）。B2 段的 0 损失顺带确认了 §34 的枚举校验有效：新提示词臂已无非法 logic 值，旧提示词臂还各漏 11、14 个。E 段的 0 损失说明「组被打散到 2 成员以下」全部发生在去重那一步。
-
-顺带修正 §35.2 一处可能的误读。按 logic 分算存活率（新/v2）：`all` 29/167 = 17%、`any` 68/311 = 22%、`at_least_n` 5/22 = 23%。**`at_least_n` 没有被特别惩罚**，它进分数的少只是因为基数本来就小（§34 测得占 4.4%）。之前「500 个组只有 5 个 `at_least_n` 计分」的说法容易读成组机制歧视计数型判据，实际不是。
-
-### 37.3 去重那一段：一把不认识判据组的键
-
-去重发生在**成组之前**，键是 `(norm(predicate), relation, polarity)`，**不含 group_id**：
-
-```383:393:analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py
-    for label, items in list(bound.items()):
-        seen: dict[tuple, dict] = {}
-        for a in items:
-            k = (norm(a.get("predicate")), a.get("relation"), a.get("polarity"))
-            prev = seen.get(k)
-            if prev is None:
-                a["_support"] = 1
-                seen[k] = a
-```
-
-先到先占坑。当同一谓词在别处以**无组**或**别组**的身份先出现，判据组就被摘掉一个成员；掉到 2 以下整组消失。这不是设计意图，是键的疏漏——去重本意是防同一命题跨段重复计分，而组成员与占坑者谓词相同，保留哪一个对「计几次」没有影响（成组的成员会被逐条打分的循环跳过，见 `grouped_ids`）。
-
-`DEDUPE_PREFERS_GROUP` 把撞键时的取舍反过来：优先保留带 group_id 的那一行，`_support` 与已升级的情态一并继承。
-
-### 37.4 修好了，但排名不动
-
-| 臂 | 去重取舍 | A | C | F | G | 存活 | top-1 | top-3 | MRR |
-|---|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| 旧/旧 | 先到先占 | 559 | 299 | 143 | 124 | 22.2% | 2/11 | 7/11 | 0.427 |
-| | 组优先 | 559 | 337 | 167 | 144 | 25.8% | 2/11 | 7/11 | 0.427 |
-| 新/旧 | 先到先占 | 412 | 227 | 100 | 84 | 20.4% | 3/11 | 7/11 | 0.481 |
-| | 组优先 | 412 | 257 | 128 | 109 | 26.5% | 3/11 | 7/11 | 0.465 |
-| 旧/v2 | 先到先占 | 619 | 329 | 156 | 136 | 22.0% | 2/11 | 7/11 | 0.430 |
-| | 组优先 | 619 | 377 | 189 | 167 | 27.0% | 1/11 | 7/11 | 0.385 |
-| 新/v2 | 先到先占 | 506 | 269 | 115 | 102 | 20.2% | 2/11 | 7/11 | 0.426 |
-| | 组优先 | 506 | 312 | 151 | 133 | 26.3% | 2/11 | 7/11 | 0.426 |
-
-（本表已含 §36 的 E17。）机制上修复完全奏效：每臂多救回 30～48 个组，存活率一致地从 20～22% 抬到 26～27%。**排名不动**：三臂 top-1 不变，旧/v2 掉 2→1；MRR 三平一降。
-
-这是本轮第三次出现同一个形状——§34 抽取变好、§35 排名不变、§37 组救回来了排名还是不变。诚实的读法是：**判据组的数量不是当前的瓶颈**。在 n=11 上这些差异全部落在 §35.1 的噪声带内，排名既不能证明这个修复有效，也不能否定它；它的依据是机制上的（一把键在无意中肢解判据组），不是排名上的。**默认关闭**，等更大的评测集再定。
-
-### 37.5 剩下的大头是接合，且不是判据组特有的
-
-修掉去重后，F 段成为最大单段损耗（新/v2：312 → 151）。注意 F 的门槛已经很低——只要求**一个**成员接合上病人发现，不要求全部。
-
-在同一位置比较成员级接合率，与**未成组**的已绑定断言对照：
-
-| 臂 | 组成员接合率 | 未成组断言接合率 |
-|---|---:|---:|
-| 旧/旧 | 225/1087 = 20.7% | 2565/15688 = 16.4% |
-| 新/旧 | 159/860 = 18.5% | 2677/16110 = 16.6% |
-| 旧/v2 | 266/1319 = 20.2% | 2698/16413 = 16.4% |
-| 新/v2 | 210/1177 = 17.8% | 2737/16459 = 16.6% |
-
-**判据组的接合并不比别的断言差，反而略好（17.8–20.7% vs 16.4–16.6%）。** 所以 F 段的损耗不是组机制的缺陷，它就是全引擎的接合率：**每 6 条绑定断言里只有约 1 条能碰到病人发现**。组只是被这个总体比率按人头摊到了——一个 3 成员的组要有 ≥1 个成员接合，在 17% 的单条接合率下大约是 43%，与观测到的 F 段存活（269→115 ≈ 43%）吻合。
-
-这个比率有多少是**应该**的、多少是缺陷，本节回答不了：指南段落会列出一个病的全部特征，而单个病人只有其中少数，接合率天然远低于 1。要判断需要另做一件事——抽样未接合的谓词，人工判定其中有多少**本该**接上病人发现。那是下一步，不是本节的结论。
-
-### 37.6 本节结论
-
-> **§38.4 改写**：下面「判据组的数量不是当前瓶颈」应改为——**在组求值器修好之前，判据组的数量不可能成为瓶颈**。本节的负结果当时无法解释，现在有机制了：组求值只检查病人侧是否 present，不读成员自己的 `polarity` 与 `threshold`，`logic`/`n` 只取首个成员且不做一致性校验。把更多组救回来，只是把更多行喂给一个不求值逻辑的求值器。本节 A 段的组数（559/412/619/506）因分组键不含候选标签而与 §34.3 略有出入，跨节引用应以 §34.3 的 540/390/612/500 为准。
-
-三节连起来看是同一个形状：§34 抽取端变好（跨行成组率 0%→显著、logic 失真收窄），§35 排名不变，§37 把组从 20% 抬到 26% 的存活率、排名仍不变。**判据组的数量不是当前瓶颈。** 真正卡住的是它下游那个 17% 的接合率，而那个比率对成组与未成组一视同仁。继续在抽取端加工判据组，收益会继续被这一段吸收掉。
-
-### 37.7 本节产物
-
-| 文件 | 内容 |
-|---|---|
-| `run_mechanical_engine.py` | `GROUP_FUNNEL` 计数器（默认关，行为中性）；`DEDUPE_PREFERS_GROUP` 组优先取舍（**默认关**） |
-| `measure_group_funnel.py` / `group_funnel.json` | 四臂七段漏斗、按 logic 的存活率、成组/未成组接合率对照 |
-| `measure_dedupe_fix.py` / `dedupe_fix_sweep.json` | 组优先去重的漏斗与排名 A/B |
-| `sweep_fixes.py` | `dedupe_prefers_group` 配置键 |
-
-## 38 接手远端四批审计：尺子先塌了，然后才轮到规则
-
-远端交付了七个目录（提交 `9a9b00b5b`、`6fa8fd7aa`、`bbc036e8a`、`72ae4aed9`），基线是 §36/§37 之前的仓库状态。本节做三件事：核验它们、和本报告既有结论对账、按对账结果改计划。
-
-术语与阅读入口另见 `analysis/mechanism_v2/results/READER_GUIDE.md` 及各目录的 `EXPLAINER.md`。
-
-### 38.0 先说结论
-
-**本报告此前所有排名数字的解释都要下调一档，原因不在规则，在金标口径。** 长期在用的 top-1/top-3 判定依据是一个接受父类与组件的代理集合；按严格的完整标签口径，11 例里**只有 5 例的候选池中存在与金标对应的标签**，四臂的完整标签 top-1 是 **1/1/0/0**，top-3 是 **4/4/3/3**。所谓「7/11」是 4 个完整标签命中加 3 个父类/组件命中。
-
-同时，抽取侧第一次有了分母：**指南里一条完整规则被忠实抽出的加权比例是 15.68%**。本报告 §34 以来在优化的，是一个 84% 的规则要么被曲解、要么根本没抽出来的规则库。
-
-### 38.1 我核验了什么，以及一处必须交代的操作事故
-
-不照抄，逐条回到数据与代码：
-
-| 核验对象 | 方法 | 结果 |
-|---|---|---|
-| 完整标签口径 4/4/3/3、1/1/0/0 | 重算 `endpoint_and_rank_accounting.json` 全部 11 例 | ✅ 完全一致 |
-| 来源忠实率 15.68%、输出 45%/20%、虚构 0/180 | 直读 `census_metrics.json` 对应键 | ✅ 完全一致 |
-| 41 个判据片段里只有 8 个真是诊断判据 | 直读 `v2_criteria_manual_screen.json` 的 `counts` | ✅ 8 + 26 + 6 + 1 = 41 |
-| 27 个引擎反例 | 在**当前**代码上重跑 `engine_repro.py` | ✅ 27/27 复现 |
-| 组求值忽略成员极性与阈值 | 读 `run_mechanical_engine.py` 第 529–532 行 | ✅ 属实 |
-| 例 74 定点消融 | 自建对照重跑两个 v2 臂 | ✅ 复现，见 38.3 |
-| 各臂嵌入覆盖 59.5/50.2/50.3/43.8% | 自写脚本重数 | ✅ 完全一致 |
-| 该目录 53 份冻结产物完整性 | 逐份比对 `artifact_manifest.json` | 52 份一致 |
-
-**事故与更正。** 我第一次跑 `engine_repro.py` 时它就地覆盖了 `engine_repro_results.json`，把 `production_sha256` 改写成了我修改后的文件哈希。该目录 README 预警过这种情况。我已从 git 对象 `9a9b00b5b` 取回原件，哈希 `140f0eb6…` 与 manifest 一致，**目录已复原**。此后不再就地运行他们的脚本。
-
-唯一对不上的 `REPORT.md` **不是我造成的**：`9a9b00b5b` 建目录时生成了 manifest，后续提交给 `REPORT.md` 加了一行交叉引用却没重算 manifest。这是这批交付自带的陈旧记录。
-
-### 38.2 尺子的三处塌陷
-
-**(1) 代理金标接受错误实体。** 例 91 金标是 Angiosarcoma（恶性），代理集合接受 Hemangioma（良性）。这不是可容忍的父类模糊，是良恶性搞错。例 56 金标是梭形细胞鳞癌，代理接受泛化的 `Carcinoma`（第 6 名），而真正完整的 `Sarcomatoid squamous cell carcinoma` **就在候选池里、排在第 21–22 名**，历史金标集从未接受过它。
-
-**(2) 排序键不是分数。** 排序按「是否被淘汰 → 确认条目数 → 分数」三级。一个 0 分候选可以排在一个 25 分但已被淘汰的候选前面。本报告多处把排名当作分数的单调函数来解释，那是错的。
-
-**(3) 重复候选把证据劈成两半——而且比审计记录的广得多。** 审计只记了例 74。我把 11 例全查了一遍：
-
-| | 数量 |
-|---|---:|
-| 仅大小写不同的重复候选组 | **23** 组，分布在 **9/11** 例（只有 773、119 干净）|
-| 其中出现证据分裂（一个有分、一个 0 分） | **10** 组 |
-| 其中被重复的概念正是代理金标 | **2** 组（例 74 CPVT、例 475 Neuralgic Amyotrophy）|
-
-机制是 `subject_match` 匹配到第一个候选就 `break`，证据全落到先出现的那个，另一个成为 0 分空壳却照样占一个名次。后果在例 74 上看得最清楚（交付配置、新提示词/v2 臂、关掉 E17）：
-
-```
-pos 4   score 0.0     eliminated=False  Catecholaminergic polymorphic ventricular tachycardia   ← 空壳
-pos 10  score 22.07   eliminated=True   Catecholaminergic Polymorphic Ventricular Tachycardia   ← 真正拿到证据的
-```
-
-**报告出来的「金标第 4 名」来自那个空壳。** 同一例的 Long QT Syndrome 也一样：拿到 25.63 分的那个在第 10 名且已被淘汰，空壳在第 7 名安然无恙——**一个已被判出局的概念，靠双胞胎在排名里活了下来**。
-
-### 38.3 三处交汇：他们手工发现的，正是我 §36/§37 机制修掉的
-
-这批审计与 §36/§37 是并行独立做的，交汇点足以互证。
-
-**(a) 他们的反例 E23 ＝ 本报告的 E17。** 他们的 E23 是「门闸放行了引语无排除依据的 asserted `excludes`」。我在当前代码上跑 `engine_repro.py`，脚本**恰好在 E23 的断言处失败**——因为 E17 已经把它降级了。逐条确认：
-
-```
-E17_ENABLED=True   relation=feature_of      ← 缺陷已消除
-E17_ENABLED=False  relation=excludes        ← 缺陷按他们描述复现
-```
-
-把 E17 关掉后 **27/27 全部复现**。所以我这三处改动**只覆盖了 27 个反例中的 1 个**，另外 26 个仍在生产代码里活着。
-
-> ⚠ 编号撞车：他们的 E01–E26 是**引擎反例**，本报告的 E1–E17 是**门闸规则**。他们另有一条 E17（基数计行数）与本报告的 E17 毫无关系。
-
-**(b) 他们手工删的那一行，正是我 §36 普查的第 6 条。** 他们的定点消融删的是例 74 断言数组下标 1017。我去查了那一行：
-
-| 臂 | 下标 1017 的内容 |
-|---|---|
-| 旧提示词/v2 | `excludes`，引语 "Evidence of ischemic or structural heart disease" |
-| 新提示词/v2 | `excludes`，引语 "Ambulatory ventricular ectopy (>2% of total beats)" |
-
-后者就是 §36.2 表里的第 6 条。两条都是评分表的扣分项被误编译成逻辑排除，两条的引语都没有排除线索，**E17 都会降级**。
-
-于是有了这个对照——**E17 以一条通用规则，达成了他们手工删单行的效果**：
-
-| 臂 | E17 | 有证据的 CPVT | 空壳 | 报告的 gold_rank |
-|---|---|---|---|---|
-| 旧提示词/v2 | 关 | 第 10，已淘汰 | 第 4 | 4 |
-| | **开** | **第 1，未淘汰** | 第 5 | **1** |
-| 新提示词/v2 | 关 | 第 10，已淘汰 | 第 4 | 4 |
-| | **开** | **第 1，未淘汰** | 第 5 | **1** |
-
-这也顺带确认了他们对 §35 的推翻是对的：§35 里「删掉 excludes 后只回到第 2，说明还有一段层三竞争损失」的推论不成立——全局删除**额外复活了 LQTS**，而按病因的定点纠正直接回到第 1。
-
-**(c) 去重缺陷是双方独立发现的同一件事。** 他们报的四臂「去重前 → 去重后仍≥2 成员」是 455→299、348→227、495→329、424→269，与 §37.2 漏斗的 B2→C 段**逐字相同**。他们的描述「去重先于建组，键只有规范 predicate、relation、polarity，忽略阈值、组、来源、作用域」也与 §37.3 一致。
-
-他们比我多给的一层：`IMPLEMENTATION_DEFECT_AUDIT` 澄清去重**不是**留下空成员，而是先删重复 occurrence、再从剩余代表行重建组，所以修复要恢复的是**成员边**——这正是 `DEDUPE_PREFERS_GROUP` 的做法，但也说明这个补丁只是治标。
-
-### 38.4 §37 那个负结果，现在有解释了
-
-§37 的结论是「组救回来了，排名不动」，当时只能说「组的数量不是瓶颈」。他们的引擎反例给出了机制：
-
-```529:532:analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py
-            sat = [m for m in members
-                   if m.get("_finding") and m["_finding"].get("polarity") == "present"]
-            vio = [m for m in members
-                   if m.get("_finding") and m["_finding"].get("polarity") in {"absent", "normal"}]
-```
-
-**判据组的「满足」判定只看病人那边是不是 present，完全不读成员自己的 polarity 和 threshold。** 后果（他们的 E01、E02）：
-
-- 成员写的是「**没有** B」，病人 B 阳性 → 代码判为**满足**，方向反了；
-- 成员写的是「A ≥ 10」，病人 A = 1 → 代码判为**满足**，阈值形同虚设。
-
-再加上 `logic`/`n` 只从**首个成员**读取、不一致也不拒绝。所以这不是一个逻辑求值器，是一个存在性计数器。
-
-**把更多组救回来，只是把更多行喂给一个不求值逻辑的求值器。** §37 的负结果因此从「无法解释」变成「意料之中」，而且它推翻了我在 §37.6 写的「判据组的数量不是当前瓶颈」——准确的说法是：**在求值器修好之前，判据组的数量不可能成为瓶颈**。
-
-顺带修正 §37.2 的一处：他们独立数出的组数是 540/390/612/500，我的 A 段是 559/412/619/506。差异来自分组键不同（我在绑定前不含候选标签）。他们的数与 §34.3 表**完全一致**，应以 §34.3 为准；§37 的 A 段只作漏斗内部的相对参照。
-
-### 38.5 一个我做的额外对照：嵌入覆盖不是 v2 回退的原因
-
-审计指出各臂的 `join_embeddings.npz` 覆盖率不同（59.5/50.2/50.3/43.8%），提醒「名义相同的 tau 不等于各臂有同等接合工具」，但没测排名影响。这条值得追，因为 `embed_sim` 是**查冻结表**，查不到直接返回 0：
-
-```128:133:analysis/mechanism_v2/results/RAG_GUIDELINE_ORACLE_CEILING_LOCAL/run_mechanical_engine.py
-def embed_sim(a: str, b: str) -> float:
-    e = _embeddings()
-    ia, ib = e["idx"].get(a.strip()), e["idx"].get(b.strip())
-    if ia is None or ib is None:
-        return 0.0
-    return float(e["emb"][ia] @ e["emb"][ib])
-```
-
-而交付配置 B1+S7 里 `FIX_EMBED_TAU=0.6` 是**开着**的。覆盖率最低的恰好是语料修复加自由提示词的那一臂（43.8%）——正是 §35 观察到回退的那一臂。如果回退是这个造成的，那 §35 的归因就是伪影。
-
-关掉嵌入通路让四臂工具对等（`measure_embed_confound.py`）：
-
-| 臂 | 嵌入 | 接合数 | top-1 | top-3 | MRR |
-|---|---|---:|---:|---:|---:|
-| 旧/旧 | 开 | 2791 | 2/11 | 7/11 | 0.427 |
-| | 关 | 2487 | 2/11 | 7/11 | 0.415 |
-| 新/旧 | 开 | 2837 | 2/11 | 6/11 | 0.413 |
-| | 关 | 2556 | 2/11 | 5/11 | 0.373 |
-| 旧/v2 | 开 | 2969 | 1/11 | 6/11 | 0.367 |
-| | 关 | 2665 | 1/11 | 5/11 | 0.354 |
-| 新/v2 | 开 | 2950 | 1/11 | 4/11 | 0.307 |
-| | 关 | 2671 | 1/11 | 4/11 | 0.303 |
-
-**回退在工具对等之后依然存在**（top-1 仍是 2/2/1/1）。所以嵌入覆盖不是 v2 回退的原因，§35 的观察本身站得住。附带两条：嵌入通路值约 11% 的接合量，每一臂都因它涨一点 MRR；E17 的收益在关掉嵌入后同样保留（2/3/2/2）。
-
-### 38.6 §22–§37 需要撤回或收窄的表述
-
-| 出处 | 原表述 | 裁定 | 依据 |
-|---|---|---|---|
-| §23.3 / §34.4 | TVD、logic 保真率是抽取质量的度量 | **撤回**。选片段的正则命中的 41 段里只有 8 段真是诊断判据，26 段根本不是逻辑组合。这把尺子量的是「LLM 与正则在一批大多不是判据的文字上是否一致」 | `v2_criteria_manual_screen.json` |
-| §34.6 | 跨行成组率与 logic 分布改善＝逻辑抽取好转 | **收窄**为产量描述。跨行率本身（37/40/119/158）双方数字一致、归因也一致，但它不是语义正确率 | 本节 38.6、`measurement_census.json` |
-| §35.2 | 「不是判据组的锅」 | **撤回**。F4b 局部开关无变化只排除了它的特定大效应，不排除组错抽、组被破坏、组未被正确求值 | E01/E02 反例 |
-| §35.4 | 高权关系产量增加是明确净收益 | **撤回**。同时新增了「年龄>40 单独充分」「负分硬排除」「替代路径变普遍必要」等错误 | `case74_audit.md` |
-| §35.5 | 语料/提示词已解决到可用程度 | **撤回**。完整规则忠实率 15.68% | `census_metrics.json` |
-| §35.3 | 「去 excludes 后回到第 2，说明还有层三竞争损失」 | **推翻**。全局删除复活了 LQTS；定点纠正直接回第 1 | 本节 38.3，已复现 |
-| §35 全节 | `--drop-excludes` 是排除修复的上界 | **撤回**。它同时删掉了别的候选的必要条件否决，estimand 不同 | `POST_V2` §4.4 |
-| §36 全节 | top-1 从 1/11 回到 2/11 | **口径更正**。数字没错，但基线的 `gold_rank=4` 来自空壳候选。按概念身份，E17 是把「第 10 且已淘汰」变成「第 1」 | 本节 38.3，已复现 |
-| §37.6 | 判据组的数量不是当前瓶颈 | **改写**。应为：在组求值器修好之前，组的数量不可能成为瓶颈 | 本节 38.4 |
-| 全文 | top-1 / top-3 / MRR 作为诊断准确率 | **加限定**。这是代理口径。完整标签口径为 top-1 1/1/0/0、top-3 4/4/3/3，且 6/11 例根本没有完整标签可选 | `ENDPOINT_ACCOUNTING.md`，已重算 |
-
-以上各处已在原章节就地加注。
-
-### 38.7 三条经得起交叉验证的正面结论
-
-对账不全是坏消息。这三条在两条独立证据链上一致：
-
-1. **E17 是对的，而且是按病因对的。** 它以通用规则达成了审计手工删行的效果，且在关掉嵌入通路后依然成立。审计独立把同一缺陷登记为 E23。
-2. **去重键漏掉 group_id 是真缺陷。** 两边数字逐字相同，两边的机制描述一致。
-3. **接合率约 17% 是真的。** 我 §37.5 测得未成组断言 16.4–16.6%，他们的 `cohort_metrics.json` 记录的 `join_rate` 是 0.1663 / 0.1671。两边用不同代码路径得到同一个数。
-
-### 38.8 本节产物
-
-| 文件 | 内容 |
-|---|---|
-| `analysis/mechanism_v2/results/READER_GUIDE.md` | 七个目录共用术语的平实语言说明（关系类型、四层引擎、接合方式、臂别名、B1/S7/F/E/G 代号、gid 陷阱、金标口径、重复候选）|
-| 七个目录各自的 `EXPLAINER.md` | 每个目录独有的概念、边界与结论 |
-| `measure_embed_confound.py` / `embed_confound_sweep.json` | 四臂 ×{嵌入开/关}×{E17 开/关} 的接合数与排名 |
-
-## 39 下一步计划（按 §38 重排）
-
-§37.6 定的下一步是「抽样未接合的谓词，判定其中多少本该接上」。**这条现在要往后放**：在金标口径和组求值器修好之前，接合率的分子分母都不可信。
-
-新的顺序按一条原则排——**先修「让测量可信」的，再修「让性能变好」的**。因为一次正确的修复完全可能让代理指标下降（错误否决曾经压住过高分干扰者），所以在尺子修好之前，任何性能数字都无法用来验收。
-
-### 39.1 P0：修尺子（不修完，后面所有实验都白做）
-
-| # | 动作 | 预期 | 状态 |
-|---|---|---|---|
-| P0-1 | 候选列表按规范化 key 去重，合并别名的证据 | 消除空壳；11 例中 9 例的排名会变，但那是**修正**不是回退 | 待做 |
-| P0-2 | 双口径报告：每个实验同时给代理 top-k 和完整标签 top-k | 之后所有结论都带两个数 | 待做 |
-| P0-3 | 6/11 例没有完整标签——判定是候选生成缺陷还是金标本身有歧义 | 决定这 6 例还能不能用来评排名 | 待做 |
-| P0-4 | 例 91 的 Angiosarcoma/Hemangioma 从代理金标里摘掉 | 良恶性错误不应计为命中 | 待做 |
-| P0-5 | 退役 TVD / logic 保真率两个指标 | §34.4 的数字不再引用 | 已在 §38.6 声明 |
-
-### 39.2 P1：修组求值器（§37 的负结果卡在这）
-
-| # | 动作 | 预期 |
-|---|---|---|
-| P1-1 | 组成员求值读自己的 `polarity`：成员为 negated 时，病人 present 应判**违反**而非满足 | 修 E01 |
-| P1-2 | 组成员求值读自己的 `threshold`，数值不满足即不计入 sat | 修 E02 |
-| P1-3 | `logic` / `n` 从整组一致性校验得出，不一致则拒绝而非取首个成员 | 修 E03/E04 |
-| P1-4 | 引入 unknown：未观测的成员不计入 sat 也不计入 vio，计数规则同时记录「确定满足数」与「可能满足上界」 | 三值语义的最小落地 |
-| P1-5 | P1-1~4 之后重跑 §37 的 `DEDUPE_PREFERS_GROUP` A/B | 此时组存活率的提升才可能转成排名 |
-
-### 39.3 P2：把剩下 26 个引擎反例分诊
-
-E23 已由 E17 覆盖。剩余 26 条按「是否需要语义能力」分流：`code_only` 29 项先做，`design_policy` 7 项需要先定政策（最紧的一条是 `argues_against` 目前和 `excludes` 走同一条无条件否决分支，这是个政策问题不是 bug）。
-
-其中优先级最高的三条：
-
-- **父类抢占**（例 56）：`subject_match` 命中即 `break`，父类 `Carcinoma` 截走亚型的证据。与 P0-1 同源，一起修。
-- **claimants 污染**：不合格行、零分行、已淘汰候选都能进 claimants，从而暗改别人的票权。
-- **L4 竞争扣分**：固定扣 0.5 分而不核验这句话在支持谁、比较条件成不成立。当前把它解释为「反证强度」超出了代码实际做的事。
-
-### 39.4 P3：抽取端（等 P0–P2 之后再动）
-
-15.68% 的完整规则忠实率是最大的一块，但**现在动它没有意义**——没有可信的尺子去验收。等 P0 完成后再按 `RULE_EXTRACTION_EXECUTION_REDESIGN` 的四步协议做，且第一批只做「浅层复合组」（24 条结构化规则里的 7 条），因为嵌套/域组和评分程序需要 schema 先升级。
-
-### 39.5 明确不做的事
-
-- **不再用 11 例的排名变化验收修复。** 它是开发集，被反复使用过，且尺子刚被证明有问题。
-- **不再把 `--drop-excludes` 这类全局消融当作上界。** estimand 不同，见 §38.6。
-- **不追 §37.6 原定的未接合谓词抽样**，直到 P0-1 和 P1 完成。
 
 | 文件 | 内容 |
 |---|---|
@@ -5083,7 +4631,7 @@ E23 已由 E17 覆盖。剩余 26 条按「是否需要语义能力」分流：`
 | `build_trial_tasks.py` | 11 例任务文件（collapse3c ∪ multistance 候选集） |
 | `run_trial_retrieval.py` / `diagnose_retrieval_depth.py` | 假设条件化检索与深度诊断 |
 | `run_trial_extraction.py` | 两处 LLM：`--groups` 抽出 `criterion_group` |
-| `run_mechanical_engine.py` | 无模型规则引擎：`specificity()`、判据组求值、封闭世界开关、`GROUP_FUNNEL` 漏斗计数（§37） |
+| `run_mechanical_engine.py` | 无模型规则引擎：`specificity()`、判据组求值、封闭世界开关 |
 | `sweep_hypotheses.py` | H1×H2×CWA 因子扫描与 MRR bootstrap |
 | `test_specificity_hypothesis.py` | H2 配对层置换检验 |
 | `trace_trial_failures.py` / `summarize_trial.py` | 26 条断言死亡定位与全臂汇总 |
@@ -5117,51 +4665,3 @@ E23 已由 E17 覆盖。剩余 26 条按「是否需要语义能力」分流：`
 | `extract_nl_rules.py` | §17 阶段 A：逐字规则句摘录 + 程序侧阈值回填 + 子串忠实度核验 |
 | `run_llm_executor.py` | §17 阶段 B：LLM 执行引擎，五种规则表示 × findings/vignette × 固定/打乱顺序 |
 | `compare_llm_vs_mechanical.py` | §17：汇总表、逐例配对符号检验、解码噪声与位置敏感性分解 |
-
----
-
-## 附：七个远端审计目录速查指针
-
-§38 消化的四批远端提交共七个目录，全部位于 `analysis/mechanism_v2/results/<目录名>/`。本表用于从主报告结论反查支撑资产。
-
-**先读这个**：`analysis/mechanism_v2/results/READER_GUIDE.md`（跨目录共用术语），每个目录另有一份 `EXPLAINER.md`（该目录独有概念与边界）。
-
-### A. 按「我想验证主报告的哪句话」反查
-
-| 主报告位置 | 结论 | 去哪儿查 |
-|---|---|---|
-| §38.0 / 全文口径 | top-k 是代理口径；完整标签口径 1/1/0/0、4/4/3/3 | `V2_INDEX_DIFFERENTIAL_AUDIT/ENDPOINT_ACCOUNTING.md` + `endpoint_and_rank_accounting.json` |
-| §38.0 | 完整规则忠实率 15.68% | `V2_RULE_EXTRACTION_CAPABILITY_CENSUS/REPORT.md` + `census_metrics.json` |
-| §38.2 (1) | 例 91 良恶性错配、例 56 完整标签排 21 位 | `V2_INDEX_DIFFERENTIAL_AUDIT/cases/case_91.md`、`cases/case_56.md` |
-| §38.2 (3) | 重复候选与证据分裂 | `POST_V2_RULE_SEMANTICS_AUDIT/case74_audit.md`；11 例全量由本地 `trial_tasks_11_all4.json` 复算 |
-| §38.3 (a) | 27 个引擎反例；E23 ＝ 本报告 E17 | `POST_V2_RULE_SEMANTICS_AUDIT/engine_audit.md` + `engine_repro.py` + `engine_repro_results.json` |
-| §38.3 (b) | 例 74 定点消融回到第 1 | `POST_V2_RULE_SEMANTICS_AUDIT/case74_targeted_ablation.py` / `.json`、`case74_manual_adjudication.csv` |
-| §38.3 (c) | 去重前后组数 455→299 等 | `POST_V2_RULE_SEMANTICS_AUDIT/cohort_group_stages.json`；机制描述见 `IMPLEMENTATION_DEFECT_AUDIT/engine_structures.md` |
-| §38.4 / §37.6 | 组求值不读成员 polarity 与 threshold（E01/E02） | `POST_V2_RULE_SEMANTICS_AUDIT/engine_audit.md`、`measurement_counterexamples.json` |
-| §38.5 | 各臂嵌入覆盖 59.5/50.2/50.3/43.8% | `POST_V2_RULE_SEMANTICS_AUDIT/measurement_census.json`；排名对照见本地 `embed_confound_sweep.json` |
-| §38.6 (§23.3/§34.4) | 41 段里只有 8 段真是诊断判据 | `POST_V2_RULE_SEMANTICS_AUDIT/v2_criteria_manual_screen.json` |
-| §38.6 (§35.4) | 高权关系产量上升同时新增错误 | `POST_V2_RULE_SEMANTICS_AUDIT/case74_audit.md` |
-| §38.6 (§35 全节) | `--drop-excludes` 与定点修复 estimand 不同 | `POST_V2_RULE_SEMANTICS_AUDIT/REPORT.md` §4.4 |
-| §38.7 | 接合率 0.1663 / 0.1671 | `POST_V2_RULE_SEMANTICS_AUDIT/cohort_metrics.json` |
-| §39.1 P0 | 候选去重、金标口径修法 | `V2_INDEX_DIFFERENTIAL_AUDIT/ENDPOINT_ACCOUNTING.md` |
-| §39.2 P1 | 组求值器该改成什么样 | `RULE_EXTRACTION_EXECUTION_REDESIGN/SEMANTIC_CONTRACT.md` + `ir_examples.json` |
-| §39.3 P2 | 26 个反例的分诊与修复顺序 | `IMPLEMENTATION_DEFECT_AUDIT/defect_catalog.md` + `REPAIR_PLAN.md` |
-| §39.4 P3 | 抽取端四步协议 | `RULE_EXTRACTION_EXECUTION_REDESIGN/EXTRACTION_PROTOCOL.md` |
-
-### B. 七个目录各自的主入口
-
-| 目录 | 提交 | 一句话 | 主报告 | 关键 md | 关键数据 | 关键脚本 |
-|---|---|---|---|---|---|---|
-| `POST_V2_RULE_SEMANTICS_AUDIT` | `9a9b00b5b` | 引擎与抽取的语义扭曲，27 个可复现反例 | `REPORT.md` | `engine_audit.md`、`case74_audit.md`、`cohort_audit.md`、`measurement_audit.md`、`source_and_provenance_audit.md`、`semantic_contract.md` | `engine_repro_results.json`、`cohort_metrics.json`、`measurement_census.json`、`v2_criteria_manual_screen.json`、`cohort_trace_{0..3}_{default_stale,exact_arm_window}.json` | `engine_repro.py`、`case74_targeted_ablation.py`、`case74_replay.py`、`cohort_recompute.py`、`reference_semantics.py`、`provenance_audit.py`、`validate_audit.py` |
-| `V2_RULE_EXTRACTION_CAPABILITY_CENSUS` | `6fa8fd7aa` | 抽取忠实率，第一次带双分母 | `REPORT.md` | `PROTOCOL.md`、`ERROR_TAXONOMY_AND_CAUSAL_MAP.md`、`GROUP_SEMANTIC_CASEBOOK.md`、`FINAL_SEMANTIC_REVIEW.md`（含一条主动撤回）、`SAMPLING_IMPLEMENTATION_CORRECTION.md` | `census_metrics.json`、`source_rule_results.json`、`output_unit_results.json`、`source_inventory_*.frozen.json`（冻结清单）、`error_dimension_metrics.json` | `aggregate_census.py`、`build_samples.py`、`structural_census.py`、`check_group_semantic_countermodels.py`、`validate_census.py` |
-| `V2_INDEX_DIFFERENTIAL_AUDIT` | `bbc036e8a` | 换索引后指标为何变差；发现尺子本身有问题 | `REPORT.md` | `ENDPOINT_ACCOUNTING.md`、`RETRIEVAL_DELTA.md`、`REPLAY_API.md`、`METHODS_REVIEW.md`、`cases/case_*.md`（11 例逐例） | `endpoint_and_rank_accounting.json`、`replay_summary.json`、`replay_outputs/`（66 个臂级重放）、`source_exposure_delta.json`、`system_probe_metrics.json` | `audit_endpoints.py`、`replay_audit.py`、`run_system_probes.py`、`retrieval_delta.py`、`validate_delivery.py` |
-| `IMPLEMENTATION_DEFECT_AUDIT` | `72ae4aed9` | 63 个工程工作项：哪些是纯 bug、哪些需要语义能力 | `REPORT.md` | `defect_catalog.md`、`REPAIR_PLAN.md`、`engine_structures.md`、`semantic_identity.md`、`SEMANTIC_REPAIR_MATRIX.md`、`PRIOR_COVERAGE_REVIEW.md` | `defect_registry.json`、`engine_defects.json`、`identity_defects.json`、`upstream_defects.json`、`prior_coverage_map.json` | `reproduce_engine_defects.py`、`reproduce_identity_defects.py`、`reproduce_upstream_defects.py`、`reproduce_auxiliary_defects.py` |
-| `RULE_EXTRACTION_EXECUTION_REDESIGN` | `bbc036e8a` | 改成什么样：四对象语义合同（**未部署**） | `REPORT.md` | `SEMANTIC_CONTRACT.md`、`EXTRACTION_PROTOCOL.md`、`MIGRATION_MAP.md`、`RESEARCH_ROADMAP.md` | `ir_examples.json`、`acceptance_vectors.json`、`experiment_matrix.json`、`migration_matrix.json` | `validate_contract_examples.py`、`build_migration_map.py` |
-| `RULE_STAGE_SCOPE_SUPPLEMENT` | `72ae4aed9` | 阶段与适用范围的规格（**合成样例，非生产**） | `REPORT.md` | `SEMANTIC_SUPPLEMENT.md`、`PRIOR_DESIGN_DELTA.md`、`INDEPENDENT_REVIEW.md` | `supplemental_examples.json`、`supplemental_vectors.json`、`review_initial_counterexamples.json` | `validate_supplement.py`、`review_checks.py` |
-| `FAITHFUL_RULE_EXTRACTION_LITERATURE_REVIEW` | `bbc036e8a` | 外部 35 项工作做到什么程度，及其指标口径 | `REPORT.md` | `modern_fol_review.md`、`semantic_parsing_review.md`、`clinical_llm_review.md`、`clinical_standards_review.md` | `study_matrix.json`、`*_sources.json`、`*_search_log.json`（原始检索记录） | `build_study_matrix.py`、`build_standards_catalog.py` |
-
-### C. 使用这些资产时的三条硬约束
-
-1. **不要就地运行他们的复现脚本。** `engine_repro.py` 等会**覆盖**同目录的冻结结果 json（§38.1 已发生过一次）。跑之前先备份，或改写输出路径。
-2. **每个目录的 `artifact_manifest.json` / `delivery_validation.json` 是完整性依据。** `POST_V2` 的 53 份产物中 `REPORT.md` 一份长期显示 CHANGED，那是交付方自带的陈旧记录（后续提交改了文件却没重算 manifest），**不是**本地改动。
-3. **`engine_repro.py` 现在会在 E23 处失败，这是预期的**——E17 已修掉该缺陷。要复现全部 27 条需临时置 `gate_assertions.E17_ENABLED = False`。

@@ -84,8 +84,7 @@ def main() -> int:
                 if not cands:
                     stats["untraced"] += 1
                 stats[f"gold={is_gold}"] += 1
-                stats["modality:" + str(e.get("modality") or "none").lower()] += 1
-                stats["join:" + str(e.get("join") or "none")] += 1
+                stats["modality:" + str(a.get("modality") or "none").lower()] += 1
                 stats["relation:" + str(a.get("relation") or "?").lower()] += 1
                 rows.append({
                     "case": key.split("/")[-1], "candidate": v["label"],
@@ -93,7 +92,6 @@ def main() -> int:
                     "relation": a.get("relation"), "modality": a.get("modality"),
                     "subject": a.get("subject"), "predicate": e.get("predicate"),
                     "joined_finding": e.get("finding"),
-                    "join": e.get("join"),
                     "source": a.get("_source"), "title": a.get("_title"),
                     "section": a.get("_section"),
                     "quote": e.get("quote"),
@@ -107,7 +105,7 @@ def main() -> int:
               f"{'  <-- GOLD' if r['is_gold'] else ''}")
         print(f"    {r['relation']}/{r['modality']}  subject={str(r['subject'])[:50]}")
         print(f"    predicate: {r['predicate']}")
-        print(f"    joined to finding: {r['joined_finding']}  (join={r['join']})")
+        print(f"    joined to finding: {r['joined_finding']}")
         print(f"    {r['source']} | {str(r['title'])[:70]}")
         print(f"    quote: {str(r['quote'])[:260]}\n")
 
